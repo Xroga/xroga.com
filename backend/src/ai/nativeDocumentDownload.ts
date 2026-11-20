@@ -23,19 +23,29 @@ const afterFormat = new RegExp('^(?:(?:a|an|the|my)\\s+)?(?:[\\p{L}]+\\s+){0,5}'
   + '\\s+(?:as|in)\\s+(?:(?:a|an)\\s+)?' + fileFormat + '\\b', 'iu');
 const exportFormat = new RegExp('^(?:please\\s+)?(?:(?:can|could|would)\\s+you\\s+)?(?:export|save|download|convert)\\s+'
   + '(?:(?:this|that|it|the\\s+(?:answer|report|document)|your\\s+(?:answer|report))\\s+)?(?:as|to)\\s+(?:(?:a|an)\\s+)?' + fileFormat + '\\b', 'i');
+const documentDeliverable = new RegExp('^(?:(?:a|an|the|my)\\s+)?'
+  + '(?:(?!(?:with|from|using|for|about|that|by|through|as|in|and|or)\\b)[\\p{L}\\p{N}-]+\\s+){0,5}' + document + '\\b', 'iu');
+const followupExport = new RegExp('(?:^|[.!?]\\s+|\\n+)\\s*(?:please\\s+)?(?:provide|attach|export|save|include)\\s+'
+  + '(?:it|the\\s+' + document + ')\\s+(?:as|in)\\s+(?:(?:a|an)\\s+)?(?:downloadable\\s+)?' + fileFormat + '\\b', 'giu');
+const declinesDownload = /\b(?:no|do\s+not|don['’]t|without)\s+(?:(?:create|export|give|make|generate|attach|include|provide|a|an|the)\s+)*(?:files?|downloads?|docx|pdf|xlsx|pptx)\b/i;
 
 export function requestedNativeDocumentFormat(prompt: string): NativeDocumentFormat | undefined {
   const text = prompt.trim();
+  if (text.length > 32_000) return;
   const direct = exportFormat.exec(text);
   const body = direct ? text : text.replace(request, '');
-  const selection = direct ?? (body !== text ? beforeFormat.exec(body) ?? beforeNamedFormat.exec(body) ?? afterFormat.exec(body) : null);
+  const inline = direct ?? (body !== text ? beforeFormat.exec(body) ?? beforeNamedFormat.exec(body) ?? afterFormat.exec(body) : null);
+  const followups = body !== text && documentDeliverable.test(body) ? [...body.matchAll(followupExport)] : [];
+  if (followups.length > 1 || inline && followups.length) return;
+  const selection = inline ?? followups[0];
   if (!selection) return;
   const raw = selection[1]?.toLowerCase().replace(/^\./, '');
   if (raw === 'word' && !direct && /\b(?:as|in)\s+(?:a|an)\s+word\s*$/i.test(selection[0])) return;
   const candidate = raw === 'word' ? 'docx' : raw === 'excel' ? 'xlsx' : raw === 'powerpoint' ? 'pptx' : raw;
   if (!isNativeDocumentFormat(candidate)) return;
-  const trailing = body.slice(selection[0].length);
-  if (/\b(?:or|and|plus|instead of)\s+(?:an?\s+)?(?:\.?(?:docx|pdf|xlsx|pptx)|word|excel|powerpoint)\b|\b(?:no|do\s+not|don['’]t|without)\s+(?:(?:create|export|give|make|generate|attach|include|provide|a|an|the)\s+)*(?:files?|downloads?|docx|pdf|xlsx|pptx)\b/i.test(trailing)) return;
+  const trailing = body.slice(selection.index + selection[0].length);
+  if (/\b(?:or|and|plus|instead of)\s+(?:an?\s+)?(?:\.?(?:docx|pdf|xlsx|pptx)|word|excel|powerpoint)\b/i.test(trailing)
+      || declinesDownload.test(followups.length ? body : trailing)) return;
   return candidate;
 }
 

@@ -8,8 +8,10 @@
   ],
   "state": "CODE_COMPLETE",
   "risk": "high",
-  "scope": "Validate explicit procedure decisions across representations, admit independently public Workspace research, and keep native answers responsive without changing model routing or execution boundaries.",
+  "scope": "Validate explicit procedure decisions across representations, admit independently public Workspace research, preserve explicitly requested document downloads, and keep native answers responsive without changing model routing or execution boundaries.",
   "changedFiles": [
+    "backend/src/ai/nativeDocumentDownload.test.ts",
+    "backend/src/ai/nativeDocumentDownload.ts",
     "backend/src/ai/nativeMarkdown.ts",
     "backend/src/ai/nativeOpenUi.ts",
     "backend/src/ai/nativeOpenUi.test.ts",
@@ -26,7 +28,8 @@
     "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
     "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
     "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-    "frontend/src/lib/formatAiMarkdown.tsx"
+    "frontend/src/lib/formatAiMarkdown.tsx",
+    "scripts/verify-native-openui-browser.mjs"
   ],
   "decisions": {
     "keep": [
@@ -36,6 +39,8 @@
       "Check explicit condition outcomes and prerequisite order at the existing answer assembly boundary.",
       "Count renderable static decision tables as delivered while preserving the existing native table requirement for requested interactions.",
       "Admit explicitly public raw-turn lookups through the current bounded Search broker even when an unrelated project is selected.",
+      "Distinguish public software names, normal currency units, and citation requests from actual destinations or official-only restrictions.",
+      "Preserve a document's requested format when the format is specified after the creation brief.",
       "Reuse an unchanged native answer tree during unrelated Workspace updates."
     ],
     "replace": [],
@@ -89,6 +94,12 @@
       "scope": "Verify public query projection and preserve the approval barrier for private context.",
       "negative": true,
       "reference": "backend/src/ai/researchAnswer.test.ts"
+    },
+    {
+      "command": "tsx --test backend/src/ai/nativeDocumentDownload.test.ts frontend/src/lib/xrogaFileExports.test.ts",
+      "scope": "Verify direct and deferred download requests, encoded Office artifacts, and negative cases for app features, conflicting formats and declined downloads.",
+      "negative": true,
+      "reference": "backend/src/ai/nativeDocumentDownload.test.ts"
     },
     {
       "command": "playwright test -c frontend/playwright.config.ts command3-auth.spec.ts",

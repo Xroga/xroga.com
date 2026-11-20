@@ -34,6 +34,7 @@ test('one exact research approval completes its original rich answer, saves evid
  t.after(()=>{setStorageServiceForTests(undefined);for(const k of Object.keys(env)){if(before[k]===undefined)delete process.env[k];else process.env[k]=before[k];}});
  let searches=0,models=0,unknown=0,mode='ok';
  let automaticAuditCount=0;
+ let expectedPublicQuery: RegExp | undefined;
  const unrelatedHistory='Earlier NASA mission discussion UNRELATED_PRIOR_NASA_TURN';
  const raw=JSON.stringify({s0:{markdown:'The retrieved page documents the supplied option [1].',data:{columns:['Option','Evidence'],rows:[['Documented option','Public source excerpt [1]']]}}});
  t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
@@ -49,6 +50,11 @@ test('one exact research approval completes its original rich answer, saves evid
       assert.ok([...body.query].length<=128);
     }else if(mode.startsWith('automatic-ranking')){
       assert.deepEqual(body,{query:'top 10 best ai comapines of 2026',count:10});
+    }else if(mode==='automatic-parity'){
+      assert.deepEqual(Object.keys(body).sort(),['count','query']);
+      assert.equal(body.count,10);
+      assert.match(body.query,expectedPublicQuery!);
+      assert.ok([...body.query].length<=128);
     }else assert.deepEqual(body,{query:'price of btc currently',count:10});
     assert.doesNotMatch(JSON.stringify(body),/UNRELATED_PRIOR|MUST_NOT_LEAVE|substituted planner context|AMBIENT_PRIVATE_REPOSITORY|evil.example/);
    }
@@ -65,7 +71,7 @@ test('one exact research approval completes its original rich answer, saves evid
   if(url.origin==='https://api.zurelay.com'){
    models++;assert.equal(body.model,'deepseek-v4.1-flash-1017');assert.equal(new Headers(init?.headers).get('x-zurelay-fallback'),'off');
    assert.match(JSON.stringify(body.messages),/Public source excerpt/);assert.match(JSON.stringify(body.messages),/untrusted|external data/i);
-   if(mode==='automatic'||mode==='automatic-official'||mode.startsWith('automatic-ranking')){
+   if(mode==='automatic'||mode==='automatic-official'||mode.startsWith('automatic-ranking')||mode==='automatic-parity'){
     assert.doesNotMatch(JSON.stringify(body.messages),/MUST_NOT_LEAVE|substituted planner context/);
     assert.match(JSON.stringify(body.messages),/UNRELATED_PRIOR_NASA_TURN/);
     assert.equal(body.messages.length,3);
@@ -76,7 +82,7 @@ test('one exact research approval completes its original rich answer, saves evid
      assert.doesNotMatch(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>/);
      assert.match(body.messages[2].content,/Page publication \(source metadata\): 2023-01-01T12:00:00\.000Z/);
      assert.match(body.messages[2].content,/Never average or combine stale/);
-    }else{
+    }else if(mode!=='automatic-parity'){
      assert.equal(body.max_tokens,20_480);
      assert.match(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>/);
      assert.doesNotMatch(body.messages[2].content,/one or two short paragraphs/);
@@ -252,6 +258,22 @@ test('one exact research approval completes its original rich answer, saves evid
   {code:'TOOL_UNAVAILABLE',message:/self-contained public search query/});
  assert.equal(confirmation.row,lastConfirmation,'An unclassified public query must not manufacture a write approval');
  assert.equal(searches,8);assert.equal(models,6);
+
+ mode='automatic-parity';
+ for(const [prompt,query] of [
+  ['Compare the newest stable Next.js release and the previous major version. Mention official release dates and upgrade risks.',/Next\.js release/],
+  ['Compare three cloud application hosting options for a small startup with a $100/month infrastructure budget. Distinguish assumptions from verified current pricing.',/\$100 per month.*current pricing/],
+  ['Who is the current CEO of Microsoft, and which official source confirms it?',/CEO of Microsoft/],
+ ] as const){
+  expectedPublicQuery=query;
+  const answer=await runChatPipeline({...ranking,prompt});
+  assert.equal(answer.intent,'research');
+  assert.equal(answer.publicWebRetrieved,true);
+  assert.match(answer.response,/https:\/\/example\.com\/docs/);
+  assert.doesNotMatch(answer.response,/Review action|Web search finished/);
+  assert.equal(confirmation.row,lastConfirmation);
+ }
+ assert.equal(searches,11);assert.equal(models,9);
 });
 
 test('automatic Search eligibility uses only the current public lookup with ambiguous inputs held for review',()=>{
@@ -330,6 +352,29 @@ test('public discovery includes implicit rankings and comparisons without export
   'Explain why companies use AI',
   'Rank these companies using the previous answer',
  ]) assert.equal(workspacePublicSearchQuery(prompt),undefined,prompt);
+});
+
+test('automatic Search distinguishes software names, public pricing units, and source citation preferences from private URLs',()=>{
+ const versions=workspacePublicSearchQuery('Compare the newest stable Next.js release and the previous major version. Mention official release dates and upgrade risks.');
+ assert.match(versions?.query??'',/Next\.js release/);
+ assert.deepEqual(versions?.officialDomains,[]);
+ const hosting=workspacePublicSearchQuery('Compare three cloud application hosting options for a small startup with a $100/month infrastructure budget. Distinguish assumptions from verified current pricing.');
+ assert.match(hosting?.query??'',/\$100 per month/);
+ assert.match(hosting?.query??'',/\bcurrent pricing\b/);
+ assert.ok([...hosting!.query].length <= 128);
+ const executive='Who is the current CEO of Microsoft, and which official source confirms it?';
+ assert.deepEqual(workspacePublicSearchQuery(executive,true),workspacePublicSearchQuery(executive));
+ assert.ok(workspacePublicSearchQuery(executive,true));
+ assert.deepEqual(workspacePublicSearchQuery('Research the latest Next.js release using only official sources (nextjs.org).',true)?.officialDomains,['nextjs.org']);
+ for(const prompt of [
+  'Find the latest version documented at Next.js.private.example.com.',
+  'Find the latest software releases listed at example.js.',
+  'Research the latest Next.js release on https://next.js/path.',
+  'Find public pricing at $100/month using our internal subscription list.',
+  'Find current pricing for customer account 12345678 at $100/month.',
+  'Compare the newest release of Node.js using only official sources.',
+  'Who is the current CEO of our private client, and which official source confirms it?',
+ ]) assert.equal(workspacePublicSearchQuery(prompt,true),undefined,prompt);
 });
 
 test('citation links always point at the retrieved source they number, never at a model-written address',()=>{

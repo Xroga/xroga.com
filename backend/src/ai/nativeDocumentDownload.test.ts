@@ -32,7 +32,20 @@ test('does not turn file mentions, other formats, or negated requests into an ex
     'Create a PDF report or an Excel spreadsheet.',
     'Create a report as PDF or DOCX.',
     'Write a message saying “create a PDF report”.',
+    'Create a web app with a report preview. Provide the report as a downloadable DOCX.',
+    'Summarize this PDF attachment. Provide the summary as DOCX.',
+    'Write a memo. Provide it as a DOCX or a PDF.',
+    'Write a memo. Provide it as a DOCX. Attach it as a PDF.',
+    'Write a memo without a download. Provide it as a DOCX.',
+    'Write a memo. Do not provide it as a DOCX.',
   ]) assert.equal(requestedNativeDocumentFormat(prompt), undefined, prompt);
+});
+
+test('recognizes a downloadable format requested after the document content', () => {
+  const memo = 'Create a one-page memo titled “Website QA Checklist” with 8 specific checks. Provide the memo as a downloadable DOCX if the artifact tool is available.';
+  assert.equal(requestedNativeDocumentFormat(memo), 'docx');
+  assert.equal(requestedNativeDocumentFormat('Prepare a client report about launch readiness.\nPlease attach it as a downloadable PDF.'), 'pdf');
+  assert.equal(requestedNativeDocumentFormat('Draft a short project brief. Export the brief as DOCX.'), 'docx');
 });
 
 test('withholds incomplete artifacts and preserves a validated local download in an authorized share projection', () => {

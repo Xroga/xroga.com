@@ -179,7 +179,7 @@ const { completeNativeWorkspaceAnswer } = await tsImport('../backend/src/ai/nati
 const { validateNativeOpenUi } = await tsImport('../backend/src/ai/nativeOpenUi.ts', import.meta.url);
 const { nativeDocumentDelivery, requestedNativeDocumentFormat } = await tsImport('../backend/src/ai/nativeDocumentDownload.ts', import.meta.url);
 const documentFixtures = {
-  docx: { prompt: 'Create a DOCX proposal with editable sections.', text: '# Workshop Proposal\n\n## Scope\n\nDiscuss the training plan.\n\n[Unverified claim](https://fake.example/report)' },
+  docx: { prompt: 'Draft a workshop proposal with editable sections. Provide it as a downloadable DOCX.', text: '# Workshop Proposal\n\n## Scope\n\nDiscuss the training plan.\n\n[Unverified claim](https://fake.example/report)' },
   pdf: { prompt: 'Create a PDF executive report from this attached dataset.', text: '# Executive Report\n\nTotal verified revenue: $1,000.' },
   xlsx: { prompt: 'Create an XLSX budget spreadsheet with formulas.', text: '# Budget\n\n| Item | Quantity | Cost | Total |\n| --- | --- | --- | --- |\n| Workshop | 2 | 25 | |\n| Total | | | |\n\n## Formulas\n- D2: =B2*C2\n- D3: =SUM(D2:D2)' },
   pptx: { prompt: 'Create a professional PPTX slide deck from these supplied notes.', text: '# Workshop Plans\n\n## Recommended timing\nThe workshop lasts 90 minutes.\n\n## Preparation\nBring the training guide.' },
