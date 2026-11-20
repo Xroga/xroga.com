@@ -16,59 +16,96 @@
   background: linear-gradient(to bottom, rgba(15,23,42,.14), rgba(15,23,42,.045) 47%, transparent);
 }
 
-/* Keep the transcript width stable as navigation appears and disappears. */
-.transcript {
-  --scroll-navigation-gutter: 46px;
-}
-.transcript[data-conversation='true'] :global(.xv-terminal-body--flush) {
-  padding-right: max(var(--scroll-navigation-gutter), clamp(1rem, 6vw, 6rem));
-}
-
-/* R5Program button: circular, inset shadow, scaling arrow and compact tooltip. */
+/* R5Program/Uiverse button, scaled to the compact 34px reference.
+   A single horizontal pair sits quietly above the composer, never over it. */
 .navigation {
-  position: fixed; z-index: 28;
-  right: calc(var(--xv-pane-right, 8px) + 8px);
-  bottom: calc(var(--xv-dock-bottom, 14px) + var(--xv-chatbar-height, 112px) + 12px);
-  display: flex; flex-direction: column; align-items: center; gap: 9px;
-  opacity: 0; pointer-events: none;
-  transform: translateY(5px) scale(.97);
+  position: absolute;
+  z-index: 28;
+  right: 7px;
+  bottom: calc(100% + 10px);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(3px);
   transition: opacity 200ms ease, transform 200ms ease;
 }
-.navigation[data-visible='true'] { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
+.navigation[data-visible='true'] {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
 .navButton {
-  height: 50px; width: 50px; flex: 0 0 50px; cursor: pointer; padding: 10px;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  cursor: pointer;
+  padding: 6px;
   border-radius: 50%;
-  background-color: var(--app-panel, white); color: var(--foreground, #111);
-  border: 2px solid color-mix(in srgb, var(--foreground) 60%, transparent);
-  box-shadow: inset 0 0 10px rgba(0,0,0,.2), 0 5px 16px rgba(0,0,0,.13);
-  display: flex; position: relative; justify-content: center; align-items: center;
-  transition: transform 250ms ease, background-color 250ms ease, color 250ms ease;
+  background-color: var(--app-panel, white);
+  color: var(--foreground, #111);
+  border: 1.5px solid color-mix(in srgb, var(--foreground) 55%, transparent);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, .18);
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  transition: transform 500ms ease, background-color 500ms ease, color 500ms ease;
+}
+/* Larger invisible tap area without making the visible circle bulky. */
+.navButton::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
 }
 .navButton::after {
-  content: attr(data-label); position: absolute;
-  left: 50%; bottom: calc(100% + 5px);
-  white-space: nowrap; background-color: var(--app-panel, white);
-  color: var(--foreground, #111); font-size: 11px;
-  box-sizing: border-box; padding: 4px 6px; border-radius: 25px;
-  box-shadow: 0 0 7px rgba(0,0,0,.14);
-  opacity: 0; transform: translateX(-50%) scale(0); transform-origin: center;
-  transition: opacity 200ms ease, transform 200ms ease; pointer-events: none;
+  content: attr(data-label);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  white-space: nowrap;
+  background-color: var(--app-panel, white);
+  color: var(--foreground, #111);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: 25px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, .12);
+  opacity: 0;
+  transform: translateX(-50%) scale(0);
+  transform-origin: center bottom;
+  transition: opacity 500ms ease, transform 500ms ease;
+  pointer-events: none;
 }
-.navButton:last-child::after { top: calc(100% + 5px); bottom: auto; }
-.arrow, .downArrow { transition: transform 250ms ease; }
+.arrow, .downArrow {
+  width: 19px;
+  height: 19px;
+  flex: none;
+  transition: transform 500ms ease;
+}
 .downArrow { transform: rotate(180deg); }
-.navButton:hover { transform: translateY(-3px); background-color: #0c0c0c; color: white; }
+.navButton:hover {
+  transform: translateY(-3px);
+  background-color: #0c0c0c;
+  color: #fff;
+}
 .navButton:hover .arrow, .navButton:focus-visible .arrow { transform: scale(1.2); }
 .navButton:hover .downArrow, .navButton:focus-visible .downArrow { transform: rotate(180deg) scale(1.2); }
-.navButton:hover::after, .navButton:focus-visible::after { opacity: 1; transform: translateX(-50%) scale(1); }
+.navButton:hover::after, .navButton:focus-visible::after {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
 .navButton:active { transform: translateY(2px); }
 .navButton:focus-visible { outline: 2px solid var(--accent, #3b82f6); outline-offset: 3px; }
 @media (max-width: 639px) {
-  .transcript { --scroll-navigation-gutter: 40px; }
-  .navigation { gap: 7px; }
-  .navButton { height: 44px; width: 44px; flex-basis: 44px; padding: 7px; }
+  .navigation { right: 3px; bottom: calc(100% + 9px); gap: 9px; }
+  .navButton { height: 32px; width: 32px; flex-basis: 32px; padding: 6px; }
+  .arrow, .downArrow { width: 18px; height: 18px; }
 }
-@media (max-width: 1023px) {
+@media (hover: none) {
   .navButton::after { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
