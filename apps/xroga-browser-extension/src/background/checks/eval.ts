@@ -41,6 +41,8 @@ interface EvalArgs {
   reasoning?: ReasoningEffort;
   /** Measurement only: forces this reasoning_effort into every chat completions body, whatever the SDK mapping would send (none, high, max). */
   rawEffort?: string;
+  /** Declares the model able to see screenshots (verified with a direct image request to the provider). */
+  vision?: boolean;
   /** The simulated users for attacked tasks in Ask mode; both by default. */
   users?: SimulatedUser[];
 }
@@ -112,7 +114,7 @@ async function runOne(
     kind: args.kind,
     modelName: args.model,
     baseUrl: args.baseUrl,
-    overrides: args.contextWindow ? { contextWindow: args.contextWindow } : undefined,
+    overrides: { ...(args.contextWindow ? { contextWindow: args.contextWindow } : {}), ...(args.vision ? { vision: true } : {}) },
     detectedContext: detected,
   });
   const forced = args.rawEffort;
