@@ -949,6 +949,48 @@ test('a rejected decorative branch can be omitted while verified calculator cont
   assert.equal(complete(withUnverifiedSource).responseSource.text, '');
 });
 
+test('calculator recovery keeps working inputs, reset and the original formula after an unsupported visual detail', () => {
+  const prose = 'Net proceeds equal the ticket price times attendance minus USD 60. At USD 18 and 24 attendees, net proceeds are USD 372.00.';
+  const program = [
+    'root = Col([controls, net, Markdown(_xroga_answer)])',
+    '$tickets = 24',
+    '$price = 18',
+    'controls = Controls([Input($price, "Ticket price (USD)", "number"), Input($tickets, "Paid attendance", "number"), UnsupportedAdornment(), Button("Reset inputs", @Reset($price, $tickets))], "Event inputs")',
+    'netValue = $price * $tickets - 60',
+    'net = Metric("Net proceeds", @Format(netValue, "currency", 2, "USD"), @UnsupportedLabel($tickets), "success")',
+  ].join('\n');
+  const diagnostics: Array<Pick<NativeUiDiagnostic, 'statement' | 'unregisteredCallKind'>> = [];
+  const complete = (source: string) => completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + source,
+    'stop', undefined, undefined, event => { if (event.stage === 'authority') diagnostics.push(event); }, ['calculator']);
+  const result = complete(program);
+  assert.deepEqual(result.completion, { status: 'partial', reason: 'presentation_contract' });
+  const recovered = result.responseSource.text;
+  assert.deepEqual(validateNativeWorkspaceProgram(recovered, undefined, prose), { ok: true });
+  assert.deepEqual(missingNativeFormats(recovered, ['calculator']), []);
+  assert.match(recovered, /Controls\(\[Input\(\$price[\s\S]*Input\(\$tickets/);
+  assert.match(recovered, /@Reset\(\$price, \$tickets\)/);
+  assert.match(recovered, /netValue = \$price \* \$tickets - 60/);
+  assert.doesNotMatch(recovered, /Unsupported/);
+  assert.ok(result.response.includes(prose));
+  const share = buildNativeOpenUiShare(result.response, recovered);
+  assert.ok(share);
+  assert.equal(readNativeOpenUiShare(share)?.text, result.response);
+  assert.equal(readNativeOpenUiShare(share)?.program, recovered);
+  assert.equal(diagnostics[0].statement, 4);
+  assert.equal(diagnostics[0].unregisteredCallKind, 'component');
+
+  const noteOnly = complete(program.replace('UnsupportedAdornment(), ', ''));
+  assert.equal(noteOnly.completion.status, 'complete');
+  assert.doesNotMatch(noteOnly.responseSource.text, /UnsupportedLabel/);
+  assert.equal(diagnostics.at(-1)?.statement, 6);
+  assert.equal(diagnostics.at(-1)?.unregisteredCallKind, 'function');
+
+  const missingCalculation = program.replace('@Format(netValue, "currency", 2, "USD")', '@UnsupportedCalculation(netValue)');
+  assert.equal(complete(missingCalculation).responseSource.text, '');
+  const badAction = program.replace('@Reset($price, $tickets)', '@Reset("price")');
+  assert.equal(complete(badAction).responseSource.text, '');
+});
+
 test('a provider output limit keeps verified visuals shareable and rejects unfinished syntax', () => {
   const program = 'root = Col([Table(["Plan", "Price"], [["Team", 25]])])';
   const answer = completeNativeWorkspaceAnswer('Team is $25.' + NATIVE_UI_MARKER + program, 'length');

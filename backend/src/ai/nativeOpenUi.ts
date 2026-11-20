@@ -19,6 +19,7 @@ const parseProgram = createParser(catalog.schema as LibraryJSONSchema, 'Col');
 const components = new Set(Object.keys(catalog.spec.components));
 const pureFunctions = new Set(Object.keys(catalog.spec.functions));
 const localActions = new Set(['Set', 'Reset']);
+const registeredNativeCall = (name: string) => components.has(name) || pureFunctions.has(name) || localActions.has(name);
 const operators = new Set(['+', '-', '*', '/', '%', '==', '!=', '<', '>', '<=', '>=', '&&', '||']);
 const safeKey = (key: string) => !['__proto__', 'prototype', 'constructor'].includes(key);
 // The Zurelay DeepSeek compatibility path can append the closing tool-call
@@ -501,6 +502,7 @@ export type NativeUiDiagnostic = {
   editorialIssue?: 'prose_conflict' | NonNullable<ReturnType<typeof reviewEditorialVisuals>>['issue'];
   referenceIssue?: 'missing' | 'cycle';
   authorityIssue?: 'unknown_capability' | 'invalid_action_binding' | 'unverified_source' | 'unsafe_expression' | 'non_scalar_state' | 'external_statement';
+  unregisteredCallKind?: 'component' | 'function';
   declarationIssue?: 'invalid_name' | 'unsafe_name' | 'duplicate' | 'missing_root' | 'invalid_root' | 'expression';
   diagramTopology?: 'invalid';
   schemaState?: { hasRoot: boolean; incomplete: boolean; unresolved: number; errors: number };
@@ -528,6 +530,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
   let editorialIssue: NativeUiDiagnostic['editorialIssue'];
   let referenceIssue: NativeUiDiagnostic['referenceIssue'];
   let authorityIssue: NativeUiDiagnostic['authorityIssue'];
+  let unregisteredCallKind: NativeUiDiagnostic['unregisteredCallKind'];
   let declarationIssue: NativeUiDiagnostic['declarationIssue'];
   let diagramTopology: NativeUiDiagnostic['diagramTopology'];
   let workLimit: NativeUiDiagnostic['workLimit'];
@@ -537,7 +540,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
     skeleton: tokens.slice(0, 100).map((token, index) => {
       const name = token.v;
       return token.t !== 14 && tokens[index + 1]?.t === 1 && typeof name === 'string'
-        && (components.has(name) || pureFunctions.has(name) || localActions.has(name)) ? name : String(token.t);
+        && registeredNativeCall(name) ? name : String(token.t);
     }).join(' '),
   });
   const fail = (reason: NativeUiDiagnostic['reason'], errors?: ReturnType<typeof parseProgram.parse>['meta']['errors']) => {
@@ -551,6 +554,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
       ...(editorialIssue ? { editorialIssue } : {}),
       ...(referenceIssue ? { referenceIssue } : {}),
       ...(authorityIssue ? { authorityIssue } : {}),
+      ...(unregisteredCallKind ? { unregisteredCallKind } : {}),
       ...(declarationIssue ? { declarationIssue } : {}),
       ...(diagramTopology ? { diagramTopology } : {}),
       ...(errors?.length ? { schema: errors.slice(0, 8).map(error => {
@@ -627,8 +631,11 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
             authorityIssue = 'unverified_source';
             return false;
           }
-          if (!components.has(node.name) && !pureFunctions.has(node.name) && !localActions.has(node.name)) {
+          if (!registeredNativeCall(node.name)) {
             authorityIssue = 'unknown_capability';
+            unregisteredCallKind = node.fn ? 'function' : 'component';
+            const declaration = statements.findIndex(item => item.id === [...active].at(-1));
+            if (declaration >= 0) statement = declaration + 1;
             return false;
           }
           return node.args.every((arg, index) =>
@@ -829,12 +836,24 @@ function normalizeDiagramRows(node: ASTNode, symbols: ReadonlyMap<string, ASTNod
   return els.some((row, index) => row !== rows.els[index]) ? { ...rows, els } : node;
 }
 
-function normalizeWorkspaceComponents(node: ASTNode, symbols: ReadonlyMap<string, ASTNode>): ASTNode {
+function normalizeWorkspaceComponents(node: ASTNode, symbols: ReadonlyMap<string, ASTNode>, omitUnsupportedNotes = false): ASTNode {
+  const normalize = (child: ASTNode) => normalizeWorkspaceComponents(child, symbols, omitUnsupportedNotes);
   const original = node.k === 'Comp' && node.name === 'List' ? node.args[0] : undefined;
   const items = resolveRecoveryReference(original, symbols);
   if (node.k === 'Comp') {
     const args = node.args.map((arg, index) => node.name === 'Diagram' && (index === 1 || index === 2)
-      ? normalizeDiagramRows(arg, symbols, index === 1) : normalizeWorkspaceComponents(arg, symbols));
+      ? normalizeDiagramRows(arg, symbols, index === 1) : normalize(arg));
+    // A Metric note is a display-only annotation. Retain the label, original
+    // result expression and controls when a model invents a formatting helper
+    // in that annotation. Never substitute a value in the calculation itself.
+    const note = node.name === 'Metric' && omitUnsupportedNotes ? resolveRecoveryReference(args[2], symbols) : undefined;
+    if (note) {
+      let unsupported = false;
+      walkAST(note, part => {
+        if (part.k === 'Comp' && part.fn && !registeredNativeCall(part.name)) unsupported = true;
+      });
+      if (unsupported) args[2] = { k: 'Str', v: '' };
+    }
     // Preserve a model-supplied table caption without widening Table's schema or
     // discarding the requested data. The complete candidate is validated below.
     if (node.name === 'Table' && args.length === 3
@@ -847,7 +866,7 @@ function normalizeWorkspaceComponents(node: ASTNode, symbols: ReadonlyMap<string
     if (items?.k === 'Arr') {
       const els = items.els.map(item => {
         const value = resolveRecoveryReference(item, symbols);
-        if (value?.k !== 'Obj') return normalizeWorkspaceComponents(item, symbols);
+        if (value?.k !== 'Obj') return normalize(item);
         const fields = new Map(value.entries);
         const keys = ['title', 'description', 'marker', 'children'];
         const values = keys.map(key => fields.get(key));
@@ -855,13 +874,13 @@ function normalizeWorkspaceComponents(node: ASTNode, symbols: ReadonlyMap<string
         let last = values.length - 1;
         while (values[last] === undefined) last -= 1;
         return { k: 'Comp', name: 'ListItem', args: values.slice(0, last + 1).map(value =>
-          value ? normalizeWorkspaceComponents(value, symbols) : { k: 'Str', v: '' }) } satisfies ASTNode;
+          value ? normalize(value) : { k: 'Str', v: '' }) } satisfies ASTNode;
       });
       if (els.some((item, index) => item !== items.els[index])) args[0] = { ...items, els };
     }
     if (args.some((arg, index) => arg !== node.args[index])) return { ...node, args };
   } else if (node.k === 'Arr') {
-    const els = node.els.map(item => normalizeWorkspaceComponents(item, symbols));
+    const els = node.els.map(normalize);
     if (els.some((item, index) => item !== node.els[index])) return { ...node, els };
   }
   return node;
@@ -915,7 +934,7 @@ export function recoverTruncatedNativeWorkspaceProgram(program: string, evidence
   }
 }
 
-const layoutChildren = new Map([['Col', 0], ['Row', 0], ['Grid', 0], ['Card', 0], ['Box', 0], ['Section', 1]]);
+const layoutChildren = new Map([['Col', 0], ['Row', 0], ['Grid', 0], ['Card', 0], ['Box', 0], ['Controls', 0], ['Section', 1]]);
 
 /** Every recovered candidate passes the full authority, schema and data checks.
  * Reachable branches with unresolved references may be omitted from the view. */
@@ -943,7 +962,9 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
       }
       if (unsafeBinding) return;
     }
-    const symbols = new Map([...originals].map(([id, node]) => [id, normalizeWorkspaceComponents(node, originals)]));
+    const symbols = new Map([...originals].map(([id, node]) => [
+      id, normalizeWorkspaceComponents(node, originals, failure === 'authority'),
+    ]));
     const root = resolveRecoveryReference(symbols.has('root') ? symbols.get('root')
       : [...symbols.values()].find(node => node.k === 'Comp' && node.name === 'Col'), symbols);
     if (root?.k !== 'Comp' || root.name !== 'Col') return;
@@ -969,8 +990,8 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
       }
       return id + ' = ' + printed;
     };
-    const normalized = failure === 'schema' && [...symbols].some(([id, node]) => originals.get(id) !== node);
-    if (normalized) {
+    const normalized = [...symbols].some(([id, node]) => originals.get(id) !== node);
+    if (failure === 'schema' && normalized) {
       const full = [...symbols].map(([id, node]) => sourceFor(id, node)).join('\n');
       const validation = check(full, narrative);
       if (validation.ok || validation.reason === 'data_review') return { program: full, validation, partial: false };
@@ -991,6 +1012,12 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
       collect(candidate);
       return [sourceFor('root', candidate), ...[...symbols].filter(([id]) => included.has(id))
         .map(([id, node]) => sourceFor(id, node))].join('\n');
+    }
+
+    if (failure === 'authority' && normalized) {
+      const full = render(root);
+      const validation = check(full, narrative);
+      if (validation.ok || validation.reason === 'data_review') return { program: full, validation, partial: false };
     }
 
     if (failure === 'factual_review' && claimsChartIsDeferred(prose)) {
