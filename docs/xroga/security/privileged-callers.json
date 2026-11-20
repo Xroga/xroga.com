@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "d3c66962bb9dfa9655121c22d3d20d7dc00756d5756cac0824403996a2b9f486",
+  "reviewRegistrySha256": "92f5d98db229b45951e52596aff0a7d92fccc42dde04b71b9d31c74cff2bacb7",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -6704,7 +6704,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "11b1fae25118734de35e"
+        "id": "263fc12118f6091e650f"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -10464,7 +10464,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "11b1fae25118734de35e"
+        "id": "263fc12118f6091e650f"
       }
     ]
   },
@@ -33046,15 +33046,15 @@
       "sourceSha256": "c73176a55e776661d1374be102e9b46b42fbd160122407941203a059408f5b47"
     },
     {
-      "id": "11b1fae25118734de35e",
+      "id": "263fc12118f6091e650f",
       "path": "frontend/src/lib/xrogaFileExports.ts",
-      "line": 100,
+      "line": 119,
       "enclosing": "exportDocumentPdf",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "5c793ee8f243864e7966593efc9e2977661f5bab56d4712333dc20ede2c4f65d",
+      "sourceSha256": "206c3d1dd60a23470ef366f85ae58af72948ce36c22fe86d931eb67eb9264116",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in exportDocumentPdf, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
