@@ -1,4 +1,18 @@
-# Browser automation hosting — final architecture decision (2026-10-22)
+# Browser automation hosting decision
+
+## Current founder override, 2026-10-31
+
+The updated title and main body of [Issue #898](https://github.com/Xroga/xroga.com/issues/898), [comment #6545943076](https://github.com/Xroga/xroga.com/issues/898#issuecomment-6545943076), and the subsequent founder directive supersede the provider exclusions and hosting selection below.
+
+Provider order is Cloudflare Browser Run Free first, existing infrastructure second, verified on-demand paid execution third, always-on infrastructure last. The proposed $35 retained Google VM is rejected. Cold starts are acceptable. No new paid infrastructure, plan upgrade or model spending is authorized by this change. Batch 2 is paused.
+
+Preserve the full Browser Worker contract: multi-step workflows, authorized authenticated interactions, consequential-action grants, Chromium/Playwright and Stagehand where required, durable progress, lease fencing, cancellation, recovery, private evidence, tenant isolation and network/credential protection. A screenshot probe is not completion of this contract. Do not remove the existing hardened container implementation or create another scheduler.
+
+Cloudflare remote CDP is a candidate execution adapter, not a Docker host. The bounded compatibility result and exact remaining network-security gap are recorded in [the October 31 receipt](cloudflare-compatibility-20261031.md). Free-plan availability is confirmed; full production compatibility is not. In particular, the 60-second default is an inactivity timeout, not a documented fixed maximum task duration. Do not reject long-running CDP solely on that misunderstanding. The shared ten-browser-minute daily Free allowance remains a real capacity limit.
+
+Any alternative, including Cloud Run Jobs, must demonstrate the actual sandbox and egress contract before deployment. Moving the Docker-spawning coordinator unchanged into Cloud Run is not a verified solution. Reuse canonical scheduling and storage, release compute after execution, and identify fixed charges separately from task usage. No automatic fallback to the rejected VM.
+
+## Historical decision, 2026-10-22, superseded where conflicting
 
 **Decision owner: founder. Supersedes every earlier suggestion to host browsers on Cloudflare Browser Run, Cloudflare Browser Rendering or Browserbase.**
 This is a *documented future provider decision*, not a claim of implementation. Nothing in Phase 1 implements or deploys it.
