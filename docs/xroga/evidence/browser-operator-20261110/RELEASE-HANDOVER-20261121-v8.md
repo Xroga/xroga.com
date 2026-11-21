@@ -36,3 +36,11 @@ See the addendum at the end of this file for the final commit, ZIP, SHA-256 and 
 ## Build addendum
 Build commit `f4141d89d` (working tree clean at build), ZIP `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-f4141d89d.zip`, SHA-256 `210A795459962F4F4016168C2567C862603826857D0F6576CFFB295EB2C61A7D`, manifest `ARTIFACT-MANIFEST-f4141d89d.json`. Rollback: unzip the `24a5d5c00` ZIP (SHA-256 `1C46F34D...A85479`) over the same folder and reload.
 Checks on this source: typecheck clean; unit suite 1443 passed, 4 skipped (before the last prompt bullet was shortened; `src/agent` re-run 522 passed); all 303 real-Chromium scenarios PASS (`scenarios-full-20261121-donor-sprint.json`), including HUM-1 and HUM-2 after the guard change and the five new S3 scenarios; upgrade from `24a5d5c00` keeps extension id, storage, service worker and side panel. Staging only.
+
+## Executing workers against one agent, real DeepSeek (measured; check `parallel-real`)
+Task: four independent three-step pages (choose, confirm, a code appears after 2.5 s), graded by the four codes in the answer. Real extension, real worker windows, real model, vision off for workers' panel path as configured by the panel. Files: `live-model/parallel-real-*-20261121.json`.
+- Single agent (told not to use workers): 167, 127, 127 s, 3/3 correct.
+- Model's free choice (no instruction): it never started workers (0 of 2), 125 and 134 s, 2/2 correct.
+- Workers with the extension's default of 3 slots (a fourth task waits): 125 s, 163 s, and one run still waiting at 232 s (stopped by the check's window, 0 codes read): 2 of 3 correct, median slower than single.
+- Workers with 4 slots (the product's server limit is 13): 152, 84, 92 s, 3/3 correct, 4 active at once. Median 92 s against 127 s single: about 1.4x faster, with large variance (n=3 per arm).
+Conclusion: workers pay off only when all tasks can run at once and each is long; with the default 3 slots they do not. Each worker is slower than the single agent per page (window start, its own model turns), so small jobs stay single-agent, which is what the model chooses by itself. Not measured: more than four tasks, tasks that use different sites, cost per arm.
