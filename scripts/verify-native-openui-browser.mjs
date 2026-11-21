@@ -557,6 +557,9 @@ try {
       assert.deepEqual(await labels(), ['Environment', 'Directive', 'Code path', 'Missing']);
       await seconds.click();
       assert.deepEqual(await labels(), ['Code path', 'Directive', 'Environment', 'Missing']);
+      await seconds.press('Enter');
+      assert.deepEqual(await labels(), ['Environment', 'Directive', 'Code path', 'Missing']);
+      assert.equal(await wideRegion.getByRole('columnheader', { name: 'Seconds' }).getAttribute('aria-sort'), 'ascending');
       if (viewport.width <= 390) {
         const directive = wideRegion.getByRole('cell', { name: 'Directive', exact: true });
         assert.equal(await directive.evaluate(cell => {

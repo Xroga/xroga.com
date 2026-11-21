@@ -1,6 +1,6 @@
 import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, missingNativeFormats, recoverNativeWorkspaceProgram, recoverNativeMonthlyChart, recoverTruncatedNativeWorkspaceProgram, splitNativeOpenUiAnswer, supplementNativeProse, validateNativeWorkspaceProgram, type NativeUiDiagnostic, type NativeUiValidation, type RequiredNativeFormat } from './nativeOpenUi.js';
-import { nativeAnswerReviewReason, nativeFactualGuidance, nativeTechnicalCorrections, repairNativePlainAnswer, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
+import { nativeAnswerReviewReason, nativeFactualGuidance, nativeTechnicalCorrections, repairNativePlainAnswer, retainReviewedTechnicalProse, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import { checklistFromProse, requestsEditableChecklist, suppliedPeriodicSeries } from './nativeOpenUiRecovery.js';
 import { conflictingNativeReadouts, initialNativeReadouts, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
 import { recoverNativeReadoutExplanations } from './nativeOpenUi.js';
@@ -185,8 +185,9 @@ export function completeNativeWorkspaceAnswer(
     };
   }
   const response = text;
+  const proseReview = nativeAnswerReviewReason(text);
   const reviewReason = validation?.ok === false && (validation.reason === 'authorization_review' || validation.reason === 'factual_review')
-    ? validation.reason : nativeAnswerReviewReason(text);
+    ? validation.reason : proseReview;
   const completion = reviewReason
     ? { status: 'partial' as const, reason: reviewReason }
     : hasDataConflict
@@ -219,8 +220,8 @@ export function completeNativeWorkspaceAnswer(
   const corrections = reviewReason ? nativeTechnicalCorrections(text) : [];
   const reviewedProse = corrections.length
     ? ['## Technical corrections', ...corrections.map(({ guidance }) => '- ' + guidance),
-      '## Original draft for review', 'Use the corrections above when reviewing this draft.', text].join('\n\n')
-    : response;
+      proseReview === 'authorization_review' ? '' : retainReviewedTechnicalProse(text, corrections)].filter(Boolean).join('\n\n')
+    : proseReview === 'authorization_review' ? 'I couldn’t verify the authorization guidance in this answer.' : response;
   const valid = validation?.ok === true && completion.status === 'complete';
   const readouts = valid ? initialNativeReadouts(program) : [];
   const multiples = valid ? nativePrincipalMultipleReview(program) : undefined;

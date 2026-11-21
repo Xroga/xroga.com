@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "077ea3640075b80eaa3bfebca28a2be5e58dc9a9",
+  "source_sha": "692f2051b63c18bd2c9ccc4763f7be98e9698f44",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17246,7 +17246,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiAccuracy.ts",
-      "sha256": "28485609ec592e4089422b448b6e32890a206d81218a87ca34eccb07840af1fe"
+      "sha256": "19429f219c9bdf2b632272053309f432c1904cfc1867f146a9af3b7fcaa1dde7"
     },
     {
       "path": "backend/src/ai/nativeOpenUiEditorial.ts",
@@ -17258,7 +17258,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "03affdc657d21fffef86dc1b7a02c99dc8515c904441e21ec3558fd5be8fc128"
+      "sha256": "35bef69f22d6589695f8452dc236da59d7d035695466b0325f43606ea1bff06f"
     },
     {
       "path": "backend/src/ai/nativeOpenUiRecovery.ts",
@@ -17278,7 +17278,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "b053db18f6f32e72648e98b6b5121fd41cf2ba7452c90dff6cf1482917041cd9"
+      "sha256": "82e78c6a85f0f8528aeffc0547d4dbec72a319c4eaaa49eee0664f788be8e48b"
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
@@ -33432,28 +33432,35 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiAccuracy.ts",
-      "line": 156,
+      "line": 148,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUiAccuracy.ts",
+      "line": 170,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUiAccuracy.ts",
-      "line": 179,
+      "line": 193,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUiAccuracy.ts",
-      "line": 201,
+      "line": 215,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUiAccuracy.ts",
-      "line": 224,
+      "line": 238,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

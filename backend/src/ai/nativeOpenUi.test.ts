@@ -1242,10 +1242,12 @@ test('an unbounded Stripe retry claim gets a readable factual-review fallback', 
   const inaccurate = 'A non-2xx makes Stripe retry forever.';
   const program = 'root = Col([Text(' + JSON.stringify(inaccurate) + ')])';
   assert.deepEqual(validateNativeOpenUi(program), { ok: false, reason: 'factual_review' });
-  const answer = completeNativeWorkspaceAnswer(inaccurate, 'stop');
+  const independent = 'Record delivery attempts in your application logs.';
+  const answer = completeNativeWorkspaceAnswer(inaccurate + '\n\n' + independent, 'stop');
   assert.deepEqual(answer.completion, { status: 'partial', reason: 'factual_review' });
   assert.match(answer.response, /finite delivery window/);
-  assert.ok(answer.response.endsWith(inaccurate));
+  assert.ok(answer.response.endsWith(independent));
+  assert.ok(!answer.response.includes(inaccurate));
   assert.equal(answer.responseSource.text, '');
   assert.deepEqual(validateNativeOpenUi('root = Col([Text("Stripe does not retry forever.")])'), { ok: true });
 });
@@ -1424,7 +1426,7 @@ test('factual layout recovery does not hide contradictory chart prose from a rem
   assert.equal(answer.responseSource.text, '');
 });
 
-test('hosted authorization and billing contradictions get corrections before the saved draft', () => {
+test('hosted authorization and billing contradictions do not reappear in saved answer text', () => {
   const cookie = 'A server-only client that owns an HTTP-only session or uses the service role bypasses RLS.';
   const roles = 'Role checks for privileged operations, including deletion, require owner or admin.';
   const policy = 'create policy projects_delete on projects\n  for delete using (is_tenant_member(tenant_id));';
@@ -1435,7 +1437,10 @@ test('hosted authorization and billing contradictions get corrections before the
   assert.deepEqual(answer.completion, { status: 'partial', reason: 'authorization_review' });
   assert.equal(answer.responseSource.text, '');
   assert.match(answer.response, /^## Technical corrections[\s\S]*user access token[\s\S]*membership-only predicate[\s\S]*timestamps can tie/);
-  assert.ok(answer.response.endsWith(draft));
+  for (const rejected of [cookie, policy, ordering]) assert.ok(!answer.response.includes(rejected));
+  const unsafeOnly = completeNativeWorkspaceAnswer('The success page grants paid access.', 'stop');
+  assert.deepEqual(unsafeOnly.completion, { status: 'partial', reason: 'authorization_review' });
+  assert.doesNotMatch(unsafeOnly.response, /grants paid access/);
   assert.deepEqual(validateNativeOpenUi(program, undefined, ordering), { ok: false, reason: 'factual_review' });
   const codeOnly = 'root = Col([Text(' + JSON.stringify(roles) + '), Code(' + JSON.stringify(policy) + ', "sql")])';
   assert.deepEqual(validateNativeOpenUi(codeOnly), { ok: false, reason: 'authorization_review' });
