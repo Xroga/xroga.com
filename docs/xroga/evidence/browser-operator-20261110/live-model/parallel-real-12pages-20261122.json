@@ -1,0 +1,52 @@
+{
+  "names": [
+    "parallel-real"
+  ],
+  "args": {
+    "model": "deepseek-v4.1-flash-1017",
+    "baseUrl": "https://api.zurelay.com/v1",
+    "arms": [
+      "parallel",
+      "single"
+    ],
+    "activeRunLimit": 13,
+    "pages": 12
+  },
+  "timedOut": false,
+  "reports": [
+    {
+      "name": "parallel-real",
+      "ok": true,
+      "startedAt": "2026-11-21T20:16:13.618Z",
+      "durationMs": 311079,
+      "result": {
+        "model": "deepseek-v4.1-flash-1017",
+        "runs": [
+          {
+            "arm": "parallel",
+            "rep": 0,
+            "ms": 134183,
+            "status": "Done",
+            "found": 12,
+            "ok": true,
+            "pages": 12,
+            "workers": 12,
+            "maxActive": 12
+          },
+          {
+            "arm": "single",
+            "rep": 0,
+            "ms": 174109,
+            "status": "Done",
+            "found": 12,
+            "ok": true,
+            "pages": 12,
+            "workers": 0,
+            "maxActive": 0
+          }
+        ]
+      }
+    }
+  ],
+  "console": []
+}

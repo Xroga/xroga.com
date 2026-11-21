@@ -41,6 +41,7 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
   app.use(express.json());
   app.use(authMiddleware);
   let pluginRevoked = false;
+  let busy = false;
   let exhausted = false;
   let pluginConfirmations = 0;
   const approvalId = '00000000-0000-4000-8000-000000000003';
@@ -52,6 +53,8 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
   app.use(createLocalBrowserRouter(() => ({ runs, leases }), async request => {
     await request.authority?.revalidate();
     if (exhausted) throw Object.assign(new Error('capacity'), { code: 'PAID_PROVIDER_CAPACITY_UNAVAILABLE', nextUnlockAt: '2026-11-12T00:00:00.000Z' });
+    // The shared model gate is full: no provider call was made, nothing is charged, the route answers 429 BROWSER_MODEL_BUSY with a short Retry-After.
+    if (busy) throw Object.assign(new Error('Model temporarily busy'), { code: 'MODEL_PROVIDER_BUSY', status: 429 });
     assert.equal(request.modelId, 'deepseek_v4_1_flash_1017');
     // The default browser turn reasons at `high` and gets the high policy's output room and spend ceiling; a picture probe stays at `none`.
     const expected = request.body.reasoning_effort === 'none' ? { ceiling: 3_000, maxTokens: [2_048, 512] } : request.body.reasoning_effort === 'high' ? { ceiling: 5_000, maxTokens: [4_096] } : { ceiling: 8_000, maxTokens: [6_144] };
@@ -151,6 +154,12 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
     assert.equal(received.length, 0);
     assert.equal((await send(`${path}/turn`, 'POST', request)).status, 200);
     assert.equal((await send(`${path}/turn`, 'POST', request)).status, 409);
+    busy = true;
+    const queued = await send(`${path}/turn`, 'POST', { ...request, turn: 2 });
+    assert.equal(queued.status, 429);
+    assert.equal(queued.headers.get('retry-after'), '3');
+    assert.match(JSON.stringify(await queued.json()), /BROWSER_MODEL_BUSY/);
+    busy = false;
     assert.equal((await send(path, 'DELETE')).status, 200);
     assert.equal((await send(`${path}/turn`, 'POST', { ...request, turn: 2 })).status, 409);
     const finished = await send(`${path}/finish`, 'POST', { status: 'completed', result: 'Late result' });
