@@ -764,8 +764,8 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   pairingWorkspace.searchParams.set('browserExtension', 'abcdefghijklmnopabcdefghijklmnop');
   pairingWorkspace.searchParams.set('browserPair', '11111111-1111-4111-8111-111111111111');
   await page.goto(pairingWorkspace.href);
-  const browserOperator = page.getByText('Browser Operator', { exact: true });
-  await expect(browserOperator).toHaveCount(1);
+  const browserOperator = page.locator('summary').filter({ hasText: /^Install Xroga Extension$/ });
+  await expect(browserOperator).toBeVisible();
   await expect(renderedArchitecture.locator('.react-flow__edge')).toHaveCount(1, { timeout: 20_000 });
   await page.mouse.move(0, 0);
   await expect(page.getByText('Conversation restored', { exact: true })).toHaveCount(0, { timeout: 10_000 });
@@ -776,19 +776,24 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     const panel = browserOperator.locator('..');
     await expect(panel).toHaveJSProperty('open', true);
     const expanded = (await panel.boundingBox())!;
-    expect(expanded.y + expanded.height).toBeLessThanOrEqual((await transcript.boundingBox())!.y + 1);
+    const transcriptTop = (await transcript.boundingBox())!.y;
+    const header = browserOperator.locator('xpath=ancestor::header[1]');
+    const headerBounds = (await header.boundingBox())!;
+    expect(expanded.y).toBeGreaterThanOrEqual(headerBounds.y + headerBounds.height);
+    expect(expanded.x).toBeGreaterThanOrEqual(headerBounds.x - 1);
     expect(expanded.x + expanded.width).toBeLessThanOrEqual(width + 1);
     await browserOperator.click();
     await expect(panel).toHaveJSProperty('open', false);
     const collapsed = (await panel.boundingBox())!;
-    expect(collapsed.y + collapsed.height).toBeLessThanOrEqual((await transcript.boundingBox())!.y + 1);
+    expect(collapsed.width).toBeLessThan(expanded.width);
+    expect(Math.abs((await transcript.boundingBox())!.y - transcriptTop)).toBeLessThanOrEqual(1);
     await browserOperator.click();
   }
   expect(chatCalls).toBe(9);
   await writeFile('test-results/native-workspace/evidence.json', JSON.stringify({
     source: expectedRelease, route: '/workspace', auth: 'isolated Supabase ordinary accounts',
     model: 'deterministic transport fixtures, zero provider calls', nativeActions: ['file handoff', 'citation link', 'keyboard calculator', 'copy readback', 'database save and reopen', 'private share owner/guest/other account', 'continuation', 'browser cancellation', 'client validation fallback', 'partial native recovery, copy and reopen', 'reviewed partial chart', 'legacy research receipt without refocus or redispatch', 'automatic public lookup, citation and source count after Copy, Share and Reopen', 'connected diagram, nested table and code in one persisted answer'],
-    viewports: [320, 390, 768, 1280, 1440], themes: ['black', 'white'], browserOperator: 'one in-flow panel, expanded and collapsed above the saved architecture answer',
+    viewports: [320, 390, 768, 1280, 1440], themes: ['black', 'white'], browserOperator: 'one compact header control expands within the viewport without shifting the saved answer',
   }, null, 2));
 });
 
