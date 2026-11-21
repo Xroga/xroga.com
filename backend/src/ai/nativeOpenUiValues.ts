@@ -258,8 +258,8 @@ export function conflictingNativeReadouts(prose: string, readouts: ReturnType<ty
       // operand. Stay within that equation so another clause cannot excuse an
       // incorrect readout. The evaluated component remains authoritative.
       const equation = nearby.index! >= at + matchedWords.length
-        ? paragraph.slice(nearby.index! + nearby[0].length).match(
-          /^[ \t]*(?:÷|\/|×|\+|−|-|divided by|times|plus|minus)[ \t]*[$€£]?[ \t]*[+-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?(?:[ \t]+[a-zA-Z]+){0,3}[ \t]*=[ \t]*([$€£])[ \t]*([+-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)/i,
+        ? paragraph.slice(nearby.index! + nearby[0].length, nearby.index! + nearby[0].length + 240).match(
+          /^[ \t]*(?:(?:÷|\/|×|\*|\+|−|-|divided by|times|plus|minus)[ \t]*[$€£]?[ \t]*[+-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?%?(?:[ \t]+[a-zA-Z]+){0,3}[ \t]*){1,4}=[ \t]*([$€£])[ \t]*([+-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)/i,
         ) : null;
       const claimed = equation?.[1] === expected[0][1] ? equation[2] : nearby[2];
       const number = Number(claimed.replace(/,/g, ''));

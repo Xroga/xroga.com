@@ -318,6 +318,29 @@ test('interactive metrics suppress stale initial snapshots while fallback preser
   assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, { text })), /405.53/);
 });
 
+test('bound Markdown suppresses exact live readouts but keeps worked examples, sources and fallback', () => {
+  const text = [
+    'Tip: $14.40', '', '- Total to pay: $94.40',
+    '- Tip: $12.00 at 15%', '- Tip: $14.40 [1]', '',
+    'For the initial bill, multiply $80 by 18%.',
+  ].join('\n');
+  const program = bindNativeAnswerText([
+    'root = Col([Markdown(_xroga_answer), Metric("Tip", @Format($bill * 0.18, "currency", 2, "USD")), Metric("Total to pay", @Format($bill * 1.18, "currency", 2, "USD"))])',
+    '$bill = 80',
+  ].join('\n'), text);
+  const root = createParser(catalog.schema as LibraryJSONSchema, 'Col').parse(program).root;
+  const { liveReadouts } = nativeMarkdownMatches(root, initialNativeValueReader(program));
+  assert.equal(liveReadouts.size, 2);
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text, nativeReadouts: liveReadouts, renderCitation: () => 'Source link',
+  }));
+  assert.doesNotMatch(html, /<p>Tip: \$14\.40|94\.40/);
+  assert.match(html, /\$12\.00 at 15%/);
+  assert.match(html, /\$14\.40 Source link/);
+  assert.match(html, /multiply \$80 by 18%/);
+  assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, { text })), /94\.40/);
+});
+
 test('inline Markdown preserves underscores inside identifiers', () => {
   const prose = 'Every tenant-owned table carries tenant_id, membership lives in tenant_members, and métrique__totale is a column.';
   assert.equal(render(prose), prose);

@@ -94,7 +94,7 @@ type Block =
   | { kind: "table"; head: string[]; rows: string[][] };
 
 export const VisibleMarkdownTables = createContext<ReadonlySet<string> | null>(null);
-export const NativeVisualContent = createContext<Pick<MarkdownMatches, "tables" | "sectionTables" | "headingTitles" | "titles" | "markdownSectionHeadings" | "checklists" | "inlineReplacements"> | undefined>(undefined);
+export const NativeVisualContent = createContext<Pick<MarkdownMatches, "tables" | "sectionTables" | "headingTitles" | "titles" | "markdownSectionHeadings" | "checklists" | "inlineReplacements" | "liveReadouts"> | undefined>(undefined);
 type InlineSectionContent = {
   nodes: ReadonlyMap<number, ReactNode>;
   replacedBlocks: ReadonlySet<number>;
@@ -183,6 +183,7 @@ type MarkdownMatches = {
   tables: ReadonlySet<string>;
   checklists: ReadonlySet<string>;
   listItems: ReadonlySet<string>;
+  liveReadouts: ReadonlySet<string>;
   inlineReplacements: ReadonlyMap<string, number>;
 };
 
@@ -226,12 +227,13 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
   const tables = new Set<string>();
   const checklists = new Set<string>();
   const listItems = new Set<string>();
-  function visit(value: unknown, sectionTitle?: string): void {
-    if (Array.isArray(value)) { value.forEach(child => visit(child, sectionTitle)); return; }
+  const liveReadouts = new Set<string>();
+  function visit(value: unknown, sectionTitle?: string, hidden = false): void {
+    if (Array.isArray(value)) { value.forEach(child => visit(child, sectionTitle, hidden)); return; }
     if (!value || typeof value !== "object") return;
     const node = value as { type?: string; typeName?: string; props?: Record<string, unknown>; hasDynamicProps?: boolean };
     if (node.type !== "element" || !node.props) {
-      Object.values(value).forEach(child => visit(child, sectionTitle));
+      Object.values(value).forEach(child => visit(child, sectionTitle, hidden));
       return;
     }
     const { props, typeName } = node;
@@ -267,7 +269,11 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
     }
     if (typeName === "Metric") {
       const label = readInitial(props.label), value = readInitial(props.value), note = readInitial(props.note);
-      if (typeof label === "string" && (typeof value === "string" || typeof value === "number")) paragraphs.add(citationTextKey(label + ': ' + value));
+      if (typeof label === "string" && (typeof value === "string" || typeof value === "number")) {
+        const readout = citationTextKey(label + ': ' + value);
+        paragraphs.add(readout);
+        if (!hidden && node.hasDynamicProps) liveReadouts.add(readout);
+      }
       if (typeof note === "string") paragraphs.add(citationTextKey(note));
     }
     if (typeName === "List" && Array.isArray(props.items)) {
@@ -345,7 +351,8 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
         checklists.add(checklistKey(controls));
       }
     }
-    Object.values(props).forEach(child => visit(child, sectionTitle));
+    const hiddenReadouts = hidden || typeName === "Tabs" || typeName === "Popover";
+    Object.values(props).forEach(child => visit(child, sectionTitle, hiddenReadouts));
   }
   visit(root);
   // Keep the authoritative heading in reading order when an extra native
@@ -369,7 +376,7 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
       if (typeof title === "string") inlineReplacements.set(title, index);
     }
   }
-  return { documents, paragraphs, titles, headingTitles, markdownSectionHeadings, sectionTables, code, tables, relationships, checklists, listItems, inlineReplacements };
+  return { documents, paragraphs, titles, headingTitles, markdownSectionHeadings, sectionTables, code, tables, relationships, checklists, listItems, liveReadouts, inlineReplacements };
 }
 
 /** Only remove a complete verbatim document already visible in native Markdown.
@@ -592,7 +599,7 @@ export function placeNativeSections(children: readonly unknown[], readInitial?: 
   if (placements.size) return { markdownIndex, placements, replacedBlocks };
 }
 
-export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false, matches, nativeTables, nativeSectionTables, nativeHeadingTitles, nativeChecklists, inlineSections }: { text: string; renderCitation?: RenderEvidenceCitation; deduplicateTables?: boolean; matches?: MarkdownMatches; nativeTables?: ReadonlySet<string>; nativeSectionTables?: ReadonlyMap<string, ReadonlySet<string>>; nativeHeadingTitles?: ReadonlySet<string>; nativeChecklists?: ReadonlySet<string>; inlineSections?: InlineSectionContent }) {
+export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false, matches, nativeTables, nativeSectionTables, nativeHeadingTitles, nativeChecklists, nativeReadouts, inlineSections }: { text: string; renderCitation?: RenderEvidenceCitation; deduplicateTables?: boolean; matches?: MarkdownMatches; nativeTables?: ReadonlySet<string>; nativeSectionTables?: ReadonlyMap<string, ReadonlySet<string>>; nativeHeadingTitles?: ReadonlySet<string>; nativeChecklists?: ReadonlySet<string>; nativeReadouts?: ReadonlySet<string>; inlineSections?: InlineSectionContent }) {
   const seenTables = new Set<string>();
   const items = blocks(text);
   const contextualTables = contextualMarkdownTableKeys(items);
@@ -603,7 +610,7 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
           case "p":
             if (i === 0 && /^(?:\*\*[^*\n]+\*\*|__[^_\n]+__)$/.test(b.text)
               && nativeHeadingTitles?.has(headingKey(b.text))) return null;
-            if (matches?.paragraphs.has(citationTextKey(b.text))) return null;
+            if (matches?.paragraphs.has(citationTextKey(b.text)) || nativeReadouts?.has(citationTextKey(b.text))) return null;
             return <p key={k}>{inline(b.text, k, renderCitation)}</p>;
           case "quote":
             if (matches?.paragraphs.has(citationTextKey(b.text))) return null;
@@ -644,7 +651,7 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
             }
             const entries = b.ordered ? b.items : b.items.filter(item =>
               !matches?.relationships.has(textKey(item)) && !matches?.listItems.has(citationTextKey(item))
-              && !matches?.paragraphs.has(citationTextKey(item)));
+              && !matches?.paragraphs.has(citationTextKey(item)) && !nativeReadouts?.has(citationTextKey(item)));
             if (!entries.length) return null;
             const elements = entries.map((item, j) => <li key={j}>{inline(item, `${k}-${j}`, renderCitation)}</li>);
             return b.ordered ? (

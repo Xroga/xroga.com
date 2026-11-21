@@ -110,6 +110,26 @@ test('currency conflicts match corresponding labels without rewriting examples',
   ]), []);
 });
 
+test('readout validation checks the result of percentage equations separately from their inputs', () => {
+  const rows = [{ label: 'Tip', value: '$14.40' }];
+  const equivalent = ['Tip: $80 × 18% = $14.40.', 'Tip: $80 × 18 / 100 = $14.40.'];
+  for (const equation of equivalent) {
+    assert.deepEqual(conflictingNativeReadouts(equation, rows), [], equation);
+    assert.deepEqual(conflictingNativeReadouts(equation.replace('$14.40', '$15.40'), rows), rows, equation);
+  }
+  assert.deepEqual(conflictingNativeReadouts('Tip: $80 × 18 / 100. Total: $94.40.', rows), rows);
+  const native = [
+    'root = Col([Markdown(_xroga_answer), editor, Metric("Tip", @Format($bill * $rate / 100, "currency", 2, "USD")), Metric("Total to pay", @Format($bill * (1 + $rate / 100), "currency", 2, "USD"))])',
+    'editor = Controls([Input($bill, "Bill amount", "number"), Input($rate, "Tip percentage", "number"), Button("Reset", @Reset($bill, $rate))], "Editable inputs")',
+    '$bill = 80', '$rate = 18',
+  ].join('\n');
+  const answer = completeNativeWorkspaceAnswer(equivalent[0] + '\n\nTotal to pay: $94.40.' + NATIVE_UI_MARKER + native,
+    'stop', undefined, undefined, undefined, ['calculator']);
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  assert.match(answer.responseSource.text, /@Reset\(\$bill, \$rate\)/);
+  assert.match(answer.response, /Tip: \$80 × 18% = \$14\.40/);
+});
+
 test('sensitivity and boundary examples do not conflict with the selected calculator result', () => {
   const rows = [{ label: 'Interest', value: '$1,500.00' }, { label: 'Total balance', value: '$11,500.00' }];
   const examples = [

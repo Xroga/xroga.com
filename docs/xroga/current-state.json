@@ -6342,7 +6342,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "65733111c20923dd64ce5b5c566f1f354e6e465d412f157d6a1af3f8405c53f7",
+      "sha256": "03affdc657d21fffef86dc1b7a02c99dc8515c904441e21ec3558fd5be8fc128",
       "symbols": [
         "accessibilityRule",
         "answerScopeRule",
@@ -6573,7 +6573,7 @@
       "id": "surface:309e6a3c1f73a053bdef",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiValues.ts",
-      "sha256": "a1da1d3c6376b32272862d39d960b4a897e0d879b6f4f593ae2562eaaf87ea93",
+      "sha256": "f54e83ebb6c38709b1013824aea407718942158724ee775bf0e7660d168e0876",
       "symbols": [
         "active",
         "amount",
@@ -89750,7 +89750,7 @@
       "id": "surface:0fef6875af5860e2f4b4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "834d85f6e0e24817dc1344cb2f6afd88a95108b38f7afcfb6b89ffe68f344a80",
+      "sha256": "30cb9eff5ec49ab3893e449e1247c1b83ae28c0cbb0510d642eb0810392c8671",
       "symbols": [
         "Block",
         "ChecklistItem",
@@ -89799,6 +89799,7 @@
         "heading",
         "headingKey",
         "headingTitles",
+        "hiddenReadouts",
         "href",
         "html",
         "i",
@@ -89820,6 +89821,7 @@
         "listIndices",
         "listItems",
         "literal",
+        "liveReadouts",
         "m",
         "markdown",
         "markdownChecklistKey",
@@ -89851,6 +89853,7 @@
         "prose",
         "proseOutsideNativeDocuments",
         "rawDestination",
+        "readout",
         "relationships",
         "remaining",
         "rendered",
@@ -90178,7 +90181,7 @@
       "id": "surface:c0e107e03bc08dc07fad",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/text.tsx",
-      "sha256": "6b54eff24d410ce10a18d1ca8ff3a0ad8b010317a1effa65a2be77146b066c44",
+      "sha256": "4f49dbcd3f038fa925b359e5ae14e3245570c16b5af8d7ebc82b5c12c3d48875",
       "symbols": [
         "Badge",
         "Caption",
@@ -153049,7 +153052,7 @@
     {
       "id": "test-suite:cf78e18abc3aa283d701",
       "sourcePath": "backend/src/ai/nativeOpenUiValues.test.ts",
-      "declaredTests": 21,
+      "declaredTests": 22,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -158334,7 +158337,7 @@
     {
       "id": "test-suite:4ce9d7bbf578638998f1",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
-      "declaredTests": 34,
+      "declaredTests": 35,
       "skipLocations": [],
       "focusLocations": []
     },

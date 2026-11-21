@@ -200,6 +200,6 @@ export const Markdown = defineComponent({
     const renderCitation = useRenderEvidenceCitation();
     const nativeVisuals = useContext(NativeVisualContent);
     const inlineSections = useContext(InlineNativeSections);
-    return <div className="iui-markdown"><MarkdownBlocks text={str(props.text)} renderCitation={renderCitation} nativeTables={nativeVisuals?.tables} nativeSectionTables={nativeVisuals?.sectionTables} nativeHeadingTitles={nativeVisuals?.headingTitles} nativeChecklists={nativeVisuals?.checklists} inlineSections={inlineSections} /></div>;
+    return <div className="iui-markdown"><MarkdownBlocks text={str(props.text)} renderCitation={renderCitation} nativeTables={nativeVisuals?.tables} nativeSectionTables={nativeVisuals?.sectionTables} nativeHeadingTitles={nativeVisuals?.headingTitles} nativeChecklists={nativeVisuals?.checklists} nativeReadouts={nativeVisuals?.liveReadouts} inlineSections={inlineSections} /></div>;
   },
 });
