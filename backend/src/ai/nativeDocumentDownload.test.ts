@@ -49,6 +49,21 @@ test('recognizes a downloadable format requested after the document content', ()
   assert.equal(requestedNativeDocumentFormat('Draft a short project brief. Export the brief as DOCX.'), 'docx');
 });
 
+test('concise file deliverables keep their format without an opening verb', () => {
+  for (const [prompt, format] of [
+    ['Downloadable DOCX kickoff agenda, 5 items and 2-column checklist.', 'docx'],
+    ['One-page PDF inspection checklist, eight checks.', 'pdf'],
+    ['XLSX budget inputs 120,250,80 and formula total.', 'xlsx'],
+    ['Three-slide PPTX internal weekly status: two wins, one risk.', 'pptx'],
+    ['Printable PDF shift handover guide.', 'pdf'],
+    ['Editable DOCX viewer for internal training, with accessibility controls.', undefined],
+    ['XLSX budgets are useful.', undefined],
+    ['One-page PDF inspection checklist, no file needed.', undefined],
+    ['One-page PDF checklist or DOCX.', undefined],
+  ] as const) assert.equal(requestedNativeDocumentFormat(prompt), format, prompt);
+  assert.match(nativeDocumentPrompt('xlsx', false, 'XLSX budget inputs 120,250,80 and formula total.'), /Include the requested calculations/);
+});
+
 test('treats explicitly formatted named sheets, agendas and handbooks as local artifacts', () => {
   const cueSheet = 'Create a downloadable editable DOCX cue sheet for a fictional volunteer planetarium show. Use a Cues section and an Operator checkout section. Keep these exact cue names, start times and durations together: Red Beacon, 19:20, 45 seconds; Star Sweep, 19:22, 75 seconds; Final Chime, 19:25, 10 seconds. In checkout, remind the operator to review the cue order and durations before opening. No outside lookup, messages, uploads or other external action.';
   for (const [prompt, format] of [

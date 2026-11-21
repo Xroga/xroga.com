@@ -4,9 +4,11 @@ import { publicHttpsUrl } from '../security/egress/urlPolicy.js';
 import { DEEPSEEK_QUERY_MAX } from './researchSearchProvider.js';
 
 const publicLookup = /\b(?:search|browse|research|look up|find|compare|current(?:ly)?|latest|newest|today(?:'s)?|now|recent(?:ly)?|live|up[- ]to[- ]date|this (?:week|month|year|weekend))\b/iu;
-const publicFactSubject = /\b(?:prices?|pricing|fares?|exchange rates?|stock quotes?|weather|forecasts?|official announcements?|news|publications?|press releases?|releases?|documentation|docs|versions?|changelogs?|schedules?|timetables?|current developments?|recent developments?|dates?|hours|airports?|flights?|results?|public holidays?|regulations?|standards?|lifespans?|habitats?|populations?|historical timelines?)\b/iu;
+const publicFactSubject = /\b(?:prices?|pricing|fares?|exchange rates?|stock quotes?|weather|forecasts?|official announcements?|news|publications?|press releases?|releases?|documentation|docs|versions?|changelogs?|deprecations?|updates?|changes?|schedules?|timetables?|current developments?|recent developments?|dates?|hours|airports?|flights?|results?|public holidays?|regulations?|standards?|lifespans?|habitats?|populations?|historical timelines?)\b/iu;
 const weatherLookup = /^(?:what(?:['’]s| is)\s+(?:the\s+)?)?(?:weather(?: forecast)?|forecast)\s+(?:in|for|at)\s+\p{L}[\p{L}\p{M} .,'’-]{1,75}[?!]?$/iu;
 const publicOfficeLookup = /^who\s+(?:is|was)\s+(?:the\s+)?(?:current\s+)?(?:president|prime minister|governor|mayor|chief executive officer|ceo)\s+of\s+\p{L}[\p{L}\p{M} .,'’-]{1,75}[?!]?$/iu;
+const publicInstitutionLeadership = /^[Ww]ho (?:currently )?(?:leads|heads) (?:the )?[A-Z][A-Z0-9]{1,15}[?!]?$/u;
+const publicSourceLookup = /\b(?:summari[sz]e|check|compare|find|cite|link)\b[^.!?;]{0,90}\b(?:dated |recent |current )?public sources?\b/iu;
 // Implicit discovery covers entities with public descriptions and observable
 // rankings. The semantic plan decides whether retrieval is useful. These
 // independent signals only admit a self-contained query from the current turn.
@@ -31,7 +33,7 @@ const softwareReleaseSubject = /\b(?:releases?|versions?|changelogs?|documentati
 const currencyPeriod = /(\p{Sc}\d{1,6}(?:\.\d{1,2})?)\/(day|week|month|year)\b/giu;
 const freshnessFocus = /\b(?:current|latest|live|newest|verified)\s+(?:prices?|pricing|releases?|versions?|fares?|exchange rates?|opening hours|schedules?)\b/iu;
 const officialSourceRequest = /\bofficial(?:\s+[\p{L}\p{N}-]+){0,3}\s+(?:sources?|docs?|documentation|sites?)\b/iu;
-const officialLinkRequest = /\bofficial (?:websites?|(?:web |support |documentation |docs )?links?|(?:support |documentation |docs )?(?:pages?|sites?)|documentation (?:urls?|sites?))\b|\bprimary sources? (?:for each|each)\b/iu;
+const officialLinkRequest = /\bofficial (?:websites?|(?:web |support |documentation |docs )?links?|(?:[\p{L}\p{N}-]+\s+){0,2}(?:pages?|sites?|urls?))\b|\bprimary sources? (?:for each|each)\b/iu;
 const exclusiveOfficialSource = /\b(?:only|exclusively)\b[^.!?]{0,40}\bofficial\b|\bofficial\b[^.!?]{0,40}\b(?:only|exclusively)\b/iu;
 const unavailableDomain = /(?:\.(?:example|onion|lan|home|corp)$|(?:^|\.)(?:intranet|staging|private|vpn)(?:\.|$))/iu;
 const explicitWebLookup = /^(?:please\s+)?(?:search|browse)\s+(?:the\s+)?(?:public\s+)?(?:web|internet)\s+(?:(?:for|to)\s+)?/iu;
@@ -40,6 +42,7 @@ const citationFooter = /(?:[,.]\s*|(?<!\s)\s+)(?:and\s+)?(?:cite\s+(?:(?:your|th
 const officialVerificationFooter = /(?:[,.;]\s*|\s+)(?:and\s+)?(?:which official source (?:confirms|verifies) (?:it|this)|cite (?:an?|the) official (?:source|reference))[?!.]*$/iu;
 const instructionStart = /^(?:please\s+)?(?:(?:search|browse)\s+(?:(?:the\s+)?(?:public\s+)?(?:web|internet)\s+)?(?:for\s+)?|look up\s+|research\s+|what\s+(?:is|are)\s+(?:the\s+)?)/iu;
 const sourcePreface = /^(?:using|from|with)\s+(?:only\s+)?official\s+[^.!?]+[.!?]\s*/iu;
+const linkFooter = /\s*;\s*link\s+(?:them|each|all)(?:\s+(?:of them|\d+|one|two|three|four|five|six|seven|eight|nine|ten))?[?!.]*$/iu;
 
 function isPublicSourceHost(domain: string): boolean {
   if (unavailableDomain.test(domain)) return false;
@@ -51,12 +54,18 @@ export function requestsOfficialLinkCoverage(prompt: string): boolean {
   return officialLinkRequest.test(prompt);
 }
 
+function publicOfficeTopic(prompt: string): string | undefined {
+  const topic = prompt.split(/(?<=\?)\s+/, 1)[0].trim();
+  if (publicOfficeLookup.test(topic) || publicInstitutionLeadership.test(topic)) return topic;
+}
+
 /** Egress still needs exact review when a request actually refers to private,
  * personal or conversation data. A bare routing miss is not such evidence. */
 export function workspaceSearchNeedsExactReview(prompt: string): boolean {
   const request = prompt.trim().replace(citationFooter, '');
+  const office = publicOfficeTopic(request);
   return containsCredentialSecretText(prompt) || privateOrContextual.test(request)
-    || privateDiscoveryContext.test(request) || (personalLookup.test(request) && !publicOfficeLookup.test(request));
+    || privateDiscoveryContext.test(request) || personalLookup.test(office ? request.slice(office.length) : request);
 }
 
 /** A public lookup sends only terms from this turn. The semantic planner can
@@ -68,9 +77,9 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
   if (!message || message.length > 32_000) return;
   // A presentation-only footer such as "cite your sources" carries no search
   // terms. Leave everything else in the turn subject to the privacy checks.
-  const request = message.replace(citationFooter, '').replace(currencyPeriod, '$1 per $2').trimEnd();
-  const publicOffice = publicOfficeLookup.test(request);
-  const officialLookup = requestsOfficialLinkCoverage(request);
+  const request = message.replace(citationFooter, '').replace(linkFooter, '').replace(currencyPeriod, '$1 per $2').trimEnd();
+  const publicOffice = publicOfficeTopic(request) !== undefined;
+  const officialLookup = requestsOfficialLinkCoverage(request) || publicSourceLookup.test(request);
   const discovery = discoveryIntent.test(request) && (discoverySubject.test(request)
     || (request.toLowerCase().match(/\b[a-z]{7,}\b/g) ?? []).some(word => discoverySpellings.has(categorySpellingKey(word))));
   if ((!publicLookup.test(request) && !discovery && !weatherLookup.test(request) && !publicOffice && !officialLookup)
@@ -91,7 +100,7 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
   // An explicit restriction to official sources still needs a literal host.
   const requestsOfficialCitation = officialVerificationFooter.test(request);
   if (!officialDomains.length && (exclusiveOfficialSource.test(request)
-    || officialOnly && asksForOfficial && !requestsOfficialCitation)) return;
+    || officialOnly && asksForOfficial && !requestsOfficialCitation && !officialLookup)) return;
   const explicitExplanation = explicitWebLookup.test(request)
     && explanatoryLookup.test(request.replace(explicitWebLookup, ''));
   if (!officialDomains.length && !publicFactSubject.test(request) && !explicitExplanation && !discovery && !publicOffice && !officialLookup) return;

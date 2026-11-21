@@ -31,13 +31,26 @@ const documentDeliverable = new RegExp(beforePrefix
 const followupExport = new RegExp('(?:^|[.!?]\\s+|\\n+)\\s*(?:please\\s+)?(?:provide|attach|export|save|include)\\s+'
   + '(?:it|the\\s+' + document + ')\\s+(?:as|in)\\s+(?:(?:a|an)\\s+)?(?:downloadable\\s+)?' + fileFormat + '\\b', 'giu');
 const declinesDownload = /\b(?:no|do\s+not|don['’]t|without)\s+(?:(?:create|export|give|make|generate|attach|include|provide|a|an|the)\s+)*(?:files?|downloads?|docx|pdf|xlsx|pptx)\b/i;
+const conciseFormat = new RegExp('^(?:(?:downloadable|editable|printable|[\\p{L}\\p{N}]+-(?:page|slide))\\s+){0,2}(' + extensions + ')\\s+', 'iu');
+
+function conciseDeliverable(text: string): RegExpExecArray | null {
+  const format = conciseFormat.exec(text);
+  if (!format || text.endsWith('?')) return null;
+  const details = text.slice(format[0].length);
+  const heading = details.split(/[,;:.\n]/, 1)[0];
+  // A heading or supplied acceptance details establish a request for the
+  // file itself. A product name or statement about the format does not.
+  if (/\b(?:app|editor|generator|parser|reader|viewer|converter|is|are|uses?|does)\b/i.test(heading)) return null;
+  if (documentDeliverable.test(heading)) return format;
+  return /:\s*\S|\s[+-]?\d+(?:[\s,.;]|$)/.test(details) ? format : null;
+}
 
 export function requestedNativeDocumentFormat(prompt: string): NativeDocumentFormat | undefined {
   const text = prompt.trim();
   if (text.length > 32_000) return;
   const direct = exportFormat.exec(text);
   const body = direct ? text : text.replace(request, '');
-  const inline = direct ?? (body !== text ? beforeFormat.exec(body) ?? beforeNamedFormat.exec(body) ?? afterFormat.exec(body) : null);
+  const inline = direct ?? (body !== text ? beforeFormat.exec(body) ?? beforeNamedFormat.exec(body) ?? afterFormat.exec(body) : conciseDeliverable(text));
   const followups = body !== text && documentDeliverable.test(body) ? [...body.matchAll(followupExport)] : [];
   if (followups.length > 1 || inline && followups.length) return;
   const selection = inline ?? followups[0];
@@ -57,7 +70,7 @@ export function nativeDocumentRequiresAttachment(prompt: string): boolean {
 }
 
 function wantsFormula(prompt: string) {
-  return /\b(?:with|using|include|add|contain(?:ing)?|has|have)\b[^.!?\n]{0,70}\bformulas?\b/i.test(prompt);
+  return /\b(?:with|using|include|add|contain(?:ing)?|has|have)\b[^.!?\n]{0,70}\bformulas?\b|\band\s+(?:(?:a|the)\s+)?formulas?\b/i.test(prompt);
 }
 
 export function nativeDocumentPrompt(format: NativeDocumentFormat, missingAttachment = false, prompt = ''): string {

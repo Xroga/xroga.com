@@ -412,6 +412,24 @@ test('public discovery includes implicit rankings and comparisons without export
  ]) assert.equal(workspacePublicSearchQuery(prompt),undefined,prompt);
 });
 
+test('public current roles, recent documentation changes and named sources enter automatic Search', () => {
+  for (const prompt of [
+    'Who currently leads WHO? Link the official organization page.',
+    'Rank five official cloud documentation sites for beginners; link all five.',
+    'Find a current official React deprecation notice and exact announcement.',
+    'Summarize two dated public sources about browser automation.',
+    'Explain a recent Chrome change separating reported behavior and inference.',
+  ]) assert.ok(workspacePublicSearchQuery(prompt), prompt);
+  for (const prompt of [
+    'Who currently leads our private CRM? Link the official organization page.',
+    'Who currently leads my company? Link the official organization page.',
+    'Who is the CEO of Apple? Who is Jane Doe?',
+    'Find recent changes in the attached client records.',
+    'Rank five official cloud documentation sites; include this private CRM list.',
+    'Summarize two dated public sources about our private employees.',
+  ]) assert.equal(workspacePublicSearchQuery(prompt),undefined,prompt);
+});
+
 test('automatic Search distinguishes software names, public pricing units, and source citation preferences from private URLs',()=>{
  const versions=workspacePublicSearchQuery('Compare the newest stable Next.js release and the previous major version. Mention official release dates and upgrade risks.');
  assert.match(versions?.query??'',/Next\.js release/);

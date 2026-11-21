@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "9fdef6a935106af659b243855603ddc69077587f",
+  "source_sha": "0354ab008be245184adb4735f38491ef12f9ef01",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17230,7 +17230,7 @@
     },
     {
       "path": "backend/src/ai/nativeDocumentDownload.ts",
-      "sha256": "7716e54ed56e8f4997b5d53c6b002136559527d11610a09d6b24ce666f8bad74"
+      "sha256": "5950e2953b8034601595901084e6b18c4ac06d0bd7e242c08da63655ca72afd9"
     },
     {
       "path": "backend/src/ai/nativeMarkdown.ts",
@@ -17674,7 +17674,7 @@
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "sha256": "6559477cd992bda1cb205816ea16a07a0ef767aa8ffa455e1557ddb4fd414432"
+      "sha256": "14db26d014f6c4bf96c1209f8d8a5c5c3e7537d086c92a336e056bee6daa9815"
     },
     {
       "path": "backend/src/ai/zurelayWire.ts",
@@ -33075,14 +33075,14 @@
     },
     {
       "path": "backend/src/ai/nativeDocumentDownload.ts",
-      "line": 87,
+      "line": 100,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeDocumentDownload.ts",
-      "line": 91,
+      "line": 104,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -34545,21 +34545,21 @@
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "line": 18,
+      "line": 20,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "line": 29,
+      "line": 31,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "line": 85,
+      "line": 94,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
