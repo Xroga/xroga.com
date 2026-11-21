@@ -7701,7 +7701,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "c12b8c82d6d82f28f8dea53d2924127e9d92f9ec6eecb417c818e60620a45310",
+      "sha256": "7b4139a59362b8a99a699dd6800ae12ac46fa7c3c1bf3b2b380568d0138326d4",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -42794,8 +42794,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:3983",
-        "backend/src/ai/pipeline.ts:3986",
+        "backend/src/ai/pipeline.ts:3987",
+        "backend/src/ai/pipeline.ts:3990",
         "backend/src/ai/projectMemory.ts:7",
         "backend/src/ai/sessionMemory.ts:7",
         "backend/src/builder/providerTransports.ts:10",
@@ -43068,7 +43068,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:133",
-        "backend/src/ai/pipeline.ts:3982",
+        "backend/src/ai/pipeline.ts:3986",
         "backend/src/ai/tenantModelDispatch.ts:6",
         "backend/src/config/supabaseTransport.security.test.ts:6",
         "backend/src/routes/integrations.ts:19",

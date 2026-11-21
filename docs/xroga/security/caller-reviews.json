@@ -1089,9 +1089,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "c12b8c82d6d82f28f8dea53d2924127e9d92f9ec6eecb417c818e60620a45310",
+      "sourceSha256": "7b4139a59362b8a99a699dd6800ae12ac46fa7c3c1bf3b2b380568d0138326d4",
       "callIds": [
-        "db8cfe93b82fb3c4b04f"
+        "9cd71e5a7fa3d7df5bee"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2658,13 +2658,22 @@
         "previousCallIds": [
           "1a8a4b584015dcca17d0"
         ]
+      },
+      "automaticResearchLedgerReservation": {
+        "parent": "3ee7bf57328167b94108eb12b8dc6db02a497557",
+        "applicationSource": "bc5175fb36e4a1b8210119cfd6a8f5255a3f4183",
+        "previousSha256": "c12b8c82d6d82f28f8dea53d2924127e9d92f9ec6eecb417c818e60620a45310",
+        "scope": "Only source positions moved for the reviewed, unchanged build conversions. Automatic public Search synthesis reserves through the existing account ledger while separate private research retains its signed bound.",
+        "previousCallIds": [
+          "db8cfe93b82fb3c4b04f"
+        ]
       }
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "c12b8c82d6d82f28f8dea53d2924127e9d92f9ec6eecb417c818e60620a45310",
+      "sourceSha256": "7b4139a59362b8a99a699dd6800ae12ac46fa7c3c1bf3b2b380568d0138326d4",
       "callIds": [
-        "a208147f40acfa66cc51"
+        "139e888ae2690919a1ea"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -4230,6 +4239,15 @@
         "scope": "Only source positions moved for existing non-persistence conversions in the unchanged build pipeline. The chat change preserves the existing egress, model admission, tenant scopes and accounting.",
         "previousCallIds": [
           "b4b12146d2de371c877b"
+        ]
+      },
+      "automaticResearchLedgerReservation": {
+        "parent": "3ee7bf57328167b94108eb12b8dc6db02a497557",
+        "applicationSource": "bc5175fb36e4a1b8210119cfd6a8f5255a3f4183",
+        "previousSha256": "c12b8c82d6d82f28f8dea53d2924127e9d92f9ec6eecb417c818e60620a45310",
+        "scope": "Only source positions moved for the reviewed, unchanged build conversions. Automatic public Search synthesis reserves through the existing account ledger while separate private research retains its signed bound.",
+        "previousCallIds": [
+          "a208147f40acfa66cc51"
         ]
       }
     },

@@ -317,7 +317,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "c12b8c82d6d82f28f8dea53d2924127e9d92f9ec6eecb417c818e60620a45310",
+      "sha256": "7b4139a59362b8a99a699dd6800ae12ac46fa7c3c1bf3b2b380568d0138326d4",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -636,6 +636,12 @@
         "previousSha256": "3eb2040d95ed469292f430d5e7b47f5a7d8bf1be2bf1a7b7fc617817141d1b56",
         "evidencePath": "docs/xroga/evidence/command-010/WORKSPACE-AUTOMATIC-PUBLIC-SEARCH-20261119.json",
         "liveAcceptance": false
+      },
+      "automaticResearchLedgerReservation": {
+        "parent": "3ee7bf57328167b94108eb12b8dc6db02a497557",
+        "applicationSource": "bc5175fb36e4a1b8210119cfd6a8f5255a3f4183",
+        "previousSha256": "c12b8c82d6d82f28f8dea53d2924127e9d92f9ec6eecb417c818e60620a45310",
+        "scope": "Only source positions moved for the reviewed, unchanged build conversions. Automatic public Search synthesis reserves through the existing account ledger while separate private research retains its signed bound."
       }
     },
     {
