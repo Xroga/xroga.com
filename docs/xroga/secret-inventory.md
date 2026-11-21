@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `fc9938a7effd4f7fd8e4c6237fb8914f9a8c593c`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `6652ea3765540b2f78a7cf8bc4ac70e3d184b643`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -154,6 +154,7 @@ Values are forbidden. Source SHA: `fc9938a7effd4f7fd8e4c6237fb8914f9a8c593c`. Na
 | RESPEECHER_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | RESPONSE_EXPERIENCE_V2 | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | RESPONSE_EXPERIENCE_V2_USERS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| RESPONSE_OPENUI | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | RIME_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | RUNWAY_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-dev-runwayml-com |
 | SEMANTIC_PLANNER_TOTAL_TIMEOUT_MS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |

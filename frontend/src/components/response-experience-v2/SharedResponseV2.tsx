@@ -11,8 +11,8 @@ class SharePresentationBoundary extends Component<{ children: ReactNode; fallbac
 
 /** Share ACL and rollout are checked on the server before this component mounts.
  * No Workspace execution controls or persistent account interaction scope exist here. */
-export default function SharedResponseV2({ snapshot, text }: { snapshot: string; text: string }) {
+export default function SharedResponseV2({ snapshot, text, openUi = false }: { snapshot: string; text: string; openUi?: boolean }) {
   const result = readRichShareSnapshot(snapshot);
   const fallback = <p className="whitespace-pre-wrap text-[15px] leading-7">{text}</p>;
-  return result.document ? <SharePresentationBoundary fallback={fallback}><ResponseCanvasV2 document={result.document} /></SharePresentationBoundary> : fallback;
+  return result.document ? <SharePresentationBoundary fallback={fallback}><ResponseCanvasV2 document={result.document} openUi={openUi} /></SharePresentationBoundary> : fallback;
 }

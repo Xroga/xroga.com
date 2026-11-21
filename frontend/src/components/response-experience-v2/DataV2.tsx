@@ -12,7 +12,7 @@ import { EntityIdentityV2 } from './EntityIdentityV2';
 import { StatusBadgeV2 } from './StatusBadgeV2';
 import { statusToneV2 } from './status';
 
-function CellV2({ value, resourceLabel = false }: { value: string | number | boolean | null | undefined; resourceLabel?: boolean }) {
+export function CellV2({ value, resourceLabel = false }: { value: string | number | boolean | null | undefined; resourceLabel?: boolean }) {
   if (value == null) return <>Unavailable</>;
   if (typeof value === 'string' && statusToneV2(value) !== 'neutral') return <StatusBadgeV2 label={value} />;
   const entity = typeof value === 'string' ? leadingEntityV2(value) : undefined;

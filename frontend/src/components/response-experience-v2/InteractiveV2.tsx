@@ -1,5 +1,5 @@
 'use client';
-import { useId, useRef, useState, useContext, useEffect, lazy, Suspense, type CSSProperties, type KeyboardEvent } from 'react';
+import { useId, useRef, useState, useContext, useEffect, lazy, Suspense, type ComponentType, type CSSProperties, type KeyboardEvent } from 'react';
 import { RotateCcw } from 'lucide-react';
 import type { ResponseNodeV2 } from './document';
 import type { CitationSource } from '@/lib/xrogaCitations';
@@ -8,9 +8,10 @@ import { ProseV2 } from './ProseV2';
 import { InteractionScopeV2 } from './interactionContext';
 import { restoreScenarioV2, saveScenarioV2 } from './interactionState';
 import styles from './response-v2.module.css';
+import type { ScenarioRangeProps } from '../response-openui/upstream/slider';
 const Chart = lazy(() => import('./ChartV2'));
 
-export function CalculatorV2({ node }: { node: CalculatorNode }) {
+export function CalculatorV2({ node, Range }: { node: CalculatorNode; Range?: ComponentType<ScenarioRangeProps> }) {
   const initial = () => Object.fromEntries(node.inputs.map(i => [i.id, String(i.value)]));
   const [values, setValues] = useState(initial); const id = useId();
   const scope = useContext(InteractionScopeV2);
@@ -39,7 +40,10 @@ export function CalculatorV2({ node }: { node: CalculatorNode }) {
       const fill = input.min != null && input.max != null && input.max > input.min ? Math.max(0, Math.min(100, (Number(values[input.id]) - input.min) / (input.max - input.min) * 100)) : 0;
       return <fieldset key={input.id}><legend className={styles.visuallyHidden}>{input.label}</legend>
       <div className={styles.inputHeading}><label htmlFor={`${id}-${input.id}`}>{input.label}{input.unit ? ` (${input.unit})` : ''}</label><input id={`${id}-${input.id}`} aria-label={`${input.label} value`} type="number" min={input.min} max={input.max} step={input.step ?? 'any'} value={values[input.id]} onChange={event => updateValues({ ...values, [input.id]: event.target.value })} /></div>
-      {input.min != null && input.max != null && input.min < input.max && <><input aria-label={`${input.label} slider`} type="range" min={input.min} max={input.max} step={input.step ?? (input.max - input.min) / 100} value={values[input.id]} style={{ '--range-fill': `${Number.isFinite(fill) ? fill : 0}%` } as CSSProperties} onChange={event => updateValues({ ...values, [input.id]: event.target.value })} /><div className={styles.rangeLabels}><span>{input.min.toLocaleString()}</span><span>{input.max.toLocaleString()}</span></div></>}
+      {input.min != null && input.max != null && input.min < input.max && (Range
+        ? <Range label={input.label} unit={input.unit} min={input.min} max={input.max} step={input.step ?? (input.max - input.min) / 100}
+          value={values[input.id] ?? ''} onChange={value => updateValues({ ...values, [input.id]: value })} />
+        : <><input aria-label={`${input.label} slider`} type="range" min={input.min} max={input.max} step={input.step ?? (input.max - input.min) / 100} value={values[input.id]} style={{ '--range-fill': `${Number.isFinite(fill) ? fill : 0}%` } as CSSProperties} onChange={event => updateValues({ ...values, [input.id]: event.target.value })} /><div className={styles.rangeLabels}><span>{input.min.toLocaleString()}</span><span>{input.max.toLocaleString()}</span></div></>)}
     </fieldset>; })}</div>
     <div className={styles.result}><div><span>{node.resultLabel}</span></div><output aria-live="polite" aria-atomic="true">{result == null ? 'Unavailable' : result.toLocaleString(undefined, { maximumFractionDigits: node.precision })}{result != null && node.unit ? <small> {node.unit}</small> : null}</output></div>
     {result == null && <p role="status">Enter valid values within the stated limits. Division by zero is unavailable.</p>}
