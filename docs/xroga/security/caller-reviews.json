@@ -28646,9 +28646,9 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sourceSha256": "5f20692793f131998120fa2e6c3f247375de62768e581628a557495b7e020915",
+      "sourceSha256": "e0e0072b7becb0e4eec382927a117dc9c4e6af2c8d88e42850cbc8a339a0e4cf",
       "callIds": [
-        "5ad78803a9689423de64"
+        "6e06699e14d3b1a54053"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
@@ -28741,11 +28741,11 @@
         "scope": "Two progress labels changed. The reviewed effect call and confirmation authority are byte-identical."
       },
       "workspaceResearchPrivacy": {
-        "baseline": "077ea3640075b80eaa3bfebca28a2be5e58dc9a9",
-        "previousSha256": "80d7289b647a9db11e83766d5ad97fab981af52edec8982f5c5efd00ccad282a",
-        "scope": "Restrict consumer research serialization to answer, source, status and explicit consent fields. Stored authority and scoped caller behaviors are unchanged.",
+        "baseline": "599bb6f36640327f3ef2b27f033f50e33ba72f2e",
+        "previousSha256": "5f20692793f131998120fa2e6c3f247375de62768e581628a557495b7e020915",
+        "scope": "Require an explicit reviewed data disclosure before the existing authenticated action call. The reviewed calls and destinations are unchanged.",
         "previousCallIds": [
-          "fdfcea22f1ec0d0fb1b6"
+          "5ad78803a9689423de64"
         ]
       }
     },
