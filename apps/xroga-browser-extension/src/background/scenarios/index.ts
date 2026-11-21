@@ -37,4 +37,6 @@ import './site-actions';
 import './human-control';
 import './capture-hidden';
 import './canvas-latency';
+import './set-of-marks';
+import './marks-look';
 import './clickable-zoo';

@@ -903,7 +903,7 @@ ${ledger}` : ''),
       if (a.action !== 'type' && a.action !== 'key') {
         await new Promise(r => setTimeout(r, 250));
         const tabId = outcome.result.page?.tabId ?? a.tabId ?? this.#activeTab;
-        const shot = await this.#time('tool.aftershot' as never, () => this.options.layer.call('screenshot', { ...(typeof tabId === 'number' ? { tabId } : {}), grid: true }, this.options.signal)).catch(() => undefined);
+        const shot = await this.#time('tool.aftershot' as never, () => this.options.layer.call('screenshot', { ...(typeof tabId === 'number' ? { tabId } : {}), grid: true, marks: true }, this.options.signal)).catch(() => undefined);
         if (shot?.ok) {
           capture = await this.#withThumb(this.#screenshotImage({ ...outcome, call: { ...outcome.call, toolName: 'screenshot' }, result: shot }));
           // The model sees this action's result in the attached image: the action owes no further evidence.
@@ -918,7 +918,7 @@ ${ledger}` : ''),
             if (same && Array.isArray(a.at) && a.at.length === 2) {
               const [cx, cy] = a.at as [number, number];
               const region: [number, number, number, number] = [Math.max(0, cx - 0.1), Math.max(0, cy - 0.06), Math.min(1, cx + 0.1), Math.min(1, cy + 0.06)];
-              const zoom = await this.#time('tool.aftershot' as never, () => this.options.layer.call('screenshot', { ...(typeof tabId === 'number' ? { tabId } : {}), region, mark: [cx, cy] }, this.options.signal)).catch(() => undefined);
+              const zoom = await this.#time('tool.aftershot' as never, () => this.options.layer.call('screenshot', { ...(typeof tabId === 'number' ? { tabId } : {}), region, mark: [cx, cy], marks: true }, this.options.signal)).catch(() => undefined);
               if (zoom?.ok) {
                 const zimg = this.#screenshotImage({ ...outcome, call: { ...outcome.call, toolName: 'screenshot' }, result: zoom });
                 if (zimg) { capture = await this.#withThumb(zimg); notes.push(note(`Nothing changed. The attached picture is an enlarged view around your click (red crosshair = where it landed), its grid labelled in whole-page fractions. Compare the crosshair with the label you meant and aim again from this picture.`)); }
@@ -930,7 +930,7 @@ ${ledger}` : ''),
               notes.push(note('The page looks exactly as before this action: it hit nothing that reacts. Do not click near this point again; re-read where the target is.'));
             }
           }
-          if (capture) notes.push(note('The screenshot after this action, with the 0 to 1 coordinate grid, is attached. Check it: if the wrong menu or item opened, say which one and aim again from this image. No separate screenshot is needed.'));
+          if (capture) notes.push(note('The screenshot after this action is attached, with a 0 to 1 coordinate grid and numbered marks on the labels and controls it shows. Check it: if the wrong menu or item opened, say which one. To act on something, use canvas mark N with the number drawn on it. No separate screenshot is needed.'));
         }
       }
     }

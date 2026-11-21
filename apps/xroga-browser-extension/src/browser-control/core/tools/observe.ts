@@ -14,6 +14,7 @@ import { renderContent, sliceContent } from '../perception/read';
 import { cleanText } from '../perception/ax';
 import { quadBounds, scrollOffset, topLevelQuad } from '../geometry';
 import { blankBoxes, drawGrid, drawLabels, presentedBoxes } from './labels';
+import { drawMarks, rememberMarks } from './marks';
 import { compactOps, diffLines, renderDiff } from '../perception/diff';
 import type { FrameRecord } from '../ports';
 import { rememberSecret } from '../redact';
@@ -276,6 +277,16 @@ export async function screenshot(ctx: ToolContext, args: ScreenshotArgs): Promis
     );
   }
   let labelled = 0;
+  let markCount = 0;
+  if (args.marks && !args.ref && !args.fullPage) {
+    // Number what the picture shows. The picture is taken before the grid so the lines do not become marks; the marks' centres are remembered as
+    // whole-page fractions for `canvas mark N`.
+    const found = await drawMarks(base64, scale);
+    base64 = found.image;
+    markCount = found.marks.length;
+    const url = (await ctx.controller.host.tabs.get(tab.tabId))?.url ?? '';
+    rememberMarks(tab, url, found.marks, found.width, found.height, args.region ?? [0, 0, 1, 1]);
+  }
   if (args.grid || args.region || args.mark) base64 = await drawGrid(base64, args.region ?? [0, 0, 1, 1], args.mark);
   if (args.labels) {
     // Only what the image shows is presented: a ref outside a cropped image keeps the baseline it had.
@@ -294,7 +305,7 @@ export async function screenshot(ctx: ToolContext, args: ScreenshotArgs): Promis
   return {
     data: { mimeType: 'image/png', base64, width: shot.width, height: shot.height, scale, origin },
     lines: [
-      `screenshot · tab ${tab.tabId} · ${shot.width}×${shot.height} px · scale ${scale.toFixed(2)}${args.labels ? ` · ${labelled} labels` : ''}${args.region ? ` · region [${args.region.map(n => n.toFixed(3)).join(', ')}] enlarged ${zoom.toFixed(1)}x, grid labelled in whole-page fractions` : args.grid ? ' · coordinate grid drawn (fractions 0 to 1 of the page)' : ''}`,
+      `screenshot · tab ${tab.tabId} · ${shot.width}×${shot.height} px · scale ${scale.toFixed(2)}${args.labels ? ` · ${labelled} labels` : ''}${args.marks ? ` · ${markCount} marks numbered (use canvas mark N)` : ''}${args.region ? ` · region [${args.region.map(n => n.toFixed(3)).join(', ')}] enlarged ${zoom.toFixed(1)}x, grid labelled in whole-page fractions` : args.grid ? ' · coordinate grid drawn (fractions 0 to 1 of the page)' : ''}`,
     ],
   };
 }

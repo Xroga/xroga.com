@@ -4,6 +4,7 @@
 //     reached this way and keeps its guarded `click`, with the payment, destructive and sending checks;
 //   - the model's stated intent is screened for consequential words, which need the user;
 //   - a dialog on the tab stops it, as for every other action.
+import { markCentre } from './marks';
 import { LayerError } from '../../protocol/errors';
 import type { CanvasArgs } from '../../protocol/schemas';
 import type { ActionReceipt } from '../../protocol/results';
@@ -162,7 +163,19 @@ export async function canvas(ctx: ToolContext, args: CanvasArgs): Promise<ToolOu
     }
     return withPageState(ctx, args.observe, { receipt: typed, data: {} });
   }
-  if (!args.at) throw new LayerError('INVALID_ARGUMENT', `canvas ${args.action} needs at.`);
+  // A mark number stands for the centre of a numbered region of the last marked screenshot.
+  const url = args.mark !== undefined || args.toMark !== undefined ? ((await ctx.controller.host.tabs.get(ctx.tab().tabId))?.url ?? '') : '';
+  if (args.mark !== undefined) {
+    const found = markCentre(ctx.tab(), url, args.mark);
+    if ('reason' in found) throw new LayerError('INVALID_ARGUMENT', `Nothing was dispatched: ${found.reason}.`);
+    args = { ...args, at: found.at };
+  }
+  if (args.toMark !== undefined) {
+    const found = markCentre(ctx.tab(), url, args.toMark);
+    if ('reason' in found) throw new LayerError('INVALID_ARGUMENT', `Nothing was dispatched: ${found.reason}.`);
+    args = { ...args, to: found.at };
+  }
+  if (!args.at) throw new LayerError('INVALID_ARGUMENT', `canvas ${args.action} needs at or mark.`);
   if (args.action === 'drag' && !args.to) throw new LayerError('INVALID_ARGUMENT', 'A drag needs `to`, the place where it ends.');
   const viewport = await viewportOf(ctx);
   const at = { x: args.at[0] * viewport.width, y: args.at[1] * viewport.height };

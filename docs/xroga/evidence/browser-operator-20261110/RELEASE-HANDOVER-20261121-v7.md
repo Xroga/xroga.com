@@ -47,3 +47,10 @@ Disposable staging user and a no-traffic tag copy of the browser-op revision wer
 
 ## Final artifact for this addendum
 Build commit `ffc5d68cc`, ZIP `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-ffc5d68cc.zip`, SHA-256 `1C45D7DA1C53AE859C43B7C71A1C1335E49DB06132752D41A201F65F52408CBC`, manifest `ARTIFACT-MANIFEST-ffc5d68cc.json`; upgrade from 23a9b4f59 passes (same id, storage kept, worker alive, side panel loads); 1424 unit tests pass. Rollback: the 23a9b4f59 ZIP. This supersedes the 23a9b4f59 ZIP named in the table above.
+
+## Set-of-marks (final change of this session)
+`screenshot marks:true` numbers the labels, icons and controls a screenshot shows (edge map, long rules removed, letters merged into words, connected components, reading order; plain image analysis in the extension, no model, no page code); `canvas mark:N` / `toMark:N` act on the centre of mark N. After every canvas pointer action the numbered picture comes back with the result. Files: `browser-control/core/tools/marks.ts` (+ unit tests), `observe.ts`, `canvas.ts`, `schemas.ts`, `agent/loop.ts`, `agent/prompt.ts`.
+- Real Chromium scenario MARKS-1: in 4 shuffled painted layouts a mark opens Tools and a dropdown mark opens the Scripts panel (4/4). On a real painted application (TraceDraw welcome screen) the marks fall on the words (picture inspected).
+- Real DeepSeek on the generated painted editor (reasoning off, vision on): seed 4 now 2 of 3 (4 and 7 turns; it was 0 of 2 and 13+ turns before), seeds 1 and 2 pass in 6-7 turns, seed 3 one failure and one pass in 3 and 9 turns, canvas-menu 3 turns, timeline split 18 turns (pass).
+- TraceDraw through the product chain, with marks, run to a 460 s window: **still not completed** (47 turns). The model reads some marks wrongly in the dense real editor ("hit the Hints toggle, not Window"), then switches to the script console. The editor itself also loads slowly in a test browser (39 MB; 61-80% after 22 s). Open.
+- Staging cleanup after the product runs: tag, temporary revisions and the throwaway user removed again; allowlist back to three ids.

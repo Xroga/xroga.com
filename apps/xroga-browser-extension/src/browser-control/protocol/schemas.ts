@@ -102,6 +102,7 @@ export const ScreenshotArgsSchema = z.strictObject({
   labels: z.boolean().optional().describe('Draw ref labels over actionable elements'),
   grid: z.boolean().optional().describe('Draw a 0 to 1 coordinate grid, for placing pointer actions on a painted canvas'),
   mark: z.tuple([z.number().min(0).max(1), z.number().min(0).max(1)]).optional().describe('[x, y] fractions: draw a red crosshair where a pointer action landed'),
+  marks: z.boolean().optional().describe('Number the labels, icons and controls the picture shows (set of marks): act on one with canvas mark N, no coordinates to estimate'),
   region: z.tuple([z.number().min(0).max(1), z.number().min(0).max(1), z.number().min(0).max(1), z.number().min(0).max(1)]).optional()
     .describe('[x0, y0, x1, y1] fractions of the visible page: capture only this area, enlarged, with a fine grid labelled in whole-page fractions (for aiming at small painted controls)'),
 });
@@ -160,6 +161,8 @@ export const CanvasArgsSchema = z.strictObject({
   action: z.enum(['click', 'double_click', 'right_click', 'hover', 'drag', 'type', 'key']),
   at: placeOnPage.optional().describe('[x, y] fractions of the screenshot'),
   to: placeOnPage.optional().describe('drag end'),
+  mark: z.number().int().min(1).max(200).optional().describe('instead of at: the number of a mark in the last screenshot taken with marks true'),
+  toMark: z.number().int().min(1).max(200).optional().describe('drag end as a mark number'),
   text: z.string().max(4000).optional().describe('type: text for a field the canvas paints'),
   key: z.string().max(40).optional().describe('key: Enter, Tab, Escape, Backspace, Control+A, F6'),
   replace: z.boolean().optional().describe('type: select all first'),
