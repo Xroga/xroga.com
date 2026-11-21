@@ -3,6 +3,7 @@ import { test } from 'node:test';
 
 import { serializeAssistantCopy } from './assistantCopy';
 import { publicAnswerExportText } from './publicAnswerText';
+import { appendCitationReferences } from './xrogaCitations';
 
 test('copy keeps unquoted schema identifiers across prose and exported TSV', () => {
   const identifiers = 'user_id, tenant_id, role\nsubscriptions\tstripe_customer_id\tstripe_subscription_id';
@@ -44,6 +45,22 @@ test('native copy collapses equivalent tables but keeps unique figures and sourc
   assert.match(copy, /Basic\t\$11\tTerms \(https:\/\/example\.org\/corrected\)/);
   assert.match(copy, /Basic\t\$10\tTerms \(https:\/\/example\.org\/prior\)/);
   assert.equal((serializeAssistantCopy(source).match(/example\.org\/current/g) ?? []).length, 2);
+});
+
+test('a copied research answer keeps the source number, title and exact URL', () => {
+  const first = 'https://example.org/_reference_(guide)?section=copy';
+  const third = 'https://example.org/_edition_?language=en';
+  const text = appendCitationReferences('A verified claim [1]. A separate claim [3].', [
+    { title: 'A report [v2] with *literal* characters', url: first },
+    { title: 'Excluded', url: 'javascript:alert(1)' },
+    { title: 'A reference', url: third },
+  ]);
+
+  assert.equal(serializeAssistantCopy(text), [
+    'A verified claim [1]. A separate claim [3].', '', 'Sources',
+    `[1] A report [v2] with *literal* characters (${first})`,
+    `[3] A reference (${third})`,
+  ].join('\n'));
 });
 
 test('copy keeps every alternative, nested list indentation, exact links and table cells', () => {

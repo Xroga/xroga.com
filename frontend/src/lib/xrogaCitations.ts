@@ -33,7 +33,9 @@ export function citationMetadata(source: Pick<CitationSource, 'title' | 'siteNam
   const knownName = domain === 'support.google.com' && destination.pathname.startsWith('/google-ads/')
     ? 'Google Ads Help' : domain === 'ads.google.com' ? 'Google Ads'
       : domain === 'postgresql.org' || domain === 'git.postgresql.org' ? 'PostgreSQL' : domain;
-  const site = providedName && !generic.test(providedName) ? providedName : knownName;
+  const linkedinPost = (domain === 'linkedin.com' || domain.endsWith('.linkedin.com')) &&
+    /^\/(?:posts\/|feed\/update\/|pulse\/)/i.test(destination.pathname);
+  const site = linkedinPost ? 'LinkedIn' : providedName && !generic.test(providedName) ? providedName : knownName;
   const providedTitle = source.title.trim().replace(/^[-–—|:]+\s*/, '');
   const path = destination.pathname === '/' ? '' : destination.pathname;
   const title = providedTitle && !generic.test(providedTitle) ? providedTitle : site === domain ? domain + path : site;
@@ -73,7 +75,10 @@ export function sourceClickUrl(value: string): string | null {
 export function appendCitationReferences(text: string, sources?: ReadonlyArray<Pick<CitationSource, 'title' | 'url'>>): string {
   const refs = sources?.flatMap(({ title, url }, index) => {
     const safe = safeSourceUrl(url);
-    return safe ? [`[${index + 1}] ${title.replace(/\s+/g, ' ').trim()} (${safe})`] : [];
+    if (!safe) return [];
+    const name = title.replace(/\s+/g, ' ').trim() || new URL(safe).hostname;
+    const label = name.replace(/[\\\[\]`*_~]/g, '\\$&');
+    return [`[${index + 1}] [${label}](<${safe}>)`];
   });
   return refs?.length ? `${text}\n\nSources\n${refs.join('\n')}` : text;
 }

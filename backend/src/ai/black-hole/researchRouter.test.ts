@@ -48,6 +48,20 @@ test('duplicate URLs collapse and invalid ones are dropped', () => {
   assert.equal(bundle.sources.length, 1);
 });
 
+test('reposted social content is discovery evidence even under a familiar publisher', () => {
+  const sources = normalizeResearch([
+    { url: 'https://www.linkedin.com/posts/employee_product-benchmark-123', title: 'Unofficial benchmark' },
+    { url: 'https://example.org/benchmark/methodology', title: 'Published methodology' },
+    { url: 'https://www.linkedin.com/help/linkedin/answer/a123', title: 'Platform guidance' },
+  ], { query: 'Compare products', officialDomains: ['linkedin.com'] }).sources;
+
+  assert.deepEqual(sources.map(({ title, trust }) => [title, trust]), [
+    ['Platform guidance', 'A_official'],
+    ['Published methodology', 'C_secondary'],
+    ['Unofficial benchmark', 'D_discovery'],
+  ]);
+});
+
 test('multi-entity link research retains diverse retrieved hosts within the evidence bound', () => {
   const results = [
     { url: 'https://review.example/first' },
