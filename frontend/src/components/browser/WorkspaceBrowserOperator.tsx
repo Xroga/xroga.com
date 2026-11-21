@@ -56,7 +56,7 @@ export function WorkspaceBrowserOperator({ extensionId, nonce, requestedId }: {
   const [runId, setRunId] = useState('');
   const [activity, setActivity] = useState<string[]>([]);
   const [result, setResult] = useState('');
-  const [status, setStatus] = useState('Connect from the Xroga side panel in Chrome.');
+  const [status, setStatus] = useState('');
 
   useEffect(() => {
     if (!nonce || !UUID.test(nonce) || !requestedId || !EXTENSION_ID.test(requestedId)) return;
@@ -219,11 +219,14 @@ export function WorkspaceBrowserOperator({ extensionId, nonce, requestedId }: {
     };
   }, [extensionId, nonce, requestedId]);
 
-  if (!extensionId && !pairingVisible) return null;
+  const showConnection = paired || pairingVisible;
   return (
-    <details className="w-fit min-w-0 max-w-full rounded-xl text-sm text-foreground open:w-96 open:border open:border-foreground/15 open:bg-background open:p-2 open:shadow-lg max-sm:open:w-[calc(100vw-2.5rem)]" open={paired || pairingVisible || undefined}>
+    <details className={showConnection
+      ? 'w-fit min-w-0 max-w-full rounded-xl text-sm text-foreground open:w-96 open:border open:border-foreground/15 open:bg-background open:p-2 open:shadow-lg max-sm:open:w-[calc(100vw-2.5rem)]'
+      : 'relative w-fit max-w-full'} open={showConnection || undefined}>
       <summary title="Use the Xroga Chrome extension for supported local browser automation tasks."
-        className="ml-auto flex w-fit max-w-full cursor-pointer list-none items-center gap-2 rounded-lg border border-foreground/15 bg-background px-2.5 py-1.5 text-xs font-semibold shadow-[0_5px_12px_-6px_rgba(0,0,0,.55)] hover:border-foreground/40 focus-visible:outline focus-visible:outline-2 [&::-webkit-details-marker]:hidden">
+        data-xroga-extension-trigger
+        className="ml-auto flex w-fit max-w-full cursor-pointer list-none items-center gap-2 rounded-lg border border-foreground/15 bg-background px-2.5 py-1.5 text-xs font-semibold shadow-[0_4px_12px_-6px_rgba(0,0,0,.45)] hover:border-foreground/40 focus-visible:outline focus-visible:outline-2 [&::-webkit-details-marker]:hidden">
         <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" className="shrink-0">
           <circle cx="12" cy="12" r="11" fill="#34A853" />
           <path d="M2.5 6.4A11 11 0 0 1 22.6 9H8.4Z" fill="#EA4335" />
@@ -232,9 +235,12 @@ export function WorkspaceBrowserOperator({ extensionId, nonce, requestedId }: {
         </svg>
         <span>{paired ? 'Xroga Extension' : 'Install Xroga Extension'}</span>
       </summary>
-      <div className="max-h-[32dvh] overflow-auto px-1">
-      <p className="my-2 text-xs" role="status">{status}</p>
-      {!paired && extensionId && <a className="text-xs underline underline-offset-2" href={`https://chromewebstore.google.com/detail/${extensionId}`} target="_blank" rel="noopener noreferrer">Open Chrome Web Store</a>}
+      {!showConnection ? (
+        <p className="absolute end-0 top-full z-10 mt-1.5 whitespace-nowrap rounded-md bg-background px-2.5 py-1.5 text-xs text-foreground shadow-md" role="status">
+          Coming soon
+        </p>
+      ) : <div className="max-h-[32dvh] overflow-auto px-1">
+      {status && <p className="my-2 text-xs" role="status">{status}</p>}
       {paired && <form className="grid gap-2" onSubmit={event => {
         event.preventDefault();
         if (!portRef.current || busy) return;
@@ -278,7 +284,7 @@ export function WorkspaceBrowserOperator({ extensionId, nonce, requestedId }: {
       </form>}
       {activity.length > 0 && <ol aria-label="Browser activity" className="mt-2 max-h-32 overflow-auto text-xs">{activity.map((line, index) => <li key={`${index}:${line}`}>{line}</li>)}</ol>}
       {result && <p className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap">{result}</p>}
-      </div>
+      </div>}
     </details>
   );
 }

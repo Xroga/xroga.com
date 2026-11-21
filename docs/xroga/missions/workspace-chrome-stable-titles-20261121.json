@@ -8,6 +8,8 @@
   "scope": "Place the existing Chrome extension control over the transcript corner and persist meaningful first-prompt chat titles without replacing manual renames.",
   "changedFiles": [
     "frontend/e2e/command3-auth.spec.ts",
+    "frontend/src/app/(workspace)/workspace/page.tsx",
+    "frontend/src/app/globals.css",
     "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
     "frontend/src/components/dashboard/DashboardView.tsx",
     "frontend/src/components/dashboard/WorkspaceScrollPolish.module.css",
@@ -28,17 +30,17 @@
     "tenant": {"changed": false, "description": "Existing account and repo ownership checks remain."},
     "approval": {"changed": false, "description": "No changes to browser operation approvals."},
     "credentials": {"changed": false, "description": "No new keys or tokens."},
-    "egress": {"changed": true, "description": "User-initiated navigation to Chrome Web Store using the existing validated public extension ID; no prompt or credentials in the link."},
+    "egress": {"changed": true, "description": "Removes public navigation to the unavailable Chrome Web Store listing. Existing signed-in pairing transport is unchanged."},
     "cost": {"changed": false, "description": "Title derivation is local; no inference cost."},
     "billing": {"changed": false, "description": "No billing changes."}
   },
   "tests": [
     {"command": "tsx --test frontend/src/lib/conversationTitle.test.ts frontend/src/lib/workspaceEmptyComposer.test.ts", "scope": "Stable legacy title recovery and extension row layout regression.", "negative": true, "reference": "frontend/src/lib/conversationTitle.test.ts"},
-    {"command": "GitHub Actions: Isolated Supabase authenticated browser verification", "scope": "The install disclosure stays within desktop and mobile viewports and does not move the saved transcript.", "negative": true, "reference": "frontend/e2e/command3-auth.spec.ts"}
+    {"command": "GitHub Actions: Isolated Supabase authenticated browser verification", "scope": "Keyboard opens and closes the public Coming soon notice without links or navigation; pairing stays within desktop and mobile viewports without moving the transcript.", "negative": true, "reference": "frontend/e2e/command3-auth.spec.ts"}
   ],
   "rollout": "Verify a source-pinned preview and release gates before promoting to the Workspace production site.",
   "rollback": "Revert the change or re-promote the last verified frontend build; no database migration.",
-  "knownGaps": ["Old sessions without a saved prompt or transcript cannot recover an exact first-prompt title until their messages are restored.", "Chrome installation depends on the configured listing."],
+  "knownGaps": ["Old sessions without a saved prompt or transcript cannot recover an exact first-prompt title until their messages are restored.", "Public installation is intentionally unavailable until a verified store link is provided."],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": ["frontend/src/lib/conversationTitle.test.ts", "frontend/src/lib/workspaceEmptyComposer.test.ts"],
   "claimsFullProductCompletion": false,

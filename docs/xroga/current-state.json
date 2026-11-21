@@ -60564,7 +60564,7 @@
       "id": "surface:561ec9ad9b6b0a62a37e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/(workspace)/workspace/page.tsx",
-      "sha256": "6e58e1399bb6dd7d931cecb0f51d0ec1b300ac41d33627a9ea70e4f8a7dd3624",
+      "sha256": "657ab53ea74ddb58f9d7f002d033360c0f47cf4341596a3945b27357b7e917f5",
       "symbols": [
         "WorkspacePage",
         "authorizedUserId",
@@ -67913,7 +67913,7 @@
       "id": "surface:46331a69bc5be52c0a7c",
       "subsystem": "browser_sandbox",
       "sourcePath": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "sha256": "290ce9849a665de6fb3040abf35a4e85b1be7bfcda58b284f9f1f0ff904e6b32",
+      "sha256": "25e0e7b903e062566daa189cdb20c3fad4187473b805948e1849f0f255fe4e13",
       "symbols": [
         "API",
         "BridgeMessage",
@@ -67955,6 +67955,7 @@
         "selected",
         "send",
         "session",
+        "showConnection",
         "stopAuthListener",
         "taskFile",
         "text",
@@ -67994,7 +67995,7 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
-      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
       "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
@@ -145402,6 +145403,16 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
+      "id": "finding:c5f48241fe25302930b4",
+      "sourcePath": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 240,
+      "kind": "COMING_SOON",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
       "id": "finding:e725b8d1447b7bda5b41",
       "sourcePath": "frontend/src/components/browser/XrogaBrowser.tsx",
       "line": 279,
@@ -148591,86 +148602,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:72bd1009127eb2fbff18",
+      "id": "frontend-call:d9bf7b5e1b5d7a77b3a3",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 871,
+      "line": 884,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:ecc9576c6fc21f76e5be",
+      "id": "frontend-call:f4d32a1db5c437a37bf1",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 874,
+      "line": 887,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:1051688c1016f4220d17",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1645,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:9f91cbc99f7514fb3413",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1646,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:1c94e397a6ff716f74fe",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1651,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:aedd4a954e80da7b36f4",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1652,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:db9b9d6c61e0c2ba8608",
+      "id": "frontend-call:6a1d1c7e25f8849d38ca",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1658,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:a3e43ce6011871c61ea1",
+      "id": "frontend-call:96d236266243af901d41",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1663,
+      "line": 1659,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:a71dd25a3126240c7dd8",
+      "id": "frontend-call:dc9ae38283cdccf18bc2",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1720,
+      "line": 1664,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:e59ff5ef7ecee99e9878",
+      "id": "frontend-call:6ec0cbefc57286e6e9b9",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1721,
+      "line": 1665,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:c406300dde35cb07f97d",
+      "id": "frontend-call:676e364653af1dbfc194",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1728,
+      "line": 1671,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:914081059e8e783c9bab",
+      "id": "frontend-call:7a25530323d35eafce9b",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1742,
+      "line": 1676,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:5421f1471b54c856f063",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1733,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:98abc13f45ec0244234e",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1734,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:6587b3c1c8644925ae66",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1741,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:157ad8ef3b35a7ed1766",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1755,
       "callee": "fetch",
       "reachable": false
     },

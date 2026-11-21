@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "2727f96e237cb7ae266df0b2b3feb508f21bcadf",
+  "source_sha": "47a0fcb36c3eb6841036d87f29f7b5ec208c9a3b",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -2836,40 +2836,6 @@
         "backend/src/services/publish/chromeWebStore.ts",
         "backend/src/services/publish/userOwnedPublish.ts",
         "frontend/src/components/publish/ChromePublishPanel.tsx"
-      ],
-      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
-      "evidence_ids": []
-    },
-    {
-      "dependency_id": "endpoint-chromewebstore-google-com",
-      "provider": "Source-defined endpoint chromewebstore.google.com",
-      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
-      "environment": "PRODUCTION",
-      "state": "CONFIGURED_BUT_UNVERIFIED",
-      "runtime_owner": "backend/API or explicitly proposed component",
-      "config_sources": [
-        "frontend/src/components/browser/WorkspaceBrowserOperator.tsx"
-      ],
-      "hostnames": [
-        "chromewebstore.google.com"
-      ],
-      "resource_id": null,
-      "region": "Not verified",
-      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
-      "secret_names": [],
-      "inbound_callers": [
-        "api or named source callers; operational reachability not inferred"
-      ],
-      "outbound_dependencies": [],
-      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
-      "timeout": "Adapter-specific; no fabricated central timeout",
-      "retry_policy": "Source-specific; no live retry test claimed",
-      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
-      "data_classification": "User data may be involved; tenant scope requires independent checks",
-      "failure_mode": "Safe user-facing failure required; internal details restricted",
-      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
-      "observability_source": [
-        "frontend/src/components/browser/WorkspaceBrowserOperator.tsx"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -20472,7 +20438,7 @@
     },
     {
       "path": "frontend/src/app/(workspace)/workspace/page.tsx",
-      "sha256": "6e58e1399bb6dd7d931cecb0f51d0ec1b300ac41d33627a9ea70e4f8a7dd3624"
+      "sha256": "657ab53ea74ddb58f9d7f002d033360c0f47cf4341596a3945b27357b7e917f5"
     },
     {
       "path": "frontend/src/app/about/page.tsx",
@@ -21092,7 +21058,7 @@
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "sha256": "290ce9849a665de6fb3040abf35a4e85b1be7bfcda58b284f9f1f0ff904e6b32"
+      "sha256": "25e0e7b903e062566daa189cdb20c3fad4187473b805948e1849f0f255fe4e13"
     },
     {
       "path": "frontend/src/components/browser/XrogaBrowser.tsx",
@@ -29087,13 +29053,6 @@
       "protocol": "http:",
       "path": "frontend/src/components/billing/XrogaPricingCard.tsx",
       "line": 29,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "chromewebstore.google.com",
-      "protocol": "https:",
-      "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 237,
       "credentialsInUrl": false
     },
     {

@@ -9754,14 +9754,6 @@ body.theme-beige {
   padding: 0.5rem 0.75rem;
   min-height: 42px;
   background: var(--term-chrome, #0b0d12);
-  /* A hairline, not a rule. The toolbar and the body are the same surface at two
-     brightnesses; the line only says where one ends. */
-  border-bottom: 1px solid rgba(255, 255, 255, 0.055);
-}
-.terminal-skin-light .xv-workspace-header,
-.terminal-skin-light-grid .xv-workspace-header,
-.terminal-skin-solar .xv-workspace-header {
-  border-bottom-color: rgba(15, 23, 42, 0.08);
 }
 
 .xv-workspace-header-tools {
