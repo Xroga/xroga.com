@@ -1,5 +1,7 @@
 # XROGA WORKSPACE — UNIVERSAL AI ANSWER + RESPONSE PRESENTATION, COMPLETE END-TO-END IMPLEMENTATION ORDER
 
+**Mandatory production UX correction (22 Nov):** Read and implement [WORKSPACE-UNIVERSAL-ADAPTIVE-PRESENTATION-AUTOMATIC-SEARCH-PRIVATE-ENGINEERING-20261122.md](./WORKSPACE-UNIVERSAL-ADAPTIVE-PRESENTATION-AUTOMATIC-SEARCH-PRIVATE-ENGINEERING-20261122.md) first. The owner's video shows ordinary public Search incorrectly routed to Confirm action / Review action with visible platform spend and internal operation metadata. Fix actual routing and consumer payload privacy; dynamically compose compact layouts for all prompt categories rather than hardcoding response templates. Preserve approval only for genuine consequential external actions.
+
 **Mandatory accuracy addendum (22 Nov):** Read and implement [WORKSPACE-TRUTHFUL-TO-THE-POINT-ADAPTIVE-PRESENTATION-20261122.md](./WORKSPACE-TRUTHFUL-TO-THE-POINT-ADAPTIVE-PRESENTATION-20261122.md) as part of this same mission. It requires accurate source-grounded answers, proper search selection, no invented information, no repeated Markdown/native UI, concise response scope and 20 targeted verification cases. This complements sections 3, 4, 6 and 7 and does not introduce a competing renderer or an unconditional search/verification pass.
 
 **Owner's engineering directive for Codex · 22 November 2026 · Xroga/xroga.com · Workspace PR #989 only**  
