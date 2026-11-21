@@ -2,7 +2,7 @@
 
 import React, { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { siPostgresql, siPython } from 'simple-icons';
+import { siNasa, siPostgresql, siPython } from 'simple-icons';
 import { citationMetadata, safeSourceUrl, sourceClickUrl, type CitationSource } from '@/lib/xrogaCitations';
 import { GoogleIcon } from '../auth/AuthGoogleIcon';
 import { useInlineCitation } from './ResponseSourceScope';
@@ -14,7 +14,8 @@ export type CitationPage = Pick<CitationSource, 'title' | 'url' | 'siteName'>;
 function CitationIcon({ domain, size }: { domain: string; size: number }) {
   // Reuse local publisher marks for exact domains.
   const localMark = domain === 'python.org' || domain === 'docs.python.org' ? siPython
-    : domain === 'postgresql.org' || domain === 'git.postgresql.org' ? siPostgresql : undefined;
+    : domain === 'postgresql.org' || domain === 'git.postgresql.org' ? siPostgresql
+    : domain === 'nasa.gov' || domain.endsWith('.nasa.gov') ? siNasa : undefined;
   if (localMark) {
     return <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={localMark.path} /></svg>;
   }
@@ -23,12 +24,13 @@ function CitationIcon({ domain, size }: { domain: string; size: number }) {
     : <SourceLogo domain={domain} size={size} />;
 }
 
-export function SourceCitation({ source, number, label, showTitle = false, referral = false }: {
+export function SourceCitation({ source, number, label, showTitle = false, referral = false, compact = false }: {
   source: CitationPage;
   number?: number;
   label?: ReactNode;
   showTitle?: boolean;
   referral?: boolean;
+  compact?: boolean;
 }) {
   const id = useId();
   const link = useRef<HTMLAnchorElement>(null);
@@ -93,15 +95,16 @@ export function SourceCitation({ source, number, label, showTitle = false, refer
 
   if (!url) return <>{label ?? (number ? `[${number}]` : source.title)}</>;
   const { domain, site, title } = citationMetadata(source, url);
+  const compactChip = compact && number !== undefined;
   return <>
-    <a ref={link} data-source-citation className={`${styles.chip} ${label || showTitle ? styles.named : ''}`}
+    <a ref={link} data-source-citation className={`${styles.chip} ${label || showTitle ? styles.named : ''} ${compactChip ? styles.compact : ''}`}
       href={(referral ? sourceClickUrl(url) : url) ?? url} target="_blank" rel="noopener noreferrer"
       aria-label={number ? `Open source ${number}: ${title}` : `${label ? 'Open link' : 'Open source'}: ${title}`}
       aria-describedby={open ? id : undefined}
       onPointerEnter={event => { if (event.pointerType !== 'touch') { keepOpen(); setOpen(true); } }}
       onPointerLeave={() => { if (document.activeElement !== link.current) dismiss(); }}
       onFocus={event => { if (event.currentTarget.matches(':focus-visible')) { keepOpen(); setOpen(true); } }}
-      onBlur={dismiss}>
+      onBlur={() => { keepOpen(); setOpen(false); }}>
       <CitationIcon domain={domain} size={13} />
       <span className={styles.label}>{label ?? (showTitle ? title : site)}</span>
     </a>

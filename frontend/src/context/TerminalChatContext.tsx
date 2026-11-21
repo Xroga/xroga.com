@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from 'react';
 import { EMPTY_RUN_STATE, type TerminalEvent, type TerminalRunState } from '@/lib/terminal/terminalEvent';
+import type { PendingReplyKind } from '@/lib/terminal/activityTimeline';
 import { coalesceActivity, mergeActivitySnapshots, type XrogaActivityPresentation } from '@/lib/terminal/activityPresentation';
 import { adaptTerminalEvent } from '@/lib/terminal/terminalEventAdapter';
 import { terminalRunReducer } from '@/lib/terminal/terminalRunReducer';
@@ -29,6 +30,7 @@ import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { useLiveBuildStore } from '@/store/useLiveBuildStore';
 import { PENDING_PROMPT_KEY } from '@/lib/constants';
+import { draftForConversationRestore } from '@/lib/composerDraft';
 import {
   clearWorkspaceSession,
   loadWorkspaceSessionHydrated,
@@ -462,7 +464,11 @@ export interface ChatMessage {
     source: string;
     thumbnailUrl?: string;
     siteDomain?: string;
+    siteName?: string;
+    siteIconDomain?: string;
+    publishedAt?: string;
   }>;
+  publicWebRetrieved?: true;
   researchReceiptId?: string;
   modelReceiptId?: string;
   hackathonBrief?: import('@/lib/hackathonBrief').HackathonBriefCardData;
@@ -539,6 +545,7 @@ interface TerminalChatContextValue {
   outOfActionsOpen: boolean;
   setOutOfActionsOpen: (v: boolean) => void;
   animatingId: string | null;
+  pendingReply: { messageId: string; kind: PendingReplyKind } | null;
   swarmActiveAgent: string | null;
   pipelineMessage: string | null;
   councilLayer: 'elite' | 'reserve' | 'blackhole' | null;
@@ -620,6 +627,8 @@ export function TerminalChatProvider({
   const projectId = projectIdProp ?? routeProjectId;
   const incognito = usePrivacyStore((s) => s.incognito);
   const [prompt, setPrompt] = useState('');
+  const latestPromptRef = useRef(prompt);
+  latestPromptRef.current = prompt;
   const [promptQueue, setPromptQueue] = useState<QueuedPrompt[]>([]);
   const [heavyLoading, setHeavyLoading] = useState(false);
   const [lightLoading, setLightLoading] = useState(false);
@@ -635,6 +644,7 @@ export function TerminalChatProvider({
   const [outOfActionsOpen, setOutOfActionsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [animatingId, setAnimatingId] = useState<string | null>(null);
+  const [pendingReply, setPendingReply] = useState<TerminalChatContextValue['pendingReply']>(null);
   const [swarmActiveAgent, setSwarmActiveAgent] = useState<string | null>(null);
   const [pipelineMessage, setPipelineMessage] = useState<string | null>(null);
   const [councilLayer, setCouncilLayer] = useState<'elite' | 'reserve' | 'blackhole' | null>(null);
@@ -1268,6 +1278,14 @@ const stopRequestedRunIdRef =
       githubRepoName?: string;
     }) => {
       if (incognito) return;
+      const snapshots = typeof document === 'undefined' ? [] : [...document.querySelectorAll<HTMLTextAreaElement>('[data-terminal-composer]')].map(input => ({
+        owner: input.dataset.draftOwner ?? '', session: input.dataset.draftSession ?? '',
+        project: input.dataset.draftProject ?? '', restoring: input.dataset.draftRestoring !== 'false', value: input.value,
+      }));
+      const composerDraft = draftForConversationRestore(snapshots, {
+        owner: workspaceIdentity.status === 'guest' ? 'guest' : workspaceIdentity.userId ?? '',
+        session: sessionIdRef.current, project: projectId ?? '',
+      }, opts.sessionId, sessionRestoring, prompt);
       restoringRef.current = true;
       setSessionRestoring(true);
       abortRef.current?.abort();
@@ -1298,11 +1316,11 @@ const stopRequestedRunIdRef =
       const hydrated = await rehydratePersistedMessages(opts.messages, opts.githubRepoName);
       setMessages(hydrated);
       await restoreProjectWorkspaceFromMessages(hydrated, opts.githubRepoName);
-      setPrompt(opts.prompt);
+      setPrompt(composerDraft);
       completedWebsiteBuildRef.current = threadHasCompletedWebsite(hydrated);
 
       saveWorkspaceSession({
-        prompt: opts.prompt,
+        prompt: composerDraft,
         messages: hydrated,
         sessionId: opts.sessionId,
         selectedId: opts.selectedId ?? opts.sessionId,
@@ -1316,7 +1334,7 @@ const stopRequestedRunIdRef =
       restoringRef.current = false;
       setSessionRestoring(false);
     },
-    [incognito, setSwarmRunning, setSessionId]
+    [incognito, setSwarmRunning, setSessionId, prompt, projectId, sessionRestoring, workspaceIdentity.status, workspaceIdentity.userId]
   );
 
   useEffect(() => {
@@ -2445,6 +2463,7 @@ const stopRequestedRunIdRef =
                 ? {
                     ...msg,
                     webSources: result.webSources,
+                    publicWebRetrieved: result.publicWebRetrieved,
                     hackathonBrief: result.hackathonBrief as ChatMessage['hackathonBrief'],
                   }
                 : msg
@@ -2981,14 +3000,20 @@ if (
           setSwarmNegotiationPhase(null);
           const mathPrompt = isMathQueryPrompt(displayPrompt);
           const needsCurrentSources = semanticPlan.goalContract.freshnessRequirement !== 'NONE';
-          setPipelineMessage(mathPrompt ? 'Solving the requested calculation' : needsCurrentSources ? 'Retrieving current sources' : null);
+          setPipelineMessage(mathPrompt ? 'Solving the requested calculation' : needsCurrentSources ? 'Preparing a source-backed answer' : null);
           setSwarmStatusLabel('XROGA AI');
           setSwarmActiveAgent('architect');
           thinkingStepsRef.current = [];
           setThinkingSteps([]);
 
           try {
-            const result = await api.phase1.chat(displayPrompt, history, attachments, semanticPlan.goalContract, controller.signal);
+            setPendingReply({
+              messageId: assistantId,
+              kind: needsCurrentSources || semanticPlan.goalContract.requiredCapabilities.includes('research.public-web')
+                ? 'source-backed' : 'standard',
+            });
+            const result = await api.phase1.chat(displayPrompt, history, attachments, semanticPlan.goalContract, controller.signal)
+              .finally(() => setPendingReply((current) => current?.messageId === assistantId ? null : current));
             if (controller.signal.aborted || sessionIdRef.current !== originatingSessionId) return;
             const rawReply = (result.response || '').trim();
             fullReply = rawReply;
@@ -3010,6 +3035,7 @@ if (
                       featureOutput: enhanced.output,
                       agent: 'Xroga AI Brain',
                       webSources: result.webSources,
+                      publicWebRetrieved: result.publicWebRetrieved,
                       hackathonBrief: result.hackathonBrief,
                     }
                   : message
@@ -4615,6 +4641,12 @@ active.applyBuild({
         if (!incognito && turn?.assistantId === assistantId && sessionIdRef.current === originatingSessionId && !interruptRef.current) {
           setMessages((current) => {
             try {
+              // A completed answer can reach the cloud before the debounced device save.
+              // Save the same transcript first so an immediate reload restores the answer.
+              if (phase1AnswerSettled && sessionIdRef.current === originatingSessionId &&
+                  activityOwner.current === workspaceIdentity.userId && !usePrivacyStore.getState().incognito) {
+                saveWorkspaceSession({ prompt: latestPromptRef.current, messages: current, sessionId: originatingSessionId });
+              }
               archiveChatTurn({
                 prompt: turn.text,
                 messages: current,
@@ -4727,6 +4759,7 @@ setTimeout(processNextInQueue, 50);
         outOfActionsOpen,
         setOutOfActionsOpen,
         animatingId,
+        pendingReply,
         swarmActiveAgent,
         pipelineMessage,
         councilLayer,

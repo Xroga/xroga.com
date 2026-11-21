@@ -15,6 +15,9 @@ import {
 import {withTenantModelReservation,type TenantModelScope} from '../tenantModelDispatch.js';
 import {isTerminalModelFailure} from '../providerRuntime.js';
 import { scopeOfficialSearchQuery } from '../researchSearchProvider.js';
+import { executeWorkspacePublicSearch } from '../parallelApproval.js';
+import { workspaceSearchNeedsExactReview } from '../workspacePublicSearch.js';
+import { presentResearchResult } from '../../services/integrations/researchResult.js';
 
 import {
   parallelExtract,
@@ -62,6 +65,7 @@ export interface WebIntelligenceResult {
   reason: string;
   needsConfirmation?:boolean;
   reviewUrl?:string;
+  publicWebRetrieved?: true;
 }
 
 const ACTIONS: readonly WebAction[] = [
@@ -490,6 +494,8 @@ export async function runWebIntelligence(
     officialDomains?: readonly string[];
     decision?: WebDecision;
     signal?: AbortSignal;
+    autoPublicSearch?: true;
+    autoPublicSearchSignal?: AbortSignal;
   },
 ): Promise<WebIntelligenceResult> {
   const decision =
@@ -516,6 +522,8 @@ export async function runWebIntelligence(
 
   let rawResults: RawResult[] =
     [];
+  let publicSources: ResearchSource[] | undefined;
+  let automaticOfficialDomains: string[] | undefined;
 
   if (
     decision.action === 'read'
@@ -549,16 +557,36 @@ export async function runWebIntelligence(
     const queries = decision.queries.length ? decision.queries : [redactSecrets(input.prompt).slice(0, 500)];
     const domains = decision.officialDomains.length ? decision.officialDomains : input.officialDomains ?? [];
     const scopedQuery = decision.sourcePolicy === 'official_only' ? scopeOfficialSearchQuery(queries[0]!, domains) : undefined;
-    if (decision.sourcePolicy === 'official_only' && !scopedQuery) {
-      return { action: decision.action, evidence: 'No verified official domain was available. No search was sent.', bundle: null,
-        sourceCount: 0, injectionAttempts: 0, reason: 'OFFICIAL_DOMAINS_UNAVAILABLE' };
+    const automatic = input.autoPublicSearch && !decision.urls.length
+      ? await executeWorkspacePublicSearch({
+          context: requireTenantContext(input.dispatchScope?.context),
+          userId: input.userId, connectedAccountId: 'platform',
+        }, input.prompt, decision.sourcePolicy === 'official_only', input.autoPublicSearchSignal)
+      : undefined;
+    if (automatic) {
+      // Use only settled provider evidence. The source policy stays in effect
+      // when normalizing the response, without exporting planner fields.
+      automaticOfficialDomains = automatic.officialDomains.length ? automatic.officialDomains : undefined;
+      publicSources = presentResearchResult({
+        ok: true, operation: 'search', result: automatic.result,
+      }, automaticOfficialDomains).sources;
+      rawResults = toRawResults(publicSources);
+    } else {
+      if (input.autoPublicSearch && !decision.urls.length && !workspaceSearchNeedsExactReview(input.prompt)) {
+        return { action: decision.action, evidence: '', bundle: null, sourceCount: 0,
+          injectionAttempts: 0, reason: 'PUBLIC_QUERY_UNVERIFIED' };
+      }
+      if (decision.sourcePolicy === 'official_only' && !scopedQuery) {
+        return { action: decision.action, evidence: 'No verified official domain was available. No search was sent.', bundle: null,
+          sourceCount: 0, injectionAttempts: 0, reason: 'OFFICIAL_DOMAINS_UNAVAILABLE' };
+      }
+      const result = await parallelSearch({
+        userId: input.userId, dispatchScope: input.dispatchScope, objective,
+        queries: scopedQuery ? [scopedQuery] : queries, signal: input.signal,
+      });
+      if (result.needsConfirmation) return pendingResearch(decision, result.reviewUrl!);
+      rawResults = toRawResults(result.sources);
     }
-    const result = await parallelSearch({
-      userId: input.userId, dispatchScope: input.dispatchScope, objective,
-      queries: scopedQuery ? [scopedQuery] : queries, signal: input.signal,
-    });
-    if (result.needsConfirmation) return pendingResearch(decision, result.reviewUrl!);
-    rawResults = toRawResults(result.sources);
   } else {
     provider = 'grok_x';
 
@@ -588,11 +616,11 @@ export async function runWebIntelligence(
       rawResults,
       {
         query: input.prompt,
-        officialDomains:
-          decision.officialDomains.length ? decision.officialDomains : input.officialDomains,
+        officialDomains: publicSources ? automaticOfficialDomains
+          : decision.officialDomains.length ? decision.officialDomains : input.officialDomains,
         maxSources: 12,
       },
-    ), decision.sourcePolicy);
+    ), publicSources ? automaticOfficialDomains ? 'official_only' : 'any' : decision.sourcePolicy);
 
   // Never trust an uncited synthesis.
   if (
@@ -634,10 +662,10 @@ export async function runWebIntelligence(
           .join('\n\n')
           .slice(0, 4_000),
 
-      sources:
-        toUiSources(
-          normalized,
-        ),
+      sources: toUiSources(normalized).map(source => {
+        const metadata = publicSources?.find(item => item.url === source.url);
+        return metadata ? { ...metadata, ...source } : source;
+      }),
 
       provider,
 
@@ -654,5 +682,6 @@ export async function runWebIntelligence(
     injectionAttempts:
       normalized.injectionAttempts,
     reason: decision.reason,
+    ...(publicSources && bundle.sources.length ? { publicWebRetrieved: true as const } : {}),
   };
 }

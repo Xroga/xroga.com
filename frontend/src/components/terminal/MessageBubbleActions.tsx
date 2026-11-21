@@ -15,6 +15,8 @@ import { MessageShareModal } from './MessageShareModal';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import { serializeAssistantCopy } from '@/lib/assistantCopy';
+import { publicAnswerExportText } from '@/lib/publicAnswerText';
+import { NATIVE_SHARE_PREFIX } from '../../../../backend/src/ai/nativeOpenUiShare';
 
 interface MessageBubbleActionsProps {
   role: 'user' | 'assistant';
@@ -38,11 +40,14 @@ export function MessageBubbleActions({
   const [reaction, setReaction] = useState<'up' | 'down' | null>(null);
   const [copied, setCopied] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const shareResponse = role === 'assistant' ? publicAnswerExportText(content) : content;
 
   async function handleCopy() {
     try {
       await navigator.clipboard.writeText(
-        role === 'assistant' ? serializeAssistantCopy(content) : content,
+        role === 'assistant' ? serializeAssistantCopy(content, {
+          collapseDuplicateTables: richResponse?.startsWith(NATIVE_SHARE_PREFIX),
+        }) : content,
       );
       setCopied(true);
       toast.success('Copied');
@@ -111,8 +116,8 @@ export function MessageBubbleActions({
         open={shareOpen}
         onClose={() => setShareOpen(false)}
         prompt={role === 'assistant' ? prompt : undefined}
-        response={content}
-        richResponse={richResponse}
+        response={shareResponse}
+        richResponse={shareResponse === content ? richResponse : undefined}
         literalContent={Boolean(richResponse)}
         contentLabel={role === 'user' ? 'prompt' : 'answer'}
       />

@@ -4,6 +4,7 @@ import type { HackathonBriefCardData } from '@/lib/hackathonBrief';
 import type { XrogaActivityPresentation } from '@/lib/terminal/activityPresentation';
 import { redactTerminalText } from '@/lib/terminal/terminalRedaction';
 import { safeSourceUrl } from '@/lib/xrogaCitations';
+import { isResearchReceiptId } from '@/lib/researchHandoff';
 
 function sanitizeHackathonBrief(raw: unknown): ChatMessage['hackathonBrief'] {
   if (!raw || typeof raw !== 'object') return undefined;
@@ -152,6 +153,8 @@ export function sanitizeChatMessages(messages: unknown): ChatMessage[] {
         thoughtMs: typeof m.thoughtMs === 'number' ? m.thoughtMs : undefined,
         executionActivity: sanitizeExecutionActivity(m.executionActivity),
         webSources: sanitizeWebSources(m.webSources),
+        ...(role === 'assistant' && m.publicWebRetrieved === true ? { publicWebRetrieved: true as const } : {}),
+        researchReceiptId: safeRole === 'assistant' && isResearchReceiptId(m.researchReceiptId) ? m.researchReceiptId : undefined,
         hackathonBrief: sanitizeHackathonBrief(m.hackathonBrief),
       };
     });

@@ -3,32 +3,39 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Check, Copy, Share2 } from 'lucide-react';
 import { MessageShareModal } from '@/components/terminal/MessageShareModal';
 import { serializeAssistantCopy } from '@/lib/assistantCopy';
+import { publicAnswerExportText } from '@/lib/publicAnswerText';
 import styles from './conversation-v2.module.css';
 import type { ResponseInputV2 } from './document';
 import { richShareSnapshot } from './shareSnapshot';
+import { NATIVE_SHARE_PREFIX } from '../../../../backend/src/ai/nativeOpenUiShare';
 
 function TurnActions({ role, content, prompt, message, richResponse }: { role: 'user' | 'assistant'; content: string; prompt?: string; message?: ResponseInputV2; richResponse?: string }) {
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>('idle');
   const [sharing, setSharing] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout>>();
   useEffect(() => () => clearTimeout(timer.current), []);
+  const copiedText = role === 'assistant' ? serializeAssistantCopy(content, {
+    collapseDuplicateTables: richResponse?.startsWith(NATIVE_SHARE_PREFIX),
+  }) : content;
   async function copy() {
     try {
-      await navigator.clipboard.writeText(role === 'assistant' ? serializeAssistantCopy(content) : content);
+      await navigator.clipboard.writeText(copiedText);
       setCopyState('copied');
       clearTimeout(timer.current);
       timer.current = setTimeout(() => setCopyState('idle'), 1800);
     } catch { setCopyState('failed'); }
   }
   if (!content.trim()) return null;
-  const snapshot = richResponse ?? (role === 'assistant' && message ? richShareSnapshot(message, serializeAssistantCopy(content)) : undefined);
+  const snapshot = role === 'assistant' && message && publicAnswerExportText(message.content) === message.content
+    ? richResponse ?? richShareSnapshot(message, copiedText)
+    : undefined;
   return <>
     <div className={styles.actions} aria-label={role === 'user' ? 'Your message actions' : 'Answer actions'}>
       <button type="button" onClick={() => void copy()} aria-label={copyState === 'copied' ? 'Copied' : 'Copy message'} title="Copy message">{copyState === 'copied' ? <Check /> : <Copy />}</button>
       <button type="button" onClick={() => setSharing(true)} aria-label="Share message" title="Share message"><Share2 /></button>
       <span role="status">{copyState === 'failed' ? 'Could not copy. Select the text to copy it.' : copyState === 'copied' ? 'Copied' : ''}</span>
     </div>
-    <MessageShareModal open={sharing} onClose={() => setSharing(false)} prompt={role === 'assistant' ? prompt : undefined} response={role === 'assistant' ? serializeAssistantCopy(content) : content} richResponse={snapshot} richResponseUnavailable={role === 'assistant' && !!message && !snapshot} literalContent contentLabel={role === 'user' ? 'prompt' : 'answer'} />
+    <MessageShareModal open={sharing} onClose={() => setSharing(false)} prompt={role === 'assistant' ? prompt : undefined} response={copiedText} richResponse={snapshot} richResponseUnavailable={role === 'assistant' && !!message && !snapshot} literalContent contentLabel={role === 'user' ? 'prompt' : 'answer'} />
   </>;
 }
 

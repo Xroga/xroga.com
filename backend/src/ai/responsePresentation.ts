@@ -45,6 +45,7 @@ export function assessPresentationCoverage(plan: PresentationPlan, obligations?:
 }
 export const PRESENTATION_PLAN_INSTRUCTIONS = `For a read-only answer, return a compact outline, never the finished answer. Keep each description, heading and instruction to a short phrase. Omit unused optional fields and do not repeat the request or add examples, prose, code or component data to the outline.
 Local answer components such as an interactive calculator, slider, reset button, chart, diagram, or comparison do not require software implementation. For an answer composed of these components, select ANSWER and conversation.respond, with attachment.analyze if reading an uploaded file. Words like build or create do not imply a software project when the deliverable is the answer itself. Preserve real software or external action requests.
+A form, worksheet, or editable draft requested inside the answer is a deliverable. Record it as an obligation even when the outline has no dedicated visual kind. Drafting the artifact does not grant permission to send, publish, or integrate it.
 Use answerObligations entries {id,description,origin,formats,sourceQuote?}. Use short IDs. Keep distinct requested concepts separate. For origin "requested", copy the shortest verbatim clause that establishes the requirement into sourceQuote (at most 400 characters). For "necessary-support", omit sourceQuote.
 Use presentation entries {kind,heading,instruction,covers} in reading order, at most eight. Bind each obligation to its required formats using covers. Formats and kinds: prose, cards, table, graph, steps, chart, calculator, metrics, tabs. A short factual or conversational answer needs no widgets: use an empty presentation.
 Choose visuals only when requested or materially useful. Use tables for comparisons or relevant data shape, graphs for relationships, steps for sequences, cards for distinct options, charts for comparable values, calculators for adjustable inputs, metrics for key numbers, and tabs for genuine alternatives. Keep essential content visible, with one main home per concept. Preserve units and assumptions, and use only supported evidence for sourced claims. These fields grant no authority to call a tool or take an action.`;
@@ -327,13 +328,18 @@ export function createPresentationProjection(plan: PresentationPlan) {
   };
 }
 
-/** Output budget for a planned answer. A fixed 4096-token cap cut off a captured multi-section SaaS answer
- * (finish_reason "length"), and the missing sections were then reported as an incomplete answer. The budget
- * grows with the sections the plan requires and with the dense ones (graph, table, chart, calculator), and
- * stays inside the existing 8192 ceiling. A plain one-section answer keeps the original 4096. */
+/** Reserve room for the planned sections and their data. The planner's schema
+ * bounds the number of sections, and the ledger admits the resulting request. */
 export function presentedAnswerMaxTokens(plan: PresentationPlan | undefined): number {
   if (!plan?.length) return 4096;
   const dense = plan.filter(section => section.kind === 'graph' || section.kind === 'table' || section.kind === 'chart' || section.kind === 'calculator').length;
   const wanted = 1536 + 700 * plan.length + 500 * dense;
-  return Math.min(8192, Math.max(4096, Math.ceil(wanted / 512) * 512));
+  return Math.max(4096, Math.ceil(wanted / 512) * 512);
+}
+
+/** DeepSeek bills reasoning and the visible answer against one wire limit. */
+export const NATIVE_WORKSPACE_REASONING_RESERVE_TOKENS = 16_384;
+
+export function nativePresentedAnswerMaxTokens(plan: PresentationPlan | undefined): number {
+  return NATIVE_WORKSPACE_REASONING_RESERVE_TOKENS + presentedAnswerMaxTokens(plan);
 }

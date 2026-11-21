@@ -120,6 +120,31 @@ test('a provider that never emits a token fails with first_token_timeout', async
   );
 });
 
+test('a buffered response can finish after the streaming silence deadline without fake activity', async () => {
+  const result = await runBuilderAttempt(async ({onToken}) => {
+    await new Promise(resolve => setTimeout(resolve, 60));
+    onToken('complete answer');
+    return 'done';
+  }, {responseMode:'buffered', budget:{firstTokenMs:10, generationMs:1000}});
+  assert.equal(result.value,'done');
+  assert.equal(result.outputChars,15);
+  assert.ok(result.firstActivityMs! >= 10);
+});
+
+test('a silent buffered response still stops at the total generation deadline', async () => {
+  await assert.rejects(runBuilderAttempt(({signal}) => new Promise((_resolve,reject) => {
+    signal.addEventListener('abort',()=>reject(new Error('aborted')));
+  }), {responseMode:'buffered',budget:{firstTokenMs:5,generationMs:30}}), {code:'BUILDER_GENERATION_TIMEOUT'});
+});
+
+test('caller cancellation interrupts a buffered response', async () => {
+  const controller=new AbortController();
+  await assert.rejects(runBuilderAttempt(({signal}) => new Promise((_resolve,reject) => {
+    signal.addEventListener('abort',()=>reject(new Error('aborted')));
+    controller.abort();
+  }), {responseMode:'buffered',signal:controller.signal}), {code:'BUILD_CANCELLED'});
+});
+
 test('a token cancels the first-token deadline', async () => {
   const result = await runBuilderAttempt(
     async ({ onToken }) => {

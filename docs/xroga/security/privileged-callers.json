@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "7b0a4969647e70790bd66e2b05698d399638336f525e2134808652ac69e0275b",
+  "reviewRegistrySha256": "5934ce229a381ab7748697f7fbc2fca0c0e453723ed4401f76bc7891755969db",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -10,17 +10,17 @@
     "privilegedFactorySites": 229,
     "persistenceCandidates": 1018,
     "ownerPredicateCandidates": 267,
-    "reviewRequired": 160,
-    "reviewedCandidates": 858,
-    "unresolvedSafetyCandidates": 210,
+    "reviewRequired": 161,
+    "reviewedCandidates": 857,
+    "unresolvedSafetyCandidates": 211,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 160,
+    "REVIEW_REQUIRED": 161,
     "SCOPED_BOUNDARY": 547,
     "NARROW_EXCEPTION": 52,
-    "NOT_PERSISTENCE": 209,
+    "NOT_PERSISTENCE": 208,
     "REVIEWED_GAP": 50
   },
   "acceptance": {
@@ -28,8 +28,8 @@
     "result": "BLOCKED",
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
-    "verifiedCandidateBoundaries": 80,
-    "unresolvedCandidateBoundaries": 938,
+    "verifiedCandidateBoundaries": 78,
+    "unresolvedCandidateBoundaries": 940,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -1560,6 +1560,18 @@
       },
       {
         "code": "STALE_CALLER_BINDING",
+        "id": "OB-797d0149b7f511eb"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-797d0149b7f511eb"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-797d0149b7f511eb"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
         "id": "OB-5c2f93d299fae321"
       },
       {
@@ -1617,6 +1629,18 @@
       {
         "code": "STALE_NON_PERSISTENCE_REVIEW",
         "id": "OB-154dee0c03517ddb"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-e342cc899b4e9464"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-e342cc899b4e9464"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-e342cc899b4e9464"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -3872,19 +3896,19 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "18bd459313ae6dbebaab"
+        "id": "192373fab95b2ca5c670"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "14acbd3141fc7fc1aedc"
+        "id": "e6927dcdfc8b2bee2690"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6b064445c855504350b1"
+        "id": "09f9cc3bfa55e77de769"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "2560cf2908b41e1b590f"
+        "id": "41f72a13adc2226d0255"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3912,11 +3936,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "5725855926bd46f4b2a1"
+        "id": "db8cfe93b82fb3c4b04f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "108c0b015831530e885e"
+        "id": "a208147f40acfa66cc51"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4072,7 +4096,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a63399e235c516f3bb2c"
+        "id": "9852088dee45327bb0d1"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6492,7 +6516,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "28127c3e6464a190bb8e"
+        "id": "79e341a43e965b1352ab"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6548,11 +6572,15 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "3472a6307dab98e79124"
+        "id": "dd1d78ed7de602caed33"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "38edd11cb4a9893a7442"
+        "id": "8b6c8db2475fb88d9db1"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "eb59e0ef82bbce82aa9f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6592,7 +6620,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a054a6bf0c7fe92e32cb"
+        "id": "fdfcea22f1ec0d0fb1b6"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6675,6 +6703,10 @@
         "id": "3a7aa1dbe9ba47ad2c75"
       },
       {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "263fc12118f6091e650f"
+      },
+      {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "eafd89a3d20bbe8c8038"
       },
@@ -6732,7 +6764,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "a63399e235c516f3bb2c"
+        "id": "9852088dee45327bb0d1"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7376,7 +7408,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "28127c3e6464a190bb8e"
+        "id": "79e341a43e965b1352ab"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7408,11 +7440,15 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "3472a6307dab98e79124"
+        "id": "dd1d78ed7de602caed33"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "38edd11cb4a9893a7442"
+        "id": "8b6c8db2475fb88d9db1"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "eb59e0ef82bbce82aa9f"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7620,27 +7656,27 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "18bd459313ae6dbebaab"
+        "id": "192373fab95b2ca5c670"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "14acbd3141fc7fc1aedc"
+        "id": "e6927dcdfc8b2bee2690"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "6b064445c855504350b1"
+        "id": "09f9cc3bfa55e77de769"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "2560cf2908b41e1b590f"
+        "id": "41f72a13adc2226d0255"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "5725855926bd46f4b2a1"
+        "id": "db8cfe93b82fb3c4b04f"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "108c0b015831530e885e"
+        "id": "a208147f40acfa66cc51"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10416,7 +10452,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "a054a6bf0c7fe92e32cb"
+        "id": "fdfcea22f1ec0d0fb1b6"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10425,16 +10461,20 @@
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "19bac69e5470fee649fa"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "263fc12118f6091e650f"
       }
     ]
   },
   "reviewAgreement": {
     "currentCallers": 1018,
-    "structuredVerified": 80,
-    "structuredUnproven": 938,
-    "manualUnresolved": 210,
-    "manualUnsupported": 728,
-    "agreedVerified": 80,
+    "structuredVerified": 78,
+    "structuredUnproven": 940,
+    "manualUnresolved": 211,
+    "manualUnsupported": 729,
+    "agreedVerified": 78,
     "proofAwaitingManualReconciliation": 0
   },
   "callers": [
@@ -11090,15 +11130,15 @@
       }
     },
     {
-      "id": "18bd459313ae6dbebaab",
+      "id": "192373fab95b2ca5c670",
       "path": "backend/src/ai/parallelApproval.ts",
-      "line": 85,
+      "line": 129,
       "enclosing": "executeParallelNativeAction",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "3ae113999caad00037882cbe3f1cc72a7536a13b53e74403bf849dbda77cfeca",
+      "sourceSha256": "d6b4d7dc04f841eab5243b792bfc0556133a21e0340de033f8a826c1b07d9f3b",
       "semanticReview": {
         "authority": "The original context comes only from the canonical native permit. Exact user_id predicates scope the executing grant and current run/worker generation. Grant, owner, immutable digest, expiry and effect receipt are rechecked before and after provider waits and immediately after DNS before any public connection.",
         "reason": "Actual canonical confirmation/vault positive and negative synthetic protocol tests pass. This factory and its two scoped reads do not certify new Phase2 or whole-source live database acceptance. No new user-context issuer or accounting ledger is introduced.",
@@ -11115,15 +11155,15 @@
       }
     },
     {
-      "id": "14acbd3141fc7fc1aedc",
+      "id": "e6927dcdfc8b2bee2690",
       "path": "backend/src/ai/parallelApproval.ts",
-      "line": 85,
+      "line": 129,
       "enclosing": "executeParallelNativeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "3ae113999caad00037882cbe3f1cc72a7536a13b53e74403bf849dbda77cfeca",
+      "sourceSha256": "d6b4d7dc04f841eab5243b792bfc0556133a21e0340de033f8a826c1b07d9f3b",
       "semanticReview": {
         "authority": "The original context comes only from the canonical native permit. Exact user_id predicates scope the executing grant and current run/worker generation. Grant, owner, immutable digest, expiry and effect receipt are rechecked before and after provider waits and immediately after DNS before any public connection.",
         "reason": "Actual canonical confirmation/vault positive and negative synthetic protocol tests pass. This factory and its two scoped reads do not certify new Phase2 or whole-source live database acceptance. No new user-context issuer or accounting ledger is introduced.",
@@ -11140,15 +11180,15 @@
       }
     },
     {
-      "id": "6b064445c855504350b1",
+      "id": "09f9cc3bfa55e77de769",
       "path": "backend/src/ai/parallelApproval.ts",
-      "line": 88,
+      "line": 132,
       "enclosing": "executeParallelNativeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "3ae113999caad00037882cbe3f1cc72a7536a13b53e74403bf849dbda77cfeca",
+      "sourceSha256": "d6b4d7dc04f841eab5243b792bfc0556133a21e0340de033f8a826c1b07d9f3b",
       "semanticReview": {
         "authority": "The original context comes only from the canonical native permit. Exact user_id predicates scope the executing grant and current run/worker generation. Grant, owner, immutable digest, expiry and effect receipt are rechecked before and after provider waits and immediately after DNS before any public connection.",
         "reason": "Actual canonical confirmation/vault positive and negative synthetic protocol tests pass. This factory and its two scoped reads do not certify new Phase2 or whole-source live database acceptance. No new user-context issuer or accounting ledger is introduced.",
@@ -11165,15 +11205,15 @@
       }
     },
     {
-      "id": "2560cf2908b41e1b590f",
+      "id": "41f72a13adc2226d0255",
       "path": "backend/src/ai/parallelApproval.ts",
-      "line": 112,
+      "line": 156,
       "enclosing": "executeParallelNativeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "3ae113999caad00037882cbe3f1cc72a7536a13b53e74403bf849dbda77cfeca",
+      "sourceSha256": "d6b4d7dc04f841eab5243b792bfc0556133a21e0340de033f8a826c1b07d9f3b",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in executeParallelNativeAction. This specific call uses the built-in Uint8Array.from conversion of already fetched public document bytes for the PDF parser, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Public egress, document size and parsing limits, resource authority and downstream actions retain their separate security obligations.",
@@ -11381,18 +11421,18 @@
       }
     },
     {
-      "id": "5725855926bd46f4b2a1",
+      "id": "db8cfe93b82fb3c4b04f",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3878,
+      "line": 3974,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "e3ce3808eba24cd2461066d7b571ae5f96fd108ef3b8aaf807ba04b39b1b3dc8",
+      "sourceSha256": "c12b8c82d6d82f28f8dea53d2924127e9d92f9ec6eecb417c818e60620a45310",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Native reasoning alignment changes only answer options and their canonical output reservation. These two in-memory conversion expressions remain byte-identical. No new persistence call, authority or security certification is inferred. The tenant dispatch test verifies reservation and wire maxima match.",
         "evidence": [
           {
             "path": "backend/src/ai/pipeline.ts",
@@ -11402,18 +11442,18 @@
       }
     },
     {
-      "id": "108c0b015831530e885e",
+      "id": "a208147f40acfa66cc51",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4062,
+      "line": 4158,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "e3ce3808eba24cd2461066d7b571ae5f96fd108ef3b8aaf807ba04b39b1b3dc8",
+      "sourceSha256": "c12b8c82d6d82f28f8dea53d2924127e9d92f9ec6eecb417c818e60620a45310",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Native reasoning alignment changes only answer options and their canonical output reservation. These two in-memory conversion expressions remain byte-identical. No new persistence call, authority or security certification is inferred. The tenant dispatch test verifies reservation and wire maxima match.",
         "evidence": [
           {
             "path": "backend/src/ai/pipeline.ts",
@@ -12620,15 +12660,15 @@
       }
     },
     {
-      "id": "a63399e235c516f3bb2c",
+      "id": "9852088dee45327bb0d1",
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 141,
+      "line": 142,
       "enclosing": "normalizeSectionData",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e543d6fda12abd26617271c716e4200836aa1b948e46d313d158c8ac75f1d737"
+      "sourceSha256": "3bc391b9a9bfc1aef62be437bcff7442c3d683635f754e874b587b4297894a10"
     },
     {
       "id": "64b99cfd7d4a42c04576",
@@ -13651,7 +13691,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "adf4566f235d911750d8b682f2f3cfa77dc75c6ed7c91ab11e8a0c05cfcc02a0"
+      "sourceSha256": "8b4c625870f1fe79b19addfc39af13ed4cac86988d064280f1236c45eb0eec55"
     },
     {
       "id": "92acd75cb009a202b61c",
@@ -13662,7 +13702,7 @@
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "adf4566f235d911750d8b682f2f3cfa77dc75c6ed7c91ab11e8a0c05cfcc02a0"
+      "sourceSha256": "8b4c625870f1fe79b19addfc39af13ed4cac86988d064280f1236c45eb0eec55"
     },
     {
       "id": "3b78226da77b7e78f992",
@@ -13673,7 +13713,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "adf4566f235d911750d8b682f2f3cfa77dc75c6ed7c91ab11e8a0c05cfcc02a0"
+      "sourceSha256": "8b4c625870f1fe79b19addfc39af13ed4cac86988d064280f1236c45eb0eec55"
     },
     {
       "id": "806c73ec27b8163a6313",
@@ -13684,7 +13724,7 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "adf4566f235d911750d8b682f2f3cfa77dc75c6ed7c91ab11e8a0c05cfcc02a0"
+      "sourceSha256": "8b4c625870f1fe79b19addfc39af13ed4cac86988d064280f1236c45eb0eec55"
     },
     {
       "id": "1836c6f18b69f6a5d8f5",
@@ -13695,7 +13735,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "adf4566f235d911750d8b682f2f3cfa77dc75c6ed7c91ab11e8a0c05cfcc02a0"
+      "sourceSha256": "8b4c625870f1fe79b19addfc39af13ed4cac86988d064280f1236c45eb0eec55"
     },
     {
       "id": "3fba7dbe0551574fe56b",
@@ -20337,7 +20377,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "768d23551b96e4e803da3767e3b4cb99b6d28cb2d97f84d9a6c8c300fbdfc845",
+      "sourceSha256": "8e116ae5296634e5a493aea0cee9434255186deaced4ce27754f92d05e760f43",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in toolUiLink. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -31354,15 +31394,15 @@
       }
     },
     {
-      "id": "28127c3e6464a190bb8e",
+      "id": "79e341a43e965b1352ab",
       "path": "frontend/src/app/share/[token]/page.tsx",
-      "line": 122,
+      "line": 127,
       "enclosing": "canPresentRichShare",
       "kind": "RPC_CANDIDATE",
       "target": "current_community_role",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "984d65c26e0f8d0a2e876d8851f13f321cea01efc8b911fcc4d9a960bb9be32e"
+      "sourceSha256": "e3b120e75bfa476fb753973446dc0150c1607cb86ddb9e7b0a3e50f45d7ac294"
     },
     {
       "id": "19620b924bbcbab333b0",
@@ -31975,6 +32015,17 @@
       "sourceSha256": "2b1ee96959439cef8b692222e04dd4d178f84fb52d5cdac6ca4c853e281ecd6c"
     },
     {
+      "id": "dd1d78ed7de602caed33",
+      "path": "frontend/src/components/layout/ThemeToggle.tsx",
+      "line": 37,
+      "enclosing": "ThemeToggle",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "74edc6638d8f972b4743fbf22f84353e03580fcaf6e5d52d1a2c972e527a223b"
+    },
+    {
       "id": "92e2f9e84b8b9d7515b1",
       "path": "frontend/src/components/marketing/AiWebsiteBuilderAtmosphere.tsx",
       "line": 109,
@@ -32017,26 +32068,26 @@
       }
     },
     {
-      "id": "3472a6307dab98e79124",
+      "id": "8b6c8db2475fb88d9db1",
       "path": "frontend/src/components/native-openui/upstream/components/chart.tsx",
-      "line": 85,
+      "line": 90,
       "enclosing": "Cartesian",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9325d074808912c08ec9d59c7c4b58b09b831a91ab07d9601e44d70b33bddbb8"
+      "sourceSha256": "874ac345f1ffd85f5291ac5ced0dec31d82cee0fbeaca443c5b5c2f29edce91c"
     },
     {
-      "id": "38edd11cb4a9893a7442",
+      "id": "eb59e0ef82bbce82aa9f",
       "path": "frontend/src/components/native-openui/upstream/components/chart.tsx",
-      "line": 184,
+      "line": 189,
       "enclosing": "axis",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9325d074808912c08ec9d59c7c4b58b09b831a91ab07d9601e44d70b33bddbb8"
+      "sourceSha256": "874ac345f1ffd85f5291ac5ced0dec31d82cee0fbeaca443c5b5c2f29edce91c"
     },
     {
       "id": "c1f57b8225d79c77eef9",
@@ -32087,27 +32138,6 @@
           {
             "path": "frontend/src/components/os-preview/FounderScenarioLab.tsx",
             "marker": "<div className=\"os-field\"><label htmlFor=\"lab-module\">Module</label><select id=\"lab-module\" value={module} onChange={(event) => chooseModule(event.target.value as LabModule | 'All')}><option>All</option>{Array.from(new Set(LAB_SCENARIOS.map((item) => item.module))).map((item) => <option key={item}>{item}</option>)}</select></div>"
-          }
-        ]
-      }
-    },
-    {
-      "id": "e75e25572d006aea3011",
-      "path": "frontend/src/components/pricing/PricingPageClient.tsx",
-      "line": 121,
-      "enclosing": "CtaParticles",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "NOT_PERSISTENCE",
-      "sourceSha256": "06dc256ae10249978f8b73114f455a3b4a518d39287cd08dd229810ab66875c5",
-      "semanticReview": {
-        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in CtaParticles, with no database or Storage client receiver.",
-        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
-        "evidence": [
-          {
-            "path": "frontend/src/components/pricing/PricingPageClient.tsx",
-            "marker": "{Array.from({ length: 10 }, (_, index) => ("
           }
         ]
       }
@@ -32508,18 +32538,18 @@
       }
     },
     {
-      "id": "a054a6bf0c7fe92e32cb",
+      "id": "fdfcea22f1ec0d0fb1b6",
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 647,
+      "line": 591,
       "enclosing": "decodeBase64UrlUtf8",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "ec0e5e45eef5f5222d775c7e006fa805e741e24e77902ac77dc1a456b1d46f2f",
+      "sourceSha256": "80d7289b647a9db11e83766d5ad97fab981af52edec8982f5c5efd00ccad282a",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
-        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. Re-bound 2026-11-04: Diff from the reviewed source d80e1ce5489b is only `export` added to BusinessActionConfirmationInline so the V2 turn can render the existing confirmation review. The reviewed call (decodeBase64UrlUtf8 Array/Uint8Array conversion) is unchanged; no new call, receiver, persistence or egress was added.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. Re-bound 2026-11-04: Diff from the reviewed source d80e1ce5489b is only `export` added to BusinessActionConfirmationInline so the V2 turn can render the existing confirmation review. The reviewed call (decodeBase64UrlUtf8 Array/Uint8Array conversion) is unchanged; no new call, receiver, persistence or egress was added. Re-bound 2026-11-15: reviewed diff adds keyboard focus, group semantics and focus outline only to the pre renderer. The Uint8Array.from call in decodeBase64UrlUtf8 and its source position are unchanged. No persistence, authentication or network behavior changed. This refresh does not certify production tenancy. Re-bound 2026-11-17: the research approval card presents the exact query and question as text and retains the full payload for inspection. The approval handler, network requests and the reviewed Uint8Array.from conversion are unchanged. The candidate ID moved because presentation lines precede that conversion. Re-bound 2026-11-18: removed the later automatic prose paragraph splitter. The entire reviewed in-memory Uint8Array conversion function and its call identity are unchanged, with no new persistence, authority or network operation. Re-bound 2026-11-18: removed the later synthesized introduction callout. The entire reviewed in-memory Uint8Array conversion function and its call identity are unchanged, with no new persistence, authority or network operation.",
         "evidence": [
           {
             "path": "frontend/src/lib/formatAiMarkdown.tsx",
@@ -33016,15 +33046,15 @@
       "sourceSha256": "c73176a55e776661d1374be102e9b46b42fbd160122407941203a059408f5b47"
     },
     {
-      "id": "53953a7522a9f4a6ec38",
+      "id": "263fc12118f6091e650f",
       "path": "frontend/src/lib/xrogaFileExports.ts",
-      "line": 90,
+      "line": 119,
       "enclosing": "exportDocumentPdf",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "771f7f75bff7d39c9b05c230ae37cd6bb3fc287bcd09a187acb37e8337a89807",
+      "sourceSha256": "206c3d1dd60a23470ef366f85ae58af72948ce36c22fe86d931eb67eb9264116",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in exportDocumentPdf, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",

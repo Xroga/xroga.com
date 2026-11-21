@@ -34,16 +34,20 @@ export function citationMetadata(source: Pick<CitationSource, 'title' | 'siteNam
     ? 'Google Ads Help' : domain === 'ads.google.com' ? 'Google Ads'
       : domain === 'postgresql.org' || domain === 'git.postgresql.org' ? 'PostgreSQL' : domain;
   const site = providedName && !generic.test(providedName) ? providedName : knownName;
-  const providedTitle = source.title.trim();
+  const providedTitle = source.title.trim().replace(/^[-–—|:]+\s*/, '');
   const path = destination.pathname === '/' ? '' : destination.pathname;
   const title = providedTitle && !generic.test(providedTitle) ? providedTitle : site === domain ? domain + path : site;
   return { domain, site, title };
 }
 
-export function numberedCitation(label: string, href: string, sources: readonly CitationSource[]) {
+export function citationLabelNumber(label: string): number | undefined {
   const match = /^(?:\[(\d{1,3})\]|(\d{1,3}))$/.exec(label.trim());
-  if (!match) return undefined;
-  const number = Number(match[1] ?? match[2]);
+  return match ? Number(match[1] ?? match[2]) : undefined;
+}
+
+export function numberedCitation(label: string, href: string, sources: readonly CitationSource[]) {
+  const number = citationLabelNumber(label);
+  if (number === undefined) return undefined;
   const source = sources[number - 1];
   const url = safeSourceUrl(href);
   return source && url && safeSourceUrl(source.url) === url ? { number, source } : undefined;

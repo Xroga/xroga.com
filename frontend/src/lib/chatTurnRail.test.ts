@@ -75,7 +75,7 @@ test('reading position uses rendered real message anchors and an efficient binar
   assert.match(LOG, /\}, \[chatTurnIdsKey, sessionId\]\);/);
   assert.match(LOG, /conversationKey=\{/);
   assert.match(LOG, /key=\{sessionId\}/);
-  assert.match(LOG, /scrollIntoView\(\{ behavior: 'smooth', block: 'start' \}\)/);
+  assert.match(LOG, /scrollToMessage\(transcriptScrollRoot\(transcriptRef\.current\), turn, 'smooth'\)/);
 });
 
 test('visual rail stays within the existing left-side portal, with no fake messages', () => {

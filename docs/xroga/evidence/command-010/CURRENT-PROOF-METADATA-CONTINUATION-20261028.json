@@ -6,7 +6,9 @@
       "path": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/TRANSPORT-LIFETIME-PROOF-87e33b94.json",
       "historicalSha256": "9950d43b6acdd1c5ad4e4bf784ef5115d47af775141905e918525f4ac3cfb4a0",
-      "currentSha256": "258d319f9acc05f428bd40295a2481c8f20b0dc21c6dfd977d0592c0f9e75a35",
+      "currentSha256": "597d08d68fcebb577d2bef962d48257ad7bcc5afbd6f6ea27f73d140ab8aba98",
+      "beforeNamedDocumentPromptFixtureSha256": "80b4ea2aadb2c6b492bad62182fb59e111ccdc5044b001a9db4c0c102563b6c7",
+      "beforeWorkspaceAutomaticSearchResultStorageSha256": "39263d4084db7bff9c4e6fd33b8d10bbe6c2bb260a60c8a62474a810e4117cbf",
       "beforeInlineCalculatorRoutingSha256": "a9fcd233225d8a1e243b3a9c26a787b532e5db6e31a8be6c0e6ded490879fbaf",
       "beforePlannerCompletionDiagnosticsSha256": "0b2b44c1e6c6c2f3f186e540669e78464ff8c9b71a3bec72c19ad5d0f59c63df",
       "beforeNativeOpenUiBenchmarkSha256": "f7c19d49f9d3433032b7f5bc8a1489acbaab698e6e9b05953527cae38f4e1024",
@@ -33,7 +35,16 @@
       "beforeNativePlainPromptSha256": "c664925ba8b8f73ea316f91de601e4da85f384c7df716f9061c10cb99e0cc482",
       "beforeLiveChromePreservationSha256": "c5dc2789581a52c827f1b03ad7fb78052704c0779a6d3611a2e0040df3f06385",
       "beforeHostedWorkspaceStagingSha256": "7e8a157348ede2c414695ef4faa2cb8d2d5ccb5d95da9f2ddeaa99651883bb50",
-      "beforeWorkspaceResponseQualitySha256": "22f777e37d6c8467f7476dfc166d2557f938e83799b20f56fa1c4e1b1cb694e0"
+      "beforeWorkspaceResponseQualitySha256": "22f777e37d6c8467f7476dfc166d2557f938e83799b20f56fa1c4e1b1cb694e0",
+      "beforeNativeReadableCopyTestSha256": "0f043314a811aec04573e64a9fffefc78690bf27b3932228169bf27cc4069fc0",
+      "beforeNativeReasoningAlignmentSha256": "73b13f4edb75d5c3d708a74457e085652ccc5ea2c4388964adb2f3c68a927363",
+      "beforeBufferedDeadlineSha256": "4ae9e8734a9340e2b49541a87c1c059409846e95b129484c1fa5ca74242f336e",
+      "beforePlainReasoningDefaultSha256": "212cfc486f9423fa5eb5ab6d06408e7eaf90970b726dab5640b1a02a3622f859",
+      "beforeDeadlineAlignmentSha256": "1d6ff451122294fb65167bf3cacad79191a96920da105d9a8502bf18abb14640",
+      "beforeConnectCatalogCountSha256": "0f9c4e687480410bc71e5fafe8ad5eb2fc05360ad3b14c71effeae731f3d9912",
+      "beforeDraftRoutingSha256": "f616f0050bb16000ba0d3005f9627069005a4d613f4e051a0a74591bda1bc1ab",
+      "beforeWorkspaceReview20261119Sha256": "1586d0ded81b662449825ee102a4784be0542cebdf5c9dd4a478fb1ed1f8c290",
+      "beforeWorkspaceAutomaticSearchSha256": "1e2e190e9757dc038f9127a99124aaa348214a4668ec6cf7b1ff678273d48b6e"
     },
     {
       "path": "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",
@@ -46,7 +57,7 @@
       "path": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/MODEL-DISPATCH-PROOF-87e33b94.json",
       "historicalSha256": "7b04f1a944b9258329978770b9e273804653d5c7464a4ccfb2ac6c2e6f6849e1",
-      "currentSha256": "e849e4d1a31465f0cd4457594f786ff8bc974cca8657bcbd479f9b33d0071615",
+      "currentSha256": "2ee19e8a2d247e0e04cc689ae685280ca909a63f19e7a5e4af58ee464e5b3993",
       "beforeNativeOpenUiBenchmarkSha256": "e6f50ffc7aef52b6cc365dfe72ec89183242c2c74976f1dcc2f97ba815f68a22",
       "beforeNativePublicationSha256": "f2467eb712a137ff897be9157c16cf8e17311597f712a83aa0280ca8aed27eac",
       "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
@@ -63,7 +74,13 @@
       "previousCurrentSha256": "3fa435b95ed8f7f01f56c3c4cd92392e338264f5a4dfb0d2c4682ac180e1cdb4",
       "beforeNativeWorkspaceRoutingSha256": "e92a07a27739aeed74adbe601e77ca49ff97c93ea4140d9242e0b14adc0c980a",
       "beforeNativePlainPromptSha256": "40c3d57b33ac26d24bcd89e7cb49425888dd6dd0720b7dc0cb7e331207253e85",
-      "beforeWorkspaceResponseQualitySha256": "9e0d8aa9fc857f7ad01795246daae0c0e7c16b7ca610b37a6c3b834bcba79286"
+      "beforeWorkspaceResponseQualitySha256": "9e0d8aa9fc857f7ad01795246daae0c0e7c16b7ca610b37a6c3b834bcba79286",
+      "beforeNativeReasoningAlignmentSha256": "04f8f1820afe9fb6cd8b2b29388d6a19bd4ec047dc8976ff87e2f36c15d3450b",
+      "beforeBufferedDeadlineSha256": "5f8dda79654882a2d2e90f3cd86878edc4149874cb7e14fd297324694066266f",
+      "beforePlainReasoningDefaultSha256": "75ea9ce3619683f77f9c83d89ab2ccf895c6b37d40458170602da0a9cfb83b15",
+      "beforeDraftRoutingSha256": "98de1924ad59858873d5e48f9e8d29a5f2d4212332c397b005da3fdde3316665",
+      "beforeWorkspaceReview20261119Sha256": "0b67dc969fcc351be59c904fc76f6925bc07c9bfa375e99717ad37cc01715858",
+      "beforeWorkspaceAutomaticSearchSha256": "ae814b2c88ce86b855c94d52e3fd6195e73f7d88e09fcdbcad43a9247960cfa7"
     }
   ],
   "exactPersistenceRemaps": [
@@ -201,5 +218,31 @@
     "prNumber": 922,
     "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
     "basis": "The listed proof and register files were re-bound on PR 922 (see REBIND-REPORT.json); only currentSha256 values changed. historicalSha256 and the archived originals are untouched."
+  },
+  "workspaceReview20261119": {
+    "auditedBase": "5898449fad9adb60c6eaa98653f2ddec8d7d6e82",
+    "candidateSource": "eea565cc2377cd5d66fcf06cc6bd4da83cfc5681",
+    "quotaVariant": "cf036156e9bc7f12520239b594a31469e03b6354",
+    "fixtureSource": "b6dbd981bed013d1299d6732da0f5fe7d97bf100",
+    "scope": "The controlled fixture now counts quota reads for ordinary plain and rich answers and for file and approved Search turns. It verifies the single post-settlement refresh and exhausted-account denial before model reservation or attachment processing. Existing receipt and persistence checks still run. This source binding carries no new hosted, CI or production acceptance.",
+    "changedSources": [
+      {
+        "path": "backend/src/ai/pipeline.ts",
+        "previousSha256": "814b1ac7189f74142e4441796d200f11ee5f0f24eabc7f42face59d75a414add",
+        "currentSha256": "3eb2040d95ed469292f430d5e7b47f5a7d8bf1be2bf1a7b7fc617817141d1b56"
+      },
+      {
+        "path": "backend/src/ai/tenantModelDispatch.test.ts",
+        "previousSha256": "62d37e53a2d4abf418f9667341e4104672a712e9e9cc5dc0b7f8e35c25c632fb",
+        "currentSha256": "312d0338ebb8163b6b4649183a44c850a8d5ac83a4b3d67b1f9579218ed154bc"
+      }
+    ]
+  },
+  "workspaceAutomaticPublicSearch": {
+    "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
+    "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+    "path": "docs/xroga/evidence/command-010/WORKSPACE-AUTOMATIC-PUBLIC-SEARCH-20261119.json",
+    "scope": "EXACT_SOURCE_AUTOMATIC_PUBLIC_READ_LOCAL_CONTROLLED_EVIDENCE",
+    "hostedAcceptance": false
   }
 }

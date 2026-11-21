@@ -9,7 +9,7 @@
     {
       "path": "backend/src/ai/pipeline.ts",
       "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
-      "currentSha256": "e3ce3808eba24cd2461066d7b571ae5f96fd108ef3b8aaf807ba04b39b1b3dc8",
+      "currentSha256": "c12b8c82d6d82f28f8dea53d2924127e9d92f9ec6eecb417c818e60620a45310",
       "genericSdkPreviousCurrentBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
@@ -24,8 +24,8 @@
         "944a58bb15dca85b3ddd"
       ],
       "afterIds": [
-        "5725855926bd46f4b2a1",
-        "108c0b015831530e885e"
+        "db8cfe93b82fb3c4b04f",
+        "a208147f40acfa66cc51"
       ],
       "unchangedNearestBlockSha256": [
         "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
@@ -4270,12 +4270,67 @@
           "b1d5a924ac6051d72aee",
           "9ff832f34f606fa57c9e"
         ]
+      },
+      "beforeAdaptiveWorkspaceBudget": {
+        "currentSha256": "e3ce3808eba24cd2461066d7b571ae5f96fd108ef3b8aaf807ba04b39b1b3dc8",
+        "afterIds": [
+          "5725855926bd46f4b2a1",
+          "108c0b015831530e885e"
+        ]
+      },
+      "beforeNativeReasoningAlignment": {
+        "source": "677b111f52097654f47e92b6807b45200c2a89ee",
+        "sha256": "245f60b9f9b04e0a67226b5354a4fd13ccf584a475e2219a09472d2f5d57000c",
+        "afterIds": [
+          "93a3b008dcb4d37d39ce",
+          "b01a01f65052e1222fd2"
+        ],
+        "scope": "Historical binding retained, no new security acceptance"
+      },
+      "beforeBufferedDeadlineSha256": "cbf67edd08efef2f05de9690ad359cd5c92dd7802c453cfb5e5d2062a5876a79",
+      "beforePlainReasoningDefault": {
+        "source": "31db9f69d27998460ceb506cbdebd5972a2121a3",
+        "sha256": "5c37c7d2bbc96fc8c4ddf1f294c9b1f2bde5385048847400a5bcbd69a3582e06",
+        "afterIds": [
+          "e5fc46a4de6acdba6654",
+          "9a60c892b04c3d76e56b"
+        ]
+      },
+      "beforeDraftRouting": {
+        "sha256": "85c08952d3469ffaff203a91df6d79e3d554478278e9244317929d7d5de73780",
+        "ids": [
+          "dae25c9daa57213c1180",
+          "6239699ce63ed3c3adfc"
+        ],
+        "scope": "Native prompt eligibility only. Dispatch, settlement and bound persistence calls remain byte-identical. Historical evidence and acceptance are unchanged."
+      },
+      "workspaceReview20261119": {
+        "auditedBase": "5898449fad9adb60c6eaa98653f2ddec8d7d6e82",
+        "candidateSource": "eea565cc2377cd5d66fcf06cc6bd4da83cfc5681",
+        "previousSha256": "814b1ac7189f74142e4441796d200f11ee5f0f24eabc7f42face59d75a414add",
+        "previousCallIds": [
+          "dd07efebd27fb2ef7b30",
+          "73e39773b083010d176b"
+        ],
+        "finding": "Ordinary text now relies on the existing just-in-time quota check. Attachment extraction, Search and approved continuations, repository evidence and Sonnet review retain the early gate. The complete callBuilderStream and runBuildPipeline functions and every runWebIntelligence request expression match the audited base. The current Search confirmation wording does not affect authority.",
+        "liveAcceptance": false
+      },
+      "workspaceAutomaticSearch": {
+        "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
+        "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+        "previousSha256": "3eb2040d95ed469292f430d5e7b47f5a7d8bf1be2bf1a7b7fc617817141d1b56",
+        "previousCallerIds": [
+          "eb8532242b9c169bae0b",
+          "9372bc4c2d95f5c088d0"
+        ],
+        "evidencePath": "docs/xroga/evidence/command-010/WORKSPACE-AUTOMATIC-PUBLIC-SEARCH-20261119.json",
+        "liveAcceptance": false
       }
     },
     {
       "path": "backend/src/routes/phase1.ts",
       "historicalSha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b",
-      "currentSha256": "768d23551b96e4e803da3767e3b4cb99b6d28cb2d97f84d9a6c8c300fbdfc845",
+      "currentSha256": "8e116ae5296634e5a493aea0cee9434255186deaced4ce27754f92d05e760f43",
       "businessModelContinuationBinding": {
         "reference": "b183079ec8a00cb4d7a29a95e8cdfb517da81acb",
         "previousCurrentSha256": "7ad7b1f7dde453a4065e15ba260998fe5841c6992724d03ee299b71c8380c0f5",
@@ -4496,6 +4551,16 @@
           "78696e27dd5c1ca37c3a"
         ],
         "basis": "Current hash and the current review ids were re-bound after the strict call-and-function comparison in REBIND-REPORT.json. The nearest-block hashes and every historical record are unchanged."
+      },
+      "workspaceAutomaticSearch": {
+        "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
+        "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+        "previousSha256": "768d23551b96e4e803da3767e3b4cb99b6d28cb2d97f84d9a6c8c300fbdfc845",
+        "previousCallerIds": [
+          "006420f2256a9d86cc5a"
+        ],
+        "evidencePath": "docs/xroga/evidence/command-010/WORKSPACE-AUTOMATIC-PUBLIC-SEARCH-20261119.json",
+        "liveAcceptance": false
       }
     },
     {

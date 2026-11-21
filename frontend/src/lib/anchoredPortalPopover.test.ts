@@ -21,6 +21,12 @@ test('anchored popover preserves preferred placement when it fits and flips only
   }
 });
 
+test('sidebar theme menus retain their right-side alignment and remain inside narrow viewports', () => {
+  assert.deepEqual(clampAnchoredPosition({left:16,right:48,top:64,bottom:96},{width:224,height:240},{width:390,height:844},'right-start'),{left:56,top:64});
+  assert.deepEqual(clampAnchoredPosition({left:280,right:312,top:200,bottom:232},{width:224,height:240},{width:320,height:400},'right-start'),{left:84,top:148});
+  assert.deepEqual(clampAnchoredPosition({left:108,right:140,top:16,bottom:48},{width:224,height:240},{width:390,height:844},'bottom-end'),{left:12,top:56});
+});
+
 test('workspace identity uses the shared body portal with complete dismissal and reposition behavior', () => {
   const portal = readFileSync(new URL('../components/ui/AnchoredPortalPopover.tsx', import.meta.url), 'utf8');
   const menu = readFileSync(new URL('../components/terminal/WorkspaceIdentityMenu.tsx', import.meta.url), 'utf8');

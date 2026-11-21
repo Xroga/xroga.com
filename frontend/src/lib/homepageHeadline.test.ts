@@ -19,8 +19,15 @@ test('the previous production hero is fully removed from the page', () => {
 });
 
 test('homepage metadata carries the primary and secondary search intent', () => {
-  assert.match(ROUTE, /AI App Builder & Coding Agent for Real Software \| Xroga/);
-  assert.match(ROUTE, /keywords: \['AI app builder', 'AI coding agent'/);
+  assert.match(ROUTE, /Xroga AI \| Superintelligence Workspace for Everything/);
+  for (const keyword of ['AI assistant', 'AI workspace', 'AI coding agent', 'AI app builder']) {
+    assert.ok(ROUTE.includes(`'${keyword}'`), `missing homepage search intent: ${keyword}`);
+  }
+  assert.match(ROUTE, /keywords: HOMEPAGE_KEYWORDS/);
+  assert.match(ROUTE, /title: HOMEPAGE_TITLE/);
+  assert.match(ROUTE, /name: HOMEPAGE_TITLE/);
+  assert.equal(ROUTE.match(/description: HOMEPAGE_DESCRIPTION/g)?.length, 2,
+    'metadata and structured data share the same description');
   assert.match(ROUTE, /path: '\/'/);
 });
 

@@ -195,7 +195,7 @@
     {
       "id": "038ced12b0f74e8d5e0f",
       "callSha256": "bbbf26a58be8e30ace8fcfaac921075adab2a85ca44b5d5b7c9f48a7ec48c8f3",
-      "sourceFileSha256": "c159e3bd321637cc26214829ed36bca439a102e91983e6fd93fcbee36ef61544",
+      "sourceFileSha256": "c68442eb8d29d7aaa6d1ccbbfbff9c33e3d40701cd2254e689fee0d40fee2d4d",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "FIXED_PROVIDER_ENDPOINT_AND_NO_REDIRECT_ONLY_NOT_DNS_OR_FULL_EGRESS_CERTIFICATION",
       "tenantAuthority": "THREE_UPSTREAM_SDK_TENANT_ACCOUNT_AUTHORITY_AND_DATA_OBLIGATIONS_REMAIN_PENDING",
@@ -211,7 +211,7 @@
         {
           "path": "backend/src/ai/openaiCompat.egress.test.ts",
           "marker": "real SDK completion and streaming use only the approved endpoint and refuse redirects",
-          "sha256": "8a686f065bbd6b45bd94a332466dcd77799ed7d125947b9ec1b23296ceeb6c35",
+          "sha256": "34bd84f5aacee796d3dfa2ff83cfd227a24c41d19fc50c4c51abf88fd6e80a46",
           "reboundOnBranch": {
             "previousSha256": "0622d56b1885aad11d4f284da5aa055690e20d3661533aa59d0c9dd1c78cd499",
             "note": "Re-bound 2026-11-05: the file gained single-response transport regression tests and a streaming-verified guard in the existing redirect test; the reviewed redirect-refusal assertions are unchanged."
@@ -299,6 +299,10 @@
       "sourceFileReboundOnBranch": {
         "previousSha256": "daae1d83b060a6c98262b5c598dcbc07af2767f31b332e2dde4b9c57bec84021",
         "note": "Re-bound 2026-11-05: openaiCompat.ts gained chatCompletionSingleResponse and a three-line delegation at the top of chatCompletionStream for Zurelay until streamed usage receipts are verified. The reviewed SDK call expressions (callSha256), caller identities, endpoint admission, redirect refusal and reservation guards are unchanged; no new network caller was added."
+      },
+      "deadlineAlignmentReview": {
+        "previousSourceFileSha256": "0bd01dc8ca4992f8bc61de75a2f6ff655e56326d563155ccfe24a9f0f91f503f",
+        "scope": "Existing transport deadlines only. SDK and wire timeout outlast the canonical five-minute generation budget. Private staging bridge outlasts model and confirmed retrieval. Caller cancellation, fixed destinations, redirect refusal, JWT/IAM separation, maxRetries=0, reservation admission and verified settlement are unchanged. No new egress caller or security acceptance is granted."
       }
     },
     {
@@ -635,7 +639,7 @@
     {
       "id": "31380a8d5b9454a98a98",
       "callSha256": "8e82b633686ef353d4c6db063a70a5772fcf9350245bec5da9d8d86dc9cc769a",
-      "sourceFileSha256": "c159e3bd321637cc26214829ed36bca439a102e91983e6fd93fcbee36ef61544",
+      "sourceFileSha256": "c68442eb8d29d7aaa6d1ccbbfbff9c33e3d40701cd2254e689fee0d40fee2d4d",
       "disposition": "VERIFIED_GUARD",
       "trust": "SHARED_JSON_SDK_DISPATCH_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_OR_EXISTING_BOUNDED_ANONYMOUS_GUEST_LEASE_EACH_WIRE_RECHECKS_CURRENT_BINDING_COMPLETION_REQUIRES_SETTLEMENT_AND_ATOMIC_RECEIPT_OR_VERIFIED_CONSERVATIVE_GUEST_BUDGET_NO_RAW_ID_OR_CALLBACK_AUTHORITY",
@@ -719,12 +723,16 @@
       "sourceFileReboundOnBranch": {
         "previousSha256": "daae1d83b060a6c98262b5c598dcbc07af2767f31b332e2dde4b9c57bec84021",
         "note": "Re-bound 2026-11-05: openaiCompat.ts gained chatCompletionSingleResponse and a three-line delegation at the top of chatCompletionStream for Zurelay until streamed usage receipts are verified. The reviewed SDK call expressions (callSha256), caller identities, endpoint admission, redirect refusal and reservation guards are unchanged; no new network caller was added."
+      },
+      "deadlineAlignmentReview": {
+        "previousSourceFileSha256": "0bd01dc8ca4992f8bc61de75a2f6ff655e56326d563155ccfe24a9f0f91f503f",
+        "scope": "Existing transport deadlines only. SDK and wire timeout outlast the canonical five-minute generation budget. Private staging bridge outlasts model and confirmed retrieval. Caller cancellation, fixed destinations, redirect refusal, JWT/IAM separation, maxRetries=0, reservation admission and verified settlement are unchanged. No new egress caller or security acceptance is granted."
       }
     },
     {
       "id": "9c345e07b723c086440e",
       "callSha256": "6eb08ff947aaf655cbb9fac9f4af25c6e8fcb622517fc4343327edaf39a6eca9",
-      "sourceFileSha256": "c159e3bd321637cc26214829ed36bca439a102e91983e6fd93fcbee36ef61544",
+      "sourceFileSha256": "c68442eb8d29d7aaa6d1ccbbfbff9c33e3d40701cd2254e689fee0d40fee2d4d",
       "disposition": "VERIFIED_GUARD",
       "trust": "SHARED_SSE_SDK_DISPATCH_AND_DEFERRED_ACCOUNTED_PUBLICATION_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_EACH_WIRE_RECHECKS_CURRENT_OWNER_PROJECT_RUN_CREDENTIAL_AUTHORITY_BINDING_NO_PUBLIC_DELTAS_UNTIL_SETTLEMENT_AND_EXACT_ATOMIC_RECEIPT_CANCELLATION_REVOCATION_AND_PUBLICATION_FAILURE_CANNOT_RETRY_MODEL",
@@ -808,6 +816,10 @@
       "sourceFileReboundOnBranch": {
         "previousSha256": "daae1d83b060a6c98262b5c598dcbc07af2767f31b332e2dde4b9c57bec84021",
         "note": "Re-bound 2026-11-05: openaiCompat.ts gained chatCompletionSingleResponse and a three-line delegation at the top of chatCompletionStream for Zurelay until streamed usage receipts are verified. The reviewed SDK call expressions (callSha256), caller identities, endpoint admission, redirect refusal and reservation guards are unchanged; no new network caller was added."
+      },
+      "deadlineAlignmentReview": {
+        "previousSourceFileSha256": "0bd01dc8ca4992f8bc61de75a2f6ff655e56326d563155ccfe24a9f0f91f503f",
+        "scope": "Existing transport deadlines only. SDK and wire timeout outlast the canonical five-minute generation budget. Private staging bridge outlasts model and confirmed retrieval. Caller cancellation, fixed destinations, redirect refusal, JWT/IAM separation, maxRetries=0, reservation admission and verified settlement are unchanged. No new egress caller or security acceptance is granted."
       }
     },
     {
@@ -3103,7 +3115,7 @@
     {
       "id": "c09bb8607fa4d00f23b7",
       "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224",
-      "sourceFileSha256": "13315f5d5480282928def653b8552f932c447cf61038a590248feb8b9589e29d",
+      "sourceFileSha256": "c258e8605447027cf9c9cb386395cdf8ffbba9cd68384f7f9029858bc3560313",
       "disposition": "VERIFIED_GUARD",
       "trust": "CONFIGURED_FIRST_PARTY_API_ORIGIN_ONLY_NO_REDIRECT_OR_CREDENTIAL_BODY_FORWARDING",
       "tenantAuthority": "EXISTING_BROWSER_SESSION_TOKEN_OR_GUEST_SESSION_ONLY_BACKEND_MUST_ENFORCE_ORIGINAL_ISSUED_ACTOR_OWNER_AND_ACTION_AUTHORITY_NO_UPSTREAM_PROMOTION",
@@ -3274,6 +3286,12 @@
       "nativeOpenUiRebinding": {
         "sourceFileSha256": "bf072296dc2828844620377cf54a58fafe4cbedfb1a796a8324b77b1f10aa0c0",
         "scope": "Original transport call AST and identifier are unchanged."
+      },
+      "workspacePublicSearchPosition": {
+        "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
+        "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+        "previousSourceFileSha256": "13315f5d5480282928def653b8552f932c447cf61038a590248feb8b9589e29d",
+        "scope": "Exact existing transport expression only"
       }
     },
     {
@@ -4287,8 +4305,8 @@
       "callSha256": "8a4cf1df25bdb5d59e6f01020cc5be67cec679c8815a93cc5b5b594cc7a7fe28",
       "sourceFileSha256": "0a7da4cf31ee271f34d2380b8d7d557be006afb19283fe1cc529539dc210c54e",
       "disposition": "VERIFIED_GUARD",
-      "trust": "FIXED_PARALLEL_API_WITH_PRODUCER_ATTESTED_EXACT_PRIVATE_EGRESS_APPROVAL",
-      "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
+      "trust": "FIXED_OFFICIAL_DEEPSEEK_SEARCH_WITH_BOUND_PUBLIC_READ_OR_EXACT_PRIVATE_SEARCH_APPROVAL",
+      "tenantAuthority": "TENANT_ACTOR_AND_ONE_USE_REQUEST_ADMISSION_PUBLIC_READ_RECEIPT_OR_LEGACY_EXACT_AUTHORITY_CANONICAL_BUDGET_SETTLEMENT",
       "evidence": [
         {
           "path": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json",
@@ -4302,6 +4320,11 @@
           "reboundOnBranch": {
             "previousSha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
           }
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/WORKSPACE-AUTOMATIC-PUBLIC-SEARCH-20261119.json",
+          "marker": "EXACT_SOURCE_AUTOMATIC_PUBLIC_READ_LOCAL_CONTROLLED_EVIDENCE",
+          "sha256": "db737bc630e4b76dc80e212fcf0b92d4ac1f089c687c19395e84f1391b2be939"
         }
       ],
       "evidenceReboundOnBranch": {
@@ -4314,12 +4337,18 @@
         "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
         "previousCallSha256": "0015b0c0aa7832d13a4d87175cb68ff30a90f397c0cb84c5899433e3f5c2ea41",
         "review": "Manual review of the Parallel fetch in parallelDispatch.ts: fixed api.parallel.ai destination and redirect:manual are retained; the generative responses operation and its Bearer header were removed, so only search and extract (x-api-key) remain, guarded by requireRetrievalOperation. Outbound egress is narrowed."
+      },
+      "workspaceAutomaticSearch": {
+        "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+        "previousTrust": "FIXED_PARALLEL_API_WITH_PRODUCER_ATTESTED_EXACT_PRIVATE_EGRESS_APPROVAL",
+        "previousTenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
+        "scope": "Distinct public alternative with current-source local fixture evidence. Existing private review remains scoped to the exact permit."
       }
     },
     {
       "id": "90c62dd04b83e45e1c68",
       "callSha256": "f2de81a8a454b092ec31470bbf964af50c74badbf8644e61fba47ff760f8013b",
-      "sourceFileSha256": "3ae113999caad00037882cbe3f1cc72a7536a13b53e74403bf849dbda77cfeca",
+      "sourceFileSha256": "d6b4d7dc04f841eab5243b792bfc0556133a21e0340de033f8a826c1b07d9f3b",
       "disposition": "VERIFIED_GUARD",
       "trust": "EXACT_APPROVED_CREDENTIAL_FREE_DNS_PINNED_DOCUMENT_READ_NO_DELEGATED_FETCH",
       "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
@@ -4348,6 +4377,12 @@
         "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
         "previousSourceFileSha256": "84b38d89d19071027dd6be660a9f7e3bfbb15524250f5fa8a637b7a51e32d3a8",
         "verification": "The reviewed egress call hash (callSha256) and id are byte-identical to the reviewed main version. Only other code in the file changed."
+      },
+      "workspacePublicSearchPosition": {
+        "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
+        "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+        "previousSourceFileSha256": "3ae113999caad00037882cbe3f1cc72a7536a13b53e74403bf849dbda77cfeca",
+        "scope": "Exact existing transport expression only"
       }
     },
     {
@@ -4829,7 +4864,7 @@
     {
       "id": "9bcbd89af61af9d9c2e7",
       "callSha256": "69183a141ad19e783f685f9775253e45397ca21b8e45fbf36e8bda227880dfde",
-      "sourceFileSha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa",
+      "sourceFileSha256": "ed0c0165506693d18de5fe89e7f592798da5002ecf3b236be34b5d089a269a17",
       "disposition": "VERIFIED_GUARD",
       "trust": "GOOGLE_METADATA_ONLY_WITH_PINNED_STAGING_AUDIENCE",
       "tenantAuthority": "WORKLOAD_IDENTITY_ONLY_NO_USER_TOKEN",
@@ -4837,14 +4872,18 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
+          "sha256": "1805f6c26e4f49612784dcd5fc3521d059109dd5afb3afc6cb024a0934f0e854"
         }
-      ]
+      ],
+      "deadlineAlignmentReview": {
+        "previousSourceFileSha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa",
+        "scope": "Existing transport deadlines only. SDK and wire timeout outlast the canonical five-minute generation budget. Private staging bridge outlasts model and confirmed retrieval. Caller cancellation, fixed destinations, redirect refusal, JWT/IAM separation, maxRetries=0, reservation admission and verified settlement are unchanged. No new egress caller or security acceptance is granted."
+      }
     },
     {
       "id": "49a49569b55d144f7a6d",
       "callSha256": "da6bfc623a007eed3e78f4f96bc3c5380edf422eaf335a62cad99ea667f02942",
-      "sourceFileSha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa",
+      "sourceFileSha256": "ed0c0165506693d18de5fe89e7f592798da5002ecf3b236be34b5d089a269a17",
       "disposition": "VERIFIED_GUARD",
       "trust": "PINNED_PRIVATE_STAGING_HEALTH_NO_REDIRECT",
       "tenantAuthority": "WORKLOAD_IDENTITY_ONLY_NO_USER_TOKEN",
@@ -4852,14 +4891,18 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
+          "sha256": "1805f6c26e4f49612784dcd5fc3521d059109dd5afb3afc6cb024a0934f0e854"
         }
-      ]
+      ],
+      "deadlineAlignmentReview": {
+        "previousSourceFileSha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa",
+        "scope": "Existing transport deadlines only. SDK and wire timeout outlast the canonical five-minute generation budget. Private staging bridge outlasts model and confirmed retrieval. Caller cancellation, fixed destinations, redirect refusal, JWT/IAM separation, maxRetries=0, reservation admission and verified settlement are unchanged. No new egress caller or security acceptance is granted."
+      }
     },
     {
       "id": "e88275f663bb87ce2556",
       "callSha256": "76321677eab8b50bb630c570fefcde30d7972a323fb64ce6a832a1da1804486a",
-      "sourceFileSha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa",
+      "sourceFileSha256": "ed0c0165506693d18de5fe89e7f592798da5002ecf3b236be34b5d089a269a17",
       "disposition": "VERIFIED_GUARD",
       "trust": "PINNED_PRIVATE_STAGING_API_METHOD_PATH_AND_ISSUER_BOUND",
       "tenantAuthority": "ORIGINAL_USER_TOKEN_VERIFIED_BY_EXISTING_XROGA_AUTH_AND_TENANT_CHECKS",
@@ -4867,19 +4910,23 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
+          "sha256": "1805f6c26e4f49612784dcd5fc3521d059109dd5afb3afc6cb024a0934f0e854"
         },
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "the staging bridge forwards an empty Share revoke and rejects nonempty revoke bodies",
-          "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
+          "sha256": "1805f6c26e4f49612784dcd5fc3521d059109dd5afb3afc6cb024a0934f0e854"
         }
-      ]
+      ],
+      "deadlineAlignmentReview": {
+        "previousSourceFileSha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa",
+        "scope": "Existing transport deadlines only. SDK and wire timeout outlast the canonical five-minute generation budget. Private staging bridge outlasts model and confirmed retrieval. Caller cancellation, fixed destinations, redirect refusal, JWT/IAM separation, maxRetries=0, reservation admission and verified settlement are unchanged. No new egress caller or security acceptance is granted."
+      }
     },
     {
       "id": "a609adccda5421076aa0",
       "callSha256": "0dada8e6784a5bce39fbf1fa531b03ba551a31948812672d0398b222d8fcef74",
-      "sourceFileSha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa",
+      "sourceFileSha256": "ed0c0165506693d18de5fe89e7f592798da5002ecf3b236be34b5d089a269a17",
       "disposition": "VERIFIED_GUARD",
       "trust": "PINNED_PRIVATE_STAGING_RESEARCH_CONFIRMATION_GET_NO_REDIRECT",
       "tenantAuthority": "ORIGINAL_OWNER_JWT_VERIFIED_BY_EXISTING_XROGA_AUTH_AND_TENANT_CHECKS",
@@ -4887,9 +4934,29 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "hosted confirmation admits only the exact owner-visible DeepSeek research action",
-          "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
+          "sha256": "1805f6c26e4f49612784dcd5fc3521d059109dd5afb3afc6cb024a0934f0e854"
         }
-      ]
+      ],
+      "deadlineAlignmentReview": {
+        "previousSourceFileSha256": "562de9c1291a88600f00940fa7235b3d45ceb069194507f4b8e44e447588fbfa",
+        "scope": "Existing transport deadlines only. SDK and wire timeout outlast the canonical five-minute generation budget. Private staging bridge outlasts model and confirmed retrieval. Caller cancellation, fixed destinations, redirect refusal, JWT/IAM separation, maxRetries=0, reservation admission and verified settlement are unchanged. No new egress caller or security acceptance is granted."
+      }
+    },
+    {
+      "id": "e079c51ab00e88b88aa7",
+      "callSha256": "12ce03fb625377d4806972e2c62595cdfe78d3bf27b8cdd5da645d9ce5663494",
+      "sourceFileSha256": "e3bc7e2a3acb9adba5bb5c8506d1c7fadb5be3e3329d00dad3050d1bd7411240",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "PUBLIC_READ_ONLY_PLATFORM_CATALOG_METADATA_AT_EXISTING_DEPLOYMENT_ORIGIN_NO_PROVIDER_DESTINATION",
+      "tenantAuthority": "PUBLIC_SHARED_METADATA_ONLY_GET_CREDENTIALS_OMIT_NO_BEARER_COOKIE_BODY_OR_ACCOUNT_SCOPE_CURSOR_ENCODED_AS_QUERY_VALUE_12_SECOND_TIMEOUT_NO_RETRY",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/publicConnectCatalog.test.ts",
+          "marker": "public catalog reads use only the configured platform origin without account credentials",
+          "sha256": "1c5f1783b1005263c9ac7ba2be7e59d994a3c6d3efb76ba9740e9f2bf656dbb3"
+        }
+      ],
+      "sourceReview": "Inherited without application changes from already-serving frontend 758bce0b420354b09fa5ec9f50252ded508df13c. API_URL resolves the configured platform origin through existing protocol validation. A missing public catalog endpoint remains an unavailable response handled by the existing honest featured-app fallback. No new backend endpoint, connection authority or tenant certification is introduced."
     }
   ]
 }

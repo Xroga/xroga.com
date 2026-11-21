@@ -4,6 +4,7 @@ import {
   hostedWorkspaceManifest, requireHostedWorkspaceBuild, validateHostedWorkspaceStaging,
   verifyHostedWorkspaceBuildReceipt,
   stagingApiAudience, stagingApiIdentity, stagingApiService, stagingAuthOrigin, stagingWebOrigin, stagingOperatorOrigin,
+  stagingRequestTimeoutMs,
 } from './hosted-workspace-staging.mjs';
 import { forwardHostedWorkspace } from '../../frontend/src/lib/hostedWorkspaceBridge.mjs';
 import { resolveAuthBuildConfiguration } from '../../frontend/src/lib/supabase/authBuildRealm.mjs';
@@ -113,10 +114,12 @@ test('disallowed methods, paths, origins and credentials fail before Google or S
   assert.equal(calls, 0);
 });
 
-test('Google IAM and original user token stay separate and response drops platform headers', async () => {
+test('Google IAM and original user token stay separate and response drops platform headers', async t => {
   const manifest = makeManifest();
   const token = jwt();
   const observed = [];
+  const timeouts=[];
+  t.mock.method(AbortSignal,'timeout',ms=>{timeouts.push(ms);return new AbortController().signal;});
   const fetcher = async (url, options) => {
     observed.push({ url, options });
     if (url.hostname === 'metadata.google.internal') return new Response('google.id.token', { headers: { 'Metadata-Flavor': 'Google' } });
@@ -136,6 +139,9 @@ test('Google IAM and original user token stay separate and response drops platfo
   assert.equal(response.headers.get('set-cookie'), null);
   assert.equal(response.headers.get('X-Serverless-Authorization'), null);
   assert.equal(response.headers.get('cache-control'), 'private, no-store');
+  assert.ok(stagingRequestTimeoutMs>310_000,'Staging must outlast the complete provider transport and settlement');
+  assert.ok(timeouts.includes(stagingRequestTimeoutMs));
+  assert.ok(!timeouts.includes(180000));
 });
 
 test('the staging bridge forwards an empty Share revoke and rejects nonempty revoke bodies', async () => {

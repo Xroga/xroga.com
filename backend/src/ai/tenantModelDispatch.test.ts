@@ -7,7 +7,8 @@ import {withTenantModelReservation,type TenantModelScope} from './tenantModelDis
 import {chatCompletion,chatCompletionStream,type ChatMessage} from './openaiCompat.js';
 import {callBuilderStream,runChatPipeline} from './pipeline.js';
 import {goalContractSchema} from './universal/goalContract.js';
-import {presentationResponseFormat,type PresentationPlan} from './responsePresentation.js';
+import {presentationResponseFormat,presentedAnswerMaxTokens,type PresentationPlan} from './responsePresentation.js';
+import {prepareAnswerCoverage} from './answerCoverage.js';
 import {runArchitectPlan} from './architect.js';
 import {convertUserRequest} from './converter.js';
 import {createXrogaAgentModel} from './softwareAgent/xrogaAgentModel.js';
@@ -37,6 +38,10 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
   let atomicReceipts=0;
   let receivedAnswer = '';
   let lastReservedInput = 0;
+  let lastReservedOutput = 0;
+  let lastProviderMaxTokens = 0;
+  let quotaReads = 0;
+  let quotaReadsAtDispatch = 0;
   let abortDuringResponse:AbortController|undefined;
   const reset=(next='ok')=>{mode=next;row=structuredClone(original);ownerNow=owner;credentialReads=0;projectReads=0;mutate=undefined;expire=undefined;};
   const stringify=JSON.stringify;
@@ -53,6 +58,8 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
     const url=new URL(String(input));
     if(url.origin==='https://api.zurelay.com'){
       effects++;const body=JSON.parse(String(init?.body));assert.doesNotMatch(JSON.stringify(body),/foreign source|cached-key|SYNTHETIC_CREDENTIAL/);
+      lastProviderMaxTokens = body.max_tokens;
+      quotaReadsAtDispatch = quotaReads;
       abortDuringResponse?.abort();
       assert.equal(new Headers(init?.headers).get('authorization'),'Bearer '+(!['platform503','platformPositive'].includes(mode)?'synthetic-user-current':'synthetic-platform-key'));
       assert.equal(init?.redirect,'manual');
@@ -69,10 +76,27 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
       if(mode==='native') {
         assert.equal(body.response_format,undefined,'Native OpenUI uses the same request, without the old JSON schema');
         assert.match(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>/);
+        assert.equal(body.reasoning_effort, undefined, 'Rich native answers retain the model reasoning default');
+        assert.ok(body.max_tokens >= 20_480, 'Rich native answers reserve output beyond the reasoning allowance');
       }
       if(mode==='native-plain') {
+        assert.equal(body.reasoning_effort, undefined, 'Plain presentation preserves the provider reasoning default');
+        assert.ok(body.max_tokens >= 16384, 'The request reserves room for reasoning and the answer');
         assert.match(body.messages[0].content,/readable Markdown/);
         assert.doesNotMatch(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>|Chart\(/);
+      }
+      if (mode === 'native-document') {
+        const request = body.messages.at(-1).content;
+        if (request.includes('attached dataset') && !request.includes('Attached document text:')) {
+          assert.match(body.messages[0].content, /attachment is missing or unreadable/);
+        } else if (!request.includes('do not export')) {
+          assert.match(body.messages[0].content, /requested (?:DOCX|PDF|XLSX|PPTX) artifact as readable Markdown/);
+          assert.match(body.messages[0].content, /Workspace handles the local download/);
+          assert.match(body.messages[0].content, /Omit capability disclaimers, manual conversion instructions, file URLs/);
+        } else {
+          assert.doesNotMatch(body.messages[0].content, /requested (?:DOCX|PDF|XLSX|PPTX) artifact as readable Markdown/);
+        }
+        if (request.includes('Attached document text:')) assert.match(request, /ticket,attendees\n25,40/);
       }
       if(mode==='missingUsage')return Response.json({model:body.model,choices:[{message:{content:'must remain unpublished'},finish_reason:'stop'}]},
         {headers:{'x-request-id':'synthetic-unknown-usage','x-zurelay-model':body.model}});
@@ -80,7 +104,7 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
         {headers:{'x-request-id':'synthetic-wrong-model','x-zurelay-model':body.model}});
       if(mode==='droppedStream')return new Response('data: '+JSON.stringify({model:body.model,choices:[{delta:{content:'unconfirmed bytes'},finish_reason:null}]})+'\n\n',
         {headers:{'content-type':'text/event-stream','x-request-id':'synthetic-drop','x-zurelay-model':body.model}});
-      if(body.stream)return new Response('data: '+JSON.stringify({id:'synthetic-provider-receipt',choices:[{delta:{content:['presentation','native','native-plain'].includes(mode)?receivedAnswer:'owned result'},finish_reason:'stop'}],model:'deepseek-v4.1-flash-1017',usage:{prompt_tokens:2,completion_tokens:2,total_tokens:4}})+'\n\ndata: [DONE]\n\n',{headers:{'content-type':'text/event-stream','x-request-id':'synthetic-provider-receipt','x-zurelay-model':'deepseek-v4.1-flash-1017'}});
+      if(body.stream)return new Response('data: '+JSON.stringify({id:'synthetic-provider-receipt',choices:[{delta:{content:['presentation','native','native-plain','native-document'].includes(mode)?receivedAnswer:'owned result'},finish_reason:'stop'}],model:'deepseek-v4.1-flash-1017',usage:{prompt_tokens:2,completion_tokens:2,total_tokens:4}})+'\n\ndata: [DONE]\n\n',{headers:{'content-type':'text/event-stream','x-request-id':'synthetic-provider-receipt','x-zurelay-model':'deepseek-v4.1-flash-1017'}});
       return Response.json({id:'synthetic-provider-receipt',choices:[{message:{content:'{"stack":"static","files":[],"notes":[]}'},finish_reason:'stop'}],model:'deepseek-v4.1-flash-1017',usage:{prompt_tokens:2,completion_tokens:2,total_tokens:4}},{headers:{'x-request-id':'synthetic-provider-receipt','x-zurelay-model':'deepseek-v4.1-flash-1017'}});
     }
     assert.equal(url.origin,env.SUPABASE_URL,'Unexpected transport is never allowed');
@@ -101,12 +125,14 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
       return Response.json(mode==='foreignCredential'?{...row,user_id:foreign}:row);
     }
     if(url.pathname==='/rest/v1/user_token_usage'){
+      quotaReads++;
       mutate?.();mutate=undefined;
-      return Response.json({user_id:owner,plan_tier:'spark',plan_budget_usd:20,quota_period_start:new Date().toISOString().slice(0,7)+'-01',input_tokens:0,output_tokens:0,spent_usd:0,rollover_usd:0,model_usage:{}});
+      return Response.json({user_id:owner,plan_tier:'spark',plan_budget_usd:20,quota_period_start:new Date().toISOString().slice(0,7)+'-01',input_tokens:0,output_tokens:0,spent_usd:mode==='out-of-credit'?20:0,rollover_usd:0,model_usage:{}});
     }
     if(url.pathname==='/rest/v1/model_provider_health')return Response.json(null);
     if(url.pathname.endsWith('/reserve_xroga_provider_budget')){
       lastReservedInput = body.p_estimated_input_tokens;
+      lastReservedOutput = body.p_maximum_output_tokens;
       assert.equal(body.p_user_id,owner);
       const r={id:randomUUID(),user_id:mode==='reservationMismatch'?foreign:owner,status:'reserved',idempotency_key:body.p_idempotency_key,internal_route:body.p_internal_route,
         purpose:body.p_purpose,price_version:body.p_price_version,estimated_input_tokens:body.p_estimated_input_tokens,maximum_output_tokens:body.p_maximum_output_tokens,reserved_micro_usd:body.p_reservation_micro_usd};
@@ -320,28 +346,148 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
   ] as const) {
     reset('native');resetModelRuntimeHealth();
     receivedAnswer=readable+'\n<<<XROGA_OPENUI_V1>>>\n'+program;
+    const savedReadable = kind === 'file' ? readable+'\n\nTicket price (USD): 25'
+      : kind === 'research' ? readable+'\n\n[1]' : readable;
     const before:number=effects,receipts:number=atomicReceipts;
+    const previousQuotaReads = quotaReads;
     const result=await runChatPipeline({userId:owner,tenantContext:context,modelScope:scope,prompt:'Explain the supplied workshop price. No external research.',
       ...(kind==='file'?{attachments:[{url:'data:text/plain;base64,'+Buffer.from(readable).toString('base64'),mimeType:'text/plain',name:'workshop.txt'}]}:{approvedResearch:research}),
-      onDelta:text=>{assert.equal(atomicReceipts,receipts+1,'Publication must follow canonical settlement');assert.equal(text,readable);}});
-    assert.equal(result.response,readable);
+      onDelta:text=>{assert.equal(atomicReceipts,receipts+1,'Publication must follow canonical settlement');assert.equal(text,savedReadable);}});
+    assert.equal(result.response,savedReadable);
     assert.equal(effects,before+1);
     assert.equal(atomicReceipts,receipts+1);
+    assert.equal(quotaReadsAtDispatch - previousQuotaReads, 2, 'Files and approved research retain preflight and dispatch quota checks');
     assert.deepEqual(result.responseSource,{format:'xroga-openui-v1',text:kind==='invalid-source'?'':program});
     assert.deepEqual(result.completion,kind==='invalid-source'?{status:'partial',reason:'presentation_contract'}:{status:'complete'});
     if(kind==='file')assert.equal(result.intent,'file_analysis');
     else assert.deepEqual(result.webSources,[evidence]);
   }
+  reset('native');resetModelRuntimeHealth();
+  receivedAnswer='Record the custodian and arrival time.\n\nIf the archive seal is broken, release the item.';
+  const beforeFilePolicy:number=effects,receiptsFilePolicy:number=atomicReceipts;
+  let filePolicyDelta='';
+  const filePolicy=await runChatPipeline({userId:owner,tenantContext:context,modelScope:scope,
+    prompt:'Review the attached intake notes.\n\nIf the archive seal is broken, stop.',
+    attachments:[{url:'data:text/plain;base64,'+Buffer.from('Intake log').toString('base64'),mimeType:'text/plain',name:'intake.txt'}],
+    onDelta:text=>filePolicyDelta+=text});
+  assert.deepEqual(filePolicy.completion,{status:'partial',reason:'factual_review'});
+  assert.match(filePolicy.response,/Record the custodian and arrival time/);
+  assert.doesNotMatch(filePolicy.response,/release the item/);
+  assert.equal(filePolicyDelta,filePolicy.response,'Publish only the guarded file answer');
+  assert.equal(effects,beforeFilePolicy+1);
+  assert.equal(atomicReceipts,receiptsFilePolicy+1);
+
   reset('native-plain');resetModelRuntimeHealth();
   receivedAnswer='Paris is the capital of France.';
   const beforePlain:number=effects,receiptsPlain:number=atomicReceipts;
-  const plain=await runChatPipeline({userId:owner,tenantContext:context,modelScope:scope,prompt:'What is the capital of France?',goalContract:goalContractSchema.parse({
+  const plainGoal = goalContractSchema.parse({
     version:'1.0',goal:'Name the capital of France',desiredOutcome:'A concise answer',semanticIntent:'ANSWER',contextComplexity:'low',confidence:0.95,requiredCapabilities:['conversation.respond'],
-  })});
+  });
+  const plainRequest = {userId:owner,tenantContext:context,modelScope:scope,prompt:'What is the capital of France?',goalContract:plainGoal};
+  const beforePlainQuota = quotaReads;
+  const plain = await runChatPipeline(plainRequest);
   assert.deepEqual(plain.responseSource,{format:'xroga-openui-v1',text:''});
   assert.equal(plain.response,receivedAnswer);
   assert.equal(effects,beforePlain+1);
   assert.equal(atomicReceipts,receiptsPlain+1);
+  assert.equal(quotaReadsAtDispatch - beforePlainQuota, 1, 'Ordinary chat reads current quota only at model dispatch');
+  assert.equal(quotaReads - beforePlainQuota, 2, 'Published chat retains the settled quota refresh');
+
+  const pdfPrompt = 'Create a PDF executive report from this attached dataset.';
+  const dataset = {url:'data:text/csv;base64,' + Buffer.from('ticket,attendees\n25,40').toString('base64'),
+    mimeType:'text/csv', name:'workshop.csv'};
+  for (const { prompt, attachments, expected, fixture } of [
+    { prompt: 'Create a DOCX proposal with editable sections.', expected: 'docx' },
+    { prompt: 'Create a downloadable editable DOCX cue sheet for a fictional volunteer planetarium show.', expected: 'docx',
+      fixture: '# Planetarium cues\n\n## Cues\n\n| Cue | Start | Duration |\n| --- | --- | --- |\n| Red Beacon | 19:20 | 45 seconds |' },
+    { prompt: pdfPrompt, attachments: [dataset], expected: 'pdf' },
+    { prompt: pdfPrompt, expected: undefined },
+    { prompt: 'Create a PDF report, but do not export a file.', expected: undefined },
+    { prompt: 'Create an XLSX budget spreadsheet with formulas.', expected: 'xlsx',
+      fixture: '# Workshop budget\n\n| Item | Cost |\n| --- | --- |\n| Hosting | 25 |\n| Total | |\n\n## Formulas\n- B3: =SUM(B2:B2)' },
+    { prompt: 'Create a PPTX deck about workshop logistics.', expected: 'pptx',
+      fixture: '# Workshop\n\n## Logistics\nBring a projector.\n\n## Duration\nAllow 90 minutes.' },
+  ]) {
+    reset('native-document');resetModelRuntimeHealth();
+    receivedAnswer=fixture ?? '# Workshop report\n\nRevenue at 40 attendees: $1,000.';
+    const before: number = effects, settled: number = atomicReceipts;
+    const answer = await runChatPipeline({...plainRequest, prompt, attachments});
+    assert.equal(answer.response, receivedAnswer);
+    assert.equal(answer.responseSource?.format, 'xroga-openui-v1');
+    assert.equal(answer.responseSource?.downloadFormat, expected);
+    assert.equal(effects, before + 1, 'A download never requires a second model dispatch');
+    assert.equal(atomicReceipts, settled + 1);
+  }
+
+  reset('out-of-credit');
+  const beforeDeniedEffects = effects;
+  const beforeDeniedReservations = reservations.size;
+  await assert.rejects(runChatPipeline(plainRequest), {code:'OUT_OF_TOKENS'});
+  let attachmentInspected = false;
+  await assert.rejects(runChatPipeline({...plainRequest,attachments:[{
+    get url() {
+      attachmentInspected = true;
+      return 'data:text/plain,held-until-quota-is-verified';
+    },
+  }]}), {code:'OUT_OF_TOKENS'});
+  assert.equal(attachmentInspected, false, 'The model quota gate still runs before reading attachments');
+  assert.equal(effects, beforeDeniedEffects);
+  assert.equal(reservations.size, beforeDeniedReservations);
+
+  reset('native');resetModelRuntimeHealth();
+  const draftGoal = goalContractSchema.parse({
+    ...semantic,
+    goal: 'Draft an email and an RSVP form',
+    desiredOutcome: 'A copyable email and a local draft form',
+    contextComplexity: 'low',
+    presentation: [
+      { kind: 'prose', heading: 'Email', instruction: 'Draft the confirmation email.', covers: ['email'] },
+      { kind: 'prose', heading: 'RSVP form', instruction: 'Provide blank venue and accessibility fields.', covers: ['rsvp'] },
+    ],
+    answerObligations: [
+      { id: 'email', description: 'Draft the confirmation email.', origin: 'requested', formats: ['prose'] },
+      { id: 'rsvp', description: 'Provide a blank RSVP form.', origin: 'requested', formats: ['prose'] },
+    ],
+  });
+  const draftMarkdown = '## Email\n\nPlease confirm the event location.\n\n## RSVP form\n\nVenue: _____\n\nAccessibility needs: _____';
+  const draftProgram = [
+    'root = Col([Markdown(_xroga_answer), Controls([Input($venue, "Venue"), TextArea($access, "Accessibility needs")], "Fillable RSVP")])',
+    '$venue = ""',
+    '$access = ""',
+  ].join('\n');
+  receivedAnswer = draftMarkdown + '\n<<<XROGA_OPENUI_V1>>>\n' + draftProgram;
+  const beforeDraft = effects, receiptsDraft = atomicReceipts;
+  const beforeDraftQuota = quotaReads;
+  const draft = await runChatPipeline({ userId: owner, tenantContext: context, modelScope: scope,
+    prompt: 'Draft an email to confirm the event location and a blank RSVP form with venue and accessibility fields.',
+    goalContract: draftGoal });
+  assert.deepEqual(draft.completion, { status: 'complete' });
+  assert.equal(draft.responseSource?.format, 'xroga-openui-v1');
+  assert.match(draft.responseSource?.text ?? '', /TextArea\(\$access, "Accessibility needs"\)/);
+  assert.match(draft.response, /Please confirm the event location/);
+  assert.equal(effects, beforeDraft + 1);
+  assert.equal(atomicReceipts, receiptsDraft + 1);
+  assert.equal(quotaReadsAtDispatch - beforeDraftQuota, 1, 'Rich local drafts also avoid the duplicate quota read');
+
+  reset('native');resetModelRuntimeHealth();
+  const orderedPlan:PresentationPlan = ['Architecture', 'Ownership', 'Chart', 'Scenarios', 'Tradeoffs'].map((heading, index) => ({
+    kind: (['graph', 'table', 'chart', 'calculator', 'prose'] as const)[index]!,
+    heading, instruction: 'Preserve the supplied details.', covers: [`part-${index}`],
+  }));
+  const richGoal = goalContractSchema.parse({ ...semantic, presentation: orderedPlan,
+    answerObligations: orderedPlan.map((section,index)=>({id:`part-${index}`,description:section.heading,origin:'necessary-support',formats:[section.kind]})),
+  });
+  receivedAnswer = 'The architecture, ownership, chart, scenarios and tradeoffs are included.';
+  const beforeRich = effects, receiptsRich = atomicReceipts;
+  const richPrompt = 'Explain the architecture, ownership, chart, scenarios and tradeoffs. No external research.';
+  await runChatPipeline({ userId: owner, tenantContext: context, modelScope: scope,
+    prompt: richPrompt, goalContract: richGoal });
+  const plannedBudget = presentedAnswerMaxTokens(prepareAnswerCoverage(richPrompt, richGoal.presentation, richGoal.answerObligations).plan);
+  assert.ok(plannedBudget > 8192);
+  assert.equal(lastReservedOutput, 16_384 + plannedBudget);
+  assert.equal(lastProviderMaxTokens, lastReservedOutput);
+  assert.equal(effects, beforeRich + 1);
+  assert.equal(atomicReceipts, receiptsRich + 1);
 });
 
 test('local request security denial cannot fall through to a different provider or account',async()=>{

@@ -1,0 +1,123 @@
+/* Only the workspace header shadow and its conversation navigation controls. */
+.headerShadow { position: relative; z-index: 6; isolation: isolate; }
+.headerShadow::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 100%; height: 25px; z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(0,0,0,.22), rgba(0,0,0,.09) 37%, transparent);
+  opacity: 0; transform: translateY(-3px);
+  transition: opacity 240ms ease, transform 240ms ease;
+}
+.headerShadow[data-scrolled='true']::after { opacity: 1; transform: translateY(0); }
+:global(.terminal-skin-light) .headerShadow::after,
+:global(.terminal-skin-light-grid) .headerShadow::after,
+:global(.terminal-skin-solar) .headerShadow::after {
+  background: linear-gradient(to bottom, rgba(15,23,42,.14), rgba(15,23,42,.045) 47%, transparent);
+}
+
+/* R5Program/Uiverse button, scaled to 28px with a stronger circular outline and clicked fill.
+   Keep the pair horizontal on wider screens and beside the transcript on phones. */
+.navigation {
+  position: absolute;
+  z-index: 28;
+  right: 7px;
+  bottom: calc(100% + 10px);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 17px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(3px);
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+.navigation[data-visible='true'] {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.navButton {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  cursor: pointer;
+  padding: 3px;
+  border-radius: 50%;
+  background-color: var(--app-panel, white);
+  color: var(--foreground, #111);
+  border: 2.5px solid color-mix(in srgb, var(--foreground) 75%, transparent);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, .18);
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  transition: transform 500ms ease, background-color 500ms ease, color 500ms ease;
+}
+/* Larger invisible tap area without making the visible circle bulky. */
+.navButton::before {
+  content: '';
+  position: absolute;
+  inset: -11px;
+  border-radius: 50%;
+}
+.navButton::after {
+  content: attr(data-label);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  white-space: nowrap;
+  background-color: var(--app-panel, white);
+  color: var(--foreground, #111);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: 25px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, .12);
+  opacity: 0;
+  transform: translateX(-50%) scale(0);
+  transform-origin: center bottom;
+  transition: opacity 500ms ease, transform 500ms ease;
+  pointer-events: none;
+}
+.arrow, .downArrow {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  transition: transform 500ms ease;
+}
+.downArrow { transform: rotate(180deg); }
+.navButton:hover {
+  transform: translateY(-3px);
+  background-color: #0c0c0c;
+  color: #fff;
+}
+.navButton:hover .arrow, .navButton:focus-visible .arrow { transform: scale(1.2); }
+.navButton:hover .downArrow, .navButton:focus-visible .downArrow { transform: rotate(180deg) scale(1.2); }
+.navButton:hover::after, .navButton:focus-visible::after {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+.navButton[data-clicked='true'], .navButton:active {
+  background-color: #0c0c0c;
+  color: #fff;
+  border-color: color-mix(in srgb, var(--foreground) 85%, transparent);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, .28);
+}
+.navButton:active { transform: translateY(2px); }
+.navButton:focus-visible { outline: 2px solid var(--accent, #3b82f6); outline-offset: 3px; }
+@media (max-width: 639px) {
+  .transcript[data-conversation='true'] :global(.xv-terminal-body--flush) {
+    padding-right: max(40px, 6vw);
+  }
+  .navigation { right: 7px; bottom: calc(100% + 9px); gap: 19px; flex-direction: column; }
+  .navButton { height: 26px; width: 26px; flex-basis: 26px; padding: 3px; }
+  .navButton::before { inset: -12px; }
+  .arrow, .downArrow { width: 15px; height: 15px; }
+}
+@media (hover: none) {
+  .navButton::after { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .navigation, .headerShadow::after, .navButton, .navButton::after, .arrow, .downArrow { transition: none; }
+}

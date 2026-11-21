@@ -10,6 +10,7 @@ import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { MessageShareModal } from './MessageShareModal';
 import styles from './WorkspacePeopleControls.module.css';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
+import { publicAnswerExportText } from '@/lib/publicAnswerText';
 import { UsersRoundIcon } from '@/components/icons/animated/UsersRoundIcon';
 import { ShareIcon } from '@/components/icons/animated/ShareIcon';
 
@@ -21,7 +22,9 @@ export function WorkspacePeopleControls() {
   const [open, setOpen] = useState(false);
   const [share, setShare] = useState(false);
   const drawerRef = useRef<HTMLElement>(null);
-  const transcript = messages.filter(message => message.role === 'user' || message.role === 'assistant').map(message => `${message.role === 'user' ? 'You' : 'Xroga'}:\n${message.content}`).join('\n\n');
+  const transcript = messages.filter(message => message.role === 'user' || message.role === 'assistant').map(message =>
+    message.role === 'user' ? `You:\n${message.content}` : `Xroga:\n${publicAnswerExportText(message.content)}`,
+  ).join('\n\n');
   useEffect(() => {
     if (!open) return;
     const previous = document.activeElement as HTMLElement | null;

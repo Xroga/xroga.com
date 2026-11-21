@@ -5782,18 +5782,6 @@ body.theme-gray * {
   color: var(--foreground);
 }
 
-.xv-formatted-response .xv-answer-lead {
-  max-width: 820px;
-  margin-bottom: 1.35rem;
-}
-
-.xv-formatted-response .xv-answer-lead p {
-  margin: 0;
-  font-size: 1.05em !important;
-  line-height: 1.55 !important;
-  font-weight: 500;
-}
-
 .xv-formatted-response :where(blockquote) {
   margin-block: 1rem;
 }
@@ -9962,6 +9950,9 @@ body.xv-workspace-expanded-active .xv-terminal-dock {
 
 /* THE scrolling element. Not the body, not the shell, not the panel. */
 .xv-terminal-scroll {
+  /* The transcript anchors explicitly on submit. Browsers can otherwise anchor
+     to a loading or answer child that moves when the final response replaces it. */
+  overflow-anchor: none;
   flex: 1 1 auto;
   height: 100%;
   min-height: 0;
@@ -14651,12 +14642,12 @@ html.xv-home-scroll-lock body {
 .xv-response-meta a { color:inherit; text-decoration:underline; text-underline-offset:2px; }
 .xv-response-meta a:hover { color:var(--foreground); }
 .xv-response-meta time { opacity:0; transition:opacity .15s ease; }
-.group:hover .xv-response-meta time,.xv-response-meta:focus-within time { opacity:.8; }
+.group:hover .xv-response-meta time,.xv-response-meta:focus-within time { opacity:1; }
 @media (hover:hover) {
   .xv-response-meta { opacity:0; pointer-events:none; transform:translateY(-3px); transition:opacity .16s ease,transform .16s ease; }
   .group:hover .xv-response-meta,.group:focus-within .xv-response-meta,.xv-response-meta:focus-within { opacity:1; pointer-events:auto; transform:none; }
 }
-@media (hover:none) { .xv-response-meta time { opacity:.8; } }
+@media (hover:none) { .xv-response-meta time { opacity:1; } }
 .xv-thinking-history { margin:8px 0 12px; padding:9px 12px; border:1px solid color-mix(in srgb,var(--foreground) 12%,transparent); border-radius:10px; background:color-mix(in srgb,var(--foreground) 3%,transparent); color:var(--muted); font-size:11px; }
 .xv-thinking-history summary { display:flex; align-items:center; gap:7px; width:fit-content; cursor:pointer; color:var(--foreground); list-style:none; }
 .xv-thinking-history summary::-webkit-details-marker { display:none; }

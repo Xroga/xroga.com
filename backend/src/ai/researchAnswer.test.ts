@@ -5,13 +5,13 @@ import {researchAnswerRequestSchema,RESEARCH_ANSWER_MAXIMUM_MICRO_USD,researchCi
 import {runChatPipeline} from './pipeline.js';
 import {goalContractSchema} from './universal/goalContract.js';
 import {confirmBusinessAction,getBusinessActionConfirmation} from '../services/integrations/businessActionConfirmations.js';
-import {readResearchResult} from '../services/integrations/researchResult.js';
+import {presentResearchResult,readResearchResult} from '../services/integrations/researchResult.js';
+import {actorFromTenantContext,setStorageServiceForTests} from '../storage/runtime.js';
 import {createTenantContext} from '../security/tenantContext.js';
 import {nativeReleaseFixture} from '../services/publish/__tests__/nativeReleaseFixture.js';
 import {harness} from '../storage/testing/harness.js';
-import {setStorageServiceForTests} from '../storage/runtime.js';
 import {actionPlanDigest} from '../services/integrations/businessAction.js';
-import {presentResearchResult} from '../services/integrations/researchResult.js';
+import {workspacePublicSearchQuery} from './workspacePublicSearch.js';
 
 test('research attribution binds canonical pages without treating code or chart arrays as citations',()=>{
  const sources=[{url:'https://example.com/docs'},{url:'https://example.com/other'}];
@@ -26,24 +26,96 @@ test('research attribution binds canonical pages without treating code or chart 
 test('one exact research approval completes its original rich answer, saves evidence and cannot replay either provider',async t=>{
  const owner='11111111-1111-4111-8111-111111111111',foreign='22222222-2222-4222-8222-222222222222';
  const context=createTenantContext({userId:owner,via:'remote_getuser'});
- const env={NODE_ENV:'test',SUPABASE_URL:'http://127.0.0.1:55437',SUPABASE_SERVICE_ROLE_KEY:'synthetic-loopback',DEEPSEEK_WEBSEARCH_FETCH_API:'synthetic-retrieval',ZURELAY_API_KEY:'synthetic-model',ZURELAY_STREAM_USAGE_VERIFIED:'1'};
+ const env={NODE_ENV:'test',SUPABASE_URL:'http://127.0.0.1:55437',SUPABASE_SERVICE_ROLE_KEY:'synthetic-loopback',DEEPSEEK_WEBSEARCH_FETCH_API:'synthetic-retrieval',ZURELAY_API_KEY:'synthetic-model',ZURELAY_STREAM_USAGE_VERIFIED:'1',
+  XROGA_NATIVE_OPENUI_WORKSPACE:'0',XROGA_DEPLOYMENT_ENVIRONMENT:'staging'};
  const before=Object.fromEntries(Object.keys(env).map(k=>[k,process.env[k]]));Object.assign(process.env,env);
  const storage=harness(),confirmation=nativeReleaseFixture(owner),reservations=new Map<string,any>();setStorageServiceForTests(storage.svc);
  t.after(()=>{setStorageServiceForTests(undefined);for(const k of Object.keys(env)){if(before[k]===undefined)delete process.env[k];else process.env[k]=before[k];}});
  let searches=0,models=0,unknown=0,mode='ok';
+ let automaticAuditCount=0;
+ let expectedPublicQuery: RegExp | undefined;
+ const rankingPrompt='Top 10 best AI companies of 2026. Explain the ranking method, show their official websites, and cite sources.';
+ const ownerActor=actorFromTenantContext(context);
+ const searchFilename='research-'+context.correlationId+'.json';
+ const put=storage.store.put.bind(storage.store);
+ t.mock.method(storage.store,'put',(...args:Parameters<typeof put>)=>{
+  if(mode==='automatic-storage-failure')throw Error('Synthetic private evidence write failure');
+  return put(...args);
+ });
+ const unrelatedHistory='Earlier NASA mission discussion UNRELATED_PRIOR_NASA_TURN';
  const raw=JSON.stringify({s0:{markdown:'The retrieved page documents the supplied option [1].',data:{columns:['Option','Evidence'],rows:[['Documented option','Public source excerpt [1]']]}}});
  t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
   const url=new URL(String(input)),body=init?.body?JSON.parse(String(init.body)):{};
   if(url.origin==='https://api.deepseek.com'&&url.pathname==='/v1/tools/search'){
    searches++;assert.equal(init?.redirect,'manual');assert.ok(!JSON.stringify(body).includes('answerRequest'));
-   return Response.json({results:[{title:'Public documentation',url:'https://example.com/docs',summary:'Public source excerpt'},{title:'Same page',url:'https://example.com/docs#section',summary:'Public source excerpt'}]},{headers:{'x-ds-trace-id':'synthetic-search-'+searches}});
+   if(mode.startsWith('automatic')){
+    if(mode==='automatic-official'){
+      assert.deepEqual(Object.keys(body).sort(),['count','query']);
+      assert.equal(body.count,10);
+      assert.match(body.query,/difference between solar and lunar eclipses/);
+      assert.match(body.query,/ site:nasa\.gov$/);
+      assert.ok([...body.query].length<=128);
+    }else if(mode.startsWith('automatic-ranking')){
+      assert.deepEqual(body,{query:'Top 10 best AI companies of 2026. Explain the ranking method, show their official websites',count:10});
+    }else if(mode==='automatic-parity'){
+      assert.deepEqual(Object.keys(body).sort(),['count','query']);
+      assert.equal(body.count,10);
+      assert.match(body.query,expectedPublicQuery!);
+      assert.ok([...body.query].length<=128);
+    }else assert.deepEqual(body,{query:'price of btc currently',count:10});
+    assert.doesNotMatch(JSON.stringify(body),/UNRELATED_PRIOR|MUST_NOT_LEAVE|substituted planner context|AMBIENT_PRIVATE_REPOSITORY|evil.example/);
+   }
+   const results=mode==='automatic-no-sources'?[]:[
+    ...(mode==='automatic-official'?[{title:'NASA Eclipses',url:'https://science.nasa.gov/eclipses/',summary:'Public source excerpt',
+      site_name:'NASA Science',site_icon:'https://cdn.deepseek.com/site-icons/science.nasa.gov'}]:[]),
+    {title:'Public documentation',url:'https://example.com/docs',summary:'Public source excerpt',
+     site_name:'Example Exchange',site_icon:'https://cdn.deepseek.com/site-icons/example.com'},
+    {title:'Same page',url:'https://example.com/docs#section',summary:'Public source excerpt'},
+    ...(mode==='automatic'?[{title:'Archived quote',url:'https://example.org/archive',summary:'Old valuation snapshot',date:'2023-01-01T12:00:00Z'}]:[]),
+   ];
+   return Response.json({results},{headers:{'x-ds-trace-id':'synthetic-search-'+searches}});
   }
   if(url.origin==='https://api.zurelay.com'){
-   models++;assert.equal(body.model,'deepseek-v4.1-flash-1017');assert.equal(body.max_tokens,4096);assert.equal(new Headers(init?.headers).get('x-zurelay-fallback'),'off');
+   models++;assert.equal(body.model,'deepseek-v4.1-flash-1017');assert.equal(new Headers(init?.headers).get('x-zurelay-fallback'),'off');
    assert.match(JSON.stringify(body.messages),/Public source excerpt/);assert.match(JSON.stringify(body.messages),/untrusted|external data/i);
-   assert.ok(['json_object','json_schema'].includes(body.response_format.type));
+   if(mode==='automatic'||mode==='automatic-official'||mode.startsWith('automatic-ranking')||mode==='automatic-parity'){
+    const trace='synthetic-search-'+searches;
+    assert.equal([...reservations.values()].find(row=>row.provider_request_id===trace)?.status,'settled');
+    const objects=await storage.svc.listObjects(ownerActor,{safeFilename:searchFilename});
+    const evidence=await Promise.all(objects.map(async object=>({
+     object, body:JSON.parse((await storage.svc.readObjectBytes(ownerActor,object.id)).bytes.toString('utf8')),
+    })));
+    const current=evidence.find(item=>item.body.result.search_id===trace);
+    assert.ok(current,'Private evidence must already be verified before synthesis');
+    assert.equal(current.body.result.provider,'deepseek');
+    assert.equal(current.body.trust,'UNTRUSTED_DATA');
+    await assert.rejects(storage.svc.readObjectBytes(storage.bob,current.object.id),{code:'NOT_FOUND'});
+    assert.doesNotMatch(JSON.stringify(body.messages),/MUST_NOT_LEAVE|substituted planner context/);
+    assert.match(JSON.stringify(body.messages),/UNRELATED_PRIOR_NASA_TURN/);
+    assert.equal(body.messages.length,3);
+    assert.equal(body.reasoning_effort,undefined);
+    if(mode==='automatic'){
+     assert.equal(body.max_tokens,16_384);
+     assert.match(body.messages[0].content,/Return only the answer, without an OpenUI program/);
+     assert.doesNotMatch(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>/);
+     assert.match(body.messages[2].content,/Page publication \(source metadata\): 2023-01-01T12:00:00\.000Z/);
+     assert.match(body.messages[2].content,/Never average or combine stale/);
+    }else if(mode!=='automatic-parity'){
+     assert.equal(body.max_tokens,20_480);
+     assert.match(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>/);
+     assert.doesNotMatch(body.messages[2].content,/one or two short paragraphs/);
+    }
+   }else{
+    assert.equal(body.max_tokens,4096);
+    assert.ok(['json_object','json_schema'].includes(body.response_format.type));
+   }
    if(mode==='drop')throw Object.assign(Error('Synthetic dispatch uncertainty'),{name:'AbortError'});
-   const sse='data: '+JSON.stringify({id:'synthetic-answer-'+models,model:body.model,choices:[{index:0,delta:{content:raw},finish_reason:'stop'}],usage:{prompt_tokens:100,completion_tokens:40,total_tokens:140}})+'\n\ndata: [DONE]\n\n';
+   if(mode.startsWith('automatic-ranking'))assert.ok(body.messages[2].content.includes(rankingPrompt));
+   const content=mode==='automatic-ranking-status'?'Web search finished.'
+     :mode.startsWith('automatic')?'The public page documents the answer [1](https://wrong.example/page).':raw;
+   const sse='data: '+JSON.stringify({id:'synthetic-answer-'+models,model:body.model,
+    choices:[{index:0,delta:{content},finish_reason:'stop'}],
+    usage:{prompt_tokens:100,completion_tokens:40,total_tokens:140}})+'\n\ndata: [DONE]\n\n';
    return new Response(sse,{headers:{'content-type':'text/event-stream','x-request-id':'synthetic-answer-'+models,'x-zurelay-model':body.model}});
   }
   assert.equal(url.origin,env.SUPABASE_URL,'All network is synthetic and bounded');
@@ -65,6 +137,14 @@ test('one exact research approval completes its original rich answer, saves evid
    return Response.json(null);
   }
   if(url.pathname.endsWith('/record_ai_usage_atomic'))return Response.json({userId:owner,receiptId:body.p_receipt_id,modelId:body.p_model_id,poolRole:body.p_pool_role,inputTokens:body.p_input,outputTokens:body.p_output,costUsd:body.p_cost_usd,ledgerId:'1',period:new Date().toISOString().slice(0,7)+'-01',replayed:false,usage:{user_id:owner}});
+  if(url.pathname.endsWith('/production_audit_log')&&mode.startsWith('automatic')){
+   assert.equal(body.metadata.classification,'PUBLIC');
+   assert.equal(body.outcome,'ALLOW');
+   assert.equal(body.user_id,owner);
+   assert.doesNotMatch(JSON.stringify(body),/NASA|price of btc|substituted planner context/);
+   automaticAuditCount++;
+   if(mode==='automatic-audit-failure')return Response.json({message:'synthetic unavailable'},{status:503});
+  }
   if(url.pathname.endsWith('/xroga_web_usage'))return new Response(null,{status:201});
   const response=await confirmation.database(url,init);if(response)return response;
   throw Error('Unexpected fixture request '+url.pathname);
@@ -109,6 +189,221 @@ test('one exact research approval completes its original rich answer, saves evid
  await assert.rejects(runChatPipeline({userId:owner,tenantContext:context,prompt,goalContract:goal,
   history:[{role:'user',content:'SYNTHETIC_CREDENTIAL_CANARY_MUST_NOT_LEAVE'}]}));
  assert.equal(searches,3);assert.equal(models,2);assert.equal(reservations.size,reservedBeforeSecret,'Credential-bearing continuation context cannot acquire approval or dispatch');
+
+ const currentPrompt='price of btc currently';
+ const currentGoal=goalContractSchema.parse({...goal,goal:'substituted planner context',desiredOutcome:'substituted planner context',
+  requiredCapabilities:['conversation.respond'],projectContext:{repo:'example/AMBIENT_PRIVATE_REPOSITORY',branch:'main'}});
+ const automaticRequest={userId:owner,tenantContext:context,prompt:currentPrompt,goalContract:currentGoal,autoPublicSearch:true as const,
+  history:[{role:'user' as const,content:unrelatedHistory},{role:'assistant' as const,content:'SYNTHETIC_CREDENTIAL_MUST_NOT_LEAVE'}]};
+ const confirmedRow=confirmation.row;
+ process.env.XROGA_NATIVE_OPENUI_WORKSPACE='1';
+ mode='automatic';
+ const automatic=await runChatPipeline(automaticRequest);
+ assert.equal(automatic.publicWebRetrieved,true);assert.equal(automatic.intent,'research');
+ assert.equal(automatic.webSources?.[0]?.siteName,'Example Exchange');assert.equal(automatic.webSources?.[0]?.siteIconDomain,'example.com');
+ assert.equal(automatic.responseSource?.format,'xroga-openui-v1');
+ assert.match(automatic.response,/https:\/\/example.com\/docs/);assert.doesNotMatch(automatic.response,/wrong.example|Review action/);
+ assert.equal(searches,4);assert.equal(models,3);assert.equal(automaticAuditCount,1);assert.equal(confirmation.row,confirmedRow);
+ const automaticSearch=[...reservations.values()].find(row=>row.provider_request_id==='synthetic-search-4');
+ assert.equal(automaticSearch?.settled_micro_usd,750);assert.equal(automaticSearch?.search_calls,1);
+
+ mode='ok';
+ const privatePending=await runChatPipeline({...automaticRequest,history:[],prompt:'Search my confidential client notes for latest account details'});
+ assert.equal(privatePending.intent,'confirmation_required');assert.equal(privatePending.publicWebRetrieved,undefined);
+ assert.equal(confirmation.row?.plan.authority?.actionClass,'SENSITIVE_DATA_EXPORT');
+ assert.equal(searches,4);assert.equal(models,3);
+
+ mode='automatic-no-sources';
+ await assert.rejects(runChatPipeline(automaticRequest),{code:'TOOL_UNAVAILABLE'});
+ assert.equal(searches,5);assert.equal(models,3);assert.equal(automaticAuditCount,2);
+ const emptySearch=[...reservations.values()].find(row=>row.provider_request_id==='synthetic-search-5');
+ assert.equal(emptySearch?.settled_micro_usd,0);assert.equal(emptySearch?.search_calls,1);
+
+ mode='automatic-audit-failure';const beforeDeniedReservation=reservations.size;
+ await assert.rejects(runChatPipeline(automaticRequest));
+ assert.equal(searches,5);assert.equal(models,3);assert.equal(reservations.size,beforeDeniedReservation);
+ const abort=new AbortController();abort.abort();
+ await assert.rejects(runChatPipeline({...automaticRequest,autoPublicSearchSignal:abort.signal}));
+ assert.equal(searches,5);assert.equal(models,3);assert.equal(reservations.size,beforeDeniedReservation);
+
+ mode='automatic-official';
+ const nasaPrompt='Search the web using only official NASA sources (nasa.gov). Explain the difference between solar and lunar eclipses, why they don’t happen every month, and cite your sources.';
+ const nasaGoal=goalContractSchema.parse({...currentGoal,sourcePolicy:{mode:'official_only',scope:'public_web',officialDomains:['evil.example']}});
+ const nasa=await runChatPipeline({...automaticRequest,prompt:nasaPrompt,goalContract:nasaGoal});
+ assert.equal(nasa.publicWebRetrieved,true);assert.equal(nasa.webSources?.length,1);
+ assert.equal(nasa.webSources?.[0]?.siteIconDomain,'science.nasa.gov');
+ assert.match(nasa.response,/https:\/\/science.nasa.gov\/eclipses\//);
+ assert.equal(searches,6);assert.equal(models,4);
+
+ const heldBeforeStorage=reservations.size, auditsBeforeStorage=automaticAuditCount;
+ setStorageServiceForTests(undefined);
+ try { await assert.rejects(runChatPipeline(automaticRequest),{code:'PROVIDER_UNAVAILABLE'}); }
+ finally { setStorageServiceForTests(storage.svc); }
+ assert.equal(searches,6);assert.equal(models,4);
+ assert.equal(automaticAuditCount,auditsBeforeStorage);assert.equal(reservations.size,heldBeforeStorage);
+
+ mode='ok';
+ const projectPending=await runChatPipeline({...automaticRequest,history:[],projectEvidence:'Authorized repository evidence.'});
+ assert.equal(projectPending.intent,'confirmation_required');
+ assert.equal(projectPending.publicWebRetrieved,undefined);
+ assert.equal(confirmation.row?.plan.authority?.actionClass,'SENSITIVE_DATA_EXPORT');
+ assert.equal(searches,6);assert.equal(models,4);
+
+ const lastConfirmation=confirmation.row;
+ const ranking={...automaticRequest,prompt:rankingPrompt,
+  goalContract:goalContractSchema.parse({...currentGoal,sourcePolicy:{mode:'official_only',scope:'public_web',officialDomains:['evil.example']}})};
+ mode='automatic-ranking';
+ const ranked=await runChatPipeline(ranking);
+ assert.equal(ranked.intent,'research');
+ assert.equal(ranked.publicWebRetrieved,true);
+ assert.match(ranked.response,/https:\/\/example.com\/docs/);
+ assert.doesNotMatch(ranked.response,/Review action|Web search finished/);
+ assert.equal(confirmation.row,lastConfirmation);
+ assert.equal(searches,7);assert.equal(models,5);
+ assert.equal([...reservations.values()].find(row=>row.provider_request_id==='synthetic-search-7')?.settled_micro_usd,750);
+
+ mode='automatic-ranking-status';
+ const partial=await runChatPipeline(ranking);
+ assert.equal(partial.completion?.status,'partial');
+ assert.match(partial.response,/couldn’t finish the answer/);
+ assert.doesNotMatch(partial.response,/Review action|Web search finished/);
+ assert.equal(partial.publicWebRetrieved,true);
+ assert.ok(partial.webSources?.length);
+ assert.equal(confirmation.row,lastConfirmation);
+ assert.equal(searches,8);assert.equal(models,6);
+
+ await assert.rejects(runChatPipeline({...automaticRequest,prompt:'What should I know about that?'}),
+  {code:'TOOL_UNAVAILABLE',message:/self-contained public search query/});
+ assert.equal(confirmation.row,lastConfirmation,'An unclassified public query must not manufacture a write approval');
+ assert.equal(searches,8);assert.equal(models,6);
+
+ mode='automatic-parity';
+ for(const [prompt,query] of [
+  ['Compare the newest stable Next.js release and the previous major version. Mention official release dates and upgrade risks.',/Next\.js release/],
+  ['Compare three cloud application hosting options for a small startup with a $100/month infrastructure budget. Distinguish assumptions from verified current pricing.',/\$100 per month.*current pricing/],
+  ['Who is the current CEO of Microsoft, and which official source confirms it?',/CEO of Microsoft/],
+ ] as const){
+  expectedPublicQuery=query;
+  const answer=await runChatPipeline({...ranking,prompt});
+  assert.equal(answer.intent,'research');
+  assert.equal(answer.publicWebRetrieved,true);
+  assert.match(answer.response,/https:\/\/example\.com\/docs/);
+  assert.doesNotMatch(answer.response,/Review action|Web search finished/);
+  assert.equal(confirmation.row,lastConfirmation);
+ }
+ assert.equal(searches,11);assert.equal(models,9);
+
+ mode='automatic-storage-failure';
+ const storedBeforeFailure=(await storage.svc.listObjects(ownerActor,{safeFilename:searchFilename})).length;
+ await assert.rejects(runChatPipeline(automaticRequest),{code:'PROVIDER_UNAVAILABLE'});
+ assert.equal(searches,12,'A failed private write must not repeat retrieval');
+ assert.equal(models,9,'Unstored retrieval must not enter synthesis');
+ assert.equal((await storage.svc.listObjects(ownerActor,{safeFilename:searchFilename})).length,storedBeforeFailure);
+ const failedWriteSearch=[...reservations.values()].find(row=>row.provider_request_id==='synthetic-search-12');
+ assert.equal(failedWriteSearch?.status,'settled');
+ assert.equal(failedWriteSearch?.search_calls,1);
+ assert.equal(confirmation.row,lastConfirmation);
+});
+
+test('automatic Search eligibility uses only the current public lookup with ambiguous inputs held for review',()=>{
+ assert.deepEqual(workspacePublicSearchQuery('price of btc currently'),{query:'price of btc currently',officialDomains:[]});
+ assert.deepEqual(workspacePublicSearchQuery('Research the latest NASA lunar mission schedule.'),
+  {query:'the latest NASA lunar mission schedule',officialDomains:[]});
+ assert.deepEqual(workspacePublicSearchQuery('Find one-way fares from Lahore to Karachi.'),
+  {query:'Find one-way fares from Lahore to Karachi',officialDomains:[]});
+ assert.deepEqual(workspacePublicSearchQuery('Search the web for how lunar eclipses happen, and cite your sources.'),
+  {query:'how lunar eclipses happen',officialDomains:[]});
+ assert.deepEqual(workspacePublicSearchQuery('Weather in Karachi'),
+  {query:'Weather in Karachi',officialDomains:[]});
+ assert.deepEqual(workspacePublicSearchQuery('What is the weather in Karachi?'),
+  {query:'weather in Karachi',officialDomains:[]});
+ assert.deepEqual(workspacePublicSearchQuery('What are the public holidays in France this year?'),
+  {query:'public holidays in France this year',officialDomains:[]});
+ assert.deepEqual(workspacePublicSearchQuery('Search the web for the lifespan of a blue whale.'),
+  {query:'the lifespan of a blue whale',officialDomains:[]});
+ assert.deepEqual(workspacePublicSearchQuery('Who is the current president of France?'),
+  {query:'Who is the current president of France',officialDomains:[]});
+ assert.deepEqual(workspacePublicSearchQuery('Who is the CEO of Apple?'),
+  {query:'Who is the CEO of Apple',officialDomains:[]});
+ assert.deepEqual(workspacePublicSearchQuery('Please browse the public internet to explain how HTTP idempotency keys work. Include your citations.'),
+  {query:'explain how HTTP idempotency keys work',officialDomains:[]});
+ assert.deepEqual(workspacePublicSearchQuery('Search the web using only official NASA sources (nasa.gov). Explain how eclipses happen, and cite your sources.',true),
+  {query:'Explain how eclipses happen site:nasa.gov',officialDomains:['nasa.gov']});
+ for(const prompt of ['Current notes in my inbox','What is the latest private customer list',
+  'Search the web for John Smith','Who is Jane Doe currently working for',
+  'Search for name associated with 123-45-6789','Search the latest details on https://example.org/query',
+  'Search the web using only official sources (edge.local). Explain the public topic.',
+  'Search the web using only official sources (staging.example.com). Explain a public topic.',
+  'Search latest NASA data from wikipedia.org',
+  'Search realistic explanations of lunar phases and eclipses using orbital geometry and the distance to the moon throughout the year. Here is the customer account number 123-45-6789.',
+  'Search earlier chat for confidential data','Do not search the web for the current exchange rate',
+  'Search the web for how my client account works, and cite your sources.',
+  'Find the latest release schedule for this project, and cite your sources.',
+  'Search the web for the current repository documentation.',
+  'Search the web for how to find Jane Doe’s phone number, and cite your sources.',
+  'Search the web for how the attached spreadsheet works. Include your citations.',
+  'Search the web to explain how 123-45-6789 is used and cite your sources.',
+  'Weather in our unpublished client event location',
+  'Forecast for my daughter’s address',
+  'Who is the CEO of our confidential acquisition target?',
+  'Search the web for the lifespan in the attached notes',
+  'Explain weather forecasts','Explain photosynthesis','Search the web for'])assert.equal(workspacePublicSearchQuery(prompt),undefined,prompt);
+});
+
+test('public discovery includes implicit rankings and comparisons without exporting private context',()=>{
+ for(const prompt of [
+  'top 10 best ai companies of 2026',
+  'top 10 best ai comapines of 2026',
+  'Best payment providers 2026',
+  'Compare cloud hosting services',
+  'Leading cybersecurity companies',
+  'Top universities worldwide',
+  'Most recent AI models',
+  '2026 electric car market leaders',
+  'Las mejores universidades del mundo en 2026',
+  'أفضل شركات الذكاء الاصطناعي في 2026',
+  '2026 की सबसे अच्छी एआई कंपनियाँ कौन सी हैं?',
+  '2026 年最好的人工智能公司有哪些？',
+ ]) {
+  const result=workspacePublicSearchQuery(prompt);
+  assert.ok(result?.query,prompt);
+  assert.deepEqual(result.officialDomains,[]);
+ }
+ for(const prompt of [
+  'Top 10 customers using my CRM and attached spreadsheet',
+  'Compare cloud services with the prices in the current project',
+  'Rank payment providers using data from our CRM',
+  'Current industry leaders with contacts at mary@example.com',
+  'Top AI companies, include the confidential vendor list',
+  'Las mejores empresas según nuestro archivo privado',
+  'أفضل شركات الذكاء الاصطناعي بناء على بياناتنا الداخلية',
+  'Top AI companies, no web search',
+  'Explain why companies use AI',
+  'Rank these companies using the previous answer',
+ ]) assert.equal(workspacePublicSearchQuery(prompt),undefined,prompt);
+});
+
+test('automatic Search distinguishes software names, public pricing units, and source citation preferences from private URLs',()=>{
+ const versions=workspacePublicSearchQuery('Compare the newest stable Next.js release and the previous major version. Mention official release dates and upgrade risks.');
+ assert.match(versions?.query??'',/Next\.js release/);
+ assert.deepEqual(versions?.officialDomains,[]);
+ const hosting=workspacePublicSearchQuery('Compare three cloud application hosting options for a small startup with a $100/month infrastructure budget. Distinguish assumptions from verified current pricing.');
+ assert.match(hosting?.query??'',/\$100 per month/);
+ assert.match(hosting?.query??'',/\bcurrent pricing\b/);
+ assert.ok([...hosting!.query].length <= 128);
+ const executive='Who is the current CEO of Microsoft, and which official source confirms it?';
+ assert.deepEqual(workspacePublicSearchQuery(executive,true),workspacePublicSearchQuery(executive));
+ assert.ok(workspacePublicSearchQuery(executive,true));
+ assert.deepEqual(workspacePublicSearchQuery('Research the latest Next.js release using only official sources (nextjs.org).',true)?.officialDomains,['nextjs.org']);
+ for(const prompt of [
+  'Find the latest version documented at Next.js.private.example.com.',
+  'Find the latest software releases listed at example.js.',
+  'Research the latest Next.js release on https://next.js/path.',
+  'Find public pricing at $100/month using our internal subscription list.',
+  'Find current pricing for customer account 12345678 at $100/month.',
+  'Compare the newest release of Node.js using only official sources.',
+  'Who is the current CEO of our private client, and which official source confirms it?',
+ ]) assert.equal(workspacePublicSearchQuery(prompt,true),undefined,prompt);
 });
 
 test('citation links always point at the retrieved source they number, never at a model-written address',()=>{
@@ -116,8 +411,23 @@ test('citation links always point at the retrieved source they number, never at 
  const out=bindCitationLinks('See [1](https://evil.example/x) and [2](<https://github.com/vercel/next.js/releases?x=1>), also [3](https://other.example/y).\n```\n[1](https://keep.example/code)\n```\n',sources);
  assert.match(out,/\[1\]\(https:\/\/nextjs\.org\/blog\/next-16\)/);
  assert.match(out,/\[2\]\(https:\/\/github\.com\/vercel\/next\.js\/releases\)/);
- assert.match(out,/\[3\]\(https:\/\/other\.example\/y\)/,'a number with no retrieved source is left alone');
+ assert.match(out,/also \[3\]\./,'a number with no retrieved source remains visible as text');
+ assert.doesNotMatch(out,/other\.example/,'an unresolved source cannot be opened from the answer');
  assert.match(out,/```\n\[1\]\(https:\/\/keep\.example\/code\)\n```/,'fenced code is never rewritten');
  assert.deepEqual(researchCitationIssues(bindCitationLinks('Claim [1](https://wrong.example) and [2].',sources),sources),[]);
- assert.ok(researchCitationIssues(bindCitationLinks('Claim [3](https://wrong.example).',sources),sources).includes('mismatched-source:3'),'an unmatched number is still reported');
+ const code='Use `[1](https://keep.example/code)` and ``example `[77]` [1](https://keep.example/more)``.';
+ const withInlineCode=bindCitationLinks('Claim [1](https://wrong.example). '+code,sources);
+ assert.equal(withInlineCode,'Claim [1](https://nextjs.org/blog/next-16). '+code);
+ assert.deepEqual(researchCitationIssues(withInlineCode,sources),[]);
+ const unresolved=bindCitationLinks('Claim [3](<https://wrong.example/path_(label)> "Model label").',sources);
+ assert.equal(unresolved,'Claim [3].');
+ assert.ok(researchCitationIssues(unresolved,sources).includes('unresolved-source:3'),'an unmatched number is still reported');
+ assert.equal(bindCitationLinks('Claim [2](https://wrong.example "Model label").',sources),
+  'Claim [2](https://github.com/vercel/next.js/releases).');
+ const parenthesizedSource=[{url:'https://example.com/docs/Feature_(product)'}];
+ const parenthesized=bindCitationLinks('Claim [1](https://wrong.example).',parenthesizedSource);
+ assert.equal(parenthesized,'Claim [1](<https://example.com/docs/Feature_(product)>).');
+ assert.deepEqual(researchCitationIssues(parenthesized,parenthesizedSource),[]);
+ assert.equal(bindCitationLinks('Use the [documentation](https://example.com/reference).',sources),
+  'Use the [documentation](https://example.com/reference).');
 });

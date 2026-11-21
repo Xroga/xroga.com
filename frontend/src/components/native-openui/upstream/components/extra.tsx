@@ -1,14 +1,12 @@
 "use client";
 
 import { defineComponent } from "@openuidev/react-lang";
-import katex from "katex";
 
-import { Check, Copy } from "lucide-react";
-import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { z } from "zod/v4";
-import { inline } from "./markdown";
-import type { HighlightedToken } from "@/lib/codeHighlight";
-import { isPresentationLanguage } from "@/lib/publicAnswerText";
+import { inline, MathExpression } from "./markdown";
+import { CodePanel } from "./code-panel";
+import { useRenderEvidenceCitation } from "../../evidence";
 import { children, cx } from "./style";
 
 const str = (value: unknown) => (value == null ? "" : String(value));
@@ -22,7 +20,7 @@ const renderSlot = (value: unknown, renderNode: Render) =>
 export const Carousel = defineComponent({
   name: "Carousel",
   props: z.object({ children, itemWidth: z.number().optional(), gap: z.number().optional() }),
-  description: "Horizontal row that scrolls and snaps, each child an item itemWidth px wide (default 240): photos, cards, options, days.",
+  description: "Wrapping row of cards, options or days. Each item has a preferred width in CSS pixels.",
   component: function CarouselView({ props, renderNode }) {
     const items = (props.children ?? []).flat().filter(item => item != null);
     const width = Math.min(640, Math.max(80, props.itemWidth ?? 240));
@@ -36,7 +34,7 @@ export const Carousel = defineComponent({
 export const Popover = defineComponent({
   name: "Popover",
   props: z.object({ trigger: slot, content: slot }),
-  description: 'Shows content in a small panel when the trigger is clicked: a definition, a source, details behind an Icon("info", "sm").',
+  description: 'Inline note with a label and visible contents, for a definition or supporting detail.',
   component: ({ props, renderNode }) => <aside className="iui-inline-note">
     {renderSlot(props.trigger, renderNode)}
     <div className="iui-col iui-flow">{renderSlot(props.content, renderNode)}</div>
@@ -48,68 +46,27 @@ export const Code = defineComponent({
   name: "Code",
   props: z.object({ code: z.string(), language: z.string().optional() }),
   description: "Code block with a copy button.",
-  component: function CodeView({ props }) {
-    const [copied, setCopied] = useState(false);
-    const code = str(props.code);
-    const internal = isPresentationLanguage(props.language);
-    const [highlight, setHighlight] = useState<{ code: string; lines: HighlightedToken[][] }>();
-    useEffect(() => {
-      if (!props.language || internal) return;
-      let current = true;
-      void import("@/lib/codeHighlight").then(module => module.highlightCode(code, props.language)).then(lines => {
-        if (current && lines) setHighlight({ code, lines });
-      }).catch(() => {});
-      return () => { current = false; };
-    }, [code, internal, props.language]);
-    if (internal) return null;
-    const colored = highlight?.code === code ? highlight.lines : undefined;
-    const copy = () =>
-      void navigator.clipboard?.writeText(code).then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
-      }).catch(() => {});
-    return (
-      <div className="iui-codeblock">
-        <div className="iui-codeblock-head">
-          <span>{str(props.language) || "code"}</span>
-          <button type="button" onClick={copy} aria-label="Copy code">
-            {copied ? <Check size={14} /> : <Copy size={14} />}
-            {copied ? "Copied" : "Copy"}
-          </button>
-        </div>
-        <pre>
-          <code>{colored ? colored.map((line, i) => (
-            <span key={i}>{line.map((token, j) => <span key={j} className="iui-code-token" style={{
-              "--iui-code-light": token.light, "--iui-code-dark": token.dark,
-            } as CSSProperties}>{token.content}</span>)}{i < colored.length - 1 ? "\n" : null}</span>
-          )) : code}</code>
-        </pre>
-      </div>
-    );
-  },
+  component: ({ props }) => <CodePanel code={props.code} language={props.language} />,
 });
 
 export const Quote = defineComponent({
   name: "Quote",
   props: z.object({ text: z.string(), cite: z.string().optional() }),
   description: "A quotation or a callout with a side rule; cite names the source.",
-  component: ({ props }) => (
-    <blockquote className="iui-quote">
-      <p>{inline(str(props.text))}</p>
-      {props.cite ? <cite>{inline(str(props.cite))}</cite> : null}
-    </blockquote>
-  ),
+  component: function QuoteView({ props }) {
+    const renderCitation = useRenderEvidenceCitation();
+    return <blockquote className="iui-quote">
+      <p>{inline(str(props.text), "quote", renderCitation)}</p>
+      {props.cite ? <cite>{inline(str(props.cite), "attribution", renderCitation)}</cite> : null}
+    </blockquote>;
+  },
 });
 
 export const MathBlock = defineComponent({
   name: "Math",
   props: z.object({ tex: z.string(), inline: z.boolean().optional() }),
   description: 'LaTeX formula, e.g. Math("E = mc^2"); inline true to sit in a Text list.',
-  component: ({ props }) => {
-    const html = katex.renderToString(str(props.tex), { displayMode: !props.inline, throwOnError: false, maxExpand: 100, maxSize: 12, trust: false, strict: "ignore", output: "htmlAndMathml" });
-    // KaTeX escapes its input and is configured without \href or \includegraphics.
-    return props.inline ? <span className="iui-math" dangerouslySetInnerHTML={{ __html: html }} /> : <div className="iui-math is-block" dangerouslySetInnerHTML={{ __html: html }} />;
-  },
+  component: ({ props }) => <MathExpression tex={str(props.tex)} inline={props.inline} />,
 });
 
 // Play

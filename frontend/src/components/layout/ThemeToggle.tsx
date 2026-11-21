@@ -1,7 +1,7 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
+import { AnchoredPortalPopover } from '@/components/ui/AnchoredPortalPopover';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { PaletteIcon } from '@/components/icons/animated/PaletteIcon';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -17,34 +17,33 @@ export function ThemeToggle({ className, placement = 'bottom-end' }: ThemeToggle
   const theme = useThemeStore((s) => s.theme);
   const setTheme = useThemeStore((s) => s.setTheme);
   const [open, setOpen] = useState(false);
-  const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const optionsRef = useRef<HTMLDivElement>(null);
   const current = normalizeTheme(theme);
-
-  const positionMenu = useCallback(() => {
-    const rect = buttonRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    setMenuStyle(
-      placement === 'right-start'
-        ? { left: rect.right + 8, top: Math.max(8, rect.top) }
-        : { right: Math.max(8, window.innerWidth - rect.right), top: rect.bottom + 8 },
-    );
-  }, [placement]);
+  const close = useCallback(() => setOpen(false), []);
 
   useEffect(() => {
     if (!open) return;
-    positionMenu();
-    const close = () => setOpen(false);
-    const reposition = () => positionMenu();
-    window.addEventListener('click', close);
-    window.addEventListener('resize', reposition);
-    window.addEventListener('scroll', reposition, true);
-    return () => {
-      window.removeEventListener('click', close);
-      window.removeEventListener('resize', reposition);
-      window.removeEventListener('scroll', reposition, true);
-    };
-  }, [open, positionMenu]);
+    optionsRef.current?.querySelector<HTMLButtonElement>('[aria-checked="true"]')?.focus({ preventScroll: true });
+  }, [open]);
+
+  const navigate = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Escape' || event.key === 'Tab') {
+      if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); }
+      close();
+      buttonRef.current?.focus({ preventScroll: true });
+      return;
+    }
+    const items = Array.from(optionsRef.current?.querySelectorAll<HTMLButtonElement>('[role="menuitemradio"]') ?? []);
+    const index = items.indexOf(document.activeElement as HTMLButtonElement);
+    const next = event.key === 'Home' ? 0 : event.key === 'End' ? items.length - 1
+      : event.key === 'ArrowDown' ? (index + 1) % items.length
+        : event.key === 'ArrowUp' ? (index - 1 + items.length) % items.length : undefined;
+    if (next === undefined || !items.length) return;
+    event.preventDefault();
+    event.stopPropagation();
+    items[next]?.focus({ preventScroll: true });
+  };
 
   /* `setTheme` re-derives the terminal skin and clears the slideshow itself. Forcing
      the skin here as well is what made this control disagree with the homepage
@@ -52,7 +51,8 @@ export function ThemeToggle({ className, placement = 'bottom-end' }: ThemeToggle
      workspace on its old skin. */
   const applyTheme = (id: CoreThemeId) => {
     setTheme(id);
-    setOpen(false);
+    close();
+    buttonRef.current?.focus({ preventScroll: true });
   };
 
   return (
@@ -60,9 +60,9 @@ export function ThemeToggle({ className, placement = 'bottom-end' }: ThemeToggle
       <button
         ref={buttonRef}
         type="button"
-        onClick={() => {
-          positionMenu();
-          setOpen((value) => !value);
+        onClick={() => setOpen((value) => !value)}
+        onKeyDown={(event) => {
+          if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); setOpen(true); }
         }}
         className="xv-theme-toggle inline-flex h-8 w-8 items-center justify-center rounded-lg glass-panel hover:border-[var(--accent)]/40 transition-colors"
         aria-label="Change theme"
@@ -73,11 +73,9 @@ export function ThemeToggle({ className, placement = 'bottom-end' }: ThemeToggle
             of a palette being loaded, which is what choosing a theme is. */}
         <AnimatedIcon icon={PaletteIcon} className="text-[var(--accent)]" />
       </button>
-      {open && typeof document !== 'undefined' && createPortal(
-        <div
-          className="fixed w-56 glass-panel-strong rounded-xl p-2 z-[300] shadow-xl border border-[var(--card-border)]"
-          style={menuStyle}
-          role="menu"
+      <AnchoredPortalPopover open={open} onClose={close} anchorRef={buttonRef} placement={placement} width={224} ariaLabel="Theme"
+        className="glass-panel-strong rounded-xl p-2 shadow-xl border border-[var(--card-border)]">
+        <div ref={optionsRef} onKeyDown={navigate}
           onClick={(event) => event.stopPropagation()}
         >
           <p className="px-3 py-1.5 text-[10px] uppercase tracking-wider text-[var(--muted)] font-pixel">
@@ -90,6 +88,7 @@ export function ThemeToggle({ className, placement = 'bottom-end' }: ThemeToggle
               onClick={() => applyTheme(opt.id)}
               role="menuitemradio"
               aria-checked={current === opt.id}
+              tabIndex={current === opt.id ? 0 : -1}
               className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                 current === opt.id
                   ? 'bg-[var(--accent-dim)] text-[var(--foreground)]'
@@ -100,9 +99,8 @@ export function ThemeToggle({ className, placement = 'bottom-end' }: ThemeToggle
               <span className="text-xs opacity-70 font-coding">{opt.description}</span>
             </button>
           ))}
-        </div>,
-        document.body,
-      )}
+        </div>
+      </AnchoredPortalPopover>
     </div>
   );
 }

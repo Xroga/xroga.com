@@ -35,15 +35,17 @@ export default function MathEquationImpl({
         output: 'html',
       });
     } catch {
-      return text.replace(/\*/g, '·');
+      return null;
     }
   }, [text, display]);
+  const content = html === null ? { children: text.replace(/\*/g, '·'), style: { overflowWrap: 'anywhere' as const } }
+    : { dangerouslySetInnerHTML: { __html: html } };
 
   if (display) {
     return (
       <div
         className={className}
-        dangerouslySetInnerHTML={{ __html: html }}
+        {...content}
         aria-label={text}
       />
     );
@@ -52,7 +54,7 @@ export default function MathEquationImpl({
   return (
     <span
       className={className}
-      dangerouslySetInnerHTML={{ __html: html }}
+      {...content}
       aria-label={text}
     />
   );

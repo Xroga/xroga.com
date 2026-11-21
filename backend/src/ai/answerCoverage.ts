@@ -1,6 +1,7 @@
 import { assessPresentationRelevance } from './presentationRelevance.js';
 import { assessPresentationCoverage, type AnswerObligations, type PresentationPlan } from './responsePresentation.js';
 import type { RequiredNativeFormat } from './nativeOpenUi.js';
+import { requestsEditableChecklist, suppliedPeriodicSeries } from './nativeOpenUiRecovery.js';
 
 /** A lower bound on explicit output requests, supplementing the semantic
  * planner. No generated facts, brand templates, sources or second model call. */
@@ -11,7 +12,7 @@ export function requestedAnswerObligations(prompt: string): AnswerObligations {
     ['diagram', /\b(?:diagram|flowchart|architecture\s+(?:map|graph))\b/i, 'graph'],
     ['schema', /\b(?:database\s+(?:schema|structure)|data\s+model)\b/i, 'table'],
     ['table', /\b(?:table|tabular|tabulate)\b/i, 'table'],
-    ['calculator', /\b(?:interactive\s+(?:calculation|scenario)|calculator|editable\s+inputs|let\s+me\s+(?:change|adjust|tweak|vary)\s+(?:the\s+)?(?:numbers|inputs|values|assumptions)|adjustable\s+(?:inputs|numbers|assumptions)|sliders?)\b/i, 'calculator'],
+    ['calculator', /\b(?:interactive\s+(?:calculation|scenario)|calculat(?:or|[ \t]+or)|editable\s+inputs|let\s+me\s+(?:change|adjust|tweak|vary)\s+(?:the\s+)?(?:numbers|inputs|values|assumptions)|adjustable\s+(?:inputs|numbers|assumptions)|sliders?)\b/i, 'calculator'],
     ['chart', /\b(?:chart|plot|histogram)\b/i, 'chart'],
     ['workflow', /\b(?:step.by.step|workflow|lifecycle)\b/i, 'steps'],
     ['comparison', /\b(?:comparison\s+cards|compare\s+.{0,60}\b(?:access|permissions|isolation))\b/i, 'cards'],
@@ -19,7 +20,7 @@ export function requestedAnswerObligations(prompt: string): AnswerObligations {
   for (const [id, expression, kind] of requests) {
     const evidence = sentences.filter(sentence => {
       const match = expression.exec(sentence);
-      if (!match || !/\b(?:include|show|draw|create|provide|render|add|with|give|build|compare|explain|let\s+me|allow|want|tabulate)\b|^\s*(?:chart|plot)\s+/i.test(sentence)) return false;
+      if (!match || !/\b(?:include|show|draw|create|provide|render|add|with|give|build|compare|explain|present|let\s+me|allow|want|tabulate)\b|^\s*(?:chart|plot)\s+/i.test(sentence)) return false;
       return !/\b(?:no|without|don't|do not|avoid|skip)\s+(?:any\s+)?(?:\w+\s+){0,2}$/i.test(sentence.slice(0,match.index));
     });
     let occurrence=0;
@@ -41,8 +42,11 @@ export function requestedAnswerObligations(prompt: string): AnswerObligations {
 export function requiredNativeFormats(prompt: string): RequiredNativeFormat[] {
   const formats = requestedAnswerObligations(prompt).filter(item => !/^\s*(?:explain|describe)\b/i.test(item.sourceQuote ?? '')
     || /\b(?:with|include|show|draw|render)\b/i.test(item.sourceQuote ?? '')).flatMap(item => item.formats);
-  return [...new Set(formats.filter((kind): kind is RequiredNativeFormat =>
-    kind === 'table' || kind === 'chart' || kind === 'graph' || kind === 'calculator'))];
+  const required: RequiredNativeFormat[] = formats.filter((kind): kind is 'table' | 'chart' | 'graph' | 'calculator' =>
+    kind === 'table' || kind === 'chart' || kind === 'graph' || kind === 'calculator');
+  if (requestsEditableChecklist(prompt)) required.push('checklist');
+  if (suppliedPeriodicSeries(prompt)) required.push('chart');
+  return [...new Set(required)];
 }
 
 /** Access-boundary architecture needs an explanation of both the ownership

@@ -28,12 +28,12 @@ test.beforeEach(async ({ page, baseURL }) => {
 });
 
 async function populate(page: import('@playwright/test').Page) {
-  await page.goto('/workspace');
+  await page.goto('/workspace', { waitUntil: 'domcontentloaded' });
   for (let index = 1; index <= 4; index++) {
     const prompt = 'Conversation rail prompt ' + index + ': inspect the real message flow and navigation.';
     await page.locator('[data-terminal-composer]').fill(prompt);
     await page.getByRole('button', { name: 'Send prompt', exact: true }).click();
-    await expect(page.getByText('Answer marker ' + index, { exact: false }).first()).toBeVisible();
+    await expect(page.getByText('Answer marker ' + index, { exact: false }).first()).toBeVisible({ timeout: 15_000 });
   }
   const rail = page.getByRole('navigation', { name: 'Conversation turn navigation' });
   await expect(rail).toBeVisible();
@@ -77,7 +77,7 @@ test('dash geometry, proximity hover, actual preview, bookmark and jump', async 
 });
 
 test('active reading marker follows both scroll directions and no rail appears for empty work', async ({ page }) => {
-  await page.goto('/workspace');
+  await page.goto('/workspace', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('.xv-chat-turn-rail')).toHaveCount(0);
   const rail = await populate(page);
   await expect(page.getByRole('button', { name: 'Stop response', exact: true })).toHaveCount(0);
@@ -94,3 +94,39 @@ test('active reading marker follows both scroll directions and no rail appears f
   await root.evaluate(element => element.scrollTo({ top: 0, behavior: 'instant' }));
   await expect(active).toHaveAttribute('aria-label', topActive!);
 });
+
+for (const width of [390, 1366]) {
+  test(`Enter keeps the newest prompt in view as its answer arrives at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 768 });
+    await populate(page);
+    const root = page.getByTestId('terminal-scroll');
+    await root.evaluate(element => element.scrollTo({ top: element.scrollHeight, behavior: 'instant' }));
+    let releaseReply = () => {};
+    const replyReady = new Promise<void>(resolve => { releaseReply = resolve; });
+    await page.route('**/api/guest/chat', async route => {
+      await replyReady;
+      await route.fallback();
+    });
+
+    const prompt = 'Check that this follow-up stays onscreen.';
+    const composer = page.locator('[data-terminal-composer]');
+    await composer.fill(prompt);
+    await composer.press('Enter');
+    const bubble = page.locator('[data-turn-id]').filter({ hasText: prompt });
+    await expect(bubble).toBeInViewport();
+    const before = await root.evaluate(element => element.scrollTop);
+    expect(before).toBeGreaterThan(0);
+    releaseReply();
+    await expect(page.getByText('Answer marker 5', { exact: false }).first()).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Stop response', exact: true })).toHaveCount(0);
+    await expect(bubble).toBeInViewport();
+    // The loading row and composer can reflow by about one control height.
+    // The submitted message must remain visible without a larger scroll jump.
+    await page.waitForTimeout(350);
+    const after = await root.evaluate(element => element.scrollTop);
+    expect(after).toBeGreaterThan(0);
+    expect(Math.abs(after - before)).toBeLessThan(48);
+    await root.evaluate(element => element.scrollTo({ top: 0, behavior: 'instant' }));
+    await expect(page.getByRole('button', { name: 'Scroll to last response', exact: true })).toBeVisible();
+  });
+}

@@ -6070,7 +6070,8 @@ import type {
 } from '@/lib/hackathonBrief';
 
 export interface Phase1ChatResult {
-  completion?: { status: 'complete' } | { status: 'partial'; reason: 'output_limit' | 'unconfirmed_stop' | 'authorization_review' | 'factual_review' | 'presentation_contract' | 'data_review' };
+  publicWebRetrieved?: true;
+  completion?: { status: 'complete' } | { status: 'partial'; reason: 'output_limit' | 'unconfirmed_stop' | 'authorization_review' | 'factual_review' | 'presentation_contract' | 'data_review' | 'source_attribution' };
   responseSource?: { format: 'xroga-response-json-v1' | 'xroga-openui-v1'; text: string; contract?:import('./responseCoverageContract').ResponseCoverageContract };
   response:
     string;
@@ -6097,6 +6098,10 @@ export interface Phase1ChatResult {
 
       thumbnailUrl?:
         string;
+      siteDomain?: string;
+      siteName?: string;
+      siteIconDomain?: string;
+      publishedAt?: string;
     }>;
 
   hackathonBrief?:

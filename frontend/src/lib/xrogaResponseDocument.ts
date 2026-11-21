@@ -2,6 +2,7 @@ import { adaptTrustedA2uiBlock } from './xrogaA2uiAdapter';
 import { modelBlockCapabilitySet } from './xrogaCapabilityManifest';
 import type { XrogaBlock, XrogaOutputDocument } from './xrogaBlocks';
 import { responseCoverageContractSchema } from './responseCoverageContract';
+import { isNativeDocumentFormat } from '../../../backend/src/ai/nativeDocumentDownload';
 
 const XROGA_UI_FENCE = /```xroga-ui\s*\n?([\s\S]*?)```/gi;
 const TABLE_DIVIDER = /^\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?\s*$/;
@@ -254,7 +255,7 @@ function tableBlocksFromMarkdown(content: string, documentId: string): { content
 }
 
 /** Convert a completed assistant answer into the canonical, persisted Xroga output document. */
-export function enhanceAiResponse(content: string, documentId: string, completion?: { status: string; reason?: string }, received?: { format: string; text: string; contract?:unknown }): EnhancedAiResponse {
+export function enhanceAiResponse(content: string, documentId: string, completion?: { status: string; reason?: string }, received?: { format: string; text: string; contract?:unknown; downloadFormat?: unknown }): EnhancedAiResponse {
   const source = typeof content === 'string' ? content : '';
   if (source.length > 200_000) return { content: source };
   const blocks: XrogaBlock[] = [];
@@ -281,6 +282,19 @@ export function enhanceAiResponse(content: string, documentId: string, completio
       : partialReason === 'output_limit'
       ? 'This answer reached its output limit and is incomplete. The received content is preserved. No automatic retry was made.'
       : 'The provider did not confirm a complete answer. The received content is preserved. No automatic retry was made.' });
+  // Native answers already own their visual program. Legacy extraction can
+  // reject valid Markdown, such as comparison tables with an empty corner cell.
+  // Keep authoritative prose intact for persistence and renderer recovery.
+  if (responseSource?.format === 'xroga-openui-v1') {
+    if (source.trim()) blocks.push({ schemaVersion: 1, id: `${safeIdPart(documentId)}-prose`, type: 'narrative', text: source });
+    return { content: source.trim(), output: {
+      schemaVersion: 1, id: `response-${safeIdPart(documentId)}`,
+      status: rejected ? 'partial' : 'completed', sourceText: source,
+      responseSource, composition: 'source-order', blocks,
+      ...(completion?.status === 'complete' && source.trim() && isNativeDocumentFormat(received?.downloadFormat)
+        ? { documentDownload: received.downloadFormat } : {}),
+    } };
+  }
   const appendText = (value: string) => blocks.push(...tableBlocksFromMarkdown(value, `${documentId}-${segment++}`).ordered);
   for (const match of source.matchAll(XROGA_UI_FENCE)) {
     appendText(source.slice(cursor, match.index));

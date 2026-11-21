@@ -14,6 +14,8 @@
 .xroga-native-sections > section + section { margin-block-start: 1rem; }
 .xroga-native-sections :is(h2,h3) { margin-block: 0 .5rem; font-size: 1em; font-weight: 650; }
 .xroga-native-openui > .iui-markdown:empty { display: none; }
+.xroga-native-openui > .native-answer-summary:not(:empty) { margin-block-end: 1rem; }
+.xroga-native-openui :is(.iui-text, .iui-caption):empty { display: none; }
 .xroga-native-openui > .iui-col + .iui-markdown:not(:empty),
 .xroga-native-openui > .iui-markdown:not(:empty) + .iui-col { margin-block-start: 1rem; }
 @media (max-width: 540px) {
@@ -28,8 +30,6 @@
 
 .xroga-native-openui, .xroga-native-openui *, .xroga-native-openui *::before, .xroga-native-openui *::after { box-sizing: border-box; }
 
-.xroga-native-openui .iui-code-token { color: var(--iui-code-light, inherit); }
-:is([data-theme="dark"], [data-theme="black"], [data-theme="gray"]) .xroga-native-openui:not(.native-evaluation[data-theme="light"] .xroga-native-openui) .iui-code-token { color: var(--iui-code-dark, inherit); }
 
 .xroga-native-openui {
   --native-accent: #195bd5;
@@ -39,18 +39,34 @@
   --iui-space-section: 25px;
   --iui-space-group: 13px;
   --iui-space-inner: 9px;
+  --iui-card-padding-limit: clamp(.875rem, 3vw, 1.5rem);
+  --iui-card-gap-limit: clamp(.75rem, 2.5vw, 1.25rem);
+  --iui-grid-gap-limit: clamp(.75rem, 2.5vw, 1rem);
   --iui-focus: var(--native-accent);
   font-family: var(--openui-font-body, system-ui, sans-serif);
   font-size: 1rem;
   line-height: 1.65;
 }
 
-:is([data-theme="dark"], [data-theme="black"], [data-theme="gray"]) .xroga-native-openui:not(.native-evaluation[data-theme="light"] .xroga-native-openui) {
+:where([data-theme="dark"], [data-theme="black"], [data-theme="gray"]) .xroga-native-openui:not(:where(.native-evaluation[data-theme="light"] .xroga-native-openui, :is(.terminal-skin-light, .terminal-skin-light-grid, .terminal-skin-solar) .xroga-native-openui)),
+:where(.terminal-skin-dark, .terminal-skin-amoled, .terminal-skin-gray, .terminal-skin-midnight, .terminal-skin-forest, .terminal-skin-matrix, .terminal-skin-amber) .xroga-native-openui {
   --native-accent: #8bb8ff;
   --native-accent-soft: #202e48;
   --native-panel: #1e2128;
   --native-line: #3a404d;
   --iui-canvas: var(--openui-foreground, #181a20);
+}
+
+/* Workspace's independently selected surface owns its answer colors. Share
+   pages and the evaluator continue to use their own page theme. */
+:where(.xv-workspace-shell[class*="terminal-skin-"]) .xroga-native-openui {
+  --iui-ink: var(--foreground);
+  --iui-muted: var(--muted);
+  --iui-faint: var(--muted);
+  --iui-canvas: var(--terminal-ui-surface);
+  --iui-on-ink: var(--terminal-ui-surface);
+  --native-panel: var(--terminal-ui-raised);
+  --native-line: var(--terminal-ui-border);
 }
 
 .xroga-native-openui .iui-title {
@@ -63,13 +79,43 @@
 .xroga-native-openui .iui-title-sm { font-size: .9375rem; }
 .xroga-native-openui .iui-title-md { font-size: 1.25rem; }
 .xroga-native-openui .iui-title-lg { font-size: clamp(1.5rem, 1.18rem + 1.2vw, 1.875rem); }
+.xroga-native-openui .iui-col:has(> .iui-title):not(.iui-flow) {
+  row-gap: 0;
+}
+.xroga-native-openui .iui-col:has(> .iui-title):not(.iui-flow) > * + * {
+  margin-block-start: min(var(--iui-column-gap, var(--iui-space-group)), var(--iui-space-section));
+}
+.xroga-native-openui .iui-col:has(> .iui-title):not(.iui-flow) > * + .iui-title {
+  margin-block-start: var(--iui-space-section);
+}
+.xroga-native-openui .iui-col:has(> .iui-title) > .iui-title + :is(.iui-text, .iui-caption, .iui-markdown, .iui-table-scroll) {
+  margin-block-start: .45rem;
+}
+.xroga-native-openui .iui-markdown > * + .iui-md-h {
+  margin-block-start: 1.35rem;
+}
+.xroga-native-openui .iui-markdown > .iui-md-h + * {
+  margin-block-start: .4rem;
+}
 .xroga-native-openui .iui-text:not(.iui-text-xs, .iui-text-sm) { font-size: 1rem; line-height: 1.65; }
 .xroga-native-openui .iui-caption { font-size: .875rem; line-height: 1.55; }
-.xroga-native-openui .iui-card { border-color: var(--native-line); border-radius: 16px; padding: clamp(.875rem, 3vw, 1.5rem); }
+.xroga-native-openui .iui-check { align-items: flex-start; }
+.xroga-native-openui .iui-check > input { margin-block-start: .28em; }
+.xroga-native-openui :is(.iui-badge, .iui-button) { max-inline-size: 100%; white-space: normal; }
+.xroga-native-openui :is(.iui-badge, .iui-button) svg { flex-shrink: 0; }
+.xroga-native-openui .iui-card { border-color: var(--native-line); border-radius: 16px; padding: var(--iui-card-padding-limit); }
 .xroga-native-openui .iui-card-soft { background: var(--native-panel); }
 .xroga-native-openui .iui-card > .iui-text { font-size: .9375rem; }
 .xroga-native-openui .iui-table-scroll { border-color: var(--native-line); }
-.xroga-native-openui .iui-table :is(td,th) { padding: .7rem .85rem; font-size: .875rem; line-height: 1.5; }
+.xroga-native-openui .iui-table :is(td,th) {
+  padding: .7rem .85rem;
+  font-size: .875rem;
+  line-height: 1.5;
+  /* Keep ordinary words in table intrinsic widths. The table's own
+     scroll container can handle wider layouts at narrow answer widths. */
+  overflow-wrap: break-word;
+  word-break: normal;
+}
 .xroga-native-openui .iui-table th { font-weight: 650; }
 .xroga-native-openui .iui-table th button { min-height: 1.75rem; }
 .xroga-native-openui .iui-slider-head { font-size: .9375rem; }
@@ -99,15 +145,12 @@
 .native-answer-metric[data-tone="warning"] dd:first-of-type { color: var(--iui-warning); }
 .native-answer-metric[data-tone="danger"] dd:first-of-type { color: var(--iui-danger); }
 .native-answer-metric .native-answer-metric-note { margin-top: .25rem; color: var(--iui-muted); font-size: .8125rem; font-weight: 400; line-height: 1.4; letter-spacing: normal; }
-/* Two short results fit side by side even when a general-purpose Grid asks to stack.
-   Other grids retain their model-specified minimum column widths. */
-.xroga-native-openui .iui-grid:has(> .native-answer-metric:first-child + .native-answer-metric:last-child) {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 7rem), 1fr)) !important;
-}
 .native-answer-controls { min-width: 0; margin: 0; padding: .5rem 0 0; border: 0; }
 .native-answer-controls legend { padding: 0; font-size: .875rem; font-weight: 650; }
 .native-answer-controls-grid { display: grid; grid-template-columns: repeat(var(--control-columns, 1), minmax(0, 1fr)); align-items: end; gap: .75rem; }
 .native-answer-controls-grid > :is(button, .iui-button) { justify-self: start; }
+.native-answer-draft-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-block-start: .75rem; }
+.native-answer-draft-actions > [role="status"] { color: var(--iui-muted); font-size: .8125rem; }
 .xroga-native-openui .iui-flow > .native-answer-metric:has(+ .native-answer-controls) {
   padding: .875rem 1rem .625rem;
   border: 1px solid var(--native-line);
@@ -171,6 +214,13 @@
 @media (max-width: 540px) {
   .native-answer-controls-grid { grid-template-columns: minmax(0, 1fr); }
   .xroga-native-openui .iui-table :is(td,th) { padding: .6rem .65rem; }
+  .xroga-native-openui .iui-markdown > .iui-table-scroll > .iui-table:not(:has(> thead > tr > :nth-child(4))) th {
+    white-space: normal;
+  }
+  .xroga-native-openui .iui-markdown > .iui-table-scroll > .iui-table:has(> thead > tr > :nth-child(2):last-child) tr > :first-child {
+    min-inline-size: 5.5rem;
+  }
+  .xroga-native-openui .iui-table:has(> thead > tr > th:nth-child(4)) tr > :first-child { min-inline-size: 6rem; }
   .native-diagram .react-flow__controls-button { min-width: 28px; min-height: 28px; }
 }
 

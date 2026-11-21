@@ -35,20 +35,25 @@ export class CompletionDiagnostics {
   receipt() { return { ...this }; }
 }
 
-export function requirePublicCompletion(text: string, modelId: string, diagnostics: CompletionDiagnostics): string {
+export function requirePublicCompletion(
+  text: string, modelId: string, diagnostics: CompletionDiagnostics,
+  recordEmpty?: (error: Error & { code: 'EMPTY_PROVIDER_RESPONSE' }) => void,
+): string {
   if (text.trim()) return text.trim();
   // Observation does not prove token exhaustion, a filter, or upstream cause.
   const receipt = diagnostics.receipt();
   console.warn('[model-empty-completion]', { modelId, ...receipt });
-  throw Object.assign(new Error(`${modelId} returned an empty completion`), {
-    code: 'EMPTY_PROVIDER_RESPONSE', retryable: false, completionDiagnostics: receipt,
+  const error = Object.assign(new Error(`${modelId} returned an empty completion`), {
+    code: 'EMPTY_PROVIDER_RESPONSE' as const, retryable: false, completionDiagnostics: receipt,
   });
+  recordEmpty?.(error);
+  throw error;
 }
 
 /** Public completion state, without provider identity or private reasoning. */
 export type PublicCompletionState =
   | { status: 'complete' }
-  | { status: 'partial'; reason: 'output_limit' | 'unconfirmed_stop' | 'authorization_review' | 'factual_review' | 'presentation_contract' | 'data_review' };
+  | { status: 'partial'; reason: 'output_limit' | 'unconfirmed_stop' | 'authorization_review' | 'factual_review' | 'presentation_contract' | 'data_review' | 'source_attribution' };
 
 export function publicCompletionState(finishReason: string | null | undefined, answer = ''): PublicCompletionState {
   // This is a narrow negative check, not a certificate that other facts are true.

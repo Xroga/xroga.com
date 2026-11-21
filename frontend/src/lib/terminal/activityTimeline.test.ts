@@ -102,6 +102,14 @@ test('only a real answer delta changes the pending label to writing', () => {
   assert.equal(pendingWorkLabel([open, delta, { ...open, kind: 'status', seq: 3 }], true), 'Waiting for the next update');
 });
 
+test('a buffered reply can show why it is waiting before any activity is reported', () => {
+  const start: TerminalEvent = { seq: 1, kind: 'session', rawEvent: 'start', level: 'info', at: 1, source: null, body: null, text: 'Started' };
+  assert.equal(pendingWorkLabel([], false, 'standard'), 'Waiting for a reply');
+  assert.equal(pendingWorkLabel([start], false, 'source-backed'), 'Waiting for a source-backed reply');
+  assert.equal(pendingWorkLabel([start], true, 'source-backed'), 'Waiting for the next update');
+  assert.equal(pendingWorkLabel([{ ...start, kind: 'status' }], false, 'source-backed'), 'Waiting for the next update');
+});
+
 test('every activity kind maps to a family, so a new kind cannot silently fall outside the timeline', () => {
   const kinds: XrogaActivityKind[] = ['respond', 'understand', 'search', 'open-source', 'read-source', 'compare', 'summarize', 'read-file', 'write-file', 'code', 'command', 'test', 'browser', 'database', 'connected-app-read', 'connected-app-write', 'automation', 'upload', 'download', 'deploy', 'verify', 'approval', 'connection', 'waiting', 'complete', 'warning', 'error'];
   for (const kind of kinds) assert.ok(familyOf(kind), kind);

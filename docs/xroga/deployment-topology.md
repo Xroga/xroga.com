@@ -1,6 +1,6 @@
 # Deployment topology, source and dated evidence
 
-Source SHA: `236dcf332377890489a4bc3df1e8df8ebe748029`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
+Source SHA: `c7b424b55e55d5d5e15129b051c3e1265a8a1d15`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -56,6 +56,7 @@ Source SHA: `236dcf332377890489a4bc3df1e8df8ebe748029`; exact current source/con
 | endpoint-aptos-dev | Source-defined endpoint aptos.dev | CONFIGURED_BUT_UNVERIFIED | aptos.dev | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-asana-com | Source-defined endpoint asana.com | CONFIGURED_BUT_UNVERIFIED | asana.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-backend-composio-dev | Source-defined endpoint backend.composio.dev | CONFIGURED_BUT_UNVERIFIED | backend.composio.dev | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-base44-com | Source-defined endpoint base44.com | CONFIGURED_BUT_UNVERIFIED | base44.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-bolt-new | Source-defined endpoint bolt.new | CONFIGURED_BUT_UNVERIFIED | bolt.new | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-brandland-zendesk-com | Source-defined endpoint brandland.zendesk.com | CONFIGURED_BUT_UNVERIFIED | brandland.zendesk.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-build-avax-network | Source-defined endpoint build.avax.network | CONFIGURED_BUT_UNVERIFIED | build.avax.network | NOT_INDEPENDENTLY_VERIFIED |
@@ -70,6 +71,7 @@ Source SHA: `236dcf332377890489a4bc3df1e8df8ebe748029`; exact current source/con
 | endpoint-cloud-google-com | Source-defined endpoint cloud.google.com | CONFIGURED_BUT_UNVERIFIED | cloud.google.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-cloudflare-com | Source-defined endpoint cloudflare.com | CONFIGURED_BUT_UNVERIFIED | cloudflare.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-coordinator | Source-defined endpoint coordinator | CONFIGURED_BUT_UNVERIFIED | coordinator | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-cursor-com | Source-defined endpoint cursor.com | CONFIGURED_BUT_UNVERIFIED | cursor.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-design-intuit-com | Source-defined endpoint design.intuit.com | CONFIGURED_BUT_UNVERIFIED | design.intuit.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-dev-whop-com | Source-defined endpoint dev.whop.com | CONFIGURED_BUT_UNVERIFIED | dev.whop.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-developer-android-com | Source-defined endpoint developer.android.com | CONFIGURED_BUT_UNVERIFIED | developer.android.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -113,6 +115,7 @@ Source SHA: `236dcf332377890489a4bc3df1e8df8ebe748029`; exact current source/con
 | endpoint-gemini-google-com | Source-defined endpoint gemini.google.com | CONFIGURED_BUT_UNVERIFIED | gemini.google.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-getfoundry-sh | Source-defined endpoint getfoundry.sh | CONFIGURED_BUT_UNVERIFIED | getfoundry.sh | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-github-com | Source-defined endpoint github.com | CONFIGURED_BUT_UNVERIFIED | github.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-google-gemini-github-io | Source-defined endpoint google-gemini.github.io | CONFIGURED_BUT_UNVERIFIED | google-gemini.github.io | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-hardhat-org | Source-defined endpoint hardhat.org | CONFIGURED_BUT_UNVERIFIED | hardhat.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-huggingface-co | Source-defined endpoint huggingface.co | CONFIGURED_BUT_UNVERIFIED | huggingface.co | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-i-postimg-cc | Source-defined endpoint i.postimg.cc | CONFIGURED_BUT_UNVERIFIED | i.postimg.cc | NOT_INDEPENDENTLY_VERIFIED |
@@ -156,6 +159,7 @@ Source SHA: `236dcf332377890489a4bc3df1e8df8ebe748029`; exact current source/con
 | endpoint-supabase-management-tests-invalid | Source-defined endpoint supabase-management-tests.invalid | CONFIGURED_BUT_UNVERIFIED | supabase-management-tests.invalid | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-supabase-com | Source-defined endpoint supabase.com | CONFIGURED_BUT_UNVERIFIED | supabase.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-support-bolt-new | Source-defined endpoint support.bolt.new | CONFIGURED_BUT_UNVERIFIED | support.bolt.new | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-support-google-com | Source-defined endpoint support.google.com | CONFIGURED_BUT_UNVERIFIED | support.google.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-temporal-io | Source-defined endpoint temporal.io | CONFIGURED_BUT_UNVERIFIED | temporal.io | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-token-actions-githubusercontent-com | Source-defined endpoint token.actions.githubusercontent.com | CONFIGURED_BUT_UNVERIFIED | token.actions.githubusercontent.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-twitter-com | Source-defined endpoint twitter.com | CONFIGURED_BUT_UNVERIFIED | twitter.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -191,6 +195,7 @@ Source SHA: `236dcf332377890489a4bc3df1e8df8ebe748029`; exact current source/con
 | endpoint-www-pcrf-net | Source-defined endpoint www.pcrf.net | CONFIGURED_BUT_UNVERIFIED | www.pcrf.net | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-www-perplexity-ai | Source-defined endpoint www.perplexity.ai | CONFIGURED_BUT_UNVERIFIED | www.perplexity.ai | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-www-pinterest-com | Source-defined endpoint www.pinterest.com | CONFIGURED_BUT_UNVERIFIED | www.pinterest.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-www-postgresql-org | Source-defined endpoint www.postgresql.org | CONFIGURED_BUT_UNVERIFIED | www.postgresql.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-www-reddit-com | Source-defined endpoint www.reddit.com | CONFIGURED_BUT_UNVERIFIED | www.reddit.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-www-redditinc-com | Source-defined endpoint www.redditinc.com | CONFIGURED_BUT_UNVERIFIED | www.redditinc.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-www-semrush-com | Source-defined endpoint www.semrush.com | CONFIGURED_BUT_UNVERIFIED | www.semrush.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -205,7 +210,6 @@ Source SHA: `236dcf332377890489a4bc3df1e8df8ebe748029`; exact current source/con
 | endpoint-www-youtube-com | Source-defined endpoint www.youtube.com | CONFIGURED_BUT_UNVERIFIED | www.youtube.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-x-com | Source-defined endpoint x.com | CONFIGURED_BUT_UNVERIFIED | x.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-xroga-api-fly-dev | Source-defined endpoint xroga-api.fly.dev | CONFIGURED_BUT_UNVERIFIED | xroga-api.fly.dev | NOT_INDEPENDENTLY_VERIFIED |
-| endpoint-xroga-local | Source-defined endpoint xroga.local | LOCAL_ONLY | xroga.local | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-xrogaaicom-vercel-app | Source-defined endpoint xrogaaicom.vercel.app | CONFIGURED_BUT_UNVERIFIED | xrogaaicom.vercel.app | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-your-website-com | Source-defined endpoint your-website.com | CONFIGURED_BUT_UNVERIFIED | your-website.com | NOT_INDEPENDENTLY_VERIFIED |
 | runtime-controls-and-conditional-aliases | Existing operator/system configuration | CONFIGURED_BUT_UNVERIFIED | Unknown/not applicable | NOT_INDEPENDENTLY_VERIFIED |
@@ -243,4 +247,4 @@ Historical findings below remain as review obligations, not fresh observations. 
 - P1 RELEASE_CONTROLS_UNENFORCED: Observed main and Production/Preview lack platform protection/restrictions; mandatory user release gates still apply. Owner command: 010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P2 HOST_TOOLCHAIN_DRIFT: Vercel project configured Node 24.x; canonical CI/API image is 22.21.1; Fly host test workflow has no explicit setup-node. Owner command: 006; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 
-1148 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.
+1222 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.

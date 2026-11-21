@@ -1,12 +1,13 @@
 "use client";
 
 import { defineComponent } from "@openuidev/react-lang";
+import { isElementNode } from "@openuidev/lang-core";
 import { ArrowUpRight } from "lucide-react";
-import { Fragment } from "react";
+import { Fragment, useContext } from "react";
 import { z } from "zod/v4";
 import { Glyph } from "./glyph";
-import { inline, MarkdownBlocks } from "./markdown";
-import { useRenderEvidenceCitation } from '../../evidence';
+import { inline, InlineNativeSections, MarkdownBlocks, NativeVisualContent } from "./markdown";
+import { EvidenceContext, evidenceSource, useRenderEvidenceCitation } from '../../evidence';
 import { children, color, cx, fg, webUrl } from "./style";
 
 const str = (value: unknown) => (value == null ? "" : String(value));
@@ -20,11 +21,12 @@ export const Title = defineComponent({
     level: z.enum(["2", "3", "4"]).optional(),
   }),
   description: "Heading. Size is visual; level is 2 by default, 3 for subsections and 4 only within a subsection.",
-  component: ({ props }) => {
+  component: function NativeTitle({ props }) {
+    const renderCitation = useRenderEvidenceCitation();
     const sizeName = props.size ?? "md";
     return (
       <div role="heading" aria-level={Number(props.level ?? "2")} className={`iui-title iui-title-${sizeName}`} style={{ color: fg(props.color) }}>
-        {inline(str(props.text))}
+        {inline(str(props.text), "title", renderCitation)}
       </div>
     );
   },
@@ -32,7 +34,6 @@ export const Title = defineComponent({
 
 /** Text, or a run of strings and inline components such as Icon, Badge, Link or Math. */
 const richText = z.union([z.string(), children]);
-const isNode = (value: unknown) => !!value && typeof value === "object" && (value as { type?: unknown }).type === "element";
 
 export const Text = defineComponent({
   name: "Text",
@@ -49,6 +50,8 @@ export const Text = defineComponent({
   description: "Paragraph with bold, italic and code. Inline components can include Source, Icon, or Badge. Only use verified Source IDs for links.",
   component: function NativeText({ props, renderNode }) {
     const renderCitation = useRenderEvidenceCitation();
+    const evidence = useContext(EvidenceContext);
+    const cluster = new Set<string>();
     return (
       <p
         className={cx("iui-text", props.size && `iui-text-${props.size}`, props.weight && `iui-weight-${props.weight}`)}
@@ -60,10 +63,17 @@ export const Text = defineComponent({
         }}
       >
         {Array.isArray(props.text)
-          ? (props.text as unknown[]).flat().map((part, i) =>
-              isNode(part) ? <span key={i} className="iui-inline">{renderNode(part)}</span> : <Fragment key={i}>{inline(str(part), `t${i}`, renderCitation)}</Fragment>,
-            )
-          : inline(str(props.text), 'text', renderCitation)}
+          ? (props.text as unknown[]).flat().map((part, i) => {
+              if (!isElementNode(part)) return <Fragment key={i}>{inline(str(part), `t${i}`, renderCitation, cluster)}</Fragment>;
+              if (part.typeName === 'Source' && typeof part.props.id === 'string') {
+                const citation = evidenceSource(evidence, part.props.id, cluster);
+                if (citation === null) cluster.clear();
+                return citation && <span key={i} className="iui-inline">{citation}</span>;
+              }
+              cluster.clear();
+              return <span key={i} className="iui-inline">{renderNode(part)}</span>;
+            })
+          : inline(str(props.text), 'text', renderCitation, cluster)}
       </p>
     );
   },
@@ -73,11 +83,12 @@ export const Caption = defineComponent({
   name: "Caption",
   props: z.object({ text: z.string(), color: color.optional() }),
   description: "Small secondary text.",
-  component: ({ props }) => (
-    <p className="iui-caption" style={{ color: fg(props.color) }}>
-      {inline(str(props.text))}
-    </p>
-  ),
+  component: function CaptionView({ props }) {
+    const renderCitation = useRenderEvidenceCitation();
+    return <p className="iui-caption" style={{ color: fg(props.color) }}>
+      {inline(str(props.text), "caption", renderCitation)}
+    </p>;
+  },
 });
 
 export const Label = defineComponent({
@@ -133,13 +144,16 @@ export const ListItem = defineComponent({
   }),
   description: "marker replaces the bullet or number, e.g. a time or an emoji.",
   // Rendered by List; on its own it shows its content.
-  component: ({ props, renderNode }) => (
-    <div className="iui-list-body">
-      <div className="iui-list-title">{inline(str(props.title))}</div>
-      {props.description ? <div className="iui-list-description">{inline(str(props.description))}</div> : null}
-      {props.children ? <div className="iui-list-children">{renderNode(props.children)}</div> : null}
-    </div>
-  ),
+  component: function NativeListItem({ props, renderNode }) {
+    const renderCitation = useRenderEvidenceCitation();
+    return (
+      <div className="iui-list-body">
+        <div className="iui-list-title">{inline(str(props.title), "list-title", renderCitation)}</div>
+        {props.description ? <div className="iui-list-description">{inline(str(props.description), "list-description", renderCitation)}</div> : null}
+        {props.children ? <div className="iui-list-children">{renderNode(props.children)}</div> : null}
+      </div>
+    );
+  },
 });
 
 export const List = defineComponent({
@@ -150,7 +164,8 @@ export const List = defineComponent({
     timeline: z.boolean().optional(),
   }),
   description: "timeline joins the markers with a line. The timeline marker is shorthand for a numbered timeline.",
-  component: ({ props, renderNode }) => {
+  component: function NativeList({ props, renderNode }) {
+    const renderCitation = useRenderEvidenceCitation();
     const items = (Array.isArray(props.items) ? props.items.flat() : []) as unknown[];
     const marker = props.marker === "timeline" ? "number" : (props.marker ?? "bullet");
     const timeline = props.timeline || props.marker === "timeline";
@@ -168,7 +183,7 @@ export const List = defineComponent({
               <span className={cx("iui-list-marker", custom && (step ? "iui-list-marker-chip" : "iui-list-marker-text"))} aria-hidden={!custom}>
                 {step ? <span>{custom}</span> : custom ?? (marker === "number" ? i + 1 : null)}
               </span>
-              {isItem(item) ? renderNode(item) : <div className="iui-list-body">{inline(str(item))}</div>}
+              {isItem(item) ? renderNode(item) : <div className="iui-list-body">{inline(str(item), "list-text", renderCitation)}</div>}
             </li>
           );
         })}
@@ -183,6 +198,8 @@ export const Markdown = defineComponent({
   description: "Prose with headings, lists, quotes, code and tables.",
   component: function NativeMarkdown({ props }) {
     const renderCitation = useRenderEvidenceCitation();
-    return <div className="iui-markdown"><MarkdownBlocks text={str(props.text)} renderCitation={renderCitation} /></div>;
+    const nativeVisuals = useContext(NativeVisualContent);
+    const inlineSections = useContext(InlineNativeSections);
+    return <div className="iui-markdown"><MarkdownBlocks text={str(props.text)} renderCitation={renderCitation} nativeTables={nativeVisuals?.tables} nativeSectionTables={nativeVisuals?.sectionTables} nativeHeadingTitles={nativeVisuals?.headingTitles} nativeChecklists={nativeVisuals?.checklists} inlineSections={inlineSections} /></div>;
   },
 });

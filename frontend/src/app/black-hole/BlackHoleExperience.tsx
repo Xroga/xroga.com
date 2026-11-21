@@ -3,11 +3,13 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import {
-  ArrowDown, ArrowRight, ArrowUpRight, Check, Code2, FileText,
-  Globe2, Search, ShieldCheck, Workflow
+  ArrowDown, ArrowRight, ArrowUpRight, ArrowUp, Check, Code2, FileText,
+  Globe2, Search, ShieldCheck, Workflow, UserRound, Sparkles, Network
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import type { PointerEvent, ReactNode } from 'react';
+import type { FormEvent, PointerEvent, ReactNode } from 'react';
+import { PENDING_PROMPT_KEY } from '@/lib/constants';
+import { BlackHoleVisual } from './BlackHoleVisual';
 
 const capabilityModes = [
   {
@@ -82,6 +84,9 @@ export function BlackHoleExperience() {
   const hero = useRef<HTMLElement>(null);
   const [capabilityIndex, setCapabilityIndex] = useState(0);
   const [progress, setProgress] = useState(0);
+  const [composerDraft, setComposerDraft] = useState('');
+  const [composerError, setComposerError] = useState('');
+  const [demoMode, setDemoMode] = useState<'build' | 'research'>('build');
   const capability = capabilityModes[capabilityIndex];
 
   useEffect(() => {
@@ -125,28 +130,104 @@ export function BlackHoleExperience() {
     hero.current.style.setProperty('--bh-y', ((event.clientY - rect.top) / rect.height - 0.5).toFixed(3));
   };
 
+  const goToComposer = (text: string) => {
+    setComposerDraft(text);
+    setComposerError('');
+    document.getElementById('bh-composer')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  const submitComposer = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const text = composerDraft.trim().slice(0, 3000);
+    if (!text) return;
+    try {
+      // This is XROGA's existing, consumed-once workspace handoff.
+      // The real workspace retains authentication, permissions and approval gates.
+      window.localStorage.setItem(PENDING_PROMPT_KEY, text);
+      window.location.assign('/workspace');
+    } catch {
+      setComposerError('Your browser blocked draft storage. Please enable storage or copy your prompt into the XROGA workspace.');
+    }
+  };
+
   return (
-    <div className="bh-page" ref={root}>
+    <div className="bh-page bh-v2" ref={root}>
       <a className="bh-skip" href="#main-story">Skip to main content</a>
       <div className="bh-grain" aria-hidden="true" />
       <div className="bh-progress" role="presentation"><span style={{ width: progress + '%' }} /></div>
 
       <main id="main-story">
-        <section className="bh-hero bh-chapter" id="encounter" ref={hero} onPointerMove={onHeroMove} data-chapter data-revealed="true">
-          <Art src="/black-hole/particle-wave.svg" className="bh-hero-wave" eager />
-          <div className="bh-hero-wave-shade" aria-hidden="true" />
-          <div className="bh-hero-metadata" aria-hidden="true"><span>XROGA / BLACK HOLE</span><span>MODEL EXPERIENCE · V INFINITY</span></div>
-          <div className="bh-wrap bh-hero-content">
-            <Overline n="XROGA / 001">AN INTELLIGENCE IN EVOLUTION</Overline>
-            <h1>BLACK HOLE <em>V</em><br/><span>INFINITY</span><span className="bh-title-period">.</span></h1>
-            <p className="bh-hero-lead">Beyond a single prompt.<br/><strong>Built to work with humanity.</strong></p>
-            <p className="bh-copy bh-hero-copy">One continuously evolving intelligence experience, designed to help turn human intention into meaningful, verifiable work.</p>
-            <div className="bh-actions">
-              <a href="#question" className="bh-button bh-button-light">Explore the vision <ArrowDown size={17}/></a>
-              <Link href="/auth/signup" className="bh-button bh-button-ghost">Enter XROGA <ArrowUpRight size={16}/></Link>
+        <section className="bh-hero bh-chapter bh-v2-hero" id="encounter" ref={hero} onPointerMove={onHeroMove} data-chapter data-revealed="true">
+          <div className="bh-v2-frame">
+            <div className="bh-v2-topline">
+              <Link className="bh-v2-brand" href="/" aria-label="XROGA home">XROGA<span>.</span></Link>
+              <span className="bh-v2-topline-id">BLACK HOLE V INFINITY / THE MODEL EXPERIENCE</span>
+              <Link href="/workspace" className="bh-v2-open-workspace">Open workspace <ArrowUpRight size={14} /></Link>
+            </div>
+            <div className="bh-v2-frame-rule" aria-hidden="true"/>
+            <div className="bh-v2-intro">
+              <p className="bh-v2-pill"><span className="bh-v2-status-dot"/> A NEW WAY TO WORK <span className="bh-v2-pill-split">/</span> XROGA INTELLIGENCE</p>
+              <h1>Intelligence that turns<br/><em>thought into work.</em></h1>
+              <p>Black Hole V Infinity is our continuously evolving intelligence experience, designed to amplify human capability and turn ambitious ideas into real, reviewable outcomes.</p>
+              <div className="bh-v2-actions">
+                <button type="button" onClick={() => document.getElementById('bh-composer')?.scrollIntoView({ behavior: 'smooth', block: 'center' })} className="bh-v2-primary">Start creating <ArrowRight size={15}/></button>
+                <a className="bh-v2-secondary" href="#demonstration">Explore the experience <ArrowDown size={15}/></a>
+              </div>
+            </div>
+            <div className="bh-v2-event-scene">
+              <div className="bh-v2-scene-glow" aria-hidden="true"/>
+              <BlackHoleVisual />
+            </div>
+            <div className="bh-v2-composer" id="bh-composer">
+              <form onSubmit={submitComposer} aria-label="Start a task in the XROGA workspace">
+                <div className="bh-v2-composer-heading"><span>What would you like to create?</span><span className="bh-v2-composer-model"><span/> BLACK HOLE V INFINITY</span></div>
+                <label className="bh-v2-sr-only" htmlFor="bh-v2-composer-input">Describe your task or idea</label>
+                <textarea id="bh-v2-composer-input" value={composerDraft} maxLength={3000} rows={2} onChange={(event) => setComposerDraft(event.target.value)} placeholder="Describe the project, research, or work you want to begin…" />
+                <div className="bh-v2-composer-bottom">
+                  <div className="bh-v2-preset-buttons">
+                    <button type="button" onClick={() => setComposerDraft('Build a beautiful, responsive SaaS dashboard with authentication and reporting.') }><Code2 size={13}/> Build software</button>
+                    <button type="button" onClick={() => setComposerDraft('Research this idea using credible sources, compare the options, and give me a practical action plan.') }><Search size={13}/> Research</button>
+                    <button type="button" onClick={() => setComposerDraft('Design a multi-step workflow with clear permissions, approvals, and verifiable outcomes.') }><Workflow size={13}/> Automate</button>
+                  </div>
+                  <button className="bh-v2-send" type="submit" disabled={!composerDraft.trim()} aria-label="Submit your prompt to XROGA"><ArrowUp size={18}/></button>
+                </div>
+                {composerError && <p className="bh-v2-composer-error" role="alert">{composerError}</p>}
+              </form>
+            </div>
+            <div className="bh-v2-bottomline"><span>HUMAN-DIRECTED INTELLIGENCE</span><span>ONE MODEL · CONTINUOUS EVOLUTION</span><a href="#demonstration">SCROLL TO EXPLORE <ArrowDown size={13}/></a></div>
+            <div className="bh-v2-capability-strip" aria-label="Areas of work">
+              {['SOFTWARE', 'RESEARCH', 'CONNECTED APPS', 'FILES & ARTIFACTS', 'WORKFLOWS'].map(label => <span key={label}>{label}</span>)}
             </div>
           </div>
-          <div className="bh-hero-bottom bh-wrap"><span>HUMAN-DIRECTED / OUTCOME-FOCUSED</span><a href="#question" aria-label="Scroll to the question">SCROLL TO EXPLORE <ArrowDown size={16}/></a><span>01 / 12</span></div>
+        </section>
+
+        <section className="bh-v2-demo" id="demonstration" aria-label="Human intent and XROGA work">
+          <div className="bh-v2-demo-wrap">
+            <p className="bh-v2-section-label">THE PRODUCT EXPERIENCE / 001</p>
+            <h2>Built for <span>real work.</span><br/>Not just better answers.</h2>
+            <p className="bh-v2-demo-description">From the first idea to the final review, XROGA is designed to keep people in command while the work moves forward.</p>
+            <div className="bh-v2-demo-switch" role="group" aria-label="Choose a workflow example">
+              <button type="button" className={demoMode === 'build' ? 'is-current' : ''} aria-pressed={demoMode === 'build'} onClick={() => setDemoMode('build')}>Build software</button>
+              <button type="button" className={demoMode === 'research' ? 'is-current' : ''} aria-pressed={demoMode === 'research'} onClick={() => setDemoMode('research')}>Research with evidence</button>
+            </div>
+            <div className="bh-v2-compare">
+              <div className="bh-v2-compare-card">
+                <div className="bh-v2-compare-top"><span>01 / HUMAN INTENT</span><UserRound size={17}/></div>
+                <div className="bh-v2-compare-wave" aria-hidden="true"><svg viewBox="0 0 460 130" preserveAspectRatio="none"><path d="M0 70 H48 C66 70 69 18 82 70 S105 122 124 70 S166 32 181 70 S208 100 227 70 S251 42 273 70 S298 84 318 70 S340 62 360 70 H460" /><path className="bh-v2-wave-shade" d="M0 70 H460"/></svg></div>
+                <h3>{demoMode === 'build' ? 'Make a product from this idea.' : 'Help me understand this decision.'}</h3>
+                <p>{demoMode === 'build' ? 'Set the purpose, requirements, constraints and what success looks like.' : 'Frame the question, what must be verified, and what evidence matters.'}</p>
+              </div>
+              <div className="bh-v2-compare-between" aria-hidden="true"><ArrowRight size={20}/></div>
+              <div className="bh-v2-compare-card">
+                <div className="bh-v2-compare-top"><span>02 / XROGA WORKFLOW</span><Sparkles size={17}/></div>
+                <div className="bh-v2-compare-wave" aria-hidden="true"><svg viewBox="0 0 460 130" preserveAspectRatio="none"><path d="M0 70 H34 Q44 70 54 45 T74 70 Q84 110 96 70 T122 70 Q140 5 156 70 T185 70 Q205 122 227 70 T262 70 Q277 15 294 70 T325 70 Q350 105 366 70 T397 70 H460"/><path className="bh-v2-wave-shade" d="M0 70 H460"/></svg></div>
+                <h3>{demoMode === 'build' ? 'Plan. Build. Test. Review.' : 'Find. Compare. Synthesize. Check.'}</h3>
+                <p>{demoMode === 'build' ? 'Use permitted capabilities, track progress, inspect results and approve consequential actions.' : 'Explore supported sources, distinguish evidence from uncertainty, and present actionable findings.'}</p>
+              </div>
+            </div>
+            <p className="bh-v2-illustrative">ILLUSTRATIVE FLOW · CAPABILITIES AND TOOL ACCESS DEPEND ON YOUR CONNECTED WORKSPACE.</p>
+            <button type="button" className="bh-v2-demo-link" onClick={() => goToComposer(demoMode === 'build' ? 'Help me plan and build a functional SaaS product, with testing and review before deployment.' : 'Research a business idea with reliable sources and give me a prioritized action plan.')}>Try this in XROGA <ArrowUpRight size={16}/></button>
+          </div>
         </section>
 
         <section className="bh-chapter bh-question" id="question" data-chapter>
@@ -254,6 +335,17 @@ export function BlackHoleExperience() {
               <p className="bh-copy">Trust is not a glowing answer on a screen. It means clear permissions, visible work, independent evidence, and meaningful control over what happens next.</p>
             </div>
             <div className="bh-trust-system">
+              <div className="bh-v2-network" role="img" aria-label="Human intention, projects, connected tools, and review all connected through an accountable XROGA workspace">
+                <svg viewBox="0 0 620 275" aria-hidden="true">
+                  <path d="M85 53 C170 53 163 130 271 130 M535 53 C450 53 457 130 349 130 M85 224 C170 224 163 144 271 144 M535 224 C450 224 457 144 349 144"/>
+                  <path className="bh-v2-central-link" d="M271 137 H349"/>
+                </svg>
+                <span className="bh-v2-network-node bh-v2-n1"><UserRound size={18}/><small>YOU</small></span>
+                <span className="bh-v2-network-node bh-v2-n2"><Code2 size={18}/><small>PROJECT</small></span>
+                <span className="bh-v2-network-node bh-v2-n3"><Globe2 size={18}/><small>TOOLS</small></span>
+                <span className="bh-v2-network-node bh-v2-n4"><ShieldCheck size={18}/><small>REVIEW</small></span>
+                <span className="bh-v2-network-core"><Network size={22}/><b>XROGA</b></span>
+              </div>
               <div className="bh-system-heading"><span>EXECUTION CONTRACT / CONCEPTUAL</span><ShieldCheck size={19}/></div>
               <div className="bh-workflow-rail">
                 {['Intent','Plan','Act','Verify','Review'].map((step,i)=><div className="bh-workflow-node" key={step}><span>{String(i+1).padStart(2,'0')}</span><strong>{step}</strong><i/></div>)}

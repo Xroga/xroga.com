@@ -37,18 +37,6 @@
 .xv-formatted-response .xv-answer-list li { padding-left:.35em; margin:.45em 0; }
 .xv-formatted-response .xv-answer-list li::marker { color:var(--answer-sky); }
 .xv-formatted-response :is(strong,b) { font-weight:680; }
-.xv-formatted-response .xv-answer-lead {
-  max-width: 740px;
-  margin: 0 0 1.65em;
-  padding: 18px 21px 20px;
-  border: 0;
-  border-left: 4px solid var(--answer-sky);
-  border-radius: 0 16px 16px 0;
-  background: color-mix(in srgb, var(--card) 92%, var(--answer-sky) 8%);
-  box-shadow: 0 9px 26px #0002;
-}
-.xv-answer-lead__label { display:block; margin-bottom:7px; color:var(--answer-sky); font-size:11px; line-height:1.3; font-weight:800; letter-spacing:.11em; text-transform:uppercase; }
-.xv-formatted-response .xv-answer-lead p { margin:0; font-size:1.03em !important; line-height:1.67 !important; font-weight:450; }
 .xv-formatted-response .xv-answer-quote { max-width:700px; margin:1.25em 0; border-left:4px solid var(--answer-sky); border-radius:0 13px 13px 0; background:color-mix(in srgb,var(--card) 91%,var(--answer-sky) 9%); }
 .xv-formatted-response .xv-answer-quote p { margin:0; }
 .xv-formatted-response .xv-answer-divider { margin:1.75em 0; border:0; height:1px; max-width:700px; background:color-mix(in srgb,var(--foreground) 12%,transparent); }
@@ -57,7 +45,7 @@
 .xv-formatted-response table th,.xv-formatted-response table td { padding:12px 14px; border-bottom:1px solid color-mix(in srgb,var(--foreground) 10%,transparent); }
 .xv-formatted-response :where(pre) { margin:1.25em 0; }
 .terminal-skin-light .xv-formatted-response,.terminal-skin-light-grid .xv-formatted-response,.terminal-skin-solar .xv-formatted-response { --answer-sky:#225fd1; }
-@media(max-width:639px){.xv-formatted-response{font-size:15px;line-height:1.7}.xv-formatted-response > .xv-answer-section{margin-top:1.75em}.xv-formatted-response .xv-answer-lead{padding:15px 16px}}
+@media(max-width:639px){.xv-formatted-response{font-size:15px;line-height:1.7}.xv-formatted-response > .xv-answer-section{margin-top:1.75em}}
 
 /* Verified entity results are distinct from narrative: ticket-like route cards and image-led stays. */
 [data-testid="rich-results"] { --rr-sky:#316fe8; margin:12px 0 25px; }
@@ -130,3 +118,77 @@
 [data-inline-answer-table] > .xv-table-tools button { min-height:28px; height:auto; padding:4px 6px; background:transparent; box-shadow:none; }
 [data-inline-answer-table] table :is(th,td) { padding-inline:clamp(7px,2vw,14px); }
 [data-xroga-surface="chart"] .xv-response-chart { padding:18px; }
+
+/* Code panels are shared by readable Markdown and native answers. */
+.iui-codeblock {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--iui-border, var(--card-border));
+  border-radius: var(--iui-radius-lg, 12px);
+  background: var(--iui-surface, var(--card));
+}
+
+.iui-codeblock-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px 6px 14px;
+  border-bottom: 1px solid var(--iui-border, var(--card-border));
+  color: var(--iui-muted, var(--muted));
+  font-size: 12px;
+}
+
+.iui-codeblock-language {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--iui-ink, var(--foreground));
+  font-weight: 600;
+}
+
+.iui-codeblock-language svg,
+.iui-codeblock-head button {
+  flex-shrink: 0;
+}
+
+.iui-codeblock-head button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.iui-codeblock-head button:hover {
+  background: var(--iui-hover, var(--surface-raised));
+  color: var(--iui-ink, var(--foreground));
+}
+
+.iui-codeblock pre {
+  margin: 0;
+  padding: 14px 16px;
+  overflow-x: auto;
+  white-space: pre;
+  font: 13px/1.6 var(--iui-mono, ui-monospace, monospace);
+}
+
+.iui-codeblock :is(pre, button):focus-visible {
+  outline: 2px solid var(--iui-focus, var(--accent));
+  outline-offset: -2px;
+}
+
+.iui-codeblock .iui-code-token {
+  color: var(--iui-code-light, inherit);
+}
+
+:where([data-theme="dark"], [data-theme="black"], [data-theme="gray"], .theme-dark, .theme-black) .iui-codeblock:not(:where(.native-evaluation[data-theme="light"] *, :is(.terminal-skin-light, .terminal-skin-light-grid, .terminal-skin-solar) *)) .iui-code-token,
+:where(.terminal-skin-dark, .terminal-skin-amoled, .terminal-skin-gray, .terminal-skin-midnight, .terminal-skin-forest, .terminal-skin-matrix, .terminal-skin-amber) .iui-codeblock .iui-code-token {
+  color: var(--iui-code-dark, inherit);
+}

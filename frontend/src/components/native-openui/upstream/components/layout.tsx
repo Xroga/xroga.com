@@ -1,17 +1,19 @@
 "use client";
 
 import { defineComponent, FormNameContext } from "@openuidev/react-lang";
-import { useId, type CSSProperties } from "react";
+import { useContext, useId, type CSSProperties, type ReactNode } from "react";
 import { z } from "zod/v4";
+import { InlineNativeSections, NativeVisualContent, placeNativeSections, VisibleMarkdownTables } from "./markdown";
 import { bg, children, color, onColor, cx, length, radius, radiusSchema, size, space } from "./style";
 
 const align = z.enum(["start", "center", "end", "stretch"]);
 const justify = z.enum(["start", "center", "end", "between"]);
 const FLEX: Record<string, string> = { start: "flex-start", end: "flex-end", center: "center", stretch: "stretch", between: "space-between" };
+const boundedSpace = (preferred: string, limit: string) => `min(${preferred}, var(${limit}, ${preferred}))`;
 
 type FlexProps = { gap?: number; align?: string; justify?: string; wrap?: boolean };
 const flexStyle = (p: FlexProps, column = false): CSSProperties => ({
-  gap: space(p.gap),
+  ...(column ? { "--iui-column-gap": space(p.gap) } as CSSProperties : { gap: space(p.gap) }),
   alignItems: p.align ? FLEX[p.align] : undefined,
   justifyContent: p.justify ? FLEX[p.justify] : undefined,
   flexWrap: p.wrap ? "wrap" : undefined,
@@ -84,11 +86,29 @@ export const Col = defineComponent({
   name: "Col",
   props: z.object({ children, gap: z.number().optional(), align: align.optional() }),
   description: "Vertical layout. Without gap it spaces blocks like an article.",
-  component: ({ props, renderNode }) => (
-    <div className={cx("iui-col", props.gap == null && "iui-flow")} style={flexStyle(props, true)}>
-      {renderNode(props.children)}
-    </div>
-  ),
+  component: function NativeColumn({ props, renderNode, statementId }) {
+    const settled = useContext(NativeVisualContent);
+    const preservedTables = useContext(VisibleMarkdownTables);
+    const inline = settled && statementId === "root" ? placeNativeSections(props.children, undefined, preservedTables ?? undefined) : undefined;
+    let contents: ReactNode;
+    if (inline) {
+      const moved = new Set<unknown>(inline.placements.values());
+      const sections = new Map<number, ReactNode>();
+      const replacedBlocks = new Set(inline.replacedBlocks);
+      for (const [index, section] of inline.placements) {
+        const title = section.typeName === "Section" ? section.props.title : undefined;
+        const replacement = typeof title === "string" ? settled?.inlineReplacements.get(title) : undefined;
+        sections.set(replacement ?? index, <InlineNativeSections.Provider value={undefined}>{renderNode(section)}</InlineNativeSections.Provider>);
+        if (replacement !== undefined) replacedBlocks.add(replacement);
+      }
+      contents = props.children.map((child, index) => moved.has(child) ? null : (
+        <InlineNativeSections.Provider key={index} value={index === inline.markdownIndex ? { nodes: sections, replacedBlocks } : undefined}>
+          {renderNode(child)}
+        </InlineNativeSections.Provider>
+      ));
+    } else contents = renderNode(props.children);
+    return <div className={cx("iui-col", props.gap == null && "iui-flow")} style={flexStyle(props, true)}>{contents}</div>;
+  },
 });
 
 export const Grid = defineComponent({
@@ -102,15 +122,16 @@ export const Grid = defineComponent({
   description: "Equal columns (default 2). With minChildWidth (px), columns drop on narrow screens.",
   component: ({ props, renderNode }) => {
     const columns = Math.min(12, Math.max(1, Math.round(props.columns ?? 2)));
-    const gap = space(props.gap) ?? "12px";
-    // At most `columns` columns, each at least minChildWidth wide.
-    const min = props.minChildWidth ? `max(${Math.max(0, props.minChildWidth)}px, (100% - ${columns - 1} * ${gap}) / ${columns})` : null;
+    const gap = boundedSpace(space(props.gap) ?? "12px", "--iui-grid-gap-limit");
+    // The requested count is an upper bound, including inside narrow chat cards.
+    // Preserve explicit minimums and give unspecified children readable space.
+    const min = `max(${Math.max(0, props.minChildWidth ?? 180)}px, (100% - ${columns - 1} * ${gap}) / ${columns})`;
     return (
       <div
         className="iui-grid"
         style={{
           gap,
-          gridTemplateColumns: min ? `repeat(auto-fill, minmax(min(100%, ${min}), 1fr))` : `repeat(${columns}, minmax(0, 1fr))`,
+          gridTemplateColumns: `repeat(auto-fill, minmax(min(100%, ${min}), 1fr))`,
         }}
       >
         {renderNode(props.children)}
@@ -128,14 +149,21 @@ export const Card = defineComponent({
     gap: z.number().optional(),
   }),
   description: "Panel with a border; soft is a filled panel for summaries.",
-  component: ({ props, renderNode }) => (
-    <section
-      className={cx("iui-card", props.variant === "soft" && "iui-card-soft", props.gap == null && "iui-flow")}
-      style={{ padding: space(props.padding), gap: space(props.gap) }}
-    >
-      {renderNode(props.children)}
-    </section>
-  ),
+  component: ({ props, renderNode }) => {
+    const padding = space(props.padding);
+    const gap = space(props.gap);
+    return (
+      <section
+        className={cx("iui-card", props.variant === "soft" && "iui-card-soft", props.gap == null && "iui-flow")}
+        style={{
+          padding: padding && boundedSpace(padding, "--iui-card-padding-limit"),
+          gap: gap && boundedSpace(gap, "--iui-card-gap-limit"),
+        }}
+      >
+        {renderNode(props.children)}
+      </section>
+    );
+  },
 });
 
 export const Divider = defineComponent({
