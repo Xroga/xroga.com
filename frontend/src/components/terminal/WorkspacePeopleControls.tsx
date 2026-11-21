@@ -12,6 +12,7 @@ import styles from './WorkspacePeopleControls.module.css';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { UsersRoundIcon } from '@/components/icons/animated/UsersRoundIcon';
 import { ShareIcon } from '@/components/icons/animated/ShareIcon';
+import { TeamMembershipPanel, teamMembershipPreviewAvailable } from './TeamMembershipPanel';
 
 export function WorkspacePeopleControls() {
   const { messages } = useTerminalChat();
@@ -28,7 +29,7 @@ export function WorkspacePeopleControls() {
     const escape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setOpen(false);
       if (event.key === 'Tab') {
-        const nodes = drawerRef.current?.querySelectorAll<HTMLElement>('button,a[href]');
+        const nodes = drawerRef.current?.querySelectorAll<HTMLElement>('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled])');
         if (!nodes?.length) return;
         const first = nodes[0], last = nodes[nodes.length - 1];
         if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
@@ -48,7 +49,9 @@ export function WorkspacePeopleControls() {
         <div className={styles.teamIntro}><UsersRound size={22} /><h2>Work together, with clear access.</h2><p>{activeProject?.repo || 'This workspace'} · {identity.displayName}</p></div>
         <section className={styles.teamSection}><h3>Conversation sharing</h3><p>Share a read-only snapshot of this conversation. It does not grant access to files, connected accounts or project editing.</p><button type="button" disabled={!transcript.trim()} onClick={() => { setOpen(false); setShare(true); }}><Share2 size={15} /> Share conversation</button></section>
         <section className={styles.teamSection}><h3>Project collaborators</h3><p>Repository collaborators are managed by GitHub. Inviting someone there does not give them Xroga workspace access or charge your plan.</p>{activeProject?.repo ? <a href={`https://github.com/${activeProject.repo}/settings/access`} target="_blank" rel="noreferrer">Manage GitHub access <ExternalLink size={14} /></a> : <p>Connect a GitHub repository to manage its collaborators.</p>}</section>
-        <section className={styles.teamSection}><h3>Xroga workspace roles</h3><p>Viewer, client, worker and owner invitations are not backed by workspace membership yet. No invite or owner-funded usage can be granted from this panel.</p></section>
+        {identity.userId && identity.status === 'authenticated' && teamMembershipPreviewAvailable()
+          ? <TeamMembershipPanel key={identity.userId} userId={identity.userId} />
+          : <section className={styles.teamSection}><h3>Xroga workspace roles</h3><p>Team membership is available only in the isolated Preview. Sharing a snapshot does not grant team access.</p></section>}
       </aside>
     </div>, document.body) : null}
   </>;

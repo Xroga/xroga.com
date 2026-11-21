@@ -27,6 +27,7 @@ import supabaseOAuthRouter from './routes/supabaseOAuth.js';
 import publishRouter from './routes/publish.js';
 import notificationsRouter from './routes/notifications.js';
 import billingRouter from './routes/billing.js';
+import teamMembershipRouter from './routes/teamMembership.js';
 import billingWebhookRouter from './routes/billingWebhook.js';
 import simpleChatRouter from './routes/simpleChat.js';
 import v1Router from './routes/v1.js';
@@ -272,6 +273,7 @@ app.get('/auth/github', authMiddleware, (req, res, next) => {
 });
 app.use('/api/notifications', authMiddleware, notificationsRouter);
 app.use('/api/billing', authMiddleware, billingRouter);
+app.use('/api/team-membership', authMiddleware, teamMembershipRouter);
 
 app.use((_req, res) => {
   res.status(404).json({ error: 'Not found' });
