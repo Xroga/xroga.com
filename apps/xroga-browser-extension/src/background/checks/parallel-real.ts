@@ -8,7 +8,7 @@ import { defineCheck } from './registry';
 import { sleep, waitForLoad } from './helpers';
 import { panel } from './panel-chat';
 
-const ALL_CODES = ['K7Q2-41', 'M3X9-86', 'R5T8-20', 'V1B6-73', 'H4N7-15', 'W9C3-62', 'D2F8-37', 'P6L1-94', 'S8J5-08', 'T3Y7-51', 'B9G2-46', 'Z5M4-29'];
+const ALL_CODES = ['K7Q2-41', 'M3X9-86', 'R5T8-20', 'V1B6-73', 'H4N7-15', 'W9C3-62', 'D2F8-37', 'P6L1-94', 'S8J5-08', 'T3Y7-51', 'B9G2-46', 'Z5M4-29', 'C6R3-18', 'N2K9-74', 'F8H5-33', 'Q4D7-69', 'J1W6-82', 'X9T2-05', 'L5P8-47', 'Y3V1-90'];
 const urlsFor = (n: number) => Array.from({ length: n }, (_, i) => `${FIXTURE_ORIGIN}/par-${i + 1}.html`);
 const job = (n: number) => `Each of these ${n} pages has a three-step account check (choose a region, confirm, then a confirmation code appears after a short load). Get the confirmation code from every page and list all ${n}.`;
 
@@ -50,7 +50,7 @@ defineCheck({
           await sleep(600);
           const known = new Set((await listConversations()).map(c => c.id));
           const start = Date.now();
-          const n = Math.min(12, args.pages ?? 4);
+          const n = Math.min(20, args.pages ?? 4);
           await panel(page.id!, 'type-send', { text: TASKS[arm]!(n) });
           let maxActive = 0;
           const sampler = setInterval(async () => {
@@ -60,7 +60,7 @@ defineCheck({
           }, 150);
           for (let i = 0; i < 40 && (await panel(page.id!, 'read')).status === 'Done'; i++) await sleep(50);
           let last = await panel(page.id!, 'read');
-          for (let i = 0; i < 2400; i++) {
+          for (let i = 0; i < 5000; i++) {
             last = await panel(page.id!, 'read');
             if (last.status === 'Done') break;
             await sleep(200);
@@ -68,7 +68,7 @@ defineCheck({
           clearInterval(sampler);
           const ms = Date.now() - start;
           const text = `${last.transcript}\n${last.body}`;
-          const codes = ALL_CODES.slice(0, Math.min(12, args.pages ?? 4));
+          const codes = ALL_CODES.slice(0, Math.min(20, args.pages ?? 4));
           const found = codes.filter(c => text.includes(c));
           const workers = (await listConversations()).filter(c => !known.has(c.id) && c.title.startsWith('Worker: '));
           out.push({ arm, rep, ms, status: last.status, found: found.length, ok: found.length === codes.length, pages: codes.length, workers: workers.length, maxActive });

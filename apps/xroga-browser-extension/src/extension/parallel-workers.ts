@@ -16,6 +16,7 @@ import type { AgentTool } from '@src/agent/tools';
 /** Workers running at the same time for one parent when the server says nothing else. More tasks than this wait their turn. */
 export const MAX_ACTIVE_WORKERS = 3;
 /** The most workers one parent runs at once, however much the account allows (each is a Chrome window and a model stream). */
+// 12, not 20: 20 workers ran concurrently and were correct (20 of 20 four times) but were not faster than one agent at median (89, 147, 210, 234 s against 175 s), and one run made 26 worker windows for 20 tasks; 12 workers beat one agent once (134 s against 174 s). See the v8 handover, round 4.
 export const MAX_ACTIVE_WORKERS_CEILING = 12;
 /** Workers that may run at once for an account limit of `activeRunLimit` runs: the parent holds one slot. */
 export function workersFor(activeRunLimit: number | undefined): number {

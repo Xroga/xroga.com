@@ -114,3 +114,6 @@ Build commit `0f23cff8f` (working tree clean at build), ZIP `C:\xr-review-builds
 
 ## Build addendum 4 (round 3)
 Build commit `6cbfe81d3` (working tree clean at build), ZIP `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-6cbfe81d3.zip`, SHA-256 `0DF1C6A02DC0479234BDE329BECF79F3527C5BC45F7CE0AC1A0D3AA4AB1BEF8C`, manifest `ARTIFACT-MANIFEST-6cbfe81d3.json`. Upgrade from `0f23cff8f` keeps extension id, storage, service worker and side panel. Rollback: the `0f23cff8f` ZIP (SHA-256 `B029CCBB...3229`). Extension unit suite 1458 passed, 4 skipped; 304 of 304 scenarios PASS. Staging only; the backend is unchanged by this round.
+
+## Round 4 addendum (2026-11-22): 20 workers
+Real DeepSeek, product limit 21, 20 independent three-step pages: workers 89, 147, 210, 234 s, all 20 of 20 correct, 20 active at once, no 429; single agent 175 s (one run). One run opened 26 worker windows for 20 tasks. At median no gain over one agent, so the per-run ceiling stays 12 (the constant was raised to 20 for the test and set back, with the reason in the source). Two-tenant isolation at the backend is covered by the route tests (another account gets 403 or 404 on session, run, turn, finish, resume, extend and probe). The consolidated report is `FINAL-ENGINEERING-REPORT-20261122.md`.
