@@ -13,6 +13,7 @@ import { dialogDetail, quote } from '../text';
 import { siteOf } from '../site';
 import { observeTab } from '../tools/observe';
 import { countMatching, describeQuery } from './count';
+import { captureBlob } from '../blob-capture';
 
 /** Settle: poll 100 ms; cap 1.5 s; 500 ms with no evidence and no request. */
 const POLL_MS = 100;
@@ -161,9 +162,11 @@ export class Evidence {
       cdp.on('Page.javascriptDialogOpening', params => {
         this.#dialog ??= params as DialogInfo;
       }),
-      cdp.on('Page.downloadWillBegin', params => {
+      cdp.on('Page.downloadWillBegin', (params, sessionId) => {
         const p = params as { url: string; suggestedFilename: string };
         this.#downloads.push({ name: p.suggestedFilename, url: p.url });
+        // A page-made file (blob: address) can only be read from the page, and only now: hold its bytes so it can be kept and handed to another site.
+        if (p.url.startsWith('blob:')) void captureBlob(cdp, sessionId, p.url);
       }),
       cdp.on('Network.requestWillBeSent', (params, sessionId) => {
         const p = params as { requestId: string; type?: string; request: { method: string; url: string } };

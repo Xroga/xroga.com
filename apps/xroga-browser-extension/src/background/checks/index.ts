@@ -29,6 +29,7 @@ import './save-file';
 import './confirm-download';
 import './parallel-bench';
 import './parallel-real';
+import './panel-real';
 import './focus-competing';
 import './direct-read';
 import './click-bench';

@@ -97,3 +97,17 @@ The staging backend that serves a signed-in device (`xroga-api-universal-staging
 
 ## Build addendum 3 (round 2)
 Build commit `0f23cff8f` (working tree clean at build), ZIP `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-0f23cff8f.zip`, SHA-256 `B029CCBBB5C8657751E062DF5A55FFA575867ABF94D4A46316932B497F523229`, manifest `ARTIFACT-MANIFEST-0f23cff8f.json`. Upgrade from `e7c96eeac` keeps extension id, storage, service worker and side panel. Rollback: the `e7c96eeac` ZIP (SHA-256 `7C6BFD82...B797`), and for the backend the retag described above. The staging backend (`browser-op-1110`) now runs the high/max image; production is not live with any of this.
+
+## Round 3 addendum (2026-11-22): cross-app file transfer with a real model
+
+**Seed covered: FILES (download in one app, upload the same bytes into another), real DeepSeek, full product toolset through the side panel, graded by what the destination server received** (new check `panel-real`; fixtures `f-export.html`, `f-import.html`).
+
+**Failure found.** The model exported a CSV the page made in the browser (a `blob:` download) and then stopped with "the extension can't re-upload a file it downloaded itself": 0 of 3 completed (each waited on the person). Cause: `confirm_download keep` refused `blob:` addresses because only the page can read them, and only while it keeps them.
+
+**Fix.** `browser-control/core/blob-capture.ts`: when a download begins from a `blob:` address the bytes are read from the page and held in extension memory (at most six files, 25 MB each, ten minutes); `keepDownload` uses them (size checked against the download, SHA-256 computed). A small hook in the page's own world (`URL.createObjectURL` wrapper that remembers the last six Blobs, one non-enumerable property) keeps the bytes readable when the page revokes the address at once, which many export buttons do. Nothing is sent anywhere by this code; a page that forbids the hook keeps working.
+
+**After.** Plain blob export: 2 of 2 (47 s and 62 s). Export that revokes the address immediately: 2 of 2 (71 s and 95 s) (it was 0 of 2 with the first version that only fetched at download time, which lost the race). Each run: exactly one post at the destination, the file name and content marker intact. Unit tests: `blob-capture.test.ts` (6). Files: `live-model/files-real-*.json`.
+
+**Checks on this source:** all 304 Chromium scenarios PASS with the hook installed on every page; `restart-restore` and `parallel-bench` PASS; extension unit suite and backend route tests below.
+
+**Still not run as graded real-model cases:** two-tenant isolation with two signed-in users (the backend route test covers ownership with a fixture), skill injection with a real model (forged digest is unit-tested; the page-injection tasks cover the model side), a service-worker kill mid-run with a real model (`restart-restore` uses the fixture model), 20 parallel workers, real Ads/Meta/Shopify/Drive accounts, production gates.

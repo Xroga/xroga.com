@@ -2,6 +2,7 @@
 // download list and says whether the file really finished, under what name and how big it is, so an exported design,
 // video or report is confirmed rather than assumed. Only the file name is reported, never the folder.
 import type { AgentTool } from './tools';
+import { capturedBlob } from '@src/browser-control/core/blob-capture';
 
 export const DEFAULT_WINDOW_S = 120;
 export const MAX_WINDOW_S = 600;
@@ -139,6 +140,17 @@ export interface KeptFile { data: Blob; name: string; mimeType: string; size: nu
  */
 export async function keepDownload(item: DownloadLike & { url?: string; finalUrl?: string }, fetchImpl: typeof fetch = fetch): Promise<KeptFile | { reason: string }> {
   const url = item.finalUrl || item.url || '';
+  // A page-made file: its bytes were read from the page when the download began (browser-control/core/blob-capture.ts); the address itself cannot be fetched again.
+  if (url.startsWith('blob:')) {
+    const captured = capturedBlob(url);
+    if (!captured) return { reason: 'the page made this file in the browser and its bytes were not captured when the download began (the page may have discarded it first); ask the user to attach it' };
+    if (captured.bytes.byteLength > KEEP_MAX_BYTES) return { reason: 'it is larger than 25 MB' };
+    if (item.fileSize && captured.bytes.byteLength !== item.fileSize) return { reason: `the bytes captured from the page (${captured.bytes.byteLength}) differ from the downloaded file (${item.fileSize})` };
+    const digest = await crypto.subtle.digest('SHA-256', captured.bytes);
+    const sha256 = [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, '0')).join('');
+    const mimeType = item.mime || captured.mimeType;
+    return { data: new Blob([captured.bytes], { type: mimeType }), name: baseName(item.filename), mimeType, size: captured.bytes.byteLength, sha256 };
+  }
   // https, data:, and the loopback development host (fixtures, a local app the user runs); never plain http elsewhere, blob: or file:.
   if (!/^(https:|data:|http:\/\/(localhost|127\.0\.0\.1)(:\d+)?\/)/i.test(url)) return { reason: `its address (${url.split(':')[0] || 'unknown'}) cannot be read again by the extension; ask the user to attach the file instead` };
   if ((item.fileSize ?? 0) > KEEP_MAX_BYTES) return { reason: 'it is larger than 25 MB' };

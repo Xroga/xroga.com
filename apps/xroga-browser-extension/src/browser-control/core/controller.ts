@@ -1,5 +1,6 @@
 // The controller: sessions, tabs, refs and tool dispatch. It runs in the extension's service worker;
 // its clients are in-process (the extension's agent, the test panel) and, later, an MCP bridge.
+import { installBlobHook } from './blob-capture';
 import { isLayerError, LayerError } from '../protocol/errors';
 import type { ErrorCode, ProtocolError } from '../protocol/errors';
 import { isReadOnly, listTools, toolSpec } from '../protocol/catalogue';
@@ -299,6 +300,8 @@ export class Controller {
           state.attachment = attachment;
           state.capture = { enabledSessions: new Set() };
           state.probe = new ProbeClient(attachment.cdp);
+          // Page-made downloads: remember the Blobs the page offers, so a file the page revokes at once can still be kept (blob-capture.ts).
+          void installBlobHook(attachment.cdp);
           // Any navigation ends the reuse of the last capture.
           attachment.topology.onFrameEvent(event => {
             if (event.type !== 'attached') state.last = undefined;
