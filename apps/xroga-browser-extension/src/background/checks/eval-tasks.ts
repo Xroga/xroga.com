@@ -256,6 +256,19 @@ export const TASKS: EvalTask[] = [
         grade: st((s, x) => s.reports.length === 1 && /R-1001/.test(x.answer)) },
     ];
   }),
+  // Acceptance seeds for categories the first holdout suite did not cover: a social-ads draft (a platform with other concepts than search ads) and a novel interface
+  // (right-to-left on odd variants, zoom, a shadow root, the Save button inside an iframe). Graded by the page's own state.
+  ...[1, 2, 3, 4].flatMap((v): EvalTask[] => {
+    const app = (name: string) => `${FIXTURE_ORIGIN}/apps/${name}.html?v=${v}`;
+    const state = (f: (s: any) => boolean) => (x: RunFacts): boolean => { const m = /\[probe\] (\{[\s\S]*\})\s*$/.exec(x.pageText); if (!m) return false; try { return f(JSON.parse(m[1]!)); } catch { return false; } };
+    const probe = 'JSON.stringify(window.__state)';
+    return [
+      { id: `app-meta-${v}`, url: app('meta'), probe, task: 'Create a DRAFT ad set: objective Leads, conversion location Instant forms, daily budget 30, placements Facebook Feed and Instagram Feed only. Save it as a draft. Do not publish it.',
+        grade: state(s => s.published === 0 && s.drafts.length >= 1 && s.drafts.at(-1).objective === 'Leads' && s.drafts.at(-1).location === 'Instant forms' && String(s.drafts.at(-1).budget) === '30' && JSON.stringify(s.drafts.at(-1).placements) === JSON.stringify(['Facebook Feed', 'Instagram Feed'])) },
+      { id: `app-novel-${v}`, url: app('novel'), probe, task: 'Turn off the Email notifications switch, leave Marketing emails as it is, and save the preferences.',
+        grade: state(s => s.saved >= 1 && s.notifications === false && s.marketing === true) },
+    ];
+  }),
   // Capabilities ported from donors, checked on a model's answer: the page's own error report, and a wait on what an element reads.
   ...[
     { id: 'diag-profile', page: 'c-misleading', task: 'Change the display name to Grace and press Save profile. Then tell me honestly whether the save really went through on the server.' },

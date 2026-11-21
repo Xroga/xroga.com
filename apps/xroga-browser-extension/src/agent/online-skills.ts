@@ -36,12 +36,12 @@ export function safeKeywords(task: string): string {
   return [...new Set(words)].slice(0, 12).join(' ');
 }
 
-async function getText(fetchImpl: FetchLike, url: string, accept: string): Promise<{ ok: true; text: string } | { ok: false }> {
+async function getText(fetchImpl: FetchLike, url: string, accept: string): Promise<{ ok: true; text: string } | { ok: false; status?: number }> {
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), TIMEOUT_MS);
   try {
     const r = await fetchImpl(url, { signal: ctl.signal, credentials: 'omit', redirect: 'error', headers: { Accept: accept } });
-    if (!r.ok) return { ok: false };
+    if (!r.ok) return { ok: false, status: r.status };
     const bytes = await r.arrayBuffer();
     if (bytes.byteLength > MAX_BODY) return { ok: false };
     return { ok: true, text: new TextDecoder().decode(bytes) };
@@ -52,14 +52,30 @@ async function getText(fetchImpl: FetchLike, url: string, accept: string): Promi
   }
 }
 
+/**
+ * When the provider answers that it is unavailable to us (402 payment required, 403, 429, 5xx) it is not asked again for this long: the answer is the
+ * provider's, not something a retry changes, and a task must not pay a request and a wait per run for it. Local skills, site skills and the general
+ * browser tools carry on; nothing here is shown to the person as a billing prompt.
+ */
+export const PROVIDER_COOLDOWN_MS = 10 * 60_000;
+const refusedUntil = new Map<string, number>();
+export function resetProviderCooldowns(): void {
+  refusedUntil.clear();
+}
+const refused = (status: number | undefined) => status === 402 || status === 403 || status === 429 || (status !== undefined && status >= 500);
+
 export const SKILLSHUB: OnlineProvider = {
   id: 'skillshub',
   hosts: ['skillshub.wtf'],
   async resolve(keywords, limit, fetchImpl) {
     if (!keywords) return [];
+    if ((refusedUntil.get('skillshub') ?? 0) > Date.now()) return [];
     const url = `https://skillshub.wtf/api/v1/skills/resolve?task=${encodeURIComponent(keywords).slice(0, 400)}&limit=${Math.min(Math.max(limit, 1), 5)}`;
     const got = await getText(fetchImpl, url, 'application/json');
-    if (!got.ok) return [];
+    if (!got.ok) {
+      if (refused(got.status)) refusedUntil.set('skillshub', Date.now() + PROVIDER_COOLDOWN_MS);
+      return [];
+    }
     let doc: { data?: unknown };
     try { doc = JSON.parse(got.text); } catch { return []; }
     if (!Array.isArray(doc.data)) return [];

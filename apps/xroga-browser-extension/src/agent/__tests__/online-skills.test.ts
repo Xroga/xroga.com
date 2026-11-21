@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { SKILLSHUB, describeOnline, loadCandidate, renderOnline, safeKeywords } from '../online-skills';
+import { PROVIDER_COOLDOWN_MS, SKILLSHUB, describeOnline, loadCandidate, renderOnline, resetProviderCooldowns, safeKeywords } from '../online-skills';
 import type { FetchLike } from '../well-known-skills';
 
 const enc = (s: string) => new TextEncoder().encode(s).buffer as ArrayBuffer;
@@ -64,5 +64,29 @@ describe('loadCandidate', () => {
     expect(await loadCandidate(cand, () => Promise.reject(new Error('x')))).toBeNull();
     expect(await loadCandidate(cand, () => reply('---\nname: g\ndescription: d\n---\n' + 'x'.repeat(70_000)))).toBeNull();
     expect(await loadCandidate({ ...cand, fetchUrl: 'https://evil.test/g.md' }, () => reply('---\nname: g\ndescription: d\n---\nok'))).toBeNull();
+  });
+});
+
+describe('SKILLSHUB answering 402 (payment required)', () => {
+  const paymentRequired: FetchLike = () => Promise.resolve({ ok: false, status: 402, headers: { get: () => null }, arrayBuffer: async () => enc('{"error":"DEPLOYMENT_DISABLED"}') } as never);
+  it('returns no candidates, and is not asked again until the cooldown ends', async () => {
+    resetProviderCooldowns();
+    let calls = 0;
+    const counting: FetchLike = (url, init) => { calls++; return paymentRequired(url, init); };
+    expect(await SKILLSHUB.resolve('google ads campaign', 3, counting)).toEqual([]);
+    expect(await SKILLSHUB.resolve('google ads campaign', 3, counting)).toEqual([]);
+    expect(calls).toBe(1);
+    expect(PROVIDER_COOLDOWN_MS).toBeGreaterThan(60_000);
+    resetProviderCooldowns();
+    expect(await SKILLSHUB.resolve('google ads campaign', 3, counting)).toEqual([]);
+    expect(calls).toBe(2);
+  });
+  it('a malformed or empty answer does not start a cooldown (it may be a passing fault)', async () => {
+    resetProviderCooldowns();
+    let calls = 0;
+    const malformed: FetchLike = () => { calls++; return reply('not json'); };
+    await SKILLSHUB.resolve('google ads campaign', 3, malformed);
+    await SKILLSHUB.resolve('google ads campaign', 3, malformed);
+    expect(calls).toBe(2);
   });
 });
