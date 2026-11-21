@@ -776,6 +776,38 @@ function printRecoveryExpression(node: ASTNode): string {
   }
 }
 
+/** A calculator can repeat its formula in an optional Section introduction.
+ * Keep the authoritative Markdown copy and any independent control guidance. */
+export function removeRepeatedCalculatorFormulas(program: string, prose: string): string {
+  if (!prose.includes('=') || /^(?: {0,3})(?:```|~~~)/m.test(prose)) return program;
+  const sentences = /(?<=[.!?])\s+|\n+/;
+  const formulaKey = (sentence: string) => {
+    if (!sentence.includes('=')) return '';
+    return nativeReadableTextKey(sentence).replace(/^[^:\n]{1,64}:\s*/, '').replace(/[.!?]$/, '').trim();
+  };
+  const formulas = new Set(prose.split(sentences).map(formulaKey).filter(Boolean));
+  if (!formulas.size) return program;
+  const statements = split(tokenize(program)).map(statement => ({
+    id: statement.id, expression: parseExpression(statement.tokens),
+  }));
+  const root = statements.find(statement => statement.id === 'root')?.expression;
+  const children = root?.k === 'Comp' ? root.args[0] : undefined;
+  const showsProse = children?.k === 'Arr' && children.els.some(child =>
+    child.k === 'Comp' && child.name === 'Markdown' && child.args[0]?.k === 'Ref' && child.args[0].n === '_xroga_answer');
+  if (!showsProse) return program;
+  let changed = false;
+  for (const { expression } of statements) walkAST(expression, node => {
+    if (node.k !== 'Comp' || node.name !== 'Section' || node.args[2]?.k !== 'Str') return;
+    const introduction = node.args[2];
+    const parts = introduction.v.split(sentences);
+    const retained = parts.filter(sentence => !formulas.has(formulaKey(sentence)));
+    if (retained.length === parts.length) return;
+    introduction.v = retained.join(' ');
+    changed = true;
+  });
+  return changed ? statements.map(({ id, expression }) => id + ' = ' + printRecoveryExpression(expression)).join('\n') : program;
+}
+
 /** Remove conflicting static explanatory paragraphs from the visual itself,
  * before deriving saved prose. Calculations, inputs and unrelated text stay intact. */
 export function recoverNativeReadoutExplanations(program: string): string {

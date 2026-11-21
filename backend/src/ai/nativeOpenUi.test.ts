@@ -1264,6 +1264,26 @@ test('the incorrect reference angle remains detectable in rich content', () => {
   }
 });
 
+test('calculator formulas already shown in Markdown do not repeat in Section introductions', () => {
+  const prompt = 'Show an interactive calculator for an adjustable number of seats and price per seat. Explain the formula once.';
+  const equation = 'total fee = number of seats × price per seat';
+  const prose = 'The calculation is: **' + equation + '**. The starting values are 2 seats at USD 10 per seat.';
+  const program = [
+    'root = Col([Markdown(_xroga_answer), calculator])',
+    '$seats = 2',
+    '$price = 10',
+    'calculator = Section("Fee calculator", [Controls([Input($seats, "Seats", "number"), Input($price, "Price", "number"), Button("Reset", @Reset($seats, $price))], "Seat inputs"), Metric("Total fee", @Format($seats * $price, "currency", 0, "USD"))], ' +
+      JSON.stringify('Formula: ' + equation + '. Reset returns both inputs to their starting values.') + ')',
+  ].join('\n');
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop',
+    undefined, prompt, undefined, requiredNativeFormats(prompt));
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  assert.equal(answer.response.split(equation).length - 1, 1);
+  assert.equal(answer.responseSource.text.split(equation).length - 1, 1);
+  assert.match(answer.responseSource.text, /Reset returns both inputs to their starting values/);
+  assert.match(answer.responseSource.text, /@Reset\(\$seats, \$price\)/);
+});
+
 test('membership checks are not treated as an immutable tenant key', () => {
   const inaccurate = 'WITH CHECK prevents moving a row to another tenant.';
   const program = 'root = Col([Table(["Component", "Role"], [["Postgres", "Tenant data"]])])';

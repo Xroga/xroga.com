@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a93997ae5dc61a914c741e584e5230015340d084",
+  "source_sha": "d69bd377f2d261a39bf484a7c013e44c3aa87994",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17230,7 +17230,7 @@
     },
     {
       "path": "backend/src/ai/nativeDocumentDownload.ts",
-      "sha256": "a9404c386ae56b234174b9f860a7e0a044a03e74316a631aaa0ea9fcdfb8eaac"
+      "sha256": "1e23641d6b5eeda9462ce11d823292e4ddac2221490f71ed4b700912e2dc35bb"
     },
     {
       "path": "backend/src/ai/nativeMarkdown.ts",
@@ -17242,7 +17242,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "04d7a037367ff3da8ee44c47b882ff37fd59af1d9bbdd89e92aaf5efd084a1be"
+      "sha256": "f992d52b0e118390537e69f8ec008c6eef50d58cbfc3d4576ba8fbbc39b22cb4"
     },
     {
       "path": "backend/src/ai/nativeOpenUiAccuracy.ts",
@@ -17278,7 +17278,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "d05f0eec07c93bd1515513478c35eaac49915804a3478e77b842c2e0dc41ac17"
+      "sha256": "1d35ca49a94dbd81c5bd1d55515484aa76a4c6678bb493298f0fb65e84a7d10f"
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
@@ -33285,84 +33285,91 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 786,
+      "line": 788,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 808,
+      "line": 818,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 870,
+      "line": 840,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 937,
+      "line": 902,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUi.ts",
+      "line": 969,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 945,
+      "line": 977,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 946,
+      "line": 978,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 947,
+      "line": 979,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 965,
+      "line": 997,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 1002,
+      "line": 1034,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 1026,
+      "line": 1058,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 1027,
+      "line": 1059,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "line": 1038,
+      "line": 1070,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

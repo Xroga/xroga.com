@@ -4,7 +4,7 @@ import { nativeAnswerReviewReason, nativeFactualGuidance, nativeTechnicalCorrect
 import { checklistFromProse, requestsEditableChecklist, suppliedPeriodicSeries } from './nativeOpenUiRecovery.js';
 import { conflictingNativeReadouts, initialNativeReadouts, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
 import { recoverNativeReadoutExplanations } from './nativeOpenUi.js';
-import { bindNativeAnswerText } from './nativeOpenUi.js';
+import { bindNativeAnswerText, removeRepeatedCalculatorFormulas } from './nativeOpenUi.js';
 import { reviewEditorialProse } from './nativeOpenUiEditorial.js';
 import { nativeMarkdownTables } from './nativeMarkdown.js';
 
@@ -145,8 +145,12 @@ export function completeNativeWorkspaceAnswer(
     }
   }
   if (recoveryReview.conflict) return editorialFallback(prose, recoveryReview.conflict);
-  const program = repair?.program ?? originalProgram;
+  const candidate = repair?.program ?? originalProgram;
   const validation = repair?.validation ?? original;
+  const deduplicated = finishReason === 'stop' && validation?.ok && requiredFormats.includes('calculator')
+    ? removeRepeatedCalculatorFormulas(candidate, prose) : candidate;
+  const program = deduplicated !== candidate && validateNativeWorkspaceProgram(deduplicated, evidenceIds, prose,
+    undefined, { request: prompt }).ok ? deduplicated : candidate;
   const missing = missingNativeFormats(validation?.ok ? program : '', requiredFormats).filter(format =>
     format !== 'table' || requestsNativeTableControls(prompt ?? '') || !nativeMarkdownTables(prose).length);
   // The model can promise controls even when its program was rejected and

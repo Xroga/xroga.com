@@ -69,7 +69,7 @@ export function nativeDocumentPrompt(format: NativeDocumentFormat, missingAttach
       + 'For calculations, immediately follow the table with "## Formulas" and one list item per formula like "- C2: =A2*B2". Use one arithmetic operator between local numeric cells/numbers, or SUM, AVERAGE, MIN or MAX on one local numeric range. Do not add external references or a second table.'
     : format === 'pptx'
       ? 'Use a level-one deck title, then one level-two heading per slide with its complete visible text or bullets underneath. Do not add other level-two sections or use fenced code. Preserve the supplied facts and keep each slide readable.'
-      : 'Write the requested headings and use prose, lists or editable tables as appropriate. Put each fact or instruction where it is useful and avoid repeating the same rows or details in another section.';
+      : 'Write the requested headings and use prose, lists or editable tables as appropriate. For a document populated from supplied facts, keep each entry in one place. Refer to that table or section from a checklist without restating its entries. Add derived values or extra instructions only when the user asks for them, and check those calculations against the original values.';
   return '\n\nWrite the complete requested ' + format.toUpperCase() + ' artifact as readable Markdown in the primary answer. ' +
     formatInstructions + ' ' +
     'Workspace handles the local download after it validates the answer. Write only the document body. Omit capability disclaimers, manual conversion instructions, file URLs and claims about file delivery. For a document-only request, submit the Markdown without an OpenUI program. ' +

@@ -64,6 +64,7 @@ test('treats explicitly formatted named sheets, agendas and handbooks as local a
   assert.match(instructions, /Workspace handles the local download/);
   assert.match(instructions, /Write only the document body/);
   assert.match(instructions, /without an OpenUI program/);
+  assert.match(instructions, /Add derived values or extra instructions only when the user asks for them/);
 });
 
 test('withholds incomplete artifacts and preserves a validated local download in an authorized share projection', () => {
