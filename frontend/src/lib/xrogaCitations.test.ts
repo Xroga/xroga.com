@@ -56,6 +56,18 @@ test('the answer renderer shows an accessible source preview and exact source li
   assert.doesNotMatch(html, /More evidence/, 'unrelated source snippets must not flood the answer');
 });
 
+test('a social post uses the publisher identity even if metadata names an unrelated member', () => {
+  const html = renderToStaticMarkup(createElement(FormattedAiMarkdown, {
+    content: 'The original post reported this [1].',
+    sources: [{ title: 'Original published post', url: 'https://www.linkedin.com/posts/original-post',
+      siteName: 'LinkedIn · Unrelated Member', snippet: '' }],
+  }));
+  assert.match(html, />LinkedIn</);
+  assert.match(html, /Open source 1: Original published post/);
+  assert.match(html, /https:\/\/www\.linkedin\.com\/posts\/original-post/);
+  assert.doesNotMatch(html, /Unrelated Member/);
+});
+
 test('structured-output narrative retains the same inline citations as plain answers', () => {
   const html = renderToStaticMarkup(renderBlock({ schemaVersion: 1, id: 'answer', type: 'narrative', text: 'A verified claim [2].' }, undefined, sources));
   assert.match(html, /Open source 2: Second report/);

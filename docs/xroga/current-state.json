@@ -2,14 +2,14 @@
   "version": "1.0",
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
-    "branch": "codex/workspace-p0-live-nav-20261120",
-    "sha": "4e5ff687b3e255090ff439a3f180bcece5ae41e1",
-    "sourceTimestampUtc": "2026-11-21T14:47:02+05:00",
-    "auditStartedUtc": "2026-11-21T10:44:40.759Z",
+    "branch": "codex/workspace-release-compat-20261122",
+    "sha": "a06f0a340781ca301e414a4661dd1b704545e007",
+    "sourceTimestampUtc": "2026-11-22T03:31:21+05:00",
+    "auditStartedUtc": "2026-11-21T23:33:25.898Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
-    "npm": "11.16.0",
+    "npm": "10.9.4",
     "lockfiles": [
       "backend/package-lock.json",
       "deploy/browser-worker/package-lock.json",
@@ -1585,7 +1585,7 @@
       "id": "surface:f18ef073f3fd23b8a6c0",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/black-hole/researchRouter.ts",
-      "sha256": "aa40f102f360971d8af7567d85c7fc78248f103968c569119eccda75a3f6b706",
+      "sha256": "fbe97a28d4d7301cc5872cdaffaf5fdddba1c5212dd2a7087eb69b521072a10a",
       "symbols": [
         "INJECTION_PATTERNS",
         "NormalizeOptions",
@@ -6353,7 +6353,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "35bef69f22d6589695f8452dc236da59d7d035695466b0325f43606ea1bff06f",
+      "sha256": "77a082ec996630fd5cfbb3a02e8fdab0eb654dd575e3923ff68a6302dff9192b",
       "symbols": [
         "accessibilityRule",
         "answerScopeRule",
@@ -8685,7 +8685,7 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "0ecc729c53d37c20ad6e32c1893c022982a47ca7b00683f4a92984d76cd95a73",
+      "sha256": "dd3f1f00a0270f55fd99d535ec134d091c935bb30d2d208321ae1f1c34a17c3a",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
@@ -122769,7 +122769,7 @@
       "id": "surface:f6ec62cf29831de59ad0",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaCitations.ts",
-      "sha256": "1ea1218aeba75eb4e7d38d24cb9c23d07bfd7b611ceb028133d67e649232dff3",
+      "sha256": "7c34966a2a3606bfab6185342ae6fd575b4ae9663b0cb4bbedd92cea80867655",
       "symbols": [
         "CitationSource",
         "MarkdownNode",
@@ -122783,7 +122783,10 @@
         "generic",
         "host",
         "knownName",
+        "label",
+        "linkedinPost",
         "match",
+        "name",
         "next",
         "number",
         "numberedCitation",
@@ -122826,6 +122829,7 @@
         "frontend/src/components/terminal/SourceCitation.tsx:6",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:13",
         "frontend/src/components/terminal/WebSourcesPanel.tsx:6",
+        "frontend/src/lib/assistantCopy.test.ts:6",
         "frontend/src/lib/formatAiMarkdown.tsx:20",
         "frontend/src/lib/researchHandoff.ts:3",
         "frontend/src/lib/sanitizeChatMessages.ts:6",
@@ -122840,6 +122844,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "frontend/src/lib/assistantCopy.test.ts",
         "frontend/src/lib/xrogaCitations.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -145054,9 +145059,9 @@
   ],
   "findings": [
     {
-      "id": "finding:1ffa61ee43ea740eef88",
+      "id": "finding:5c39c79032650043e9a6",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "line": 79,
+      "line": 80,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -152754,7 +152759,7 @@
     {
       "id": "test-suite:77b6115578d9250ffa19",
       "sourcePath": "backend/src/ai/black-hole/researchRouter.test.ts",
-      "declaredTests": 9,
+      "declaredTests": 10,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -158676,7 +158681,7 @@
     {
       "id": "test-suite:0d9655cb673ddb25aff3",
       "sourcePath": "frontend/src/lib/assistantCopy.test.ts",
-      "declaredTests": 9,
+      "declaredTests": 10,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -160076,7 +160081,7 @@
     {
       "id": "test-suite:1b04327f877eb86409b4",
       "sourcePath": "frontend/src/lib/xrogaCitations.test.ts",
-      "declaredTests": 10,
+      "declaredTests": 11,
       "skipLocations": [],
       "focusLocations": []
     },

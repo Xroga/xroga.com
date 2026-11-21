@@ -145,6 +145,10 @@ function classifySource(result: RawResult, officialDomains: readonly string[]): 
   if (X_HOST_RE.test(host)) {
     return { sourceType: 'x_post', trust: result.xHandle && official ? 'B_primary' : 'D_discovery' };
   }
+  if ((host === 'linkedin.com' || host.endsWith('.linkedin.com')) &&
+      /^\/(?:posts\/|feed\/update\/|pulse\/)/i.test(new URL(result.url).pathname)) {
+    return { sourceType: 'web', trust: 'D_discovery' };
+  }
   if (REPO_HOST_RE.test(host)) {
     return { sourceType: 'official_repository', trust: official ? 'A_official' : 'C_secondary' };
   }

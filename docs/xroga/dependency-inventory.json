@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "d7061d6c530f94cfc96183448d338af4bb487fcb",
+  "source_sha": "a06f0a340781ca301e414a4661dd1b704545e007",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17038,7 +17038,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/researchRouter.ts",
-      "sha256": "aa40f102f360971d8af7567d85c7fc78248f103968c569119eccda75a3f6b706"
+      "sha256": "fbe97a28d4d7301cc5872cdaffaf5fdddba1c5212dd2a7087eb69b521072a10a"
     },
     {
       "path": "backend/src/ai/black-hole/retryPolicy.ts",
@@ -17258,7 +17258,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "35bef69f22d6589695f8452dc236da59d7d035695466b0325f43606ea1bff06f"
+      "sha256": "77a082ec996630fd5cfbb3a02e8fdab0eb654dd575e3923ff68a6302dff9192b"
     },
     {
       "path": "backend/src/ai/nativeOpenUiRecovery.ts",
@@ -17330,7 +17330,7 @@
     },
     {
       "path": "backend/src/ai/prompts.ts",
-      "sha256": "0ecc729c53d37c20ad6e32c1893c022982a47ca7b00683f4a92984d76cd95a73"
+      "sha256": "dd3f1f00a0270f55fd99d535ec134d091c935bb30d2d208321ae1f1c34a17c3a"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -24590,7 +24590,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaCitations.ts",
-      "sha256": "1ea1218aeba75eb4e7d38d24cb9c23d07bfd7b611ceb028133d67e649232dff3"
+      "sha256": "7c34966a2a3606bfab6185342ae6fd575b4ae9663b0cb4bbedd92cea80867655"
     },
     {
       "path": "frontend/src/lib/xrogaConnect.ts",
@@ -32610,14 +32610,14 @@
     },
     {
       "path": "backend/src/ai/black-hole/researchRouter.ts",
-      "line": 184,
+      "line": 188,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/black-hole/researchRouter.ts",
-      "line": 220,
+      "line": 224,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -33520,13 +33520,6 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "line": 111,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/ai/nativeOpenUiPrompt.ts",
       "line": 112,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
@@ -33534,7 +33527,14 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "line": 115,
+      "line": 113,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUiPrompt.ts",
+      "line": 116,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
