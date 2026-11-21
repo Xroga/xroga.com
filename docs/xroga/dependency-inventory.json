@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "692f2051b63c18bd2c9ccc4763f7be98e9698f44",
+  "source_sha": "a8ddd56460a0314c8168edd24bc4e29e6ea06f54",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17674,7 +17674,7 @@
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "sha256": "14db26d014f6c4bf96c1209f8d8a5c5c3e7537d086c92a336e056bee6daa9815"
+      "sha256": "34b8daedfbe8349a9de4d222c21a30cc1bd8ae3535c3aacf688adb7d534f1623"
     },
     {
       "path": "backend/src/ai/zurelayWire.ts",
@@ -23518,7 +23518,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "41d7770dee6cab2807dc8af147c1b0118495948c82ae28e20a4c4560ba4a72c4"
+      "sha256": "ac4ed979e70d42e5056daeeabc50c19f9c2ea273748e585cef5e6cf56e0868d3"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -30674,7 +30674,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4090,
+      "line": 4096,
       "credentialsInUrl": false
     },
     {
@@ -34566,7 +34566,7 @@
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "line": 94,
+      "line": 96,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -40355,14 +40355,14 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2139,
+      "line": 2145,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2172,
+      "line": 2178,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -1405,9 +1405,10 @@ const stopRequestedRunIdRef =
     .filter(m => pendingResearchConfirmation(m)||pendingModelConfirmation(m)).slice(-20)
     .map(m => ({ messageId: m.id, confirmationId: (pendingResearchConfirmation(m)||pendingModelConfirmation(m))! })));
 
-  // Read-only receipt handoff. Focus/reopen retrieves saved evidence, never dispatches research.
+  // Read-only receipt handoff. Reopen can publish its messages before the
+  // restore completes. Recheck on that transition and on return from review.
   useEffect(() => {
-    if (isGuest || !sessionReady || !workspaceIdentity.userId || restoringRef.current) return;
+    if (isGuest || !sessionReady || sessionRestoring || !workspaceIdentity.userId || restoringRef.current) return;
     const pending = JSON.parse(researchPendingKey) as Array<{ messageId: string; confirmationId: string }>;
     if (!pending.length) return;
     let disposed = false;
@@ -1455,15 +1456,20 @@ const stopRequestedRunIdRef =
       const id: unknown = (event as CustomEvent<unknown>).detail;
       if (typeof id === 'string' && pending.some(message => message.confirmationId === id)) void refresh();
     };
+    const pageRestored = (event: PageTransitionEvent) => {
+      if (event.persisted) void refresh();
+    };
     void refresh();
     window.addEventListener('focus', refresh);
+    window.addEventListener('pageshow', pageRestored);
     window.addEventListener(RESEARCH_RECEIPT_AVAILABLE, receiptAvailable);
     return () => {
       disposed = true;
       window.removeEventListener('focus', refresh);
+      window.removeEventListener('pageshow', pageRestored);
       window.removeEventListener(RESEARCH_RECEIPT_AVAILABLE, receiptAvailable);
     };
-  }, [isGuest, sessionReady, workspaceIdentity.userId, researchPendingKey]);
+  }, [isGuest, sessionReady, sessionRestoring, pathname, workspaceIdentity.userId, researchPendingKey]);
 
   /** Persist terminal history while user works — not only after submit completes */
   useEffect(() => {

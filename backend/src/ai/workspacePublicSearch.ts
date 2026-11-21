@@ -39,6 +39,7 @@ const unavailableDomain = /(?:\.(?:example|onion|lan|home|corp)$|(?:^|\.)(?:intr
 const explicitWebLookup = /^(?:please\s+)?(?:search|browse)\s+(?:the\s+)?(?:public\s+)?(?:web|internet)\s+(?:(?:for|to)\s+)?/iu;
 const explanatoryLookup = /^(?:(?:explain|describe|define|compare)\s+|(?:how|why)\s+(?!to\b)|what\s+(?:is|are)\s+(?:the\s+)?(?:differences?|definitions?|meanings?)\s+(?:of|between)\s+)/iu;
 const citationFooter = /(?:[,.]\s*|(?<!\s)\s+)(?:and\s+)?(?:cite\s+(?:(?:your|the)\s+)?sources?|include\s+(?:(?:your|the)\s+)?(?:source\s+links|citations))[?!.]*$/iu;
+const presentationInstruction = /(?:[,.;]\s*|\s+and\s+)(?:please\s+)?(?:give|explain|state|outline|show|describe|include)\s+your\s+(?:(?:ranking|comparison|selection|evaluation)\s+)?(?:criteria|reasoning|rationale|approach|method(?:ology)?|assumptions|recommendation)\b(?=$|\s*(?:[,.;?!]|\band\s+(?:cite|link|include|explain)\b))/giu;
 const officialVerificationFooter = /(?:[,.;]\s*|\s+)(?:and\s+)?(?:which official source (?:confirms|verifies) (?:it|this)|cite (?:an?|the) official (?:source|reference))[?!.]*$/iu;
 const instructionStart = /^(?:please\s+)?(?:(?:search|browse)\s+(?:(?:the\s+)?(?:public\s+)?(?:web|internet)\s+)?(?:for\s+)?|look up\s+|research\s+|what\s+(?:is|are)\s+(?:the\s+)?)/iu;
 const sourcePreface = /^(?:using|from|with)\s+(?:only\s+)?official\s+[^.!?]+[.!?]\s*/iu;
@@ -62,7 +63,7 @@ function publicOfficeTopic(prompt: string): string | undefined {
 /** Egress still needs exact review when a request actually refers to private,
  * personal or conversation data. A bare routing miss is not such evidence. */
 export function workspaceSearchNeedsExactReview(prompt: string): boolean {
-  const request = prompt.trim().replace(citationFooter, '');
+  const request = prompt.trim().replace(citationFooter, '').replace(presentationInstruction, '');
   const office = publicOfficeTopic(request);
   return containsCredentialSecretText(prompt) || privateOrContextual.test(request)
     || privateDiscoveryContext.test(request) || personalLookup.test(office ? request.slice(office.length) : request);
@@ -75,9 +76,10 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
 } | undefined {
   const message = prompt.trim();
   if (!message || message.length > 32_000) return;
-  // A presentation-only footer such as "cite your sources" carries no search
-  // terms. Leave everything else in the turn subject to the privacy checks.
-  const request = message.replace(citationFooter, '').replace(linkFooter, '').replace(currencyPeriod, '$1 per $2').trimEnd();
+  // Instructions about how to explain a result carry no retrieval terms.
+  // Keep each qualifier and subsequent clause subject to the privacy checks.
+  const request = message.replace(citationFooter, '').replace(presentationInstruction, '')
+    .replace(linkFooter, '').replace(currencyPeriod, '$1 per $2').trimEnd();
   const publicOffice = publicOfficeTopic(request) !== undefined;
   const officialLookup = requestsOfficialLinkCoverage(request) || publicSourceLookup.test(request);
   const discovery = discoveryIntent.test(request) && (discoverySubject.test(request)
