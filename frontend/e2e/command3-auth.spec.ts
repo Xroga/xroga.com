@@ -299,7 +299,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     'table = Table(["", "Role"], [["Next.js", "Application"], ["PostgreSQL", "Data isolation"]])',
     'sample = Code("const boundary = \\"tenant_id\\";", "typescript")',
   ].join('\n');
-  const research = 'Research the official evidence and cite it.';
+  const research = 'Research the official evidence using my private workshop details and cite it.';
   const confirmationId = '221fe7f9-f0dd-4b12-b03a-bcb57a13f655';
   const researchReply = 'The retrieved source describes the official policy [1].';
   const researchSource = { title: 'Official policy fixture', siteName: 'Example publisher', url: 'https://example.com/policy', snippet: 'Documented policy.', source: 'web' };
@@ -308,8 +308,9 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const publicLookupSource = { title: 'Timestamped market quote fixture', siteName: 'Example Market', url: 'https://example.com/market-quote', snippet: 'Synthetic market data for this test.', source: 'web' };
   const publicLookupReply = publicLookupProse + ' [1]';
   const publicLookupProgram = 'root = Col([Text([' + JSON.stringify(publicLookupProse + ' ') + ', Source("source-1")])])';
-  const confirmation = { id: confirmationId, status: 'pending', summary: 'Retrieve one set of public results.', toolkit: 'xroga-native-research', risk: 'read',
-    approval: { accountReference: 'controlled fixture', operation: 'Search', actionDigest: 'a'.repeat(64), destination: 'official search', criticalParameters: {}, spendMaximumMicroUsd: '750', currency: 'USD' } };
+  const confirmation = { id: confirmationId, status: 'pending', summary: 'Review the information to send with this research request.',
+    toolkit: 'xroga-native-research', risk: 'write', createdAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 900_000).toISOString(),
+    researchReview: [{ label: 'Research objective', value: 'Compare the workshop notes with official evidence.' }] };
   const source = { title: 'Workshop source fixture', url: 'https://example.com/workshop', snippet: 'USD 25 per attendee.', source: 'fixture' };
   const program = [
     '$attendees = 40',
@@ -659,10 +660,19 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
           responseSource: { format: 'xroga-openui-v1', text: 'root = Col([Text(["The retrieved source describes the official policy. ", Source("source-1")])])' } } } } });
   });
   await send(research);
-  const legacyConfirm = page.getByRole('button', { name: 'Approve research request', exact: true });
-  await expect(legacyConfirm).toBeVisible();
-  await expect(page.getByText(/Full approval payload|Prepared digest|micro-USD|controlled fixture|No live evidence has been retrieved/)).toHaveCount(0);
-  await legacyConfirm.click();
+  const review = page.getByRole('link', { name: 'Review and confirm', exact: true });
+  await expect(review).toBeVisible();
+  await expect(page.getByRole('button', { name: /Confirm action|Approve (research request|information sharing)/ })).toHaveCount(0);
+  await expect.poll(async () => JSON.stringify((await readSaved())?.messages ?? [])).toContain(confirmationId);
+  await review.click();
+  await expect(page).toHaveURL(new RegExp('/dashboard/actions/confirm/' + confirmationId + '$'));
+  await expect(page.getByRole('heading', { name: 'Review research information', exact: true })).toBeVisible();
+  await expect(page.getByLabel('Information to send')).toContainText('Compare the workshop notes with official evidence.');
+  await expect(page.getByText(/Prepared action digest|micro-USD|Approved spend ceiling|Critical parameters|Prepared app operation/)).toHaveCount(0);
+  await page.getByRole('button', { name: 'Approve information sharing', exact: true }).click();
+  await page.getByRole('button', { name: 'Back to Xroga', exact: true }).click();
+  await expect(page).toHaveURL(/\/workspace$/);
+  await openPersistedConversation(page, { id: sessionId, title: savedTitle!, reply });
   const researched = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: 'The retrieved source describes the official policy.' });
   await expect(researched.getByRole('link', { name: /Official policy fixture/ })).toHaveAttribute('href', researchSource.url);
   expect(confirmations).toBe(1);

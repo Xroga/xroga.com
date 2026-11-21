@@ -140,6 +140,20 @@ export function nativeAnswerReviewReason(answer: string) {
   return reviewNativeAnswer(answer)?.reason;
 }
 
+/** Preserve independent prose only when the existing checks can locate all
+ * rejected claims in complete paragraphs. Avoid separating claims from code. */
+export function retainReviewedTechnicalProse(answer: string, corrections: readonly TechnicalCorrection[]): string {
+  if (corrections.some(item => item.reason === 'authorization_review') || /^ {0,3}(?:`{3,}|~{3,})/m.test(answer)) return '';
+  const context = nativeTechnicalReviewContext(answer);
+  const removed = new Set<string>();
+  const retained = answer.split(/\n\s*\n/u).filter(block => {
+    const issues = nativeTechnicalCorrections(context + '\n' + block);
+    for (const issue of issues) removed.add(issue.guidance);
+    return !issues.length;
+  }).join('\n\n').trim();
+  return corrections.every(item => removed.has(item.guidance)) && !nativeAnswerReviewReason(retained) ? retained : '';
+}
+
 /** Apply a known local correction only when it leaves the rest of the
  * completed plain answer intact and the corrected answer clears review. */
 export function repairNativePlainAnswer(answer: string): string | undefined {
