@@ -123,6 +123,38 @@ test('sensitivity and boundary examples do not conflict with the selected calcul
   assert.deepEqual(conflictingNativeReadouts('Each additional year adds $500 of interest, but interest at the current settings is $1,800.00.', rows), [rows[0]]);
 });
 
+test('a sensitivity chart can reuse a calculator result name without replacing the active readout', () => {
+  const prose = 'Net proceeds equal ticket price times attendance minus the fixed USD 60 cost. At USD 18 and 24 attendees, gross revenue is USD 432 and net proceeds are USD 372.';
+  // Reconstruct the scenario shape from the hosted fallback. The rejected
+  // provider program is deliberately absent from production-style evidence.
+  const native = [
+    'root = Col([Markdown(_xroga_answer), controls, gross, net, scenarios])',
+    '$tickets = 24',
+    '$price = 18',
+    'controls = Controls([Input($price, "Ticket price (USD)", "number"), Input($tickets, "Paid attendance", "number"), Button("Reset inputs", @Reset($price, $tickets))], "Event inputs")',
+    'gross = Metric("Gross ticket revenue", @Format($price * $tickets, "currency", 2, "USD"))',
+    'net = Metric("Net proceeds", @Format($price * $tickets - 60, "currency", 2, "USD"))',
+    'scenarios = Chart("bar", [{price:12,net:12 * $tickets - 60},{price:18,net:18 * $tickets - 60},{price:24,net:24 * $tickets - 60}], "price", ["net"], "currency", "USD", false, 240, {title:"Net proceeds at each ticket price",xLabel:"Ticket price",yLabel:"Net proceeds"})',
+  ].join('\n');
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + native,
+    'stop', undefined, undefined, undefined, ['calculator']);
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  assert.match(answer.response, /Net proceeds: \$372\.00/);
+  assert.match(answer.response, /\| 12 \| \$228\.00 \|/);
+  assert.match(answer.response, /\| 24 \| \$516\.00 \|/);
+  assert.match(answer.responseSource.text, /@Reset\(\$price, \$tickets\)/);
+  const share = buildNativeOpenUiShare(answer.response, answer.responseSource.text);
+  assert.ok(share);
+  assert.equal(readNativeOpenUiShare(share)?.program, answer.responseSource.text);
+
+  const falseCurrentResults = '| Metric | Current value |\n| --- | --- |\n| **Net proceeds** | **$999.00** |';
+  const rejected = completeNativeWorkspaceAnswer(prose + '\n\n' + falseCurrentResults + NATIVE_UI_MARKER + native,
+    'stop', undefined, undefined, undefined, ['calculator']);
+  assert.deepEqual(rejected.completion, { status: 'partial', reason: 'data_review' });
+  assert.doesNotMatch(rejected.response + rejected.responseSource.text, /999\.00/);
+  assert.match(rejected.response, /\| 12 \| \$228\.00 \|/);
+});
+
 test('saved answer preserves calculator and readable computed values after a prose conflict', () => {
   const prose = [
     'This example assumes a fixed rate and excludes fees.',
@@ -145,10 +177,14 @@ test('saved answer preserves calculator and readable computed values after a pro
 
 test('an unrepaired visual cannot restore the conflicting readout', () => {
   const native = program.replace('root = Col([', 'root = Col([Quote("Total interest: $4,331.83"), Text("Payments are monthly."), ');
-  const result = completeNativeWorkspaceAnswer('The calculation excludes fees.' + NATIVE_UI_MARKER + native, 'stop');
+  const prose = 'Change either input and the totals update immediately. The calculation excludes fees.';
+  const result = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + native,
+    'stop', undefined, undefined, undefined, ['calculator']);
   assert.deepEqual(result.completion, { status: 'partial', reason: 'data_review' });
   assert.equal(result.responseSource.text, '');
   assert.match(result.response, /The calculation excludes fees/);
+  assert.match(result.response, /worked example/);
+  assert.doesNotMatch(result.response, /totals update immediately/);
   assert.match(result.response, /Payments are monthly/);
   assert.match(result.response, /4,331\.67/);
   assert.doesNotMatch(result.response, /4,331\.83/);

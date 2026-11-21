@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "428c926c16bd2eccd78cd10cfdf60eb0eed7faa6",
+  "source_sha": "4e5ff687b3e255090ff439a3f180bcece5ae41e1",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17274,11 +17274,11 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiValues.ts",
-      "sha256": "09b126f13f82f787b658556e2e644c93f6877313dd3c08d7f698f71b1a4e2062"
+      "sha256": "a1da1d3c6376b32272862d39d960b4a897e0d879b6f4f593ae2562eaaf87ea93"
     },
     {
       "path": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "f95e275f0ace7e7cc19e3e82b8c0bbe7973541eef4b5c5ee9c0ae485a57a9251"
+      "sha256": "c3a7c1fea1f665d7d54e2967f0aa5a75828cc1f6911d59d7c8753de80d395af9"
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
@@ -33481,14 +33481,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiValues.ts",
-      "line": 31,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/ai/nativeOpenUiValues.ts",
-      "line": 59,
+      "line": 32,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -33509,21 +33502,28 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiValues.ts",
-      "line": 125,
+      "line": 62,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUiValues.ts",
-      "line": 127,
+      "line": 126,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOpenUiValues.ts",
-      "line": 156,
+      "line": 128,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/nativeOpenUiValues.ts",
+      "line": 157,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

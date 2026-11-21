@@ -1,6 +1,7 @@
 import { createParser, evaluate, parseExpression, split, tokenize, walkAST, type ASTNode, type EvaluationContext, type LibraryJSONSchema } from '@openuidev/lang-core';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
 import { nativeFunctions } from './nativeOpenUiFunctions.generated.js';
+import { nativeMarkdownTables } from './nativeMarkdown.js';
 
 const functions: NonNullable<EvaluationContext['functions']> = Object.fromEntries(nativeFunctions.map(fn => [fn.name, {
   ...catalog.schema.functions[fn.name as keyof typeof catalog.schema.functions],
@@ -209,17 +210,36 @@ const readoutScenario = /^[ \t]*(?:(?:[-+*]|\d+[.)])\s+)?(?:\b(?:boundary|edge) 
 /** Compare explicit currency claims to the corresponding labeled readout. An
  * unrelated example, input amount or uncategorized number is never rewritten. */
 export function conflictingNativeReadouts(prose: string, readouts: ReturnType<typeof initialNativeReadouts>) {
+  if (!readouts.length) return [];
   const money = /([$€£])\s*([+-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)/g;
+  const tables = nativeMarkdownTables(prose);
+  const metricRows = tables.flatMap(({ head, rows }) => head.length === 2
+    ? rows.flatMap(([label, value]) => {
+        const cell = value.replace(/[*_`]/g, '');
+        const amount = cell.matchAll(money).next().value;
+        return amount?.[0] === cell ? [{ label: metricLabelKey(label.replace(/[*_`]/g, '')), cell }] : [];
+      }) : []);
+  // A column heading does not claim that the first observation is the
+  // current calculator result. Keep chart and table cells out of prose
+  // matching, and check explicit two-cell metric rows on their own.
+  if (tables.length) {
+    const lines = prose.split(/\r\n?|\n/);
+    for (const table of tables) lines.fill('', table.start, table.end);
+    prose = lines.join('\n');
+  }
   const plain = prose.replace(/[*_`]/g, '');
+  const statements = plain.split(/\n\s*\n/).flatMap(paragraph =>
+    /^\s*(?:for example|example|scenario|hypothetical|suppose|alternative)\b/i.test(paragraph)
+      ? [] : paragraph.split(readoutClaimBreak));
   return readouts.filter(({ label, value }) => {
     const expected = [...value.matchAll(money)];
     if (expected.length !== 1) return false;
     const target = Number(expected[0][2].replace(/,/g, ''));
     const words = label.toLowerCase().trim();
-    const statements = plain.split(/\n\s*\n/).flatMap(paragraph =>
-      /^\s*(?:for example|example|scenario|hypothetical|suppose|alternative)\b/i.test(paragraph)
-        ? [] : paragraph.split(readoutClaimBreak));
-    for (const paragraph of statements) {
+    const key = metricLabelKey(label);
+    const labeledRows = metricRows.filter(row => row.label === key)
+      .map(row => label + ': ' + row.cell);
+    for (const paragraph of [...statements, ...labeledRows]) {
       // Sensitivity and boundary examples describe other inputs and changes
       // in value. Compare the labeled active readout in its own claim.
       if (readoutScenario.test(paragraph)) continue;

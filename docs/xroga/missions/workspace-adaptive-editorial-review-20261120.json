@@ -50,6 +50,7 @@
       "Preserve a document's requested format when the format is specified after the creation brief, and keep its tables editable in Word.",
       "Remove directions to unavailable calculator inputs while retaining the worked calculation and unrelated content.",
       "Keep calculator sensitivity and boundary examples distinct from the active result being checked.",
+      "Keep a sensitivity chart's computed series separate from the calculator's selected value while still checking explicit labeled scalar rows.",
       "Reuse an unchanged native answer tree during unrelated Workspace updates."
     ],
     "replace": [],
