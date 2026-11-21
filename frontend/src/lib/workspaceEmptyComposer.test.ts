@@ -351,6 +351,10 @@ test('Chrome extension control overlays only its own corner and does not add a t
   assert.match(POLISH, /\.browserControl\s*\{[^}]*position:\s*absolute/);
   assert.match(OPERATOR, /Install Xroga Extension/);
   assert.match(OPERATOR, /supported local browser automation tasks/);
+  assert.match(OPERATOR, /!showConnection[\s\S]*?Coming soon/);
+  assert.doesNotMatch(OPERATOR, /chromewebstore\.google\.com|Connect from the Xroga side panel in Chrome\./);
+  assert.match(POLISH, /terminal-skin-gray[^\n]*\[data-xroga-extension-trigger\][\s\S]*?border: 0/);
+  assert.match(POLISH, /terminal-skin-dark[^\n]*\[data-xroga-extension-trigger\][\s\S]*?background: #fff/);
 });
 
 test('workspace scroll navigation keeps compact buttons and reserves reading room on mobile', () => {

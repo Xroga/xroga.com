@@ -1,6 +1,6 @@
 # Deployment topology, source and dated evidence
 
-Source SHA: `6f9693bd38c6952f5cd35b8f4d5147d2fb20409a`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
+Source SHA: `072ca6b4fc8f31c1f174a9563950647e7a058cac`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -67,7 +67,6 @@ Source SHA: `6f9693bd38c6952f5cd35b8f4d5147d2fb20409a`; exact current source/con
 | endpoint-chain-link | Source-defined endpoint chain.link | CONFIGURED_BUT_UNVERIFIED | chain.link | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-cheatsheetseries-owasp-org | Source-defined endpoint cheatsheetseries.owasp.org | CONFIGURED_BUT_UNVERIFIED | cheatsheetseries.owasp.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-chrome-google-com | Source-defined endpoint chrome.google.com | CONFIGURED_BUT_UNVERIFIED | chrome.google.com | NOT_INDEPENDENTLY_VERIFIED |
-| endpoint-chromewebstore-google-com | Source-defined endpoint chromewebstore.google.com | CONFIGURED_BUT_UNVERIFIED | chromewebstore.google.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-chromewebstore-googleapis-com | Source-defined endpoint chromewebstore.googleapis.com | CONFIGURED_BUT_UNVERIFIED | chromewebstore.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-cloud-google-com | Source-defined endpoint cloud.google.com | CONFIGURED_BUT_UNVERIFIED | cloud.google.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-cloudflare-com | Source-defined endpoint cloudflare.com | CONFIGURED_BUT_UNVERIFIED | cloudflare.com | NOT_INDEPENDENTLY_VERIFIED |
