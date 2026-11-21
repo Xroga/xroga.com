@@ -108015,7 +108015,7 @@
         "frontend/src/lib/restoreRepoTerminal.ts:10",
         "frontend/src/lib/syncRepoTerminalSessions.ts:17",
         "frontend/src/lib/terminalHistory.ts:15",
-        "frontend/src/lib/terminalHistory.ts:281"
+        "frontend/src/lib/terminalHistory.ts:283"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -117235,8 +117235,8 @@
         "frontend/src/components/layout/SidebarProjectHistory.tsx:15",
         "frontend/src/components/terminal/WorkspaceConversationMenu.tsx:12",
         "frontend/src/lib/sidebarOrganization.test.ts:6",
-        "frontend/src/lib/terminalHistory.ts:251",
-        "frontend/src/lib/terminalHistory.ts:254"
+        "frontend/src/lib/terminalHistory.ts:253",
+        "frontend/src/lib/terminalHistory.ts:256"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -119842,7 +119842,7 @@
       "id": "surface:af3de59afc346b2429f7",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/terminalHistory.ts",
-      "sha256": "4fdfd425309eb8a9e170f2a1e0952452adad3bb7c0f57187ea0da47186c2411e",
+      "sha256": "176aeb1fe244c7ca637686b1bd19128a0975e12191af93749cc0286df4f3d71b",
       "symbols": [
         "BROWSER_KEYWORDS",
         "KEY",
@@ -119892,6 +119892,7 @@
         "status",
         "stickyRepo",
         "t",
+        "terminalNumber",
         "titlePrompt",
         "toActivityKind"
       ],

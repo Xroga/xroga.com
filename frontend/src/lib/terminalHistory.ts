@@ -220,7 +220,9 @@ export function saveTerminalHistorySession(opts: {
     : undefined);
 
   // Repo order stays numbered; display titles are independent of that order.
-  if (githubRepoName?.includes('/')) allocateTerminalNumber(opts.sessionId, githubRepoName);
+  const terminalNumber = githubRepoName?.includes('/')
+    ? allocateTerminalNumber(opts.sessionId, githubRepoName)
+    : undefined;
 
   const entry: TerminalHistoryEntry = {
     id: opts.sessionId,

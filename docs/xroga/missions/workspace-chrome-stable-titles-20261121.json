@@ -39,5 +39,5 @@
   "evidenceRefs": ["frontend/src/lib/conversationTitle.test.ts", "frontend/src/lib/workspaceEmptyComposer.test.ts"],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
-  "release": {"state": "BLOCKED", "blockers": ["Source-pinned CI and preview pending.", "Production base has stale caller-review evidence for a pricing component not changed by this mission."], "authenticatedE2e": "BLOCKED", "stagedSecurity": "NOT_APPLICABLE", "liveUrl": null, "deployedSha": null}
+  "release": {"state": "BLOCKED", "blockers": ["Rerun source-pinned CI and verify the preview after preserving the repo ordinal at save and retiring the obsolete pricing non-persistence review."], "authenticatedE2e": "BLOCKED", "stagedSecurity": "NOT_APPLICABLE", "liveUrl": null, "deployedSha": null}
 }
