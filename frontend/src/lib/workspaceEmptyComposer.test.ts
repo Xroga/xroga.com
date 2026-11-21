@@ -338,9 +338,16 @@ test('workspace navigation uses independent arrows and hides both at the bottom'
   assert.match(NAV, /new ResizeObserver\(schedule\)/);
   assert.match(NAV, /prefers-reduced-motion: reduce/);
   assert.match(NAV, /M440-160v-487L216-423/);
-  assert.match(POLISH, /\.headerShadow\[data-scrolled='true'\]::after/);
   assert.match(POLISH, /\.navigation\[data-visible='true'\]/);
-  assert.match(DASHBOARD, /data-scrolled=\{headerScrolled/);
+});
+
+test('the top scroll fade stays inside the conversation pane, never on the toolbar', () => {
+  const POLISH = read('../components/dashboard/WorkspaceScrollPolish.module.css');
+  assert.doesNotMatch(POLISH, /\.header(?:Shadow|Chrome)::(?:before|after)/);
+  assert.doesNotMatch(DASHBOARD, /<header[^>]*data-scrolled/);
+  assert.match(DASHBOARD, /className="xv-terminal-panel"[^>]*>\s*\{terminalPane\}\s*\{hasConversation && \([\s\S]*?data-scrolled=\{transcriptScrolled/);
+  assert.match(POLISH, /\.transcriptFade\s*\{[^}]*inset-inline: max\(9%,[^}]*block-size: 10px;[^}]*pointer-events: none;[^}]*opacity: 0;/);
+  assert.match(POLISH, /\.transcriptFade\[data-scrolled='true'\]\s*\{ opacity: 1; \}/);
 });
 
 test('Chrome extension control overlays only its own corner and does not add a transcript row', () => {
@@ -379,6 +386,16 @@ test('workspace scroll navigation stays compact and horizontal with Uiverse moti
 test('workspace transcript keeps balanced responsive gutters', () => {
   assert.match(CSS, /\.xv-terminal-body--flush\s*\{[^}]*padding:\s*0 clamp\(1rem, 6vw, 6rem\)/);
   assert.match(CSS, /\.xv-terminal-body--flush \.xv-terminal-turn\s*\{[^}]*max-width:\s*56rem/);
+});
+
+test('the conversation scrollport ends at the composer without clipping its native scrollbar', () => {
+  const scrollport = CSS.match(/\.xv-terminal-scroll\[data-conversation='true'\]\s*\{([^}]*)\}/)?.[1] ?? '';
+  assert.match(scrollport, /margin-block-end: max\(0px, calc\(var\(--xv-dock-bottom, 14px\) - var\(--xv-pane-bottom, 0px\)\)\)/);
+  assert.doesNotMatch(scrollport, /clip-path/);
+  assert.match(CSS, /\.xv-terminal-scroll::-webkit-scrollbar \{ width: 12px; \}/);
+  assert.match(CSS, /\.xv-terminal-scroll::-webkit-scrollbar-thumb\s*\{[^}]*background-clip: padding-box;[^}]*border-inline: 2px solid transparent/);
+  assert.match(CSS, /\.xv-terminal-dock\[class\*='terminal-skin-'\]\[data-workspace-state='conversation'\]\s*\{[^}]*pointer-events: none/);
+  assert.match(CSS, /:is\(\.xv-kimi-composer-frame, \.xv-chatbar-queue-outside\)\s*\{[^}]*pointer-events: auto/);
 });
 
 test('the live transcript does not mount the starter headline as a scrolling wall', () => {

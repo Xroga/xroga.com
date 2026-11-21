@@ -9955,8 +9955,9 @@ body.xv-workspace-expanded-active .xv-terminal-dock {
   /* Room for the composer, which is fixed over the bottom of the shell. Without it the
      last few lines of a build report sit permanently behind the chatbar. */
   padding-bottom: calc(var(--xv-chatbar-height, 112px) + 64px);
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.13) transparent;
+  --xv-scroll-thumb: color-mix(in srgb, var(--foreground) 26%, transparent);
+  --xv-scroll-thumb-hover: color-mix(in srgb, var(--foreground) 42%, transparent);
+  scrollbar-color: var(--xv-scroll-thumb) transparent;
 }
 
 /*
@@ -9996,25 +9997,22 @@ body.xv-workspace-expanded-active .xv-terminal-dock {
   }
 }
 
-/* Compact once it is earned: 4px of thumb with no track behind it, so a running
-   build gets a position indicator rather than a groove down the edge of the window. */
-.xv-terminal-scroll::-webkit-scrollbar { width: 4px; }
-.xv-terminal-scroll::-webkit-scrollbar-track { background: transparent; }
-.xv-terminal-scroll::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
-}
-.xv-terminal-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
-
-.terminal-skin-light .xv-terminal-scroll,
-.terminal-skin-light-grid .xv-terminal-scroll,
-.terminal-skin-solar .xv-terminal-scroll {
-  scrollbar-color: rgba(15, 23, 42, 0.18) transparent;
-}
-.terminal-skin-light .xv-terminal-scroll::-webkit-scrollbar-thumb,
-.terminal-skin-light-grid .xv-terminal-scroll::-webkit-scrollbar-thumb,
-.terminal-skin-solar .xv-terminal-scroll::-webkit-scrollbar-thumb {
-  background: rgba(15, 23, 42, 0.16);
+/* Keep the visible thumb slim without making its draggable gutter a tiny target.
+   Chromium uses its native scrollbar parts; other engines retain their native width. */
+@supports selector(::-webkit-scrollbar) {
+  .xv-terminal-scroll { scrollbar-color: auto; }
+  .xv-terminal-scroll::-webkit-scrollbar { width: 12px; }
+  .xv-terminal-scroll::-webkit-scrollbar-track { background: transparent; }
+  .xv-terminal-scroll::-webkit-scrollbar-thumb {
+    background: var(--xv-scroll-thumb);
+    background-clip: padding-box;
+    border-inline: 2px solid transparent;
+    border-radius: 999px;
+  }
+  .xv-terminal-scroll::-webkit-scrollbar-thumb:hover,
+  .xv-terminal-scroll::-webkit-scrollbar-thumb:active {
+    background-color: var(--xv-scroll-thumb-hover);
+  }
 }
 
 /* The transcript inside the shell carries no frame of its own: the shell is the frame. */
@@ -14806,21 +14804,31 @@ body.theme-beige .xv-plugins-popover, body.theme-beige .xv-sidebar-hover-menu__c
   }
 }
 
-/* Keep the transcript visible around the floating composer. Only the few pixels
-   between the pane edge and the composer's lower edge are clipped; clipping at
-   the composer's *top* would recreate the large square blank block. */
+/* End the real scrollport at the bottom of the floating composer. A clip-path
+   on the scrollport hides both the content and the end of its native scrollbar. */
 
 .xv-terminal-scroll[data-conversation='true'] {
-  clip-path: inset(0 0 max(0px, calc(var(--xv-dock-bottom, 14px) - var(--xv-pane-bottom, 0px))) 0);
+  margin-block-end: max(0px, calc(var(--xv-dock-bottom, 14px) - var(--xv-pane-bottom, 0px)));
 }
 
 .xv-terminal-dock[class*='terminal-skin-'][data-workspace-state='conversation'] {
   background:transparent !important;
   padding-bottom:0;
+  pointer-events: none;
 }
 .xv-terminal-dock[data-workspace-state='conversation'] .xv-terminal-dock-inner {
   background:transparent !important;
   padding-bottom:0 !important;
+}
+/* Don't let the transparent full-width dock intercept the scrollbar's right edge.
+   The composer, menus, scroll shortcuts, and queued prompts stay interactive. */
+.xv-terminal-dock[data-workspace-state='conversation'] :is(.xv-kimi-composer-frame, .xv-chatbar-queue-outside) {
+  pointer-events: auto;
+}
+@media (max-width: 639px) {
+  .xv-terminal-dock:not(.xv-terminal-dock--fullscreen)[data-workspace-state='conversation'] .xv-terminal-dock-inner {
+    padding-inline: 14px;
+  }
 }
 
 /* A narrow theme-native fade sits directly above the composer after the transcript
