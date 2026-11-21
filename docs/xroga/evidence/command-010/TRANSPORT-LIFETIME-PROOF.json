@@ -251,7 +251,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "d65c2cadfb01a3463fe0b74e5c172c99f726584eebc2ed6992bee959c1611f96",
+      "sha256": "4a47a4d7205dc86f0624f0a78f477708a137adfa3fac5ed2f8dd2a6c7d9f48b9",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/black-hole/webIntelligence.ts",
         "sha256": "f7ee10618d7993cc8e827b7f77d23eec06e663232d26a44c598a48825fbb6b7d"
@@ -276,6 +276,11 @@
         "evidencePath": "backend/src/ai/researchAnswer.test.ts",
         "scope": "Controlled regression checks confirm private evidence read-back after Search settlement and before Zurelay synthesis, cross-account denial, and no synthesis or repeat retrieval when private storage fails. The approved document-fetch function and Search provider transport calls are unchanged.",
         "liveAcceptance": false
+      },
+      "workspaceOfficialLinkCoverage": {
+        "baseline": "81327005552435f2f38886320fb4f8d039887241",
+        "previousSha256": "d65c2cadfb01a3463fe0b74e5c172c99f726584eebc2ed6992bee959c1611f96",
+        "scope": "Select publisher diversity from the same settled and saved public evidence. Exact-source live acceptance pending."
       }
     },
     {

@@ -524,6 +524,7 @@ export async function runWebIntelligence(
     [];
   let publicSources: ResearchSource[] | undefined;
   let automaticOfficialDomains: string[] | undefined;
+  let preferDistinctHosts = false;
 
   if (
     decision.action === 'read'
@@ -567,6 +568,7 @@ export async function runWebIntelligence(
       // Use only settled provider evidence. The source policy stays in effect
       // when normalizing the response, without exporting planner fields.
       automaticOfficialDomains = automatic.officialDomains.length ? automatic.officialDomains : undefined;
+      preferDistinctHosts = automatic.officialLinkCoverage && !automaticOfficialDomains;
       publicSources = presentResearchResult({
         ok: true, operation: 'search', result: automatic.result,
       }, automaticOfficialDomains).sources;
@@ -619,6 +621,7 @@ export async function runWebIntelligence(
         officialDomains: publicSources ? automaticOfficialDomains
           : decision.officialDomains.length ? decision.officialDomains : input.officialDomains,
         maxSources: 12,
+        preferDistinctHosts,
       },
     ), publicSources ? automaticOfficialDomains ? 'official_only' : 'any' : decision.sourcePolicy);
 

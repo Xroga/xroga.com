@@ -48,6 +48,21 @@ test('duplicate URLs collapse and invalid ones are dropped', () => {
   assert.equal(bundle.sources.length, 1);
 });
 
+test('multi-entity link research retains diverse retrieved hosts within the evidence bound', () => {
+  const results = [
+    { url: 'https://review.example/first' },
+    { url: 'https://www.review.example/second' },
+    { url: 'https://review.example/third' },
+    { url: 'https://project-a.example/docs' },
+    { url: 'https://project-b.example/support' },
+  ];
+  const select = (preferDistinctHosts: boolean, maxSources: number) =>
+    normalizeResearch(results, { query: 'official links', preferDistinctHosts, maxSources }).sources.map(source => source.url);
+  assert.deepEqual(select(false, 3), results.slice(0, 3).map(result => result.url));
+  assert.deepEqual(select(true, 3), [results[0].url, results[3].url, results[4].url]);
+  assert.deepEqual(select(true, 4), [results[0].url, results[3].url, results[4].url, results[1].url]);
+});
+
 // ---------------------------------------------------------------------------
 // §17 — injection defense
 // ---------------------------------------------------------------------------

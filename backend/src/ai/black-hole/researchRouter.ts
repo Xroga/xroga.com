@@ -162,6 +162,7 @@ export interface NormalizeOptions {
   readonly officialDomains?: readonly string[];
   readonly now?: () => Date;
   readonly maxSources?: number;
+  readonly preferDistinctHosts?: boolean;
 }
 
 /**
@@ -213,9 +214,24 @@ export function normalizeResearch(
   const rank: Record<SourceTrust, number> = { A_official: 0, B_primary: 1, C_secondary: 2, D_discovery: 3 };
   sources.sort((a, b) => rank[a.trust] - rank[b.trust]);
 
+  // Coverage of multiple entities benefits from new publishers before several
+  // pages from one publisher. Preserve provider order within each group and
+  // keep additional pages when there is room in the existing evidence budget.
+  const hosts = new Set<string>();
+  const firstPages: ResearchSourceRecord[] = [];
+  const additionalPages: ResearchSourceRecord[] = [];
+  if (options.preferDistinctHosts) {
+    for (const source of sources) {
+      const host = hostOf(source.url);
+      (hosts.has(host) ? additionalPages : firstPages).push(source);
+      hosts.add(host);
+    }
+  }
+  const selected = options.preferDistinctHosts ? [...firstPages, ...additionalPages] : sources;
+
   return {
     query: options.query,
-    sources: sources.slice(0, options.maxSources ?? 12),
+    sources: selected.slice(0, options.maxSources ?? 12),
     retrievedAt,
     injectionAttempts,
     unavailable: sources.length === 0,

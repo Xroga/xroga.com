@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "2fa95950606fcc1e528d83c3b3fe8ae26d158005e00d1134abb984a91e9e7990",
+  "sourceTreeDigest": "d46bc0d3210dc99f3c09ee6a14c56dc155bf67d1b55d07532993a089f3f55dfd",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -197,7 +197,7 @@
     {
       "id": "90c62dd04b83e45e1c68",
       "file": "backend/src/ai/parallelApproval.ts",
-      "line": 152,
+      "line": 153,
       "entryPoint": "executeParallelNativeAction",
       "transport": "boundedPublicGet",
       "callee": "boundedPublicGet",
@@ -231,7 +231,7 @@
       "entryPoint": "executeParallelRequest",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "8a4cf1df25bdb5d59e6f01020cc5be67cec679c8815a93cc5b5b594cc7a7fe28",
+      "callSha256": "dc508cf35a15a3c1b19ad126bcf268c86991a31771cef42b2ae134b2e6c9b00d",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "FIXED_OFFICIAL_DEEPSEEK_SEARCH_WITH_BOUND_PUBLIC_READ_OR_EXACT_PRIVATE_SEARCH_APPROVAL",
       "tenantAuthority": "TENANT_ACTOR_AND_ONE_USE_REQUEST_ADMISSION_PUBLIC_READ_RECEIPT_OR_LEGACY_EXACT_AUTHORITY_CANONICAL_BUDGET_SETTLEMENT",

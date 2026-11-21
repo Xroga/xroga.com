@@ -1585,7 +1585,7 @@
       "id": "surface:f18ef073f3fd23b8a6c0",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/black-hole/researchRouter.ts",
-      "sha256": "cc1d245e917161cc8bf86ad70f0c6c27fa8d311af17abaef7ade55acdc297362",
+      "sha256": "aa40f102f360971d8af7567d85c7fc78248f103968c569119eccda75a3f6b706",
       "symbols": [
         "INJECTION_PATTERNS",
         "NormalizeOptions",
@@ -1597,13 +1597,16 @@
         "SourceTrust",
         "SourceType",
         "X_HOST_RE",
+        "additionalPages",
         "blocks",
         "classifySource",
         "detectInjection",
+        "firstPages",
         "flag",
         "formatResearchAsEvidence",
         "host",
         "hostOf",
+        "hosts",
         "injectionAttempts",
         "key",
         "normalizeResearch",
@@ -1614,7 +1617,9 @@
         "result",
         "retrievedAt",
         "seen",
+        "selected",
         "snippet",
+        "source",
         "sources",
         "suspect"
       ],
@@ -2089,7 +2094,7 @@
       "id": "surface:0e78a2534aef2dadd6c0",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "d65c2cadfb01a3463fe0b74e5c172c99f726584eebc2ed6992bee959c1611f96",
+      "sha256": "4a47a4d7205dc86f0624f0a78f477708a137adfa3fac5ed2f8dd2a6c7d9f48b9",
       "symbols": [
         "ACTIONS",
         "WebAction",
@@ -2119,6 +2124,7 @@
         "officialDomains",
         "parseDecision",
         "pendingResearch",
+        "preferDistinctHosts",
         "provider",
         "publicSources",
         "queries",
@@ -7045,7 +7051,7 @@
       "id": "surface:7d07dd00cd58533729b5",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/parallelApproval.ts",
-      "sha256": "d6b4d7dc04f841eab5243b792bfc0556133a21e0340de033f8a826c1b07d9f3b",
+      "sha256": "2bc9b76675b93d766942801f0e86582047286ff1a0396eb1dfc1511d21313800",
       "symbols": [
         "Operation",
         "ParallelAdmission",
@@ -7076,6 +7082,7 @@
         "issuedAt",
         "modelScope",
         "nonce",
+        "officialLinkCoverage",
         "operation",
         "page",
         "parsed",
@@ -7175,8 +7182,8 @@
         "backend/src/ai/parallelApproval.ts#identity"
       ],
       "tenantBoundary": [
-        "backend/src/ai/parallelApproval.ts:129 (user_id)",
-        "backend/src/ai/parallelApproval.ts:132 (user_id)"
+        "backend/src/ai/parallelApproval.ts:130 (user_id)",
+        "backend/src/ai/parallelApproval.ts:133 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/ai/parallelApproval.ts#actionPlanDigest",
@@ -7203,7 +7210,7 @@
       "id": "surface:78d9ec4b29ef687ea76d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/parallelDispatch.ts",
-      "sha256": "0a7da4cf31ee271f34d2380b8d7d557be006afb19283fe1cc529539dc210c54e",
+      "sha256": "1e50c88700ee7b4b2bcb21efe55a93463976c6e86cac9868b0b298c8dc254c5a",
       "symbols": [
         "Operation",
         "admission",
@@ -7284,8 +7291,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/parallelApproval.ts:100",
-        "backend/src/ai/parallelApproval.ts:163",
+        "backend/src/ai/parallelApproval.ts:101",
+        "backend/src/ai/parallelApproval.ts:164",
         "backend/src/ai/parallelWeb.security.test.ts:15",
         "backend/src/ai/parallelWeb.ts:1"
       ],
@@ -8666,7 +8673,7 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "b4bc8ebc41f59459bb63005eceda83451dda0c397c34fcfa3045554a6a6ec96e",
+      "sha256": "0ecc729c53d37c20ad6e32c1893c022982a47ca7b00683f4a92984d76cd95a73",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
@@ -10088,8 +10095,9 @@
       "id": "surface:5f676989c84806ca6213",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/researchSearchProvider.ts",
-      "sha256": "aa68f0a3824a5e5ff17abee739fa65e720e2e7e35fe4323823189945c18015cf",
+      "sha256": "6f1b66a88773710c56eccf3f0d66638731b1ede49a90cbfc049d37ae3df50c28",
       "symbols": [
+        "DEEPSEEK_LINK_DISCOVERY_RESULTS",
         "DEEPSEEK_QUERY_MAX",
         "DEEPSEEK_SEARCH_MICRO_USD",
         "DEEPSEEK_SEARCH_RESULTS",
@@ -15252,7 +15260,7 @@
       "id": "surface:82ff96c046038933cdb9",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/workspacePublicSearch.ts",
-      "sha256": "39a753d32dfc1af009f0bf18a484574a0618fccfddffa6117935120852482020",
+      "sha256": "6559477cd992bda1cb205816ea16a07a0ef767aa8ffa455e1557ddb4fd414432",
       "symbols": [
         "asksForOfficial",
         "bareDomain",
@@ -15276,6 +15284,8 @@
         "isSoftwareName",
         "message",
         "officialDomains",
+        "officialLinkRequest",
+        "officialLookup",
         "officialSourceRequest",
         "officialVerificationFooter",
         "personalLookup",
@@ -15288,6 +15298,7 @@
         "publicSoftwareNames",
         "request",
         "requestsOfficialCitation",
+        "requestsOfficialLinkCoverage",
         "sites",
         "softwareReleaseSubject",
         "sourcePreface",
@@ -152632,7 +152643,7 @@
     {
       "id": "test-suite:77b6115578d9250ffa19",
       "sourcePath": "backend/src/ai/black-hole/researchRouter.test.ts",
-      "declaredTests": 8,
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },

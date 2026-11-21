@@ -886,11 +886,11 @@
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
-      "sourceSha256": "d6b4d7dc04f841eab5243b792bfc0556133a21e0340de033f8a826c1b07d9f3b",
+      "sourceSha256": "2bc9b76675b93d766942801f0e86582047286ff1a0396eb1dfc1511d21313800",
       "callIds": [
-        "192373fab95b2ca5c670",
-        "e6927dcdfc8b2bee2690",
-        "09f9cc3bfa55e77de769"
+        "974dd5e438a2e74dfdea",
+        "f7b506aa1abafb41e67a",
+        "5e7e523d234c0d0691bc"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The original context comes only from the canonical native permit. Exact user_id predicates scope the executing grant and current run/worker generation. Grant, owner, immutable digest, expiry and effect receipt are rechecked before and after provider waits and immediately after DNS before any public connection.",
@@ -937,18 +937,28 @@
           "6b064445c855504350b1"
         ],
         "scope": "Exact existing call chains and owner predicates only. The prior review grants no automatic public Search authority."
+      },
+      "workspaceOfficialLinkCoverage": {
+        "baseline": "81327005552435f2f38886320fb4f8d039887241",
+        "previousSha256": "d6b4d7dc04f841eab5243b792bfc0556133a21e0340de033f8a826c1b07d9f3b",
+        "previousIds": [
+          "192373fab95b2ca5c670",
+          "e6927dcdfc8b2bee2690",
+          "09f9cc3bfa55e77de769"
+        ],
+        "scope": "Existing persistence calls and tenant predicates are unchanged. Link discovery changes only the bounded public Search request and evidence selection."
       }
     },
     {
       "path": "backend/src/ai/parallelDispatch.ts",
-      "sourceSha256": "0a7da4cf31ee271f34d2380b8d7d557be006afb19283fe1cc529539dc210c54e",
+      "sourceSha256": "1e50c88700ee7b4b2bcb21efe55a93463976c6e86cac9868b0b298c8dc254c5a",
       "callIds": [
         "eafd89a3d20bbe8c8038",
         "d39950af553ed4c73ba8",
         "a14844e6560526208cb5",
         "5f7898751365afe3ccbb",
         "4caea0778375b8dbf0dd",
-        "9f307b5e858813b8e6bb"
+        "9b3c321985a4f3af700b"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
@@ -1060,6 +1070,19 @@
           "91afe59da48d41fdec1b"
         ],
         "disposition": "REVIEWED_GAP"
+      },
+      "workspaceOfficialLinkCoverage": {
+        "baseline": "81327005552435f2f38886320fb4f8d039887241",
+        "previousSha256": "0a7da4cf31ee271f34d2380b8d7d557be006afb19283fe1cc529539dc210c54e",
+        "previousIds": [
+          "eafd89a3d20bbe8c8038",
+          "d39950af553ed4c73ba8",
+          "a14844e6560526208cb5",
+          "5f7898751365afe3ccbb",
+          "4caea0778375b8dbf0dd",
+          "9f307b5e858813b8e6bb"
+        ],
+        "scope": "Existing persistence calls and tenant predicates are unchanged. Link discovery changes only the bounded public Search request and evidence selection."
       }
     },
     {
@@ -29337,9 +29360,9 @@
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
-      "sourceSha256": "d6b4d7dc04f841eab5243b792bfc0556133a21e0340de033f8a826c1b07d9f3b",
+      "sourceSha256": "2bc9b76675b93d766942801f0e86582047286ff1a0396eb1dfc1511d21313800",
       "callIds": [
-        "41f72a13adc2226d0255"
+        "69b72d6a1fac78622ac5"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in executeParallelNativeAction. This specific call uses the built-in Uint8Array.from conversion of already fetched public document bytes for the PDF parser, not the adjacent database, object storage or provider transport.",
@@ -29362,6 +29385,14 @@
           "2560cf2908b41e1b590f"
         ],
         "scope": "Exact existing call chains and owner predicates only. The prior review grants no automatic public Search authority."
+      },
+      "workspaceOfficialLinkCoverage": {
+        "baseline": "81327005552435f2f38886320fb4f8d039887241",
+        "previousSha256": "d6b4d7dc04f841eab5243b792bfc0556133a21e0340de033f8a826c1b07d9f3b",
+        "previousIds": [
+          "41f72a13adc2226d0255"
+        ],
+        "scope": "Existing persistence calls and tenant predicates are unchanged. Link discovery changes only the bounded public Search request and evidence selection."
       }
     },
     {

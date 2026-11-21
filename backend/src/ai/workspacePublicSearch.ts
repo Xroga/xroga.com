@@ -31,6 +31,7 @@ const softwareReleaseSubject = /\b(?:releases?|versions?|changelogs?|documentati
 const currencyPeriod = /(\p{Sc}\d{1,6}(?:\.\d{1,2})?)\/(day|week|month|year)\b/giu;
 const freshnessFocus = /\b(?:current|latest|live|newest|verified)\s+(?:prices?|pricing|releases?|versions?|fares?|exchange rates?|opening hours|schedules?)\b/iu;
 const officialSourceRequest = /\bofficial(?:\s+[\p{L}\p{N}-]+){0,3}\s+(?:sources?|docs?|documentation|sites?)\b/iu;
+const officialLinkRequest = /\bofficial (?:websites?|(?:web |support |documentation |docs )?links?|(?:support |documentation |docs )?(?:pages?|sites?)|documentation (?:urls?|sites?))\b|\bprimary sources? (?:for each|each)\b/iu;
 const exclusiveOfficialSource = /\b(?:only|exclusively)\b[^.!?]{0,40}\bofficial\b|\bofficial\b[^.!?]{0,40}\b(?:only|exclusively)\b/iu;
 const unavailableDomain = /(?:\.(?:example|onion|lan|home|corp)$|(?:^|\.)(?:intranet|staging|private|vpn)(?:\.|$))/iu;
 const explicitWebLookup = /^(?:please\s+)?(?:search|browse)\s+(?:the\s+)?(?:public\s+)?(?:web|internet)\s+(?:(?:for|to)\s+)?/iu;
@@ -44,6 +45,10 @@ function isPublicSourceHost(domain: string): boolean {
   if (unavailableDomain.test(domain)) return false;
   try { return publicHttpsUrl('https://' + domain).hostname === domain; }
   catch { return false; }
+}
+
+export function requestsOfficialLinkCoverage(prompt: string): boolean {
+  return officialLinkRequest.test(prompt);
 }
 
 /** Egress still needs exact review when a request actually refers to private,
@@ -65,9 +70,10 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
   // terms. Leave everything else in the turn subject to the privacy checks.
   const request = message.replace(citationFooter, '').replace(currencyPeriod, '$1 per $2').trimEnd();
   const publicOffice = publicOfficeLookup.test(request);
+  const officialLookup = requestsOfficialLinkCoverage(request);
   const discovery = discoveryIntent.test(request) && (discoverySubject.test(request)
     || (request.toLowerCase().match(/\b[a-z]{7,}\b/g) ?? []).some(word => discoverySpellings.has(categorySpellingKey(word))));
-  if ((!publicLookup.test(request) && !discovery && !weatherLookup.test(request) && !publicOffice)
+  if ((!publicLookup.test(request) && !discovery && !weatherLookup.test(request) && !publicOffice && !officialLookup)
     || explicitlyDisablesResearch(message)
     || workspaceSearchNeedsExactReview(message) || specificIdentityOrUrl.test(message)
     || !/^[\p{L}\p{M}\p{N}\p{Sc} ,.'’!?()&–،؟。？！、-]+$/u.test(request)) return;
@@ -88,7 +94,7 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
     || officialOnly && asksForOfficial && !requestsOfficialCitation)) return;
   const explicitExplanation = explicitWebLookup.test(request)
     && explanatoryLookup.test(request.replace(explicitWebLookup, ''));
-  if (!officialDomains.length && !publicFactSubject.test(request) && !explicitExplanation && !discovery && !publicOffice) return;
+  if (!officialDomains.length && !publicFactSubject.test(request) && !explicitExplanation && !discovery && !publicOffice && !officialLookup) return;
 
   const topic = request.replace(bareDomain, host => isSoftwareName(host) ? host : '').replace(/\(\s*\)/g, '')
     .replace(explicitWebLookup, '').replace(instructionStart, '').replace(sourcePreface, '')

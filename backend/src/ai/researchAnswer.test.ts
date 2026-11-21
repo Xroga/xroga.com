@@ -56,7 +56,7 @@ test('one exact research approval completes its original rich answer, saves evid
       assert.match(body.query,/ site:nasa\.gov$/);
       assert.ok([...body.query].length<=128);
     }else if(mode.startsWith('automatic-ranking')){
-      assert.deepEqual(body,{query:'Top 10 best AI companies of 2026. Explain the ranking method, show their official websites',count:10});
+      assert.deepEqual(body,{query:'Top 10 best AI companies of 2026. Explain the ranking method, show their official websites',count:25});
     }else if(mode==='automatic-parity'){
       assert.deepEqual(Object.keys(body).sort(),['count','query']);
       assert.equal(body.count,10);
@@ -356,6 +356,8 @@ test('automatic Search eligibility uses only the current public lookup with ambi
   {query:'explain how HTTP idempotency keys work',officialDomains:[]});
  assert.deepEqual(workspacePublicSearchQuery('Search the web using only official NASA sources (nasa.gov). Explain how eclipses happen, and cite your sources.',true),
   {query:'Explain how eclipses happen site:nasa.gov',officialDomains:['nasa.gov']});
+ assert.deepEqual(workspacePublicSearchQuery('Official support links for Microsoft, Apple and Google in one table.'),
+  {query:'Official support links for Microsoft, Apple and Google in one table',officialDomains:[]});
  for(const prompt of ['Current notes in my inbox','What is the latest private customer list',
   'Search the web for John Smith','Who is Jane Doe currently working for',
   'Search for name associated with 123-45-6789','Search the latest details on https://example.org/query',
@@ -373,7 +375,7 @@ test('automatic Search eligibility uses only the current public lookup with ambi
   'Weather in our unpublished client event location',
   'Forecast for my daughter’s address',
   'Who is the CEO of our confidential acquisition target?',
-  'Search the web for the lifespan in the attached notes',
+  'Search the web for the lifespan in the attached notes','Official support links for our private vendors',
   'Explain weather forecasts','Explain photosynthesis','Search the web for'])assert.equal(workspacePublicSearchQuery(prompt),undefined,prompt);
 });
 

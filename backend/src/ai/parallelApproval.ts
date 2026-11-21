@@ -19,8 +19,8 @@ import {redactSecrets} from '../lib/truthfulExecution.js';
 import {createRequire} from 'node:module';
 import {researchAnswerRequestSchema,completeApprovedResearchAnswer,RESEARCH_ANSWER_MAXIMUM_MICRO_USD} from './researchAnswer.js';
 import {requireResearchResultStorage,saveResearchResult} from '../services/integrations/researchResult.js';
-import {deepseekSearchBody,researchSearchMicroUsd,DEEPSEEK_SEARCH_URL} from './researchSearchProvider.js';
-import {workspacePublicSearchQuery} from './workspacePublicSearch.js';
+import {deepseekSearchBody,researchSearchMicroUsd,DEEPSEEK_LINK_DISCOVERY_RESULTS,DEEPSEEK_SEARCH_URL} from './researchSearchProvider.js';
+import {requestsOfficialLinkCoverage,workspacePublicSearchQuery} from './workspacePublicSearch.js';
 
 const pdfParse=createRequire(import.meta.url)('pdf-parse/lib/pdf-parse.js') as (data:Uint8Array,options:{max:number})=>Promise<{text:string}>;
 function extractUrls(body:Record<string,unknown>):string[]{
@@ -37,7 +37,7 @@ function requireRetrievalOnly(operation:string):void{
 const unsigned=(p:BusinessActionPlan|Omit<BusinessActionPlan,'planDigest'>)=>{const{scopeRequirements:_proof,...rest}=p;const{planDigest:_digest,...value}=rest as BusinessActionPlan;return value;};
 const digest=(value:unknown)=>preparedActionDigest(JSON.parse(JSON.stringify(value)));
 const identity=(scope:TenantModelScope,nonce:string,value:unknown)=>({tenant:scope.context.tenantId,owner:scope.context.userId,provider:'research-plan',account:'parallel',credentialType:'prepared-action',recordId:nonce,revision:digest(value),scope:'research-egress'});
-interface State {scope:TenantModelScope;operation:Operation;body:Record<string,unknown>;maximumMicroUsd:number;check:()=>Promise<void>;begin:()=>Promise<void>;active:boolean}
+interface State {scope:TenantModelScope;operation:Operation;body:Record<string,unknown>;publicSearchPayload?:Readonly<ReturnType<typeof deepseekSearchBody>>;maximumMicroUsd:number;check:()=>Promise<void>;begin:()=>Promise<void>;active:boolean}
 const admitted=new WeakMap<object,State>();
 export interface ParallelAdmission {readonly marker:'native-research'}
 export async function prepareParallelApproval(scope:TenantModelScope,operation:Operation,body:Record<string,unknown>,signal?:AbortSignal){
@@ -71,21 +71,22 @@ export function requireParallelAdmission(value:ParallelAdmission|undefined,scope
  * private research, backed by a distinct READ/PUBLIC audit decision. */
 export async function executeWorkspacePublicSearch(
  scope:TenantModelScope, prompt:string, officialOnly:boolean, signal?:AbortSignal,
-):Promise<{result:unknown;officialDomains:string[]}|undefined>{
+):Promise<{result:unknown;officialDomains:string[];officialLinkCoverage:boolean}|undefined>{
  const context=requireTenantContext(scope.context);requireResourceOwner(context,scope.userId);
  if(scope.projectId!==undefined||scope.repository!==undefined||scope.runAttempt||scope.authority
   ||scope.researchAnswer||scope.connectedAccountId!=='platform')throw denied();
  const request=workspacePublicSearchQuery(prompt, officialOnly);
  if(!request)return;
  const body={mode:'turbo',objective:'',search_queries:[request.query]};
- const payload=deepseekSearchBody(body);
+ const officialLinkCoverage=requestsOfficialLinkCoverage(prompt);
+ const payload=Object.freeze(deepseekSearchBody(body,officialLinkCoverage?DEEPSEEK_LINK_DISCOVERY_RESULTS:undefined));
  const targetDigest=digest(payload);
  const binding={userId:context.userId,provider:'deepseek-search',connectedAccountId:'deepseek-search:platform',
   operation:'search',targetDigest,planDigest:digest({correlationId:context.correlationId,targetDigest})};
  const check=async()=>{signal?.throwIfAborted();requireResourceOwner(context,scope.userId);};
  const admission:ParallelAdmission=Object.freeze({marker:'native-research'});
  let started=false;
- const state:State={scope:{...scope,context},operation:'search',body:structuredClone(body),maximumMicroUsd:researchSearchMicroUsd(),active:true,check,
+ const state:State={scope:{...scope,context},operation:'search',body:structuredClone(body),publicSearchPayload:payload,maximumMicroUsd:researchSearchMicroUsd(),active:true,check,
   begin:async()=>{
    if(started)throw denied();started=true;await check();
    await enforceEgress({context,actionClass:'READ',destination:DEEPSEEK_SEARCH_URL,recipient:binding.connectedAccountId,
@@ -105,7 +106,7 @@ export async function executeWorkspacePublicSearch(
   // settlement. A failed write never enters synthesis or replays retrieval.
   await saveResearchResult(context,context.correlationId,JSON.stringify(evidence),digest(evidence));
   await check();
-  return {result,officialDomains:request.officialDomains};
+  return {result,officialDomains:request.officialDomains,officialLinkCoverage};
  }finally{state.active=false;admitted.delete(admission);}
 }
 
