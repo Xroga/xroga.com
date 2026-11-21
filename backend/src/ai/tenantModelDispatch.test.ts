@@ -91,7 +91,8 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
           assert.match(body.messages[0].content, /attachment is missing or unreadable/);
         } else if (!request.includes('do not export')) {
           assert.match(body.messages[0].content, /requested (?:DOCX|PDF|XLSX|PPTX) artifact as readable Markdown/);
-          assert.match(body.messages[0].content, /Do not invent a file URL/);
+          assert.match(body.messages[0].content, /Workspace handles the local download/);
+          assert.match(body.messages[0].content, /Omit capability disclaimers, manual conversion instructions, file URLs/);
         } else {
           assert.doesNotMatch(body.messages[0].content, /requested (?:DOCX|PDF|XLSX|PPTX) artifact as readable Markdown/);
         }
@@ -397,6 +398,8 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
     mimeType:'text/csv', name:'workshop.csv'};
   for (const { prompt, attachments, expected, fixture } of [
     { prompt: 'Create a DOCX proposal with editable sections.', expected: 'docx' },
+    { prompt: 'Create a downloadable editable DOCX cue sheet for a fictional volunteer planetarium show.', expected: 'docx',
+      fixture: '# Planetarium cues\n\n## Cues\n\n| Cue | Start | Duration |\n| --- | --- | --- |\n| Red Beacon | 19:20 | 45 seconds |' },
     { prompt: pdfPrompt, attachments: [dataset], expected: 'pdf' },
     { prompt: pdfPrompt, expected: undefined },
     { prompt: 'Create a PDF report, but do not export a file.', expected: undefined },
