@@ -1,0 +1,476 @@
+/* Public Xroga Connect marketplace. Completely scoped: the canonical marketing
+   header/footer and private dashboard are not modified by this page. */
+.xi-root{--xi-blue:#86baff;--xi-blue-strong:#5e9cff;--xi-border:rgba(149,178,228,.15);--xi-muted:#a0aec4;position:relative;isolation:isolate;overflow:clip;min-height:100vh;background:#050505;color:#f5f7fc;font-family:var(--font-goga),var(--font-inter),system-ui,sans-serif}
+.xi-root *,.xi-root *::before,.xi-root *::after{box-sizing:border-box}
+.xi-root :is(h1,h2,h3,p){color:inherit}
+.xi-root :is(a,button,select,input):focus-visible{outline:2px solid #8fc6ff;outline-offset:3px}
+.xi-root a{text-decoration:none}
+.xi-root button,.xi-root select,.xi-root input{font:inherit}
+.xi-root button{cursor:pointer}
+.xi-root h1,.xi-root h2{font-family:var(--font-source-serif),Georgia,'Times New Roman',serif;font-weight:400;letter-spacing:-.047em}
+.xi-root h2 em,.xi-root h1 em{font-style:normal;color:#b9d7ff}
+.xi-root ::selection{background:#3677cb;color:#fff}
+.xi-root .xi-visually-hidden{position:absolute!important;width:1px!important;height:1px!important;clip:rect(0,0,0,0)!important;overflow:hidden!important;white-space:nowrap!important}
+.xi-root .xi-overline{display:block;font-family:var(--font-goga),system-ui,sans-serif;letter-spacing:.17em;color:#87baf7;font-size:10px;font-weight:790;text-transform:uppercase}
+.xi-hero{position:relative;text-align:center;min-height:610px;display:flex;align-items:center;justify-content:center;padding:129px 26px 112px;background:radial-gradient(ellipse 45% 62% at 50% 38%,#111111 0%,#060606 54%,#050505 90%);}
+.xi-hero-halo{position:absolute;pointer-events:none;top:-285px;left:50%;transform:translateX(-50%);width:780px;height:540px;border-radius:100%;filter:blur(38px);background:radial-gradient(ellipse,rgba(96,150,237,.065),transparent 66%)}
+.xi-hero::after{content:'';pointer-events:none;position:absolute;inset:0;background-image:radial-gradient(rgba(203,224,255,.13) .6px,transparent .6px);background-size:19px 19px;opacity:.25;mask-image:radial-gradient(ellipse at 50% 45%,#000,transparent 85%)}
+.xi-hero-content{position:relative;z-index:2;max-width:930px;margin:auto}
+.xi-eyebrow{display:inline-flex;align-items:center;gap:11px;padding:9px 16px;border:1px solid rgba(142,190,255,.25);border-radius:100px;background:rgba(34,62,106,.38);font-size:10px;letter-spacing:.14em;font-weight:780;color:#a9cdfa}
+.xi-eyebrow span{width:7px;height:7px;border-radius:50%;background:#8dbdff;box-shadow:0 0 13px rgba(139,195,255,.65)}
+.xi-eyebrow i{height:10px;width:1px;background:rgba(161,194,236,.36)}
+.xi-hero h1{font-size:clamp(66px,7vw,105px);line-height:1.01;margin:30px auto 24px;text-wrap:balance}
+.xi-hero-content>p{max-width:665px;margin:0 auto;font-size:15px;line-height:1.9;color:#adbed5}
+.xi-hero-actions{display:flex;justify-content:center;align-items:center;gap:13px;flex-wrap:wrap;margin:31px 0 25px}
+.xi-primary-button,.xi-secondary-button{display:inline-flex;align-items:center;justify-content:center;gap:13px;min-height:48px;padding:11px 20px;border-radius:11px;font-size:12px;font-weight:790;transition:transform .23s,border-color .23s,background .23s}
+.xi-primary-button{color:#070707!important;background:linear-gradient(125deg,#9cceff,#6ca9ff);box-shadow:0 12px 42px rgba(69,134,239,.17)}
+.xi-primary-button:hover{background:linear-gradient(125deg,#c2e0ff,#8dbfff);transform:translateY(-2px)}
+.xi-secondary-button{background:rgba(17,29,48,.78);color:#e7f0ff;border:1px solid rgba(172,198,243,.22)}
+.xi-secondary-button:hover{border-color:#7ab5fd;transform:translateY(-2px)}
+.xi-hero-proof{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:20px;color:#9bb4d0;font-size:10px}
+.xi-hero-proof span{display:inline-flex;align-items:center;gap:7px}
+.xi-hero-proof svg{color:#80b8fe}
+.xi-hero-logos{position:absolute;z-index:1;inset:0;max-width:1510px;margin:0 auto;pointer-events:none}
+.xi-orbit-logo{position:absolute;width:68px;height:68px;display:grid;place-items:center;border-radius:18px;border:1px solid rgba(144,189,252,.24);background:linear-gradient(135deg,rgba(31,52,86,.92),rgba(17,25,42,.9));box-shadow:0 15px 35px rgba(0,0,0,.33),inset 0 1px rgba(255,255,255,.065);transform:rotate(-9deg)}
+.xi-orbit-logo .h-10{height:44px;width:44px}
+.xi-orbit-logo-1{top:18%;left:8%;transform:rotate(-12deg)}.xi-orbit-logo-2{top:42%;left:2%;transform:rotate(9deg)}.xi-orbit-logo-3{bottom:17%;left:11%;transform:rotate(6deg)}.xi-orbit-logo-4{top:18%;right:9%;transform:rotate(13deg)}.xi-orbit-logo-5{top:42%;right:2%;transform:rotate(-8deg)}.xi-orbit-logo-6{bottom:16%;right:11%;transform:rotate(11deg)}.xi-orbit-logo-7{top:9%;left:31%;width:55px;height:55px;opacity:.58}.xi-orbit-logo-8{top:8%;right:30%;width:55px;height:55px;opacity:.58}
+.xi-spotlight,.xi-section,.xi-mcp,.xi-cta{max-width:1260px;margin:0 auto}
+.xi-spotlight{padding:96px 32px 90px;text-align:center}
+.xi-spotlight-heading h2{font-size:clamp(42px,5vw,70px);line-height:1.07;margin:18px 0 34px}
+.xi-featured-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;max-width:1050px;margin:0 auto}
+.xi-featured-item{min-height:74px;padding:13px 16px;display:flex;align-items:center;gap:13px;border:1px solid var(--xi-border);border-radius:13px;background:linear-gradient(145deg,#141414,#0b0b0b);color:#edf4ff;transition:transform .2s,border-color .2s}
+.xi-featured-item:hover{transform:translateY(-2px);border-color:rgba(132,189,255,.48)}
+.xi-featured-item .h-10{height:39px;width:39px}
+.xi-featured-item>span{font-size:12px;font-weight:730;text-align:left;min-width:0;flex:1}
+.xi-featured-item>svg{color:#90add2}
+.xi-small-note{font-size:10px;line-height:1.5;color:#8198b8;margin:17px 0 0}
+.xi-section{padding:70px 32px 110px;scroll-margin-top:35px}
+.xi-section-heading{display:flex;align-items:end;justify-content:space-between;gap:36px;margin:0 0 35px}
+.xi-section-heading h2{font-size:clamp(47px,5.3vw,75px);line-height:1.01;margin:14px 0 0}
+.xi-section-heading>p{max-width:330px;color:#9bacc3;font-size:13px;line-height:1.85;margin:0 0 5px}
+.xi-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.xi-step{position:relative;overflow:hidden;min-height:420px;padding:25px 25px 28px;border:1px solid rgba(149,178,228,.16);border-radius:21px;background:radial-gradient(ellipse at 50% 40%,rgba(75,122,207,.025),transparent 65%),linear-gradient(140deg,#151515,#0b0b0b)}
+.xi-step-num{font-size:10px;letter-spacing:.13em;font-weight:770;color:#86b9fc}
+.xi-step h3{font-size:19px;letter-spacing:-.03em;line-height:1.25;font-weight:740;margin:18px 0 9px}
+.xi-step>p{font-size:12px;line-height:1.7;color:#9eacc2;max-width:330px;margin:0}
+.xi-step-visual{height:235px;display:flex;flex-direction:column;justify-content:center;gap:10px;padding:21px 8px 0}
+.xi-step-search{height:40px;display:flex;align-items:center;gap:9px;padding:0 12px;border:1px solid rgba(142,185,239,.23);border-radius:9px;background:#191919;color:#a7c7f3;font-size:11px}
+.xi-step-search-row{display:flex;align-items:center;gap:11px;padding:11px 13px;border:1px solid rgba(149,187,241,.15);border-radius:10px;background:#121212}
+.xi-logo-stamp{display:grid;place-items:center;border-radius:8px;width:30px;height:30px;background:#f2f4fa;color:#171717;font-size:15px;font-weight:900}
+.xi-logo-stamp--blue{background:#7271e1;color:#fff}
+.xi-step-search-row>span:nth-child(2){display:grid;gap:2px;flex:1;font-size:11px;font-weight:700}
+.xi-step-search-row small{color:#8ba2bd;font-size:9px;font-weight:400}
+.xi-step-search-row svg{color:#90c8ff}
+.xi-step-search-row--faded{opacity:.68}
+.xi-auth-title{display:flex;align-items:center;gap:11px;font-size:12px;font-weight:720;color:#e0edff;margin-bottom:10px}
+.xi-auth-title svg{color:#9bc6ff}
+.xi-permission{display:flex;align-items:center;gap:9px;padding:13px;border-radius:9px;border:1px solid rgba(147,183,226,.17);background:#171717;color:#cbdcf4;font-size:10px}
+.xi-permission svg{color:#8abeff}
+.xi-permission-muted{border-style:dashed;background:rgba(35,52,73,.28);color:#9fb0c9}
+.xi-prompt-bubble{padding:16px 17px;align-self:flex-end;background:linear-gradient(110deg,#242424,#1b1b1b);border:1px solid rgba(151,204,255,.23);border-radius:13px 13px 4px 13px;font-size:11px;color:#ebf3ff}
+.xi-prompt-status{display:flex;align-items:center;gap:9px;padding:13px;border:1px solid rgba(150,180,220,.18);border-radius:11px;background:#171717;color:#d5e5f9;font-size:11px}
+.xi-prompt-status svg{color:#91c2ff}
+.xi-prompt-small{display:flex;align-items:center;gap:8px;font-size:10px;color:#8cafd5;padding:8px}
+.xi-mcp{position:relative;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:28px;padding:55px 62px;margin-top:15px;margin-bottom:72px;border:1px solid rgba(132,183,249,.25);border-radius:26px;background:radial-gradient(ellipse at 76% 53%,rgba(86,137,230,.055),transparent 55%),linear-gradient(130deg,#131313,#0b0b0b)}
+.xi-mcp-copy{position:relative;z-index:2}
+.xi-mcp h2{font-size:clamp(47px,5vw,68px);line-height:1.03;margin:16px 0}
+.xi-mcp p{font-size:13px;line-height:1.85;color:#a7bbd4;max-width:460px}
+.xi-mcp-cta{display:inline-flex;align-items:center;gap:10px;padding:12px 0;margin-top:13px;font-size:12px;font-weight:780;color:#a4cbff;border-bottom:1px solid rgba(139,185,244,.44)}
+.xi-mcp-cta:hover{color:#e0efff}
+.xi-mcp-art{position:relative;height:270px;display:flex;align-items:center;justify-content:center}
+.xi-mcp-centre{position:relative;z-index:2;display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center;width:140px;height:140px;border:1px solid rgba(122,177,255,.45);border-radius:23px;background:linear-gradient(150deg,#202020,#141414);box-shadow:0 0 90px rgba(77,150,245,.15),inset 0 1px rgba(255,255,255,.09);color:#cce3ff}
+.xi-mcp-centre strong{font-size:12px;letter-spacing:.13em}
+.xi-mcp-centre small{color:#9bb9df;font-size:10px}
+.xi-mcp-line{position:absolute;width:200px;height:1px;border-top:1px dashed rgba(144,189,248,.4);transform-origin:center}
+.xi-mcp-line-a{transform:rotate(25deg)}.xi-mcp-line-b{transform:rotate(-42deg)}.xi-mcp-line-c{transform:rotate(90deg)}
+.xi-mcp-node{position:absolute;z-index:2;width:48px;height:48px;display:grid;place-items:center;border:1px solid rgba(125,186,255,.36);border-radius:14px;background:#1c1c1c;color:#a9ceff}
+.xi-mcp-node-a{top:9%;left:17%}.xi-mcp-node-b{right:12%;top:27%}.xi-mcp-node-c{bottom:4%;left:32%}
+.xi-directory{max-width:1320px;padding-top:78px}
+.xi-directory-title{text-align:center;max-width:820px;margin:0 auto 35px}
+.xi-directory-title h2{font-size:clamp(56px,7vw,91px);line-height:.98;margin:19px 0 17px}
+.xi-directory-title p{color:#9faec7;line-height:1.8;font-size:13px;max-width:675px;margin:0 auto}
+.xi-directory-search{position:relative;max-width:850px;height:66px;display:flex;align-items:center;gap:15px;padding:0 20px;border:1px solid rgba(148,193,251,.36);border-radius:16px;background:linear-gradient(135deg,#171717,#101010);box-shadow:0 15px 60px rgba(30,84,159,.12);margin:0 auto 38px}
+.xi-directory-search>svg{color:#89c1fe;flex-shrink:0}
+.xi-directory-search input{flex:1;width:100%;min-width:0;outline:none;border:0;background:transparent;font-size:14px;color:#eef6ff}
+.xi-directory-search input::placeholder{color:#8ba6ca;opacity:1}
+.xi-directory-search:focus-within{border-color:#a1caff;box-shadow:0 0 0 3px rgba(113,172,255,.15)}
+.xi-directory-search input:focus-visible{outline:0}
+.xi-directory-search>button{background:none;border:0;display:grid;place-items:center;color:#a5bad6;padding:5px}
+.xi-search-kbd{display:flex;align-items:center;gap:5px;white-space:nowrap;font-size:10px;padding:7px 9px;color:#7898bd;border:1px solid rgba(132,167,218,.18);border-radius:7px}
+.xi-library{display:grid;grid-template-columns:248px minmax(0,1fr);align-items:start;gap:24px}
+.xi-library-sidebar{position:sticky;top:22px;max-height:calc(100vh - 38px);overflow:auto;scrollbar-width:thin;scrollbar-color:#292929 transparent;padding:21px 13px 17px;border:1px solid rgba(143,181,224,.12);border-radius:18px;background:linear-gradient(130deg,#141414,#0a0a0a)}
+.xi-sidebar-title{display:flex;align-items:center;gap:10px;padding:0 10px 17px;color:#e5efff;font-weight:800;font-size:12px}
+.xi-category-stack{display:grid;gap:3px}
+.xi-category-option{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;padding:10px 11px;border:1px solid transparent;border-radius:9px;background:transparent;text-align:left;color:#a8b7cf;font-size:11px;line-height:1.3;transition:background .16s,color .16s}
+.xi-category-option span{flex:1}
+.xi-category-option small{font-size:10px;color:#7c93af;font-variant-numeric:tabular-nums}
+.xi-category-option:hover{background:#222222;color:#eaf3ff}
+.xi-category-option-active{background:#272727!important;color:#eaf4ff!important;border-color:rgba(124,184,251,.25)!important}
+.xi-category-option-active small{color:#a6cfff}
+.xi-more-categories{border-top:1px solid rgba(138,176,217,.14);margin-top:13px;padding-top:12px}
+.xi-more-categories summary{display:flex;align-items:center;justify-content:space-between;list-style:none;cursor:pointer;font-size:11px;font-weight:730;color:#8dbaff;padding:10px 11px}
+.xi-more-categories summary::-webkit-details-marker{display:none}
+.xi-more-categories[open] summary svg{transform:rotate(180deg)}
+.xi-library-main{min-width:0}
+.xi-library-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:15px;padding:4px 0 19px}
+.xi-result-status{font-size:12px;color:#a1b2cc}
+.xi-result-status strong{color:#f0f7ff;font-variant-numeric:tabular-nums}
+.xi-result-status span{color:#7196c5}
+.xi-sort-control{display:flex;align-items:center;gap:10px;color:#93a7c4;font-size:11px}
+.xi-sort-control select{min-height:37px;max-width:205px;border-radius:9px;border:1px solid rgba(137,168,213,.2);background:#141414;color:#dceaff;padding:0 10px;outline:0}
+.xi-mode-filters{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 19px}
+.xi-mode-filters button{padding:9px 13px;background:#181818;border:1px solid rgba(136,177,232,.18);border-radius:100px;color:#95adc9;font-weight:730;font-size:10px}
+.xi-mode-filters button:hover{border-color:#85b5f6;color:#f7fbff}
+.xi-mode-filters .xi-mode-active{background:#8dc1ff!important;color:#101010!important;border-color:#8dc1ff!important}
+.xi-app-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.xi-app-card{min-width:0}
+.xi-card-link{display:flex;flex-direction:column;height:100%;min-height:304px;padding:19px 19px 18px;border:1px solid rgba(139,178,229,.17);border-radius:17px;background:linear-gradient(135deg,#151515,#0d0d0d);color:#f1f6ff;transition:transform .22s,border-color .22s,box-shadow .22s}
+.xi-card-link:hover{transform:translateY(-3px);border-color:rgba(136,190,255,.52);box-shadow:0 20px 35px rgba(0,0,0,.2)}
+.xi-card-top{display:flex;align-items:start;justify-content:space-between;gap:12px}
+.xi-card-top .h-10{height:47px;width:47px;padding:6px}
+.xi-card-go{color:#789ab9;transition:transform .2s}
+.xi-card-link:hover .xi-card-go{transform:translate(2px,-2px);color:#a4cfff}
+.xi-card-kind{margin-top:16px;font-size:9px;color:#8dbaff;text-transform:uppercase;letter-spacing:.095em;font-weight:830}
+.xi-app-card h3{font-size:16px;line-height:1.25;letter-spacing:-.023em;font-weight:780;margin:6px 0 8px}
+.xi-card-description{margin:0 0 18px;color:#9fb2cb;font-size:10px;line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:46px}
+.xi-card-meta{display:flex;flex-direction:column;gap:9px;padding-top:14px;margin-top:auto;border-top:1px solid rgba(145,178,218,.13)}
+.xi-card-meta>div{display:flex;align-items:start;gap:6px;font-size:9px;color:#8298b5;line-height:1.4}
+.xi-card-meta svg{color:#749ecf;flex-shrink:0}
+.xi-card-meta span{flex:1;min-width:0}
+.xi-card-meta strong{max-width:58%;color:#afc5df;font-weight:600;text-align:right}
+.xi-card-bottom{display:flex;align-items:center;gap:7px;margin-top:17px;font-size:10px;font-weight:780;color:#a9d2ff}
+.xi-pagination{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:18px;margin-top:25px;color:#829bb9;font-size:11px}
+.xi-pagination button{display:inline-flex;gap:10px;align-items:center;padding:12px 18px;border:1px solid rgba(126,183,253,.39);background:#1a1a1a;border-radius:10px;font-size:12px;font-weight:740;color:#cde4ff}
+.xi-pagination button:hover{background:#262626}
+.xi-catalog-footnote{display:flex;align-items:start;gap:8px;padding:18px;margin-top:25px;border:1px solid rgba(144,174,220,.13);background:rgba(25,38,55,.58);border-radius:11px;font-size:10px;line-height:1.7;color:#9db2c9}
+.xi-catalog-footnote svg{color:#8ab9f8;flex-shrink:0}
+.xi-no-results{min-height:290px;padding:45px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px dashed rgba(151,188,234,.29);border-radius:17px;background:#101010;color:#a5c1e1;text-align:center}
+.xi-no-results h3{font-size:19px;margin:13px 0 5px}.xi-no-results p{font-size:12px;margin:0 0 17px;color:#8ba5c4}
+.xi-no-results button{background:#91c5ff;border:0;border-radius:9px;color:#0c0c0c;font-size:12px;font-weight:750;padding:11px 17px}
+.xi-cta{position:relative;text-align:center;margin:30px auto 0;overflow:hidden;max-width:none;padding:86px 24px 108px;background:radial-gradient(ellipse at 50% 84%,rgba(71,128,222,.055),transparent 53%),linear-gradient(180deg,#101010,#070707);}
+.xi-cta-halo{position:absolute;left:50%;top:-145px;transform:translateX(-50%);width:600px;height:250px;background:radial-gradient(ellipse,rgba(117,180,255,.25),transparent 70%);pointer-events:none}
+.xi-cta h2{position:relative;font-size:clamp(50px,6vw,80px);line-height:1.02;margin:15px auto}
+.xi-cta p{color:#a3b7d0;max-width:530px;font-size:13px;line-height:1.8;margin:0 auto 28px}
+@media (max-width:1180px){.xi-hero-logos{opacity:.56}.xi-orbit-logo-2,.xi-orbit-logo-5{display:none}.xi-library{grid-template-columns:218px minmax(0,1fr);gap:17px}.xi-app-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:900px){.xi-hero{padding:115px 24px 100px}.xi-hero h1{font-size:clamp(58px,8.8vw,83px)}.xi-hero-logos{opacity:.3}.xi-featured-list{grid-template-columns:repeat(4,minmax(0,1fr))}.xi-featured-item{flex-wrap:wrap;min-height:100px;justify-content:center}.xi-featured-item>span{flex-basis:calc(100% - 30px);text-align:center}.xi-featured-item>svg{display:none}.xi-section-heading{display:block}.xi-section-heading>p{max-width:600px;margin-top:18px}.xi-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.xi-mcp{margin-left:22px;margin-right:22px;padding:35px}.xi-library{grid-template-columns:1fr}.xi-library-sidebar{position:static;max-height:none;display:block}.xi-category-stack{grid-template-columns:repeat(3,minmax(0,1fr))}.xi-more-categories .xi-category-stack{grid-template-columns:repeat(3,minmax(0,1fr))}.xi-app-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:700px){.xi-hero{padding:95px 17px 75px;min-height:545px}.xi-hero-logos{opacity:.16}.xi-orbit-logo-1,.xi-orbit-logo-4{top:7%}.xi-hero h1{font-size:clamp(49px,10.8vw,73px);line-height:1.02}.xi-hero-content>p{font-size:13px}.xi-hero-proof{gap:10px 17px}.xi-spotlight{padding:74px 19px}.xi-featured-list{grid-template-columns:repeat(2,minmax(0,1fr))}.xi-featured-item{min-height:68px;flex-wrap:nowrap;justify-content:start}.xi-featured-item>span{flex:1;text-align:left;font-size:11px}.xi-section{padding:60px 17px 80px}.xi-steps{grid-template-columns:1fr}.xi-step{min-height:390px}.xi-step-visual{height:220px}.xi-mcp{grid-template-columns:1fr;margin:0 16px 50px;padding:38px 22px}.xi-mcp-art{height:210px}.xi-library-sidebar .xi-category-stack{grid-template-columns:repeat(2,minmax(0,1fr))}.xi-app-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.xi-card-link{min-height:310px}.xi-directory-title h2{font-size:clamp(49px,9vw,69px)}.xi-search-kbd{display:none}}
+@media (max-width:480px){.xi-hero h1{font-size:48px}.xi-hero-actions{flex-direction:column;align-items:stretch;max-width:320px;margin-left:auto;margin-right:auto}.xi-hero-actions a{width:100%}.xi-spotlight-heading h2{font-size:45px}.xi-section-heading h2{font-size:47px}.xi-mcp h2{font-size:51px}.xi-directory-title h2{font-size:48px}.xi-directory-search{height:59px;padding:0 14px}.xi-directory-search input{font-size:12px}.xi-library-sidebar .xi-category-stack{grid-template-columns:1fr 1fr}.xi-library-toolbar{align-items:start}.xi-app-grid{grid-template-columns:1fr}.xi-card-link{min-height:264px}.xi-card-description{min-height:unset}.xi-card-meta{gap:7px}.xi-pagination button{width:100%;justify-content:center}.xi-cta h2{font-size:48px}}
+@media(prefers-reduced-motion:reduce){.xi-root :is(.xi-card-link,.xi-featured-item,.xi-primary-button,.xi-secondary-button){transition:none!important}.xi-root :is(.xi-card-link,.xi-featured-item,.xi-primary-button,.xi-secondary-button):hover{transform:none!important}}
+
+
+/* Black Titanium: true near-black page and charcoal cards. Blue stays an accent,
+   never the full-page fill. The shared Xroga marketing header is untouched. */
+.xi-root{background:#050505;color:#f5f5f6}
+.xi-hero{background:radial-gradient(ellipse 60% 70% at 50% 37%,#111111 0%,#070707 52%,#050505 94%);border-color:rgba(255,255,255,.085)}
+.xi-hero-halo{opacity:.44}
+.xi-spotlight,.xi-section,.xi-mcp,.xi-cta{background-color:transparent}
+.xi-orbit-logo{background:linear-gradient(145deg,#191919,#0a0a0a);border-color:rgba(199,210,230,.18)}
+.xi-featured-item,.xi-step,.xi-app-card .xi-card-link,.xi-library-sidebar,.xi-agent-list,.xi-agent-detail{background:linear-gradient(140deg,#151515,#0b0b0b);border-color:rgba(255,255,255,.12)}
+.xi-card-link:hover,.xi-featured-item:hover{border-color:rgba(140,193,255,.54)}
+.xi-directory-search{background:#141414;border-color:rgba(170,190,220,.34);box-shadow:0 15px 50px rgba(0,0,0,.24)}
+.xi-mcp{background:radial-gradient(ellipse at 75% 50%,rgba(86,137,230,.05),transparent 54%),linear-gradient(140deg,#151515,#080808)}
+.xi-cta{background:radial-gradient(ellipse at 50% 100%,rgba(87,146,226,.07),transparent 50%),#080808}
+.xi-step-search,.xi-step-search-row,.xi-permission,.xi-prompt-status,.xi-auth-title,.xi-prompt-bubble{background-color:#1b1b1b}
+.xi-category-option-active{background:#262626!important}
+.xi-category-option:hover{background:#202020}
+.xi-sort-control select,.xi-mode-filters button{background:#171717}
+.xi-mode-filters button.xi-mode-active{background:#94c4ff!important;color:#090909!important}
+.xi-mcp-centre,.xi-mcp-node{background:linear-gradient(145deg,#242424,#141414)}
+.xi-no-results,.xi-catalog-footnote{background:#121212}
+
+/* Agent interoperability cards: users select a real GitHub handoff guide.
+   No provider in this section is represented as directly connected to Xroga. */
+.xi-agents{padding-top:88px;padding-bottom:103px}
+.xi-agent-layout{display:grid;grid-template-columns:minmax(280px,.84fr) minmax(0,1.16fr);gap:16px}
+.xi-agent-list{display:grid;gap:7px;padding:15px;border:1px solid rgba(255,255,255,.12);border-radius:19px}
+.xi-agent-option{display:flex;align-items:center;gap:14px;width:100%;padding:12px 15px;border:1px solid transparent;border-radius:12px;background:#161616;color:#f2f2f4;text-align:left;transition:background .2s,border-color .2s}
+.xi-agent-option:hover{background:#222}
+.xi-agent-option-active{background:#20252b!important;border-color:rgba(137,191,255,.48)!important}
+.xi-agent-option .h-10{width:42px;height:42px}
+.xi-agent-option-text{display:flex;flex-direction:column;flex:1;gap:4px;min-width:0}
+.xi-agent-option-text strong{font-size:14px;font-weight:740;letter-spacing:-.02em}
+.xi-agent-option-text small{font-size:10px;color:#9da3ae}
+.xi-agent-option-arrow{color:#a0b8d4}
+.xi-agent-detail{padding:29px 31px;min-width:0;border:1px solid rgba(255,255,255,.12);border-radius:20px}
+.xi-agent-detail-top{display:flex;align-items:flex-start;gap:18px;padding-bottom:23px;border-bottom:1px solid rgba(255,255,255,.1)}
+.xi-agent-detail-top>div{min-width:0}
+.xi-agent-pill{display:inline-flex;font-size:9px;line-height:1.1;letter-spacing:.06em;text-transform:uppercase;padding:6px 10px;border:1px solid rgba(126,190,255,.32);border-radius:100px;color:#a3cbff;background:rgba(74,130,213,.08)}
+.xi-agent-detail h3{font-family:var(--font-source-serif),Georgia,serif;font-size:30px;font-weight:400;letter-spacing:-.035em;margin:9px 0 6px}
+.xi-agent-detail-top p{color:#adbacd;font-size:11px;line-height:1.65;margin:0}
+.xi-agent-how-heading{display:flex;align-items:center;gap:10px;color:#dde6f1;font-size:12px;font-weight:720;margin:25px 0 12px}
+.xi-agent-how-heading svg{color:#8fc1ff}
+.xi-agent-steps{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.xi-agent-steps li{display:flex;align-items:flex-start;gap:12px;padding:11px 13px;background:#171717;border:1px solid rgba(255,255,255,.075);border-radius:10px}
+.xi-agent-steps span{flex-shrink:0;color:#92c2ff;font-size:11px;font-weight:760}
+.xi-agent-steps p{margin:0;font-size:11px;color:#c6cdd7;line-height:1.55}
+.xi-agent-detail-copy{font-size:11px;line-height:1.76;color:#9eabba;margin:18px 0 22px}
+.xi-agent-actions{display:flex;align-items:center;gap:15px;flex-wrap:wrap}
+.xi-agent-primary,.xi-agent-doc{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 14px;border-radius:9px;font-size:11px;font-weight:750}
+.xi-agent-primary{background:#9acbff;color:#101010!important}
+.xi-agent-primary:hover{background:#c5e2ff}
+.xi-agent-doc{border:1px solid rgba(166,185,213,.26);color:#b6cce7!important}
+.xi-agent-doc:hover{border-color:#8ac0ff}
+.xi-agent-disclosure{display:flex;align-items:flex-start;gap:10px;font-size:11px;line-height:1.65;color:#a5b2c2;margin:18px 0 0;padding:17px 19px;background:#101010;border:1px solid rgba(255,255,255,.09);border-radius:12px}
+.xi-agent-disclosure svg{flex-shrink:0;color:#92c4ff}
+@media(max-width:900px){.xi-agent-layout{grid-template-columns:1fr}.xi-agent-list{grid-template-columns:repeat(2,minmax(0,1fr))}.xi-agent-option{min-width:0}}
+@media(max-width:620px){.xi-agents{padding-top:62px;padding-bottom:74px}.xi-agent-list{grid-template-columns:1fr}.xi-agent-detail{padding:23px 18px}.xi-agent-detail h3{font-size:26px}.xi-agent-detail-top{gap:11px}.xi-agent-actions{align-items:stretch;flex-direction:column}.xi-agent-actions a{width:100%}}
+@media(prefers-reduced-motion:reduce){.xi-agent-option{transition:none}}
+
+
+
+/* V3: compact viewport-sized hero, explicit real provider logo rail, compact
+   search-first discovery, and genuinely sticky categories until the last row.
+   Clip does not establish the scrolling container that overflow:hidden did. */
+.xi-hero{
+  min-height:min(570px,calc(100svh - 138px));
+  padding:55px 24px 48px;
+  background:radial-gradient(ellipse 50% 48% at 50% 42%,#111 0%,#080808 60%,#050505 95%);
+}
+.xi-hero-content{max-width:850px}
+.xi-hero h1{font-size:clamp(47px,5.1vw,75px);line-height:1.03;letter-spacing:-.046em;margin:0 auto 19px}
+.xi-hero-content>p{max-width:670px;font-size:13px;line-height:1.7}
+.xi-hero-actions{margin:23px 0 0}
+.xi-hero-logos{opacity:.5}
+.xi-orbit-logo{width:57px;height:57px;border-radius:15px}
+.xi-orbit-logo .h-10{width:40px;height:40px}
+.xi-orbit-logo-1{top:17%;left:5%}.xi-orbit-logo-2{top:45%;left:2%}
+.xi-orbit-logo-3{bottom:13%;left:9%}.xi-orbit-logo-4{top:16%;right:6%}
+.xi-orbit-logo-5{top:46%;right:2%}.xi-orbit-logo-6{bottom:13%;right:9%}
+.xi-orbit-logo-7,.xi-orbit-logo-8{display:none}
+.xi-hero-app-strip{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:8px;max-width:770px;margin:0 auto}
+.xi-hero-app{display:inline-flex;align-items:center;gap:8px;padding:6px 11px 6px 7px;border:1px solid rgba(255,255,255,.13);border-radius:99px;background:#161616;color:#dbe4f0;font-size:10px;font-weight:660;transition:border-color .18s,background .18s}
+.xi-hero-app:hover{border-color:rgba(130,187,255,.5);background:#222}
+.xi-hero-app .h-6{width:26px;height:26px}
+.xi-hero-app img{object-fit:contain}
+.xi-directory{padding-top:52px}
+.xi-directory-title{max-width:780px;margin-bottom:21px}
+.xi-directory-title h2{font-size:clamp(43px,4.7vw,62px);line-height:1.02;margin:0 0 12px}
+.xi-directory-title p{max-width:760px;font-size:12px;line-height:1.7;color:#a6afbb}
+.xi-directory-search{margin-bottom:24px}
+.xi-library{align-items:start}
+.xi-library-sidebar{
+  position:sticky;
+  top:92px;
+  max-height:calc(100dvh - 110px);
+  overscroll-behavior:contain;
+  overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:#414141 transparent;
+}
+.xi-catalog-footnote{align-items:center;flex-wrap:wrap}
+.xi-catalog-footnote a{display:inline-flex;align-items:center;gap:5px;margin-left:auto;color:#9dcaff;text-decoration:underline;text-underline-offset:3px}
+.xi-result-status{font-variant-numeric:tabular-nums}
+.xi-app-card .xi-card-top img,.xi-app-card .xi-card-top>span{filter:none}
+.xi-card-link{min-height:286px}
+
+/* Open, borderless MCP editorial layout — no isolated panel/card. */
+.xi-mcp.xi-mcp-open{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  align-items:center;
+  gap:60px;
+  max-width:1250px;
+  margin:0 auto 70px;
+  padding:73px 32px 78px;
+  border:0;
+  ;
+  border-radius:0;
+  background:transparent!important;
+  box-shadow:none;
+}
+.xi-mcp-open h2{font-size:clamp(50px,5.7vw,78px);margin:0 0 16px}
+.xi-mcp-open .xi-mcp-cta{margin-top:16px}
+.xi-mcp-flow{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:nowrap;color:#8c99aa}
+.xi-mcp-flow>svg{flex-shrink:0;color:#6989ad}
+.xi-mcp-flow-unit,.xi-mcp-flow-core{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-width:109px;white-space:nowrap;padding:14px 15px;border-radius:10px;font-size:12px;font-weight:720}
+.xi-mcp-flow-unit{color:#ced7e1;background:#171717;border:1px solid rgba(255,255,255,.13)}
+.xi-mcp-flow-core{color:#cce3ff;background:#162234;border:1px solid rgba(135,189,249,.39)}
+.xi-cta{margin-top:0;padding:78px 24px 95px}
+.xi-cta h2{font-size:clamp(55px,6vw,81px)}
+
+/* Workspace and extension are distinct surfaces with real, scoped links. */
+.xi-channels{padding-top:70px;padding-bottom:92px}
+.xi-channel-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.xi-channel{padding:27px 28px 26px;border-top:1px solid rgba(147,193,251,.35);background:linear-gradient(180deg,#111,#070707);border-radius:0 0 15px 15px;min-height:260px;display:flex;flex-direction:column;align-items:flex-start}
+.xi-channel-icon{width:47px;height:47px;display:grid;place-items:center;border-radius:12px;border:1px solid rgba(125,185,255,.22);background:#1b1b1b;color:#a0cbff}
+.xi-channel h3{font-size:20px;letter-spacing:-.03em;margin:20px 0 9px}
+.xi-channel p{font-size:12px;line-height:1.76;color:#acb7c6;margin:0 0 22px;max-width:510px}
+.xi-channel-link{display:inline-flex;align-items:center;gap:9px;color:#a9d1ff;font-size:12px;font-weight:780;margin-top:auto;padding:8px 0}
+.xi-channel-link:hover{color:#e7f1ff}
+.xi-channel-disclosure{font-size:10px;line-height:1.65;color:#818e9f;margin:14px 0 0}
+@media(max-width:1100px){
+  .xi-hero-logos{opacity:.25}
+  .xi-hero h1{font-size:clamp(48px,6.2vw,68px)}
+  .xi-mcp-flow{gap:8px}
+  .xi-mcp-flow-unit,.xi-mcp-flow-core{min-width:90px;padding:12px 9px;font-size:10px}
+}
+@media(max-width:900px){
+  .xi-hero{min-height:min(580px,calc(100svh - 110px));padding:64px 21px 52px}
+  .xi-directory{padding-top:45px}
+  .xi-library-sidebar{position:static;top:auto;max-height:none;overflow:visible}
+  .xi-mcp.xi-mcp-open{gap:30px;padding:65px 25px}
+}
+@media(max-width:700px){
+  .xi-hero{min-height:0;padding:58px 18px 52px}
+  .xi-hero h1{font-size:clamp(44px,9.4vw,58px);line-height:1.06;margin-bottom:18px}
+  .xi-hero-content>p{font-size:12px;line-height:1.7}
+  .xi-hero-actions{margin:20px auto 20px}
+  .xi-hero-logos{opacity:.12}
+  .xi-hero-app-strip{gap:6px}
+  .xi-hero-app{font-size:9px;padding:5px 7px 5px 5px}
+  .xi-hero-app .h-6{width:23px;height:23px}
+  .xi-directory{padding-top:42px}
+  .xi-directory-title h2{font-size:clamp(37px,8.2vw,48px)}
+  .xi-directory-search{margin-bottom:17px}
+  .xi-channel-grid{grid-template-columns:1fr}
+  .xi-channel{min-height:225px}
+  .xi-mcp.xi-mcp-open{grid-template-columns:1fr;gap:24px;padding:55px 19px;margin:0 15px 55px}
+  .xi-mcp-flow{justify-content:flex-start}
+  .xi-mcp-open h2{font-size:clamp(47px,11vw,66px)}
+}
+@media(max-width:480px){
+  .xi-hero{padding-top:51px}
+  .xi-hero h1{font-size:clamp(41px,10vw,49px)}
+  .xi-mcp-flow{gap:5px}
+  .xi-mcp-flow-unit,.xi-mcp-flow-core{min-width:0;padding:11px 8px;gap:4px;font-size:9px}
+  .xi-mcp-flow>svg{width:15px;height:15px}
+  .xi-channel{padding:25px 21px}
+}
+@media(prefers-reduced-motion:reduce){.xi-hero-app{transition:none}}
+
+
+
+/* The shared site header already occupies document flow. Its generic
+   marketing-page 96px top offset is not needed on this route; keep the
+   canonical header, remove only duplicated spacing for /integrations. */
+.xv-public-marketing-content > main.xi-main:first-child:not(.xv-homepage):not([data-crypto-page]){
+  padding-top:0!important;
+}
+.xi-main{margin:0;padding:0}
+
+/* Explicit full-catalog path when anonymous preview API is not deployed. */
+.xi-catalog-continue{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin:15px auto 0;color:#b8d9ff;font-size:12px;font-weight:760;border-bottom:1px solid rgba(166,205,255,.44);padding:4px 0 8px;transition:color .18s}
+.xi-catalog-continue:hover{color:#fff}
+@media (prefers-reduced-motion:reduce){.xi-catalog-continue{transition:none}}
+
+
+/* The same continuous dot field as the homepage after its hero.
+   SharedDotBackdrop is mounted once as the first child of .xi-root.
+   Its own 25px near-black grid + eased, phase-locked mouse highlight
+   runs from the integrations hero through the closing CTA. The site's
+   shared footer lives outside .xi-root and is deliberately untouched.
+   Text, inputs, cards and the sticky category sidebar remain clickable. */
+.xi-root > section {
+  position: relative;
+  z-index: 1;
+  background: transparent !important;
+}
+
+/* The hero's earlier decorative mini-grid would double up on the
+   canonical 25px homepage dots; keep only the shared component. */
+.xi-hero::after {
+  display: none !important;
+}
+
+/* No dark section paint over the backdrop: every marketing panel shares
+   the same base grid, while individual foreground cards keep their tint. */
+.xi-root > section.xi-mcp.xi-mcp-open {
+  background: transparent !important;
+}
+
+/* Intentional compact hero after removal of post-action app badge row.
+   Keep verified repo brand marks as quiet orbital artwork only. */
+.xi-hero-logos .xi-orbit-logo img {object-fit:contain}
+.xi-hero-content .xi-hero-actions {margin-bottom:0}
+
+
+/* Integrations hero polish: ten authentic, bundled provider marks.
+   Five left and five right, outside the hero's text column on wide screens. */
+.xi-hero-logos{opacity:1;max-width:1510px}
+.xi-orbit-logo{
+  --xi-tilt:-7deg;
+  display:grid;
+  width:57px;height:57px;
+  border-radius:16px;
+  border:1px solid rgba(217,197,156,.17);
+  background:linear-gradient(150deg,rgba(20,19,18,.94),rgba(9,10,11,.95));
+  box-shadow:0 10px 30px rgba(0,0,0,.27),inset 0 1px rgba(255,255,255,.045);
+  transform:rotate(var(--xi-tilt));
+  animation:xi-logo-drift 6.8s ease-in-out infinite;
+}
+.xi-orbit-brandmark{display:block;width:39px;height:39px;object-fit:contain}
+.xi-orbit-logo-1{top:8%;left:7%;--xi-tilt:-11deg;animation-delay:-.2s}
+.xi-orbit-logo-2{top:28%;left:1.5%;--xi-tilt:8deg;animation-delay:-1.8s}
+.xi-orbit-logo-3{top:48%;left:7.5%;--xi-tilt:-5deg;animation-delay:-2.9s}
+.xi-orbit-logo-4{top:67%;left:2.5%;--xi-tilt:11deg;animation-delay:-4.1s}
+.xi-orbit-logo-5{top:81%;left:11%;--xi-tilt:-8deg;animation-delay:-5.3s}
+.xi-orbit-logo-6{top:8%;right:7%;--xi-tilt:10deg;animation-delay:-1.3s}
+.xi-orbit-logo-7{top:28%;right:1.5%;--xi-tilt:-8deg;animation-delay:-3.2s;opacity:1}
+.xi-orbit-logo-8{top:48%;right:7.5%;--xi-tilt:6deg;animation-delay:-4.7s;opacity:1}
+.xi-orbit-logo-9{top:67%;right:2.5%;--xi-tilt:-10deg;animation-delay:-.9s}
+.xi-orbit-logo-10{top:81%;right:11%;--xi-tilt:7deg;animation-delay:-2.5s}
+.xi-orbit-logo-7,.xi-orbit-logo-8{display:grid}
+@keyframes xi-logo-drift{
+  0%,100%{transform:translate3d(0,0,0) rotate(var(--xi-tilt))}
+  50%{transform:translate3d(0,-6px,0) rotate(var(--xi-tilt))}
+}
+
+/* The only headline text that changes is apps / agents / tools.
+   Three words share one grid cell so the headline never reflows. */
+.xi-hero-rotating{display:inline-grid;vertical-align:baseline;white-space:nowrap}
+.xi-hero-word{
+  grid-area:1/1;
+  display:block;
+  line-height:inherit;
+  text-align:left;
+  opacity:0;
+  animation:xi-hero-word-blur 9s ease-in-out infinite both;
+}
+.xi-hero-word--apps{animation-delay:0s}
+.xi-hero-word--agents{animation-delay:-6s}
+.xi-hero-word--tools{animation-delay:-3s}
+@keyframes xi-hero-word-blur{
+  0%,25%{opacity:1;filter:blur(0);transform:translateY(0)}
+  33.333%,96%{opacity:0;filter:blur(8px);transform:translateY(-6px)}
+  100%{opacity:1;filter:blur(0);transform:translateY(0)}
+}
+
+/* Continuous shared homepage dots extend to the footer, including both
+   rounded lower corners. No page-level horizontal section separators. */
+.xi-root{border-radius:0 0 34px 34px;background:#050607}
+.xi-hero{border-bottom:0}
+.xi-mcp.xi-mcp-open{border-top:0}
+.xi-cta{
+  border-top:0;
+  border-radius:0 0 34px 34px;
+  background:transparent!important;
+  margin-bottom:0;
+}
+
+/* Icons remain full-size and legible on desktop; decorative marks yield
+   space to the headline on tablet/mobile. */
+@media(max-width:1100px){
+  .xi-hero-logos{opacity:.55}
+  .xi-orbit-logo-1,.xi-orbit-logo-2,.xi-orbit-logo-3,.xi-orbit-logo-4,.xi-orbit-logo-5{left:1%}
+  .xi-orbit-logo-6,.xi-orbit-logo-7,.xi-orbit-logo-8,.xi-orbit-logo-9,.xi-orbit-logo-10{right:1%}
+}
+@media(max-width:900px){
+  .xi-hero-logos{opacity:.38}
+  .xi-orbit-logo{width:45px;height:45px;border-radius:13px}
+  .xi-orbit-brandmark{width:30px;height:30px}
+}
+@media(max-width:700px){
+  .xi-hero-logos{opacity:.3}
+  .xi-orbit-logo{width:39px;height:39px}
+  .xi-orbit-brandmark{width:26px;height:26px}
+  .xi-orbit-logo-2,.xi-orbit-logo-3,.xi-orbit-logo-4,
+  .xi-orbit-logo-7,.xi-orbit-logo-8,.xi-orbit-logo-9{display:none}
+  .xi-orbit-logo-1,.xi-orbit-logo-6{top:3%}
+  .xi-orbit-logo-5,.xi-orbit-logo-10{top:auto;bottom:5%}
+  .xi-root,.xi-cta{border-bottom-left-radius:24px;border-bottom-right-radius:24px}
+}
+@media(prefers-reduced-motion:reduce){
+  .xi-orbit-logo,.xi-hero-word{animation:none!important;transform:none!important;filter:none!important}
+  .xi-hero-word{opacity:0}
+  .xi-hero-word--apps{opacity:1}
+}

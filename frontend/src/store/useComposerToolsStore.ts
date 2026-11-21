@@ -126,6 +126,9 @@ export const COMPOSER_COMMANDS = [
 interface ComposerToolsState {
   /** Free-text standing rules the user writes. Empty means none are applied. */
   rules: string;
+  /** Optional response-style guidance, separate from strict standing rules. */
+  preferences: string;
+  setPreferences: (preferences: string) => void;
   /** Ids of the enabled packs, in `COMPOSER_SKILLS`. */
   enabledSkills: string[];
   setRules: (rules: string) => void;
@@ -137,7 +140,9 @@ export const useComposerToolsStore = create<ComposerToolsState>()(
   persist(
     (set) => ({
       rules: '',
+      preferences: '',
       enabledSkills: [],
+      setPreferences: (preferences) => set({ preferences }),
       setRules: (rules) => set({ rules }),
       toggleSkill: (id) =>
         set((s) => ({
@@ -188,12 +193,14 @@ export const useComposerToolsStore = create<ComposerToolsState>()(
  * Exported and pure so the behaviour is testable without a browser, and so the
  * composer can show the user the exact text that will be attached.
  */
-export function buildComposerPreamble(rules: string, enabledSkills: readonly string[]): string {
+export function buildComposerPreamble(rules: string, enabledSkills: readonly string[], preferences = ''): string {
   const parts: string[] = [];
 
   const packs = COMPOSER_SKILLS.filter((s) => enabledSkills.includes(s.id));
   for (const pack of packs) parts.push(pack.instruction);
 
+  const trimmedPreferences = preferences.trim();
+  if (trimmedPreferences) parts.push('Response preferences: ' + trimmedPreferences);
   const trimmed = rules.trim();
   if (trimmed) parts.push(trimmed);
 

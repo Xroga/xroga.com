@@ -349,3 +349,18 @@
   .getStarted,
   .mobileGetStarted { transition: none; }
 }
+
+/* Discoverability label: small and visible, without changing the tested hero headline. */
+.page :global(.xab-hero__kicker) {
+  margin: 0 0 23px;
+  padding: 8px 15px;
+  border: 1px solid var(--tp-border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--tp-panel-solid) 88%, transparent);
+  color: var(--tp-accent);
+  font-size: clamp(.67rem, 1.05vw, .82rem);
+  font-weight: 750;
+  letter-spacing: .06em;
+  line-height: 1.45;
+  text-transform: uppercase;
+}

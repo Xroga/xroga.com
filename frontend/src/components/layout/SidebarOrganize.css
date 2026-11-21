@@ -207,3 +207,27 @@
 @media (prefers-reduced-motion: reduce) {
   .xv-nav-scroll-minimal { transition: none; }
 }
+
+
+/* Compact project/chat reading rail. Fade overflowing titles rather than adding
+   ellipsis dots; retain full aria-labels and the measured hover reveal. */
+[data-sidebar-work-organizer] .xv-sidebar-project-entry { gap: 0; }
+[data-sidebar-work-organizer] .xv-sidebar-expand-button { width:16px; min-width:16px; padding:0; margin:0; }
+[data-sidebar-work-organizer] .xv-sidebar-work-row > button:first-child,
+[data-sidebar-work-organizer] .xv-sidebar-work-row:is(:hover,:focus-within) > button:first-child,
+[data-sidebar-work-organizer] .xv-sidebar-project-entry:is(:hover,:focus-within) .xv-sidebar-work-row > button:first-child {
+  padding-inline: 5px 3px;
+}
+[data-sidebar-work-organizer] .xv-sidebar-long-title__rest { text-overflow:clip; }
+[data-sidebar-work-organizer] .xv-sidebar-long-title:has(.is-overflowing) {
+  -webkit-mask-image: linear-gradient(to right,#000 calc(100% - 20px),transparent);
+  mask-image: linear-gradient(to right,#000 calc(100% - 20px),transparent);
+}
+[data-sidebar-work-organizer] .xv-sidebar-long-title__content { padding-right:0; }
+[data-sidebar-work-organizer] .xv-sidebar-work-actions { inset-inline-end:0; }
+[data-sidebar-work-organizer] .xv-sidebar-project-entry .xv-sidebar-work-actions { inset-inline-end:26px; }
+@media (hover:none),(pointer:coarse) {
+  [data-sidebar-work-organizer] .xv-sidebar-expand-button { width:24px; min-width:24px; }
+  [data-sidebar-work-organizer] .xv-sidebar-work-row > button:first-child { padding-inline-end:50px; }
+  [data-sidebar-work-organizer] .xv-sidebar-project-entry .xv-sidebar-work-row > button:first-child { padding-inline-end:74px; }
+}

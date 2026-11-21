@@ -215,8 +215,10 @@ function guestGateReasonForHref(href: string): WorkspaceAuthGateReason | null {
 }
 
 function planLabel(tier?: string | null) {
-  if (!tier || tier === 'unpaid' || tier === 'free') return 'Free';
-  return 'Xroga Pro';
+  if (!tier || tier === 'unpaid' || tier === 'free') return 'Xroga Free';
+  if (tier === 'plus') return 'Xroga Plus';
+  if (tier === 'pro') return 'Xroga Pro';
+  return 'Xroga plan';
 }
 
 /**
@@ -256,6 +258,10 @@ export function Sidebar({ displayName, email }: SidebarProps) {
   const profileRowRef = useRef<HTMLDivElement>(null);
   /** Set when a press on the edge toggle became a resize, so the click is ignored. */
   const edgeToggleDraggedRef = useRef(false);
+  // Resize against real DOM widths while dragging. Persist only on release so
+  // heavy workspace content does not rerender for every pointer movement.
+  const sidebarFrameRef = useRef<HTMLDivElement>(null);
+  const sidebarPanelRef = useRef<HTMLElement>(null);
   /** Pending hover-to-open, so leaving the mark before the delay cancels it. */
   const hoverOpenTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { setAvatarUrl, uploadAvatarFile } = useAvatarUpdate();
@@ -268,23 +274,32 @@ export function Sidebar({ displayName, email }: SidebarProps) {
   const setSidebarWidth = useThemeStore((s) => s.setSidebarWidth);
   const terminalFullscreenRaw = useThemeStore((s) => s.terminalFullscreen);
   const planTier = useAppStore((s) => s.planTier);
+  const planName = useAppStore((s) => s.planName);
   const profile = useAppStore((s) => s.profile);
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
   const incognito = hydrated && incognitoRaw;
   const terminalFullscreen = hydrated && terminalFullscreenRaw;
   const isMobile = useIsMobile();
   const avatarUrl = profile?.avatar_url;
-  const nameInitial = (profile?.display_name ?? displayName ?? 'U').charAt(0).toUpperCase();
-  const userName = incognito
-    ? 'Incognito'
-    : isGuest
-      ? 'Guest workspace'
-      : (profile?.display_name ?? displayName ?? 'User');
+  // Prefer actual saved profile names; the server fallback can be an email prefix.
+  const emailLocalPart = (email ?? workspaceIdentity.email ?? '').split('@')[0]?.trim().toLowerCase();
+  const savedName = profile?.display_name?.trim();
+  const routeName = (displayName ?? workspaceIdentity.displayName)?.trim();
+  const realName = savedName && !savedName.includes('@')
+    ? savedName
+    : routeName && !routeName.includes('@') && routeName.toLowerCase() !== emailLocalPart
+      ? routeName
+      : 'Xroga user';
+  const nameInitial = realName.charAt(0).toUpperCase();
+  const userName = incognito ? 'Incognito' : isGuest ? 'Guest workspace' : realName;
+  const namedPlan = planName?.trim();
   const userPlan = incognito
     ? 'Temporary session'
     : isGuest
       ? 'Preview session'
-      : planLabel(planTier);
+      : namedPlan
+        ? /^xroga\b/i.test(namedPlan) ? namedPlan : `Xroga ${namedPlan}`
+        : planLabel(planTier);
 
   // A pending hover-to-open must not fire into a sidebar that is no longer mounted —
   // navigating away mid-hover would otherwise leave the timer to run and set state on
@@ -340,24 +355,58 @@ export function Sidebar({ displayName, email }: SidebarProps) {
     const startW = sidebarWidth;
     let pendingWidth = startW;
     let frame = 0;
+    let active = true;
     document.body.classList.add('xv-sidebar-resizing');
 
+    // Keep the sidebar, shell and fixed composer at the same live boundary.
+    // TerminalDock owns an inline CSS variable, so updating only the shell's
+    // variable would leave its composer behind during a drag.
+    function syncGeometry(pixels: string) {
+      const frame = sidebarFrameRef.current;
+      if (frame) {
+        frame.style.width = pixels;
+        frame.closest<HTMLElement>('[data-testid="workspace-shell"]')?.style.setProperty('--sidebar-width', pixels);
+      }
+      if (sidebarPanelRef.current) sidebarPanelRef.current.style.width = pixels;
+      document.querySelector<HTMLElement>('.xv-terminal-dock')?.style.setProperty('--sidebar-width', pixels);
+    }
+
+    // The sidebar remains a flex sibling of the workspace; changing its real
+    // frame width lets the browser size both panes together without repainting
+    // the entire React conversation tree on every mouse move.
+    function paint() {
+      frame = 0;
+      if (!active) return;
+      const width = Math.min(SIDEBAR_MAX_WIDTH, Math.max(SIDEBAR_MIN_WIDTH, pendingWidth));
+      const pixels = `${width}px`;
+      syncGeometry(pixels);
+    }
     function onMove(ev: PointerEvent) {
       pendingWidth = startW + (ev.clientX - startX);
-      if (!frame) frame = requestAnimationFrame(() => { frame = 0; setSidebarWidth(pendingWidth); });
+      if (!frame) frame = requestAnimationFrame(paint);
     }
-    function onUp() {
+    function finish(commit: boolean) {
+      if (!active) return;
+      active = false;
       if (frame) cancelAnimationFrame(frame);
-      if (pendingWidth < SIDEBAR_MIN_WIDTH - 40) toggleSidebar();
-      else setSidebarWidth(pendingWidth);
+      frame = 0;
+      if (!commit) {
+        syncGeometry(`${startW}px`);
+      } else if (pendingWidth < SIDEBAR_MIN_WIDTH - 40) {
+        toggleSidebar();
+      } else {
+        setSidebarWidth(pendingWidth);
+      }
       document.body.classList.remove('xv-sidebar-resizing');
       document.removeEventListener('pointermove', onMove);
       document.removeEventListener('pointerup', onUp);
-      document.removeEventListener('pointercancel', onUp);
+      document.removeEventListener('pointercancel', onCancel);
     }
+    function onUp() { finish(true); }
+    function onCancel() { finish(false); }
     document.addEventListener('pointermove', onMove);
     document.addEventListener('pointerup', onUp, { once: true });
-    document.addEventListener('pointercancel', onUp, { once: true });
+    document.addEventListener('pointercancel', onCancel, { once: true });
   }
 
   function startResize(e: React.PointerEvent<HTMLDivElement>) {
@@ -574,7 +623,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
             </Link>
           </HoverTip>
         </div>
-      ) : displayName ? (
+      ) : !isGuest ? (
         <div ref={profileRowRef} className="xv-sidebar-rail-profile">
           {incognito ? (
             <IncognitoProfileBox size="sidebar" />
@@ -583,6 +632,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
               url={avatarUrl}
               initial={nameInitial}
               size="sidebarCompact"
+              className="rounded-[10px]"
               onClick={() => setAvatarPickerOpen(true)}
             />
           )}
@@ -630,7 +680,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
             </Link>
           </div>
         </div>
-      ) : displayName && navExpanded ? (
+      ) : !isGuest && navExpanded ? (
         <div ref={profileRowRef} className="xv-sidebar-profile-row flex items-center gap-2 px-2 py-1.5 rounded-xl">
           {incognito ? (
             <IncognitoProfileBox size="sidebar" />
@@ -639,17 +689,14 @@ export function Sidebar({ displayName, email }: SidebarProps) {
             url={avatarUrl}
             initial={nameInitial}
             size="sidebarCompact"
+            className="rounded-[10px]"
             onClick={() => setAvatarPickerOpen(true)}
           />
           )}
           <ProfileQuickMenu onLogout={handleLogout} anchorRef={profileRowRef} displayName={userName} email={email}>
             <span className="min-w-0 flex-1 text-left">
               <span className="block truncate text-[12px] font-medium leading-tight xv-sidebar-profile-name">{userName}</span>
-              {userPlan === 'Free' ? (
-                <UpgradeActionButton compact />
-              ) : (
-                <span className="block truncate text-[10px] xv-sidebar-profile-plan">{userPlan}</span>
-              )}
+              <span className="block truncate text-[10px] xv-sidebar-profile-plan" title={userPlan}>{userPlan}</span>
             </span>
             <span className="xv-profile-menu-caret" aria-hidden="true">›</span>
           </ProfileQuickMenu>
@@ -894,13 +941,15 @@ export function Sidebar({ displayName, email }: SidebarProps) {
         )}
 
       <div
+        ref={sidebarFrameRef}
         className={cn(compactStyles.compact, 'xv-sidebar-root relative hidden lg:block shrink-0', !effectiveSidebarOpen && 'is-collapsed')}
         onClickCapture={event => { if (!effectiveSidebarOpen && !terminalFullscreen) { event.preventDefault(); event.stopPropagation(); toggleSidebar(); } }}
         style={{ width: asideWidth }}
       >
         <aside
+  ref={sidebarPanelRef}
   className={cn(
-    'xv-sidebar-floating xv-sidebar-hover relative z-40 flex flex-col shrink-0 overflow-hidden transition-[width,opacity] duration-200 opacity-100'
+    'xv-sidebar-floating xv-sidebar-hover relative z-40 flex flex-col shrink-0 overflow-hidden transition-opacity duration-150 opacity-100'
   )}
   style={{ width: asideWidth }}
 >

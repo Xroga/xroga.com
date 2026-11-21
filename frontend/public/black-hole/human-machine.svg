@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 620" fill="none">
+<defs>
+  <linearGradient id="edge" x1="0" x2="1400" y1="0" y2="620" gradientUnits="userSpaceOnUse">
+    <stop stop-color="#8da8bc" stop-opacity=".55"/><stop offset=".52" stop-color="#effaff"/>
+    <stop offset="1" stop-color="#859caf" stop-opacity=".6"/>
+  </linearGradient>
+  <linearGradient id="wrist" x1="0" x2="0" y1="100" y2="620" gradientUnits="userSpaceOnUse">
+    <stop stop-color="#dae8f3" stop-opacity=".1"/><stop offset=".45" stop-color="#dcefff" stop-opacity=".7"/><stop offset="1" stop-color="#9ba8b2" stop-opacity=".05"/>
+  </linearGradient>
+  <radialGradient id="point"><stop stop-color="#f9ffff"/><stop offset=".14" stop-color="#d7f1ff" stop-opacity=".86"/><stop offset=".5" stop-color="#9ecfff" stop-opacity=".24"/><stop offset="1" stop-color="#a6d6ff" stop-opacity="0"/></radialGradient>
+  <filter id="glow"><feGaussianBlur stdDeviation="10"/></filter>
+</defs>
+<g stroke="url(#edge)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round">
+<!-- left: articulated cybernetic hand emerging diagonally -->
+<path d="M21 610 134 489 230 418 286 378 360 341 420 310 484 297 541 284 600 261 647 246 663 255 656 274 619 295 565 311 514 340 489 373 472 388 442 392 431 412 409 433 374 445 347 447 312 481 262 522 223 567 183 620"/>
+<path d="M68 620 167 514 240 456 299 410 367 368 425 338 484 326 538 311 603 281"/>
+<path d="M178 620 228 572 274 538 318 502 364 470"/>
+<!-- machine index extended -->
+<path d="M490 303 531 274 568 240 600 208 628 196 644 206 644 222 625 245 597 270 561 299"/>
+<path d="M600 208 619 217 632 227 M565 244 579 262 M533 277 548 292"/>
+<!-- other fingers folded -->
+<path d="M478 329 520 347 549 350 567 372 555 386 528 387 480 375"/>
+<path d="M457 360 500 386 522 409 508 426 489 422 447 394"/>
+<path d="M405 397 436 423 442 442 427 457 403 447"/>
+<!-- robotic joints and circuit bands -->
+<circle cx="360" cy="374" r="20"/><circle cx="360" cy="374" r="10"/>
+<circle cx="421" cy="340" r="14"/><circle cx="421" cy="340" r="6"/>
+<circle cx="533" cy="276" r="10"/><circle cx="533" cy="276" r="4"/>
+<circle cx="601" cy="210" r="9"/><circle cx="601" cy="210" r="4"/>
+<circle cx="297" cy="427" r="13"/><circle cx="297" cy="427" r="6"/>
+<path d="M168 515 216 538 247 512 M214 476 265 497 296 468 M252 447 291 465 327 448 M310 398 336 421"/>
+<path d="M134 580 182 598 221 570 M96 615 143 632 M289 455 346 416"/>
+<path d="M280 483 304 466 316 479 297 497Z M386 364 398 357 411 371 398 382Z"/>
+<path d="M228 519 241 526 M255 486 266 494 M365 432 383 426"/>
+</g>
+<g stroke="#dae8f2" stroke-width="1" opacity=".44">
+<path d="M21 591 165 451 252 408 345 348 441 300 516 282 M79 620 202 500 279 456 377 389" stroke-dasharray="3 9"/>
+<path d="M138 551 180 564 228 551 M150 534 185 541 M284 413 321 429 M315 400 360 419"/>
+</g>
+<!-- right: organic hand reaching down from top -->
+<g stroke="url(#wrist)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+<path d="M1370 -40 1263 78 1192 161 1123 223 1070 271 1012 295 946 312 874 321 806 325 747 322 711 313 703 300 713 290 738 288 788 293 841 286 894 275 927 253 940 226 933 191 941 171 955 173 973 204 983 231"/>
+<path d="M1400 47 1316 118 1241 187 1188 247 1147 294 1118 333 1091 381 1073 407 1050 417 1033 409 1036 386 1049 360 1076 310"/>
+<path d="M1400 123 1354 168 1291 228 1253 285 1220 347 1194 374 1174 374 1166 353 1174 335 1192 304"/>
+<path d="M1400 209 1377 228 1332 279 1291 333 1261 369 1242 373 1230 355 1239 336 1272 290"/>
+<path d="M1219 249 1181 258 1141 272 1100 273 1060 269"/>
+<path d="M940 227 Q985 250 1021 249 Q1083 240 1147 212"/>
+<path d="M930 191 941 183 M1015 299 Q1056 313 1089 306"/>
+<path d="M1232 129 1254 161 1276 168 M1332 126 1351 146"/>
+</g>
+<!-- fingertip detail -->
+<path d="M702 298 Q686 292 678 301 Q673 309 684 317" stroke="#f7ffff" stroke-opacity=".85" stroke-width="1.7"/>
+<path d="M658 260 Q672 253 679 264" stroke="#f7ffff" stroke-opacity=".7" stroke-width="1.5"/>
+<circle cx="683" cy="305" r="115" fill="url(#point)" opacity=".75"/>
+<circle cx="683" cy="305" r="4" fill="#eff9ff"/>
+<circle cx="683" cy="305" r="10" stroke="#e9f8ff" stroke-opacity=".6"/>
+<circle cx="683" cy="305" r="44" stroke="#b1d9f7" stroke-opacity=".21"/>
+<g fill="#cde8ff">
+<circle cx="650" cy="249" r="1.5"/><circle cx="720" cy="251" r="1.3"/><circle cx="730" cy="329" r="1"/><circle cx="653" cy="352" r="1.4"/><circle cx="703" cy="369" r=".7"/>
+<circle cx="691" cy="220" r="1"/><circle cx="740" cy="221" r="1.2"/><circle cx="637" cy="316" r="1.2"/><circle cx="770" cy="311" r=".7"/>
+</g>
+</svg>

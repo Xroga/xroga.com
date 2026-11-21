@@ -1,11 +1,10 @@
 import type { CSSProperties } from 'react';
-import Image from 'next/image';
 import styles from './BlackHoleMark.module.css';
 
-/** The supplied black-hole artwork, extracted from its square background. */
+/** The exact uploaded black-hole mark, now a transparent SVG mask (theme-aware). */
 export function BlackHoleMark({ active = false, className = '' }: { active?: boolean; className?: string }) {
   return <span className={`${styles.mark} ${active ? styles.active : ''} ${className}`} aria-hidden="true">
-    <Image className={styles.art} src="/black-hole-cutout-v2.png" alt="" width={96} height={96} unoptimized />
+    <span className={styles.art} />
   </span>;
 }
 

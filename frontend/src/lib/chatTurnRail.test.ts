@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { bookmarkStorageKey, buildChatTurns, MAX_VISIBLE_CHAT_TURNS, proximityWidth, turnMarkerTop, visibleChatTurns } from '../components/terminal/ChatTurnRail';
+import { bookmarkStorageKey, buildChatTurns, MAX_VISIBLE_CHAT_TURNS, proximityWidth, shouldShowChatTurnRail, turnMarkerTop, visibleChatTurns } from '../components/terminal/ChatTurnRail';
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
 const RAIL = read('../components/terminal/ChatTurnRail.tsx');
@@ -91,4 +91,40 @@ test('mobile intelligence cards retain their independently verified sticky scrol
   assert.match(HOMEPAGE_CSS, /@media\(max-width:600px\)/);
   assert.match(HOMEPAGE_CSS, /\.xv-intelligence__grid\{display:block;padding-bottom:8svh\}/);
   assert.match(HOMEPAGE_CSS, /position:sticky;top:calc\(4\.5rem \+ var\(--xv-stack-index\) \* \.48rem\)/);
+});
+
+test('workspace conversation markers are anchored to the pane, not delayed viewport coordinates', () => {
+  assert.match(RAIL, /root\.closest<HTMLElement>\('\.xv-terminal-panel'\)/);
+  assert.match(RAIL, /setRailHost\(host\)/);
+  assert.match(RAIL, /railHost \?\? document\.body/);
+  assert.match(RAIL, /style=\{railHost \? undefined : \{ left: layout\.left \}\}/);
+  assert.match(CSS, /\.xv-chat-turn-rail\.xv-chat-turn-rail--dock\.xv-chat-turn-rail--pane\s*\{\s*position: absolute/);
+  assert.match(CSS, /body\.xv-sidebar-resizing \.xv-terminal-dock\s*\{\s*transition-property: opacity !important/);
+  assert.match(CSS, /\.xv-workspace-header \.xv-workspace-identity-cluster\s*\{[\s\S]*?overflow: hidden/);
+  assert.match(CSS, /@media \(min-width: 1024px\) and \(max-width: 1200px\)/);
+});
+
+test('workspace history rail is always present for multi-turn chats, even when transcript fits', () => {
+  assert.match(RAIL, /railAnchorRef = useRef<HTMLSpanElement>\(null\)/);
+  assert.match(RAIL, /railAnchorRef\.current\?\.closest<HTMLElement>\('\.xv-terminal-scroll'\)/);
+  assert.match(RAIL, /railAnchorRef\.current\?\.closest<HTMLElement>\('\.xv-terminal-panel'\)/);
+  assert.match(RAIL, /const anchor = <span ref=\{railAnchorRef\} hidden aria-hidden="true" \/>/);
+  assert.doesNotMatch(RAIL, /\|\| !layout\.navigable/);
+  assert.match(RAIL, /!shouldShowChatTurnRail\(turns\.length, visibleTurns\.length, layout\.width\)/);
+  assert.match(RAIL, /railHost \?\? document\.body/);
+  assert.match(CSS, /\.xv-chat-turn-rail\.xv-chat-turn-rail--dock\.xv-chat-turn-rail--pane\s*\{\s*position: absolute/);
+});
+
+test('one real question-and-answer pair shows one navigable history marker', () => {
+  const turns = buildChatTurns([
+    { id: 'prompt-1', role: 'user', content: 'Compare PostgreSQL, MySQL and SQLite for a small SaaS' },
+    { id: 'answer-1', role: 'assistant', content: 'For a small multi-tenant SaaS, default to PostgreSQL.' },
+  ]);
+  assert.equal(turns.length, 1, 'one conversation exchange is one genuine history target');
+  assert.equal(shouldShowChatTurnRail(turns.length, turns.length, 1422), true);
+  assert.equal(shouldShowChatTurnRail(1, 1, 1024), true);
+  assert.equal(shouldShowChatTurnRail(1, 1, 390), true);
+  assert.equal(shouldShowChatTurnRail(0, 0, 1422), false);
+  assert.equal(shouldShowChatTurnRail(2, 2, 320), false, 'respect tiny viewport cutoff');
+  assert.match(RAIL, /onClick=\{\(\) => onJump\(turn\.id\)\}/);
 });
