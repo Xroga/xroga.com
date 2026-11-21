@@ -1,0 +1,31 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-MORE-MENU-20261122",
+  "baseSha": "f9f2216c15647458bf5cf14878161dbbf37f3962",
+  "requirementIds": ["XR-MISSION-055", "XR-MISSION-056"],
+  "state": "CODE_COMPLETE",
+  "risk": "low",
+  "scope": "Remove Operations and Growth from the Workspace More flyout and show the remaining links under one heading.",
+  "changedFiles": ["frontend/src/components/layout/Sidebar.tsx", "frontend/src/lib/sidebarAccountFlyouts.test.ts", "frontend/src/lib/sidebarCompactNav.test.ts"],
+  "decisions": {"keep": ["Existing destinations, other menus and keyboard and touch interactions"], "extend": ["Verify the exact order of the remaining links"], "replace": ["Two flyout headings with one More heading"], "deprecate": ["Operations and Growth shortcuts in More only"]},
+  "architecture": {"change": "extends_canonical", "reason": "Reuse the existing sidebar flyout and its link handlers.", "rfc": null},
+  "schemaImpact": {"changed": false, "migrations": [], "rollout": "Frontend only.", "rollback": "No database rollback needed."},
+  "securityImpact": {
+    "auth": {"changed": false, "description": "Existing sign-in and route admission are unchanged."},
+    "tenant": {"changed": false, "description": "No resource access changes."},
+    "approval": {"changed": false, "description": "No approval changes."},
+    "credentials": {"changed": false, "description": "No credentials."},
+    "egress": {"changed": false, "description": "No network or external action changes."},
+    "cost": {"changed": false, "description": "No inference or provider usage."},
+    "billing": {"changed": false, "description": "No billing changes."}
+  },
+  "tests": [{"command": "node --test frontend/src/lib/sidebarCompactNav.test.ts", "scope": "Verify one heading and the exact five remaining links, preserving other sidebar behavior.", "negative": true, "reference": "frontend/src/lib/sidebarCompactNav.test.ts"}],
+  "rollout": "Verify the scoped build, then release the same tested production source.",
+  "rollback": "Restore the last verified frontend deployment. No data changes.",
+  "knownGaps": [],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": ["frontend/src/lib/sidebarCompactNav.test.ts"],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {"state": "BLOCKED", "blockers": ["Run the release checks and verify the deployed Workspace flyout."], "authenticatedE2e": "BLOCKED", "stagedSecurity": "NOT_APPLICABLE", "liveUrl": null, "deployedSha": null}
+}
