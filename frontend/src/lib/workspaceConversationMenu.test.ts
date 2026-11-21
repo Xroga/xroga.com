@@ -7,11 +7,12 @@ const view = read('../components/dashboard/DashboardView.tsx');
 const menu = read('../components/terminal/WorkspaceConversationMenu.tsx');
 const styles = read('../components/terminal/WorkspaceConversationMenu.module.css');
 
-test('workspace header keeps conversation actions and independent repository identity', () => {
+test('workspace header unifies conversation and project actions', () => {
   const header = view.slice(view.indexOf('<header className="xv-workspace-header"'), view.indexOf('</header>'));
   assert.match(header, /<WorkspaceConversationMenu\s*\/>/);
   assert.match(header, /<WorkspaceIdentityMenu incognito\s*\/>/);
-  assert.match(header, /activeProject \? <WorkspaceIdentityMenu\s*\/> : null/);
+  assert.doesNotMatch(header, /activeProject \? <WorkspaceIdentityMenu\s*\/> : null/);
+  assert.match(menu, /<WorkspaceIdentityMenu embedded onAction=\{closeMenu\} \/>/);
   assert.doesNotMatch(header, /<SidebarProjectHistory/);
 });
 
@@ -48,4 +49,13 @@ test('management resolves the exact owner-scoped conversation, including old sav
   assert.match(styles, /\.actionList\s*\{/);
   assert.match(styles, /\.actionPane\s*\{[^}]*overflow-y: auto/);
   assert.match(styles, /prefers-reduced-motion: reduce/);
+});
+
+test('unified popup removes duplicate conversation title and uses icon-only rename and pin', () => {
+  assert.doesNotMatch(menu, /Current conversation/);
+  assert.match(menu, /aria-label="Rename conversation"/);
+  assert.match(menu, /'Pin conversation'/);
+  assert.match(styles, /\.compactTools\s*\{/);
+  assert.match(styles, /\.quickActions\s*\{/);
+  assert.match(styles, /\.bottomActions\s*\{/);
 });
