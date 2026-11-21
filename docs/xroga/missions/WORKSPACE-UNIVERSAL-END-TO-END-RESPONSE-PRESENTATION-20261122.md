@@ -1,5 +1,7 @@
 # XROGA WORKSPACE — UNIVERSAL AI ANSWER + RESPONSE PRESENTATION, COMPLETE END-TO-END IMPLEMENTATION ORDER
 
+**Mandatory accuracy addendum (22 Nov):** Read and implement [WORKSPACE-TRUTHFUL-TO-THE-POINT-ADAPTIVE-PRESENTATION-20261122.md](./WORKSPACE-TRUTHFUL-TO-THE-POINT-ADAPTIVE-PRESENTATION-20261122.md) as part of this same mission. It requires accurate source-grounded answers, proper search selection, no invented information, no repeated Markdown/native UI, concise response scope and 20 targeted verification cases. This complements sections 3, 4, 6 and 7 and does not introduce a competing renderer or an unconditional search/verification pass.
+
 **Owner's engineering directive for Codex · 22 November 2026 · Xroga/xroga.com · Workspace PR #989 only**  
 **Status: actionable engineering specification, not proof of implementation.** The target is a market-leading, *universal* prompt-to-outcome Workspace, not a collection of layouts hardcoded to known benchmark prompts. This file supersedes earlier narrow presentation requests where they conflict; keep previous verified architecture and acceptance artifacts. Do **not** confuse this task with Claude's Browser Operator PR #976.
 
