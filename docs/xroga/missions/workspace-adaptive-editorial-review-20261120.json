@@ -48,6 +48,7 @@
       "Admit explicitly public raw-turn lookups through the current bounded Search broker even when an unrelated project is selected.",
       "Distinguish public software names, normal currency units, and citation requests from actual destinations or official-only restrictions.",
       "Store settled automatic Search evidence under its authenticated request correlation before answer synthesis.",
+      "Reserve automatic public Search synthesis through the canonical ledger using the full evidence and planned answer budget, preserving the signed cap for private research.",
       "Preserve a document's requested format when the format is specified after the creation brief, and keep its tables editable in Word.",
       "Recognize explicit local file formats on named document subtypes and keep file delivery instructions out of the authored document.",
       "Remove directions to unavailable calculator inputs while retaining the worked calculation and unrelated content.",
@@ -87,8 +88,8 @@
       "description": "Approved public-query shapes send only text derived from the raw turn through the existing public read broker. Attachments, history, connected accounts and project data cannot populate this request."
     },
     "cost": {
-      "changed": false,
-      "description": "No second answer model, retry or new spending path. Public reads enter the existing bounded reservation."
+      "changed": true,
+      "description": "Automatic public Search synthesis uses a conservative reservation under the existing account entitlement. The separate signed private research cap, paid retrieval bounds, provider accounting, and one-dispatch rule remain enforced."
     },
     "billing": {
       "changed": false,

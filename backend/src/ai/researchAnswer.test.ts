@@ -72,6 +72,10 @@ test('one exact research approval completes its original rich answer, saves evid
      site_name:'Example Exchange',site_icon:'https://cdn.deepseek.com/site-icons/example.com'},
     {title:'Same page',url:'https://example.com/docs#section',summary:'Public source excerpt'},
     ...(mode==='automatic'?[{title:'Archived quote',url:'https://example.org/archive',summary:'Old valuation snapshot',date:'2023-01-01T12:00:00Z'}]:[]),
+    ...(mode==='automatic-ranking-expanded-evidence'?Array.from({length:9},(_,index)=>({
+     title:`Independent public report ${index+1}`,url:`https://example.org/report/${index+1}`,
+     summary:`Public source excerpt for report ${index+1}. `+'Présentation comparative des capacités et résultats vérifiés. '.repeat(28),
+    })):[]),
    ];
    return Response.json({results},{headers:{'x-ds-trace-id':'synthetic-search-'+searches}});
   }
@@ -100,6 +104,10 @@ test('one exact research approval completes its original rich answer, saves evid
      assert.doesNotMatch(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>/);
      assert.match(body.messages[2].content,/Page publication \(source metadata\): 2023-01-01T12:00:00\.000Z/);
      assert.match(body.messages[2].content,/Never average or combine stale/);
+    }else if(mode==='automatic-ranking-expanded-evidence'){
+     assert.ok(body.max_tokens>20_480,'Keep the planned output budget for a detailed sourced answer');
+     assert.match(JSON.stringify(body.messages),/Independent public report 9/);
+     assert.match(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>/);
     }else if(mode!=='automatic-parity'){
      assert.equal(body.max_tokens,20_480);
      assert.match(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>/);
@@ -122,7 +130,11 @@ test('one exact research approval completes its original rich answer, saves evid
   if(url.pathname.endsWith('/user_token_usage'))return Response.json({user_id:owner,plan_tier:'spark',plan_budget_usd:20,quota_period_start:new Date().toISOString().slice(0,7)+'-01',input_tokens:0,output_tokens:0,spent_usd:0,rollover_usd:0,model_usage:{}});
   if(url.pathname.endsWith('/model_provider_health'))return Response.json(null);
   if(url.pathname.endsWith('/reserve_xroga_provider_budget')){
-   assert.ok(body.p_reservation_micro_usd<=(body.p_internal_route.startsWith('web.')?750:RESEARCH_ANSWER_MAXIMUM_MICRO_USD));
+   if(body.p_internal_route.startsWith('web.'))assert.equal(body.p_reservation_micro_usd,750);
+   else if(mode==='automatic-ranking-expanded-evidence'){
+    assert.ok(body.p_reservation_micro_usd>RESEARCH_ANSWER_MAXIMUM_MICRO_USD,'Canonical reservation covers the real evidence and output');
+    assert.ok(body.p_reservation_micro_usd<10_000,'Representative request stays within the isolated acceptance allowance');
+   }else assert.ok(body.p_reservation_micro_usd<=RESEARCH_ANSWER_MAXIMUM_MICRO_USD);
    const row={id:randomUUID(),user_id:owner,idempotency_key:body.p_idempotency_key,status:'reserved',purpose:body.p_purpose,internal_route:body.p_internal_route,price_version:body.p_price_version,
     estimated_input_tokens:body.p_estimated_input_tokens,maximum_output_tokens:body.p_maximum_output_tokens,reserved_micro_usd:body.p_reservation_micro_usd};reservations.set(row.id,row);
    if(mode==='cancel-at-model-reservation'&&!body.p_internal_route.startsWith('web.'))confirmation.row!.status='cancelled';
@@ -302,6 +314,21 @@ test('one exact research approval completes its original rich answer, saves evid
  const failedWriteSearch=[...reservations.values()].find(row=>row.provider_request_id==='synthetic-search-12');
  assert.equal(failedWriteSearch?.status,'settled');
  assert.equal(failedWriteSearch?.search_calls,1);
+ assert.equal(confirmation.row,lastConfirmation);
+
+ mode='automatic-ranking-expanded-evidence';
+ const expandedGoal=goalContractSchema.parse({...ranking.goalContract,presentation:[
+  {kind:'prose',heading:'Method',instruction:'Explain the research criteria'},
+  {kind:'table',heading:'Ranked companies',instruction:'Compare all ranked companies and link their official websites'},
+  {kind:'prose',heading:'Scope and tradeoffs',instruction:'Explain limitations and differences'},
+  {kind:'table',heading:'Evidence by criterion',instruction:'Show where public evidence supports each criterion'},
+ ]});
+ const expanded=await runChatPipeline({...ranking,goalContract:expandedGoal});
+ assert.equal(expanded.publicWebRetrieved,true);
+ assert.equal(expanded.completion?.status,'complete');
+ assert.equal(expanded.webSources?.length,10);
+ assert.equal(searches,13);
+ assert.equal(models,10,'A full public source set reaches exactly one synthesis call');
  assert.equal(confirmation.row,lastConfirmation);
 });
 

@@ -26,7 +26,7 @@ import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT } from './nativeOpenUi.js';
 import { nativeDocumentDelivery, nativeDocumentPrompt, nativeDocumentRequiresAttachment, requestedNativeDocumentFormat, type NativeDocumentFormat } from './nativeDocumentDownload.js';
 import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
-import { bindCitationLinks, researchCitationIssues, RESEARCH_ANSWER_MAXIMUM_MICRO_USD } from './researchAnswer.js';
+import { bindCitationLinks, researchCitationIssues } from './researchAnswer.js';
 import { nativeOpenUiPlainPrompt, workspaceNativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
 import { assessPresentationCoverage, createPresentationProjection, nativePresentedAnswerMaxTokens, NATIVE_WORKSPACE_REASONING_RESERVE_TOKENS, presentationRequestInstructions, presentationResponseFormat, presentedAnswerMaxTokens, type PresentationResponseFormat } from './responsePresentation.js';
 import { prepareAnswerCoverage, requiredNativeFormats } from './answerCoverage.js';
@@ -725,6 +725,7 @@ export async function callBuilderStream(
     modelRepository?:string|null;
     modelConnectedAccountId?:string;
     modelMaximumCostMicroUsd?:number;
+    conservativeInputReservation?:true;
     modelRevalidateBeforeDispatch?:()=>Promise<void>;
     signal?: AbortSignal;
     onModelFallback?: (from: ModelId, to: ModelId) => void;
@@ -809,7 +810,7 @@ export async function callBuilderStream(
       const runAttempt = () =>
         withTenantModelReservation({scope:{context,userId:context.userId,projectId:opts.databaseProjectId,runAttempt:opts.modelRunAttempt,repository:opts.modelRepository,
               connectedAccountId:opts.modelConnectedAccountId??(opts.credentialOverrides?(opts.credentialOverrides[modelId]?`apikey_${provider}`:'platform'):undefined),maximumCostMicroUsd:opts.modelMaximumCostMicroUsd,revalidateBeforeDispatch:opts.modelRevalidateBeforeDispatch},
-              modelId,payload:{messages,...(opts.responseFormat?{responseFormat:process.env.ZURELAY_JSON_SCHEMA_VERIFIED==='1'?opts.responseFormat:{type:'json_object'}}:{})},estimatedInputTokens:opts.modelMaximumCostMicroUsd!==undefined
+              modelId,payload:{messages,...(opts.responseFormat?{responseFormat:process.env.ZURELAY_JSON_SCHEMA_VERIFIED==='1'?opts.responseFormat:{type:'json_object'}}:{})},estimatedInputTokens:opts.conservativeInputReservation||opts.modelMaximumCostMicroUsd!==undefined
                 ?Buffer.byteLength(JSON.stringify({messages,responseFormat:opts.responseFormat}),'utf8'):estimateMessageTokens(messages)
                 + (opts.responseFormat ? estimateMessageTokens([{ role: 'system', content: JSON.stringify(opts.responseFormat) }]) : 0),
               maximumOutputTokens:opts.maxTokens??8192,execute,validateResponse:opts.validateResponse});
@@ -1230,7 +1231,10 @@ export async function runChatPipeline(opts: {
       tenantContext:opts.tenantContext,
       databaseProjectId:opts.modelScope?.projectId,modelRunAttempt:opts.modelScope?.runAttempt,modelRepository:opts.modelScope?.repository,
       modelConnectedAccountId:publicWebRetrieved ? 'platform' : opts.modelScope?.connectedAccountId,
-      modelMaximumCostMicroUsd:publicWebRetrieved ? RESEARCH_ANSWER_MAXIMUM_MICRO_USD : opts.modelScope?.maximumCostMicroUsd,
+      // Automatic public research uses the same canonical entitlement as chat.
+      // The separately approved workflow carries its own signed spend cap.
+      modelMaximumCostMicroUsd:opts.modelScope?.maximumCostMicroUsd,
+      conservativeInputReservation:publicWebRetrieved,
       modelRevalidateBeforeDispatch:opts.modelScope?.revalidateBeforeDispatch,
       signal: publicWebRetrieved ? opts.autoPublicSearchSignal : undefined,
       temperature: 0.5,
