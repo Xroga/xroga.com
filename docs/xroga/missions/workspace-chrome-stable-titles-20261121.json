@@ -7,6 +7,7 @@
   "risk": "low",
   "scope": "Place the existing Chrome extension control over the transcript corner and persist meaningful first-prompt chat titles without replacing manual renames.",
   "changedFiles": [
+    "frontend/e2e/command3-auth.spec.ts",
     "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
     "frontend/src/components/dashboard/DashboardView.tsx",
     "frontend/src/components/dashboard/WorkspaceScrollPolish.module.css",
@@ -31,7 +32,10 @@
     "cost": {"changed": false, "description": "Title derivation is local; no inference cost."},
     "billing": {"changed": false, "description": "No billing changes."}
   },
-  "tests": [{"command": "tsx --test frontend/src/lib/conversationTitle.test.ts frontend/src/lib/workspaceEmptyComposer.test.ts", "scope": "Stable legacy title recovery and extension row layout regression.", "negative": true, "reference": "frontend/src/lib/conversationTitle.test.ts"}],
+  "tests": [
+    {"command": "tsx --test frontend/src/lib/conversationTitle.test.ts frontend/src/lib/workspaceEmptyComposer.test.ts", "scope": "Stable legacy title recovery and extension row layout regression.", "negative": true, "reference": "frontend/src/lib/conversationTitle.test.ts"},
+    {"command": "GitHub Actions: Isolated Supabase authenticated browser verification", "scope": "The install disclosure stays within desktop and mobile viewports and does not move the saved transcript.", "negative": true, "reference": "frontend/e2e/command3-auth.spec.ts"}
+  ],
   "rollout": "Verify a source-pinned preview and release gates before promoting to the Workspace production site.",
   "rollback": "Revert the change or re-promote the last verified frontend build; no database migration.",
   "knownGaps": ["Old sessions without a saved prompt or transcript cannot recover an exact first-prompt title until their messages are restored.", "Chrome installation depends on the configured listing."],
@@ -39,5 +43,5 @@
   "evidenceRefs": ["frontend/src/lib/conversationTitle.test.ts", "frontend/src/lib/workspaceEmptyComposer.test.ts"],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
-  "release": {"state": "BLOCKED", "blockers": ["Rerun source-pinned CI and verify the preview after preserving the repo ordinal at save and retiring the obsolete pricing non-persistence review."], "authenticatedE2e": "BLOCKED", "stagedSecurity": "NOT_APPLICABLE", "liveUrl": null, "deployedSha": null}
+  "release": {"state": "BLOCKED", "blockers": ["Run signed-in browser verification with the updated disclosure label and overlay geometry assertions before promotion."], "authenticatedE2e": "BLOCKED", "stagedSecurity": "NOT_APPLICABLE", "liveUrl": null, "deployedSha": null}
 }
