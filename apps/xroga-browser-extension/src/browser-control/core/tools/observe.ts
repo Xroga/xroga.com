@@ -276,7 +276,7 @@ export async function screenshot(ctx: ToolContext, args: ScreenshotArgs): Promis
     );
   }
   let labelled = 0;
-  if (args.grid || args.region) base64 = await drawGrid(base64, args.region ?? [0, 0, 1, 1]);
+  if (args.grid || args.region || args.mark) base64 = await drawGrid(base64, args.region ?? [0, 0, 1, 1], args.mark);
   if (args.labels) {
     // Only what the image shows is presented: a ref outside a cropped image keeps the baseline it had.
     const image = clip ?? { width: shot.width / scale, height: shot.height / scale };

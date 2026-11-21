@@ -101,6 +101,7 @@ export const ScreenshotArgsSchema = z.strictObject({
   fullPage: z.boolean().optional(),
   labels: z.boolean().optional().describe('Draw ref labels over actionable elements'),
   grid: z.boolean().optional().describe('Draw a 0 to 1 coordinate grid, for placing pointer actions on a painted canvas'),
+  mark: z.tuple([z.number().min(0).max(1), z.number().min(0).max(1)]).optional().describe('[x, y] fractions: draw a red crosshair where a pointer action landed'),
   region: z.tuple([z.number().min(0).max(1), z.number().min(0).max(1), z.number().min(0).max(1), z.number().min(0).max(1)]).optional()
     .describe('[x0, y0, x1, y1] fractions of the visible page: capture only this area, enlarged, with a fine grid labelled in whole-page fractions (for aiming at small painted controls)'),
 });

@@ -901,6 +901,16 @@ ${ledger}` : ''),
             const same = this.#lastCanvasPicture !== undefined && this.#lastCanvasPicture === capture.data;
             this.#lastCanvasPicture = capture.data;
             this.#canvasNoChange = same ? this.#canvasNoChange + 1 : 0;
+            // Where the click really landed, next to what is around it: the picture the model aims from is rebuilt as an enlarged crop with a crosshair.
+            if (same && Array.isArray(a.at) && a.at.length === 2) {
+              const [cx, cy] = a.at as [number, number];
+              const region: [number, number, number, number] = [Math.max(0, cx - 0.1), Math.max(0, cy - 0.06), Math.min(1, cx + 0.1), Math.min(1, cy + 0.06)];
+              const zoom = await this.#time('tool.aftershot' as never, () => this.options.layer.call('screenshot', { ...(typeof tabId === 'number' ? { tabId } : {}), region, mark: [cx, cy] }, this.options.signal)).catch(() => undefined);
+              if (zoom?.ok) {
+                const zimg = this.#screenshotImage({ ...outcome, call: { ...outcome.call, toolName: 'screenshot' }, result: zoom });
+                if (zimg) { capture = await this.#withThumb(zimg); notes.push(note(`Nothing changed. The attached picture is an enlarged view around your click (red crosshair = where it landed), its grid labelled in whole-page fractions. Compare the crosshair with the label you meant and aim again from this picture.`)); }
+              }
+            }
             if (same && this.#canvasNoChange >= 3) {
               notes.push(note(`${this.#canvasNoChange} canvas actions in a row changed nothing on the page. Stop aiming by eye at this spot. Take screenshot with region [x0, y0, x1, y1] around the label you want (for a menu bar, the whole top strip) and read its exact position from the enlarged grid, or use another way in: a keyboard shortcut or menu key (Alt, F10), the application's command box or script console.`));
             } else if (same) {

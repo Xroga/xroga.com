@@ -83,7 +83,7 @@ export async function drawLabels(base64: string, boxes: LabelBox[], scale: numbe
 }
 
 /** A coordinate grid over the picture, for pointer actions on a painted canvas: faint lines every 5 percent, strong lines every 10, each labelled with the 0 to 1 fraction the canvas tool takes. */
-export async function drawGrid(base64: string, window: [number, number, number, number] = [0, 0, 1, 1]): Promise<string> {
+export async function drawGrid(base64: string, window: [number, number, number, number] = [0, 0, 1, 1], mark?: [number, number]): Promise<string> {
   if (typeof OffscreenCanvas === 'undefined') return base64;
   const bitmap = await createImageBitmap(new Blob([base64ToBytes(base64) as BlobPart], { type: 'image/png' }));
   const w = bitmap.width;
@@ -120,5 +120,15 @@ export async function drawGrid(base64: string, window: [number, number, number, 
   };
   axis(x0, x1, w, true);
   axis(y0, y1, h, false);
+  if (mark && mark[0] >= x0 && mark[0] <= x1 && mark[1] >= y0 && mark[1] <= y1) {
+    const mx = ((mark[0] - x0) / (x1 - x0)) * w;
+    const my = ((mark[1] - y0) / (y1 - y0)) * h;
+    g.strokeStyle = '#ff0000';
+    g.lineWidth = 2;
+    g.beginPath(); g.moveTo(mx - 14, my); g.lineTo(mx + 14, my); g.moveTo(mx, my - 14); g.lineTo(mx, my + 14); g.stroke();
+    g.beginPath(); g.arc(mx, my, 7, 0, Math.PI * 2); g.stroke();
+    g.fillStyle = '#ff0000';
+    g.fillText('click', mx + 10, my + 8);
+  }
   return blobToBase64(await canvas.convertToBlob({ type: 'image/png' }));
 }
