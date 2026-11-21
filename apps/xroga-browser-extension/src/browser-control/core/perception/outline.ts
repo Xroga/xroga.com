@@ -270,6 +270,16 @@ export function completeFieldFacts(frame: FrameCapture, doc: LayoutDocument | un
   return fields;
 }
 
+/**
+ * Native date and time inputs: Chrome's accessibility tree shows the control (role Date, Time, ...) with its browser-internal segments below it
+ * (spinbuttons Month, Day, Year, Hour, AM/PM, and a picker button). Those are not page content and cannot be set one by one: a model that picks them types into the
+ * wrong segment ("32026" for the year) and never finishes. The control itself takes a whole value through `set`, so only the control is shown.
+ */
+const NATIVE_COMPOSITE_INPUTS = new Set(['date', 'time', 'inputtime', 'datetime', 'datetimelocal', 'inputdatetimelocal', 'month', 'week', 'inputmonth', 'inputweek']);
+export function isNativeCompositeInput(rawRole: string): boolean {
+  return NATIVE_COMPOSITE_INPUTS.has(rawRole.toLowerCase().replace(/[^a-z]/g, ''));
+}
+
 /** Converts one frame's AX nodes into outline nodes (the frame's document children). */
 export function buildFrameTree(frame: FrameCapture, stats: TreeStats = { deepCut: 0 }): ONode[] {
   const byId = new Map(frame.nodes.map(n => [n.nodeId, n]));
@@ -331,7 +341,7 @@ export function buildFrameTree(frame: FrameCapture, stats: TreeStats = { deepCut
         : [];
     }
     const before = secrets.length;
-    let children = kids();
+    let children = isNativeCompositeInput(raw) ? [] : kids();
     const states = statesOf(node, raw);
     const out: ONode = {
       kind: 'element',
