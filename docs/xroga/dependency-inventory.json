@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "0354ab008be245184adb4735f38491ef12f9ef01",
+  "source_sha": "6f9693bd38c6952f5cd35b8f4d5147d2fb20409a",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -2836,6 +2836,40 @@
         "backend/src/services/publish/chromeWebStore.ts",
         "backend/src/services/publish/userOwnedPublish.ts",
         "frontend/src/components/publish/ChromePublishPanel.tsx"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-chromewebstore-google-com",
+      "provider": "Source-defined endpoint chromewebstore.google.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/components/browser/WorkspaceBrowserOperator.tsx"
+      ],
+      "hostnames": [
+        "chromewebstore.google.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/components/browser/WorkspaceBrowserOperator.tsx"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -21074,7 +21108,7 @@
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "sha256": "0be4dadad6e19f17d809b6e998499508d82f8c849b4b3c46d315fb9ca6b1603f"
+      "sha256": "290ce9849a665de6fb3040abf35a4e85b1be7bfcda58b284f9f1f0ff904e6b32"
     },
     {
       "path": "frontend/src/components/browser/XrogaBrowser.tsx",
@@ -21194,7 +21228,7 @@
     },
     {
       "path": "frontend/src/components/dashboard/DashboardView.tsx",
-      "sha256": "39082eb40c4abf20467ca1108a925afe8997d07c640c06493dd4561faeb76a5f"
+      "sha256": "37209a2a7bf5de2ceddd1f1d19bba1e8b04992b7b90e53568c6386c6777cbdb7"
     },
     {
       "path": "frontend/src/components/dashboard/DashboardWelcome.tsx",
@@ -22266,7 +22300,7 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sha256": "2b1ee96959439cef8b692222e04dd4d178f84fb52d5cdac6ca4c853e281ecd6c"
+      "sha256": "bdf84341e108be49d8d273c5f9ec653b417aab8894284904f7bfb23ca61cdcd2"
     },
     {
       "path": "frontend/src/components/layout/SidebarSearchModal.tsx",
@@ -23674,7 +23708,7 @@
     },
     {
       "path": "frontend/src/lib/cloudTerminalSessions.ts",
-      "sha256": "e79dfedd5a75134545dbbaf7dafcd53dcefd63f8fd3b245450772a56b6ed5a76"
+      "sha256": "8645302a3abe542d71f2a5d7b0108c2669ae7ca588059f09c9c63fb8b7c9d39a"
     },
     {
       "path": "frontend/src/lib/codeBuildProcessing.ts",
@@ -23715,6 +23749,10 @@
     {
       "path": "frontend/src/lib/contactPhone.ts",
       "sha256": "a701a0391e6eab968ef8473d4a5cd17537cd2ad6086bfc25f25555fdfdb1ad6a"
+    },
+    {
+      "path": "frontend/src/lib/conversationTitle.ts",
+      "sha256": "0db161bb3952eff916f4b604a4812ecfefc8a9a5d37cd4830ed7d0a8387c1c51"
     },
     {
       "path": "frontend/src/lib/creationIntelligence.ts",
@@ -24314,7 +24352,7 @@
     },
     {
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "sha256": "c556d45dd88f793c9f0dd83feb41a4f99bffe126eab8e71a5df2e61924c2d999"
+      "sha256": "82d805caf300911a8cc4b30603510069d83f351c14e9682f48c25d4da3468c63"
     },
     {
       "path": "frontend/src/lib/sidebarProjectTask.ts",
@@ -24414,7 +24452,7 @@
     },
     {
       "path": "frontend/src/lib/syncRepoTerminalSessions.ts",
-      "sha256": "54625ee6d16e865c1c6229ac8a5e8d2f13b08a23986042018066fdf92c456a56"
+      "sha256": "858698361957d62819cc7e1534d58e033f71832f0dba50dcebe885588058e8e4"
     },
     {
       "path": "frontend/src/lib/tableRows.ts",
@@ -24462,7 +24500,7 @@
     },
     {
       "path": "frontend/src/lib/terminalHistory.ts",
-      "sha256": "0bc21e539fcbdac1bd712156789b596227454e80ff1766e38c39a3df9dca3003"
+      "sha256": "176aeb1fe244c7ca637686b1bd19128a0975e12191af93749cc0286df4f3d71b"
     },
     {
       "path": "frontend/src/lib/terminalSearch.ts",
@@ -29068,6 +29106,13 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "chromewebstore.google.com",
+      "protocol": "https:",
+      "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 237,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "www.w3.org",
       "protocol": "http:",
       "path": "frontend/src/components/errors/RetroTvErrorAnimation.tsx",
@@ -32536,7 +32581,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/lib/terminalHistory.ts",
-      "line": 237,
+      "line": 235,
       "credentialsInUrl": false
     }
   ],
@@ -40411,14 +40456,7 @@
     },
     {
       "path": "frontend/src/lib/cloudTerminalSessions.ts",
-      "line": 19,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/lib/cloudTerminalSessions.ts",
-      "line": 21,
+      "line": 20,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -40432,7 +40470,14 @@
     },
     {
       "path": "frontend/src/lib/cloudTerminalSessions.ts",
-      "line": 24,
+      "line": 23,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/cloudTerminalSessions.ts",
+      "line": 25,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -40796,35 +40841,35 @@
     },
     {
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 108,
+      "line": 104,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 109,
+      "line": 105,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 159,
+      "line": 155,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 176,
+      "line": 172,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 177,
+      "line": 173,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

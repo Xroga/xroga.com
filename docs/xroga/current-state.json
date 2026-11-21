@@ -68525,7 +68525,7 @@
       "id": "surface:46331a69bc5be52c0a7c",
       "subsystem": "browser_sandbox",
       "sourcePath": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "sha256": "0be4dadad6e19f17d809b6e998499508d82f8c849b4b3c46d315fb9ca6b1603f",
+      "sha256": "290ce9849a665de6fb3040abf35a4e85b1be7bfcda58b284f9f1f0ff904e6b32",
       "symbols": [
         "API",
         "BridgeMessage",
@@ -70095,7 +70095,7 @@
       "id": "surface:793b89822aa62ee49888",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/dashboard/DashboardView.tsx",
-      "sha256": "39082eb40c4abf20467ca1108a925afe8997d07c640c06493dd4561faeb76a5f",
+      "sha256": "37209a2a7bf5de2ceddd1f1d19bba1e8b04992b7b90e53568c6386c6777cbdb7",
       "symbols": [
         "DashboardView",
         "activeProject",
@@ -85950,7 +85950,7 @@
       "id": "surface:dae82b1420f0fd73a0bb",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sha256": "2b1ee96959439cef8b692222e04dd4d178f84fb52d5cdac6ca4c853e281ecd6c",
+      "sha256": "bdf84341e108be49d8d273c5f9ec653b417aab8894284904f7bfb23ca61cdcd2",
       "symbols": [
         "REPO_FILTERS",
         "RepoFilter",
@@ -108650,7 +108650,7 @@
       "id": "surface:b344e6be193f7fda6b24",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/cloudTerminalSessions.ts",
-      "sha256": "e79dfedd5a75134545dbbaf7dafcd53dcefd63f8fd3b245450772a56b6ed5a76",
+      "sha256": "8645302a3abe542d71f2a5d7b0108c2669ae7ca588059f09c9c63fb8b7c9d39a",
       "symbols": [
         "CLOUD_EVENT",
         "allocateTerminalNumber",
@@ -108694,6 +108694,7 @@
         "upload"
       ],
       "imports": [
+        "./conversationTitle",
         "@/context/TerminalChatContext",
         "@/lib/api",
         "@/lib/storageSafe",
@@ -108702,6 +108703,7 @@
       ],
       "runtimeImports": [
         "frontend/src/lib/api.ts",
+        "frontend/src/lib/conversationTitle.ts",
         "frontend/src/lib/storageSafe.ts",
         "frontend/src/lib/uploadCoalescing.ts"
       ],
@@ -108719,8 +108721,8 @@
         "frontend/src/context/TerminalChatContext.tsx:2086",
         "frontend/src/lib/restoreRepoTerminal.ts:10",
         "frontend/src/lib/syncRepoTerminalSessions.ts:17",
-        "frontend/src/lib/terminalHistory.ts:14",
-        "frontend/src/lib/terminalHistory.ts:285"
+        "frontend/src/lib/terminalHistory.ts:15",
+        "frontend/src/lib/terminalHistory.ts:283"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -109338,6 +109340,55 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "frontend/src/lib/contactPhone.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:95f521e24a4b54cc02e9",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/conversationTitle.ts",
+      "sha256": "0db161bb3952eff916f4b604a4812ecfefc8a9a5d37cd4830ed7d0a8387c1c51",
+      "symbols": [
+        "boundary",
+        "isPlaceholderConversationTitle",
+        "limit",
+        "prompt",
+        "source",
+        "stableConversationTitle",
+        "tidy"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(shell)/dashboard/automations/page.tsx",
+        "frontend/src/app/(shell)/dashboard/projects/page.tsx",
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx",
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/lib/cloudTerminalSessions.ts:17",
+        "frontend/src/lib/conversationTitle.test.ts:3",
+        "frontend/src/lib/sidebarOrganization.ts:6",
+        "frontend/src/lib/syncRepoTerminalSessions.ts:23",
+        "frontend/src/lib/terminalHistory.ts:9"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/conversationTitle.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -116067,7 +116118,7 @@
         "frontend/src/context/TerminalChatContext.tsx:45",
         "frontend/src/lib/restoreRepoTerminal.ts:7",
         "frontend/src/lib/syncRepoTerminalSessions.ts:14",
-        "frontend/src/lib/terminalHistory.ts:9"
+        "frontend/src/lib/terminalHistory.ts:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -117821,7 +117872,7 @@
       "id": "surface:3f2965f2e342555c0e07",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/sidebarOrganization.ts",
-      "sha256": "c556d45dd88f793c9f0dd83feb41a4f99bffe126eab8e71a5df2e61924c2d999",
+      "sha256": "82d805caf300911a8cc4b30603510069d83f351c14e9682f48c25d4da3468c63",
       "symbols": [
         "SidebarChat",
         "SidebarKind",
@@ -117830,17 +117881,14 @@
         "SidebarSection",
         "active",
         "activeChatSaves",
-        "actual",
         "c",
         "changeSidebarMeta",
-        "clean",
         "client",
         "completedLinks",
         "createSidebarSection",
         "deleteSidebarChat",
         "deleteSidebarMeta",
         "error",
-        "existing",
         "id",
         "key",
         "loadPinnedSidebarRecords",
@@ -117871,12 +117919,14 @@
         "write"
       ],
       "imports": [
+        "./conversationTitle",
         "@/lib/sidebarProjectTask",
         "@/lib/storageSafe",
         "@/lib/supabase/client",
         "@/lib/terminalHistory"
       ],
       "runtimeImports": [
+        "frontend/src/lib/conversationTitle.ts",
         "frontend/src/lib/sidebarProjectTask.ts",
         "frontend/src/lib/storageSafe.ts",
         "frontend/src/lib/supabase/client.ts"
@@ -117893,8 +117943,8 @@
         "frontend/src/components/layout/SidebarProjectHistory.tsx:15",
         "frontend/src/components/terminal/WorkspaceConversationMenu.tsx:12",
         "frontend/src/lib/sidebarOrganization.test.ts:6",
-        "frontend/src/lib/terminalHistory.ts:255",
-        "frontend/src/lib/terminalHistory.ts:258"
+        "frontend/src/lib/terminalHistory.ts:253",
+        "frontend/src/lib/terminalHistory.ts:256"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -117907,19 +117957,19 @@
       "externalProviderDependencies": [],
       "authBoundary": [],
       "tenantBoundary": [
+        "frontend/src/lib/sidebarOrganization.ts:27 (user_id)",
         "frontend/src/lib/sidebarOrganization.ts:31 (user_id)",
         "frontend/src/lib/sidebarOrganization.ts:35 (user_id)",
         "frontend/src/lib/sidebarOrganization.ts:39 (user_id)",
         "frontend/src/lib/sidebarOrganization.ts:43 (user_id)",
-        "frontend/src/lib/sidebarOrganization.ts:47 (user_id)",
+        "frontend/src/lib/sidebarOrganization.ts:67 (user_id)",
         "frontend/src/lib/sidebarOrganization.ts:71 (user_id)",
-        "frontend/src/lib/sidebarOrganization.ts:75 (user_id)",
-        "frontend/src/lib/sidebarOrganization.ts:91 (user_id)",
+        "frontend/src/lib/sidebarOrganization.ts:87 (user_id)",
+        "frontend/src/lib/sidebarOrganization.ts:95 (user_id)",
         "frontend/src/lib/sidebarOrganization.ts:99 (user_id)",
-        "frontend/src/lib/sidebarOrganization.ts:103 (user_id)",
-        "frontend/src/lib/sidebarOrganization.ts:151 (user_id)",
-        "frontend/src/lib/sidebarOrganization.ts:153 (user_id)",
-        "frontend/src/lib/sidebarOrganization.ts:155 (user_id)"
+        "frontend/src/lib/sidebarOrganization.ts:147 (user_id)",
+        "frontend/src/lib/sidebarOrganization.ts:149 (user_id)",
+        "frontend/src/lib/sidebarOrganization.ts:151 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -119583,7 +119633,7 @@
       "id": "surface:44b0d44fdf7fec50ba97",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/syncRepoTerminalSessions.ts",
-      "sha256": "54625ee6d16e865c1c6229ac8a5e8d2f13b08a23986042018066fdf92c456a56",
+      "sha256": "858698361957d62819cc7e1534d58e033f71832f0dba50dcebe885588058e8e4",
       "symbols": [
         "HISTORY_KEY",
         "all",
@@ -119602,7 +119652,6 @@
         "isLive",
         "labeled",
         "messages",
-        "n",
         "next",
         "persistHistory",
         "prompt",
@@ -119618,6 +119667,7 @@
         "ws"
       ],
       "imports": [
+        "./conversationTitle",
         "@/context/TerminalChatContext",
         "@/lib/cloudTerminalSessions",
         "@/lib/repoContext",
@@ -119629,6 +119679,7 @@
       ],
       "runtimeImports": [
         "frontend/src/lib/cloudTerminalSessions.ts",
+        "frontend/src/lib/conversationTitle.ts",
         "frontend/src/lib/repoContext.ts",
         "frontend/src/lib/repoSessionsIndex.ts",
         "frontend/src/lib/storageSafe.ts",
@@ -119664,7 +119715,7 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
-      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
       "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
@@ -120499,7 +120550,7 @@
       "id": "surface:af3de59afc346b2429f7",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/terminalHistory.ts",
-      "sha256": "0bc21e539fcbdac1bd712156789b596227454e80ff1766e38c39a3df9dca3003",
+      "sha256": "176aeb1fe244c7ca637686b1bd19128a0975e12191af93749cc0286df4f3d71b",
       "symbols": [
         "BROWSER_KEYWORDS",
         "KEY",
@@ -120554,6 +120605,7 @@
         "toActivityKind"
       ],
       "imports": [
+        "./conversationTitle",
         "@/context/TerminalChatContext",
         "@/lib/cloudTerminalSessions",
         "@/lib/landingOutcome",
@@ -120568,6 +120620,7 @@
       ],
       "runtimeImports": [
         "frontend/src/lib/cloudTerminalSessions.ts",
+        "frontend/src/lib/conversationTitle.ts",
         "frontend/src/lib/landingOutcome.ts",
         "frontend/src/lib/projectContext.ts",
         "frontend/src/lib/repoContext.ts",
@@ -146856,7 +146909,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:c2da7cb88eb870eea557",
+      "id": "finding:bab93ffef45637e1416a",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
       "line": 600,
       "kind": "STUB",
@@ -146866,7 +146919,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:763627a56950b2675c98",
+      "id": "finding:559286a8c3d6624d32b5",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
       "line": 1250,
       "kind": "PLACEHOLDER",
@@ -146876,7 +146929,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:02a30cf62a3110b9c75f",
+      "id": "finding:14114aef605e68d64664",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
       "line": 1277,
       "kind": "PLACEHOLDER",
@@ -148956,6 +149009,16 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
+      "id": "finding:5b32ea6874feb299a104",
+      "sourcePath": "frontend/src/lib/syncRepoTerminalSessions.ts",
+      "line": 108,
+      "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
       "id": "finding:56ca1048e6215c4dc817",
       "sourcePath": "scripts/batch4/local-fairness-benchmark.ts",
       "line": 35,
@@ -150671,28 +150734,28 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:31bbb0f5be98bae66787",
+      "id": "frontend-call:6162dffc29c102865986",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
       "line": 975,
       "callee": "api.projects.get",
       "reachable": true
     },
     {
-      "id": "frontend-call:314fb1e3e213c738e849",
+      "id": "frontend-call:c4cca2af48882cab3bce",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
       "line": 1108,
       "callee": "api.projects.create",
       "reachable": true
     },
     {
-      "id": "frontend-call:d40da552eb44e2fa531a",
+      "id": "frontend-call:282b4f175b0e08df3929",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
       "line": 1116,
       "callee": "api.projects.delete",
       "reachable": true
     },
     {
-      "id": "frontend-call:4d91db4660d449ed5a1d",
+      "id": "frontend-call:1e7216218ce88ee7622d",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
       "line": 1119,
       "callee": "api.terminalSessions.delete",
@@ -152106,23 +152169,23 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:7c6d8cf46133dccac488",
+      "id": "frontend-call:ea6ba5314f6034714485",
       "sourcePath": "frontend/src/lib/cloudTerminalSessions.ts",
-      "line": 131,
+      "line": 132,
       "callee": "api.terminalSessions.upsert",
       "reachable": true
     },
     {
-      "id": "frontend-call:a277772eb83ca90613b5",
+      "id": "frontend-call:05b0a7689643d596ebfd",
       "sourcePath": "frontend/src/lib/cloudTerminalSessions.ts",
-      "line": 187,
+      "line": 188,
       "callee": "api.terminalSessions.list",
       "reachable": true
     },
     {
-      "id": "frontend-call:566679cd104fba02359f",
+      "id": "frontend-call:89298445b4130d0a0c3e",
       "sourcePath": "frontend/src/lib/cloudTerminalSessions.ts",
-      "line": 201,
+      "line": 202,
       "callee": "api.terminalSessions.get",
       "reachable": true
     },
@@ -158751,6 +158814,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:73047da4cdd3df9c1b26",
+      "sourcePath": "frontend/src/lib/conversationTitle.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:397ac46db83146d551a2",
       "sourcePath": "frontend/src/lib/credentialVault.test.ts",
       "declaredTests": 2,
@@ -159887,7 +159957,7 @@
     {
       "id": "test-suite:9bbc27bda2a16a87c8f8",
       "sourcePath": "frontend/src/lib/workspaceEmptyComposer.test.ts",
-      "declaredTests": 26,
+      "declaredTests": 27,
       "skipLocations": [],
       "focusLocations": []
     },

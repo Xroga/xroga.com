@@ -14,6 +14,7 @@ import {
   uploadDelayMs,
 } from '@/lib/uploadCoalescing';
 import type { ChatMessage } from '@/context/TerminalChatContext';
+import { stableConversationTitle } from './conversationTitle';
 
 const CLOUD_EVENT = 'xroga-cloud-terminals-changed';
 const ordinalCache = new Map<string, number>();
@@ -210,8 +211,7 @@ export function cloudToHistoryEntry(session: CloudTerminalSession): TerminalHist
   const messages = (Array.isArray(session.messages) ? session.messages : []) as ChatMessage[];
   return {
     id: session.id,
-    title: session.title && !/^#\d+\s+terminal$/i.test(session.title)
-      ? session.title : ((session.prompt || session.preview || '').replace(/\s+/g,' ').trim().slice(0,90) || 'Untitled conversation'),
+    title: stableConversationTitle(session.title, messages, session.prompt),
     preview: session.preview || session.prompt.slice(0, 200),
     prompt: session.prompt,
     messages,

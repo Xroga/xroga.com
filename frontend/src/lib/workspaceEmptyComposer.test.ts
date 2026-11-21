@@ -343,6 +343,16 @@ test('workspace navigation uses independent arrows and hides both at the bottom'
   assert.match(DASHBOARD, /data-scrolled=\{headerScrolled/);
 });
 
+test('Chrome extension control overlays only its own corner and does not add a transcript row', () => {
+  const POLISH = read('../components/dashboard/WorkspaceScrollPolish.module.css');
+  const OPERATOR = read('../components/browser/WorkspaceBrowserOperator.tsx');
+  assert.match(DASHBOARD, /<header[\s\S]*?className=\{scrollPolish\.browserControl\}>\{browserOperator\}[\s\S]*?<\/header>/);
+  assert.doesNotMatch(DASHBOARD, /<\/header>\s*\{browserOperator\}/);
+  assert.match(POLISH, /\.browserControl\s*\{[^}]*position:\s*absolute/);
+  assert.match(OPERATOR, /Install Xroga Extension/);
+  assert.match(OPERATOR, /supported local browser automation tasks/);
+});
+
 test('workspace scroll navigation keeps compact buttons and reserves reading room on mobile', () => {
   const POLISH = read('../components/dashboard/WorkspaceScrollPolish.module.css');
   assert.match(POLISH, /\.navigation\s*\{[^}]*flex-direction:\s*row;/s);

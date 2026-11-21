@@ -221,9 +221,20 @@ export function WorkspaceBrowserOperator({ extensionId, nonce, requestedId }: {
 
   if (!extensionId && !pairingVisible) return null;
   return (
-    <details className="mx-3 my-1 max-h-[32dvh] w-fit min-w-0 max-w-[calc(100%_-_1.5rem)] shrink-0 self-end overflow-auto rounded-lg text-sm text-foreground open:w-96 open:border open:bg-background open:px-3 open:pb-2" open={paired || pairingVisible || undefined}>
-      <summary className="cursor-pointer rounded-md px-2 py-1 text-xs font-medium hover:bg-foreground/5 focus-visible:outline focus-visible:-outline-offset-2">Browser Operator</summary>
+    <details className="w-fit min-w-0 max-w-full rounded-xl text-sm text-foreground open:w-96 open:border open:border-foreground/15 open:bg-background open:p-2 open:shadow-lg max-sm:open:w-[calc(100vw-2.5rem)]" open={paired || pairingVisible || undefined}>
+      <summary title="Use the Xroga Chrome extension for supported local browser automation tasks."
+        className="ml-auto flex w-fit max-w-full cursor-pointer list-none items-center gap-2 rounded-lg border border-foreground/15 bg-background px-2.5 py-1.5 text-xs font-semibold shadow-[0_5px_12px_-6px_rgba(0,0,0,.55)] hover:border-foreground/40 focus-visible:outline focus-visible:outline-2 [&::-webkit-details-marker]:hidden">
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" className="shrink-0">
+          <circle cx="12" cy="12" r="11" fill="#34A853" />
+          <path d="M2.5 6.4A11 11 0 0 1 22.6 9H8.4Z" fill="#EA4335" />
+          <path d="M22.6 9A11 11 0 0 1 11.3 23L16 14l-3-5Z" fill="#FBBC05" />
+          <circle cx="12" cy="12" r="4.65" fill="#4285F4" stroke="#fff" strokeWidth="1" />
+        </svg>
+        <span>{paired ? 'Xroga Extension' : 'Install Xroga Extension'}</span>
+      </summary>
+      <div className="max-h-[32dvh] overflow-auto px-1">
       <p className="my-2 text-xs" role="status">{status}</p>
+      {!paired && extensionId && <a className="text-xs underline underline-offset-2" href={`https://chromewebstore.google.com/detail/${extensionId}`} target="_blank" rel="noopener noreferrer">Open Chrome Web Store</a>}
       {paired && <form className="grid gap-2" onSubmit={event => {
         event.preventDefault();
         if (!portRef.current || busy) return;
@@ -267,6 +278,7 @@ export function WorkspaceBrowserOperator({ extensionId, nonce, requestedId }: {
       </form>}
       {activity.length > 0 && <ol aria-label="Browser activity" className="mt-2 max-h-32 overflow-auto text-xs">{activity.map((line, index) => <li key={`${index}:${line}`}>{line}</li>)}</ol>}
       {result && <p className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap">{result}</p>}
+      </div>
     </details>
   );
 }

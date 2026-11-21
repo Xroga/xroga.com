@@ -88,6 +88,7 @@ test('a queued sidebar save cannot move a previous account’s conversation to t
    if (name === '@/lib/supabase/client') return { createClient: () => client };
    if (name === '@/lib/storageSafe') return { sidebarMessagesForStorage: (messages: unknown[]) => messages };
    if (name === '@/lib/sidebarProjectTask') return {};
+   if (name === './conversationTitle') return { stableConversationTitle: (title: string | null, _messages?: unknown[], prompt?: string) => title || prompt || 'Untitled conversation' };
    throw new Error('Unexpected fixture dependency: ' + name);
   },
   setTimeout: (callback: () => void) => timers.push(callback), clearTimeout() {},

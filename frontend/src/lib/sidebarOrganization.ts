@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/client';
 import { isEmptyAssistantPlaceholder, sidebarMessagesForStorage } from '@/lib/storageSafe';
 import type { TerminalHistoryEntry } from '@/lib/terminalHistory';
 import { getActiveSidebarProject, type ActiveSidebarProject } from '@/lib/sidebarProjectTask';
+import { stableConversationTitle } from './conversationTitle';
 
 export type SidebarKind = 'conversation' | 'project';
 export type SidebarMeta = {
@@ -14,13 +15,8 @@ export type SidebarSection = { id:string; project_id:string; title:string; sort_
 export type SidebarProject = { id:string; name:string; github_repo_name:string|null; updated_at:string|null };
 export type SidebarChat = { id:string; title:string; prompt:string; preview:string; message_count:number; kind:string; status:string; created_at:string; updated_at:string };
 
-const clean = (value: string) => value.replace(/[#*_\n\r\t]/g,' ').replace(/\s+/g,' ').trim();
 export function meaningfulSidebarTitle(title: string | null | undefined, fallback: string | null | undefined): string {
-  const existing=clean(title||'');
-  if(existing && !/^(?:#?\d+\s+terminal|terminal\s*#?\d+|terminal session)$/i.test(existing)) return existing.slice(0,120);
-  const actual=clean(fallback||'');
-  if(!actual) return 'Untitled conversation';
-  return actual.slice(0,90);
+  return stableConversationTitle(title, undefined, fallback);
 }
 export function visiblePage<T>(items:T[],visible:number):T[]{ return items.slice(0,Math.max(0,visible)); }
 export function sortPinned<T extends {pin_order:number|null}>(items:T[]):T[]{

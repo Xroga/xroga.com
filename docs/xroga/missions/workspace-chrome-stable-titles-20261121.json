@@ -1,0 +1,43 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-CHROME-STABLE-TITLES-20261121",
+  "baseSha": "d3e86fe8ab738781f8c487aba694760fd77e0df8",
+  "requirementIds": ["XR-MISSION-055", "XR-MISSION-056"],
+  "state": "CODE_COMPLETE",
+  "risk": "low",
+  "scope": "Place the existing Chrome extension control over the transcript corner and persist meaningful first-prompt chat titles without replacing manual renames.",
+  "changedFiles": [
+    "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+    "frontend/src/components/dashboard/DashboardView.tsx",
+    "frontend/src/components/dashboard/WorkspaceScrollPolish.module.css",
+    "frontend/src/components/layout/SidebarProjectHistory.tsx",
+    "frontend/src/lib/conversationTitle.ts",
+    "frontend/src/lib/conversationTitle.test.ts",
+    "frontend/src/lib/cloudTerminalSessions.ts",
+    "frontend/src/lib/sidebarOrganization.ts",
+    "frontend/src/lib/syncRepoTerminalSessions.ts",
+    "frontend/src/lib/terminalHistory.ts",
+    "frontend/src/lib/workspaceEmptyComposer.test.ts"
+  ],
+  "decisions": {"keep": ["Existing extension bridge and sidebar metadata authority"], "extend": ["Header disclosure positioning and first-prompt title persistence"], "replace": [], "deprecate": []},
+  "architecture": {"change": "extends_canonical", "reason": "Uses existing Workspace and account history flows without a new service or model dispatch.", "rfc": null},
+  "schemaImpact": {"changed": false, "migrations": [], "rollout": "Existing title and prompt fields.", "rollback": "No schema rollback."},
+  "securityImpact": {
+    "auth": {"changed": false, "description": "Existing Chrome pairing and signed-in session remain required."},
+    "tenant": {"changed": false, "description": "Existing account and repo ownership checks remain."},
+    "approval": {"changed": false, "description": "No changes to browser operation approvals."},
+    "credentials": {"changed": false, "description": "No new keys or tokens."},
+    "egress": {"changed": true, "description": "User-initiated navigation to Chrome Web Store using the existing validated public extension ID; no prompt or credentials in the link."},
+    "cost": {"changed": false, "description": "Title derivation is local; no inference cost."},
+    "billing": {"changed": false, "description": "No billing changes."}
+  },
+  "tests": [{"command": "tsx --test frontend/src/lib/conversationTitle.test.ts frontend/src/lib/workspaceEmptyComposer.test.ts", "scope": "Stable legacy title recovery and extension row layout regression.", "negative": true, "reference": "frontend/src/lib/conversationTitle.test.ts"}],
+  "rollout": "Verify a source-pinned preview and release gates before promoting to the Workspace production site.",
+  "rollback": "Revert the change or re-promote the last verified frontend build; no database migration.",
+  "knownGaps": ["Old sessions without a saved prompt or transcript cannot recover an exact first-prompt title until their messages are restored.", "Chrome installation depends on the configured listing."],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": ["frontend/src/lib/conversationTitle.test.ts", "frontend/src/lib/workspaceEmptyComposer.test.ts"],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {"state": "BLOCKED", "blockers": ["Rerun source-pinned CI and verify the preview after preserving the repo ordinal at save and retiring the obsolete pricing non-persistence review."], "authenticatedE2e": "BLOCKED", "stagedSecurity": "NOT_APPLICABLE", "liveUrl": null, "deployedSha": null}
+}
