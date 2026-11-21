@@ -95496,7 +95496,7 @@
       "id": "surface:9a3d0f5fb7baaf59bba8",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/TeamMembershipPanel.tsx",
-      "sha256": "c21da819d53dc2c0d12454d84d8fd42ee99640beb3186b4eb93c126ed89b5a6c",
+      "sha256": "4270105fe6a3515fbccf3a0e1c3164fba66f1a12da89fe8a842b00e5b0875625",
       "symbols": [
         "Command",
         "Detail",
@@ -95511,6 +95511,7 @@
         "controller",
         "create",
         "createAttempt",
+        "detail",
         "err",
         "fingerprint",
         "initials",
@@ -95529,12 +95530,14 @@
         "./WorkspacePeopleControls.module.css",
         "@/lib/api",
         "@/lib/supabase/config",
+        "@/lib/teamMembershipSelection",
         "react"
       ],
       "runtimeImports": [
         "frontend/src/components/terminal/WorkspacePeopleControls.module.css",
         "frontend/src/lib/api.ts",
-        "frontend/src/lib/supabase/config.ts"
+        "frontend/src/lib/supabase/config.ts",
+        "frontend/src/lib/teamMembershipSelection.ts"
       ],
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx"
@@ -113162,6 +113165,42 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:0005571fcd1f9d38c8f0",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/teamMembershipSelection.ts",
+      "sha256": "65ff1315771ac0a1caf9d928bf8cf675f4a1a95e6f6f8e6aeffc778318a83cc7",
+      "symbols": [
+        "TeamResponse",
+        "currentTeamResponse"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/terminal/TeamMembershipPanel.tsx:6",
+        "frontend/src/lib/teamMembershipSelection.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/teamMembershipSelection.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -151745,6 +151784,13 @@
       "id": "test-suite:1409e18ce87a6696702e",
       "sourcePath": "frontend/src/lib/swarmReplayGap.contract.test.ts",
       "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:56c27de0c5a633594d3c",
+      "sourcePath": "frontend/src/lib/teamMembershipSelection.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

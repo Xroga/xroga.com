@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { API_URL, apiFetch, ApiError } from '@/lib/api';
 import { isProductionAuthBuild } from '@/lib/supabase/config';
+import { currentTeamResponse, type TeamResponse } from '@/lib/teamMembershipSelection';
 import styles from './WorkspacePeopleControls.module.css';
 
 type Role = 'owner' | 'admin' | 'member';
@@ -38,7 +39,7 @@ const actions: Record<string, string> = { create: 'created the team', accept: 'j
 export function TeamMembershipPanel({ userId }: { userId: string }) {
   const [teams, setTeams] = useState<Team[] | null>(null);
   const [selected, setSelected] = useState('');
-  const [detail, setDetail] = useState<Detail | null>(null);
+  const [teamResponse, setTeamResponse] = useState<TeamResponse<Detail> | null>(null);
   const [revision, setRevision] = useState(0);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -50,6 +51,7 @@ export function TeamMembershipPanel({ userId }: { userId: string }) {
   const inviteAttempt = useRef<{ fingerprint: string; requestId: string } | null>(null);
   const active = teams?.find(team => team.id === selected && team.status === 'active');
   const activeId = active?.id;
+  const detail = currentTeamResponse(teamResponse, activeId, revision);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -60,11 +62,10 @@ export function TeamMembershipPanel({ userId }: { userId: string }) {
   }, [revision, userId]);
 
   useEffect(() => {
-    setDetail(null);
     if (!activeId) return;
     const controller = new AbortController();
     apiFetch<{data: Detail}>(`/api/team-membership/${activeId}`, { signal: controller.signal }).then(({ data }) => {
-      if (!controller.signal.aborted) setDetail(data);
+      if (!controller.signal.aborted) setTeamResponse({ teamId: activeId, revision, data });
     }).catch(err => { if (!controller.signal.aborted) setError(message(err)); });
     return () => controller.abort();
   }, [activeId, revision, userId]);
@@ -113,7 +114,13 @@ export function TeamMembershipPanel({ userId }: { userId: string }) {
         <label>Team name <input value={name} onChange={event => setName(event.target.value)} required maxLength={80} /></label>
         <button type="submit" disabled={busy}>Create team</button>
       </form>
-      <label>Manage a team <select value={selected} onChange={event => { setDetail(null); setSelected(event.target.value); }}>
+      <label>Manage a team <select value={selected} disabled={busy} onChange={event => {
+        setTeamResponse(null);
+        setEmail('');
+        setNotice('');
+        setError('');
+        setSelected(event.target.value);
+      }}>
         <option value="">Choose a team</option>
         {teams.filter(team => team.status === 'active').map(team => <option value={team.id} key={team.id}>{team.name} ({team.role})</option>)}
       </select></label>
@@ -123,6 +130,7 @@ export function TeamMembershipPanel({ userId }: { userId: string }) {
         <button disabled={busy} onClick={() => void submit({ action: 'decline', teamId: team.id })}>Decline</button>
       </div>)}
     </> : null}
+    {active && !detail && !error ? <p role="status">Loading team details…</p> : null}
     {active && detail ? <>
       {(active.role === 'owner' || active.role === 'admin') ? <form className="grid gap-2" onSubmit={event => {
         event.preventDefault();
@@ -135,7 +143,7 @@ export function TeamMembershipPanel({ userId }: { userId: string }) {
         }
         void submit({ action, teamId: active.id, email: recipient, requestId: inviteAttempt.current.requestId });
       }}>
-        <label>Account email <input type="email" required maxLength={254} value={email} onChange={event => setEmail(event.target.value)} /></label>
+        <label>Account email <input type="email" required maxLength={254} value={email} disabled={busy} onChange={event => setEmail(event.target.value)} /></label>
         <button type="submit" value="invite" disabled={busy}>Send invitation</button>
         <button type="submit" value="resend" disabled={busy}>Resend pending invitation</button>
         <button type="submit" value="revoke" disabled={busy}>Revoke pending invitation</button>

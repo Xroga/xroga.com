@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "89f69f59dd839c5366f0d8a23fe5dbaf7c3d232e",
+  "source_sha": "d400e2f7ecbfc5b9f85194192000e4c67b824942",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -22609,7 +22609,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TeamMembershipPanel.tsx",
-      "sha256": "c21da819d53dc2c0d12454d84d8fd42ee99640beb3186b4eb93c126ed89b5a6c"
+      "sha256": "4270105fe6a3515fbccf3a0e1c3164fba66f1a12da89fe8a842b00e5b0875625"
     },
     {
       "path": "frontend/src/components/terminal/TerminalBuildReport.tsx",
@@ -23774,6 +23774,10 @@
     {
       "path": "frontend/src/lib/tableRows.ts",
       "sha256": "583902051342bf8237a2e687256a048d0e5edbf2db4de72ec3f08c4968c096bf"
+    },
+    {
+      "path": "frontend/src/lib/teamMembershipSelection.ts",
+      "sha256": "65ff1315771ac0a1caf9d928bf8cf675f4a1a95e6f6f8e6aeffc778318a83cc7"
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
@@ -29931,21 +29935,21 @@
       "hostname": "api.xroga.com",
       "protocol": "https:",
       "path": "frontend/src/components/terminal/TeamMembershipPanel.tsx",
-      "line": 21,
+      "line": 22,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "frontend/src/components/terminal/TeamMembershipPanel.tsx",
-      "line": 21,
+      "line": 22,
       "credentialsInUrl": false
     },
     {
       "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "frontend/src/components/terminal/TeamMembershipPanel.tsx",
-      "line": 21,
+      "line": 22,
       "credentialsInUrl": false
     },
     {
