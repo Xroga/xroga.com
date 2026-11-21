@@ -1,11 +1,12 @@
 'use client';
-import { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import type { CitationSource } from '@/lib/xrogaCitations';
 import { sourceKeyV2 } from './sourceRegistry';
 import { Globe } from 'lucide-react';
 import { siGithub, siNextdotjs, siSupabase, siStripe, siCloudflare, siReact, siTypescript, siMdnwebdocs, siPython, siPostgresql, siNodedotjs, siVercel, siDocker, siN8n, siTemporal, siSentry, siPosthog, siPaypal, siGooglecloud } from 'simple-icons';
 import { safeLinkV2 } from './document';
 import styles from './response-v2.module.css';
+import { SourceCitation } from '../terminal/SourceCitation';
 
 // Existing simple-icons dependency, CC0 artwork. Trademarks belong to their owners.
 // Exact domain matches only, never infer an organization from model prose.
@@ -37,13 +38,13 @@ export function SourceMarkV2({ url }: { url: string }) {
   if (mark) return <svg className={styles.sourceMark} width="14" height="14" viewBox="0 0 24 24" fill={/^(000000|FFFFFF)$/i.test(mark.hex) ? 'currentColor' : `#${mark.hex}`} aria-hidden="true"><path d={mark.path} /></svg>;
   return <SiteLogoV2 domain={domain} />;
 }
-export function SourceLinkV2({ url, title, number }: { url: string; title: string; number?: number }) {
+export function SourceLinkV2({ url, title, siteName, number }: { url: string; title: string; siteName?: string; number?: number }) {
   const registry = useContext(SourceRegistryContextV2);
   const entry = registry.get(sourceKeyV2(url) ?? '');
   title = entry?.title || title;
   const safe = safeLinkV2(url);
   if (!safe) return <span>{title}</span>;
-  return <a className={styles.citation} href={safe} target="_blank" rel="noopener noreferrer" title={`${title}\n${safe}`} aria-label={`${number ? `Source ${number}: ` : ''}${title}. ${sourceDomainV2(safe)}`}><SourceMarkV2 url={safe} /><span>{sourceDomainV2(safe) || title}</span>{number && <span className={styles.visuallyHidden}> [{number}]</span>}</a>;
+  return <SourceCitation source={{ title, url: safe, siteName: entry?.siteName ?? siteName }} number={number} />;
 }
 /** Uses the existing bounded, public-only, redirect/DNS-checked image proxy.
  * No browser credentials/referrer are sent to the external image host. */

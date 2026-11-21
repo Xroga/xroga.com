@@ -267,7 +267,7 @@ test('ideas stay collapsed until a category is chosen, then fill the real compos
 });
 
 
-test('the real new terminal keeps plugins in the composer footer', () => {
+test('the real new terminal keeps Connect Apps in the composer footer', () => {
   assert.doesNotMatch(
     WELCOME,
     /WorkspaceConnectionsStrip/,
@@ -275,7 +275,7 @@ test('the real new terminal keeps plugins in the composer footer', () => {
 
   assert.doesNotMatch(DOCK, /xv-chatbar-context-strip/);
   assert.match(CHATBAR, /aria-label="Projects"/);
-  assert.match(CHATBAR, /aria-label="Plugins"/);
+  assert.match(CHATBAR, /aria-label="Connect Apps"/);
 
   assert.match(
     CONNECTIONS,
@@ -393,7 +393,7 @@ test('full prompt expands the existing prompt bubble instead of rendering a dupl
 });
 
 
-test('connection management reads real provider status and routes full management to Plugins', () => {
+test('connection management reads real provider status and routes full management to Connect Apps', () => {
   for (
     const provider of [
       'github',
@@ -416,24 +416,11 @@ test('connection management reads real provider status and routes full managemen
     );
   }
 
-  assert.equal(
-    INTEGRATIONS.includes('/dashboard/integrations/\${plugin.id}'),
-    true,
-  );
-
-  assert.match(
-    INTEGRATIONS,
-    /Browse all plugins/,
-  );
-
-  assert.match(INTEGRATIONS, /placeholder="Search plugins…"/);
-  assert.match(INTEGRATIONS, /xv-plugins-popover__body/);
-  assert.match(INTEGRATIONS, /Browse all/);
-
-  assert.match(
-    INTEGRATIONS,
-    /xrogaConnect\.search/,
-  );
+  assert.match(INTEGRATIONS, /href=\{'\/dashboard\/integrations\/'\+encodeURIComponent\(app\.slug\)\}/);
+  assert.match(INTEGRATIONS, /href="\/dashboard\/integrations".*Browse all apps/);
+  assert.match(INTEGRATIONS, /Search all supported apps/);
+  assert.match(INTEGRATIONS, /styles\.items/);
+  assert.match(INTEGRATIONS, /xrogaConnect\.catalog/);
 });
 
 
@@ -613,12 +600,12 @@ test('the bottom inspiration bar opens the real catalog automatically on workspa
 
   assert.match(
     TEMPLATES,
-    /Recent projects/,
+    /id="recent-projects-heading">Recent work<\/strong>/,
   );
 
   assert.match(
     TEMPLATES,
-    /loadTerminalHistory\(\)\.filter/,
+    /setRecentSessions\(loadTerminalHistory\(\)\.slice\(0, 6\)\)/,
   );
 
   assert.match(
@@ -673,7 +660,7 @@ test('the bottom inspiration bar opens the real catalog automatically on workspa
 
   assert.match(
     TEMPLATES,
-    /selected GitHub repository/,
+    /offer GitHub publishing only after I select and authorize a repository/,
   );
 
   assert.match(

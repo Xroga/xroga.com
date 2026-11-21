@@ -3,7 +3,6 @@ import { useState } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { xrogaConnect, type XrogaConnectTool } from "@/lib/xrogaConnect";
-import { combinations, packs, packPrompt } from "./catalog";
 import styles from "./automations.module.css";
 const Integrations = dynamic(
   () =>
@@ -54,13 +53,13 @@ export function Connections({
         <span className={styles.badge}>Existing integration APIs</span>
       </div>
       <div className={styles.toolbar}>
-        {["Apps", "Custom MCP", "Combinations", "Tool Explorer"].map((s) => (
+        {["Apps", "Custom MCP", "Tool Explorer"].map((s) => (
           <button key={s} aria-pressed={view === s} onClick={() => setView(s)}>
             {s}
           </button>
         ))}
       </div>
-      {view === "Apps" && <Integrations />}
+      {view === "Apps" && <><p className={styles.notice}>Want a ready-made combination? <Link href="#work-packs">Explore Work Packs →</Link></p><Integrations /></>}
       {view === "Custom MCP" && (
         <>
           <p className={styles.notice}>
@@ -70,33 +69,6 @@ export function Connections({
           </p>
           <Mcp />
         </>
-      )}
-      {view === "Combinations" && (
-        <div className={styles.grid}>
-          {combinations.map((c) => (
-            <article className={styles.card} key={c.name}>
-              <span className={styles.eyebrow}>
-                Outcome setup · not a connected group
-              </span>
-              <h3>{c.name}</h3>
-              <p>{c.apps.join(" → ")}</p>
-              {c.apps.map((app) => (
-                <Link key={app} href={`/dashboard/integrations/${app}`}>
-                  {app} ↗
-                </Link>
-              ))}
-              <button
-                onClick={() => {
-                  const p = packs.find((p) => p.id === c.pack)!;
-                  onSelect(packPrompt(p, {}), c.name);
-                }}
-              >
-                Use combination in chatbar
-              </button>
-              <Link href={`#work-packs/${c.pack}`}>Guided setup →</Link>
-            </article>
-          ))}
-        </div>
       )}
       {view === "Tool Explorer" && (
         <>

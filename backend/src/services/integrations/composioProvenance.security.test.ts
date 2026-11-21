@@ -14,6 +14,7 @@ test('private connected-app read uses exact existing consent and preserves verif
  t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
   const url=new URL(String(input));if(url.origin===env.SUPABASE_URL){if(url.pathname.endsWith('/user_integrations'))return Response.json(null);return(await fixture.database(url,init))!;}
   if(url.pathname.endsWith('/execute')){effects++;return Response.json({result_type:'completed',data:{message:'Verified fixture message',access_token:'SYNTHETIC_PROVIDER_RESULT_CREDENTIAL'}});}
+  if(url.pathname.endsWith('/connected_accounts'))return Response.json({items:[{id:'ca_owned',user_id:'xroga:'+owner,toolkit:{slug:'slack'},status:'ACTIVE'}]});
   if(url.pathname.includes('/tools/'))return Response.json({slug:'SLACK_GET_MESSAGES',toolkit:{slug:'slack'},tags:['readOnlyHint']});
   if(url.pathname.endsWith('/search'))return Response.json({tool_schemas:{tool:{toolkit:'slack',tool_slug:'SLACK_GET_MESSAGES',input_schema:{type:'object'}}}});
   if(url.pathname.endsWith('/toolkits'))return Response.json({items:[{slug:'slack',connected_account:{id:'ca_owned',status:'ACTIVE'}}]});

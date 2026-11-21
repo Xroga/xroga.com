@@ -37,7 +37,7 @@ test('popovers are clamped, fully opaque and accessible to small screens', () =>
   assert.match(profile, /navigator.clipboard.writeText\(email\)/);
 });
 
-test('New Work and active conversations share one bordered composer with inline Projects and Plugins', () => {
+test('New Work and active conversations share one bordered composer with inline Projects and Connect Apps', () => {
   const chatbar = read('../components/terminal/TerminalChatBar.tsx');
   const shell = read('../components/layout/AppShell.tsx');
   assert.doesNotMatch(dock, /xv-chatbar-context-strip|WorkspaceConnectionsStrip/);
@@ -45,7 +45,7 @@ test('New Work and active conversations share one bordered composer with inline 
   assert.match(chatbar, /arrowSend=\{!incognito\}/);
   assert.match(chatbar, /plusIcon=\{!incognito\}/);
   assert.match(chatbar, /aria-label="Projects"/);
-  assert.match(chatbar, /aria-label="Plugins"/);
+  assert.match(chatbar, /aria-label="Connect Apps"/);
   assert.doesNotMatch(shell, /<CompactAppTooltip/);
   assert.match(audio, /<IconMotion>/);
   assert.match(starter, /TASK_ACCEPTANCE\[label\]/);

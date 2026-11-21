@@ -4,6 +4,7 @@ import { ExternalLink, Play } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { safeSourceUrl, sourceClickUrl } from '@/lib/xrogaCitations';
+import { SourceLogo } from './SourceLogo';
 
 export interface WebSourceItem {
   title: string;
@@ -12,6 +13,9 @@ export interface WebSourceItem {
   source?: string;
   thumbnailUrl?: string;
   siteDomain?: string;
+  siteName?: string;
+  siteIconDomain?: string;
+  publishedAt?: string;
   channelTitle?: string;
 }
 
@@ -23,16 +27,13 @@ function domainFromUrl(url: string): string {
   }
 }
 
-function faviconForDomain(domain: string): string {
-  return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64`;
-}
-
 function displayDomain(item: WebSourceItem): string {
-  return item.siteDomain || domainFromUrl(item.url);
+  return domainFromUrl(item.url);
 }
 
 function isYoutube(item: WebSourceItem): boolean {
-  return item.source === 'youtube' || displayDomain(item).includes('youtube');
+  const domain = displayDomain(item);
+  return domain === 'youtu.be' || domain === 'youtube.com' || domain.endsWith('.youtube.com');
 }
 
 const externalImageLoader = ({ src }: { src: string }) => src;
@@ -71,18 +72,7 @@ function SourceCard({ item, number }: { item: WebSourceItem; number: number }) {
         </div>
       ) : (
         <div className="w-11 h-11 rounded-lg bg-white dark:bg-white/10 flex items-center justify-center shrink-0 ring-1 ring-black/5 dark:ring-white/10 overflow-hidden">
-          <Image
-            src={faviconForDomain(domain)}
-            alt=""
-            width={24}
-            height={24}
-            loader={externalImageLoader}
-            unoptimized
-            className="w-6 h-6 object-contain"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = 'none';
-            }}
-          />
+          <SourceLogo domain={domain} size={24} />
         </div>
       )}
       <div className="min-w-0 flex-1">

@@ -325,6 +325,18 @@
       "tests": "backend/tests/engineeringResourceLedger.local.integration.ts",
       "evidence": "Batch 4 migration, development only and not applied to production. Exercised against a real disposable PostgreSQL: an override replaces the default for one owner only and applies even to a record-only category, clearing reverts, invalid values are rejected, and the table and functions are unreachable by anon and authenticated roles. Not a live Supabase receipt.",
       "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "notification_push_subscriptions",
+      "migration": "20261110212913_smart_notification_push_subscriptions.sql",
+      "migrationSha256": "3e1373475910689fc9ce26fb18fc2fbe2cf93fffef7416cb811aa87b4fbee5b1",
+      "authorizationMigration": "20261110212913_smart_notification_push_subscriptions.sql",
+      "authorizationSha256": "3e1373475910689fc9ce26fb18fc2fbe2cf93fffef7416cb811aa87b4fbee5b1",
+      "boundary": "RLS is enabled and direct table grants are limited to service_role. Subscription routes derive the owner from the authenticated request and only modify that account’s rows. The table contains server-only push delivery credentials.",
+      "tests": "backend/src/security/tenantIsolation.local.integration.ts",
+      "evidence": "Exact migration SQL carried from the live notification release. Disposable migration replay checks grants and exercises the normal authenticated subscription API. This entry records source review, not a live database observation.",
+      "productionChanges": false
     }
   ]
 }

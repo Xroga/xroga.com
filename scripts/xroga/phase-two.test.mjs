@@ -61,12 +61,13 @@ test('both baseline jobs reject stale Phase2 evidence hashes before browser inst
   assert.equal(jobs.length,2);
   for(const job of jobs){
     const check=job.indexOf('node scripts/xroga/phase-two.mjs');
-    assert.ok(check>=0);assert.ok(check<job.indexOf('run: npx playwright install'));
-    assert.ok(check<job.indexOf('npm run verify:baseline'));
+    const browser=job.indexOf('run: bash scripts/ci/install-playwright-chromium.sh');
+    const baseline=job.indexOf('npm run verify:baseline');
+    assert.ok(check>=0 && check<browser && browser<baseline,'Verify frozen evidence before Chromium setup and full regression');
     const inventory=job.indexOf('node scripts/xroga/inventory.mjs --check');
-    assert.ok(inventory>check&&inventory<job.indexOf('run: npx playwright install'),'Reject source inventory drift before browser installation and full regression');
+    assert.ok(inventory>check&&inventory<browser,'Reject source inventory drift before browser installation and full regression');
     const requirements=job.indexOf('node scripts/xroga/validate-requirements-ledger.mjs');
-    assert.ok(requirements>inventory&&requirements<job.indexOf('run: npx playwright install'),'Reject stale source-ledger hashes before expensive regression');
+    assert.ok(requirements>inventory&&requirements<browser,'Reject stale source-ledger hashes before expensive regression');
     assert.equal(job.match(/npm run verify:baseline/g)?.length,2,'Both complete baseline repetitions remain mandatory');
   }
 });

@@ -259,3 +259,23 @@ test('repeated model block IDs receive stable unique presentation IDs', () => {
   assert.equal(new Set(first.output?.blocks.map(b => b.id)).size, 2);
   assert.deepEqual(first, enhanceAiResponse(source, 'x'.repeat(100)));
 });
+
+test('a native OpenUI program is stored alongside readable answer text', () => {
+  const program = 'root = Col([Text("A readable answer.")])';
+  const enhanced = enhanceAiResponse('A readable answer.', 'native-answer', { status: 'complete' }, { format: 'xroga-openui-v1', text: program });
+  const saved = parseXrogaOutput(JSON.parse(JSON.stringify(enhanced.output)));
+  assert.equal(saved?.responseSource?.format, 'xroga-openui-v1');
+  assert.equal(saved?.responseSource?.text, program);
+  assert.equal(saved?.sourceText, 'A readable answer.');
+  assert.equal(enhanced.content, 'A readable answer.');
+});
+
+test('a factual-review warning and original answer survive the saved document round trip', () => {
+  const source = 'The retry behavior needs review.\n\n| Mode | State |\n| --- | --- |\n| Live | Pending |';
+  const enhanced = enhanceAiResponse(source, 'native-review', { status: 'partial', reason: 'factual_review' },
+    { format: 'xroga-openui-v1', text: '' });
+  const saved = parseXrogaOutput(JSON.parse(JSON.stringify(enhanced.output)));
+  assert.equal(saved?.status, 'partial');
+  assert.equal(saved?.sourceText, source);
+  assert.match(saved?.blocks[0]?.type === 'notice' ? saved.blocks[0].text : '', /technical claim that needs review/);
+});

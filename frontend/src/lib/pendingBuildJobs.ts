@@ -1,6 +1,7 @@
 const KEY = 'xroga_pending_build_jobs';
 
 export interface PendingBuildJob {
+  ownerId?: string;
   runId?: string;
   lastSequence?: number;
   assistantMessageId: string;
@@ -88,6 +89,11 @@ export function loadPendingBuildJobs(): PendingBuildJob[] {
   } catch {
     return [];
   }
+}
+
+export function loadPendingBuildJobsForOwner(ownerId: string | null | undefined): PendingBuildJob[] {
+  if (!ownerId) return [];
+  return loadPendingBuildJobs().filter(job => job?.ownerId === ownerId);
 }
 
 export function savePendingBuildJobs(jobs: PendingBuildJob[]) {

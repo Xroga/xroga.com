@@ -8,7 +8,7 @@ const css=readFileSync(new URL('../components/layout/SidebarOrganize.css',import
 const visible=sidebar.slice(sidebar.indexOf('  return <div className="mt-2 mb-1'),sidebar.indexOf('    <SidebarActionMenu point='));
 
 test('Projects, conditional Pinned and Recents are compact text-first rows',()=>{
-  assert.match(visible, /<h2 className=\{sectionTitle\}>Projects<\/h2>/);
+  assert.match(visible, /<h2 className=\{sectionTitle\}><button[^\n]{0,240}aria-label="View all projects">Projects /);
   assert.match(visible, /pinnedItems\.length>0\?<section/);
   assert.match(visible, /<h2 className=\{sectionTitle\}>Recents<\/h2>/);
   assert.doesNotMatch(visible, /<MessageSquare|<FolderOpen/);

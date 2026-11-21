@@ -12,7 +12,6 @@ import { useHydrated } from '@/hooks/useHydrated';
 import { uploadChatImage, type ChatAttachment } from '@/lib/api';
 import { IntegrationsModal } from './IntegrationsModal';
 import { GithubRepoModal } from './GithubRepoModal';
-import { RepoWorkspaceGateModal } from './RepoWorkspaceGateModal';
 import { ChatbarShell } from '@/components/ui/Uiverse';
 import {
   ChatBarDragOverlay,
@@ -26,11 +25,7 @@ import { cn } from '@/lib/utils';
 import { dispatchCompanionEvent } from '@/lib/companion';
 import { BlackHoleVButton } from './BlackHoleVButton';
 import toast from 'react-hot-toast';
-import { checkRepoWorkspaceReady } from '@/lib/repoWorkspaceGate';
 import { ensureSelectedRepoFolder } from '@/lib/repoSessionsIndex';
-import { isGeneralAdviceOrKnowledgePrompt, isWebsiteBuildPrompt } from '@/lib/chatMemory';
-import { shouldRouteToPhase1 } from '@/lib/phase1Routing';
-import { requiresGitHubForBuild } from '@/lib/messageHelpers';
 import { composerMaxHeightForViewport } from '@/lib/chatComposerSizing';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
 import { useWorkspaceAuthGate } from '@/components/workspace/WorkspaceAuthGate';
@@ -40,6 +35,7 @@ import { buildArtifactContextPreamble, useXrogaArtifactContext } from '@/lib/xro
 import { appendVoiceTranscript } from '@/lib/terminal/voiceRecording';
 import { XrogaVoiceControl } from './XrogaVoiceControl';
 import { getSelectedRepoContext } from '@/lib/repoContext';
+import { nativeWorkSkillById, buildNativeWorkSkillPrompt } from '@/lib/nativeWorkSkills';
 
 const MIN_INPUT_H = 32;
 const COMPOSER_PLACEHOLDERS = [
@@ -84,6 +80,7 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
     loading,
     submit,
     stop,
+    startNewChat,
   } = useTerminalChat();
   const hydrated = useHydrated();
   const activeArtifactId = useXrogaArtifactContext((state) => state.activeArtifactId);
@@ -138,6 +135,29 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
     }, 300);
     return () => window.clearTimeout(timer);
   }, [draft, prompt, setPrompt]);
+  // Library → Workspace: the selected native Skill is placed in the existing
+  // composer, never auto-sent and never opened in a second chat/mode.
+  useEffect(() => {
+    if (typeof window === 'undefined' || sessionRestoring) return;
+    const url = new URL(window.location.href);
+    const skill = nativeWorkSkillById(url.searchParams.get('nativeSkill'));
+    if (!skill || url.pathname !== '/workspace') return;
+    // Library starts a fresh, unassigned conversation in Recents; the plus-menu
+    // picker intentionally keeps its existing conversation instead.
+    startNewChat();
+    const scaffold = buildNativeWorkSkillPrompt(skill);
+    const next = scaffold;
+    setSelectedTool({label:skill.title,category:'Native Skill',description:skill.description,tone:'purple',scaffold});
+    setDraft(next);
+    draftRef.current = next;
+    lastExternalPrompt.current = next;
+    setPrompt(next);
+    url.searchParams.delete('nativeSkill');
+    window.history.replaceState(window.history.state,'',url.pathname+url.search+url.hash);
+    window.setTimeout(()=>textareaRef.current?.focus(),80);
+  },[setPrompt,sessionRestoring,startNewChat]);
+
+
   const [integrationsOpen, setIntegrationsOpen] = useState(false);
   const [projectsQuickOpen, setProjectsQuickOpen] = useState(false);
   const projectsButtonRef = useRef<HTMLButtonElement>(null);
@@ -151,12 +171,6 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
   const [sendState, setSendState] = useState<SendButtonState>('idle');
   const [composerSignal, setComposerSignal] = useState(true);
   const composerSignalTimer = useRef<number | null>(null);
-  const [repoGate, setRepoGate] = useState<{
-    open: boolean;
-    reason: 'not_connected' | 'no_repo_selected';
-    message: string;
-  }>({ open: false, reason: 'not_connected', message: '' });
-
   const triggerComposerSignal = useCallback((duration = 1200) => {
     setComposerSignal(true);
     if (composerSignalTimer.current !== null) window.clearTimeout(composerSignalTimer.current);
@@ -234,53 +248,11 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
     return () => window.removeEventListener('xroga:companion-ask', onCompanionAsk);
   }, [setPrompt]);
 
-  async function ensureRepoWorkspace(promptText?: string): Promise<boolean> {
-    // Guest conversation is deliberately detached from repository/provider gates.
-    // The chat provider itself is the hard boundary that prevents guest execution.
-    if (isGuest || incognito) return true;
-    // Sandbox website/landing/chatbot/crypto builds must not be blocked by a flaky GitHub status
-    // when the user already selected a repo in the footer (or when building a simple site).
-    const p = (promptText || draftRef.current || prompt || '').trim();
-    // Advice / Q&A / research must never be blocked by the Connect-GitHub modal
-    if (
-      p &&
-      (isGeneralAdviceOrKnowledgePrompt(p) ||
-        shouldRouteToPhase1(p, [], undefined, { completedWebsiteBuild: false }))
-    ) {
-      return true;
-    }
-    if (p && (isWebsiteBuildPrompt(p) || requiresGitHubForBuild(p))) {
-      const selected = (await import('@/lib/repoContext')).getSelectedRepoContext();
-      if (selected?.repo?.includes('/')) {
-        ensureSelectedRepoFolder();
-        setGithubConnected(true);
-        return true;
-      }
-    }
-    // Do NOT auto-bind sticky default_repo here — that silently targets the wrong product
-    // when starting a new build. Updates get sticky only when the chat layer detects an update.
-    try {
-      const status = await api.github.status();
-      setGithubConnected(status.connected);
-    } catch {
-      /* gate will handle */
-    }
-    const ready = await checkRepoWorkspaceReady();
-    if (ready.ok) {
-      ensureSelectedRepoFolder();
-      return true;
-    }
-    // Website builds can run in sandbox without GitHub — never brick the user on Connect modal
-    if (p && (isWebsiteBuildPrompt(p) || requiresGitHubForBuild(p))) {
-      console.warn('[TerminalChatBar] allowing sandbox build without repo gate');
-      return true;
-    }
-    if (ready.reason === 'no_repo_selected') {
-      const { notifyOpenRepoPicker } = await import('@/lib/githubProjectEvents');
-      notifyOpenRepoPicker();
-    }
-    setRepoGate({ open: true, reason: ready.reason, message: ready.message });
-    return false;
+  async function ensureRepoWorkspace(): Promise<boolean> {
+    // GitHub is optional. For authorized repository operations, the individual
+    // tool must still require a valid account, scoped repo and permissions.
+    if (getSelectedRepoContext()?.repo) ensureSelectedRepoFolder();
+    return true;
   }
 
   async function handleSubmit(e: React.FormEvent, interrupt = false) {
@@ -295,7 +267,7 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
     setPrompt(text);
     lastExternalPrompt.current = text;
 
-    if (!(await ensureRepoWorkspace(text))) {
+    if (!(await ensureRepoWorkspace())) {
       setSendState('idle');
       return;
     }
@@ -390,7 +362,7 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
   );
 
   async function applyStyleFromFile(file: File, stylePrompt: string) {
-    if (!(await ensureRepoWorkspace(stylePrompt))) return;
+    if (!(await ensureRepoWorkspace())) return;
     setUploading(true);
     try {
       const url = await uploadChatImage(file);
@@ -574,20 +546,6 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
           const next = draftRef.current + (draftRef.current ? '\n' : '') + t;
           setDraft(next);
           draftRef.current = next;
-        }}
-      />
-      <RepoWorkspaceGateModal
-        open={repoGate.open}
-        reason={repoGate.reason}
-        message={repoGate.message}
-        onClose={() => setRepoGate((g) => ({ ...g, open: false }))}
-        onReady={() => {
-          setRepoGate((g) => ({ ...g, open: false }));
-          void api.github
-            .status()
-            .then((s) => setGithubConnected(s.connected))
-            .catch(() => {});
-          ensureSelectedRepoFolder();
         }}
       />
       <div className="relative">

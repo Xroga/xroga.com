@@ -1,0 +1,154 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-INLINE-CITATIONS-20261110",
+  "baseSha": "23072785b435bd2162512ca7683d7311631e47b9",
+  "requirementIds": [
+    "XR-MISSION-054",
+    "XR-MISSION-055"
+  ],
+  "state": "VERIFIED_SCOPE",
+  "risk": "low",
+  "scope": "Show clickable evidence beside supporting text, omit repeated footer destinations, and keep answer data visible with bounded large table scrolling.",
+  "decisions": {
+    "keep": [
+      "Existing OpenUI and compatibility renderers, persisted answers, Share privacy, DeepSeek routing, and the same-origin icon route"
+    ],
+    "extend": [
+      "Shared citation chip for both renderers and the native Share view"
+    ],
+    "replace": [
+      "Source-list drawers and answer-content disclosures with visible source lists and answer sections"
+    ],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "Frontend only. Verify the exact candidate in staging before production.",
+    "rollback": "Restore the preceding compatible frontend. The saved answer format is unchanged."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "Existing Workspace and owner-only Share admission unchanged."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "Source metadata comes from the same authorized answer. No new data reads."
+    },
+    "approval": {
+      "changed": false,
+      "description": "Source navigation follows a user click or keyboard action. Existing task approvals unchanged."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No new credentials, roles or secret access."
+    },
+    "egress": {
+      "changed": false,
+      "description": "The existing bounded same-origin icon route handles validated domains. Exact Google domains use the existing local mark. No new transport or host."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No model, search or other paid requests for this frontend change."
+    },
+    "billing": {
+      "changed": false,
+      "description": "Canonical billing is unchanged."
+    }
+  },
+  "tests": [
+    {
+      "command": "node node_modules/@playwright/test/cli.js test -c frontend/playwright.config.ts workspace-new-terminal.spec.ts -g 'answer citations and table rows remain directly readable'",
+      "scope": "Built Workspace on desktop and mobile with intercepted guest chat. Verify inline citation focus, both table columns and the last row without pagination.",
+      "negative": true,
+      "reference": "frontend/e2e/workspace-new-terminal.spec.ts"
+    },
+    {
+      "command": "node scripts/verify-native-openui-browser.mjs",
+      "scope": "Chrome checks for source placement, branded preview, keyboard access, mobile direct tap, unsafe or duplicate sources, chart data and diagram relationships.",
+      "negative": true,
+      "reference": "scripts/verify-native-openui-browser.mjs"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json --test frontend/src/lib/xrogaCitations.test.ts frontend/src/lib/formatAiMarkdown.test.ts frontend/src/components/response-experience-v2/document.test.ts backend/src/ai/nativeOpenUi.test.ts",
+      "scope": "Citation safety and compatibility, original links, and unchanged native response validation.",
+      "negative": true,
+      "reference": "frontend/src/lib/xrogaCitations.test.ts"
+    }
+  ],
+  "architecture": {
+    "change": "none",
+    "reason": "Rendering changes in the current answer pipeline without new execution or persistence paths.",
+    "rfc": null
+  },
+  "rollout": "Run exact-source CI and authenticate against the compatible staging frontend before promoting.",
+  "rollback": "Restore the preceding compatible frontend. Stored programs and source records are unchanged.",
+  "knownGaps": [
+    "A fresh DeepSeek turn and authenticated Workspace persistence and isolation still require the matched hosted candidate. Earlier provider receipts and fixture CI are recorded separately."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "docs/operations/native-openui/INLINE-CITATIONS-AND-VISIBLE-CONTENT.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Verify the PR head checks and the matched authenticated staging route. Production promotion requires separate approval."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "NOT_APPLICABLE",
+    "liveUrl": null,
+    "deployedSha": null
+  },
+  "changedFiles": [
+    "docs/operations/native-openui/INLINE-CITATIONS-AND-VISIBLE-CONTENT.md",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/missions/workspace-inline-citations-20261110.json",
+    "docs/xroga/security/caller-reviews.json",
+    "docs/xroga/security/egress-callers.json",
+    "docs/xroga/security/privileged-callers.json",
+    "docs/xroga/security/rls-audit.md",
+    "frontend/e2e/command3-auth.spec.ts",
+    "frontend/e2e/workspace-new-terminal.spec.ts",
+    "frontend/src/app/share/[token]/page.tsx",
+    "frontend/src/components/native-openui/Diagram.tsx",
+    "frontend/src/components/native-openui/NativeSurface.tsx",
+    "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
+    "frontend/src/components/native-openui/Resources.tsx",
+    "frontend/src/components/native-openui/evidence.tsx",
+    "frontend/src/components/native-openui/library.tsx",
+    "frontend/src/components/native-openui/surface.css",
+    "frontend/src/components/native-openui/upstream/components/chart.tsx",
+    "frontend/src/components/native-openui/upstream/components/text.tsx",
+    "frontend/src/components/response-experience-v2/ChartV2.tsx",
+    "frontend/src/components/response-experience-v2/ProseV2.tsx",
+    "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
+    "frontend/src/components/response-experience-v2/SourceV2.tsx",
+    "frontend/src/components/response-experience-v2/document.test.ts",
+    "frontend/src/components/response-experience-v2/response-v2.module.css",
+    "frontend/src/components/terminal/ResponseSources.module.css",
+    "frontend/src/components/terminal/ResponseSourceScope.tsx",
+    "frontend/src/components/terminal/ResponseSources.tsx",
+    "frontend/src/components/terminal/SourceCitation.module.css",
+    "frontend/src/components/terminal/SourceCitation.tsx",
+    "frontend/src/components/terminal/SwarmMessageLog.tsx",
+    "frontend/src/components/terminal/XrogaBlockView.tsx",
+    "frontend/src/components/terminal/XrogaDecisionMatrixView.tsx",
+    "frontend/src/components/terminal/XrogaOrganizerBlockView.tsx",
+    "frontend/src/components/terminal/XrogaRichBlockView.tsx",
+    "frontend/src/components/terminal/XrogaRichResultsView.module.css",
+    "frontend/src/components/terminal/XrogaRichResultsView.tsx",
+    "frontend/src/lib/formatAiMarkdown.test.ts",
+    "frontend/src/lib/formatAiMarkdown.tsx",
+    "frontend/src/lib/terminal/responseSources.test.ts",
+    "frontend/src/lib/xrogaCitations.ts",
+    "frontend/src/lib/xrogaCitations.test.ts",
+    "frontend/src/styles/answerExperience.css",
+    "scripts/generate-native-openui-spec.mjs",
+    "scripts/verify-native-openui-browser.mjs"
+  ]
+}

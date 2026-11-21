@@ -105,11 +105,11 @@ function ListRenderer({ block }: { block: XrogaBlock }) {
 function EvidenceRenderer({ block }: { block: XrogaBlock }) {
   if (block.type !== 'evidence') return null;
   return (
-    <details className="xv-response-surface max-w-[820px] rounded-xl border border-[var(--border)] p-3 text-sm">
-      <summary className="flex cursor-pointer list-none items-center gap-2 font-medium"><FileCheck2 className="h-4 w-4" aria-hidden="true" />{block.evidence.title}</summary>
+    <section className="xv-response-surface max-w-[820px] rounded-xl border border-[var(--border)] p-3 text-sm">
+      <h3 className="flex items-center gap-2 font-medium"><FileCheck2 className="h-4 w-4" aria-hidden="true" />{block.evidence.title}</h3>
       {block.evidence.summary ? <p className="mt-2 text-[var(--muted)]">{block.evidence.summary}</p> : null}
       {block.evidence.locator ? <code className="mt-2 block break-all text-xs">{block.evidence.locator}</code> : null}
-    </details>
+    </section>
   );
 }
 

@@ -1,0 +1,122 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-NATIVE-OPENUI-RECOVERY-20261110",
+  "baseSha": "c873b3eb09a63cf8217aa05a21929d528d64af9a",
+  "requirementIds": [
+    "XR-MISSION-054",
+    "XR-MISSION-055"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "medium",
+  "scope": "Preserve settled native answer prose and independently validated visuals through Workspace rendering, persistence, Copy, Share and Reopen.",
+  "changedFiles": [
+    "backend/src/ai/nativeOpenUi.ts",
+    "backend/src/ai/nativeOpenUiPrompt.ts",
+    "backend/src/ai/nativeOpenUiWorkspace.ts",
+    "backend/src/ai/pipeline.ts",
+    "frontend/src/components/native-openui/NativeSurface.tsx",
+    "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
+    "frontend/src/components/terminal/SwarmMessageLog.tsx",
+    "frontend/src/context/TerminalChatContext.tsx",
+    "frontend/src/lib/sidebarOrganization.ts",
+    "frontend/src/lib/storageSafe.ts",
+    "frontend/src/lib/terminalHistory.ts",
+    "frontend/src/lib/xrogaResponseDocument.ts",
+    "frontend/e2e/command3-auth.spec.ts"
+  ],
+  "decisions": {
+    "keep": [
+      "Existing native OpenUI registry, DeepSeek route, canonical accounting, tenant ownership and same-version Share decoder."
+    ],
+    "extend": [
+      "Privacy-safe validation diagnostics and independently validated presentation recovery.",
+      "Settled sidebar persistence through the existing owner-verified save queue."
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "Existing stored formats and database rows remain compatible.",
+    "rollback": "Restore the prior native-compatible frontend and decoder. Existing prose and OpenUI syntax remain readable."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "Existing authenticated account and owner-only Share controls."
+    },
+    "tenant": {
+      "changed": true,
+      "description": "The sidebar queue serializes writes per owner and conversation. Every write rechecks the current owner."
+    },
+    "approval": {
+      "changed": false,
+      "description": "External action authority is unchanged."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "The repair adds no credentials or roles."
+    },
+    "egress": {
+      "changed": false,
+      "description": "The existing provider receives a narrower authorized registry. No transport, destination or additional call is introduced."
+    },
+    "cost": {
+      "changed": false,
+      "description": "Offline repair and controlled tests use no provider calls."
+    },
+    "billing": {
+      "changed": false,
+      "description": "Existing canonical dispatch and settlement."
+    }
+  },
+  "tests": [
+    {
+      "command": "tsx --test backend/src/ai/nativeOpenUi.test.ts",
+      "scope": "Invalid schema, partial recovery, unverified source rejection, redacted diagnostic and missing-prose handling.",
+      "negative": true,
+      "reference": "backend/src/ai/nativeOpenUi.test.ts"
+    },
+    {
+      "command": "tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/sidebarOrganization.test.ts frontend/src/lib/storageSafe.test.ts",
+      "scope": "Account switch denial and exclusion of blank assistant placeholders.",
+      "negative": true,
+      "reference": "frontend/src/lib/sidebarOrganization.test.ts"
+    },
+    {
+      "command": "playwright test -c frontend/playwright.config.ts command3-auth.spec.ts",
+      "scope": "Controlled partial response through Copy, private Share, durable Reopen and tenant denial.",
+      "negative": true,
+      "reference": "frontend/e2e/command3-auth.spec.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Extends the existing model response contract and sidebar persistence without a parallel runtime.",
+    "rfc": null
+  },
+  "rollout": "Complete exact-source CI and an authenticated private DeepSeek matrix before requesting production canary approval.",
+  "rollback": "Restore the known compatible prior frontend and native decoder, and leave native generation disabled if necessary.",
+  "knownGaps": [
+    "The exact historical rejected program is unavailable.",
+    "Fresh Search needs valid bucket-scoped private staging storage. The previous staging window is closed."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "docs/operations/native-openui/LIVE-ACCEPTANCE-RECOVERY.md",
+    "docs/operations/native-openui/WORKSPACE_ACCEPTANCE.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Fresh ordinary-user live DeepSeek acceptance and the matched decoder recovery drill remain required."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

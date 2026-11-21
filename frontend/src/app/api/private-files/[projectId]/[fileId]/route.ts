@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+import { hostedWorkspaceRequest } from '@/lib/hostedWorkspaceBridge.mjs';
 
 export const dynamic='force-dynamic';
 export const runtime='nodejs';
@@ -21,7 +22,11 @@ export async function GET(request:Request,{params}:{params:Promise<{projectId:st
     if(links.length>1 || links.some(link=>link.length>2048))return NextResponse.json({error:'File link is unavailable.'},{status:404,headers:privateHeaders});
     if(links.length)target.searchParams.set('link',links[0]);
     const range=request.headers.get('range');
-    const response=await fetch(target,{cache:'no-store',redirect:'error',signal:AbortSignal.timeout(25000),headers:{Authorization:`Bearer ${session.access_token}`,...(range?{Range:range}:{})}});
+    const options = {cache:'no-store',redirect:'error',signal:AbortSignal.timeout(25000),
+      headers:{Authorization:`Bearer ${session.access_token}`,...(range?{Range:range}:{})}} satisfies RequestInit;
+    const response = process.env.NEXT_PUBLIC_XROGA_WORKSPACE_STAGING_ORIGIN
+      ? await hostedWorkspaceRequest(new Request(target, options), target.pathname)
+      : await fetch(target, options);
     if(![200,206].includes(response.status)) {
       await response.body?.cancel();
       const status=[400,401,404,409,416].includes(response.status)?response.status:503;

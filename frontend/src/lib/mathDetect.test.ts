@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { isMathSolutionContent } from './mathDetect';
-import { parseXrogaBlocks } from './plainAiText';
+import { parseXrogaBlocks } from './plainAiTextParser';
 
 test('ordinary prose with steps, numbers, and an Answer label is not math', () => {
   const prose = 'Answer\n\nStep 1: Open settings.\nStep 2: Choose the project with 3 files.';

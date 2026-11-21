@@ -961,6 +961,8 @@ export async function readBusinessData(
       .filter(
         isLocallyApprovedReadTool,
       )
+      .filter((tool) => !discovery.explicitlyRequestedToolkit ||
+        normalizeToolkit(tool.toolkit) === discovery.explicitlyRequestedToolkit)
       .slice(
         0,
         MAX_TOOL_CANDIDATES,

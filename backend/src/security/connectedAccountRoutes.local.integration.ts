@@ -16,7 +16,7 @@ export function registerConnectedAccountRouteTests(getUsers:()=>readonly {id:str
     t.after(()=>{globalThis.fetch=original;oldKey===undefined?delete process.env.COMPOSIO_API_KEY:process.env.COMPOSIO_API_KEY=oldKey;});
     const session='trs_phase_two_owner',otherSession='trs_phase_two_other',tool='GMAIL_FETCH_EMAILS';
     const createdFor:string[]=[],executions:{session:string;body:unknown}[]=[];
-    let mode='normal',sessionReads=0;
+    let mode='normal',sessionReads=0,accountReads=0;
     globalThis.fetch=async(input,init)=>{
       const url=new URL(String(input instanceof Request?input.url:input));
       if(url.origin!=='https://backend.composio.dev'){
@@ -38,7 +38,16 @@ export function registerConnectedAccountRouteTests(getUsers:()=>readonly {id:str
       }
       if(path.endsWith('/search'))return Response.json({tool_schemas:{fixture:{tool_slug:tool,toolkit:'gmail',description:'Synthetic read only',input_schema:{type:'object'}}}});
       if(path.endsWith('/toolkits'))return Response.json({items:[{slug:'gmail',name:'Gmail',connected_account:{id:'fixture-owner-account',status:'ACTIVE'}}]});
+      if(path.endsWith('/connected_accounts')){
+        accountReads++;
+        assert.equal(url.searchParams.get('user_ids'),`xroga:${owner.id}`);
+        assert.equal(url.searchParams.get('toolkit_slugs'),'gmail');
+        assert.equal(url.searchParams.get('statuses'),'ACTIVE');
+        return Response.json({items:[{id:'fixture-owner-account',user_id:`xroga:${owner.id}`,toolkit:{slug:'gmail'},status:'ACTIVE'}]});
+      }
       if(path.endsWith('/execute')){
+        assert.equal(accountReads,1,'Verify exactly one active account before using the provider default');
+        assert.equal(Object.hasOwn(body,'account'),false,'The provider rejects explicit selection in a single-account session');
         assert.ok(path.includes(`/${session}/`));executions.push({session,body});
         return Response.json({data:{fixture:true,reference:'fixture-owner-read'},error:null});
       }

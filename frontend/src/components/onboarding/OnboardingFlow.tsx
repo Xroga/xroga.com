@@ -43,6 +43,7 @@ function BrandMark({ slug, label }: { slug: 'github' | 'vercel'; label: string }
 
 /** Where onboarding hands off. The workspace is where building actually happens. */
 const WORKSPACE = '/workspace';
+const SETUP_SAVE_TIMEOUT_MS = 15_000;
 
 export function OnboardingFlow({ initial }: { initial: OnboardingState }) {
   const router = useRouter();
@@ -50,6 +51,10 @@ export function OnboardingFlow({ initial }: { initial: OnboardingState }) {
   const [step, setStep] = useState<OnboardingStep>(resumeStep(initial));
   const [ready, setReady] = useState(false);
   const [leaving, setLeaving] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
+  const finishing = useRef(false);
+  const pendingWrite = useRef<Promise<unknown>>(Promise.resolve());
   const persistTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   /**
@@ -61,10 +66,12 @@ export function OnboardingFlow({ initial }: { initial: OnboardingState }) {
    * whole object anyway.
    */
   const persist = useCallback((next: OnboardingState) => {
+    if (finishing.current) return;
     if (persistTimer.current) clearTimeout(persistTimer.current);
     persistTimer.current = setTimeout(() => {
-      void api.profile
-        .update({ onboarding: serializeOnboarding(next) } as never)
+      pendingWrite.current = pendingWrite.current
+        .catch(() => undefined)
+        .then(() => api.profile.update({ onboarding: serializeOnboarding(next) } as never, AbortSignal.timeout(SETUP_SAVE_TIMEOUT_MS)))
         .catch(() => undefined);
     }, 350);
   }, []);
@@ -160,28 +167,33 @@ export function OnboardingFlow({ initial }: { initial: OnboardingState }) {
     };
   }, [step, ready, syncIntegrations, update]);
 
-  const enterWorkspace = useCallback(() => {
-    setLeaving(true);
-    router.replace(WORKSPACE);
-  }, [router]);
-
-  const skipSetup = useCallback(() => {
-    setLeaving(true);
-    // Skipping is an answer. The status records it so the reader is not asked again,
-    // and the integrations they passed on stay available in settings.
+  const finishSetup = useCallback(async (status: 'skipped' | 'completed') => {
+    if (finishing.current) return;
+    finishing.current = true;
+    setSaving(true);
+    setSaveError(false);
+    if (persistTimer.current) clearTimeout(persistTimer.current);
     const next: OnboardingState = {
       ...state,
-      status: 'skipped',
+      status,
       currentStep: 'complete',
       updatedAt: new Date().toISOString(),
       completedAt: new Date().toISOString(),
     };
-    setState(next);
-    void api.profile
-      .update({ onboarding: serializeOnboarding(next) } as never)
-      .catch(() => undefined)
-      .finally(() => router.replace(WORKSPACE));
+    try {
+      // Do not let a prior in-progress save overwrite the final choice.
+      await pendingWrite.current;
+      await api.profile.update({ onboarding: serializeOnboarding(next) } as never, AbortSignal.timeout(SETUP_SAVE_TIMEOUT_MS));
+      setLeaving(true);
+      router.replace(WORKSPACE);
+    } catch {
+      finishing.current = false;
+      setSaving(false);
+      setSaveError(true);
+    }
   }, [state, router]);
+  const enterWorkspace = useCallback(() => { void finishSetup('completed'); }, [finishSetup]);
+  const skipSetup = useCallback(() => { void finishSetup('skipped'); }, [finishSetup]);
 
   const connectGitHub = useCallback(async () => {
     // Leaves the tab, so the way back has to be recorded before it goes.
@@ -274,11 +286,12 @@ export function OnboardingFlow({ initial }: { initial: OnboardingState }) {
     <div className="xv-onb" data-leaving={leaving ? 'true' : 'false'}>
       <header className="xv-onb__bar">
         <Logo href={null} height={30} variant="header" className="xv-onb__mark" />
-        <button type="button" onClick={skipSetup} className="xv-onb-skip-global">
-          Skip setup
+        <button type="button" onClick={skipSetup} className="xv-onb-skip-global" disabled={saving}>
+          {saving ? 'Saving setup…' : 'Skip setup'}
         </button>
       </header>
 
+      {saveError && <p role="alert" className="px-4 text-center text-sm">Setup could not be saved. Please try again.</p>}
       <main className="xv-onb__stage">
         <OnboardingCardStack items={items} activeIndex={activeIndex} />
       </main>

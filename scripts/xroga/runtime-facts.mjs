@@ -37,8 +37,8 @@ export const evidence=[...historicalEvidence,googleEvidence];
 const current={
   frontend:{evidence:[googleEvidence.id],health:'Accepted production frontend and authenticated API routing in the dated zero-Fly receipt. New Phase4 cookie/security release is not deployed or accepted.'},
   api:{provider:'Google Cloud Run',hosts:['api.xroga.com'],resource:'xroga-api-google',region:'us-east4',
-    sources:['Dockerfile.api','backend/src/index.ts','backend/src/config/platformEnvironment.ts','scripts/infrastructure/cloud-run-release-gate.mjs',receiptPath],
-    keys:/^(PORT|NODE_ENV|API_PUBLIC_URL|FRONTEND_URL|XROGA_RELEASE_SHA|GITHUB_SHA|XROGA_PLATFORM_)/,
+    sources:['Dockerfile.api','backend/src/index.ts','backend/src/config/platformEnvironment.ts','backend/src/services/browserPushService.ts','scripts/infrastructure/cloud-run-release-gate.mjs',receiptPath],
+    keys:/^(PORT|NODE_ENV|API_PUBLIC_URL|FRONTEND_URL|XROGA_RELEASE_SHA|GITHUB_SHA|XROGA_VAPID_|XROGA_PLATFORM_)/,
     outbound:['supabase','r2','google-execution','google-delivery','credential-store','cloudflare-voice'],evidence:[googleEvidence.id],
     auth:'Native dedicated Google service identity, protected Secret Manager bundle, existing issued Supabase tenant context and canonical authority. No Fly federation or personal developer identity.',
     health:'Accepted dated /health and /ready plus authenticated production infrastructure acceptance. Future Phase4 source still requires its own release gates.'},

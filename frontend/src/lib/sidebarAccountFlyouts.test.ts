@@ -52,7 +52,7 @@ test('tips and ordinary notifications dismiss after five seconds', () => {
 test('avatar editing and account navigation remain separate controls', () => {
   assert.match(SIDEBAR, /size="sidebarCompact"[\s\S]*?onClick=\{\(\) => setAvatarPickerOpen\(true\)\}/);
   assert.match(SIDEBAR, /<ProfileQuickMenu[\s\S]*?displayName=\{userName\}[\s\S]*?email=\{email\}/);
-  assert.match(SIDEBAR, /<UpgradeActionButton compact \/>/);
+  assert.match(PROFILE_MENU, /<UpgradeActionButton \/>/);
   assert.match(UPGRADE_ACTION, /xv-upgrade-action__fold/);
   assert.match(UPGRADE_ACTION, /Array\.from\(\{ length: 10 \}/);
 });

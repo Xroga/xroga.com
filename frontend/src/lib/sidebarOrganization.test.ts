@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
+import vm from 'node:vm';
+import ts from 'typescript';
 import { meaningfulSidebarTitle, visiblePage, sortPinned } from './sidebarOrganization';
 
 const read=(p:string)=>readFileSync(new URL(p,import.meta.url),'utf-8');
@@ -66,4 +68,38 @@ test('unscoped browser cache cannot appear as another account history or migrate
  assert.match(sidebar,/verifiedIds\.has\(e\.id\)/);
  assert.match(sidebar,/verifiedIds\.has\(e\.id\)\)/);
  assert.doesNotMatch(sidebar,/Opened terminal — start chatting or building/);
+});
+
+test('a queued sidebar save cannot move a previous account’s conversation to the new account', async () => {
+ let activeUser = 'account-a';
+ const timers: Array<() => void> = [];
+ const writes: Array<{ user_id: string; id: string }> = [];
+ const client = {
+  auth: { getUser: async () => ({ data: { user: { id: activeUser } } }) },
+  from: () => ({ upsert: async (row: { user_id: string; id: string }) => { writes.push(row); return {}; } }),
+ };
+ const exports: Record<string, (...args: unknown[]) => void> = {};
+ const code = ts.transpileModule(read('./sidebarOrganization.ts'), {
+  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+ }).outputText;
+ vm.runInNewContext(code, {
+  exports, window: { dispatchEvent() {} }, Event, console,
+  require: (name: string) => {
+   if (name === '@/lib/supabase/client') return { createClient: () => client };
+   if (name === '@/lib/storageSafe') return { sidebarMessagesForStorage: (messages: unknown[]) => messages };
+   if (name === '@/lib/sidebarProjectTask') return {};
+   throw new Error('Unexpected fixture dependency: ' + name);
+  },
+  setTimeout: (callback: () => void) => timers.push(callback), clearTimeout() {},
+ });
+ const entry = { id: 'conversation', title: 'Conversation', messages: [{ role: 'assistant', content: 'Private response' }] };
+ exports.scheduleSidebarChatSave('account-a', entry);
+ activeUser = 'account-b';
+ timers.shift()!();
+ await new Promise<void>(resolve => setImmediate(resolve));
+ assert.deepEqual(writes, []);
+ exports.scheduleSidebarChatSave('account-b', entry);
+ timers.shift()!();
+ await new Promise<void>(resolve => setImmediate(resolve));
+ assert.deepEqual(writes.map(({ user_id, id }) => [user_id, id]), [['account-b', 'conversation']]);
 });

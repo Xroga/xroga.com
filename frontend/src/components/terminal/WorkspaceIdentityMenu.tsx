@@ -3,14 +3,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   AlertTriangle,
-  Archive,
-  CheckCircle2,
-  ChevronRight,
-  ExternalLink,
   Globe2,
   Loader2,
   Plus,
-  Settings2,
   Sparkles,
   Undo2,
 } from 'lucide-react';
@@ -19,7 +14,6 @@ import { GithubGlyphIcon } from '@/components/icons/animated/GithubGlyphIcon';
 import { TerminalPromptIcon } from '@/components/icons/animated/TerminalPromptIcon';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { api } from '@/lib/api';
-import { removeTerminalHistoryEntry } from '@/lib/terminalHistory';
 import { rollbackProjectUpdate } from '@/lib/rollbackProjectUpdate';
 import { useProjectWorkspaceStore, type ProjectWorkspaceStatus } from '@/store/useProjectWorkspaceStore';
 import { AnchoredPortalPopover } from '@/components/ui/AnchoredPortalPopover';
@@ -57,8 +51,8 @@ function formatRelative(timestamp: number | null): string {
   return new Date(timestamp).toLocaleDateString();
 }
 
-export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boolean }) {
-  const { sessionId, setPrompt, startNewChat } = useTerminalChat();
+export function WorkspaceIdentityMenu({ incognito = false, embedded = false, onAction }: { incognito?: boolean; embedded?: boolean; onAction?: () => void }) {
+  const { setPrompt, startNewChat } = useTerminalChat();
   const activeProject = useProjectWorkspaceStore((state) => state.activeProjectContext);
   const deployUrl = useProjectWorkspaceStore((state) => state.deployUrl);
   const githubRepoUrl = useProjectWorkspaceStore((state) => state.githubRepoUrl);
@@ -69,7 +63,6 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
   const lastFileTrail = useProjectWorkspaceStore((state) => state.lastFileTrail);
 
   const [open, setOpen] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const [undoBusy, setUndoBusy] = useState(false);
   const [syncConfidence, setSyncConfidence] = useState<SyncConfidence>('idle');
   const rootRef = useRef<HTMLDivElement>(null);
@@ -87,7 +80,7 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
   // Real GitHub sync confidence. Opening the menu may perform this cheap GitHub read,
   // but it never spends AI/model tokens.
   useEffect(() => {
-    if (!open || !repoIdentity.fullName || !visibleCommitSha) {
+    if (!(open || embedded) || !repoIdentity.fullName || !visibleCommitSha) {
       setSyncConfidence('idle');
       return;
     }
@@ -113,7 +106,7 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
     return () => {
       cancelled = true;
     };
-  }, [open, repoIdentity.branch, repoIdentity.fullName, visibleCommitSha]);
+  }, [open, embedded, repoIdentity.branch, repoIdentity.fullName, visibleCommitSha]);
 
   const repoUrl = useMemo(
     () =>
@@ -141,26 +134,21 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
     if (!url) return;
     window.open(url, '_blank', 'noopener,noreferrer');
     setOpen(false);
+    onAction?.();
   };
 
   const prepareProjectReview = () => {
     setPrompt(PROJECT_REVIEW_PROMPT);
     setOpen(false);
+    onAction?.();
     toast.success('Project review prompt is ready');
   };
 
   const newProjectTask = () => {
     startNewChat();
     setOpen(false);
+    onAction?.();
     toast.success(`New task started in ${repoIdentity.label}`);
-  };
-
-  const archiveCurrentTask = () => {
-    const archivedId = sessionId;
-    startNewChat();
-    removeTerminalHistoryEntry(archivedId);
-    setOpen(false);
-    toast.success('Task archived');
   };
 
   const undoLastChange = async () => {
@@ -217,7 +205,90 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
           ? 'Undo unavailable — cannot verify GitHub'
           : 'Undo last Xroga change';
 
-  return (
+  // Display-only shortening. Real GitHub identity, links and permissions remain unchanged.
+  const compactRepoName = repoIdentity.label.replace(/-20\d{6}-\d{6}$/, '');
+  const projectActionClass = 'inline-flex min-w-0 items-center justify-center gap-1.5 rounded-lg px-1.5 py-1.5 text-[11px] font-medium text-[var(--muted)] transition-colors hover:bg-[var(--accent-dim)] hover:text-[var(--foreground)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]';
+
+  const projectMenu = !repoIdentity.fullName ? (
+    <div className="px-2 py-2">
+      <strong className="block text-xs">Xroga · Black Hole</strong>
+      <p className="mt-1 text-[11px] leading-relaxed text-[var(--muted)]">
+        Describe the work. Xroga selects available capabilities automatically.
+      </p>
+    </div>
+  ) : (
+    <div className="min-w-0 px-1 pb-1 pt-0.5">
+      <div className="min-w-0 px-1.5 pb-1.5 pt-1">
+        <div className="flex min-w-0 items-center gap-2">
+          <GithubGlyphIcon size={15} className="shrink-0 opacity-70" />
+          <button type="button" className="min-w-0 flex-1 truncate text-left text-[12px] font-semibold leading-5"
+            title={`Copy repository: ${repoIdentity.fullName} · ${STATUS_LABEL[visibleStatus]}`}
+            aria-label={`Copy repository name ${repoIdentity.fullName}`}
+            onClick={() => void navigator.clipboard.writeText(repoIdentity.fullName)
+              .then(() => toast.success('Repository name copied'))
+              .catch(() => toast.error('Could not copy repository name'))}>
+            {compactRepoName}
+          </button>
+
+        </div>
+        <div className="mt-0.5 flex min-w-0 items-center gap-1.5 pl-[23px] text-[10px] text-[var(--muted)]" title={repoIdentity.branch}>
+          <span className="max-w-full truncate">{repoIdentity.branch || 'Default branch'}</span>
+          {visibleLastUpdateAt ? <span className="shrink-0 opacity-75">· {formatRelative(visibleLastUpdateAt)}</span> : null}
+        </div>
+        {visibleCommitSha && (syncConfidence === 'moved' || syncConfidence === 'unavailable') ? (
+          <div role="status" className="mt-1 flex items-center gap-1.5 pl-[23px] text-[10px] text-amber-500">
+            <AlertTriangle className="h-3 w-3 shrink-0" aria-hidden="true" />
+            <span className="min-w-0 truncate" title={syncText}>{syncText}</span>
+          </div>
+        ) : null}
+      </div>
+
+      <button role="menuitem" type="button" onClick={prepareProjectReview}
+        title="Ask Xroga about this project — health, risks & next steps"
+        className="my-0.5 flex w-full items-center gap-2 rounded-lg bg-[var(--accent-dim)] px-2.5 py-2 text-left text-[11px] font-semibold text-[var(--foreground)] transition-colors hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]">
+        <Sparkles className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+        <span className="min-w-0 flex-1 truncate">Ask Xroga</span>
+        <span className="text-[10px] font-normal text-[var(--muted)]">Project review</span>
+      </button>
+
+      {hasUndoData ? (
+        <button role="menuitem" type="button" disabled={!undoEnabled}
+          title={undoText} onClick={() => void undoLastChange()}
+          className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-[11px] text-[var(--foreground)] hover:bg-[var(--accent-dim)] disabled:cursor-not-allowed disabled:opacity-45">
+          {undoBusy || syncConfidence === 'checking'
+            ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+            : <Undo2 className="h-3.5 w-3.5" aria-hidden="true" />}
+          <span className="truncate">{undoText}</span>
+        </button>
+      ) : null}
+
+      <div className={`grid gap-1 ${visibleDeployUrl ? 'grid-cols-3' : 'grid-cols-2'}`}>
+        {repoUrl ? (
+          <button role="menuitem" type="button" title="Open on GitHub" aria-label="Open on GitHub"
+            onClick={() => openExternal(repoUrl)} className={projectActionClass}>
+            <GithubGlyphIcon size={14} className="shrink-0" /><span>GitHub</span>
+          </button>
+        ) : null}
+        {visibleDeployUrl ? (
+          <button role="menuitem" type="button" title="Open live site" aria-label="Open live site"
+            onClick={() => openExternal(visibleDeployUrl)} className={projectActionClass}>
+            <Globe2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" /><span>Live site</span>
+          </button>
+        ) : null}
+        <button role="menuitem" type="button" title="New task in this project" aria-label="New task in this project"
+          onClick={newProjectTask} className={projectActionClass}>
+          <Plus className="h-3.5 w-3.5 shrink-0" aria-hidden="true" /><span>New task</span>
+        </button>
+      </div>
+
+    </div>
+  );
+
+  return embedded ? (
+    <section className="min-w-0 border-b border-[var(--card-border)] px-0.5 pb-1" aria-label="Connected project actions">
+      {projectMenu}
+    </section>
+  ) : (
     <div ref={rootRef} className="xv-workspace-identity">
       <button
         type="button"
@@ -235,138 +306,7 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
       <AnchoredPortalPopover open={open} onClose={() => setOpen(false)} anchorRef={rootRef} placement="bottom-start" width={repoIdentity.fullName ? 290 : 236} ariaLabel={repoIdentity.fullName ? 'Project actions' : 'About Xroga Black Hole'}
           className="absolute left-0 top-[calc(100%+.45rem)] z-[1000] overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-1.5 text-[var(--foreground)] shadow-[0_20px_60px_rgba(0,0,0,.28)]"
         >
-          {!repoIdentity.fullName ? <div className="px-2.5 py-2"><strong className="block text-xs">Xroga · Black Hole</strong><span className="mt-1 block text-[11px] text-[var(--muted)]">Super Intelligence</span><p className="mb-0 mt-2 text-[11px] leading-relaxed">Describe the work. Xroga selects available capabilities automatically.</p></div> : <>
-          <div className="px-2.5 pb-2 pt-2">
-            <div className="flex items-start gap-2.5">
-              <div className="min-w-0 flex-1">
-                <button type="button" className="block w-full break-all text-left text-sm font-semibold" title="Copy full repository name" onClick={() => { if (repoIdentity.fullName) void navigator.clipboard.writeText(repoIdentity.fullName).then(() => toast.success('Repository name copied')).catch(() => toast.error('Could not copy repository name')); }}>{repoIdentity.fullName || repoIdentity.label}</button>
-                <p className="mt-0.5 break-all font-mono text-[10px] text-[var(--muted)]">
-                  {repoIdentity.fullName || 'No GitHub repository'} · {repoIdentity.branch}
-                </p>
-              </div>
-              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[var(--card-border)] px-2 py-1 text-[10px] font-medium">
-                <span className={`h-1.5 w-1.5 rounded-full ${statusDotClass(visibleStatus)}`} />
-                {STATUS_LABEL[visibleStatus]}
-              </span>
-            </div>
-
-            <div className="mt-2 flex items-center gap-1.5 text-[10px] text-[var(--muted)]">
-              {syncConfidence === 'checking' ? (
-                <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
-              ) : syncConfidence === 'synced' ? (
-                <CheckCircle2 className="h-3 w-3 text-emerald-500" aria-hidden="true" />
-              ) : syncConfidence === 'moved' || syncConfidence === 'unavailable' ? (
-                <AlertTriangle className="h-3 w-3 text-amber-500" aria-hidden="true" />
-              ) : null}
-              <span>{syncText}</span>
-              {visibleLastUpdateAt ? (
-                <span>· updated {formatRelative(visibleLastUpdateAt)}</span>
-              ) : null}
-            </div>
-          </div>
-
-          <div className="my-1 h-px bg-[var(--card-border)]" />
-
-          {hasUndoData ? (
-            <button
-              role="menuitem"
-              type="button"
-              disabled={!undoEnabled}
-              onClick={() => void undoLastChange()}
-              className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-xs font-semibold transition hover:bg-[var(--accent-dim)] disabled:cursor-not-allowed disabled:opacity-45"
-            >
-              {undoBusy || syncConfidence === 'checking' ? (
-                <Loader2 className="h-4 w-4 shrink-0 animate-spin" />
-              ) : (
-                <Undo2 className="h-4 w-4 shrink-0" />
-              )}
-              <span>{undoText}</span>
-            </button>
-          ) : null}
-
-          <button
-            role="menuitem"
-            type="button"
-            onClick={prepareProjectReview}
-            className="flex w-full items-start gap-2.5 rounded-lg px-2.5 py-2 text-left transition hover:bg-[var(--accent-dim)]"
-          >
-            <Sparkles className="mt-0.5 h-4 w-4 shrink-0" />
-            <span className="min-w-0">
-              <span className="block text-xs font-semibold">Ask Xroga about this project</span>
-              <span className="mt-0.5 block text-[10px] text-[var(--muted)]">
-                Health, risks & what to do next
-              </span>
-            </span>
-          </button>
-
-          <div className="my-1 h-px bg-[var(--card-border)]" />
-
-          {repoUrl ? (
-            <button
-              role="menuitem"
-              type="button"
-              onClick={() => openExternal(repoUrl)}
-              className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-xs transition hover:bg-[var(--accent-dim)]"
-            >
-              <GithubGlyphIcon size={16} className="shrink-0" />
-              <span className="flex-1">Open on GitHub</span>
-              <ExternalLink className="h-3.5 w-3.5 opacity-55" />
-            </button>
-          ) : null}
-
-          {visibleDeployUrl ? (
-            <button
-              role="menuitem"
-              type="button"
-              onClick={() => openExternal(visibleDeployUrl)}
-              className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-xs transition hover:bg-[var(--accent-dim)]"
-            >
-              <Globe2 className="h-4 w-4 shrink-0" />
-              <span className="flex-1">Open live site</span>
-              <ExternalLink className="h-3.5 w-3.5 opacity-55" />
-            </button>
-          ) : null}
-
-          <button
-            role="menuitem"
-            type="button"
-            onClick={newProjectTask}
-            className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-xs transition hover:bg-[var(--accent-dim)]"
-          >
-            <Plus className="h-4 w-4 shrink-0" />
-            <span>New task in this project</span>
-          </button>
-
-          <div className="my-1 h-px bg-[var(--card-border)]" />
-
-          <button
-            role="menuitem"
-            type="button"
-            aria-expanded={settingsOpen}
-            onClick={() => setSettingsOpen((value) => !value)}
-            className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-xs text-[var(--muted)] transition hover:bg-[var(--accent-dim)] hover:text-[var(--foreground)]"
-          >
-            <Settings2 className="h-4 w-4 shrink-0" />
-            <span className="flex-1">Project settings</span>
-            <ChevronRight
-              className={`h-3.5 w-3.5 transition-transform ${settingsOpen ? 'rotate-90' : ''}`}
-            />
-          </button>
-
-          {settingsOpen ? (
-            <div className="ml-6 border-l border-[var(--card-border)] pl-1.5">
-              <button
-                role="menuitem"
-                type="button"
-                onClick={archiveCurrentTask}
-                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-[11px] text-[var(--muted)] transition hover:bg-red-500/10 hover:text-red-500"
-              >
-                <Archive className="h-3.5 w-3.5" />
-                <span>Archive current task</span>
-              </button>
-            </div>
-          ) : null}
-          </>}
+          {projectMenu}
       </AnchoredPortalPopover>
     </div>
   );

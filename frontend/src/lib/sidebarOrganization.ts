@@ -1,6 +1,6 @@
 'use client';
 import { createClient } from '@/lib/supabase/client';
-import { messagesForStorage } from '@/lib/storageSafe';
+import { isEmptyAssistantPlaceholder, sidebarMessagesForStorage } from '@/lib/storageSafe';
 import type { TerminalHistoryEntry } from '@/lib/terminalHistory';
 import { getActiveSidebarProject, type ActiveSidebarProject } from '@/lib/sidebarProjectTask';
 
@@ -46,15 +46,21 @@ export async function loadSidebarChats(userId:string,offset=0,limit=100):Promise
 export async function loadSidebarChatById(userId:string,id:string):Promise<TerminalHistoryEntry|null>{
  const {data,error}=await owned(userId).from('xroga_sidebar_chats').select('*').eq('user_id',userId).eq('id',id).maybeSingle();
  if(error) throw error; if(!data) return null;
- return {id:data.id,title:data.title,prompt:data.prompt,preview:data.preview,messages:Array.isArray(data.messages)?data.messages:[],
+ const messages: TerminalHistoryEntry['messages'] = Array.isArray(data.messages) ? data.messages : [];
+ return {id:data.id,title:data.title,prompt:data.prompt,preview:data.preview,messages:messages.map(message =>
+  message && isEmptyAssistantPlaceholder(message)
+   ? { ...message, content: 'This reply was interrupted before it could be saved. Send your question again to retry.' }
+   : message),
  kind:data.kind||'chat',status:data.status||'active',messageCount:data.message_count||0,createdAt:data.created_at,updatedAt:data.updated_at} as TerminalHistoryEntry;
 }
 export async function saveSidebarChat(userId:string,entry:TerminalHistoryEntry):Promise<void>{
  if(entry.githubRepoName?.includes('/')||!entry.messages?.length) return;
+ const messages=sidebarMessagesForStorage(entry.messages).slice(-300);
+ if(!messages.length) return;
  const {error}=await owned(userId).from('xroga_sidebar_chats').upsert({
   user_id:userId,id:entry.id,title:meaningfulSidebarTitle(entry.title,entry.prompt),prompt:(entry.prompt||'').slice(0,20000),
-  preview:(entry.preview||'').slice(0,500),messages:messagesForStorage(entry.messages).slice(-300),
-  kind:entry.kind,status:entry.status||'active',message_count:entry.messageCount,
+  preview:(entry.preview||'').slice(0,500),messages,
+  kind:entry.kind,status:entry.status||'active',message_count:messages.length,
   created_at:entry.createdAt,updated_at:entry.updatedAt,
  },{onConflict:'user_id,id'});
  if(error) throw error;
@@ -100,18 +106,30 @@ export async function deleteSidebarChat(userId:string,id:string):Promise<void>{
 
 /** Coalesce non-repository chat saves; never block message rendering on cloud I/O. */
 const pendingChats=new Map<string,ReturnType<typeof setTimeout>>();
-export function scheduleSidebarChatSave(entry:TerminalHistoryEntry):void{
- if(typeof window==='undefined'||entry.githubRepoName?.includes('/')||!entry.messages?.length) return;
- const prev=pendingChats.get(entry.id);
+const activeChatSaves=new Map<string,Promise<void>>();
+export function scheduleSidebarChatSave(ownerId:string,entry:TerminalHistoryEntry,immediate=false):void{
+ if(typeof window==='undefined'||!ownerId||entry.githubRepoName?.includes('/')||!entry.messages?.length) return;
+ const key=ownerId+':'+entry.id;
+ const prev=pendingChats.get(key);
  if(prev) clearTimeout(prev);
- pendingChats.set(entry.id,setTimeout(()=>{
-  pendingChats.delete(entry.id);
-  void createClient().auth.getUser().then(async ({data,error})=>{
-    if(error||!data.user) return;
-    try{ await saveSidebarChat(data.user.id,entry); window.dispatchEvent(new Event('xroga-sidebar-chats-changed')); }
-    catch(e){ console.warn('[sidebar] chat sync unavailable:',e); }
+ const save=()=>{
+  pendingChats.delete(key);
+  const write=(activeChatSaves.get(key) ?? Promise.resolve()).then(async ()=>{
+    // A sign-out or account switch can happen while a save is debounced.
+    // Never reassign an existing draft to whoever signs in next.
+    const {data,error}=await createClient().auth.getUser();
+    if(error||data.user?.id!==ownerId) return;
+    await saveSidebarChat(ownerId,entry);
+    window.dispatchEvent(new Event('xroga-sidebar-chats-changed'));
+  }).catch(()=>{
+    console.warn('[sidebar] chat sync unavailable');
+  }).finally(()=>{
+    if(activeChatSaves.get(key)===write) activeChatSaves.delete(key);
   });
- },1500));
+  activeChatSaves.set(key,write);
+ };
+ if(immediate) save();
+ else pendingChats.set(key,setTimeout(save,1500));
 }
 
 export async function swapSidebarPins(userId:string,first:{item_type:SidebarKind;item_id:string},second:{item_type:SidebarKind;item_id:string}):Promise<void>{

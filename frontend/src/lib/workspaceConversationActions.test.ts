@@ -19,13 +19,12 @@ test('workspace title dropdown directly exposes real conversation actions', () =
   assert.doesNotMatch(menu, /New chat<\/button>|Move to section|move-section/);
 });
 
-test('workspace direct actions reuse the existing sharing, organizing and management handlers', () => {
-  for (const label of ['Share private link', 'Copy link', 'Open in new tab', 'Rename', 'Unpin', 'Pin', 'Move to project', 'Archive', 'Delete']) {
+test('workspace actions reuse the existing organizing and management handlers', () => {
+  for (const label of ['Rename', 'Unpin', 'Pin', 'Move to project', 'Archive', 'Delete']) {
     assert.ok(menu.includes(label), `Missing action: ${label}`);
   }
-  assert.match(menu, /navigator\.share\(/);
-  assert.match(menu, /navigator\.clipboard\.writeText\(/);
-  assert.match(menu, /encodeURIComponent\(sessionId\)/);
+  assert.doesNotMatch(menu, /shareLink\(|navigator\.share\(|Copy link|Share private link/);
+  assert.match(menu, /styles\.primaryActionRow/);
   assert.match(menu, /changeSidebarMeta\(accountId, 'conversation', sessionId, changes\)/);
   assert.match(menu, /loadSidebarProjects\(accountId, 0, 100\)/);
   assert.match(menu, /deleteSidebarChat\(accountId, sessionId\)/);

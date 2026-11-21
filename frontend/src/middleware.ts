@@ -1,7 +1,18 @@
-import { type NextRequest } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import { updateSession } from '@/lib/supabase/middleware';
+import { isHostedWorkspaceRoute } from '../../scripts/security/hosted-workspace-staging.mjs';
 
 export async function middleware(request: NextRequest) {
+  // Keep these exact staging bearer requests on the API's JSON auth path.
+  if (process.env.NEXT_PUBLIC_XROGA_WORKSPACE_STAGING_ORIGIN) {
+    const path = request.nextUrl.pathname;
+    if (isHostedWorkspaceRoute(path, request.method)) return NextResponse.next({ request });
+    if (path === '/api/phase1' || path.startsWith('/api/phase1/')) {
+      return NextResponse.json({ error: 'Staging API request unavailable.' }, {
+        status: 404, headers: { 'cache-control': 'private, no-store', 'x-content-type-options': 'nosniff' },
+      });
+    }
+  }
   return await updateSession(request);
 }
 
@@ -21,6 +32,6 @@ export async function middleware(request: NextRequest) {
  */
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|opengraph-image|manifest.webmanifest|robots.txt|sitemap.xml|llms.txt|\\.well-known|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico|txt|xml|woff|woff2|ttf)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|opengraph-image|manifest.webmanifest|xroga-notifications-sw.js|robots.txt|sitemap.xml|llms.txt|\\.well-known|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico|txt|xml|woff|woff2|ttf)$).*)',
   ],
 };

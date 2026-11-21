@@ -3,7 +3,6 @@
 import { useMemo, useState } from 'react';
 import {
   CalendarDays,
-  ChevronRight,
   File,
   Folder,
   LoaderCircle,
@@ -56,7 +55,7 @@ function TabsRenderer({ block }: { block: Extract<OrganizerBlock, { type: 'tabs'
 }
 
 function AccordionRenderer({ block }: { block: Extract<OrganizerBlock, { type: 'accordion' }> }) {
-  return <Surface title={block.title ?? 'Details'} description={block.description} state={block.state}><div className="divide-y divide-[var(--border)]">{block.items.map((item) => <details key={item.id} open={item.open} className="group"><summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-medium"><span>{item.title}</span><ChevronRight className="h-4 w-4 shrink-0 text-[var(--muted)] transition-transform group-open:rotate-90 motion-reduce:transition-none" aria-hidden="true" /></summary><p className="whitespace-pre-wrap px-4 pb-4 text-sm leading-6 text-[var(--muted)]">{item.content}</p></details>)}</div></Surface>;
+  return <Surface title={block.title ?? 'Details'} description={block.description} state={block.state}><div className="divide-y divide-[var(--border)]">{block.items.map((item) => <section key={item.id} className="px-4 py-3"><h4 className="mb-1 text-sm font-semibold">{item.title}</h4><p className="whitespace-pre-wrap text-sm leading-6 text-[var(--muted)]">{item.content}</p></section>)}</div></Surface>;
 }
 
 function FileTreeRenderer({ block }: { block: Extract<OrganizerBlock, { type: 'file-tree' }> }) {
@@ -95,7 +94,7 @@ function CalendarRenderer({ block }: { block: Extract<OrganizerBlock, { type: 'c
 function SourceListRenderer({ block }: { block: Extract<OrganizerBlock, { type: 'source-list' }> }) {
   return (
     <Surface title={block.title ?? 'Sources'} description={block.description} state={block.state}>
-      <div className="p-4"><ResponseSources sources={block.sources.map((source) => ({ title: source.title, url: source.url, snippet: source.excerpt ?? '', siteDomain: source.domain }))} /></div>
+      <div className="p-4"><ResponseSources sources={block.sources.map((source) => ({ title: source.title, url: source.url, siteName: source.domain }))} /></div>
     </Surface>
   );
 }
