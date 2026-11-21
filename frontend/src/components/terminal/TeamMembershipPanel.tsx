@@ -10,7 +10,7 @@ type Team = { id: string; name: string; role: Role; status: 'active' | 'pending'
 type Member = { userId: string; name: string; role: Role; status: 'active' | 'pending' };
 type Detail = { members: Member[]; activity: Array<{ id: string; actor_user_id: string | null; action: string; created_at: string }> };
 type Command = { action: 'create'; requestId: string; name: string }
-  | { action: 'invite'; teamId: string; email: string }
+  | { action: 'invite' | 'resend' | 'revoke'; teamId: string; email: string; requestId: string }
   | { action: 'accept' | 'decline'; teamId: string }
   | { action: 'remove'; teamId: string; userId: string }
   | { action: 'set_role'; teamId: string; userId: string; role: 'admin' | 'member' };
@@ -29,6 +29,7 @@ function initials(name: string) {
 function message(error: unknown) {
   if (error instanceof ApiError && error.status === 403) return 'Teams requires an active individual Paid subscription.';
   if (error instanceof ApiError && error.status === 404) return 'Team access is no longer available.';
+  if (error instanceof ApiError && error.data?.code === 'INVITE_EMAIL_UNAVAILABLE') return 'Invitation email is not configured in this environment.';
   return 'The team request couldn’t be completed. Please try again.';
 }
 
@@ -46,6 +47,7 @@ export function TeamMembershipPanel({ userId }: { userId: string }) {
   const [busy, setBusy] = useState(false);
   const submitting = useRef(false);
   const createAttempt = useRef<{ requestId: string; name: string } | null>(null);
+  const inviteAttempt = useRef<{ fingerprint: string; requestId: string } | null>(null);
   const active = teams?.find(team => team.id === selected && team.status === 'active');
   const activeId = active?.id;
 
@@ -79,9 +81,12 @@ export function TeamMembershipPanel({ userId }: { userId: string }) {
       });
       if (command.action === 'create' && data.id) { createAttempt.current = null; setSelected(data.id); setName(''); }
       if (command.action === 'accept') setSelected(command.teamId);
-      if (command.action === 'invite') {
+      if (command.action === 'invite' || command.action === 'resend' || command.action === 'revoke') {
+        inviteAttempt.current = null;
         setEmail('');
-        setNotice('If this address matches a verified account, an invitation appears in its Teams panel. No email was sent.');
+        setNotice(command.action === 'revoke'
+          ? 'Revoke request processed. If a pending invitation matched, it can no longer be accepted.'
+          : 'Request processed. If the invitation is eligible and within send limits, Xroga attempts email delivery.');
       }
       setRevision(value => value + 1);
     } catch (err) { setError(message(err)); }
@@ -121,10 +126,19 @@ export function TeamMembershipPanel({ userId }: { userId: string }) {
     {active && detail ? <>
       {(active.role === 'owner' || active.role === 'admin') ? <form className="grid gap-2" onSubmit={event => {
         event.preventDefault();
-        void submit({ action: 'invite', teamId: active.id, email });
+        const value = (event.nativeEvent as SubmitEvent).submitter?.getAttribute('value');
+        const action = value === 'resend' || value === 'revoke' ? value : 'invite';
+        const recipient = email.trim().toLowerCase();
+        const fingerprint = JSON.stringify([active.id, action, recipient]);
+        if (inviteAttempt.current?.fingerprint !== fingerprint) {
+          inviteAttempt.current = { fingerprint, requestId: crypto.randomUUID() };
+        }
+        void submit({ action, teamId: active.id, email: recipient, requestId: inviteAttempt.current.requestId });
       }}>
         <label>Account email <input type="email" required maxLength={254} value={email} onChange={event => setEmail(event.target.value)} /></label>
-        <button type="submit" disabled={busy}>Invite in Xroga</button>
+        <button type="submit" value="invite" disabled={busy}>Send invitation</button>
+        <button type="submit" value="resend" disabled={busy}>Resend pending invitation</button>
+        <button type="submit" value="revoke" disabled={busy}>Revoke pending invitation</button>
       </form> : null}
       <h3>Members</h3>
       <ul>{detail.members.map(member => {

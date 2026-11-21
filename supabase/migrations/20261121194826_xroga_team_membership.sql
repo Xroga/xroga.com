@@ -2,15 +2,15 @@
 -- b6c8f713113474d935f8601e1417a7dc0ac31017. See docs/third-party/elenchus.txt.
 -- Service-only RPC; Paid entitlement and verified actor are checked by Xroga's API.
 begin;
-create table public.xroga_teams (
+create table if not exists public.xroga_teams (
   id uuid primary key default gen_random_uuid(),
   name text not null check (char_length(btrim(name)) between 1 and 80),
   owner_user_id uuid not null references auth.users(id) on delete restrict,
   created_at timestamptz not null default now()
 );
-create index xroga_teams_owner_idx on public.xroga_teams(owner_user_id);
+create index if not exists xroga_teams_owner_idx on public.xroga_teams(owner_user_id);
 
-create table public.xroga_team_members (
+create table if not exists public.xroga_team_members (
   team_id uuid not null references public.xroga_teams(id) on delete cascade,
   user_id uuid not null references auth.users(id) on delete cascade,
   role text not null check (role in ('owner', 'admin', 'member')),
@@ -22,11 +22,11 @@ create table public.xroga_team_members (
   check (status <> 'pending' or invited_until is not null),
   primary key (team_id, user_id)
 );
-create unique index xroga_team_one_owner_idx on public.xroga_team_members(team_id) where role = 'owner';
-create index xroga_team_members_user_idx on public.xroga_team_members(user_id, status, team_id);
-create index xroga_team_members_inviter_idx on public.xroga_team_members(invited_by);
+create unique index if not exists xroga_team_one_owner_idx on public.xroga_team_members(team_id) where role = 'owner';
+create index if not exists xroga_team_members_user_idx on public.xroga_team_members(user_id, status, team_id);
+create index if not exists xroga_team_members_inviter_idx on public.xroga_team_members(invited_by);
 
-create table public.xroga_team_activity (
+create table if not exists public.xroga_team_activity (
   id uuid primary key default gen_random_uuid(),
   team_id uuid not null references public.xroga_teams(id) on delete cascade,
   actor_user_id uuid references auth.users(id) on delete set null,
@@ -34,9 +34,9 @@ create table public.xroga_team_activity (
   action text not null check (action in ('create','invite','accept','decline','remove','set_role')),
   created_at timestamptz not null default now()
 );
-create index xroga_team_activity_team_idx on public.xroga_team_activity(team_id, created_at desc, id);
-create index xroga_team_activity_actor_idx on public.xroga_team_activity(actor_user_id);
-create index xroga_team_activity_target_idx on public.xroga_team_activity(target_user_id);
+create index if not exists xroga_team_activity_team_idx on public.xroga_team_activity(team_id, created_at desc, id);
+create index if not exists xroga_team_activity_actor_idx on public.xroga_team_activity(actor_user_id);
+create index if not exists xroga_team_activity_target_idx on public.xroga_team_activity(target_user_id);
 
 alter table public.xroga_teams enable row level security;
 alter table public.xroga_team_members enable row level security;
@@ -45,10 +45,10 @@ alter table public.xroga_team_activity enable row level security;
 -- to a browser using a user JWT; the authenticated API applies canonical Paid eligibility.
 revoke all on public.xroga_teams, public.xroga_team_members, public.xroga_team_activity from public, anon, authenticated;
 
-create schema xroga_teams_private;
+create schema if not exists xroga_teams_private;
 revoke all on schema xroga_teams_private from public, anon, authenticated;
 grant usage on schema xroga_teams_private to service_role;
-create function xroga_teams_private.confirmed_invitee(p_actor uuid, p_team uuid, p_email text)
+create or replace function xroga_teams_private.confirmed_invitee(p_actor uuid, p_team uuid, p_email text)
 returns uuid language sql security definer set search_path = '' as $invitee$
   select u.id from auth.users u
   where lower(u.email)=lower(btrim(p_email)) and u.email_confirmed_at is not null
@@ -59,7 +59,7 @@ $invitee$;
 revoke all on function xroga_teams_private.confirmed_invitee(uuid,uuid,text) from public, anon, authenticated;
 grant execute on function xroga_teams_private.confirmed_invitee(uuid,uuid,text) to service_role;
 
-create function public.xroga_team_membership(
+create or replace function public.xroga_team_membership(
   p_actor uuid, p_action text, p_team uuid default null, p_value text default null,
   p_target uuid default null, p_request_id uuid default null
 ) returns jsonb language plpgsql security invoker set search_path = '' as $team$

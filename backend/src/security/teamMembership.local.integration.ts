@@ -67,6 +67,26 @@ export function registerTeamMembershipTests(admin: SupabaseClient, request: ApiR
     assert.equal((await act(member.id, 'detail', { p_team: teamId })).error?.code, '42501');
     assert.equal((await act(owner.id, 'remove', { p_team: teamId, p_target: owner.id })).error?.code, '42501');
     assert.equal((await act(owner.id, 'detail', { p_team: teamId })).error, null);
+    const delivery = (action: string, requestId = randomUUID()) =>
+      admin.rpc('xroga_team_claim_invite_email', { p_actor: owner.id, p_team: teamId, p_email: member.email, p_action: action, p_request: requestId });
+    const sameRequestId = randomUUID();
+    const claims = await Promise.all([delivery('invite', sameRequestId), delivery('invite', sameRequestId)]);
+    for (const claim of claims) assert.equal(claim.error, null);
+    assert.equal(claims.filter(claim => claim.data.claimed === true).length, 1);
+    assert.deepEqual((await delivery('resend')).data, { claimed: false }, 'cooldown blocks resends');
+    const revokeRequest = randomUUID();
+    assert.deepEqual((await delivery('revoke', revokeRequest)).data, { claimed: false });
+    assert.equal((await act(member.id, 'accept', { p_team: teamId })).error?.code, '42501');
+    assert.equal((await act(owner.id, 'invite', { p_team: teamId, p_value: member.email })).error, null);
+    assert.deepEqual((await delivery('revoke', revokeRequest)).data, { claimed: false });
+    assert.equal((await act(member.id, 'list')).data?.[0]?.status, 'pending');
+    const expired = await admin.from('xroga_team_members').update({ invited_until: new Date(Date.now()-60000).toISOString() })
+      .eq('team_id', teamId).eq('user_id', member.id);
+    assert.equal(expired.error, null);
+    assert.equal((await act(member.id, 'accept', { p_team: teamId })).error?.code, '42501');
+    assert.deepEqual((await delivery('resend')).data, { claimed: false }, 'expired invitations cannot be resent');
+    assert.ok((await stranger.client.rpc('xroga_team_claim_invite_email',
+      { p_actor: owner.id, p_team: teamId, p_email: member.email, p_action: 'invite', p_request: randomUUID() })).error);
     // The entire isolated stack is torn down after this suite; never delete application teams via client APIs.
   });
 }

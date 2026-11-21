@@ -24,6 +24,9 @@ export function WorkspacePeopleControls() {
   const drawerRef = useRef<HTMLElement>(null);
   const transcript = messages.filter(message => message.role === 'user' || message.role === 'assistant').map(message => `${message.role === 'user' ? 'You' : 'Xroga'}:\n${message.content}`).join('\n\n');
   useEffect(() => {
+    if (teamMembershipPreviewAvailable() && new URLSearchParams(location.search).get('teamInvites') === '1') setOpen(true);
+  }, []);
+  useEffect(() => {
     if (!open) return;
     const previous = document.activeElement as HTMLElement | null;
     const escape = (event: KeyboardEvent) => {
@@ -51,7 +54,9 @@ export function WorkspacePeopleControls() {
         <section className={styles.teamSection}><h3>Project collaborators</h3><p>Repository collaborators are managed by GitHub. Inviting someone there does not give them Xroga workspace access or charge your plan.</p>{activeProject?.repo ? <a href={`https://github.com/${activeProject.repo}/settings/access`} target="_blank" rel="noreferrer">Manage GitHub access <ExternalLink size={14} /></a> : <p>Connect a GitHub repository to manage its collaborators.</p>}</section>
         {identity.userId && identity.status === 'authenticated' && teamMembershipPreviewAvailable()
           ? <TeamMembershipPanel key={identity.userId} userId={identity.userId} />
-          : <section className={styles.teamSection}><h3>Xroga workspace roles</h3><p>Team membership is available only in the isolated Preview. Sharing a snapshot does not grant team access.</p></section>}
+          : teamMembershipPreviewAvailable() && identity.status === 'guest'
+            ? <section className={styles.teamSection}><h3>Team invitations</h3><a href="/auth/login?next=%2Fworkspace%3FteamInvites%3D1">Sign in to review your invitations</a></section>
+            : <section className={styles.teamSection}><h3>Xroga workspace roles</h3><p>Team membership is available only in the isolated Preview. Sharing a snapshot does not grant team access.</p></section>}
       </aside>
     </div>, document.body) : null}
   </>;
