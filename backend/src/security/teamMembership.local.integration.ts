@@ -99,11 +99,13 @@ export function registerTeamMembershipTests(admin: SupabaseClient, request: ApiR
     assert.equal((await request('/api/team-membership', member.token, 'POST', { action: 'accept', teamId })).status, 200);
     const visibleTeams = await request('/api/team-membership', member.token);
     assert.equal(visibleTeams.status, 200);
-    assert.deepEqual((await visibleTeams.json()).data.map((entry: { id: string; role: string; status: string }) =>
+    const visible = (await visibleTeams.json()) as { data: Array<{ id: string; role: string; status: string }> };
+    assert.deepEqual(visible.data.map(entry =>
       [entry.id, entry.role, entry.status]), [[teamId, 'member', 'active']]);
     const roster = await request(`/api/team-membership/${teamId}`, member.token);
     assert.equal(roster.status, 200);
-    assert.ok((await roster.json()).data.members.some((entry: { userId: string; role: string }) =>
+    const detail = (await roster.json()) as { data: { members: Array<{ userId: string; role: string }> } };
+    assert.ok(detail.data.members.some(entry =>
       entry.userId === member.id && entry.role === 'member'));
     const change = (token: string, command: unknown) => request('/api/team-membership', token, 'POST', command);
     assert.equal((await change(member.token, { action: 'set_role', teamId, userId: member.id, role: 'admin' })).status, 404);
@@ -111,7 +113,9 @@ export function registerTeamMembershipTests(admin: SupabaseClient, request: ApiR
     assert.equal((await change(member.token, { action: 'remove', teamId, userId: owner.id })).status, 404);
     assert.equal((await change(owner.token, { action: 'remove', teamId, userId: member.id })).status, 200);
     assert.equal((await request(`/api/team-membership/${teamId}`, member.token)).status, 404);
-    assert.deepEqual((await (await request('/api/team-membership', member.token)).json()).data, []);
+    const afterRemoval = await request('/api/team-membership', member.token);
+    assert.equal(afterRemoval.status, 200);
+    assert.deepEqual(await afterRemoval.json(), { data: [] });
     // The entire isolated stack is torn down after this suite; never delete application teams via client APIs.
   });
 }
