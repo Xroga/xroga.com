@@ -32,7 +32,7 @@ jobs:
           node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json --test frontend/src/lib/goldenJourneyRendering.test.ts
       - name: Build existing frontend with public fixture configuration
         run: npm run build --workspace=frontend
-      - run: npx playwright install --with-deps chromium
+      - run: bash scripts/ci/install-playwright-chromium.sh
       - name: Existing Playwright guest and denied-founder boundaries
         run: node scripts/xroga/run-golden-browser.mjs
       - name: Preserve fictional-fixture diagnostics (no real users or credentials)

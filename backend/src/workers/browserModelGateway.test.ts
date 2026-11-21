@@ -16,6 +16,22 @@ const ok = (content: string, extra: any = {}) => ({ id: 'cmpl-1', choices: [{ me
 const signal = new AbortController().signal;
 
 describe('browser model gateway (Stagehand ClientLLM through the canonical ledger and route)', () => {
+  it('passes the canonical browser reservation to production transport pacing and settles once', async () => {
+    const { gw, ledger, bodies } = harness(() => ok('Verified'));
+    const prior = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'production';
+    try {
+      await gw.generate({ messages: [{ role: 'user', content: { type: 'text', text: 'read the catalog' } }] },
+        { job: job(), remainingMicros: 2_000_000, signal, authority: fixture.authority });
+    } finally {
+      process.env.NODE_ENV = prior;
+    }
+    assert.equal(ledger.pacing, 1);
+    assert.equal(ledger.pacingRelease, 1);
+    assert.equal(ledger.settled.length, 1);
+    assert.equal(bodies.length, 1);
+  });
+
   it('reserves, calls the canonical route, settles the measured usage, and returns Stagehand structured output', async () => {
     const { gw, ledger, bodies } = harness(() => ok('{"elements":[{"selector":"a.next"}]}'));
     const r = await gw.generate({ systemPrompt: 'sys', messages: [{ role: 'user', content: [{ type: 'text', text: 'find next' }] }], responseFormat: { type: 'json_schema', name: 'Observe result', schema: { type: 'object' } } }, { job: job(), remainingMicros: 2_000_000, signal, authority:fixture.authority });

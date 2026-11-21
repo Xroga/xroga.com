@@ -209,20 +209,20 @@ test('the menu keeps a small deliberate gap above the composer', () => {
   assert.doesNotMatch(MENU, /window\.innerHeight - rect\.top - 1/);
 });
 
-test('the menu is anchored to the composer, not to the plus button', () => {
-  // The portal measures the full composer surface rather than the small trigger.
+test('the compact menu is aligned with its trigger within the viewport', () => {
+  // The composer sets the vertical anchor and the trigger sets the horizontal anchor.
   assert.match(MENU, /className=\{cn\('xv-cba-root shrink-0', className\)\}/);
   assert.match(MENU, /closest<HTMLElement>\('\.xv-chatbar-solid'\)/);
   assert.match(MENU, /const frame = composer\.closest<HTMLElement>\('\.xv-kimi-composer-frame'\) \?\? composer/);
-  assert.match(MENU, /const left = Math\.max\(8, Math\.min\(rect\.left, window\.innerWidth - width - 8\)\)/);
+  assert.match(MENU, /const left = Math\.max\(8, Math\.min\(trigger\.left, window\.innerWidth - width - 8\)\)/);
   assert.match(MENU, /window\.innerHeight - rect\.top \+ 6/);
 });
 
 test('opening the menu overlays the terminal instead of resizing anything', () => {
   assert.match(MENU, /createPortal\(/);
   assert.match(MENU, /document\.body/);
-  assert.match(MENU, /maxHeight:\s*Math\.min\(480, Math\.max\(130, rect\.top - 12\)\)/);
-  assert.match(MENU, /const width = Math\.min\(rect\.width, window\.innerWidth - 16\)/);
+  assert.match(MENU, /maxHeight:\s*Math\.min\(314, Math\.max\(130, rect\.top - 12\)\)/);
+  assert.match(MENU, /const width = Math\.min\(344, window\.innerWidth - 16\)/);
   assert.match(MENU, /window\.addEventListener\('scroll', sync, \{ capture: true, passive: true \}\)/, 'the portal can detach while its dock scrolls');
 });
 
@@ -232,13 +232,13 @@ test('composer panels select the available side and remain viewport bounded on m
   assert.match(MENU, /setMenuStyle\(available >= 160 \?/);
   assert.match(MENU, /position: 'fixed', left, top: rect\.bottom \+ 6/);
   assert.match(MENU, /bottom: Math\.max\(8, window\.innerHeight - rect\.top \+ 6\)/);
-  assert.match(MENU, /const width = Math\.min\(rect\.width, window\.innerWidth - 16\)/);
-  assert.match(MENU, /maxHeight: Math\.max\(120, Math\.min\(440, rect\.top - 12\)\)/);
+  assert.match(MENU, /const width = Math\.min\(344, window\.innerWidth - 16\)/);
+  assert.match(MENU, /maxHeight: Math\.max\(120, Math\.min\(314, rect\.top - 12\)\)/);
   assert.match(MENU, /menuRef\.current\?\.contains\(target\)/);
 });
 
 test('provider connections are one compact menu row, and the detached pill is gone', () => {
-  assert.match(MENU, /<b>Plugins<\/b>/);
+  assert.match(MENU, /<b>Connect Apps<\/b>/);
   assert.match(MENU, /onOpenIntegrations/);
   assert.match(CHATBAR, /onOpenIntegrations=\{\(\) => \{/);
   // The duplicate trigger, and its styling hook, must not come back.
@@ -256,7 +256,7 @@ test('the duplicate Connectors row is gone and slash commands expose real action
 test('the compact menu exposes the requested working tools', () => {
   for (const label of [
     'Add files or photos',
-    'Plugins',
+    'Connect Apps',
     'Slash commands',
     'Plan before build',
     'Debug an error',
@@ -272,7 +272,7 @@ test('the compact menu exposes the requested working tools', () => {
 
 test('the action palette follows the reference row order', () => {
   const files = MENU.indexOf('<b>Add files or photos</b>');
-  const integrations = MENU.indexOf('<b>Plugins</b>');
+  const integrations = MENU.indexOf('<b>Connect Apps</b>');
   const commands = MENU.indexOf('<b>Slash commands</b>');
   const plan = MENU.indexOf('<b>Plan before build</b>');
   assert.ok(files >= 0 && integrations > files, 'integrations should follow file input');
@@ -288,11 +288,11 @@ test('command, plan, and debug inserts expose an intentional selection highlight
   assert.match(CSS, /textarea\[data-insert-highlight='debug'\]::selection[^}]*background:#dc3f4b/);
 });
 
-test('Plugins keeps its supported-app description and the full gated click action', () => {
+test('Connect Apps keeps its supported-app description and the full gated click action', () => {
   // PR827 replaced the miniature provider-logo hover preview with one plain row.
   assert.match(MENU, /className="xv-cba-item xv-cba-item--integrations" data-tone="purple"/);
   assert.match(MENU, /disabled=\{!onOpenIntegrations\}/);
-  assert.match(MENU, /<b>Plugins<\/b><i>Connect and manage supported apps<\/i>/);
+  assert.match(MENU, /<b>Connect Apps<\/b><i>Connect and manage supported apps<\/i>/);
   assert.match(MENU, /onOpenIntegrations\?\.\(\)/);
   assert.match(MENU, /onOpenIntegrations\?\.\(\); setOpen\(false\)/);
 });

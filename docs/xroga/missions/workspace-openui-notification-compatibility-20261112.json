@@ -1,0 +1,140 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-OPENUI-NOTIFICATION-COMPATIBILITY-20261112",
+  "baseSha": "c6d0d04421f9bbef7ec766188b4147185f709327",
+  "requirementIds": [
+    "XR-ORIGINAL-F089"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "high",
+  "scope": "Carry live Smart Notifications and its authenticated subscription API into the Native OpenUI Workspace release candidate.",
+  "changedFiles": [
+    ".github/workflows/command3-auth-browser.yml",
+    "backend/package-lock.json",
+    "backend/package.json",
+    "backend/src/routes/notifications.ts",
+    "backend/src/security/tenantIsolation.local.integration.ts",
+    "backend/src/services/browserPushService.test.ts",
+    "backend/src/services/browserPushService.ts",
+    "backend/src/services/notificationService.ts",
+    "frontend/public/xroga-notifications-sw.js",
+    "frontend/src/components/notifications/NotificationExperience.tsx",
+    "frontend/src/components/notifications/SidebarNotificationCenter.tsx",
+    "frontend/src/components/settings/NotificationsSettingsPanel.tsx",
+    "frontend/src/lib/api.ts",
+    "frontend/src/lib/browserPush.ts",
+    "frontend/src/middleware.ts",
+    "package-lock.json",
+    "scripts/xroga/runtime-facts.mjs",
+    "supabase/migrations/20261110212913_smart_notification_push_subscriptions.sql",
+    "docs/xroga/missions/workspace-openui-notification-compatibility-20261112.json",
+    "frontend/src/lib/notificationExperience.ts",
+    "frontend/src/lib/notificationExperience.test.ts",
+    "docs/xroga/security/current-migration-additions.json",
+    "scripts/security/schema-catalog.mjs",
+    "scripts/security/schema-catalog.test.mjs",
+    "scripts/security/full-supabase-history.mjs"
+  ],
+  "decisions": {
+    "keep": [
+      "Native OpenUI generation and recovery, live notification consent, recipient scope and first-party API transport."
+    ],
+    "extend": [
+      "Carry the production notification code and pinned dependencies into the release candidate. Exercise subscription ownership with two isolated authenticated accounts."
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": true,
+    "migrations": [
+      "supabase/migrations/20261110212913_smart_notification_push_subscriptions.sql"
+    ],
+    "rollout": "Apply additive RLS-protected table in isolated staging, verify role denial, then production before enabling push endpoints.",
+    "rollback": "Revert API/frontend to prior revision and disable VAPID bindings; preserve subscription rows until opt-outs and cleanup are reviewed. No table drop."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": true,
+      "description": "Push subscription endpoints require existing authenticated API middleware; no anonymous subscription route."
+    },
+    "tenant": {
+      "changed": true,
+      "description": "Subscriptions are stored and queried only by authenticated tenant user ID; browser roles have no table access."
+    },
+    "approval": {
+      "changed": false,
+      "description": "Browser permission and explicit user switch are required; no auto-subscribe on page load."
+    },
+    "credentials": {
+      "changed": true,
+      "description": "VAPID public/private values stored in Secret Manager; private value never reaches browser."
+    },
+    "egress": {
+      "changed": true,
+      "description": "Server sends generic push payloads only to validated public browser push-service hosts."
+    },
+    "cost": {
+      "changed": true,
+      "description": "Small outbound push requests and Cloud Run work; at most ten subscriptions queried per notification."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No product payment changes."
+    }
+  },
+  "tests": [
+    {
+      "command": "node --import tsx --test backend/src/services/browserPushService.test.ts",
+      "scope": "Verify accepted browser push-service subscription formats and destination validation.",
+      "negative": true,
+      "reference": "backend/src/services/browserPushService.test.ts"
+    },
+    {
+      "command": "node --import tsx --test src/security/tenantIsolation.local.integration.ts",
+      "scope": "Verify authenticated subscription creation, update and deletion and verify that a different account cannot modify or delete the subscription.",
+      "negative": true,
+      "reference": "backend/src/security/tenantIsolation.local.integration.ts"
+    },
+    {
+      "command": "node --import tsx --test frontend/src/lib/notificationExperience.test.ts",
+      "scope": "Verify the live sound preview plays the chime without opting the user into future sound alerts.",
+      "negative": true,
+      "reference": "frontend/src/lib/notificationExperience.test.ts"
+    },
+    {
+      "command": "node scripts/security/full-supabase-history.mjs",
+      "scope": "Require the source-bound push table and verify its privileges in a fresh disposable database.",
+      "negative": true,
+      "reference": "scripts/security/full-supabase-history.mjs"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Uses existing notification persistence, tenant API, and completion event writers; no new scheduler or notification inbox.",
+    "rfc": null
+  },
+  "rollout": "Verify exact-source builds and account isolation. Preserve the live VAPID bindings and the existing table during the OpenUI rollout.",
+  "rollback": "Restore the prior notification-capable API and frontend with compatible native answer decoding. Preserve subscription rows and existing VAPID bindings.",
+  "knownGaps": [
+    "Hosted Native OpenUI generation and rollback require verification on the combined candidate."
+  ],
+  "placeholderClaimsRemaining": [
+    "No live closed-page delivery has yet been verified"
+  ],
+  "evidenceRefs": [
+    "docs/operations/native-openui/ANSWER-RELIABILITY.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Combined-source authenticated CI and private hosted OpenUI acceptance pending."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

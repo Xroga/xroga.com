@@ -1,0 +1,1401 @@
+{
+  "upstreams": {
+    "openui": "5afae00a507e7a96144ca39e446f9af86e5f779c",
+    "openIntelligentUi": "9df2e64bc44282f6305a47eb6dbbbd8f28139138",
+    "copilotKit": "c7815d9ac96f48fb3a64ad8c18e176a870c81763",
+    "skills": "045d7cf6d1986b85f9ebb36cd3e34cef0a7de0de"
+  },
+  "nativeComponents": [
+    "Col",
+    "Row",
+    "Box",
+    "Grid",
+    "Card",
+    "Carousel",
+    "Popover",
+    "Tabs",
+    "Divider",
+    "Spacer",
+    "Title",
+    "Text",
+    "Caption",
+    "Label",
+    "Badge",
+    "List",
+    "ListItem",
+    "Markdown",
+    "Quote",
+    "Code",
+    "Math",
+    "Section",
+    "Metric",
+    "Controls",
+    "Diagram",
+    "Form",
+    "Input",
+    "TextArea",
+    "Slider",
+    "Select",
+    "Checkbox",
+    "RadioGroup",
+    "SegmentedControl",
+    "DatePicker",
+    "ChoicePicker",
+    "Timer",
+    "Button",
+    "IconButton",
+    "Pressable",
+    "Flashcard",
+    "Source",
+    "Resource",
+    "Icon",
+    "Table",
+    "Chart",
+    "Svg",
+    "Circle",
+    "Ellipse",
+    "Rect",
+    "Line",
+    "Path",
+    "Polyline",
+    "Polygon",
+    "G",
+    "SvgText"
+  ],
+  "nativeFunctions": [
+    "Clamp",
+    "Convert",
+    "Lerp",
+    "Payment",
+    "Percent",
+    "Pow",
+    "Sqrt",
+    "Format",
+    "Plural",
+    "Default",
+    "Duration",
+    "Between",
+    "Change",
+    "Cumulative",
+    "GroupBy",
+    "Histogram",
+    "MovingAvg",
+    "Stats",
+    "Top",
+    "AddDays",
+    "AddMonths",
+    "DaysBetween",
+    "StartOf",
+    "Chunk",
+    "Find",
+    "Includes",
+    "MixColor",
+    "Reverse",
+    "Slice",
+    "Take"
+  ],
+  "copilotKitStandard": [
+    {
+      "name": "Box",
+      "disposition": "existing-equivalent",
+      "details": "Box"
+    },
+    {
+      "name": "Column",
+      "disposition": "existing-equivalent",
+      "details": "Col"
+    },
+    {
+      "name": "Row",
+      "disposition": "existing-equivalent",
+      "details": "Row"
+    },
+    {
+      "name": "Grid",
+      "disposition": "existing-equivalent",
+      "details": "Grid"
+    },
+    {
+      "name": "GridItem",
+      "disposition": "existing-equivalent",
+      "details": "Grid + Box"
+    },
+    {
+      "name": "Card",
+      "disposition": "existing-equivalent",
+      "details": "Card"
+    },
+    {
+      "name": "Flow",
+      "disposition": "existing-equivalent",
+      "details": "Col / Row / Grid"
+    },
+    {
+      "name": "FlowItem",
+      "disposition": "existing-equivalent",
+      "details": "Box"
+    },
+    {
+      "name": "Carousel",
+      "disposition": "existing-equivalent",
+      "details": "Carousel"
+    },
+    {
+      "name": "CarouselItem",
+      "disposition": "existing-equivalent",
+      "details": "Card in Carousel"
+    },
+    {
+      "name": "CarouselMediaItem",
+      "disposition": "excluded",
+      "details": "No authorized media asset resolver in this evaluator"
+    },
+    {
+      "name": "Spacer",
+      "disposition": "existing-equivalent",
+      "details": "Spacer"
+    },
+    {
+      "name": "Divider",
+      "disposition": "existing-equivalent",
+      "details": "Divider"
+    },
+    {
+      "name": "Tabs",
+      "disposition": "adapted-source",
+      "details": "Tabs"
+    },
+    {
+      "name": "Title",
+      "disposition": "existing-equivalent",
+      "details": "Title"
+    },
+    {
+      "name": "Text",
+      "disposition": "existing-equivalent",
+      "details": "Text"
+    },
+    {
+      "name": "Caption",
+      "disposition": "existing-equivalent",
+      "details": "Caption"
+    },
+    {
+      "name": "Label",
+      "disposition": "existing-equivalent",
+      "details": "Label"
+    },
+    {
+      "name": "Bold",
+      "disposition": "existing-equivalent",
+      "details": "Text/Markdown"
+    },
+    {
+      "name": "Italic",
+      "disposition": "existing-equivalent",
+      "details": "Text/Markdown"
+    },
+    {
+      "name": "Underline",
+      "disposition": "existing-equivalent",
+      "details": "Text emphasis where supported"
+    },
+    {
+      "name": "Strikethrough",
+      "disposition": "existing-equivalent",
+      "details": "Text/Markdown"
+    },
+    {
+      "name": "Badge",
+      "disposition": "existing-equivalent",
+      "details": "Badge"
+    },
+    {
+      "name": "Blockquote",
+      "disposition": "existing-equivalent",
+      "details": "Quote"
+    },
+    {
+      "name": "Code",
+      "disposition": "existing-equivalent",
+      "details": "Code"
+    },
+    {
+      "name": "Markdown",
+      "disposition": "existing-equivalent",
+      "details": "Markdown"
+    },
+    {
+      "name": "Math",
+      "disposition": "existing-equivalent",
+      "details": "Math"
+    },
+    {
+      "name": "ShimmerText",
+      "disposition": "existing-equivalent",
+      "details": "App-owned loading status"
+    },
+    {
+      "name": "Link",
+      "disposition": "existing-equivalent",
+      "details": "Source for vetted evidence URLs"
+    },
+    {
+      "name": "Tooltip",
+      "disposition": "existing-equivalent",
+      "details": "Popover"
+    },
+    {
+      "name": "Button",
+      "disposition": "existing-equivalent",
+      "details": "Button"
+    },
+    {
+      "name": "Pressable",
+      "disposition": "existing-equivalent",
+      "details": "Pressable"
+    },
+    {
+      "name": "Form",
+      "disposition": "existing-equivalent",
+      "details": "Form"
+    },
+    {
+      "name": "TextField",
+      "disposition": "existing-equivalent",
+      "details": "Input"
+    },
+    {
+      "name": "TextArea",
+      "disposition": "existing-equivalent",
+      "details": "TextArea"
+    },
+    {
+      "name": "Select",
+      "disposition": "existing-equivalent",
+      "details": "Select"
+    },
+    {
+      "name": "CheckBox",
+      "disposition": "existing-equivalent",
+      "details": "Checkbox"
+    },
+    {
+      "name": "Radio",
+      "disposition": "existing-equivalent",
+      "details": "RadioGroup"
+    },
+    {
+      "name": "RadioGroup",
+      "disposition": "existing-equivalent",
+      "details": "RadioGroup"
+    },
+    {
+      "name": "Slider",
+      "disposition": "existing-equivalent",
+      "details": "Slider"
+    },
+    {
+      "name": "SegmentedControl",
+      "disposition": "existing-equivalent",
+      "details": "SegmentedControl"
+    },
+    {
+      "name": "ChoicePicker",
+      "disposition": "adapted-source",
+      "details": "Searchable native radio choices with a draft, Apply and Cancel. OpenUI scalar binding commits only after Apply. Browser fixture checks filtering, cancel and reactive recalculation."
+    },
+    {
+      "name": "DateTimeInput",
+      "disposition": "existing-equivalent",
+      "details": "DatePicker (date only)"
+    },
+    {
+      "name": "PulseIndicator",
+      "disposition": "existing-equivalent",
+      "details": "App-owned status or Badge"
+    },
+    {
+      "name": "FlashcardFlip",
+      "disposition": "existing-equivalent",
+      "details": "Flashcard"
+    },
+    {
+      "name": "Popover",
+      "disposition": "existing-equivalent",
+      "details": "Popover"
+    },
+    {
+      "name": "PopoverTrigger",
+      "disposition": "existing-equivalent",
+      "details": "Popover owns its trigger"
+    },
+    {
+      "name": "PopoverContent",
+      "disposition": "existing-equivalent",
+      "details": "Popover owns its content"
+    },
+    {
+      "name": "Modal",
+      "disposition": "existing-equivalent",
+      "details": "Popover for nonessential supporting content; no modal registered"
+    },
+    {
+      "name": "Table",
+      "disposition": "existing-equivalent",
+      "details": "Table"
+    },
+    {
+      "name": "TableSection",
+      "disposition": "existing-equivalent",
+      "details": "Table"
+    },
+    {
+      "name": "TableRow",
+      "disposition": "existing-equivalent",
+      "details": "Table"
+    },
+    {
+      "name": "TableCell",
+      "disposition": "existing-equivalent",
+      "details": "Table"
+    },
+    {
+      "name": "List",
+      "disposition": "existing-equivalent",
+      "details": "List"
+    },
+    {
+      "name": "ListItem",
+      "disposition": "existing-equivalent",
+      "details": "ListItem"
+    },
+    {
+      "name": "Chart",
+      "disposition": "existing-equivalent",
+      "details": "Chart"
+    },
+    {
+      "name": "Map",
+      "disposition": "excluded",
+      "details": "No authorized map/tiles provider in this evaluator"
+    },
+    {
+      "name": "Image",
+      "disposition": "excluded",
+      "details": "No authorized media asset resolver in this evaluator"
+    },
+    {
+      "name": "Icon",
+      "disposition": "existing-equivalent",
+      "details": "Icon"
+    },
+    {
+      "name": "Favicon",
+      "disposition": "existing-equivalent",
+      "details": "No remote favicon requests; use trusted Xroga source data when available"
+    },
+    {
+      "name": "Svg",
+      "disposition": "existing-equivalent",
+      "details": "Svg"
+    },
+    {
+      "name": "Video",
+      "disposition": "excluded",
+      "details": "No authorized media asset resolver in this evaluator"
+    },
+    {
+      "name": "AudioPlayer",
+      "disposition": "excluded",
+      "details": "No authorized media asset resolver in this evaluator"
+    },
+    {
+      "name": "HtmlView",
+      "disposition": "excluded",
+      "details": "Untrusted generated HTML excluded"
+    },
+    {
+      "name": "LinkCard",
+      "disposition": "existing-equivalent",
+      "details": "Source or Card with Source"
+    },
+    {
+      "name": "Citation",
+      "disposition": "existing-equivalent",
+      "details": "Source"
+    },
+    {
+      "name": "FollowUp",
+      "disposition": "existing-equivalent",
+      "details": "Workspace-owned action, not callable by model UI"
+    },
+    {
+      "name": "EntityCard",
+      "disposition": "existing-equivalent",
+      "details": "Card and Source, no executable entity actions"
+    },
+    {
+      "name": "ImageGrid",
+      "disposition": "excluded",
+      "details": "No authorized media asset resolver in this evaluator"
+    }
+  ],
+  "nativeDiagram": {
+    "renderer": "React Flow from the existing workspace dependencies",
+    "input": "Validated OpenUI nodes and labeled links",
+    "interaction": "Zoom, pan, fit and text equivalent"
+  },
+  "resourceIdentity": "Static official domain mapping and local Simple Icons artwork. Unknown evidence domains use a neutral icon.",
+  "upstreamCapabilities": {
+    "OpenUI": {
+      "native": [
+        "Lang lexer and parser",
+        "Schema and generated model instructions",
+        "React registry and renderer",
+        "Local reactive state and actions",
+        "Validation of a complete streaming prefix"
+      ],
+      "integratedWithExisting": [
+        "Xroga transport, workspace, persistence, citations and owner-scoped sharing"
+      ],
+      "excluded": {
+        "AgentInterface and headless adapters": "Xroga already owns the conversation and streaming transport.",
+        "Gateway, Autofix and observability": "The authorized provider and ledger stay in Xroga. Avoid duplicate model calls and telemetry.",
+        "External Query, Mutation and tool calls": "Model presentation cannot grant execution authority.",
+        "Email, Vue, Svelte and Angular renderers": "This Workspace runs React and does not render UI through email."
+      }
+    },
+    "Open Intelligent UI": {
+      "native": [
+        "Layout, typography, list, badge and cards",
+        "Responsive table and chart",
+        "Forms and local controls",
+        "Code, math and SVG",
+        "Deterministic arithmetic, formatting and data functions in nativeFunctions",
+        "User-started local timer, bounded list transforms, histogram and color mixing"
+      ],
+      "excluded": {
+        "MapView, MapMarker and street routing": "Upstream MapLibre design loads tiles and optional routing. No approved staging tile or route provider.",
+        "Image and media": "The upstream catalog permits URL loading. Only Xroga-owned verified artifact surfaces have access checks; a native media resolver still needs review.",
+        "HtmlView": "No arbitrary HTML or execution in the answer.",
+        "Chess and coach skill registries": "They depend on separate, domain-specific state and are outside the shared response contract.",
+        "Random, Now, Today, Shuffle and Pick": "Saved snapshots should reproduce their inputs. No live clock or randomness in this registry.",
+        "Other list, date, formatting and color functions": "See intelligentUiFunctionAudit for each pinned upstream export and the corresponding reason or verified registry binding.",
+        "Pivot, Bucket and allocation expansion": "Further output-shape and expansion limits need individual verification."
+      }
+    },
+    "CopilotKit": {
+      "native": [
+        "Standard Tabs",
+        "Standard searchable ChoicePicker",
+        "Draft / Apply / Cancel presentation interaction adapted from the interruption examples"
+      ],
+      "integratedWithExisting": [
+        "Workspace activity, approvals and task status remain owned by Xroga. No model-authored UI may approve a real operation."
+      ],
+      "excluded": {
+        "CopilotRuntime, useCoAgent and AG-UI transports": "A second model loop and state stream would compete with Xroga's authority and ledger.",
+        "Remote actions, useInterrupt and approval resumption": "The existing canonical Xroga approvals remain authoritative.",
+        "Remaining A2UI standard surfaces": "Each standard component has its own disposition in copilotKitStandard."
+      }
+    }
+  },
+  "intelligentUiFunctionAudit": [
+    {
+      "name": "Append",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Prepend",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Concat",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Remove",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "RemoveAt",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Update",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Dynamic property writes need forbidden-key rejection and bounded result schemas."
+    },
+    {
+      "name": "Toggle",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Includes",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "adapted",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Includes",
+      "evidence": "Generated schema parity and deterministic function boundary checks."
+    },
+    {
+      "name": "Find",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "adapted",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Find",
+      "evidence": "Generated schema parity and deterministic function boundary checks."
+    },
+    {
+      "name": "IndexOf",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Take",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "adapted",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Take",
+      "evidence": "Generated schema parity and deterministic function boundary checks."
+    },
+    {
+      "name": "Slice",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "adapted",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Slice",
+      "evidence": "Hosted-independent Chrome capability scenario and backend validation of the native program."
+    },
+    {
+      "name": "Unique",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Reverse",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "adapted",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Reverse",
+      "evidence": "Generated schema parity and deterministic function boundary checks."
+    },
+    {
+      "name": "Range",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Pick",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Random output changes on reopen. Use ChoicePicker."
+    },
+    {
+      "name": "Shuffle",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Random output changes on reopen. Use a supplied order."
+    },
+    {
+      "name": "Flatten",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Chunk",
+      "category": "lists",
+      "sourcePath": "src/lib/functions/lists.ts",
+      "license": "MIT",
+      "integration": "adapted",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Chunk",
+      "evidence": "Generated schema parity and deterministic function boundary checks."
+    },
+    {
+      "name": "Pow",
+      "category": "numbers",
+      "sourcePath": "src/lib/functions/numbers.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Pow",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Sqrt",
+      "category": "numbers",
+      "sourcePath": "src/lib/functions/numbers.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Sqrt",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Random",
+      "category": "numbers",
+      "sourcePath": "src/lib/functions/numbers.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Random output changes on reopen. Use supplied scenario inputs."
+    },
+    {
+      "name": "Clamp",
+      "category": "numbers",
+      "sourcePath": "src/lib/functions/numbers.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Clamp",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Percent",
+      "category": "numbers",
+      "sourcePath": "src/lib/functions/numbers.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Percent",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Lerp",
+      "category": "numbers",
+      "sourcePath": "src/lib/functions/numbers.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Lerp",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Allocate",
+      "category": "numbers",
+      "sourcePath": "src/lib/functions/numbers.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Rounding, zero weights and integer precision require domain-specific acceptance before budgeting can rely on it."
+    },
+    {
+      "name": "Payment",
+      "category": "numbers",
+      "sourcePath": "src/lib/functions/numbers.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Payment",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Convert",
+      "category": "numbers",
+      "sourcePath": "src/lib/functions/numbers.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Convert",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Format",
+      "category": "text",
+      "sourcePath": "src/lib/functions/text.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Format",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Join",
+      "category": "text",
+      "sourcePath": "src/lib/functions/text.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Plural",
+      "category": "text",
+      "sourcePath": "src/lib/functions/text.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Plural",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Pad",
+      "category": "text",
+      "sourcePath": "src/lib/functions/text.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Upper",
+      "category": "text",
+      "sourcePath": "src/lib/functions/text.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Lower",
+      "category": "text",
+      "sourcePath": "src/lib/functions/text.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Trim",
+      "category": "text",
+      "sourcePath": "src/lib/functions/text.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Capitalize",
+      "category": "text",
+      "sourcePath": "src/lib/functions/text.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Split",
+      "category": "text",
+      "sourcePath": "src/lib/functions/text.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Replace",
+      "category": "text",
+      "sourcePath": "src/lib/functions/text.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Duration",
+      "category": "text",
+      "sourcePath": "src/lib/functions/text.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Duration",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Default",
+      "category": "text",
+      "sourcePath": "src/lib/functions/text.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Default",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "MixColor",
+      "category": "colors",
+      "sourcePath": "src/lib/functions/colors.ts",
+      "license": "MIT",
+      "integration": "adapted",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.MixColor",
+      "evidence": "Generated schema parity and deterministic function boundary checks."
+    },
+    {
+      "name": "Now",
+      "category": "dates",
+      "sourcePath": "src/lib/functions/dates.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Clock-dependent output changes on reopen. Use an explicit calendar date."
+    },
+    {
+      "name": "FormatDate",
+      "category": "dates",
+      "sourcePath": "src/lib/functions/dates.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Upstream timestamp display depends on viewer locale and timezone. Supported helpers use calendar dates only."
+    },
+    {
+      "name": "AddDays",
+      "category": "dates",
+      "sourcePath": "src/lib/functions/dates.ts",
+      "license": "MIT",
+      "integration": "adapted",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.AddDays",
+      "evidence": "calendar scenario in scripts/verify-native-openui-browser.mjs exercises DaysBetween and AddMonths; registry shape is generated for all four date helpers"
+    },
+    {
+      "name": "DaysBetween",
+      "category": "dates",
+      "sourcePath": "src/lib/functions/dates.ts",
+      "license": "MIT",
+      "integration": "adapted",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.DaysBetween",
+      "evidence": "calendar scenario in scripts/verify-native-openui-browser.mjs exercises DaysBetween and AddMonths; registry shape is generated for all four date helpers"
+    },
+    {
+      "name": "Today",
+      "category": "dates",
+      "sourcePath": "src/lib/functions/dates.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Clock-dependent output changes on reopen. Use an explicit calendar date."
+    },
+    {
+      "name": "AddMonths",
+      "category": "dates",
+      "sourcePath": "src/lib/functions/dates.ts",
+      "license": "MIT",
+      "integration": "adapted",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.AddMonths",
+      "evidence": "calendar scenario in scripts/verify-native-openui-browser.mjs exercises DaysBetween and AddMonths; registry shape is generated for all four date helpers"
+    },
+    {
+      "name": "MonthsBetween",
+      "category": "dates",
+      "sourcePath": "src/lib/functions/dates.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Upstream timestamp inputs are timezone-sensitive. Use DaysBetween for explicit dates."
+    },
+    {
+      "name": "StartOf",
+      "category": "dates",
+      "sourcePath": "src/lib/functions/dates.ts",
+      "license": "MIT",
+      "integration": "adapted",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.StartOf",
+      "evidence": "calendar scenario in scripts/verify-native-openui-browser.mjs exercises DaysBetween and AddMonths; registry shape is generated for all four date helpers"
+    },
+    {
+      "name": "GroupBy",
+      "category": "data",
+      "sourcePath": "src/lib/functions/data.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.GroupBy",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Pivot",
+      "category": "data",
+      "sourcePath": "src/lib/functions/data.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Dynamic column keys need collision rejection and a bounded output matrix."
+    },
+    {
+      "name": "Top",
+      "category": "data",
+      "sourcePath": "src/lib/functions/data.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Top",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Between",
+      "category": "data",
+      "sourcePath": "src/lib/functions/data.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Between",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Bucket",
+      "category": "data",
+      "sourcePath": "src/lib/functions/data.ts",
+      "license": "MIT",
+      "integration": "excluded-with-rationale",
+      "discoverable": false,
+      "reason": "Not registered: bounded output, nested evaluation and interactive rendering have not been verified. Use the bounded registered calculations or a static result."
+    },
+    {
+      "name": "Cumulative",
+      "category": "data",
+      "sourcePath": "src/lib/functions/data.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Cumulative",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "MovingAvg",
+      "category": "data",
+      "sourcePath": "src/lib/functions/data.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.MovingAvg",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Change",
+      "category": "data",
+      "sourcePath": "src/lib/functions/data.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Change",
+      "evidence": "Registry schema only unless named in a component-family test"
+    },
+    {
+      "name": "Histogram",
+      "category": "data",
+      "sourcePath": "src/lib/functions/data.ts",
+      "license": "MIT",
+      "integration": "adapted",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Histogram",
+      "evidence": "Hosted-independent Chrome capability scenario and backend validation of the native program."
+    },
+    {
+      "name": "Stats",
+      "category": "data",
+      "sourcePath": "src/lib/functions/data.ts",
+      "license": "MIT",
+      "integration": "native",
+      "discoverable": true,
+      "schema": "backend/src/ai/nativeOpenUiCatalog.json#spec.functions.Stats",
+      "evidence": "Registry schema only unless named in a component-family test"
+    }
+  ],
+  "intelligentUiComponentAudit": [
+    {
+      "name": "Col",
+      "disposition": "registered",
+      "native": "Col",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Row",
+      "disposition": "registered",
+      "native": "Row",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Box",
+      "disposition": "registered",
+      "native": "Box",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Grid",
+      "disposition": "registered",
+      "native": "Grid",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Card",
+      "disposition": "registered",
+      "native": "Card",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Carousel",
+      "disposition": "registered",
+      "native": "Carousel",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Popover",
+      "disposition": "registered",
+      "native": "Popover",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Divider",
+      "disposition": "registered",
+      "native": "Divider",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Spacer",
+      "disposition": "registered",
+      "native": "Spacer",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Title",
+      "disposition": "registered",
+      "native": "Title",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Text",
+      "disposition": "registered",
+      "native": "Text",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Caption",
+      "disposition": "registered",
+      "native": "Caption",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Label",
+      "disposition": "registered",
+      "native": "Label",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Badge",
+      "disposition": "registered",
+      "native": "Badge",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Link",
+      "disposition": "trusted-equivalent",
+      "native": "Source / Resource",
+      "reason": "Raw external links require a trusted evidence or product ID."
+    },
+    {
+      "name": "List",
+      "disposition": "registered",
+      "native": "List",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "ListItem",
+      "disposition": "registered",
+      "native": "ListItem",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Markdown",
+      "disposition": "registered",
+      "native": "Markdown",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Quote",
+      "disposition": "registered",
+      "native": "Quote",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Code",
+      "disposition": "registered",
+      "native": "Code",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Math",
+      "disposition": "registered",
+      "native": "Math",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Button",
+      "disposition": "registered",
+      "native": "Button",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "IconButton",
+      "disposition": "registered",
+      "native": "IconButton",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Pressable",
+      "disposition": "registered",
+      "native": "Pressable",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Input",
+      "disposition": "registered",
+      "native": "Input",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "TextArea",
+      "disposition": "registered",
+      "native": "TextArea",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Select",
+      "disposition": "registered",
+      "native": "Select",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "SegmentedControl",
+      "disposition": "registered",
+      "native": "SegmentedControl",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Slider",
+      "disposition": "registered",
+      "native": "Slider",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Checkbox",
+      "disposition": "registered",
+      "native": "Checkbox",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "RadioGroup",
+      "disposition": "registered",
+      "native": "RadioGroup",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "DatePicker",
+      "disposition": "registered",
+      "native": "DatePicker",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Timer",
+      "disposition": "registered",
+      "native": "Timer",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Form",
+      "disposition": "registered",
+      "native": "Form",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "SearchImage",
+      "disposition": "requires-approved-service",
+      "reason": "Upstream image search performs a separate remote request."
+    },
+    {
+      "name": "Image",
+      "disposition": "requires-trusted-resolver",
+      "reason": "Upstream accepts arbitrary model-provided URLs. Xroga attachments retain their existing access checks."
+    },
+    {
+      "name": "Icon",
+      "disposition": "registered",
+      "native": "Icon",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Table",
+      "disposition": "registered",
+      "native": "Table",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Chart",
+      "disposition": "registered",
+      "native": "Chart",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Map",
+      "disposition": "requires-approved-service",
+      "reason": "The pinned MapLibre implementation loads tiles and optional routes. No approved provider is bound to this runtime."
+    },
+    {
+      "name": "MapMarker",
+      "disposition": "requires-trusted-resolver",
+      "reason": "Coordinates and map data need an approved source binding."
+    },
+    {
+      "name": "YouTube",
+      "disposition": "requires-trusted-resolver",
+      "reason": "Iframe playback requires an approved media ID resolver and an opt-in privacy boundary."
+    },
+    {
+      "name": "Flashcard",
+      "disposition": "registered",
+      "native": "Flashcard",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Celebration",
+      "disposition": "excluded-for-relevance",
+      "reason": "The unconditional animation can obscure reading. Existing controls retain reduced-motion-safe transitions."
+    },
+    {
+      "name": "Svg",
+      "disposition": "registered",
+      "native": "Svg",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Circle",
+      "disposition": "registered",
+      "native": "Circle",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Ellipse",
+      "disposition": "registered",
+      "native": "Ellipse",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Rect",
+      "disposition": "registered",
+      "native": "Rect",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Line",
+      "disposition": "registered",
+      "native": "Line",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Path",
+      "disposition": "registered",
+      "native": "Path",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Polyline",
+      "disposition": "registered",
+      "native": "Polyline",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "Polygon",
+      "disposition": "registered",
+      "native": "Polygon",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "G",
+      "disposition": "registered",
+      "native": "G",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "SvgText",
+      "disposition": "registered",
+      "native": "SvgText",
+      "reason": "Exposed through the native OpenUI generated schema."
+    },
+    {
+      "name": "HtmlView",
+      "disposition": "excluded-for-security",
+      "reason": "The renderer does not accept executable HTML, iframes or network effects from generated programs."
+    }
+  ],
+  "iconCatalog": {
+    "library": "lucide-react",
+    "version": "1.21.0",
+    "license": "ISC",
+    "names": 1986,
+    "spriteShards": 24,
+    "reference": "frontend/src/components/native-openui/upstream/components/lucide-catalog.json",
+    "delivery": "Local, versioned SVG symbols. The common inline icons do not require a request."
+  }
+}

@@ -102,6 +102,36 @@ export interface SemanticRequestPlan {
     string;
 }
 
+/** A calculator composed in the answer uses local presentation state. A
+ * software deliverable, project control or external action keeps its own route. */
+export function enforceInlineCalculatorIntent(
+  goal: GoalContract,
+  { message, attachments }: Pick<GoalInterpretationInput, 'message' | 'attachments'>,
+): GoalContract {
+  const capabilities = goal.requiredCapabilities;
+  if (
+    (goal.semanticIntent !== 'MODIFY' && goal.semanticIntent !== 'ANSWER') ||
+    !capabilities.includes('software.implement') ||
+    capabilities.some(id => !['software.implement', 'validation.run', 'attachment.analyze', 'conversation.respond'].includes(id)) ||
+    goal.blockers.length || goal.projectContext || goal.previewRequirement === 'REQUIRED' ||
+    goal.publicationRequirement !== 'NONE' || goal.deploymentRequirement !== 'NONE'
+  ) return goal;
+
+  const inAnswer = /\b(?:in|within)\s+(?:this |the |your )?(?:answer|chat|response)\b/i.test(message);
+  const adjustable = /\b(?:sliders?|adjustable inputs?)\b/i.test(message);
+  const structuredData = /\b(?:charts?|tables?|tabulate)\b/i.test(message);
+  const softwareOrAction = /\b(?:apps?|websites?|webpages?|repos?|repositor(?:y|ies)|pull requests?|code|react|next\.js|html|css|javascript|typescript|preview|deploy\w*|publish\w*|install\w*|integrate\w*|save|send|email|upload|delete|commit)\b/i.test(message);
+  if (softwareOrAction || !/\bcalculator\b/i.test(message) || !adjustable ||
+      (!inAnswer && !(attachments.length && structuredData))) return goal;
+
+  return {
+    ...goal,
+    semanticIntent: 'ANSWER',
+    previewRequirement: 'NONE',
+    requiredCapabilities: ['conversation.respond', ...(attachments.length ? ['attachment.analyze'] : [])],
+  };
+}
+
 /**
  * Final API-boundary invariant for explicit product controls.
  *
@@ -1416,6 +1446,8 @@ export async function planSemanticRequest(
               let correctionUsed =
                 false;
 
+              let completionShape: { finish: 'stop' | 'length' | 'other'; outputTokens: number } | undefined;
+
               const goalContract =
                 await resolveStructuredGoalContract(
                   async (
@@ -1478,6 +1510,11 @@ export async function planSemanticRequest(
 
                     finalModelId =
                       completion.modelId;
+                    completionShape = {
+                      finish: completion.finishReason === 'stop' || completion.finishReason === 'length'
+                        ? completion.finishReason : 'other',
+                      outputTokens: completion.outputTokens,
+                    };
 
                     /* Canonical dispatch already verified the atomic usage receipt. */
 
@@ -1504,6 +1541,9 @@ export async function planSemanticRequest(
                         error instanceof
                         RuntimeFailure
                       ) {
+                        if (completionShape) {
+                          console.warn('[planner-completion-shape]', { modelId, code: error.code, ...completionShape });
+                        }
                         lastStructuredFailure =
                           error;
 
@@ -1527,14 +1567,15 @@ export async function planSemanticRequest(
         },
       );
 
+    const interpretedGoal = enforceInlineCalculatorIntent(planned.value, interpretationInput);
     const goalContract =
       goalContractSchema.parse(
         {
-          ...planned.value,
+          ...interpretedGoal,
 
           requiredAuthorities: [
             ...new Set(
-              planned.value
+              interpretedGoal
                 .requiredCapabilities
                 .flatMap(
                   (

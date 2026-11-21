@@ -15,7 +15,7 @@ export function browserModelFixture(t:TestContext){
   t.after(()=>{for(const k of Object.keys(env)){if(old[k]===undefined)delete process.env[k];else process.env[k]=old[k];}});
   const context=createTenantContext({userId:browserOwner,via:'remote_getuser'});
   const authority={context,revalidate:async()=>{}};
-  const ledger={reserved:[] as any[],settled:[] as any[],released:[] as any[],atomic:0};
+  const ledger={reserved:[] as any[],settled:[] as any[],released:[] as any[],atomic:0,pacing:0,pacingRelease:0};
   const bodies:any[]=[];const reservations=new Map<string,any>();
   const fixture={authority,ledger,bodies,owner:browserOwner,mode:'ok',beforeReserve:()=>{},beforeSettle:()=>{},
     reply:(_body:any):any=>({id:'synthetic-browser-provider',choices:[{message:{content:'owned fixture'}}],usage:{prompt_tokens:1000,completion_tokens:200}})};
@@ -31,6 +31,16 @@ export function browserModelFixture(t:TestContext){
     if(url.pathname==='/rest/v1/projects')return Response.json(fixture.owner===browserOwner?{id:browserProject}:null);
     if(url.pathname==='/rest/v1/user_integrations')return Response.json(null);
     if(url.pathname==='/rest/v1/user_token_usage')return Response.json({user_id:browserOwner,plan_tier:'spark',plan_budget_usd:20,quota_period_start:new Date().toISOString().slice(0,7)+'-01',input_tokens:0,output_tokens:0,spent_usd:0,rollover_usd:0,model_usage:{}});
+    if(url.pathname.endsWith('/claim_xroga_model_request')){
+      assert.equal(body.p_user_id,browserOwner);
+      assert.equal(reservations.get(body.p_reservation_id)?.status,'reserved');
+      ledger.pacing++;
+      return Response.json({granted:true,retry_after_ms:0});
+    }
+    if(url.pathname.endsWith('/release_xroga_model_request')){
+      ledger.pacingRelease++;
+      return Response.json(null);
+    }
     if(url.pathname.endsWith('/reserve_xroga_provider_budget')){
       fixture.beforeReserve();
       if(fixture.mode==='reservationDenied')return Response.json({message:'synthetic denial'},{status:400});

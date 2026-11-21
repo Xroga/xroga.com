@@ -12,6 +12,8 @@ import {
 } from '@/store/useComposerToolsStore';
 import { cn } from '@/lib/utils';
 import controls from './WorkspaceControls.module.css';
+import { NativeSkillsPicker } from '@/components/library/NativeSkillsPicker';
+import { buildNativeWorkSkillPrompt } from '@/lib/nativeWorkSkills';
 
 /**
  * The composer's extra actions, behind one compact trigger.
@@ -96,7 +98,8 @@ export function ChatBarActionsMenu({
   plusIcon?: boolean;
 }) {
   const [open, setOpen] = useState(false);
-  const [panel, setPanel] = useState<'menu' | 'commands' | 'skills' | 'preferences' | 'rules' | 'work'>('menu');
+  const [panel, setPanel] = useState<'menu' | 'commands' | 'instructions' | 'preferences' | 'rules' | 'work'>('menu');
+  const [nativeSkillsOpen, setNativeSkillsOpen] = useState(false);
   const [workId, setWorkId] = useState<string>('library');
   const activeWork = WORK_OPTIONS.find(item => item.id === workId) ?? WORK_OPTIONS[0];
   const rootRef = useRef<HTMLDivElement>(null);
@@ -286,9 +289,13 @@ export function ChatBarActionsMenu({
                 <Bug className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="xv-cba-item__text"><b>Debug an error</b><i>Paste the error, get the root cause</i></span>
               </button>
-              <button type="button" className="xv-cba-item" data-tone="purple" onClick={() => setPanel('skills')}>
+              <button type="button" className="xv-cba-item" data-tone="purple" onClick={() => {setOpen(false);setNativeSkillsOpen(true);}}>
                 <Sparkles className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                <span className="xv-cba-item__text"><b>Skills</b><i>{enabledSkills.length ? `${enabledSkills.length} active` : 'Reusable instruction packs'}</i></span>
+                <span className="xv-cba-item__text"><b>Skills</b><i>40 ready-made complete jobs</i></span>
+              </button>
+              <button type="button" className="xv-cba-item" data-tone="gray" onClick={() => setPanel('instructions')}>
+                <ListChecks className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                <span className="xv-cba-item__text"><b>Instruction packs</b><i>{enabledSkills.length ? `${enabledSkills.length} active` : 'Optional reusable instructions'}</i></span>
               </button>
               <button type="button" className="xv-cba-item" data-tone="purple" onClick={() => setPanel('preferences')}>
                 <ScrollText className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
@@ -354,13 +361,13 @@ export function ChatBarActionsMenu({
             </>
           )}
 
-          {panel === 'skills' && (
+          {panel === 'instructions' && (
             <>
               <div className="xv-cba-head">
                 <button type="button" onClick={() => setPanel('menu')} className="xv-cba-back">
                   Back
                 </button>
-                <span>Skills</span>
+                <span>Instruction packs</span>
                 <button type="button" onClick={() => setOpen(false)} aria-label="Close">
                   <X className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
@@ -441,6 +448,10 @@ export function ChatBarActionsMenu({
         </div>,
         document.body,
       ) : null}
+      <NativeSkillsPicker open={nativeSkillsOpen} onClose={()=>setNativeSkillsOpen(false)} onChoose={skill=>{
+        insert(buildNativeWorkSkillPrompt(skill),{label:skill.title,category:'Native Skill',description:skill.description,tone:'purple'});
+        setNativeSkillsOpen(false);
+      }}/>
     </div>
   );
 }

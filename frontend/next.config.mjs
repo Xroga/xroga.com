@@ -1,9 +1,12 @@
 import { nextRedirects } from './redirects.mjs';
 import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { resolveAuthBuildConfiguration } from './src/lib/supabase/authBuildRealm.mjs';
+import { hostedWorkspaceManifestVersion, stagingWebOrigin } from '../scripts/security/hosted-workspace-staging.mjs';
 import {browserProxyHeaders,imageProxyHeaders} from './src/lib/untrustedProxyResponsePolicy.mjs';
 const stagingManifest=process.env.XROGA_STAGING_AUTH_BUILD==='1'?JSON.parse(readFileSync(process.env.XROGA_STAGING_MANIFEST_PATH??'', 'utf8')):undefined;
 const authBuildConfiguration = resolveAuthBuildConfiguration(process.env,stagingManifest);
+const hostedWorkspace = stagingManifest?.version === hostedWorkspaceManifestVersion;
 
 const configuredApiOrigin = (() => {
   try {
@@ -22,7 +25,9 @@ const driveStorageOrigin = process.env.NEXT_PUBLIC_XROGA_DRIVE === '1'
   ? 'https://xroga-drive-prod.f14d36fd540c59ad410272122edc1a7e.r2.cloudflarestorage.com'
   : null;
 
-const connectSources = (authBuildConfiguration.projectRef==='self-hosted-staging' ? [
+const connectSources = (hostedWorkspace ? [
+  "'self'", authBuildConfiguration.url, authBuildConfiguration.url.replace(/^https:/, 'wss:'),
+] : authBuildConfiguration.projectRef==='self-hosted-staging' ? [
   "'self'", configuredApiOrigin, authBuildConfiguration.url,
   authBuildConfiguration.url.replace(/^https:/,'wss:'),
 ] : [
@@ -47,10 +52,8 @@ const connectSources = (authBuildConfiguration.projectRef==='self-hosted-staging
 const scriptSources = [
   "'self'",
   "'unsafe-inline'",
-  'https://www.googletagmanager.com',
-  'https://www.clarity.ms',
-  'https://*.clarity.ms',
-  'https://analytics.ahrefs.com',
+  ...(!hostedWorkspace ? ['https://www.googletagmanager.com', 'https://www.clarity.ms',
+    'https://*.clarity.ms', 'https://analytics.ahrefs.com'] : []),
   ...(process.env.NODE_ENV === 'development' ? ["'unsafe-eval'"] : []),
 ].join(' ');
 
@@ -111,12 +114,22 @@ const NON_PREVIEW_SOURCE = '/((?!(?:$|about$|api/(?:browser-view|image-fetch)/?$
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  ...(hostedWorkspace ? { output: 'standalone', outputFileTracingRoot: fileURLToPath(new URL('..', import.meta.url)) } : {}),
   // Compile the shared canonical server-only guest budget from this monorepo.
   experimental: {externalDir: true, extensionAlias: {'.js': ['.js', '.ts', '.tsx']}},
   // Next inlines this validated public issuer in both server and browser builds.
   // Runtime hosting URLs/body/query parameters cannot redirect credentials.
-  env: { NEXT_PUBLIC_XROGA_AUTH_PROJECT_REF: authBuildConfiguration.projectRef,NEXT_PUBLIC_XROGA_AUTH_BASE_URL:authBuildConfiguration.url },
+  env: { NEXT_PUBLIC_XROGA_AUTH_PROJECT_REF: authBuildConfiguration.projectRef,NEXT_PUBLIC_XROGA_AUTH_BASE_URL:authBuildConfiguration.url,
+    NEXT_PUBLIC_XROGA_WORKSPACE_STAGING_ORIGIN: hostedWorkspace ? stagingWebOrigin : '' },
   webpack(config, { isServer, webpack }) {
+    // The shared native validator is imported from backend source. With separate
+    // installs, its OpenUI dependency can otherwise resolve Zod 3's older v4
+    // compatibility entry. Keep all frontend v4 schemas on the frontend's
+    // pinned Zod 4. Unqualified Zod imports and the backend runtime are unchanged.
+    Object.assign(config.resolve.alias, {
+      'zod/v4$': fileURLToPath(import.meta.resolve('zod/v4')),
+      'zod/v4/core$': fileURLToPath(import.meta.resolve('zod/v4/core')),
+    });
     if (!isServer) {
       // PptxGenJS guards these Node-only imports at runtime, but webpack still
       // attempts to resolve their node: specifiers in the browser bundle.
@@ -149,6 +162,14 @@ const nextConfig = {
   async redirects() {
     return nextRedirects();
   },
+  ...(hostedWorkspace ? {
+    async rewrites() {
+      // Existing Next routes (including /api/release and private files) take priority.
+      return { beforeFiles: [], afterFiles: [], fallback: [
+        { source: '/api/:path*', destination: '/workspace-staging-transport/:path*' },
+      ] };
+    },
+  } : {}),
 };
 
 export default nextConfig;

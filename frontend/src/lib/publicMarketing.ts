@@ -18,6 +18,7 @@ export const PRIVATE_PREFIXES = [
   '/share',
   '/ref',
   '/os-preview',
+  '/native-answer-evaluation',
 ] as const;
 
 /**

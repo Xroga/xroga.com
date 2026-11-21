@@ -2,54 +2,52 @@
 
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { Bell } from 'lucide-react';
+import { Bell, Volume2 } from 'lucide-react';
 import { Switch } from '@/components/ui/Switch';
+import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { SettingsPanelHeader, SettingsRow, SettingsStack } from '@/components/settings/SettingsPrimitives';
 import {
   BROWSER_NOTIFY_PROJECT_READY_KEY,
-  requestBuildNotificationPermission,
-  showBuildBrowserNotification,
 } from '@/lib/buildBrowserNotify';
-import { NOTIFICATION_SOUND_KEY, NOTIFICATION_STACK_KEY, notificationPreference, setNotificationPreference } from '@/lib/notificationExperience';
+import { browserPushSupported, disableBrowserPush, enableBrowserPush, hasBrowserPushSubscription } from '@/lib/browserPush';
+import { NOTIFICATION_SOUND_KEY, NOTIFICATION_STACK_KEY, notificationPreference, previewNotificationChime, setNotificationPreference } from '@/lib/notificationExperience';
 
 export function NotificationsSettingsPanel() {
   const [browserNotify, setBrowserNotify] = useState(false);
   const [stackNotify, setStackNotify] = useState(false);
   const [soundNotify, setSoundNotify] = useState(false);
   const [permission, setPermission] = useState<NotificationPermission | 'unsupported'>('default');
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    setBrowserNotify(typeof Notification !== 'undefined' && Notification.permission === 'granted' && localStorage.getItem(BROWSER_NOTIFY_PROJECT_READY_KEY) !== '0');
+    void hasBrowserPushSubscription().then((active) => setBrowserNotify(active && localStorage.getItem(BROWSER_NOTIFY_PROJECT_READY_KEY) !== '0')).catch(() => setBrowserNotify(false));
     setStackNotify(notificationPreference(NOTIFICATION_STACK_KEY));
     setSoundNotify(notificationPreference(NOTIFICATION_SOUND_KEY));
-    setPermission(typeof Notification === 'undefined' ? 'unsupported' : Notification.permission);
+    setPermission(browserPushSupported() ? Notification.permission : 'unsupported');
   }, []);
 
   async function toggleBrowserNotify(next: boolean) {
-    if (next) {
-      const ok = await requestBuildNotificationPermission();
-      setPermission(typeof Notification === 'undefined' ? 'unsupported' : Notification.permission);
-      if (!ok) {
-        toast.error('Browser blocked notifications — allow them in site settings');
-        setBrowserNotify(false);
+    if (busy) return;
+    setBusy(true);
+    try {
+      if (next) {
+        const enabled = await enableBrowserPush();
+        setPermission(browserPushSupported() ? Notification.permission : 'unsupported');
+        if (!enabled) { toast.error('Allow notifications in your browser to enable alerts'); return; }
+        localStorage.setItem(BROWSER_NOTIFY_PROJECT_READY_KEY, '1');
+        setBrowserNotify(true);
+        toast.success('Alerts will reach this device even after Xroga closes');
+      } else {
+        await disableBrowserPush();
         localStorage.setItem(BROWSER_NOTIFY_PROJECT_READY_KEY, '0');
-        return;
+        setBrowserNotify(false);
+        toast.success('Browser push notifications off');
       }
-      localStorage.setItem(BROWSER_NOTIFY_PROJECT_READY_KEY, '1');
-      setBrowserNotify(true);
-      showBuildBrowserNotification({
-        title: 'Xroga notifications on',
-        body: 'We’ll alert you in this browser when a project is ready.',
-        tag: 'xroga-notify-test',
-      });
-      toast.success('Browser notifications enabled');
-      return;
-    }
-    localStorage.setItem(BROWSER_NOTIFY_PROJECT_READY_KEY, '0');
-    setBrowserNotify(false);
-    toast.success('Browser notifications off');
+    } catch {
+      toast.error('Could not update browser push. Please retry.');
+    } finally { setBusy(false); }
   }
 
   return (
@@ -65,14 +63,22 @@ export function NotificationsSettingsPanel() {
           <Switch checked={stackNotify} onChange={(next) => { setNotificationPreference(NOTIFICATION_STACK_KEY, next); setStackNotify(next); }} label="In-app notification stack" description="Show recent updates in the bottom-right corner. Hover or focus to see up to six; the sidebar bell always remains available." />
         </SettingsRow>
         <SettingsRow>
-          <Switch checked={soundNotify} onChange={(next) => { setNotificationPreference(NOTIFICATION_SOUND_KEY, next); setSoundNotify(next); }} label="Completion sound" description="Play a short chime when new updates arrive while this tab is in the background. Browser audio rules may require a previous interaction." />
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            <div className="min-w-[min(100%,16rem)] flex-1">
+              <Switch checked={soundNotify} onChange={(next) => { setNotificationPreference(NOTIFICATION_SOUND_KEY, next); setSoundNotify(next); }} label="Completion sound" description="Play a short chime when new updates arrive while this tab is in the background. Browser audio rules may require a previous interaction." />
+            </div>
+            <Button size="sm" variant="secondary" className="mb-2 shrink-0" onClick={previewNotificationChime}>
+              <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
+              Play sound
+            </Button>
+          </div>
         </SettingsRow>
         <SettingsRow>
           <Switch
             checked={browserNotify}
             onChange={(next) => void toggleBrowserNotify(next)}
             label="Browser notifications"
-            description="Show real task updates outside the page while this tab remains open in the background. Requires this device's notification permission."
+            description={busy ? 'Updating this device…' : 'Get important updates even after closing Xroga. Requires this device’s notification permission.'}
           />
         </SettingsRow>
         {permission === 'denied' && (

@@ -247,6 +247,35 @@ after(async()=>{for(const user of users){
   assert.deepEqual(retained.data,before.data,'Account deletion must preserve audit evidence unchanged');
 }});
 
+test('browser push subscriptions remain scoped to their authenticated account', async () => {
+  const [owner, other] = users;
+  const path = '/api/notifications/push-subscription';
+  const table = 'notification_push_subscriptions';
+  // An invented token never identifies a real device. These routes never send a push.
+  const endpoint = 'https://fcm.googleapis.com/fcm/send/' + randomUUID();
+  const keys = { p256dh: 'a'.repeat(87), auth: 'b'.repeat(22) };
+  const readSubscription = async () => {
+    const result = await admin.from(table).select('user_id,p256dh,auth_secret').eq('endpoint', endpoint).maybeSingle();
+    assert.equal(result.error, null);
+    return result.data;
+  };
+  try {
+    assert.equal((await request(path, undefined, 'POST', { endpoint, keys })).status, 401);
+    assert.equal((await request(path, owner.token, 'POST', { endpoint, keys, user_id: other.id })).status, 200);
+    const replacement = { ...keys, auth: 'c'.repeat(22) };
+    assert.equal((await request(path, owner.token, 'POST', { endpoint, keys: replacement })).status, 200);
+    const expected = { user_id: owner.id, p256dh: keys.p256dh, auth_secret: replacement.auth };
+    assert.deepEqual(await readSubscription(), expected);
+    assert.equal((await request(path, other.token, 'POST', { endpoint, keys })).status, 503);
+    assert.equal((await request(path, other.token, 'DELETE', { endpoint })).status, 200);
+    assert.deepEqual(await readSubscription(), expected);
+    assert.equal((await request(path, owner.token, 'DELETE', { endpoint })).status, 200);
+    assert.equal(await readSubscription(), null);
+  } finally {
+    assert.equal((await admin.from(table).delete().eq('endpoint', endpoint).eq('user_id', owner.id)).error, null);
+  }
+});
+
 test('real owner helpers deny every foreign high-risk resource without enumerating data',async()=>{
   const [owner,other]=users;
   for(const [kind,key] of [['project','project'],['run','run'],['provider_connection','provider'],['runtime_session','session'],['cost_record','cost']] as const) {

@@ -3,12 +3,12 @@
 import React, {
   useCallback,
   useEffect,
-  useRef,
   useState,
 } from 'react';
-import { createPortal } from 'react-dom';
-import { ArrowUpRight, Check, Copy, Search } from 'lucide-react';
-import { SourceLogo } from '@/components/terminal/SourceLogo';
+import { Search } from 'lucide-react';
+import { SourceCitation } from '@/components/terminal/SourceCitation';
+import { PluginBrandLogo } from '@/components/integrations/PluginBrandLogo';
+import { PluginPermissionControl } from '@/components/integrations/PluginPermissionControl';
 
 import ReactMarkdown, {
   type Components,
@@ -16,7 +16,7 @@ import ReactMarkdown, {
 } from 'react-markdown';
 
 import remarkGfm from 'remark-gfm';
-import { remarkSourceCitations, safeSourceUrl, sourceClickUrl, type CitationSource } from './xrogaCitations';
+import { numberedCitation, remarkSourceCitations, safeSourceUrl, type CitationSource } from './xrogaCitations';
 
 import {
   ApiError,
@@ -30,6 +30,8 @@ import {
 } from './oauthPopupResult';
 
 import { xrogaConnect } from './xrogaConnect';
+import { compactConnectedAppConfirmationMarkdown, previewConnectedAppResult } from './connectedAppResult';
+import { RESEARCH_RECEIPT_AVAILABLE } from './researchHandoff';
 
 function joinClasses(
   ...values:
@@ -240,6 +242,8 @@ export function BusinessActionConfirmationInline({
     useState(
       false,
     );
+  const [detailsOpen, setDetailsOpen] = useState(true);
+  const [resultOpen, setResultOpen] = useState(false);
 
   useEffect(
     () => {
@@ -345,6 +349,10 @@ export function BusinessActionConfirmationInline({
           setNotice(
             result.response,
           );
+          if (result.ok && result.toolkit === 'xroga-native-research' &&
+              result.confirmation.status === 'consumed' && result.confirmation.id === confirmationId) {
+            window.dispatchEvent(new CustomEvent(RESEARCH_RECEIPT_AVAILABLE, { detail: confirmationId }));
+          }
         } catch (
           error
         ) {
@@ -459,48 +467,43 @@ export function BusinessActionConfirmationInline({
   const status =
     confirmation
       ?.status;
+  const resultPreview = notice && !failed && status === 'consumed'
+    ? previewConnectedAppResult(notice)
+    : null;
 
   return (
     <span className="my-2 flex w-full max-w-xl flex-col gap-2 rounded-xl border border-[var(--card-border)]/70 bg-[var(--foreground)]/[0.025] p-3 align-top">
-      <span className="flex items-center justify-between gap-3">
-        <span className="font-semibold text-[var(--foreground)]">
-          Confirm external action
-        </span>
-
+      <span className="flex min-w-0 flex-wrap items-start gap-2">
         {confirmation ? (
-          <span className="rounded-full border border-[var(--card-border)]/60 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--foreground)]/60">
-            {toolkitLabel(
-              confirmation.toolkit,
-            )}
-            {' · '}
-            {confirmation.risk}
-          </span>
+          <PluginBrandLogo id={confirmation.toolkit} name={toolkitLabel(confirmation.toolkit)} toolkit={confirmation.toolkit} size="micro" />
+        ) : null}
+        <span className="min-w-0 flex-1 text-[13px] leading-relaxed text-[var(--foreground)]">
+          {confirmation ? (confirmation.request || confirmation.summary) : !failed ? 'Loading action…' : null}
+        </span>
+        {status === 'pending' && confirmation && !confirmation.toolkit.startsWith('xroga-') ? (
+          <PluginPermissionControl toolkit={confirmation.toolkit} pluginName={toolkitLabel(confirmation.toolkit)} buttonOnly compact />
         ) : null}
       </span>
 
-      {confirmation ? (
-        <span className="flex flex-col gap-1 text-[13px] leading-relaxed text-[var(--foreground)]/80">
-          <span>{confirmation.summary}</span>
-          {confirmation.request ? <span className="text-[11px] text-[var(--foreground)]/55">Your request: {confirmation.request}</span> : null}
+      {status === 'pending' && confirmation?.approval ? (
+        <span role="region" aria-label="Exact action approval" className="text-[11px] text-[var(--foreground)]/70">
+          <button type="button" aria-expanded={detailsOpen} onClick={() => setDetailsOpen((open) => !open)} className="font-medium underline-offset-2 hover:underline">
+            Review exact action
+          </button>
+          {detailsOpen ? (
+            <span className="mt-2 flex flex-col gap-1 rounded-lg border border-[var(--card-border)]/60 p-2">
+              <span>{confirmation.summary}</span>
+              <span>Account: {confirmation.approval.accountReference}</span>
+              <span>Operation: {confirmation.approval.operation}</span>
+              <span>Destination: {JSON.stringify(confirmation.approval.destination)}</span>
+              <span>Spend ceiling: {confirmation.approval.spendMaximumMicroUsd === null ? 'No spending authority included' : (confirmation.approval.spendMaximumMicroUsd + ' micro-USD, ' + confirmation.approval.currency)}</span>
+              <code className="block max-h-48 overflow-auto whitespace-pre-wrap break-all">{JSON.stringify(confirmation.approval.criticalParameters, null, 2)}</code>
+              <span className="break-all text-[10px]">Prepared digest: {confirmation.approval.actionDigest}</span>
+            </span>
+          ) : null}
         </span>
-      ) : !failed ? (
-        <span className="text-[13px] text-[var(--foreground)]/65">
-          Loading the exact pending action…
-        </span>
-      ) : null}
-
-      {status ===
-      'pending' ? (
-        <span role="group" aria-label="Exact action approval" className="flex flex-col gap-1 text-[12px] text-[var(--foreground)]/75">
-          {confirmation?.approval ? <>
-            <span>Account: {confirmation.approval.accountReference}</span>
-            <span>Operation: {confirmation.approval.operation}</span>
-            <span>Destination: {JSON.stringify(confirmation.approval.destination)}</span>
-            <span>Spend ceiling: {confirmation.approval.spendMaximumMicroUsd === null ? 'No spending authority included' : `${confirmation.approval.spendMaximumMicroUsd} micro-USD, ${confirmation.approval.currency}`}</span>
-            <code className="block max-h-48 overflow-auto whitespace-pre-wrap break-all">{JSON.stringify(confirmation.approval.criticalParameters, null, 2)}</code>
-            <span className="break-all text-[10px]">Prepared digest: {confirmation.approval.actionDigest}</span>
-          </> : <span>This older action needs to be prepared again before confirmation.</span>}
-        </span>
+      ) : status === 'pending' ? (
+        <span className="text-[12px] text-[var(--foreground)]/70">This older action needs to be prepared again.</span>
       ) : null}
 
       {status ===
@@ -540,9 +543,6 @@ export function BusinessActionConfirmationInline({
               : 'Cancel'}
           </button>
 
-          <span className="text-[11px] text-[var(--foreground)]/50">
-            One dispatch attempt. Review uncertain outcomes before retrying.
-          </span>
         </span>
       ) : null}
 
@@ -556,15 +556,27 @@ export function BusinessActionConfirmationInline({
       ) : null}
 
       {notice ? (
-        <span
-          className={joinClasses(
-            'text-[12px] font-medium',
-            failed
-              ? 'text-red-500'
-              : 'text-[var(--foreground)]/75',
-          )}
-        >
-          {notice}
+        <span className="flex min-w-0 flex-col gap-1">
+          <span className={joinClasses('text-[12px] font-medium', failed ? 'text-red-500' : 'text-[var(--foreground)]/75')}>
+            {resultPreview?.summary ?? notice}
+          </span>
+          {resultPreview?.details ? (
+            <>
+              <button
+                type="button"
+                aria-expanded={resultOpen}
+                onClick={() => setResultOpen((open) => !open)}
+                className="self-start text-[11px] text-[var(--foreground)]/65 underline-offset-2 hover:underline"
+              >
+                {resultOpen ? 'Hide provider result' : 'View provider result'}
+              </button>
+              {resultOpen ? (
+                <code className="block max-h-48 overflow-auto whitespace-pre-wrap break-all text-[10px] text-[var(--foreground)]/70">
+                  {resultPreview.details}
+                </code>
+              ) : null}
+            </>
+          ) : null}
         </span>
       ) : null}
     </span>
@@ -1657,57 +1669,6 @@ const components:
     ),
   };
 
-function CitationChip({ number, source, label }: { number?: number; source: CitationSource; label?: React.ReactNode }) {
-  const [visible, setVisible] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [position, setPosition] = useState({ top: 0, left: 0 });
-  const linkRef = useRef<HTMLAnchorElement>(null);
-  const dismissRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => () => { if (dismissRef.current) clearTimeout(dismissRef.current); }, []);
-  const url = safeSourceUrl(source.url);
-  if (!url) return <span>{label ?? `[${number}]`}</span>;
-  const domain = new URL(url).hostname.replace(/^www\./i, '');
-  const snippet = source.snippet.replace(/\s+/g, ' ').replace(/^[\s*•-]+/, '').trim();
-  const excerpt = snippet.length > 175 ? `${snippet.slice(0, 172).trimEnd()}…` : snippet;
-  const keepOpen = () => { if (dismissRef.current) clearTimeout(dismissRef.current); };
-  const scheduleClose = () => { keepOpen(); dismissRef.current = setTimeout(() => setVisible(false), 180); };
-  const placePreview = () => {
-    keepOpen();
-    const rect = linkRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const width = Math.min(344, window.innerWidth - 24);
-    const left = Math.max(12, Math.min(rect.left, window.innerWidth - width - 12));
-    const top = rect.bottom + 12 + 260 < window.innerHeight ? rect.bottom + 9 : Math.max(12, rect.top - 260);
-    setPosition({ top, left });
-    setVisible(true);
-  };
-  return (
-    <span className="inline-flex align-baseline">
-      <a
-        ref={linkRef}
-        href={sourceClickUrl(url) ?? url}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label={number ? `Open source ${number}: ${source.title}` : `Open link: ${source.title}`}
-        onMouseEnter={placePreview}
-        onMouseLeave={scheduleClose}
-        onFocus={placePreview}
-        onBlur={scheduleClose}
-        onKeyDown={(event) => { if (event.key === 'Escape') setVisible(false); }}
-        className={label ? 'xv-resource-link' : 'xv-citation-chip'}
-      >{label ?? <><SourceLogo domain={domain} size={15} /><span>{domain}</span></>}</a>
-      {visible && typeof document !== 'undefined' ? createPortal(
-        <div className="xv-citation-preview" style={{ top: position.top, left: position.left }} onMouseEnter={keepOpen} onMouseLeave={scheduleClose} onFocus={keepOpen} onBlur={scheduleClose}>
-          <span className="xv-citation-preview__top"><span className="xv-citation-preview__icon"><SourceLogo domain={domain} size={27} /></span><span className="min-w-0"><span className="xv-citation-preview__domain">{domain}</span><span className="xv-citation-preview__eyebrow">Source page · verify on original site</span></span></span>
-          <span className="xv-citation-preview__title">{source.title}</span>
-          {excerpt ? <span className="xv-citation-preview__excerpt">{excerpt}</span> : null}
-          <span className="xv-citation-preview__actions"><button type="button" onClick={async () => { try { await navigator.clipboard.writeText(snippet || source.title); setCopied(true); } catch { setCopied(false); } }}>{copied ? <Check size={13} /> : <Copy size={13} />}{copied ? 'Copied' : 'Copy excerpt'}</button><a href={sourceClickUrl(url) ?? url} target="_blank" rel="noopener noreferrer">Visit source <ArrowUpRight size={13} /></a></span>
-        </div>, document.body,
-      ) : null}
-    </span>
-  );
-}
-
 /** Add breathing room to legacy wall-of-text answers without rewriting their wording. */
 export function structureLongProse(markdown: string): string {
   const formatBlock = (block: string) => {
@@ -1749,7 +1710,8 @@ export function FormattedAiMarkdown({
   sources?: CitationSource[];
   afterIntro?: React.ReactNode;
 }) {
-  const normalized = streaming ? content.replace(/\r\n/g, '\n') : structureLongProse(content.replace(/\r\n/g, '\n'));
+  const prepared = content.replace(/\r\n/g, '\n');
+  const normalized = streaming ? prepared : structureLongProse(compactConnectedAppConfirmationMarkdown(prepared));
   const opening = normalized.match(/^([^\n]+(?:\n(?!\n)[^\n]+)*)\n\s*\n/);
   const lead = !streaming && (normalized.length > 500 || afterIntro) && opening && opening[1].length >= 25 && opening[1].length <= 500 && !/^\s*(?:[#>*`\-|\d+\.]|!\[)/.test(opening[1]) ? opening[1] : null;
   const introParts = afterIntro && !lead && !streaming ? normalized.split(/\n\s*\n/) : [];
@@ -1761,15 +1723,13 @@ export function FormattedAiMarkdown({
     ...components,
     a: ({ href, children, ...props }) => {
       const label = Array.isArray(children) ? children.join('') : children;
-      const match = typeof label === 'string' ? /^\[(\d{1,2})\]$/.exec(label) : null;
-      const number = match ? Number(match[1]) : 0;
-      const source = number > 0 ? availableSources[number - 1] : undefined;
-      if (source && href === safeSourceUrl(source.url)) return <CitationChip number={number} source={source} />;
+      const citation = typeof label === 'string' && href ? numberedCitation(label, href, availableSources) : undefined;
+      if (citation) return <SourceCitation number={citation.number} source={citation.source} referral />;
       const external = href ? safeSourceUrl(href) : null;
       if (external) {
         const knownIndex = availableSources.findIndex((item) => safeSourceUrl(item.url) === external);
         const title = typeof label === 'string' && label.trim() ? label.trim() : new URL(external).hostname;
-        return <CitationChip number={knownIndex >= 0 ? knownIndex + 1 : undefined} source={knownIndex >= 0 ? availableSources[knownIndex] : { title, url: external, snippet: '' }} label={children} />;
+        return <SourceCitation referral number={knownIndex >= 0 ? knownIndex + 1 : undefined} source={knownIndex >= 0 ? availableSources[knownIndex] : { title, url: external, snippet: '' }} label={children} />;
       }
       return React.createElement(components.a as React.ElementType, { href, ...props }, children);
     },

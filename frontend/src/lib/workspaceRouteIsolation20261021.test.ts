@@ -24,7 +24,8 @@ test('repo header is only the actual repository name; menu still has complete id
   assert.match(identity, /activeProject\?\.repo\.split\('\/'\)\.pop\(\)/);
   assert.match(identity, /<h3 className="xv-repo-name" title=\{repoIdentity\.fullName\}><SidebarMovingTitle text=\{repoIdentity\.label\} \/><\/h3>/);
   assert.doesNotMatch(identity.slice(identity.indexOf('className="xv-term-title xv-term-title--button"'), identity.indexOf('<AnchoredPortalPopover open={open}')), /ChevronDown/);
-  assert.match(identity, /repoIdentity\.fullName \|\| 'No GitHub repository'/);
+  assert.match(identity, /aria-label=\{`Copy repository name \$\{repoIdentity\.fullName\}`\}/);
+  assert.match(identity, /navigator\.clipboard\.writeText\(repoIdentity\.fullName\)/);
 });
 
 test('sidebar uses animated Blocks for Overview and Locate for Search', () => {
@@ -36,11 +37,12 @@ test('sidebar uses animated Blocks for Overview and Locate for Search', () => {
 });
 
 test('plugin search uses full catalog with debounce and cannot misrepresent unloaded results', () => {
-  assert.match(plugin, /xrogaConnect\.catalog\(\{ search: query\.trim\(\), limit: 25 \}\)/);
-  assert.match(plugin, /setTimeout\(\(\) =>/);
-  assert.match(plugin, /catalogSearching/);
-  assert.match(plugin, /Live plugin search is unavailable/);
-  assert.match(plugin, /plugin\.connected && onSelect/);
+  assert.match(plugin, /xrogaConnect\.catalog\(\{ search: query\.trim\(\) \|\| undefined, sortBy: 'usage', limit: 50 \}\)/);
+  assert.match(plugin, /xrogaConnect\.catalog\([^\n]+cursor: next/);
+  assert.match(plugin, /\}, query\.trim\(\) \? 260 : 0\)/);
+  assert.match(plugin, /requestRef\.current !== requestId/);
+  assert.match(plugin, /Catalog search is unavailable/);
+  assert.match(plugin, /!loadingCatalog && !loadingStatus && showResults\.length === 0/);
 });
 
 test('conversation navigation uses 1 marker per user request and reply with adaptive page limits', async () => {

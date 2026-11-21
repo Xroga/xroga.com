@@ -15,12 +15,9 @@
 .actions button:focus-visible { outline: 2px solid #6e94d5; outline-offset: 3px; }
 .actions svg { width: 16px; height: 16px; stroke-width: 1.6; }
 .actions span { font-size: 12px; }
-.status { display: flex; align-items: center; gap: 9px; color: var(--muted); font-size: 13px; margin-block: 4px 16px; }
-.status > span { width: 6px; height: 6px; background: currentColor; border-radius: 50%; animation: breathe 1.8s ease-in-out infinite; }
-.activity, .controls { margin-block-end: 20px; }
+.activity { margin-block-end: 12px; }
+.controls { margin-block-end: 20px; }
 .controls:empty { display: none; }
-@keyframes breathe { 50% { opacity: .35; } }
-@media (prefers-reduced-motion: reduce) { .status > span { animation: none; } }
 /* The existing controlled composer keeps every draft, upload, voice and stop
    handler. This appearance applies only while a server-authorized V2 scope exists. */
 :global(body):has(.scope) :global([data-testid=persistent-terminal-dock]) :global(.xv-terminal-dock-inner) { max-width: 880px; padding-inline: 28px; }

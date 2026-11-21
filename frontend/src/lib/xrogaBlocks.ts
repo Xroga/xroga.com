@@ -355,7 +355,9 @@ export const xrogaOutputSchema = z.object({
   sourceText: z.string().max(200_000).optional(),
   // Preserve the received document for incomplete-output recovery. It is data,
   // never HTML, executable UI or proof that the answer passed validation.
-  responseSource: z.object({ format: z.literal('xroga-response-json-v1'), text: z.string().max(200_000), contract:responseCoverageContractSchema.optional() }).strict().optional(),
+  responseSource: z.object({
+    format: z.enum(['xroga-response-json-v1', 'xroga-openui-v1']), text: z.string().max(200_000), contract: responseCoverageContractSchema.optional(),
+  }).strict().refine(source => source.format !== 'xroga-openui-v1' || (source.text.length <= 24_000 && !source.contract)).optional(),
   composition: z.literal('source-order').optional(),
   artifact: z.object({
     id: z.string().min(1), type: z.string().min(1), title: z.string().min(1), projectId: z.string().optional(),

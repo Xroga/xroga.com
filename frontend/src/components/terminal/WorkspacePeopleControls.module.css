@@ -1,4 +1,6 @@
-.control { display:flex; align-items:center; gap:5px; height:27px; border:1px solid var(--terminal-ui-border); border-radius:8px; padding:0 7px; font:11px Arial,sans-serif; color:var(--foreground); background:var(--terminal-ui-raised); }
+.control { display:flex; align-items:center; gap:6px; height:30px; border:0; border-radius:8px; padding:0 7px; font:600 11px/1.2 var(--font-inter, Inter),ui-sans-serif,system-ui,sans-serif; color:var(--foreground); background:transparent; box-shadow:none; cursor:pointer; transition:background-color 140ms ease,color 140ms ease; }
+.control:not(:disabled):hover { background:color-mix(in srgb,var(--foreground) 7%,transparent); }
+.control:focus-visible { outline:2px solid var(--accent,currentColor); outline-offset:2px; }
 .control:disabled { opacity:.4; cursor:not-allowed; }
 .control>div { max-width:19px; max-height:19px; overflow:hidden; border-radius:50%; }
 .overlay { position:fixed; inset:0; z-index:2147483000; background:rgba(0,0,0,.54); }
@@ -16,4 +18,4 @@
 .teamSection p { margin:0 0 12px; }
 .teamSection button,.teamSection a { display:inline-flex; align-items:center; gap:8px; width:auto; padding:8px 0; color:inherit; font-size:12px; font-weight:650; background:transparent; border:0; cursor:pointer; text-decoration:underline; text-underline-offset:3px; }
 .teamSection button:disabled { opacity:.4; cursor:not-allowed; }
-@media(max-width:1023px) { .control { width:27px; padding:0; justify-content:center; flex-shrink:0; } .control>span { display:none; } }
+@media(max-width:1023px) { .control { width:32px; min-width:32px; height:32px; padding:0; justify-content:center; flex-shrink:0; } .control>span { display:none; } }

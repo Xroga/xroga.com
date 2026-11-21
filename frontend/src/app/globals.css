@@ -3226,24 +3226,7 @@ body.theme-gray * {
     box-shadow: none;
     outline: none;
   }
-  /* Only subtle grip lines, no painted chip behind the header text. */
-  .xv-sidebar-resize-handle > span {
-    width: 3px;
-    height: 42px;
-    border-radius: 999px;
-    background: repeating-linear-gradient(
-      to bottom,
-      color-mix(in srgb, var(--muted) 62%, transparent) 0 3px,
-      transparent 3px 7px
-    );
-    opacity: 0.55;
-    transition: opacity 100ms ease;
-  }
-  .xv-sidebar-resize-handle:hover > span,
-  .xv-sidebar-resize-handle:focus-visible > span,
-  body.xv-sidebar-resizing .xv-sidebar-resize-handle > span {
-    opacity: 1;
-  }
+  /* Resize remains draggable and keyboard accessible; no six-dot visual grip. */
   body.xv-sidebar-resizing,
   body.xv-sidebar-resizing * {
     cursor: ew-resize !important;
@@ -14983,4 +14966,40 @@ body.xv-sidebar-resizing .xv-terminal-dock {
     padding-inline: 0;
     justify-content: center;
   }
+}
+
+/* Workspace-only header controls: text links on desktop, icon-only on mobile.
+   Resting controls have no outlined pill; focus-visible remains accessible. */
+.xv-workspace-header-tools .xv-skin-trigger {
+  min-height: 30px;
+  height: 30px;
+  gap: 6px;
+  padding: 0 7px;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--foreground) !important;
+  font: 600 11px/1.2 var(--font-inter, Inter), ui-sans-serif, system-ui, sans-serif;
+  cursor: pointer;
+}
+.xv-workspace-header-tools .xv-skin-trigger:hover {
+  color: var(--foreground) !important;
+  background: color-mix(in srgb, var(--foreground) 7%, transparent) !important;
+}
+.xv-workspace-header-tools .xv-skin-trigger:focus-visible {
+  outline: 2px solid var(--accent, currentColor);
+  outline-offset: 2px;
+}
+@media (min-width: 1024px) {
+  .xv-workspace-header-tools .xv-skin-trigger-label { display: inline; }
+}
+@media (max-width: 1023px) {
+  .xv-workspace-header-tools .xv-skin-trigger {
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
+    padding: 0;
+    justify-content: center;
+  }
+  .xv-workspace-header-tools .xv-skin-trigger-label { display: none !important; }
 }

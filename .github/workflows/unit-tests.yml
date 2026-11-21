@@ -42,7 +42,7 @@ jobs:
       - name: Install pinned browser for existing local browser integration tests
         env:
           PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/batch-01-playwright
-        run: npx playwright install --with-deps chromium
+        run: bash scripts/ci/install-playwright-chromium.sh
 
       - name: Canonical build, test and security baseline
         env:
@@ -90,7 +90,7 @@ jobs:
       - name: Install the same pinned browser for integrated regression
         env:
           PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/batch-01-playwright
-        run: npx playwright install --with-deps chromium
+        run: bash scripts/ci/install-playwright-chromium.sh
       - name: Complete integrated baseline twice without source mutation
         env:
           PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/batch-01-playwright

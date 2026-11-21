@@ -254,7 +254,7 @@ test('essential answer sections and tables are not hidden in disclosure controls
   const canvas = readFileSync(new URL('./ResponseCanvasV2.tsx', import.meta.url), 'utf8');
   const interactions = readFileSync(new URL('./InteractiveV2.tsx', import.meta.url), 'utf8');
   assert.doesNotMatch(canvas.slice(0, canvas.indexOf('references.length > 0')), /<details|View source data/);
-  assert.match(canvas, /<summary>References/);
+  assert.match(canvas, /<ResponseSources sources=\{references\}/);
   // Tabs switch between alternative views, like any tab widget, and nothing else may be hidden. Every panel stays in the page
   // (so assistive technology, keyboard users, Copy and export all reach it) and `hidden` is allowed only on a tab panel.
   assert.doesNotMatch(interactions, /node\.items\[selected\]/);

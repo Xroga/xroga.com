@@ -1,5 +1,5 @@
-/** A repository-list refresh may restore a default only before the user has
- * chosen an explicit task/project context. This is UI selection, not authority. */
+/** Passive account refreshes must not attach a GitHub repository to New Work.
+ * A repository context exists only after the user selects or explicitly restores it. */
 export function passiveRepositorySelection(input: {
   repositories: readonly string[];
   selected: string | null;
@@ -8,8 +8,7 @@ export function passiveRepositorySelection(input: {
   defaultRepository?: string | null;
   repositoryLocked: boolean;
 }): string | null {
-  if (input.selected && input.repositories.includes(input.selected)) return input.selected;
-  if (input.fresh || input.projectSelected) return null;
-  if (input.defaultRepository && input.repositories.includes(input.defaultRepository)) return input.defaultRepository;
-  return input.repositoryLocked ? input.repositories[0] ?? null : null;
+  return input.selected && input.repositories.includes(input.selected)
+    ? input.selected
+    : null;
 }

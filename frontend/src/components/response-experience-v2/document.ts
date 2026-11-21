@@ -29,7 +29,7 @@ export const nodeSchema = z.discriminatedUnion('kind', [
   base.extend({ kind: z.literal('timeline'), items: z.array(z.object({ id: label, label, icon: z.string().max(40).optional(), detail: text.optional(), status: label.optional(), date: label.optional() })).max(100) }),
   base.extend({ kind: z.literal('progress'), items: z.array(z.object({ id: label, label, value: z.number().finite().nonnegative(), max: z.number().finite().positive(), detail: text.optional(), unit: label.optional(), status: label.optional() })).max(30) }),
 ]);
-export const responseDocumentSchema = z.object({ version: z.literal(2), id: label, originalText: text, streaming: z.boolean(), nodes: z.array(nodeSchema).max(100), sources: z.array(z.object({ title: label, url: text, snippet: text })).max(100) });
+export const responseDocumentSchema = z.object({ version: z.literal(2), id: label, originalText: text, streaming: z.boolean(), nodes: z.array(nodeSchema).max(100), sources: z.array(z.object({ title: label, url: text, snippet: text, siteName: text.optional() })).max(100) });
 export type ResponseNodeV2 = z.infer<typeof nodeSchema>;
 export type ResponseDocumentV2 = z.infer<typeof responseDocumentSchema>;
 export type ResponseInputV2 = { id: string; content: string; featureOutput?: unknown; webSources?: CitationSource[] };

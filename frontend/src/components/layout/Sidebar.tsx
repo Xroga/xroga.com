@@ -180,7 +180,7 @@ const navItems: NavEntry[] = [
       { href: '/dashboard/library#my-files', label: 'My Files', icon: Files, animated: LucideFolderOpenIcon, tip: 'Coming soon · Stored files', planned: true },
       { href: '/dashboard/library#artifacts', label: 'Artifacts', icon: FileText, animated: LucideFileTextIcon, tip: 'Coming soon · Saved deliverables', planned: true },
       { href: '/showcase', label: 'Templates', icon: LayoutTemplate, animated: LucideLayersIcon, tip: 'Browse existing Xroga templates.' },
-      { href: '/dashboard/library#skills', label: 'Skills', icon: BookOpen, animated: LucideBookTextIcon, tip: 'Coming soon · Reusable capabilities', planned: true },
+      { href: '/dashboard/library#skills', label: 'Skills', icon: BookOpen, animated: LucideBookTextIcon, tip: '40 ready-made jobs to start in your Workspace.' },
       { href: '/dashboard/library#xroga-drive', label: 'Xroga Drive', icon: HardDrive, animated: LucideHardDriveIcon, tip: 'Coming soon · Persistent personal storage', planned: true },
     ],
   },
@@ -561,8 +561,8 @@ export function Sidebar({ displayName, email }: SidebarProps) {
     useProjectWorkspaceStore.getState().setWorkspaceOpen(false);
     handleNavClick();
     router.push('/workspace');
-    // Signal the composer after the task reset. The canonical project stays selected;
-    // users clear it only through the separate "New product" control.
+    // Signal the composer after New Work clears the previous project
+    // and repository. Users can opt back into either in the same workspace.
     window.setTimeout(() => {
       window.dispatchEvent(new CustomEvent('xroga-request-new-terminal'));
     }, 80);
@@ -965,7 +965,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
             onKeyDown={resizeWithKeyboard}
             className="xv-sidebar-resize-handle hidden lg:flex"
           >
-            <span aria-hidden="true" />
+            {/* Keep the accessible drag/keyboard resize handle, with no six-dot decoration. */}
           </div>
         ) : null}
       </div>

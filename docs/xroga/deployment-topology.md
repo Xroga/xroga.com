@@ -1,6 +1,6 @@
 # Deployment topology, source and dated evidence
 
-Source SHA: `fc9938a7effd4f7fd8e4c6237fb8914f9a8c593c`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
+Source SHA: `a92dcf9c0b19e61c803957729f5ea2d559ecb6d7`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -103,6 +103,7 @@ Source SHA: `fc9938a7effd4f7fd8e4c6237fb8914f9a8c593c`; exact current source/con
 | endpoint-example-test | Source-defined endpoint example.test | CONFIGURED_BUT_UNVERIFIED | example.test | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-exp-host | Source-defined endpoint exp.host | CONFIGURED_BUT_UNVERIFIED | exp.host | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-expo-dev | Source-defined endpoint expo.dev | CONFIGURED_BUT_UNVERIFIED | expo.dev | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-fcm-googleapis-com | Source-defined endpoint fcm.googleapis.com | CONFIGURED_BUT_UNVERIFIED | fcm.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-fixture | Source-defined endpoint fixture | CONFIGURED_BUT_UNVERIFIED | fixture | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-fixture-invalid | Source-defined endpoint fixture.invalid | CONFIGURED_BUT_UNVERIFIED | fixture.invalid | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-fixture-supabase-co | Source-defined endpoint fixture.supabase.co | CONFIGURED_BUT_UNVERIFIED | fixture.supabase.co | NOT_INDEPENDENTLY_VERIFIED |
@@ -242,4 +243,4 @@ Historical findings below remain as review obligations, not fresh observations. 
 - P1 RELEASE_CONTROLS_UNENFORCED: Observed main and Production/Preview lack platform protection/restrictions; mandatory user release gates still apply. Owner command: 010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P2 HOST_TOOLCHAIN_DRIFT: Vercel project configured Node 24.x; canonical CI/API image is 22.21.1; Fly host test workflow has no explicit setup-node. Owner command: 006; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 
-1077 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.
+1140 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.

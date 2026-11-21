@@ -30,10 +30,11 @@ export function requireBrowserModelAuthority(job:BrowserJob,authority:BrowserMod
 
 export async function dispatchBrowserModel(input:{job:BrowserJob;authority:BrowserModelAuthority|undefined;signal:AbortSignal;
   modelId:ModelId;body:Record<string,unknown>&{messages:unknown;tools?:unknown};estimatedInputTokens:number;maximumOutputTokens:number;
-  idempotencyKey:string;client?:()=>BrowserModelClient}):Promise<any>{
+  idempotencyKey:string;client?:()=>BrowserModelClient;platformCostCeiling?:number}):Promise<any>{
   const job=structuredClone(input.job);
   const authority=requireBrowserModelAuthority(job,input.authority);
   const scope={context:authority.context,userId:authority.context.userId,
+    ...(input.platformCostCeiling!==undefined?{connectedAccountId:'platform',maximumCostMicroUsd:input.platformCostCeiling}:{}),
     ...(!job.projectId.startsWith('user:')?{projectId:job.projectId}:{})};
   const signal=input.signal,checkCancellation=()=>signal.throwIfAborted();
   const current=async()=>{checkCancellation();await authority.revalidate();checkCancellation();};
@@ -56,7 +57,7 @@ export async function dispatchBrowserModel(input:{job:BrowserJob;authority:Brows
       const client=input.client?.();
       if(client&&client.model!==endpoint.apiModel)throw Object.assign(Error('Browser model destination changed.'),{code:'MODEL_DISPATCH_BINDING_DENIED'});
       await beforeDispatch(wire);
-      const completion=client?await client.create(request,{signal}):await createModelProviderClient(endpoint,beforeDispatch).chat.completions.create(request as never,{signal,maxRetries:0});
+      const completion=client?await client.create(request,{signal}):await createModelProviderClient(endpoint,beforeDispatch,dispatch.beforeDispatch).chat.completions.create(request as never,{signal,maxRetries:0});
       const inputTokens=completion?.usage?.prompt_tokens,outputTokens=completion?.usage?.completion_tokens;
       const reasoningTokens=completion?.usage?.completion_tokens_details?.reasoning_tokens??0;
       const providerRequestId=client ? completion?.id : modelTransportReceipt(endpoint).requestId;

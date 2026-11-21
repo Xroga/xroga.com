@@ -1,0 +1,10 @@
+.git/
+.github/
+**/node_modules/
+**/.env
+**/.env.*
+**/.next/
+**/dist/
+**/*.log
+.local-task-storage/
+outputs/
