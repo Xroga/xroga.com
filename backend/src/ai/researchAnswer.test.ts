@@ -11,7 +11,7 @@ import {createTenantContext} from '../security/tenantContext.js';
 import {nativeReleaseFixture} from '../services/publish/__tests__/nativeReleaseFixture.js';
 import {harness} from '../storage/testing/harness.js';
 import {actionPlanDigest} from '../services/integrations/businessAction.js';
-import {workspacePublicSearchQuery} from './workspacePublicSearch.js';
+import {workspacePublicSearchQuery,workspaceSearchNeedsExactReview} from './workspacePublicSearch.js';
 
 test('public Workspace research omits private data, provider receipts and usage from its response payload', () => {
   const result = {
@@ -447,6 +447,25 @@ test('public current roles, recent documentation changes and named sources enter
     'Rank five official cloud documentation sites; include this private CRM list.',
     'Summarize two dated public sources about our private employees.',
   ]) assert.equal(workspacePublicSearchQuery(prompt),undefined,prompt);
+});
+
+test('public research can request an explanation without exporting editorial instructions or private context', () => {
+  for (const [prompt, query] of [
+    ['Compare cloud hosting services. Give your ranking criteria and cite official sources.', 'Compare cloud hosting services'],
+    ['Search the web for the newest stable Node.js release, give your reasoning.', 'the newest stable Node.js release'],
+    ['Find the latest train fares and explain your methodology.', 'Find the latest train fares'],
+  ]) {
+    assert.equal(workspaceSearchNeedsExactReview(prompt), false, prompt);
+    assert.equal(workspacePublicSearchQuery(prompt)?.query, query, prompt);
+  }
+  for (const prompt of [
+    'Compare hosting services. Explain your criteria from the attached spreadsheet.',
+    'Find the latest train fares and give your recommendation, then include our itinerary.',
+    'Research the newest release and explain your reasoning using my private notes.',
+  ]) {
+    assert.equal(workspaceSearchNeedsExactReview(prompt), true, prompt);
+    assert.equal(workspacePublicSearchQuery(prompt), undefined, prompt);
+  }
 });
 
 test('automatic Search distinguishes software names, public pricing units, and source citation preferences from private URLs',()=>{
