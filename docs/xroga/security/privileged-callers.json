@@ -1,26 +1,26 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "ab0fcbd251c0d5f859a5d19bda625fed1f6b31ada2b5432bedf80cb4ad01fc3f",
+  "reviewRegistrySha256": "713efeaba34608f1bfdf2feb55c67c96e2e486222fa6e81bc1feb6f48745c8c6",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 226,
-    "persistenceCandidates": 999,
+    "privilegedFactorySites": 228,
+    "persistenceCandidates": 1003,
     "ownerPredicateCandidates": 262,
-    "reviewRequired": 152,
-    "reviewedCandidates": 847,
-    "unresolvedSafetyCandidates": 196,
+    "reviewRequired": 157,
+    "reviewedCandidates": 846,
+    "unresolvedSafetyCandidates": 201,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 152,
+    "REVIEW_REQUIRED": 157,
     "SCOPED_BOUNDARY": 547,
     "NARROW_EXCEPTION": 52,
-    "NOT_PERSISTENCE": 204,
+    "NOT_PERSISTENCE": 203,
     "REVIEWED_GAP": 44
   },
   "acceptance": {
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 80,
-    "unresolvedCandidateBoundaries": 919,
+    "unresolvedCandidateBoundaries": 923,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -4792,6 +4792,26 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "fe7e18825793dab5b593"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "4af64600aa963a1aba30"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "99bf9d87117dfd30a663"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "56522adca468dea3f747"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "7052eb5c15ef06bfb037"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "20c9e87145ae5dc93476"
       },
       {
@@ -6340,15 +6360,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "8204b932fb1d657bcf51"
-      },
-      {
-        "code": "MISSING_CALLER_REVIEW",
         "id": "4fe92c7afdea034fa58b"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "01fce3ee8703d9146072"
+        "id": "dda13c8e2e39e29ed41c"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6641,6 +6657,26 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "a0cc691275ff5a5069a1"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "fe7e18825793dab5b593"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "4af64600aa963a1aba30"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "99bf9d87117dfd30a663"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "56522adca468dea3f747"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "7052eb5c15ef06bfb037"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -10100,11 +10136,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "8204b932fb1d657bcf51"
-      },
-      {
-        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "01fce3ee8703d9146072"
+        "id": "dda13c8e2e39e29ed41c"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10133,11 +10165,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 999,
+    "currentCallers": 1003,
     "structuredVerified": 80,
-    "structuredUnproven": 919,
-    "manualUnresolved": 196,
-    "manualUnsupported": 723,
+    "structuredUnproven": 923,
+    "manualUnresolved": 201,
+    "manualUnsupported": 722,
     "agreedVerified": 80,
     "proofAwaitingManualReconciliation": 0
   },
@@ -20232,6 +20264,61 @@
           }
         ]
       }
+    },
+    {
+      "id": "fe7e18825793dab5b593",
+      "path": "backend/src/routes/teamMembership.ts",
+      "line": 54,
+      "enclosing": "handle",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "c280709726f97142587bdcd9c48e9511ebad4a41356cc671485aa36216d55735"
+    },
+    {
+      "id": "4af64600aa963a1aba30",
+      "path": "backend/src/routes/teamMembership.ts",
+      "line": 55,
+      "enclosing": "handle",
+      "kind": "RPC_CANDIDATE",
+      "target": "xroga_team_claim_invite_email",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "c280709726f97142587bdcd9c48e9511ebad4a41356cc671485aa36216d55735"
+    },
+    {
+      "id": "99bf9d87117dfd30a663",
+      "path": "backend/src/routes/teamMembership.ts",
+      "line": 65,
+      "enclosing": "handle",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "xroga_team_invite_delivery",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "c280709726f97142587bdcd9c48e9511ebad4a41356cc671485aa36216d55735"
+    },
+    {
+      "id": "56522adca468dea3f747",
+      "path": "backend/src/routes/teamMembership.ts",
+      "line": 71,
+      "enclosing": "handle",
+      "kind": "RPC_CANDIDATE",
+      "target": "xroga_team_membership",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "c280709726f97142587bdcd9c48e9511ebad4a41356cc671485aa36216d55735"
+    },
+    {
+      "id": "7052eb5c15ef06bfb037",
+      "path": "backend/src/routes/teamMembership.ts",
+      "line": 71,
+      "enclosing": "handle",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "c280709726f97142587bdcd9c48e9511ebad4a41356cc671485aa36216d55735"
     },
     {
       "id": "353aa869f7c46574b7a6",
@@ -31249,7 +31336,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628",
+      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -31270,7 +31357,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628",
+      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -31291,7 +31378,7 @@
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628"
+      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237"
     },
     {
       "id": "4fbfd0293636c69d00b0",
@@ -31302,7 +31389,7 @@
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628"
+      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237"
     },
     {
       "id": "92e2f9e84b8b9d7515b1",
@@ -31579,27 +31666,6 @@
       }
     },
     {
-      "id": "8204b932fb1d657bcf51",
-      "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "line": 107,
-      "enclosing": "IntegrationsModal",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0dbd96995b155733fa243bf3ce5cab4f3a5e374f86e566ff29f850f3cae8f8c1",
-      "semanticReview": {
-        "authority": "Native Array.from copies a local Map iterator into React state for rendering validated plugin search results. This disposition covers only that conversion, not adjacent connector search or any consequential integration action.",
-        "reason": "Exact current-source receiver and surrounding data flow were inspected. Only the native in-memory conversion is excluded. No adjacent authority, persistence or provider boundary is certified.",
-        "evidence": [
-          {
-            "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-            "marker": "setApps(Array.from(available.values()));"
-          }
-        ]
-      }
-    },
-    {
       "id": "4fe92c7afdea034fa58b",
       "path": "frontend/src/components/terminal/ResponseSources.tsx",
       "line": 57,
@@ -31611,15 +31677,15 @@
       "sourceSha256": "0fd186c17e5d8ab081a61db58f16e171de43d5d8cc66727caccab5245f1a5fc7"
     },
     {
-      "id": "01fce3ee8703d9146072",
+      "id": "dda13c8e2e39e29ed41c",
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 413,
+      "line": 417,
       "enclosing": "TerminalChatBar",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "959ecdbdfe4da3c4cee1a79e2e4684f638df3ded77cf7ed9002bdafbd2ee8d0c",
+      "sourceSha256": "de31dc36e098886d61cf2598e17037153d92489efbf19281765814f670b0ee18",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",

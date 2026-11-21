@@ -27762,7 +27762,7 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628",
+      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237",
       "callIds": [
         "a291f26c3c5001de01f9"
       ],
@@ -27787,7 +27787,7 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628",
+      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237",
       "callIds": [
         "f8d5eaf0193282882763"
       ],
@@ -28111,35 +28111,10 @@
       "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
     },
     {
-      "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "sourceSha256": "0dbd96995b155733fa243bf3ce5cab4f3a5e374f86e566ff29f850f3cae8f8c1",
-      "callIds": [
-        "8204b932fb1d657bcf51"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Native Array.from copies a local Map iterator into React state for rendering validated plugin search results. This disposition covers only that conversion, not adjacent connector search or any consequential integration action.",
-      "reason": "Exact current-source receiver and surrounding data flow were inspected. Only the native in-memory conversion is excluded. No adjacent authority, persistence or provider boundary is certified.",
-      "evidence": [
-        {
-          "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-          "marker": "setApps(Array.from(available.values()));"
-        }
-      ],
-      "beforeCurrentMainIntegration": {
-        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
-        "sourceSha256": "0dbd96995b155733fa243bf3ce5cab4f3a5e374f86e566ff29f850f3cae8f8c1",
-        "callIds": [
-          "8204b932fb1d657bcf51"
-        ],
-        "disposition": "NOT_PERSISTENCE"
-      },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
-    },
-    {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sourceSha256": "959ecdbdfe4da3c4cee1a79e2e4684f638df3ded77cf7ed9002bdafbd2ee8d0c",
+      "sourceSha256": "de31dc36e098886d61cf2598e17037153d92489efbf19281765814f670b0ee18",
       "callIds": [
-        "01fce3ee8703d9146072"
+        "dda13c8e2e39e29ed41c"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
