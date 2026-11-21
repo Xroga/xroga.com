@@ -111,3 +111,6 @@ Build commit `0f23cff8f` (working tree clean at build), ZIP `C:\xr-review-builds
 **Checks on this source:** all 304 Chromium scenarios PASS with the hook installed on every page; `restart-restore` and `parallel-bench` PASS; extension unit suite and backend route tests below.
 
 **Still not run as graded real-model cases:** two-tenant isolation with two signed-in users (the backend route test covers ownership with a fixture), skill injection with a real model (forged digest is unit-tested; the page-injection tasks cover the model side), a service-worker kill mid-run with a real model (`restart-restore` uses the fixture model), 20 parallel workers, real Ads/Meta/Shopify/Drive accounts, production gates.
+
+## Build addendum 4 (round 3)
+Build commit `6cbfe81d3` (working tree clean at build), ZIP `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-6cbfe81d3.zip`, SHA-256 `0DF1C6A02DC0479234BDE329BECF79F3527C5BC45F7CE0AC1A0D3AA4AB1BEF8C`, manifest `ARTIFACT-MANIFEST-6cbfe81d3.json`. Upgrade from `0f23cff8f` keeps extension id, storage, service worker and side panel. Rollback: the `0f23cff8f` ZIP (SHA-256 `B029CCBB...3229`). Extension unit suite 1458 passed, 4 skipped; 304 of 304 scenarios PASS. Staging only; the backend is unchanged by this round.
