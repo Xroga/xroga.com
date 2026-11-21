@@ -43,8 +43,9 @@ export const ExpectationSchema = z
       equals: z.number().int().min(0).optional(),
       atLeast: z.number().int().min(0).optional(),
       atMost: z.number().int().min(0).optional(),
+      delta: z.number().int().optional().describe('Change from before the action: 1 = gained a row'),
     })
-      .refine(c => c.equals !== undefined || c.atLeast !== undefined || c.atMost !== undefined, 'count needs equals, atLeast or atMost')
+      .refine(c => c.equals !== undefined || c.atLeast !== undefined || c.atMost !== undefined || c.delta !== undefined, 'count needs equals, atLeast, atMost or delta')
       .optional()
       .describe('How many elements with this role (and a name containing this text) the page has: the list gained a row'),
   })
@@ -183,8 +184,27 @@ export const WaitArgsSchema = z.strictObject({
   textGone: z.string().optional(),
   target: TargetSchema.optional(),
   state: z.enum(['visible', 'hidden', 'attached', 'detached', 'enabled']).optional(),
+  reading: z
+    .strictObject({
+      equals: z.string().optional(),
+      contains: z.string().optional(),
+      matches: z.string().optional(),
+      above: z.number().optional(),
+      below: z.number().optional(),
+      changed: z.boolean().optional(),
+    })
+    .optional()
+    .describe('Wait until the target reads this (value or text; matches is a regex)'),
   url: z.string().optional(),
   ms: z.number().int().min(0).max(60_000).optional(),
+});
+
+export const DiagnosticsArgsSchema = z.strictObject({
+  ...readCommon,
+  kind: z.enum(['both', 'console', 'network']).optional(),
+  onlyProblems: z.boolean().optional().describe('Errors, and requests that failed or got 400+'),
+  urlPattern: z.string().optional(),
+  limit: z.number().int().min(1).max(100).optional(),
 });
 
 export const NavigateArgsSchema = z.strictObject({
@@ -255,6 +275,7 @@ export type CanvasArgs = z.infer<typeof CanvasArgsSchema>;
 export type ScrollArgs = z.infer<typeof ScrollArgsSchema>;
 export type WaitArgs = z.infer<typeof WaitArgsSchema>;
 export type NavigateArgs = z.infer<typeof NavigateArgsSchema>;
+export type DiagnosticsArgs = z.infer<typeof DiagnosticsArgsSchema>;
 export type TabsArgs = z.infer<typeof TabsArgsSchema>;
 export type HandleDialogArgs = z.infer<typeof HandleDialogArgsSchema>;
 export type UploadArgs = z.infer<typeof UploadArgsSchema>;

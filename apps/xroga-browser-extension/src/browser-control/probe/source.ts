@@ -173,6 +173,8 @@ export interface ProbeApi {
   watchBlock(el: Element): string;
   blockMutations(): number;
   hasText(text: string): boolean;
+  /** What the element reads: a form control's value, otherwise its visible text (at most 400 characters). */
+  reading(el: Element): string;
   recentInput(ms: number): Array<{ t: number; kind: 'mouse' | 'key' | 'wheel' | 'touch'; x?: number; y?: number }>;
   navigationTarget(el: Element, mode: 'activate' | 'enter'): NavigationTarget | null;
   focused(): Element | null;
@@ -819,9 +821,19 @@ export function probeMain(): void {
     },
 
     /** Whether the page's visible text contains `text` (whitespace collapsed, case ignored: a model paraphrasing the capitalisation of a status must not read as a failed action). */
+    reading(el: Element) {
+      const v = (el as HTMLInputElement).value;
+      if (typeof v === 'string' && ['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName)) return v.slice(0, 400);
+      const h = el as HTMLElement;
+      return String(h.innerText ?? el.textContent ?? '').slice(0, 400);
+    },
+
     hasText(text: string) {
       const norm = (t: string) => t.replace(/\s+/g, ' ').trim().toLowerCase();
-      return norm(document.body?.innerText ?? '').includes(norm(text));
+      const hay = norm(document.body?.innerText ?? '');
+      const want = norm(text);
+      // A value split across separate elements (a name and its phone number in two cells) reads run together to a model: also compare with all whitespace removed (Browser Agent verify.ts textPresentIn).
+      return hay.includes(want) || hay.replace(/\s+/g, '').includes(want.replace(/\s+/g, ''));
     },
 
     /** Selects the whole content of a focused field or editor, so the next insertion replaces it. */

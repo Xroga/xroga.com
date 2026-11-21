@@ -11,6 +11,7 @@ import {
   HoverArgsSchema,
   DragArgsSchema,
   CanvasArgsSchema,
+  DiagnosticsArgsSchema,
   NavigateArgsSchema,
   PressArgsSchema,
   ReadArgsSchema,
@@ -151,6 +152,15 @@ export const TOOL_SPECS: ToolSpec[] = [
     name: 'wait',
     description: 'Wait for text to appear or disappear, an element state, a URL, or a fixed time.',
     args: WaitArgsSchema,
+    readOnly: true,
+    capability: 'core',
+    available: true,
+  },
+  {
+    name: 'diagnostics',
+    description:
+      "The page's console errors and its requests with status: for an action that did nothing or a success message with no result. The first call starts recording; repeat the action, call again.",
+    args: DiagnosticsArgsSchema,
     readOnly: true,
     capability: 'core',
     available: true,

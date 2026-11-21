@@ -44,6 +44,9 @@ interface TrackedRequest {
   method: string;
   url: string;
   done: boolean;
+  /** The HTTP status once the response arrived; a failed request has `failed` instead. */
+  status?: number;
+  failed?: string;
 }
 
 export interface EvidenceResult {
@@ -93,6 +96,9 @@ export class Evidence {
   /** The caller masked the value, or the target was a sensitive field at the baseline: it stays masked,
    *  whatever it becomes (a password field the page turns into a text field). */
   #maskedBefore = false;
+  /** How many elements the page had for a `count.delta` expectation before the action (Browser Agent's list_count_delta baseline). */
+  #countBefore: number | undefined;
+  #wantDelta: Expectation['count'] | undefined;
   /** The tab's state when the baseline was taken: its probe goes away when the tab closes or the debugger detaches. */
   #tab!: TabState;
 
@@ -106,9 +112,10 @@ export class Evidence {
   static async begin(
     ctx: ToolContext,
     target: ResolvedTarget | null,
-    options: { masked?: boolean } = {},
+    options: { masked?: boolean; expect?: Expectation } = {},
   ): Promise<Evidence> {
     const evidence = new Evidence(ctx, target, options.masked ?? false);
+    if (options.expect?.count?.delta !== undefined) evidence.#wantDelta = options.expect.count;
     await evidence.#start();
     return evidence;
   }
@@ -123,6 +130,11 @@ export class Evidence {
         .tab()
         .probe!.call<string>(this.target.frame, this.target.objectId, 'watchBlock')
         .catch(() => '');
+    }
+    if (this.#wantDelta) {
+      const { delta: _d, equals: _e, atLeast: _a, atMost: _m, ...query } = this.#wantDelta;
+      const before = await observeTab(this.ctx, { mode: 'all', window: 'page' }).catch(() => undefined);
+      this.#countBefore = before ? countMatching(before.tree, query) : undefined;
     }
     this.#baseline = await this.#snapshot();
     this.#maskedBefore =
@@ -163,8 +175,18 @@ export class Evidence {
           done: false,
         });
       }),
+      cdp.on('Network.responseReceived', (params, sessionId) => {
+        const p = params as { requestId: string; response: { status: number } };
+        const request = this.#requests.get(`${sessionId ?? ''}|${p.requestId}`);
+        if (request) request.status = p.response.status;
+      }),
       cdp.on('Network.loadingFinished', (params, sessionId) => this.#finish(params, sessionId)),
-      cdp.on('Network.loadingFailed', (params, sessionId) => this.#finish(params, sessionId)),
+      cdp.on('Network.loadingFailed', (params, sessionId) => {
+        const p = params as { requestId: string; errorText?: string; canceled?: boolean };
+        const request = this.#requests.get(`${sessionId ?? ''}|${p.requestId}`);
+        if (request && !p.canceled) request.failed = (p.errorText ?? 'failed').replace(/^net::/, '');
+        this.#finish(params, sessionId);
+      }),
       this.ctx.controller.host.tabs.onCreated(tab => {
         if (tab.openerTabId === tabId && !this.#newTab) this.#newTab = { tabId: tab.tabId, url: tab.url };
       }),
@@ -248,7 +270,9 @@ export class Evidence {
     }
     const requests = [...this.#requests.values()];
     for (const r of requests.slice(0, 3))
-      signals.push(`request: ${r.method} ${quote(requestUrl(r.url, base.url))}${r.done ? '' : ' (pending)'}`);
+      signals.push(
+        `request: ${r.method} ${quote(requestUrl(r.url, base.url))}${r.failed ? ` FAILED ${r.failed}` : r.status !== undefined ? ` → ${r.status}${r.status >= 400 ? ' (the server refused or failed it)' : ''}` : r.done ? '' : ' (pending)'}`,
+      );
     if (requests.length > 3) signals.push(`… ${requests.length - 3} more requests`);
     return signals;
   }
@@ -275,7 +299,7 @@ export class Evidence {
         }
         if (this.#dialog || this.#newTab || !this.#tab.probe) break;
         if (expect) {
-          met = await checkExpectation(this.ctx, this.target, expect, this.#maskedBefore).catch(() => undefined);
+          met = await checkExpectation(this.ctx, this.target, expect, this.#maskedBefore, this.#countBefore).catch(() => undefined);
           if (met?.status === 'met') break;
         }
         const now = await this.#snapshot();
@@ -336,7 +360,7 @@ export class Evidence {
       const all = [...strong, ...weak];
       if (this.#abandoned) all.push('settle abandoned: the call was cancelled');
       if (expect && met?.status !== 'met')
-        met = await checkExpectation(this.ctx, this.target, expect, this.#maskedBefore).catch(e => ({
+        met = await checkExpectation(this.ctx, this.target, expect, this.#maskedBefore, this.#countBefore).catch(e => ({
           status: 'unmet' as const,
           detail: String(e),
         }));
@@ -420,6 +444,7 @@ export async function checkExpectation(
   target: ResolvedTarget | null,
   expect: Expectation,
   masked = false,
+  countBefore?: number,
 ): Promise<ActionReceipt['postcondition']> {
   const failures: string[] = [];
   const attachment = await ctx.attach();
@@ -443,12 +468,16 @@ export async function checkExpectation(
       failures.push(`there is no ${describeQuery(expect.exists)} on the page`);
     }
     if (expect.count !== undefined) {
-      const { equals, atLeast, atMost, ...query } = expect.count;
+      const { equals, atLeast, atMost, delta, ...query } = expect.count;
       const n = countMatching(observation.tree, query);
       const what = describeQuery(query);
       if (equals !== undefined && n !== equals) failures.push(`the page has ${n} ${what}, not ${equals}`);
       if (atLeast !== undefined && n < atLeast) failures.push(`the page has ${n} ${what}, fewer than ${atLeast}`);
       if (atMost !== undefined && n > atMost) failures.push(`the page has ${n} ${what}, more than ${atMost}`);
+      if (delta !== undefined) {
+        if (countBefore === undefined) failures.push('the count before the action was not taken, so a change cannot be judged');
+        else if (n - countBefore !== delta) failures.push(`the page had ${countBefore} ${what} and has ${n} (a change of ${n - countBefore}, not ${delta})`);
+      }
     }
   }
   if (expect.value !== undefined || expect.checked !== undefined || expect.gone !== undefined) {
@@ -483,7 +512,7 @@ export async function withEvidence<T extends { dialog?: DialogInfo }>(
   options: { masked?: boolean },
   dispatch: () => Promise<T>,
 ): Promise<{ outcome: T; evidence: EvidenceResult }> {
-  const evidence = await Evidence.begin(ctx, target, options);
+  const evidence = await Evidence.begin(ctx, target, { ...options, expect });
   let outcome: T;
   try {
     outcome = await dispatch();

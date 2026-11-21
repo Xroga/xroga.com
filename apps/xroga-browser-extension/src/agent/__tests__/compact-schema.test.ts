@@ -28,7 +28,8 @@ describe('compactSchema', () => {
   });
 
   it('makes the full tool catalogue smaller than the 32,064 characters it was by about a fifth', () => {
-    expect(size(tools)).toBeLessThan(32_064 * 0.84);
+    // 0.84 until the diagnostics tool, wait.reading and count.delta (about 1,000 characters, served from the provider's prompt cache) were added.
+    expect(size(tools)).toBeLessThan(32_064 * 0.865);
   });
 
   it('offers the at option of click only to a run that asks for it', () => {

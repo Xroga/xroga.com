@@ -27,3 +27,47 @@ defineScenario({
     );
   },
 });
+
+// Port of Browser Agent's list_count_delta (uiuing/browser-agent @ a8517e2c, MIT, packages/extension/src/engine/page/verify.ts): a model that does not know
+// how many rows the list has can still say "it gained one".
+defineScenario({
+  id: 'S3-expect-count-delta',
+  set: 'C',
+  title: 'click "Add a row" with a count.delta postcondition: gained one (met), gained none (unmet), wrong sign (unmet)',
+  covers: 'the count is taken before the action and the change is judged against it, with the page, not the model, supplying the baseline',
+  async run(ctx) {
+    await ctx.open(`${FIXTURE_ORIGIN}/c-effects.html`);
+    await ctx.call('snapshot');
+    const add = { target: { role: 'button', name: 'Add a row' } };
+    const gained = await ctx.call('click', { ...add, expect: { count: { role: 'listitem', delta: 1 } } });
+    const none = await ctx.call('click', { ...add, expect: { count: { role: 'listitem', delta: 0 } } });
+    const lost = await ctx.call('click', { ...add, expect: { count: { role: 'listitem', delta: -1 } } });
+    const p = [post(gained), post(none), post(lost)];
+    return outcome(
+      'gain of 1 met; delta 0 and -1 unmet saying the change was 1',
+      JSON.stringify(p),
+      p[0]?.status === 'met' && p[1]?.status === 'unmet' && (p[1]?.detail ?? '').includes('a change of 1, not 0') && p[2]?.status === 'unmet',
+    );
+  },
+});
+
+// Port in idea of FSB's reactive triggers (fullselfbrowsing/FSB @ 28284b8c, MIT): wait until a target READS something, instead of polling with fixed sleeps.
+defineScenario({
+  id: 'S3-wait-reading',
+  set: 'C',
+  title: 'wait until a progress figure is above 60, a status contains "finish", and a figure changed; and time out saying what it read',
+  covers: 'wait on the value of an element the page updates by itself, with the reading in the timeout message',
+  async run(ctx) {
+    await ctx.open(`${FIXTURE_ORIGIN}/c-ticker.html`);
+    const snap = await ctx.call('snapshot');
+    const plain = await ctx.call('wait', { target: { role: 'textbox', name: 'Progress' }, timeoutMs: 1000 });
+    const above = await ctx.call('wait', { target: { role: 'textbox', name: 'Progress' }, reading: { above: 60 }, timeoutMs: 4000 });
+    const state = await ctx.call('wait', { target: { role: 'button', name: 'State' }, reading: { contains: 'finish' }, timeoutMs: 4000 });
+    const never = await ctx.call('wait', { target: { role: 'textbox', name: 'Progress' }, reading: { below: 5 }, timeoutMs: 600 });
+    return outcome(
+      'above 60 met, state contains finish met, below 5 times out saying it reads 100',
+      JSON.stringify({ above: above.ok, state: state.ok, never: never.ok, why: never.error?.message?.slice(0, 120), snap: snap.text.slice(-300), aboveErr: above.error?.message?.slice(0, 160), plain: plain.ok, plainErr: plain.error?.message?.slice(0, 160) }),
+      above.ok && state.ok && !never.ok && /reads 100, not below 5/.test(never.error?.message ?? ''),
+    );
+  },
+});

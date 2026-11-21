@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Stock counter</title></head>
+<body>
+<h1>Warehouse</h1>
+<label>Units left <input id="u" readonly aria-label="Units left" value="100"></label>
+<p><button type="button" id="p" aria-label="Phase">filling orders</button></p>
+<script>
+let u = 100;
+const t = setInterval(() => {
+  u -= 10;
+  document.getElementById('u').value = String(u);
+  if (u <= 30) document.getElementById('p').textContent = 'low stock';
+  if (u <= 0) { document.getElementById('p').textContent = 'sold out'; clearInterval(t); }
+}, Number(new URLSearchParams(location.search).get('step')) || 150);
+</script></body></html>

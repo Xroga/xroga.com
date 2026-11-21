@@ -7,6 +7,7 @@ import { checkCancelled } from '../controller';
 import { resolveTarget } from '../interaction/resolve';
 import { withPageState } from './navigate';
 import { quote } from '../text';
+import { unmetReading } from '../reading';
 
 const POLL_MS = 100;
 const DEFAULT_TIMEOUT_MS = 5_000;
@@ -28,7 +29,7 @@ function pause(ms: number, signal?: AbortSignal): Promise<void> {
 }
 
 /** Checks every condition once; returns the unmet ones with what was seen. */
-async function unmet(ctx: ToolContext, args: WaitArgs): Promise<string[]> {
+async function unmet(ctx: ToolContext, args: WaitArgs, previous: { reading?: string }): Promise<string[]> {
   const out: string[] = [];
   const attachment = await ctx.attach();
   const probe = ctx.tab().probe!;
@@ -52,6 +53,11 @@ async function unmet(ctx: ToolContext, args: WaitArgs): Promise<string[]> {
       const target = await resolveTarget(ctx, args.target, { fresh: true });
       try {
         state = await probe.call<ProbeState>(target.frame, target.objectId, 'state');
+        if (args.reading && state?.connected) {
+          const now = await probe.call<string>(target.frame, target.objectId, 'reading');
+          if (previous.reading === undefined) previous.reading = now;
+          for (const u of unmetReading(args.reading, now, previous.reading)) out.push(`the target: ${u}`);
+        }
       } finally {
         await probe.release(target.frame, target.objectId);
       }
@@ -79,7 +85,9 @@ async function unmet(ctx: ToolContext, args: WaitArgs): Promise<string[]> {
 }
 
 export async function wait(ctx: ToolContext, args: WaitArgs): Promise<ToolOutcome> {
+  if (args.reading && !args.target) throw new LayerError('INVALID_ARGUMENT', 'wait with reading needs a target');
   const conditions = [args.text, args.textGone, args.url, args.target].filter(c => c !== undefined).length;
+  const previous: { reading?: string } = {};
   const start = performance.now();
   if (!conditions) {
     if (args.ms === undefined) throw new LayerError('INVALID_ARGUMENT', 'wait needs a condition or ms');
@@ -91,14 +99,14 @@ export async function wait(ctx: ToolContext, args: WaitArgs): Promise<ToolOutcom
   let last: string[] = [];
   for (;;) {
     checkCancelled(ctx);
-    last = await unmet(ctx, args);
+    last = await unmet(ctx, args, previous);
     const elapsed = Math.round(performance.now() - start);
     if (!last.length) {
       const what = [
         args.text !== undefined && `text ${quote(args.text)}`,
         args.textGone !== undefined && `text gone ${quote(args.textGone)}`,
         args.url !== undefined && `URL contains ${quote(args.url)}`,
-        args.target && `target ${args.state ?? 'visible'}`,
+        args.target && `target ${args.state ?? 'visible'}${args.reading ? ` and reading ${JSON.stringify(args.reading)}` : ''}`,
       ]
         .filter(Boolean)
         .join(', ');

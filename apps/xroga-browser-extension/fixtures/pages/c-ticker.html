@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Ticker</title></head>
+<body>
+<h1>Import job</h1>
+<label>Progress <input id="n" readonly aria-label="Progress" value="0"></label>
+<p><button type="button" id="s" aria-label="State">queued</button></p>
+<script>
+let n = 0;
+const t = setInterval(() => {
+  n += 10;
+  document.getElementById('n').value = String(n);
+  if (n >= 30) document.getElementById('s').textContent = 'running';
+  if (n >= 100) { document.getElementById('s').textContent = 'finished'; clearInterval(t); }
+}, Number(new URLSearchParams(location.search).get('step')) || 150);
+</script></body></html>

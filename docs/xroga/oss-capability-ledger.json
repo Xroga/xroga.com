@@ -119,17 +119,24 @@
       "pushed_at": "2026-11-20T06:32:02Z",
       "language": "TypeScript",
       "stars": 10617,
-      "inspected_level": "cooperation/controller.ts header and control-authority.ts read; MIT",
+      "inspected_level": "source read: apps/extension/src/content/cooperation-capture.ts matches() and humanInput() (MIT)",
       "xroga_current_equivalent": "browser-control gate, expect, refs, ask_user takeover (set-i scenario)",
-      "chosen_reuse_method": "idea candidate, not yet built",
-      "xroga_file_paths": [],
-      "new_tests": [],
+      "chosen_reuse_method": "adapt (MIT): one-to-one consumption of expected inputs, coordinates corrected by visualViewport offset",
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/src/browser-control/core/human-guard.ts (unexplained)",
+        "apps/xroga-browser-extension/src/browser-control/probe/source.ts (recentInput)"
+      ],
+      "new_tests": [
+        "src/browser-control/core/__tests__/human-guard.test.ts (unexplained)"
+      ],
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Its ControlAuthority guard is created before asynchronous preparation and checked at the native effect boundary, so an action is refused if the person took the tab meanwhile. Xroga hands over only through explicit ask_user takeover; it does not detect a person typing during a run. CDP input is also isTrusted, so telling person from agent needs dispatch-window correlation. Recorded as a characterised gap, not integrated.",
+      "adoption_or_rejection_reason": "Gap by reading: a person key or click right after an agent input of the same kind was explained away by it. HUM-1 and HUM-2 re-run recorded in the evidence file.",
       "classification": "ADAPT CODE",
-      "rights_note": null
+      "rights_note": null,
+      "donor_status": "CHROME_VERIFIED",
+      "donor_status_note": "Highest status actually reached, 2026-11-21; labels: CANDIDATE, SOURCE_STUDIED, ALREADY_COVERED, PORTED_UNIT, CHROME_VERIFIED, LIVE_DEEPSEEK_VERIFIED, APP_ACCOUNT_VERIFIED, BLOCKED, REJECTED"
     },
     {
       "upstream_repo": "browser-use/browser-harness",
@@ -179,9 +186,9 @@
       "pushed_at": "2026-11-18T12:13:03Z",
       "language": "TypeScript",
       "stars": 29725,
-      "inspected_level": "README read; behavior comparison by fixture",
+      "inspected_level": "source read: packages/page-controller (PageController.ts, actions.ts, dom/getPageInfo.ts, patches/antd.ts), pinned d8dd3344",
       "xroga_current_equivalent": "CDP accessibility snapshot with refs and clickable detection (src/browser-control)",
-      "chosen_reuse_method": "none: no gap found",
+      "chosen_reuse_method": "none",
       "xroga_file_paths": [
         "apps/xroga-browser-extension/fixtures/pages/clickable-zoo.html",
         "apps/xroga-browser-extension/src/background/scenarios/clickable-zoo.ts"
@@ -192,9 +199,11 @@
       "chrome_check": "ZOO-1 passes: 10 of 10 control types without button or link roles (div onclick, pointer span, role button div, anchor without href, focusable li, image button, shadow-DOM button, label checkbox, summary, SVG shape) are listed with a ref and their click reaches the page",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Its semantic element detection would add nothing for these classes: Xroga already finds and activates them. Reopen only if a fixture class is found where Xroga misses a control.",
+      "adoption_or_rejection_reason": "Its actions are synthetic DOM events (with library patches such as antd.ts to make them register); Xroga dispatches trusted input through chrome.debugger, which needs no patches. Its page info (pixels above/below, pages) is in Xroga snapshot windows. No token or accuracy measurement run against it this session.",
       "classification": "ALREADY IMPLEMENTED",
-      "rights_note": null
+      "rights_note": null,
+      "donor_status": "ALREADY_COVERED",
+      "donor_status_note": "Highest status actually reached, 2026-11-21; labels: CANDIDATE, SOURCE_STUDIED, ALREADY_COVERED, PORTED_UNIT, CHROME_VERIFIED, LIVE_DEEPSEEK_VERIFIED, APP_ACCOUNT_VERIFIED, BLOCKED, REJECTED"
     },
     {
       "upstream_repo": "derpx06/webgenie",
@@ -484,23 +493,26 @@
       "pushed_at": "2026-07-09T05:45:17Z",
       "language": "TypeScript",
       "stars": 61,
-      "inspected_level": "source read: orchestrator/healing.ts, contracts/verification.ts, page/verify.ts",
+      "inspected_level": "source read: orchestrator/healing.ts, contracts/verification.ts, page/verify.ts (list_count_delta, textPresentIn), pinned a8517e2c",
       "xroga_current_equivalent": "none before (tracker reacted to repetition only)",
-      "chosen_reuse_method": "adapt diagnose -> strategy chain -> terminal check (MIT); Xroga codes, directives and terminal rule are new",
+      "chosen_reuse_method": "adapt (MIT): list_count_delta baseline-relative count and the whitespace-insensitive text fallback; Xroga reads the baseline in its own Evidence layer",
       "xroga_file_paths": [
-        "apps/xroga-browser-extension/src/agent/failure-diagnosis.ts",
-        "apps/xroga-browser-extension/src/agent/progress-tracker.ts",
-        "apps/xroga-browser-extension/src/agent/loop.ts (errorCode into the tracker)"
+        "apps/xroga-browser-extension/src/browser-control/core/interaction/evidence.ts (countBefore)",
+        "apps/xroga-browser-extension/src/browser-control/protocol/schemas.ts (count.delta)",
+        "apps/xroga-browser-extension/src/browser-control/probe/source.ts (hasText fallback)"
       ],
       "new_tests": [
-        "src/agent/__tests__/failure-diagnosis.test.ts"
+        "scenario S3-expect-count-delta (real Chromium)",
+        "src/browser-control/core/__tests__/count.test.ts (unchanged, still passes)"
       ],
-      "chrome_check": null,
+      "chrome_check": "S3-expect-count and S3-expect-count-delta PASS in Chromium 2026-11-21: delta 1 met, delta 0 and -1 unmet with \"a change of 1\"",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Kept: terminal failures (needs a person) stop at once, others get a diagnosis-specific chain. Its postcondition vocabulary (verify.ts) is already covered by the expect schema in src/browser-control/protocol/schemas.ts (url, text, textGone, value, checked, gone, exists, count); element_state and attribute_equals are the only gaps.",
+      "adoption_or_rejection_reason": "Gap reproduced: expect.count needed an absolute number the model rarely knows. element_state/attribute_equals remain not ported (value/checked/gone cover the common cases).",
       "classification": "ADAPT CODE",
-      "rights_note": null
+      "rights_note": null,
+      "donor_status": "CHROME_VERIFIED",
+      "donor_status_note": "Highest status actually reached, 2026-11-21; labels: CANDIDATE, SOURCE_STUDIED, ALREADY_COVERED, PORTED_UNIT, CHROME_VERIFIED, LIVE_DEEPSEEK_VERIFIED, APP_ACCOUNT_VERIFIED, BLOCKED, REJECTED"
     },
     {
       "upstream_repo": "jeet-dhandha/agent-webbridge",
@@ -2017,17 +2029,28 @@
       "pushed_at": "2026-11-07T06:53:14Z",
       "language": "JavaScript",
       "stars": 19,
-      "inspected_level": "src/background/decisions.js read; MIT",
+      "inspected_level": "source read: src/background/tools.js (tool set), pinned 6f11eeea; its click, hover, double click, right click, drag, key and upload tools are already covered by Xroga click/hover/drag/press/upload",
       "xroga_current_equivalent": "backend authority and approval gates (INV-03, INV-06)",
-      "chosen_reuse_method": "none",
-      "xroga_file_paths": [],
-      "new_tests": [],
-      "chrome_check": null,
-      "deepseek_check": null,
+      "chosen_reuse_method": "adapt the idea (MIT): read_console and read_network as one read-only diagnostics tool; plus request status in action receipts (not in the donor)",
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/src/browser-control/core/diagnostics.ts",
+        "apps/xroga-browser-extension/src/browser-control/core/tools/diagnostics.ts",
+        "apps/xroga-browser-extension/src/browser-control/core/interaction/evidence.ts (request status)",
+        "apps/xroga-browser-extension/src/browser-control/protocol/catalogue.ts"
+      ],
+      "new_tests": [
+        "src/browser-control/core/__tests__/diagnostics.test.ts",
+        "scenarios S3-diagnostics and S3-request-status (real Chromium)",
+        "eval tasks diag-profile, diag-newsletter"
+      ],
+      "chrome_check": "S3-diagnostics and S3-request-status PASS 2026-11-21: a \"Saved!\" page whose request answered 404 shows \"request: POST ... -> 404\" in the click receipt, and the diagnostics tool lists the 404 and the console error without the query string",
+      "deepseek_check": "diag-profile and diag-newsletter, answer must say the save failed: 6/6 with the new code, 5/6 with the previous code (n=6 each; not a significant difference). With only the diagnostics tool offered and no receipt status the model never called it (0/4 in the first run).",
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Its optional safety verdicts send page text (up to 60,000 characters) to a third-party decision service (OpenRouter alpha or TypeSafe). That is new paid egress of page content, so it is rejected. Its null-on-any-failure wrapper contract is already how online-skills.ts behaves.",
+      "adoption_or_rejection_reason": "Finding: a tool the model has to decide to call was not called; the same evidence put in the receipt of the action was used. Recording keeps method, status, path without query, no bodies or headers.",
       "classification": "REJECT",
-      "rights_note": null
+      "rights_note": null,
+      "donor_status": "LIVE_DEEPSEEK_VERIFIED",
+      "donor_status_note": "Highest status actually reached, 2026-11-21; labels: CANDIDATE, SOURCE_STUDIED, ALREADY_COVERED, PORTED_UNIT, CHROME_VERIFIED, LIVE_DEEPSEEK_VERIFIED, APP_ACCOUNT_VERIFIED, BLOCKED, REJECTED"
     },
     {
       "upstream_repo": "fullselfbrowsing/FSB",
@@ -2047,17 +2070,28 @@
       "pushed_at": "2026-11-18T21:35:14Z",
       "language": "JavaScript",
       "stars": 204,
-      "inspected_level": "extension/ai/agent-loop.js (3134 lines) stuck-detection read; MIT",
+      "inspected_level": "source read: extension/ai/tool-definitions.js (trigger, stop_trigger, wait_for_element, wait_for_stable), pinned 28284b8c",
       "xroga_current_equivalent": "src/agent/progress-tracker.ts (advisories, never a stop)",
-      "chosen_reuse_method": "none",
-      "xroga_file_paths": [],
-      "new_tests": [],
-      "chrome_check": null,
-      "deepseek_check": null,
+      "chosen_reuse_method": "adapt the idea (MIT): wait until an element READS something (equals, contains, regex, above, below, changed). Not ported: the persistent background trigger runtime, refresh-poll mode (a watch that outlives the run or reloads a tab is not wanted).",
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/src/browser-control/core/reading.ts",
+        "apps/xroga-browser-extension/src/browser-control/core/tools/wait.ts",
+        "apps/xroga-browser-extension/src/browser-control/probe/source.ts (reading)",
+        "apps/xroga-browser-extension/src/browser-control/protocol/schemas.ts (wait.reading)"
+      ],
+      "new_tests": [
+        "src/browser-control/core/__tests__/reading.test.ts",
+        "scenario S3-wait-reading (real Chromium)",
+        "eval tasks reading-job, reading-stock"
+      ],
+      "chrome_check": "S3-wait-reading PASS 2026-11-21: above 60 met, contains \"finish\" met, below 5 times out saying it reads 100",
+      "deepseek_check": "reading-job and reading-stock: 4/4 with the new code and 4/4 with the previous code (n=4 each): the model already waits correctly on these two pages, so no measured improvement",
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Its loop ends runs deterministically (iteration circuit breaker, stuck force-stop after 5 warnings). The owner directive forbids artificial ceilings, and Xroga already detects repetition, no-change and no-progress as advisories that never stop a run. Its recipe catalog is unverified selector data, weaker than reviewed, hash-checked VerifiedSiteAction.",
+      "adoption_or_rejection_reason": "Limit: reading needs a target with a ref (controls, inputs, buttons, links); plain text counters have no ref. Use text for those.",
       "classification": "REJECT",
-      "rights_note": null
+      "rights_note": null,
+      "donor_status": "LIVE_DEEPSEEK_VERIFIED",
+      "donor_status_note": "Highest status actually reached, 2026-11-21; labels: CANDIDATE, SOURCE_STUDIED, ALREADY_COVERED, PORTED_UNIT, CHROME_VERIFIED, LIVE_DEEPSEEK_VERIFIED, APP_ACCOUNT_VERIFIED, BLOCKED, REJECTED"
     },
     {
       "upstream_repo": "sickn33/agentic-awesome-skills",
@@ -2209,5 +2243,6 @@
       "classification": "ADAPT CODE",
       "rights_note": null
     }
-  ]
+  ],
+  "generated_at_update": "2026-11-21 donor sprint"
 }

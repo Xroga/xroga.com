@@ -28,6 +28,7 @@ import './set-i';
 import './set-u';
 import './set-s-subagents';
 import './expect-count';
+import './diagnostics';
 import './canvas-point';
 import './canvas-script-editor';
 import './variants-form';

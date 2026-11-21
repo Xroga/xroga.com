@@ -22,7 +22,7 @@ const TOOL_CLASS: Record<string, MethodClass> = {
   plugin_read: 'connected', plugin_act: 'connected', plugin_chain: 'connected', http_get: 'connected',
   navigate: 'navigate', tabs: 'navigate',
   delegate: 'workers', start_parallel_tasks: 'workers',
-  snapshot: 'read', read: 'read', find: 'read', screenshot: 'read', wait: 'read', read_attachment: 'read', confirm_download: 'read',
+  diagnostics: 'read', snapshot: 'read', read: 'read', find: 'read', screenshot: 'read', wait: 'read', read_attachment: 'read', confirm_download: 'read',
   find_skill: 'skill', read_skill: 'skill', plugin_search: 'skill', plugin_action_search: 'skill',
 };
 
