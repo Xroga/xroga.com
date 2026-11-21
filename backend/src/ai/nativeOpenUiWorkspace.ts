@@ -7,6 +7,7 @@ import { recoverNativeReadoutExplanations } from './nativeOpenUi.js';
 import { bindNativeAnswerText, removeRepeatedCalculatorFormulas } from './nativeOpenUi.js';
 import { reviewEditorialProse } from './nativeOpenUiEditorial.js';
 import { nativeMarkdownTables } from './nativeMarkdown.js';
+import { compactNativeDocumentProse, requestedNativeDocumentFormat } from './nativeDocumentDownload.js';
 
 const outputLimitNote = 'This answer reached the provider output limit. The available answer is shown below.';
 const promisesControls = (text: string) => /\b(?:controls?|sliders?|input fields?)\s+(?:above|below)\b|\b(?:above|below)\s+(?:calculator|controls?)\b/i.test(text);
@@ -264,11 +265,13 @@ export function completeNativeWorkspaceAnswer(
       responseSource: { format: NATIVE_UI_FORMAT, text: verifiedBeforeLimit ? program : '' },
     };
   }
+  const deliveredProse = !generatedProgram && !evidenceIds?.size && prompt && completion.status === 'complete'
+    ? compactNativeDocumentProse(requestedNativeDocumentFormat(prompt), prompt, reviewedProse) : reviewedProse;
   return {
     response: valid ? supplementNativeProse(response, program, true)
       : completion.status === 'partial' && completion.reason === 'data_review'
         ? recovered?.text ?? 'Partial answer. The written summary disagreed with the plotted data, and the chart could not be recovered.'
-        : reviewedProse,
+        : deliveredProse,
     completion,
     responseSource: { format: NATIVE_UI_FORMAT, text: valid ? program : recovered?.program ?? '' },
   };

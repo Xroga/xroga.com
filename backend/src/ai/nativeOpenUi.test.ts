@@ -6,7 +6,7 @@ import { buildNativeOpenUiShare, readNativeOpenUiShare } from './nativeOpenUiSha
 import { readNativeOpenUiRun } from './nativeOpenUiRun.js';
 import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
 import { requiredNativeFormats } from './answerCoverage.js';
-import { bindNativeAnswerText, nativeReadableTextKey, supplementNativeProse } from './nativeOpenUi.js';
+import { bindNativeAnswerText, nativeReadableTextKey, removeRepeatedCalculatorFormulas, supplementNativeProse } from './nativeOpenUi.js';
 
 test('native Markdown references the complete readable answer without generating a second explanation', () => {
   const prose = '## Answer\n\nUse **Basic** for one seat.\n\n1. Read the terms.\n2. Compare the total.\n\nLiteral example: `_xroga_answer = "example"`.';
@@ -1282,6 +1282,31 @@ test('calculator formulas already shown in Markdown do not repeat in Section int
   assert.equal(answer.responseSource.text.split(equation).length - 1, 1);
   assert.match(answer.responseSource.text, /Reset returns both inputs to their starting values/);
   assert.match(answer.responseSource.text, /@Reset\(\$seats, \$price\)/);
+});
+
+test('calculator metric captions keep distinct context and omit the equation already shown in Markdown', () => {
+  const prose = '**Net proceeds = ticket price × paid attendance − room cost**\n\nThe room cost stays at USD 60.';
+  const caption = 'Ticket price × paid attendance − USD 60 room cost';
+  const program = [
+    'root = Col([Markdown(_xroga_answer), Metric("Net proceeds", @Format(netProceeds, "currency", 2, "USD"), ' + JSON.stringify(caption) + ')])',
+    '$ticketPrice = 18',
+    '$paidAttendance = 24',
+    'roomCost = 60',
+    'netProceeds = $ticketPrice * $paidAttendance - roomCost',
+  ].join('\n');
+  const bound = bindNativeAnswerText(program, prose);
+  const clean = removeRepeatedCalculatorFormulas(bound, prose);
+  assert.ok(!clean.includes(caption));
+  assert.ok(clean.includes('The room cost stays at USD 60.'));
+  assert.equal(validateNativeWorkspaceProgram(clean, undefined, prose).ok, true);
+  for (const variant of [
+    bound.replace('roomCost = 60', 'roomCost = 50'),
+    bound.replace(caption, `${caption} before taxes`),
+    bound.replace('Metric("Net proceeds"', 'Metric("Gross proceeds"'),
+  ]) assert.equal(removeRepeatedCalculatorFormulas(variant, prose), variant);
+  const differentAmount = prose.replace('USD 60.', 'USD 600.');
+  const distinctCaption = bindNativeAnswerText(program, differentAmount);
+  assert.equal(removeRepeatedCalculatorFormulas(distinctCaption, differentAmount), distinctCaption);
 });
 
 test('membership checks are not treated as an immutable tenant key', () => {

@@ -776,8 +776,8 @@ function printRecoveryExpression(node: ASTNode): string {
   }
 }
 
-/** A calculator can repeat its formula in an optional Section introduction.
- * Keep the authoritative Markdown copy and any independent control guidance. */
+/** Keep formulas in the authoritative Markdown when a calculator also
+ * includes a copy in its introduction or metric caption. */
 export function removeRepeatedCalculatorFormulas(program: string, prose: string): string {
   if (!prose.includes('=') || /^(?: {0,3})(?:```|~~~)/m.test(prose)) return program;
   const sentences = /(?<=[.!?])\s+|\n+/;
@@ -795,10 +795,42 @@ export function removeRepeatedCalculatorFormulas(program: string, prose: string)
   const showsProse = children?.k === 'Arr' && children.els.some(child =>
     child.k === 'Comp' && child.name === 'Markdown' && child.args[0]?.k === 'Ref' && child.args[0].n === '_xroga_answer');
   if (!showsProse) return program;
+  const key = (value: string) => nativeReadableTextKey(value).replace(/[.!?]$/, '').trim().toLowerCase();
+  const equations = new Map<string, Set<string>>();
+  for (const formula of formulas) {
+    const equation = /^([\p{L}][\p{L}\p{N}\s]{0,79}) = ([^=]+)$/u.exec(formula);
+    if (!equation || !/[×*÷/−+^]|\s-\s/u.test(equation[2])) continue;
+    const label = key(equation[1]);
+    const bodies = equations.get(label) ?? new Set<string>();
+    bodies.add(key(equation[2]));
+    equations.set(label, bodies);
+  }
+  const constants = new Map(statements.flatMap(({ id, expression }) => expression.k === 'Num' && !id.startsWith('$')
+    ? [[id.replace(/([a-z0-9])([A-Z])/g, '$1 $2').replace(/_/g, ' ').toLowerCase(), expression.v] as const] : []));
+  const visibleAmounts = new Set(prose.match(/\b[A-Z]{3} \d+(?:\.\d+)?(?![\p{L}\p{N}_]|[.,]\d)/gu) ?? []);
+  const matchingMetricFormula = (label: string, caption: string) => {
+    const bodies = equations.get(key(label));
+    if (!bodies?.size) return false;
+    const visibleCaption = nativeReadableTextKey(caption);
+    const restatedCaption = visibleCaption.replace(/\b([A-Z]{3} \d+(?:\.\d+)?)\s+(?=\p{L})/gu,
+      (match, amount: string, offset: number) => {
+        const operand = visibleCaption.slice(offset + match.length).split(/[×*÷/−+^]|\s-\s/u)[0];
+        // A caption may spell out a fixed operand. Keep it unless the program
+        // declares that exact amount and the visible prose already states it.
+        return constants.get(key(operand)) === Number(amount.slice(4)) && visibleAmounts.has(amount) ? '' : match;
+      });
+    return bodies.has(key(restatedCaption)) || formulas.has(formulaKey(visibleCaption));
+  };
   let changed = false;
   for (const { expression } of statements) walkAST(expression, node => {
-    if (node.k !== 'Comp' || node.name !== 'Section' || node.args[2]?.k !== 'Str') return;
+    if (node.k !== 'Comp' || node.args[2]?.k !== 'Str') return;
     const introduction = node.args[2];
+    if (node.name === 'Metric' && node.args[0]?.k === 'Str' && matchingMetricFormula(node.args[0].v, introduction.v)) {
+      introduction.v = '';
+      changed = true;
+      return;
+    }
+    if (node.name !== 'Section') return;
     const parts = introduction.v.split(sentences);
     const retained = parts.filter(sentence => !formulas.has(formulaKey(sentence)));
     if (retained.length === parts.length) return;

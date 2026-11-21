@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { nativeDocumentDelivery, nativeDocumentPrompt, nativeDocumentRequiresAttachment, requestedNativeDocumentFormat } from './nativeDocumentDownload.js';
+import { compactNativeDocumentProse, nativeDocumentDelivery, nativeDocumentPrompt, nativeDocumentRequiresAttachment, requestedNativeDocumentFormat } from './nativeDocumentDownload.js';
 import { buildNativeOpenUiShare, readNativeOpenUiShare } from './nativeOpenUiShare.js';
+import { completeNativeWorkspaceAnswer } from './nativeOpenUiWorkspace.js';
 
 test('recognizes direct Office and PDF deliverables', () => {
   assert.equal(requestedNativeDocumentFormat('Create a PDF executive report from this attached dataset.'), 'pdf');
@@ -94,4 +95,19 @@ test('withholds incomplete artifacts and preserves a validated local download in
   assert.equal(readNativeOpenUiShare(shared)?.text, pptx);
   assert.equal(buildNativeOpenUiShare('No table here.', '', [], 'xlsx'), undefined);
   assert.equal(readNativeOpenUiShare(buildNativeOpenUiShare('The answer stays readable.', 'root = Col([Text("Sample")])', [], 'xlsx')!)?.documentDownload, undefined);
+});
+
+test('document checkout preserves its instruction without reciting the whole preceding table', () => {
+  const table = '| Item | Quantity |\n| --- | --- |\n| Blue tape | 2 |\n| Spring clamps | 4 |\n| Cleaning cloth | 1 |';
+  const checkout = '- [ ] Confirm the packing list is complete: Blue tape, Spring clamps, Cleaning cloth.';
+  const unique = '- [ ] Check the spare supplies: Blue tape, Masking tape.';
+  const source = '# Packing sheet\n\n' + table + '\n\n## Checkout\n\n' + checkout + '\n' + unique;
+  const prompt = 'Create an editable DOCX packing sheet with a checkout reminder.';
+  const response = compactNativeDocumentProse('docx', prompt, source);
+  assert.equal(response, source.replace(checkout, '- [ ] Confirm the packing list is complete.'));
+  assert.equal(completeNativeWorkspaceAnswer(source, 'stop', undefined, prompt).response, response);
+  assert.ok(completeNativeWorkspaceAnswer(source, 'length', undefined, prompt).response.includes(checkout));
+  assert.equal(compactNativeDocumentProse('docx', `${prompt} Repeat the item names in checkout.`, source), source);
+  assert.equal(compactNativeDocumentProse('xlsx', prompt, source), source);
+  assert.equal(readNativeOpenUiShare(buildNativeOpenUiShare(response, '', [], 'docx')!)?.text, response);
 });

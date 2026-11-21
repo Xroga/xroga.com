@@ -1,4 +1,5 @@
 import type { PublicCompletionState } from './completionDiagnostics.js';
+import { nativeMarkdownTables } from './nativeMarkdown.js';
 import { parseNativeSlideDeck, parseNativeWorkbook } from './nativeOfficeContent.js';
 
 export const nativeDocumentFormats = ['docx', 'pdf', 'xlsx', 'pptx'] as const;
@@ -69,11 +70,31 @@ export function nativeDocumentPrompt(format: NativeDocumentFormat, missingAttach
       + 'For calculations, immediately follow the table with "## Formulas" and one list item per formula like "- C2: =A2*B2". Use one arithmetic operator between local numeric cells/numbers, or SUM, AVERAGE, MIN or MAX on one local numeric range. Do not add external references or a second table.'
     : format === 'pptx'
       ? 'Use a level-one deck title, then one level-two heading per slide with its complete visible text or bullets underneath. Do not add other level-two sections or use fenced code. Preserve the supplied facts and keep each slide readable.'
-      : 'Write the requested headings and use prose, lists or editable tables as appropriate. For a document populated from supplied facts, keep each entry in one place. Refer to that table or section from a checklist without restating its entries. Add derived values or extra instructions only when the user asks for them, and check those calculations against the original values.';
+      : 'Write the requested headings and use prose, lists or editable tables as appropriate. For a document populated from supplied facts, keep each entry in one place. A checklist that refers to a table should point to it without repeating its names or values. When the user names the sections and asks for a specific reminder, include the named sections and that reminder without adding template fields or extra checklist items. Use a list for separate fields when requested. Add derived values or extra instructions only when the user asks for them, and check those calculations against the original values.';
   return '\n\nWrite the complete requested ' + format.toUpperCase() + ' artifact as readable Markdown in the primary answer. ' +
     formatInstructions + ' ' +
     'Workspace handles the local download after it validates the answer. Write only the document body. Omit capability disclaimers, manual conversion instructions, file URLs and claims about file delivery. For a document-only request, submit the Markdown without an OpenUI program. ' +
     'When required source material is missing or unreadable, explain what is needed and do not invent its contents.';
+}
+
+/** Keep both the table and its independent checklist instruction. An exact
+ * enumeration of every row name adds no content to that instruction. */
+export function compactNativeDocumentProse(format: NativeDocumentFormat | undefined, prompt: string, response: string): string {
+  if ((format !== 'docx' && format !== 'pdf') || /^(?: {0,3})(?:```|~~~)/m.test(response)
+      || /\b(?:repeat|restate|relist|recap|list\s+[^.\n]{0,60}\s+again)\b/i.test(prompt)) return response;
+
+  const key = (labels: readonly string[]) => JSON.stringify(labels.map(label => label.trim()));
+  const tableNames = new Set<string>();
+  for (const table of nativeMarkdownTables(response)) {
+    const labels = table.rows.map(row => row[0]);
+    if (labels.length >= 3 && labels.every(label => /^[\p{L}\p{N}][\p{L}\p{N} -]*$/u.test(label))
+        && new Set(labels).size === labels.length) tableNames.add(key(labels));
+  }
+  if (!tableNames.size) return response;
+
+  const reviewItem = /^( {0,3}[-*+]\s+\[[ xX]\]\s+(?:confirm|check|review|verify|ensure)\b[^:\n]{1,110}): ([^\n.!?]+)\.?$/gim;
+  return response.replace(reviewItem, (line, instruction: string, names: string) =>
+    tableNames.has(key(names.split(','))) ? `${instruction}.` : line);
 }
 
 export function nativeDocumentDelivery(format: NativeDocumentFormat | undefined, missingAttachment: boolean, prompt: string,

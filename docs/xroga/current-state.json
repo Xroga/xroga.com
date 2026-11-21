@@ -5236,7 +5236,7 @@
       "id": "surface:e0ab1e1220bfa120c45b",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeDocumentDownload.ts",
-      "sha256": "1e23641d6b5eeda9462ce11d823292e4ddac2221490f71ed4b700912e2dc35bb",
+      "sha256": "7716e54ed56e8f4997b5d53c6b002136559527d11610a09d6b24ce666f8bad74",
       "symbols": [
         "NativeDocumentFormat",
         "afterFormat",
@@ -5246,6 +5246,7 @@
         "beforePrefix",
         "body",
         "candidate",
+        "compactNativeDocumentProse",
         "declinesDownload",
         "descriptionWord",
         "direct",
@@ -5260,6 +5261,8 @@
         "inline",
         "inlinePrefix",
         "isNativeDocumentFormat",
+        "key",
+        "labels",
         "nativeDocumentDelivery",
         "nativeDocumentFormats",
         "nativeDocumentPrompt",
@@ -5268,16 +5271,21 @@
         "raw",
         "request",
         "requestedNativeDocumentFormat",
+        "reviewItem",
         "selection",
+        "table",
+        "tableNames",
         "text",
         "trailing",
         "wantsFormula"
       ],
       "imports": [
         "./completionDiagnostics.js",
+        "./nativeMarkdown.js",
         "./nativeOfficeContent.js"
       ],
       "runtimeImports": [
+        "backend/src/ai/nativeMarkdown.ts",
         "backend/src/ai/nativeOfficeContent.ts"
       ],
       "entryPoints": [
@@ -5297,6 +5305,7 @@
       "callers": [
         "backend/src/ai/nativeDocumentDownload.test.ts:3",
         "backend/src/ai/nativeOpenUiShare.ts:3",
+        "backend/src/ai/nativeOpenUiWorkspace.ts:10",
         "backend/src/ai/pipeline.ts:27",
         "backend/src/ai/universal/semanticRequestPlanner.ts:14",
         "frontend/src/lib/xrogaBlocks.ts:4",
@@ -5362,6 +5371,13 @@
       "runtimeImports": [],
       "entryPoints": [
         "backend/src/index.ts",
+        "frontend/src/app/(shell)/dashboard/automations/page.tsx",
+        "frontend/src/app/(shell)/dashboard/error.tsx",
+        "frontend/src/app/(shell)/dashboard/projects/page.tsx",
+        "frontend/src/app/(shell)/error.tsx",
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/dashboard/page.tsx",
+        "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/native-answer-evaluation/page.tsx",
         "frontend/src/app/os-preview/rich-results/page.tsx",
@@ -5369,6 +5385,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
+        "backend/src/ai/nativeDocumentDownload.ts:2",
         "backend/src/ai/nativeOpenUi.ts:4",
         "backend/src/ai/nativeOpenUiEditorial.ts:1",
         "backend/src/ai/nativeOpenUiValues.ts:4",
@@ -5473,7 +5490,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/nativeDocumentDownload.ts:2",
+        "backend/src/ai/nativeDocumentDownload.ts:3",
         "frontend/src/lib/xrogaFileExports.ts:4"
       ],
       "reachable": true,
@@ -5496,7 +5513,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "f992d52b0e118390537e69f8ec008c6eef50d58cbfc3d4576ba8fbbc39b22cb4",
+      "sha256": "fea30a569bd6c863bc8406f3bc87c4fa83e2100b87f4d4528648cfacd3d54fa3",
       "symbols": [
         "EditorialContext",
         "MAX_EXPANDED_EXPRESSION_DEPTH",
@@ -5527,6 +5544,7 @@
         "bindNativeAnswerText",
         "binding",
         "blockedAuthority",
+        "bodies",
         "body",
         "boundAnswer",
         "branches",
@@ -5547,6 +5565,7 @@
         "component",
         "componentFacts",
         "components",
+        "constants",
         "corrected",
         "currency",
         "data",
@@ -5565,6 +5584,8 @@
         "entries",
         "entry",
         "envelope",
+        "equation",
+        "equations",
         "existing",
         "existingTasks",
         "existingText",
@@ -5580,6 +5601,7 @@
         "firstBlock",
         "firstRelationship",
         "followed",
+        "formula",
         "formulaKey",
         "formulas",
         "from",
@@ -5620,6 +5642,7 @@
         "longestRun",
         "marker",
         "matched",
+        "matchingMetricFormula",
         "middle",
         "missingNativeFormats",
         "multiples",
@@ -5639,6 +5662,7 @@
         "note",
         "object",
         "opening",
+        "operand",
         "operators",
         "optionalFields",
         "orderedScopes",
@@ -5689,6 +5713,7 @@
         "resolveRecoveryReference",
         "resolved",
         "resolvedEntry",
+        "restatedCaption",
         "restored",
         "result",
         "retained",
@@ -5749,6 +5774,8 @@
         "value",
         "values",
         "visible",
+        "visibleAmounts",
+        "visibleCaption",
         "visit",
         "visited",
         "workLimit",
@@ -6304,7 +6331,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "aa3a1a51502d7392932bcd2648137690a6b7a7bd28055a96d6f60663ad9bd879",
+      "sha256": "65733111c20923dd64ce5b5c566f1f354e6e465d412f157d6a1af3f8405c53f7",
       "symbols": [
         "accessibilityRule",
         "answerScopeRule",
@@ -6678,7 +6705,7 @@
       "id": "surface:93911e9946fd4b21d50d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "1d35ca49a94dbd81c5bd1d55515484aa76a4c6678bb493298f0fb65e84a7d10f",
+      "sha256": "b053db18f6f32e72648e98b6b5121fd41cf2ba7452c90dff6cf1482917041cd9",
       "symbols": [
         "authorityIssue",
         "calculatorUnavailable",
@@ -6692,6 +6719,7 @@
         "correctedProgram",
         "corrections",
         "deduplicated",
+        "deliveredProse",
         "editorialFallback",
         "editorialIssue",
         "factualLayoutOnly",
@@ -6748,6 +6776,7 @@
       ],
       "imports": [
         "./completionDiagnostics.js",
+        "./nativeDocumentDownload.js",
         "./nativeMarkdown.js",
         "./nativeOpenUi.js",
         "./nativeOpenUiAccuracy.js",
@@ -6757,6 +6786,7 @@
       ],
       "runtimeImports": [
         "backend/src/ai/completionDiagnostics.ts",
+        "backend/src/ai/nativeDocumentDownload.ts",
         "backend/src/ai/nativeMarkdown.ts",
         "backend/src/ai/nativeOpenUi.ts",
         "backend/src/ai/nativeOpenUiAccuracy.ts",
@@ -6769,6 +6799,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
+        "backend/src/ai/nativeDocumentDownload.test.ts:5",
         "backend/src/ai/nativeOpenUi.test.ts:7",
         "backend/src/ai/nativeOpenUiEditorial.test.ts:5",
         "backend/src/ai/nativeOpenUiValues.test.ts:5",
@@ -6788,6 +6819,7 @@
         "backend/src/ai/nativeOpenUiWorkspace.ts#verifiedText"
       ],
       "testCoverage": [
+        "backend/src/ai/nativeDocumentDownload.test.ts",
         "backend/src/ai/nativeOpenUi.test.ts",
         "backend/src/ai/nativeOpenUiEditorial.test.ts",
         "backend/src/ai/nativeOpenUiValues.test.ts"
@@ -152980,14 +153012,14 @@
     {
       "id": "test-suite:0ff3fc98dc7085435219",
       "sourcePath": "backend/src/ai/nativeDocumentDownload.test.ts",
-      "declaredTests": 5,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 87,
+      "declaredTests": 88,
       "skipLocations": [],
       "focusLocations": []
     },
