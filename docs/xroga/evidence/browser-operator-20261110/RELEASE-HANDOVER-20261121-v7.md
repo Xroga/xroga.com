@@ -36,3 +36,11 @@
 
 ## Install, upgrade, rollback
 Unzip, `chrome://extensions`, Developer mode, Load unpacked (same extension id; storage persists). Rollback: unzip the `9e366783c` ZIP over the same folder and reload. No backend change in this session; no staging tags, users or revisions were created this session.
+
+## Addendum (same day): product-chain findings after v7
+Disposable staging user and a no-traffic tag copy of the browser-op revision were used and then removed (tag, copy revisions, user deleted; allowlist back to three ids).
+- **Why a 1-2 minute drawing task takes minutes in the product chain.** Measured: backend logs show the provider takes 3-8 s per turn (median ~5.4 s, ~21k input tokens with a screenshot); layer actions are fast when the page tab is in front (screenshot 0.43 s, click 0.4 s) but a screenshot of a tab that is NOT in front took ~3.9 s in the same product chain (426 ms vs 4006 ms measured). A TraceDraw turn still averaged ~14 s in the product (13-19 turns in 205 s): ~7 s provider, the rest extension/network time not yet attributed (the product keeps its phase timings only when a run finishes, and TraceDraw never finished). Simple product tasks finish in 11-14 s (2 turns).
+- **TraceDraw product run, 3 attempts after the changes: not completed** within the 205-330 s window each time (13-19 turns): new document created, then the model reaches the wrong menu (Image, Window, Effects) and loops on Tools. Open.
+- **Painted-menu seed 4 (fixture), with the dropdown-alignment hint:** 2 of 4 (13 and 14 turns, two 270 s timeouts). Improved from 0 of 2, not solved.
+- **Added this round:** same-purpose-repeated detection for canvas aiming (four of the last six canvas actions share their purpose → one note to change the way in: shortcut, command search, console, keyboard menu), clearer menu_path advice (does not work for canvas-painted menus), a dropdown-alignment hint, the real-model harness now keeps the page tab in front and reports the run's phase timings when a run finishes.
+- **SkillsHub** still returns HTTP 402 (checked again today).

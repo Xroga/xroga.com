@@ -47,7 +47,8 @@ defineCheck({
     const window = (await chrome.windows.getCurrent()).id!;
     const report: Record<string, unknown> = { extensionId: chrome.runtime.id, device: report0.device, tasks: [], polls: [] };
     for (const task of tasks) {
-      const page = await chrome.tabs.create({ windowId: window, url: task.url, active: false });
+      // The page tab is the one in front, as a person's tab is while the agent works on it (a hidden tab makes every screenshot several seconds slower); the panel runs in a second tab.
+      const page = await chrome.tabs.create({ windowId: window, url: task.url, active: true });
       await waitForLoad(page.id!);
       const view = await chrome.tabs.create({ windowId: window, url: chrome.runtime.getURL(`/sidepanel.html#tab=${page.id}`), active: false });
       await waitForLoad(view.id!);
@@ -123,6 +124,12 @@ defineCheck({
           turns: run?.turns,
           reason: run?.reason,
           answer: last.slice(-3000),
+          // Where the product run's time went: the loop's phase recorder (the product keeps it in storage for each run).
+          timing: await chrome.storage.local.get('xroga_perf_v1').then(r => {
+            const ring = (r.xroga_perf_v1 ?? []) as Array<{ timings?: { wallMs: number; marks?: Record<string, number>; phases: Record<string, { count: number; totalMs: number; maxMs: number }> } }>;
+            const last = ring.at(-1)?.timings;
+            return last ? { wallMs: Math.round(last.wallMs), marks: last.marks, phases: Object.fromEntries(Object.entries(last.phases).map(([k, v]) => [k, `${v.count}x ${Math.round(v.totalMs)}ms (max ${Math.round(v.maxMs)})`])) } : null;
+          }).catch(() => null),
         });
       } finally {
         for (const t of [view, page]) await chrome.tabs.remove(t.id!).catch(() => undefined);

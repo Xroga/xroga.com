@@ -881,6 +881,19 @@ ${ledger}` : ''),
         ? 'This page paints its interface on a canvas, so its outline shows little. Use screenshot to see it, use canvas (click, drag, hover at fractions of the screenshot) to act on it, and check the result with another screenshot. find_color locates a colour.'
         : 'This page paints its interface on a canvas, so its outline shows little. find_color locates a colour on the page; use at fractions of the canvas with click or drag, and check the result.'));
     }
+    // The same aim again and again: four canvas actions in the last six share their purpose (most of their words). The page may change a little each time
+    // (other menus open), so no-change detection never fires; the purpose has not been reached. A different way in is the way out.
+    if (outcome.call.toolName === 'canvas') {
+      const words = (v: unknown) => new Set(String(v ?? '').toLowerCase().match(/[a-z]{3,}/g)?.filter(w => !['the', 'and', 'menu', 'click', 'open', 'bar'].includes(w)) ?? []);
+      const mine = words((outcome.call.input as { intent?: unknown } | undefined)?.intent);
+      this.#canvasIntents.push(mine);
+      if (this.#canvasIntents.length > 6) this.#canvasIntents.shift();
+      const similar = mine.size ? this.#canvasIntents.filter(w => w.size && [...mine].filter(x => w.has(x)).length / Math.min(mine.size, w.size) >= 0.6).length : 0;
+      if (similar >= 4 && !this.#aimNoted) {
+        this.#aimNoted = true;
+        notes.push(note('You have aimed at the same thing four times and not reached it. Aiming again by eye is not working. Change the way in: a keyboard shortcut for the tool or command you want (function keys or letters; most editors show them next to menu items), the application command search (Ctrl+K, Ctrl+Shift+P, or /), a script console, or open the menu with the keyboard (Alt or F10, then arrow keys). Then verify with a screenshot.'));
+      } else if (similar < 3) this.#aimNoted = false;
+    }
     let capture = await this.#withThumb(this.#screenshotImage(outcome));
     // A pointer action on a painted canvas is always followed by a look at the result. The look is taken here, with the coordinate grid, and
     // goes back with the action: the model checks it (right menu? right object?) and aims its next action in the same turn instead of
@@ -1566,6 +1579,8 @@ ${ledger}` : ''),
    * A tool already in the list is never replaced, and the run holds at most 40 of them.
    */
   #askedText = '';
+  #canvasIntents: Array<Set<string>> = [];
+  #aimNoted = false;
   #lastCanvasPicture: string | undefined;
   #canvasNoChange = 0;
   #giveUpChallenged = false;
