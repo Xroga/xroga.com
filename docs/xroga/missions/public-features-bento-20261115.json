@@ -1,0 +1,140 @@
+{
+  "version": "1.0",
+  "missionId": "PUBLIC-FEATURES-BENTO-20261115",
+  "baseSha": "67dac20c98e9f208b9785c271b1f221b3bce4759",
+  "requirementIds": [
+    "XR-FAMILY-rich-ai-ui"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "medium",
+  "scope": "Redesign the shared public /features page into a blue Manus-style categorized directory; remove its duplicate page-level header/footer so the canonical PublicMarketingChrome remains the sole shared navigation; adapt the uploaded Manus-style Baskerville headline typography to h1/h2 across Xroga pages and the feature-directory category headings, retaining readable sans-serif control and card text.",
+  "changedFiles": [
+    "frontend/src/app/layout.tsx",
+    "frontend/src/app/features/page.tsx",
+    "frontend/src/app/features/FeaturesCatalog.tsx",
+    "frontend/src/app/features/features.css",
+    "frontend/src/lib/publicFeatureDirectory.ts",
+    "frontend/src/lib/publicFeatureDirectory.test.ts",
+    "frontend/src/styles/xroga-fonts.css",
+    "docs/xroga/missions/public-features-bento-20261115.json"
+  ],
+  "decisions": {
+    "keep": [
+      "Canonical PublicMarketingChrome shared header/footer; no additional page-level navigation/footer.",
+      "Existing routes, metadata, public descriptions, backend/runtime/security boundaries and user-selected workspace font settings.",
+      "Blue bento visual design and the complete source-mapped directory."
+    ],
+    "extend": [
+      "Load Libre Baskerville once using a runtime-only Google Fonts stylesheet link in the shared root document head (CSP already allows Google font hosts), with bundled Source Serif 4 / Georgia fallback. Apply the family to h1/h2 site-wide and to public marketing display headings; keep Next.js builds independent from downloading Google font binaries.",
+      "Remove duplicate /features local header/footer markup and adjust hero spacing under the existing shared marketing chrome.",
+      "Retain existing six-category full directory, status labels, frontend search and category filters with source-coverage tests."
+    ],
+    "replace": [
+      "Cormorant-based previous feature-page display styling with a Baskerville-style editorial serif matching the provided screenshot.",
+      "Duplicative local navigation/footer markup on /features."
+    ],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No database or schema changes.",
+    "rollback": "Revert the features UI/data/test changes; no migrations."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "No authorization behavior changed; existing signup route is linked."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No tenant data or authenticated workspace state is accessed."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No external action execution; all cards are navigation links."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No secrets, account credentials or provider tokens used."
+    },
+    "egress": {
+      "changed": true,
+      "description": "New public runtime-only stylesheet request to fonts.googleapis.com and glyph requests to fonts.gstatic.com for Libre Baskerville. Both hosts already appear in the project's CSP; no user credentials are transmitted by the font integration. Bundled Source Serif 4/Georgia remains the fallback."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No model inference, external APIs or paid dependencies."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No subscription or checkout changes."
+    }
+  },
+  "tests": [
+    {
+      "command": "npm run lint --prefix frontend --workspaces=false",
+      "scope": "Frontend lint for updated page and feature directory; rerun on final SHA.",
+      "negative": false,
+      "reference": "frontend/src/app/features/FeaturesCatalog.tsx"
+    },
+    {
+      "command": "npm run build --prefix frontend --workspaces=false",
+      "scope": "Next.js compilation, types, static metadata and client bundle; rerun on final SHA.",
+      "negative": false,
+      "reference": "frontend/src/app/features/page.tsx"
+    },
+    {
+      "command": "npx tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/publicFeatureDirectory.test.ts",
+      "scope": "37 canonical source entries mapped, category/uniqueness coverage, retired-feature negative tests; pending CI or trusted local execution.",
+      "negative": true,
+      "reference": "frontend/src/lib/publicFeatureDirectory.test.ts"
+    },
+    {
+      "command": "Manual desktop/mobile screenshot comparison of /features and other representative Xroga pages",
+      "scope": "Inspect real rendered font family, page's single shared navigation, functional filters, hero and directory heading line wraps at 390/768/1440px; not yet observed.",
+      "negative": true,
+      "reference": "frontend/src/styles/xroga-fonts.css"
+    },
+    {
+      "command": "Browser font CSS network + computed-style check",
+      "scope": "Check exact branch preview loads Libre Baskerville from Google and heading computed fonts across public and workspace pages; pending browser environment.",
+      "negative": true,
+      "reference": "frontend/src/app/layout.tsx"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Public marketing page only; no execution runtime, scheduler, model route, capability registry or control plane changes.",
+    "rfc": null
+  },
+  "rollout": "Merge only after frontend CI and visual/a11y review; then verify public /features URL and internal links. No automatic production publication requested.",
+  "rollback": "Revert this bounded /features page, catalog, directory data and CSS change, or re-deploy the prior verified frontend release; no backend or schema changes.",
+  "knownGaps": [
+    "Verify browser computed font for all page headings and ensure remote Google font CSS/glyph URLs load under current CSP; if unavailable, local Source Serif 4/Georgia fallback is used.",
+    "Latest-branch Next.js frontend build/visual review and Xroga site-wide heading regression screenshots are pending.",
+    "Vercel preview link previously shown was for an older commit, so it does not demonstrate this font/header fix.",
+    "Unrelated repository-wide mission policy baseline ancestor and inventory snapshot drift may block larger checks; do not bypass."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "frontend/src/app/features/page.tsx",
+    "frontend/src/app/features/FeaturesCatalog.tsx",
+    "frontend/src/app/features/features.css",
+    "frontend/src/lib/publicFeatureDirectory.ts",
+    "frontend/src/lib/publicFeatureDirectory.test.ts"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Exact-commit frontend CI and visual/typography/header screenshots required before merge or production release.",
+      "Global heading change requires review on homepage, app builder, about, workspace and other representative routes."
+    ],
+    "authenticatedE2e": "NOT_APPLICABLE",
+    "stagedSecurity": "NOT_APPLICABLE",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}
