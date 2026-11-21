@@ -97513,7 +97513,7 @@
       "callers": [
         "frontend/src/components/terminal/SwarmMessageLog.tsx:47",
         "frontend/src/lib/chatTurnRail.test.ts:4",
-        "frontend/src/lib/workspaceRouteIsolation20261021.test.ts:49"
+        "frontend/src/lib/workspaceRouteIsolation20261021.test.ts:50"
       ],
       "reachable": true,
       "persistenceDependencies": [],
