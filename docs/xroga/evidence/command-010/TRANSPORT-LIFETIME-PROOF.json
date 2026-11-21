@@ -251,7 +251,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "0d1c3d78bb1d340d38e2532c06ab2cc73e8bb90c9e79fffc49d936b1e886bf02",
+      "sha256": "d65c2cadfb01a3463fe0b74e5c172c99f726584eebc2ed6992bee959c1611f96",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/black-hole/webIntelligence.ts",
         "sha256": "f7ee10618d7993cc8e827b7f77d23eec06e663232d26a44c598a48825fbb6b7d"
@@ -269,6 +269,13 @@
         "candidate": "a53217141172f08c820d24b48b73bca9952d6b66",
         "previousSha256": "bacebb92d3c69637716c4fb8c9af2e96f3e154ae8d717be9a19d02a267db7bdf",
         "scope": "Bounded research intent and dispatch selection were reviewed. Direct provider transports, credentials and authority implementation retain their existing requirements. Controlled evidence only."
+      },
+      "workspaceAutomaticSearchResultStorage": {
+        "applicationSource": "927f3b9c3393010cdc9bbb438efcea5384b75cfb",
+        "previousSha256": "0d1c3d78bb1d340d38e2532c06ab2cc73e8bb90c9e79fffc49d936b1e886bf02",
+        "evidencePath": "backend/src/ai/researchAnswer.test.ts",
+        "scope": "Controlled regression checks confirm private evidence read-back after Search settlement and before Zurelay synthesis, cross-account denial, and no synthesis or repeat retrieval when private storage fails. The approved document-fetch function and Search provider transport calls are unchanged.",
+        "liveAcceptance": false
       }
     },
     {
