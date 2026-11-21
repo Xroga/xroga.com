@@ -9,7 +9,7 @@
     {
       "path": "backend/src/ai/pipeline.ts",
       "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
-      "currentSha256": "7b4139a59362b8a99a699dd6800ae12ac46fa7c3c1bf3b2b380568d0138326d4",
+      "currentSha256": "70ae7c28be531fc8ff76d13bf2818ec214bf75f6642c0bb07cf677799ca02371",
       "genericSdkPreviousCurrentBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
@@ -24,8 +24,8 @@
         "944a58bb15dca85b3ddd"
       ],
       "afterIds": [
-        "9cd71e5a7fa3d7df5bee",
-        "139e888ae2690919a1ea"
+        "6781907bf45fd19a626b",
+        "10dbab43eaaf4866b75f"
       ],
       "unchangedNearestBlockSha256": [
         "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
@@ -4331,12 +4331,17 @@
         "applicationSource": "bc5175fb36e4a1b8210119cfd6a8f5255a3f4183",
         "previousSha256": "c12b8c82d6d82f28f8dea53d2924127e9d92f9ec6eecb417c818e60620a45310",
         "scope": "Only source positions moved for the reviewed, unchanged build conversions. Automatic public Search synthesis reserves through the existing account ledger while separate private research retains its signed bound."
+      },
+      "workspaceResearchPrivacy": {
+        "baseline": "077ea3640075b80eaa3bfebca28a2be5e58dc9a9",
+        "previousSha256": "7b4139a59362b8a99a699dd6800ae12ac46fa7c3c1bf3b2b380568d0138326d4",
+        "scope": "Public-answer proposals with only public research capabilities may use the existing metered read. Build and tenant persistence are unchanged."
       }
     },
     {
       "path": "backend/src/routes/phase1.ts",
       "historicalSha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b",
-      "currentSha256": "8e116ae5296634e5a493aea0cee9434255186deaced4ce27754f92d05e760f43",
+      "currentSha256": "ecaa975be6c7ae1a0251c3673410eb361256a73d4e02bbe81ff26d487c1529d1",
       "businessModelContinuationBinding": {
         "reference": "b183079ec8a00cb4d7a29a95e8cdfb517da81acb",
         "previousCurrentSha256": "7ad7b1f7dde453a4065e15ba260998fe5841c6992724d03ee299b71c8380c0f5",
@@ -4352,7 +4357,7 @@
         "ebede146c851a085d2b8"
       ],
       "afterIds": [
-        "006420f2256a9d86cc5a"
+        "dbf2b5a720f5ae54b672"
       ],
       "unchangedNearestBlockSha256": [
         "c2096dbdee542d663ba05ee31829f741533e7ae3a6bd6aae397ced85681a4286"
@@ -4567,6 +4572,11 @@
         ],
         "evidencePath": "docs/xroga/evidence/command-010/WORKSPACE-AUTOMATIC-PUBLIC-SEARCH-20261119.json",
         "liveAcceptance": false
+      },
+      "workspaceResearchPrivacy": {
+        "baseline": "077ea3640075b80eaa3bfebca28a2be5e58dc9a9",
+        "previousSha256": "8e116ae5296634e5a493aea0cee9434255186deaced4ce27754f92d05e760f43",
+        "scope": "Restrict consumer research serialization to answer, source, status and explicit consent fields. Stored authority and scoped caller behaviors are unchanged."
       }
     },
     {

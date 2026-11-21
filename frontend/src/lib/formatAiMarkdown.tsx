@@ -139,6 +139,7 @@ interface SafeConfirmation {
   expiresAt:
     string;
   approval?: { spendMaximumMicroUsd: string | null; currency: string | null };
+  researchReview?: Array<{ label: string; value: string }>;
 }
 
 function toolkitLabel(
@@ -435,8 +436,8 @@ export function BusinessActionConfirmationInline({
       ?.status;
   const approval = confirmation?.approval;
   const savedSearch = confirmation?.toolkit === 'xroga-native-research';
-  const privateRead = confirmation?.risk === 'read' && !savedSearch;
-  const maximumSpend = approval && readableActionSpend(approval.spendMaximumMicroUsd, approval.currency);
+  const privateRead = confirmation?.risk === 'read' || savedSearch;
+  const maximumSpend = !savedSearch && approval && readableActionSpend(approval.spendMaximumMicroUsd, approval.currency);
   const reviewHref = `/dashboard/actions/confirm/${encodeURIComponent(confirmationId)}`;
   const statusMessage = {
     executing: savedSearch ? 'Searching the web…' : 'Action in progress…',
@@ -460,7 +461,7 @@ export function BusinessActionConfirmationInline({
         ) : null}
       </span>
 
-      {status === 'pending' && approval ? (
+      {status === 'pending' && (approval || confirmation?.researchReview?.length) ? (
         <span className="flex flex-wrap items-center gap-2 text-[12px] text-[var(--foreground)]/70">
           <a href={reviewHref} className="font-medium underline underline-offset-2">{privateRead ? 'Review and confirm' : 'Review details'}</a>
           {maximumSpend ? <span>Up to {maximumSpend}</span> : null}
@@ -482,10 +483,7 @@ export function BusinessActionConfirmationInline({
             }
             className="rounded-lg bg-[var(--accent)] px-3 py-1.5 text-[12px] font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {busy ===
-            'confirm'
-              ? savedSearch ? 'Searching the web…' : 'Confirming…'
-              : savedSearch ? 'Approve research request' : 'Confirm action'}
+            {busy === 'confirm' ? 'Confirming…' : 'Confirm action'}
           </button>}
 
           <button

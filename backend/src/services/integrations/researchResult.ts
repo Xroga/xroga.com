@@ -52,6 +52,33 @@ export interface ResearchResult {
   answerFailure?:string;
 }
 
+/** Show the exact user data relevant to consent while keeping the signed
+ * authority, request digest and upstream budget on the server. */
+export function workspaceResearchConfirmationView(confirmation: SafeBusinessActionConfirmation) {
+  if (confirmation.toolkit !== 'xroga-native-research') return confirmation;
+  const { id, status, toolkit, risk, createdAt, expiresAt, approval, receipt } = confirmation;
+  const parameters = record(approval?.criticalParameters);
+  const request = record(parameters.body);
+  const synthesis = record(parameters.answerRequest);
+  const fields = (label: string, values: unknown[]) =>
+    values.map(text).filter(Boolean).map(value => ({ label, value }));
+  const review = [
+    ...fields('Research objective', [request.objective]),
+    ...fields('Search terms', Array.isArray(request.search_queries) ? request.search_queries : []),
+    ...fields('Pages to retrieve', Array.isArray(request.urls) ? request.urls : []),
+    ...fields('Your question', [synthesis.prompt]),
+    ...(Array.isArray(synthesis.history) ? synthesis.history.flatMap(entry =>
+      fields(record(entry).role === 'user' ? 'Earlier user message' : 'Earlier answer', [record(entry).content])) : []),
+    ...fields('Project context for synthesis', [synthesis.projectEvidence]),
+  ];
+  return {
+    id, status, toolkit, risk, createdAt, expiresAt,
+    summary: 'Review the information to send with this research request.',
+    ...(approval && review.length ? { researchReview: review } : {}),
+    ...(receipt ? { receipt: { id: receipt.id, outcome: receipt.outcome, recordedAt: receipt.recordedAt } } : {}),
+  };
+}
+
 /** Provider evidence is untrusted content, never an instruction or a new authority. */
 export function presentResearchResult(raw: unknown, officialOnly?: readonly string[]): Omit<ResearchResult, 'confirmationId' | 'receiptId'> {
   const envelope = record(raw);

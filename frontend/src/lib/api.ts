@@ -6079,7 +6079,7 @@ export interface Phase1ChatResult {
   intent:
     string;
 
-  usage:
+  usage?:
     TokenUsage;
 
   webSources?:

@@ -1100,7 +1100,7 @@ export async function runChatPipeline(opts: {
     // evidence, attachments and project/worker model scopes still require review.
     const autoPublicSearch = opts.autoPublicSearch && goal
       && !opts.attachments?.length && !opts.projectEvidence && !opts.modelScope
-      && (goal.semanticIntent === 'ANSWER' || goal.semanticIntent === 'INVESTIGATE')
+      && (goal.semanticIntent === 'ANSWER' || goal.semanticIntent === 'INVESTIGATE' || goal.semanticIntent === 'PROPOSE')
       && (goal.requiredCapabilities.includes('research.public-web') || goal.freshnessRequirement !== 'NONE')
       && goal.requiredCapabilities.every(capability => capability === 'research.public-web' || capability === 'conversation.respond');
     try {
