@@ -24,10 +24,6 @@ export default function PrivacyPage() {
           <a href={`mailto:${COMPANY_CONTACT.email}`} className="text-[var(--accent)] hover:underline">
             {COMPANY_CONTACT.email}
           </a>
-          ,{' '}
-          <a href={`tel:${COMPANY_CONTACT.phoneTel}`} className="text-[var(--accent)] hover:underline">
-            {COMPANY_CONTACT.phoneDisplay}
-          </a>
           . See{' '}
           <Link href="/contact" className="text-[var(--accent)] hover:underline">
             Contact
