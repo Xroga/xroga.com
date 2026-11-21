@@ -27963,9 +27963,9 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sourceSha256": "2b1ee96959439cef8b692222e04dd4d178f84fb52d5cdac6ca4c853e281ecd6c",
+      "sourceSha256": "bdf84341e108be49d8d273c5f9ec653b417aab8894284904f7bfb23ca61cdcd2",
       "callIds": [
-        "4c3e13cce409a0e53b15"
+        "9b5825294bbdeabe6b85"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
@@ -27988,9 +27988,9 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sourceSha256": "2b1ee96959439cef8b692222e04dd4d178f84fb52d5cdac6ca4c853e281ecd6c",
+      "sourceSha256": "bdf84341e108be49d8d273c5f9ec653b417aab8894284904f7bfb23ca61cdcd2",
       "callIds": [
-        "4cec2f7fa66b26d9ec3f"
+        "1410a770303a0c8eb8f3"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
@@ -29362,10 +29362,10 @@
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "sourceSha256": "0be4dadad6e19f17d809b6e998499508d82f8c849b4b3c46d315fb9ca6b1603f",
+      "sourceSha256": "290ce9849a665de6fb3040abf35a4e85b1be7bfcda58b284f9f1f0ff904e6b32",
       "callIds": [
         "a6cdc1439fc61b260e6e",
-        "d742142f7f919cf0dbed"
+        "86e269031764c5de83da"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",

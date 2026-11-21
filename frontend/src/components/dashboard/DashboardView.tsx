@@ -285,9 +285,11 @@ export function DashboardView({ browserOperator }: { browserOperator?: ReactNode
               </button>
             </div>
           )}
+          {browserOperator && (
+            <div className={scrollPolish.browserControl}>{browserOperator}</div>
+          )}
         </header>
 
-        {browserOperator}
         <div
           ref={bodyRef}
           className="xv-workspace-body"

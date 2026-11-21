@@ -6,6 +6,7 @@ import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { messagesForStorage, safeStorageSet } from '@/lib/storageSafe';
 import { saveTerminalSessionToIndexedDB, deleteTerminalSessionFromIndexedDB } from '@/lib/terminalSessionStorage';
 import { isLegacyFabricatedLiveText } from '@/lib/landingOutcome';
+import { stableConversationTitle } from './conversationTitle';
 import {
   markRepoSessionCloudId,
   registerRepoSession,
@@ -13,7 +14,6 @@ import {
 } from '@/lib/repoSessionsIndex';
 import {
   allocateTerminalNumber,
-  cloudTerminalLabel,
   pushTerminalSessionToCloud,
 } from '@/lib/cloudTerminalSessions';
 
@@ -178,8 +178,10 @@ export function saveTerminalHistorySession(opts: {
 }): TerminalHistoryEntry | null {
   if (!opts.messages.length) return null;
 
-  const firstUser = opts.messages.find((m) => m.role === 'user');
-  const titlePrompt = firstUser?.content?.trim() || opts.prompt.trim() || 'Terminal session';
+  const existing = loadTerminalHistory().find((e) => e.id === opts.sessionId);
+  const firstUser = existing?.messages?.find(m => m.role === 'user' && m.content?.trim())
+    ?? opts.messages.find(m => m.role === 'user' && m.content?.trim());
+  const titlePrompt = firstUser?.content?.trim() || existing?.prompt?.trim() || opts.prompt.trim();
   // Every genuine conversation is saved, including browser/automation-related requests.
   // Execution records remain separate and must not be inferred from prompt wording.
 
@@ -191,7 +193,6 @@ export function saveTerminalHistorySession(opts: {
       .slice(0, 200) || titlePrompt.slice(0, 200);
 
   const meta = extractProjectMeta(opts.messages);
-  const existing = loadTerminalHistory().find((e) => e.id === opts.sessionId);
   const now = new Date().toISOString();
   const kind = detectKind(opts.messages, titlePrompt);
   const status = opts.status ?? detectStatus(opts.messages, kind);
@@ -218,19 +219,14 @@ export function saveTerminalHistorySession(opts: {
     ? projectContextKey({ repo: githubRepoName, branch: githubBranch, projectRoot })
     : undefined);
 
-  // Assign #1 / #2 before persist so sidebar + storage use the numbered title.
-  const terminalNumber =
-    githubRepoName?.includes('/')
-      ? allocateTerminalNumber(opts.sessionId, githubRepoName)
-      : undefined;
+  // Repo order stays numbered; display titles are independent of that order.
+  if (githubRepoName?.includes('/')) allocateTerminalNumber(opts.sessionId, githubRepoName);
 
   const entry: TerminalHistoryEntry = {
     id: opts.sessionId,
-    title: existing?.title && !/^#\d+\s+terminal$/i.test(existing.title)
-      ? existing.title
-      : titlePrompt.replace(/\s+/g,' ').trim().slice(0,90),
+    title: stableConversationTitle(existing?.title, undefined, titlePrompt),
     preview,
-    prompt: opts.prompt || titlePrompt,
+    prompt: titlePrompt,
     messages: opts.messages,
     kind,
     status,
