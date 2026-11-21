@@ -16,6 +16,7 @@
     "backend/src/ai/nativeMarkdown.ts",
     "backend/src/ai/nativeOpenUi.ts",
     "backend/src/ai/nativeOpenUi.test.ts",
+    "backend/src/ai/nativeOpenUiAccuracy.ts",
     "backend/src/ai/nativeOpenUiEditorial.ts",
     "backend/src/ai/nativeOpenUiEditorial.test.ts",
     "backend/src/ai/nativeOpenUiPrompt.ts",
@@ -51,6 +52,7 @@
       "Remove directions to unavailable calculator inputs while retaining the worked calculation and unrelated content.",
       "Keep calculator sensitivity and boundary examples distinct from the active result being checked.",
       "Keep a sensitivity chart's computed series separate from the calculator's selected value while still checking explicit labeled scalar rows.",
+      "Apply a verified local factual correction in place when it resolves the only flagged issue in an ordinary plain answer.",
       "Reuse an unchanged native answer tree during unrelated Workspace updates."
     ],
     "replace": [],

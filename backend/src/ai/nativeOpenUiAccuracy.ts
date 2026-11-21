@@ -19,6 +19,9 @@ export function claimsChartIsDeferred(prose: string): boolean {
 }
 type TechnicalCorrection = { reason: 'authorization_review' | 'factual_review'; guidance: string; rule?: FactualRule };
 const isNextJs = /\b(?:Next(?:\.js|js)|App Router|NEXT_PUBLIC_)\b/i;
+// The issue concerns the spin axis. The equatorial plane can correctly
+// be described as inclined by this angle relative to the orbital plane.
+const wrongAxialReference = /(\bEarth(?:['’]s)?\b[^.!?;\n]{0,64}\b(?:axis|axial tilt)\b[^.!?;\n]{0,30}\b23(?:[.,][45]\d*)?\s*(?:°|degrees?\b))\s*(?:relative to|with respect to|from|to)\s+(?:the\s+|its\s+|Earth['’]s\s+)?(?:orbital plane|plane of (?:its|Earth['’]s) orbit|ecliptic(?: plane)?)\b/i;
 
 export function nativeTechnicalReviewContext(text: string) {
   return [/\bStripe\b/i.test(text) ? 'Stripe' : '', isNextJs.test(text) ? 'Next.js' : ''].filter(Boolean).join('\n');
@@ -52,9 +55,6 @@ export function nativeTechnicalCorrections(answer: string): TechnicalCorrection[
       corrections.push({ reason: 'factual_review', rule: 'nextjs_server_invocation', guidance: nativeFactualGuidance.nextjs_server_invocation });
     }
   }
-  // This applies to the spin axis. The equatorial plane can correctly be
-  // described as inclined by this angle relative to the orbital plane.
-  const wrongAxialReference = /\bEarth(?:['’]s)?\b[^.!?;\n]{0,64}\b(?:axis|axial tilt)\b[^.!?;\n]{0,30}\b23(?:[.,][45]\d*)?\s*(?:°|degrees?\b)\s*(?:relative to|with respect to|from|to)\s+(?:the\s+|its\s+|Earth['’]s\s+)?(?:orbital plane|plane of (?:its|Earth['’]s) orbit|ecliptic(?: plane)?)\b/i;
   if (statements.some(statement => !warnsAgainst(statement) && !/\b(?:not tilted|misconception|false|wrong|myth|erroneous)\b/i.test(statement) && wrongAxialReference.test(statement))) {
     corrections.push({ reason: 'factual_review', rule: 'earth_axial_tilt_reference', guidance: nativeFactualGuidance.earth_axial_tilt_reference });
   }
@@ -138,6 +138,16 @@ export function reviewNativeAnswer(answer: string): { reason: TechnicalCorrectio
 
 export function nativeAnswerReviewReason(answer: string) {
   return reviewNativeAnswer(answer)?.reason;
+}
+
+/** Apply a known local correction only when it leaves the rest of the
+ * completed plain answer intact and the corrected answer clears review. */
+export function repairNativePlainAnswer(answer: string): string | undefined {
+  if (!/^\p{L}/u.test(answer) || /[\r\n\x60*_<>|\[\]“”"]/.test(answer)) return;
+  const corrections = nativeTechnicalCorrections(answer);
+  if (corrections.length !== 1 || corrections[0].rule !== 'earth_axial_tilt_reference') return;
+  const corrected = answer.replace(wrongAxialReference, '$1 from the perpendicular to its orbital plane');
+  if (corrected !== answer && !nativeAnswerReviewReason(corrected)) return corrected;
 }
 
 const monthNames = [

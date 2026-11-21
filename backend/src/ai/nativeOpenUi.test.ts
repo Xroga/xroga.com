@@ -1227,13 +1227,26 @@ test('an unbounded Stripe retry claim gets a readable factual-review fallback', 
   assert.deepEqual(validateNativeOpenUi('root = Col([Text("Stripe does not retry forever.")])'), { ok: true });
 });
 
-test('the captured seasons error is flagged in prose and native content', () => {
-  const inaccurate = 'Earth has seasons because its axis is tilted about 23.5° relative to its orbital plane, so as it orbits the Sun each hemisphere alternately receives more direct sunlight and longer days, then less direct sunlight and shorter days.';
+test('correct a captured plain answer in place without exposing the rejected draft', () => {
+  const inaccurate = 'Earth’s seasons occur because its axis is tilted about 23.5 degrees relative to its orbital plane, so as it orbits the Sun each hemisphere alternately receives more direct sunlight and longer days, then less direct sunlight and shorter days.';
   const result = completeNativeWorkspaceAnswer(inaccurate, 'stop');
-  assert.deepEqual(result.completion, { status: 'partial', reason: 'factual_review' });
-  assert.match(result.response, /23\.4° from the perpendicular to its orbital plane/);
-  assert.ok(result.response.endsWith(inaccurate));
+  assert.deepEqual(result.completion, { status: 'complete' });
+  assert.equal(result.response, inaccurate.replace('relative to its orbital plane', 'from the perpendicular to its orbital plane'));
   assert.equal(result.responseSource.text, '');
+
+  // Source-bound, structured and truncated answers still require review.
+  for (const guarded of [
+    completeNativeWorkspaceAnswer(inaccurate, 'length'),
+    completeNativeWorkspaceAnswer(inaccurate, 'stop', new Set(['source-1'])),
+    completeNativeWorkspaceAnswer(inaccurate, 'stop', undefined, undefined, undefined, ['chart']),
+    completeNativeWorkspaceAnswer(inaccurate + '\n\nThe date varies by hemisphere.', 'stop'),
+  ]) {
+    assert.deepEqual(guarded.completion, { status: 'partial', reason: 'factual_review' });
+  }
+});
+
+test('the incorrect reference angle remains detectable in rich content', () => {
+  const inaccurate = 'Earth’s axis is tilted 23.5° relative to its orbital plane.';
   const program = (text: string) => 'root = Col([Text(' + JSON.stringify(text) + ')])';
   const diagnostics: NativeUiDiagnostic[] = [];
   assert.deepEqual(validateNativeWorkspaceProgram(program(inaccurate), undefined, '', event => diagnostics.push(event)),

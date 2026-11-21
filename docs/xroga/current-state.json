@@ -5829,7 +5829,7 @@
       "id": "surface:f8a39bc555632894e7fb",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiAccuracy.ts",
-      "sha256": "937581eea45a7cc1a9d59214a62e40dfd3e89d3ab89f3a22b2b8504f9a6652cc",
+      "sha256": "28485609ec592e4089422b448b6e32890a206d81218a87ca34eccb07840af1fe",
       "symbols": [
         "FactualRule",
         "MonthlyPoint",
@@ -5851,6 +5851,7 @@
         "compare",
         "compareBothGains",
         "contradictsMonthlyChart",
+        "corrected",
         "corrections",
         "count",
         "counts",
@@ -5918,6 +5919,7 @@
         "rate",
         "rejectedOrdering",
         "rejectedTimestamp",
+        "repairNativePlainAnswer",
         "requiresNativeAuthorizationReview",
         "reviewNativeAnswer",
         "rises",
@@ -6666,7 +6668,7 @@
       "id": "surface:93911e9946fd4b21d50d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "c3a7c1fea1f665d7d54e2967f0aa5a75828cc1f6911d59d7c8753de80d395af9",
+      "sha256": "d05f0eec07c93bd1515513478c35eaac49915804a3478e77b842c2e0dc41ac17",
       "symbols": [
         "authorityIssue",
         "calculatorUnavailable",
@@ -152973,7 +152975,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 85,
+      "declaredTests": 86,
       "skipLocations": [],
       "focusLocations": []
     },

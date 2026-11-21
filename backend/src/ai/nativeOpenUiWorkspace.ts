@@ -1,6 +1,6 @@
 import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, missingNativeFormats, recoverNativeWorkspaceProgram, recoverNativeMonthlyChart, recoverTruncatedNativeWorkspaceProgram, splitNativeOpenUiAnswer, supplementNativeProse, validateNativeWorkspaceProgram, type NativeUiDiagnostic, type NativeUiValidation, type RequiredNativeFormat } from './nativeOpenUi.js';
-import { nativeAnswerReviewReason, nativeFactualGuidance, nativeTechnicalCorrections, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
+import { nativeAnswerReviewReason, nativeFactualGuidance, nativeTechnicalCorrections, repairNativePlainAnswer, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import { checklistFromProse, requestsEditableChecklist, suppliedPeriodicSeries } from './nativeOpenUiRecovery.js';
 import { conflictingNativeReadouts, initialNativeReadouts, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
 import { recoverNativeReadoutExplanations } from './nativeOpenUi.js';
@@ -202,6 +202,14 @@ export function completeNativeWorkspaceAnswer(
         responseSource: { format: NATIVE_UI_FORMAT, text: reviewed.program },
       };
     }
+  }
+  if (reviewReason === 'factual_review' && finishReason === 'stop' && !generatedProgram && !evidenceIds?.size && !requiredFormats.length) {
+    const corrected = repairNativePlainAnswer(response);
+    if (corrected) return {
+      response: corrected,
+      completion: { status: 'complete' as const },
+      responseSource: { format: NATIVE_UI_FORMAT, text: '' },
+    };
   }
   const corrections = reviewReason ? nativeTechnicalCorrections(text) : [];
   const reviewedProse = corrections.length
