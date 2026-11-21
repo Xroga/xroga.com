@@ -44,3 +44,6 @@ Disposable staging user and a no-traffic tag copy of the browser-op revision wer
 - **Painted-menu seed 4 (fixture), with the dropdown-alignment hint:** 2 of 4 (13 and 14 turns, two 270 s timeouts). Improved from 0 of 2, not solved.
 - **Added this round:** same-purpose-repeated detection for canvas aiming (four of the last six canvas actions share their purpose → one note to change the way in: shortcut, command search, console, keyboard menu), clearer menu_path advice (does not work for canvas-painted menus), a dropdown-alignment hint, the real-model harness now keeps the page tab in front and reports the run's phase timings when a run finishes.
 - **SkillsHub** still returns HTTP 402 (checked again today).
+
+## Final artifact for this addendum
+Build commit `ffc5d68cc`, ZIP `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-ffc5d68cc.zip`, SHA-256 `1C45D7DA1C53AE859C43B7C71A1C1335E49DB06132752D41A201F65F52408CBC`, manifest `ARTIFACT-MANIFEST-ffc5d68cc.json`; upgrade from 23a9b4f59 passes (same id, storage kept, worker alive, side panel loads); 1424 unit tests pass. Rollback: the 23a9b4f59 ZIP. This supersedes the 23a9b4f59 ZIP named in the table above.
