@@ -1,4 +1,6 @@
 # XROGA BROWSER OPERATOR — ADVANCED UNIVERSAL PRODUCTION FINISHING MISSION
+
+**Latest universal complex-app execution manual (22 Nov):** [Xroga Universal Complex Apps — Canva, Higgsfield, Ads, DB, SEO and 72 source repositories](./BROWSER-OPERATOR-UNIVERSAL-COMPLEX-APPS-CANVA-HIGGSFIELD-ADS-ENGINEERING-20261122.md). This gives explicit source-to-code contracts and full task postconditions; implement and measure the actual capabilities rather than adding site-specific prompt recipes. Read alongside this advanced finishing mission and preserve the actual reported high/worker/Blob fixes.
 ## Founder execution directive for Claude Code · 22 November 2026
 **Target:** existing Nanobrowser-derived Xroga Browser Operator extension and its canonical Xroga backend. **PR:** [Xroga/xroga.com #976](https://github.com/Xroga/xroga.com/pull/976), branch \`claude/ops-integrated-20261112\`.
 
