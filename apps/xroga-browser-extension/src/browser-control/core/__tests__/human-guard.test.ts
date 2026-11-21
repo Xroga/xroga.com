@@ -18,3 +18,19 @@ describe('explainedByAgent', () => {
     expect(explainedByAgent({ t: 3500, kind: 'key' }, agent, false)).toBe(false);
   });
 });
+
+import { unexplained } from '../human-guard';
+describe('unexplained (one agent input explains at most one page event)', () => {
+  const agent = [{ tabId: 1, t: 1000, kind: 'key' as const }];
+  it('a person key right after the agent key is not swallowed by it', () => {
+    const left = unexplained([{ t: 1020, kind: 'key' }, { t: 1100, kind: 'key' }], agent, true);
+    expect(left).toEqual([{ t: 1100, kind: 'key' }]);
+  });
+  it('a press and release the page saw are both explained by two logged inputs', () => {
+    const two = [{ tabId: 1, t: 1000, kind: 'mouse' as const, x: 10, y: 10 }, { tabId: 1, t: 1010, kind: 'mouse' as const, x: 10, y: 10 }];
+    expect(unexplained([{ t: 1030, kind: 'mouse', x: 10, y: 10 }, { t: 1040, kind: 'mouse', x: 10, y: 10 }], two, true)).toEqual([]);
+  });
+  it('an event before the agent sent anything is a persons', () => {
+    expect(unexplained([{ t: 700, kind: 'key' }], agent, true)).toHaveLength(1);
+  });
+});

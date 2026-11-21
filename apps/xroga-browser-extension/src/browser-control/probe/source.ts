@@ -426,7 +426,9 @@ export function probeMain(): void {
     g.addEventListener(type, (e: Event) => {
       if (!e.isTrusted) return;
       const m = e as MouseEvent;
-      recent.push({ t: Date.now(), kind: KIND[type]!, ...(typeof m.clientX === 'number' ? { x: m.clientX, y: m.clientY } : {}) });
+      // CDP positions are in the visual viewport; DOM client coordinates are in the layout viewport, which has another origin after pinch zoom or pan (as BrowserSkill's cooperation-capture does).
+      const vv = (g as { visualViewport?: { offsetLeft: number; offsetTop: number } }).visualViewport;
+      recent.push({ t: Date.now(), kind: KIND[type]!, ...(typeof m.clientX === 'number' ? { x: m.clientX - (vv?.offsetLeft ?? 0), y: m.clientY - (vv?.offsetTop ?? 0) } : {}) });
       if (recent.length > 60) recent.shift();
     }, { capture: true, passive: true });
   }
