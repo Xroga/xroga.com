@@ -568,7 +568,7 @@ export async function runWebIntelligence(
       // when normalizing the response, without exporting planner fields.
       automaticOfficialDomains = automatic.officialDomains.length ? automatic.officialDomains : undefined;
       publicSources = presentResearchResult({
-        ok: true, operation: 'search', result: await automatic.response.json(),
+        ok: true, operation: 'search', result: automatic.result,
       }, automaticOfficialDomains).sources;
       rawResults = toRawResults(publicSources);
     } else {

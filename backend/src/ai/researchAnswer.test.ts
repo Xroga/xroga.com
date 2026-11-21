@@ -5,13 +5,12 @@ import {researchAnswerRequestSchema,RESEARCH_ANSWER_MAXIMUM_MICRO_USD,researchCi
 import {runChatPipeline} from './pipeline.js';
 import {goalContractSchema} from './universal/goalContract.js';
 import {confirmBusinessAction,getBusinessActionConfirmation} from '../services/integrations/businessActionConfirmations.js';
-import {readResearchResult} from '../services/integrations/researchResult.js';
+import {presentResearchResult,readResearchResult} from '../services/integrations/researchResult.js';
+import {actorFromTenantContext,setStorageServiceForTests} from '../storage/runtime.js';
 import {createTenantContext} from '../security/tenantContext.js';
 import {nativeReleaseFixture} from '../services/publish/__tests__/nativeReleaseFixture.js';
 import {harness} from '../storage/testing/harness.js';
-import {setStorageServiceForTests} from '../storage/runtime.js';
 import {actionPlanDigest} from '../services/integrations/businessAction.js';
-import {presentResearchResult} from '../services/integrations/researchResult.js';
 import {workspacePublicSearchQuery} from './workspacePublicSearch.js';
 
 test('research attribution binds canonical pages without treating code or chart arrays as citations',()=>{
@@ -35,6 +34,14 @@ test('one exact research approval completes its original rich answer, saves evid
  let searches=0,models=0,unknown=0,mode='ok';
  let automaticAuditCount=0;
  let expectedPublicQuery: RegExp | undefined;
+ const rankingPrompt='Top 10 best AI companies of 2026. Explain the ranking method, show their official websites, and cite sources.';
+ const ownerActor=actorFromTenantContext(context);
+ const searchFilename='research-'+context.correlationId+'.json';
+ const put=storage.store.put.bind(storage.store);
+ t.mock.method(storage.store,'put',(...args:Parameters<typeof put>)=>{
+  if(mode==='automatic-storage-failure')throw Error('Synthetic private evidence write failure');
+  return put(...args);
+ });
  const unrelatedHistory='Earlier NASA mission discussion UNRELATED_PRIOR_NASA_TURN';
  const raw=JSON.stringify({s0:{markdown:'The retrieved page documents the supplied option [1].',data:{columns:['Option','Evidence'],rows:[['Documented option','Public source excerpt [1]']]}}});
  t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
@@ -49,7 +56,7 @@ test('one exact research approval completes its original rich answer, saves evid
       assert.match(body.query,/ site:nasa\.gov$/);
       assert.ok([...body.query].length<=128);
     }else if(mode.startsWith('automatic-ranking')){
-      assert.deepEqual(body,{query:'top 10 best ai comapines of 2026',count:10});
+      assert.deepEqual(body,{query:'Top 10 best AI companies of 2026. Explain the ranking method, show their official websites',count:10});
     }else if(mode==='automatic-parity'){
       assert.deepEqual(Object.keys(body).sort(),['count','query']);
       assert.equal(body.count,10);
@@ -72,6 +79,17 @@ test('one exact research approval completes its original rich answer, saves evid
    models++;assert.equal(body.model,'deepseek-v4.1-flash-1017');assert.equal(new Headers(init?.headers).get('x-zurelay-fallback'),'off');
    assert.match(JSON.stringify(body.messages),/Public source excerpt/);assert.match(JSON.stringify(body.messages),/untrusted|external data/i);
    if(mode==='automatic'||mode==='automatic-official'||mode.startsWith('automatic-ranking')||mode==='automatic-parity'){
+    const trace='synthetic-search-'+searches;
+    assert.equal([...reservations.values()].find(row=>row.provider_request_id===trace)?.status,'settled');
+    const objects=await storage.svc.listObjects(ownerActor,{safeFilename:searchFilename});
+    const evidence=await Promise.all(objects.map(async object=>({
+     object, body:JSON.parse((await storage.svc.readObjectBytes(ownerActor,object.id)).bytes.toString('utf8')),
+    })));
+    const current=evidence.find(item=>item.body.result.search_id===trace);
+    assert.ok(current,'Private evidence must already be verified before synthesis');
+    assert.equal(current.body.result.provider,'deepseek');
+    assert.equal(current.body.trust,'UNTRUSTED_DATA');
+    await assert.rejects(storage.svc.readObjectBytes(storage.bob,current.object.id),{code:'NOT_FOUND'});
     assert.doesNotMatch(JSON.stringify(body.messages),/MUST_NOT_LEAVE|substituted planner context/);
     assert.match(JSON.stringify(body.messages),/UNRELATED_PRIOR_NASA_TURN/);
     assert.equal(body.messages.length,3);
@@ -92,7 +110,7 @@ test('one exact research approval completes its original rich answer, saves evid
     assert.ok(['json_object','json_schema'].includes(body.response_format.type));
    }
    if(mode==='drop')throw Object.assign(Error('Synthetic dispatch uncertainty'),{name:'AbortError'});
-   if(mode.startsWith('automatic-ranking'))assert.match(body.messages[2].content,/top 10 best ai comapines of 2026/);
+   if(mode.startsWith('automatic-ranking'))assert.ok(body.messages[2].content.includes(rankingPrompt));
    const content=mode==='automatic-ranking-status'?'Web search finished.'
      :mode.startsWith('automatic')?'The public page documents the answer [1](https://wrong.example/page).':raw;
    const sse='data: '+JSON.stringify({id:'synthetic-answer-'+models,model:body.model,
@@ -232,7 +250,7 @@ test('one exact research approval completes its original rich answer, saves evid
  assert.equal(searches,6);assert.equal(models,4);
 
  const lastConfirmation=confirmation.row;
- const ranking={...automaticRequest,prompt:'top 10 best ai comapines of 2026',
+ const ranking={...automaticRequest,prompt:rankingPrompt,
   goalContract:goalContractSchema.parse({...currentGoal,sourcePolicy:{mode:'official_only',scope:'public_web',officialDomains:['evil.example']}})};
  mode='automatic-ranking';
  const ranked=await runChatPipeline(ranking);
@@ -274,6 +292,17 @@ test('one exact research approval completes its original rich answer, saves evid
   assert.equal(confirmation.row,lastConfirmation);
  }
  assert.equal(searches,11);assert.equal(models,9);
+
+ mode='automatic-storage-failure';
+ const storedBeforeFailure=(await storage.svc.listObjects(ownerActor,{safeFilename:searchFilename})).length;
+ await assert.rejects(runChatPipeline(automaticRequest),{code:'PROVIDER_UNAVAILABLE'});
+ assert.equal(searches,12,'A failed private write must not repeat retrieval');
+ assert.equal(models,9,'Unstored retrieval must not enter synthesis');
+ assert.equal((await storage.svc.listObjects(ownerActor,{safeFilename:searchFilename})).length,storedBeforeFailure);
+ const failedWriteSearch=[...reservations.values()].find(row=>row.provider_request_id==='synthetic-search-12');
+ assert.equal(failedWriteSearch?.status,'settled');
+ assert.equal(failedWriteSearch?.search_calls,1);
+ assert.equal(confirmation.row,lastConfirmation);
 });
 
 test('automatic Search eligibility uses only the current public lookup with ambiguous inputs held for review',()=>{

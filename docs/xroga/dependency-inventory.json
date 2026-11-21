@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "03844991ad6448ab58e703ada434ceacf04b02e5",
+  "source_sha": "428c926c16bd2eccd78cd10cfdf60eb0eed7faa6",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17066,7 +17066,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "0d1c3d78bb1d340d38e2532c06ab2cc73e8bb90c9e79fffc49d936b1e886bf02"
+      "sha256": "d65c2cadfb01a3463fe0b74e5c172c99f726584eebc2ed6992bee959c1611f96"
     },
     {
       "path": "backend/src/ai/buildImprovementMemory.ts",
@@ -17286,7 +17286,7 @@
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
-      "sha256": "7a203849ef6dc442e817eff7ebced5772c349b4f4151daa3d4dfe9de517d6aa6"
+      "sha256": "d6b4d7dc04f841eab5243b792bfc0556133a21e0340de033f8a826c1b07d9f3b"
     },
     {
       "path": "backend/src/ai/parallelDispatch.ts",

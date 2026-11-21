@@ -2,10 +2,10 @@
   "version": "1.0",
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
-    "branch": "codex/workspace-public-research-p0-20261120",
-    "sha": "a53217141172f08c820d24b48b73bca9952d6b66",
-    "sourceTimestampUtc": "2026-11-20T23:38:24+05:00",
-    "auditStartedUtc": "2026-11-20T18:45:47.624Z",
+    "branch": "codex/workspace-p0-live-nav-20261120",
+    "sha": "428c926c16bd2eccd78cd10cfdf60eb0eed7faa6",
+    "sourceTimestampUtc": "2026-11-21T03:30:22+05:00",
+    "auditStartedUtc": "2026-11-21T09:26:23.886Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -2089,7 +2089,7 @@
       "id": "surface:0e78a2534aef2dadd6c0",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "0d1c3d78bb1d340d38e2532c06ab2cc73e8bb90c9e79fffc49d936b1e886bf02",
+      "sha256": "d65c2cadfb01a3463fe0b74e5c172c99f726584eebc2ed6992bee959c1611f96",
       "symbols": [
         "ACTIONS",
         "WebAction",
@@ -6981,7 +6981,7 @@
       "id": "surface:7d07dd00cd58533729b5",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/parallelApproval.ts",
-      "sha256": "7a203849ef6dc442e817eff7ebced5772c349b4f4151daa3d4dfe9de517d6aa6",
+      "sha256": "d6b4d7dc04f841eab5243b792bfc0556133a21e0340de033f8a826c1b07d9f3b",
       "symbols": [
         "Operation",
         "ParallelAdmission",
@@ -7003,6 +7003,7 @@
         "db",
         "denied",
         "digest",
+        "evidence",
         "executeParallelNativeAction",
         "executeWorkspacePublicSearch",
         "extractUrls",
@@ -7022,6 +7023,7 @@
         "requireParallelAdmission",
         "requireRetrievalOnly",
         "response",
+        "result",
         "results",
         "started",
         "state",
@@ -7109,8 +7111,8 @@
         "backend/src/ai/parallelApproval.ts#identity"
       ],
       "tenantBoundary": [
-        "backend/src/ai/parallelApproval.ts:123 (user_id)",
-        "backend/src/ai/parallelApproval.ts:126 (user_id)"
+        "backend/src/ai/parallelApproval.ts:129 (user_id)",
+        "backend/src/ai/parallelApproval.ts:132 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/ai/parallelApproval.ts#actionPlanDigest",
@@ -7122,7 +7124,9 @@
         "backend/src/ai/parallelApproval.ts#targetDigest"
       ],
       "costBoundary": [],
-      "evidenceBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/ai/parallelApproval.ts#evidence"
+      ],
       "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -7217,7 +7221,7 @@
       ],
       "callers": [
         "backend/src/ai/parallelApproval.ts:100",
-        "backend/src/ai/parallelApproval.ts:157",
+        "backend/src/ai/parallelApproval.ts:163",
         "backend/src/ai/parallelWeb.security.test.ts:15",
         "backend/src/ai/parallelWeb.ts:1"
       ],
@@ -15251,7 +15255,7 @@
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.ts:19",
         "backend/src/ai/parallelApproval.ts:23",
-        "backend/src/ai/researchAnswer.test.ts:15"
+        "backend/src/ai/researchAnswer.test.ts:14"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -36888,7 +36892,7 @@
         "backend/src/ai/quota.ts:2",
         "backend/src/ai/repoSummarize.security.test.ts:6",
         "backend/src/ai/repoSummarize.ts:19",
-        "backend/src/ai/researchAnswer.test.ts:9",
+        "backend/src/ai/researchAnswer.test.ts:10",
         "backend/src/ai/resourceLedger.test.ts:5",
         "backend/src/ai/resourceLedger.ts:10",
         "backend/src/ai/resourceMeter.ts:17",
@@ -42087,7 +42091,6 @@
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.ts:20",
         "backend/src/ai/parallelApproval.ts:21",
-        "backend/src/ai/researchAnswer.test.ts:14",
         "backend/src/ai/researchAnswer.test.ts:8",
         "backend/src/ai/researchAnswer.ts:4",
         "backend/src/routes/phase1.ts:1",
@@ -43712,7 +43715,7 @@
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.test.ts:8",
         "backend/src/ai/parallelWeb.security.test.ts:17",
-        "backend/src/ai/researchAnswer.test.ts:10",
+        "backend/src/ai/researchAnswer.test.ts:11",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:3",
         "backend/src/services/integrations/businessModelEgress.test.ts:5",
         "backend/src/services/integrations/composioAccountSelection.security.test.ts:4",
@@ -48337,7 +48340,7 @@
       ],
       "callers": [
         "backend/src/ai/parallelWeb.security.test.ts:13",
-        "backend/src/ai/researchAnswer.test.ts:12",
+        "backend/src/ai/researchAnswer.test.ts:9",
         "backend/src/ai/sonnetApproval.test.ts:7",
         "backend/src/index.ts:60",
         "backend/src/routes/browserRuns.ts:20",
@@ -48767,7 +48770,7 @@
       "entryPoints": [],
       "callers": [
         "backend/src/ai/parallelWeb.security.test.ts:12",
-        "backend/src/ai/researchAnswer.test.ts:11",
+        "backend/src/ai/researchAnswer.test.ts:12",
         "backend/src/routes/browserRunInternal.test.ts:6",
         "backend/src/routes/browserRuns.test.ts:11",
         "backend/src/routes/drive.test.ts:7",

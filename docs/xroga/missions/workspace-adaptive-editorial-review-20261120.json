@@ -10,6 +10,7 @@
   "risk": "high",
   "scope": "Validate explicit procedure decisions across representations, admit independently public Workspace research, preserve explicitly requested document downloads, and keep native answers responsive without changing model routing or execution boundaries.",
   "changedFiles": [
+    "backend/src/ai/black-hole/webIntelligence.ts",
     "backend/src/ai/nativeDocumentDownload.test.ts",
     "backend/src/ai/nativeDocumentDownload.ts",
     "backend/src/ai/nativeMarkdown.ts",
@@ -21,6 +22,7 @@
     "backend/src/ai/nativeOpenUiValues.test.ts",
     "backend/src/ai/nativeOpenUiValues.ts",
     "backend/src/ai/nativeOpenUiWorkspace.ts",
+    "backend/src/ai/parallelApproval.ts",
     "backend/src/ai/pipeline.ts",
     "backend/src/ai/researchAnswer.test.ts",
     "backend/src/ai/tenantModelDispatch.test.ts",
@@ -44,6 +46,7 @@
       "Count renderable static decision tables as delivered while preserving the existing native table requirement for requested interactions.",
       "Admit explicitly public raw-turn lookups through the current bounded Search broker even when an unrelated project is selected.",
       "Distinguish public software names, normal currency units, and citation requests from actual destinations or official-only restrictions.",
+      "Store settled automatic Search evidence under its authenticated request correlation before answer synthesis.",
       "Preserve a document's requested format when the format is specified after the creation brief, and keep its tables editable in Word.",
       "Remove directions to unavailable calculator inputs while retaining the worked calculation and unrelated content.",
       "Keep calculator sensitivity and boundary examples distinct from the active result being checked.",
@@ -97,7 +100,7 @@
     },
     {
       "command": "tsx --test backend/src/ai/researchAnswer.test.ts",
-      "scope": "Verify public query projection and preserve the approval barrier for private context.",
+      "scope": "Verify public query projection, settled and tenant-private evidence before synthesis, failure without repeat dispatch, and the approval barrier for private context.",
       "negative": true,
       "reference": "backend/src/ai/researchAnswer.test.ts"
     },

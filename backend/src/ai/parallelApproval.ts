@@ -71,7 +71,7 @@ export function requireParallelAdmission(value:ParallelAdmission|undefined,scope
  * private research, backed by a distinct READ/PUBLIC audit decision. */
 export async function executeWorkspacePublicSearch(
  scope:TenantModelScope, prompt:string, officialOnly:boolean, signal?:AbortSignal,
-):Promise<{response:Response;officialDomains:string[]}|undefined>{
+):Promise<{result:unknown;officialDomains:string[]}|undefined>{
  const context=requireTenantContext(scope.context);requireResourceOwner(context,scope.userId);
  if(scope.projectId!==undefined||scope.repository!==undefined||scope.runAttempt||scope.authority
   ||scope.researchAnswer||scope.connectedAccountId!=='platform')throw denied();
@@ -99,7 +99,13 @@ export async function executeWorkspacePublicSearch(
  try{
   const {executeParallelRequest}=await import('./parallelDispatch.js');
   const response=await executeParallelRequest({scope:state.scope,userId:context.userId,operation:'search',body,signal,admission});
-  return {response,officialDomains:request.officialDomains};
+  const result:unknown=await response.json();
+  const evidence={ok:true,operation:'search',result,trust:'UNTRUSTED_DATA'};
+  // Link private evidence to the request's READ audit after verified provider
+  // settlement. A failed write never enters synthesis or replays retrieval.
+  await saveResearchResult(context,context.correlationId,JSON.stringify(evidence),digest(evidence));
+  await check();
+  return {result,officialDomains:request.officialDomains};
  }finally{state.active=false;admitted.delete(admission);}
 }
 

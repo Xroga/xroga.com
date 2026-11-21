@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "92f5d98db229b45951e52596aff0a7d92fccc42dde04b71b9d31c74cff2bacb7",
+  "reviewRegistrySha256": "5934ce229a381ab7748697f7fbc2fca0c0e453723ed4401f76bc7891755969db",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -3896,19 +3896,19 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "5aa7f94412fbfc5da325"
+        "id": "192373fab95b2ca5c670"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "7292ab3be3261281c42f"
+        "id": "e6927dcdfc8b2bee2690"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "05bf100f6c7e0c6065a1"
+        "id": "09f9cc3bfa55e77de769"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "379d330fc0e972f494da"
+        "id": "41f72a13adc2226d0255"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7656,19 +7656,19 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "5aa7f94412fbfc5da325"
+        "id": "192373fab95b2ca5c670"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "7292ab3be3261281c42f"
+        "id": "e6927dcdfc8b2bee2690"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "05bf100f6c7e0c6065a1"
+        "id": "09f9cc3bfa55e77de769"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "379d330fc0e972f494da"
+        "id": "41f72a13adc2226d0255"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -11130,15 +11130,15 @@
       }
     },
     {
-      "id": "5aa7f94412fbfc5da325",
+      "id": "192373fab95b2ca5c670",
       "path": "backend/src/ai/parallelApproval.ts",
-      "line": 123,
+      "line": 129,
       "enclosing": "executeParallelNativeAction",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "7a203849ef6dc442e817eff7ebced5772c349b4f4151daa3d4dfe9de517d6aa6",
+      "sourceSha256": "d6b4d7dc04f841eab5243b792bfc0556133a21e0340de033f8a826c1b07d9f3b",
       "semanticReview": {
         "authority": "The original context comes only from the canonical native permit. Exact user_id predicates scope the executing grant and current run/worker generation. Grant, owner, immutable digest, expiry and effect receipt are rechecked before and after provider waits and immediately after DNS before any public connection.",
         "reason": "Actual canonical confirmation/vault positive and negative synthetic protocol tests pass. This factory and its two scoped reads do not certify new Phase2 or whole-source live database acceptance. No new user-context issuer or accounting ledger is introduced.",
@@ -11155,15 +11155,15 @@
       }
     },
     {
-      "id": "7292ab3be3261281c42f",
+      "id": "e6927dcdfc8b2bee2690",
       "path": "backend/src/ai/parallelApproval.ts",
-      "line": 123,
+      "line": 129,
       "enclosing": "executeParallelNativeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "7a203849ef6dc442e817eff7ebced5772c349b4f4151daa3d4dfe9de517d6aa6",
+      "sourceSha256": "d6b4d7dc04f841eab5243b792bfc0556133a21e0340de033f8a826c1b07d9f3b",
       "semanticReview": {
         "authority": "The original context comes only from the canonical native permit. Exact user_id predicates scope the executing grant and current run/worker generation. Grant, owner, immutable digest, expiry and effect receipt are rechecked before and after provider waits and immediately after DNS before any public connection.",
         "reason": "Actual canonical confirmation/vault positive and negative synthetic protocol tests pass. This factory and its two scoped reads do not certify new Phase2 or whole-source live database acceptance. No new user-context issuer or accounting ledger is introduced.",
@@ -11180,15 +11180,15 @@
       }
     },
     {
-      "id": "05bf100f6c7e0c6065a1",
+      "id": "09f9cc3bfa55e77de769",
       "path": "backend/src/ai/parallelApproval.ts",
-      "line": 126,
+      "line": 132,
       "enclosing": "executeParallelNativeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "7a203849ef6dc442e817eff7ebced5772c349b4f4151daa3d4dfe9de517d6aa6",
+      "sourceSha256": "d6b4d7dc04f841eab5243b792bfc0556133a21e0340de033f8a826c1b07d9f3b",
       "semanticReview": {
         "authority": "The original context comes only from the canonical native permit. Exact user_id predicates scope the executing grant and current run/worker generation. Grant, owner, immutable digest, expiry and effect receipt are rechecked before and after provider waits and immediately after DNS before any public connection.",
         "reason": "Actual canonical confirmation/vault positive and negative synthetic protocol tests pass. This factory and its two scoped reads do not certify new Phase2 or whole-source live database acceptance. No new user-context issuer or accounting ledger is introduced.",
@@ -11205,15 +11205,15 @@
       }
     },
     {
-      "id": "379d330fc0e972f494da",
+      "id": "41f72a13adc2226d0255",
       "path": "backend/src/ai/parallelApproval.ts",
-      "line": 150,
+      "line": 156,
       "enclosing": "executeParallelNativeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "7a203849ef6dc442e817eff7ebced5772c349b4f4151daa3d4dfe9de517d6aa6",
+      "sourceSha256": "d6b4d7dc04f841eab5243b792bfc0556133a21e0340de033f8a826c1b07d9f3b",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in executeParallelNativeAction. This specific call uses the built-in Uint8Array.from conversion of already fetched public document bytes for the PDF parser, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Public egress, document size and parsing limits, resource authority and downstream actions retain their separate security obligations.",
