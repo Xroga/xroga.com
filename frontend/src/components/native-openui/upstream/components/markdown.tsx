@@ -7,7 +7,7 @@ import { staticChartTable } from "./chart";
 import { CodePanel } from "./code-panel";
 import type { RenderEvidenceCitation } from "../../evidence";
 import { nativeReadableTextKey } from "../../../../../../backend/src/ai/nativeOpenUi";
-import { readNativeMarkdownTable } from "../../../../../../backend/src/ai/nativeMarkdown";
+import { nativeTableDecimalKey, readNativeMarkdownTable } from "../../../../../../backend/src/ai/nativeMarkdown";
 
 // Markdown builds React elements. Formula HTML comes only from untrusted KaTeX.
 // Inline: **bold**, *italic*, ~~strike~~, `code`, [text](https://...).
@@ -101,9 +101,10 @@ type InlineSectionContent = {
 };
 export const InlineNativeSections = createContext<InlineSectionContent | undefined>(undefined);
 
-function scalarTableKey(head: readonly string[], rows: readonly unknown[][], format: (cell: unknown) => string): string | undefined {
+function scalarTableKey(head: readonly string[], rows: readonly unknown[][], format: (cell: unknown) => string,
+  formatCell = format): string | undefined {
   if (!rows.length || rows.some(row => row.length !== head.length || row.some(cell => typeof cell !== "string" && typeof cell !== "number"))) return;
-  return JSON.stringify([head.map(format), rows.map(row => row.map(format))]);
+  return JSON.stringify([head.map(format), rows.map(row => row.map(formatCell))]);
 }
 
 // Only compare scalar cells. Retain distinct data and cells with components.
@@ -113,7 +114,7 @@ export function tableContentKey(head: readonly string[], rows: readonly unknown[
     .join("").trim().replace(/\s+/g, " ")
     .replace(/^the (?=[a-z])/i, "")
     .replace(/^[A-Z](?=[a-z]+ )/, initial => initial.toLowerCase());
-  return scalarTableKey(head, rows, plain);
+  return scalarTableKey(head, rows, plain, cell => plain(nativeTableDecimalKey(String(cell))));
 }
 
 function tableHasLinks(head: string[], rows: string[][]): boolean {

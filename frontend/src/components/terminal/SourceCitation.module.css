@@ -1,10 +1,11 @@
 .chip.chip {
+  --citation-gap: .18rem;
   display: inline-flex;
   align-items: center;
   gap: .32rem;
-  max-inline-size: min(100%, 18rem);
+  max-inline-size: min(calc(100% - var(--citation-gap)), 18rem);
   min-block-size: 24px;
-  margin-inline-start: .18rem;
+  margin-inline-start: var(--citation-gap);
   padding: .1rem .55rem .1rem .35rem;
   border: 1px solid transparent;
   border-radius: 999px;
@@ -23,7 +24,7 @@
 
 .compact.compact {
   min-inline-size: 24px;
-  max-inline-size: min(100%, 12rem);
+  max-inline-size: min(calc(100% - var(--citation-gap)), 12rem);
   gap: .2rem;
   padding-inline: .25rem;
 }
@@ -32,7 +33,7 @@
 .label { min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mark { display: inline-grid; place-items: center; flex: none; }
 .mark svg { width: 100%; height: 100%; }
-.named.named { max-inline-size: 100%; }
+.named.named { max-inline-size: calc(100% - var(--citation-gap)); }
 .named .label { overflow-wrap: anywhere; white-space: normal; }
 
 .preview {

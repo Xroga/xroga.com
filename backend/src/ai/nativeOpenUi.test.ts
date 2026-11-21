@@ -443,6 +443,29 @@ test('a fenced table example cannot replace a real or separately titled native t
   );
 });
 
+test('one scoped table survives decimal and grouped digit formatting across the saved answer and OpenUI', () => {
+  const prose = '## Results\n\n| Company | Score | Team |\n| --- | --- | --- |\n| North | 1000.0 | 8,931 |\n| East | 763.9 | 1,000 |';
+  const program = 'root = Col([Markdown(_xroga_answer), Section("Results", [Table(["Company","Score","Team"], [["North",1000,8931],["East",763.9,1000]])])])';
+  assert.equal(supplementNativeProse(prose, bindNativeAnswerText(program, prose), true), prose);
+  for (const different of ['8932', '"08931"', '"8,931 [1]"', '"$8,931"']) {
+    const changed = bindNativeAnswerText(program.replace('8931', different), prose);
+    assert.equal(supplementNativeProse(prose, changed, true).match(/^\| Company \| Score \| Team \|$/gm)?.length, 2);
+  }
+});
+
+test('a single-series chart reuses exact readable values from the same section', () => {
+  const prose = '## Ranking\n\n| Rank | Company | Composite score |\n| --- | --- | --- |\n| 1 | North | 1000.0 |\n| 2 | East | 763.9 |';
+  const program = 'root = Col([Section("Ranking", [Chart("bar", [{name:"North",score:1000},{name:"East",score:763.9}], "name", ["score"], "number", null, false, 320, {title:"Momentum", xLabel:"Company", yLabel:"Score (0–1000)", note:"Scores measure momentum."})])])';
+  const readable = supplementNativeProse(prose, program, true);
+  assert.ok(readable.startsWith(prose));
+  assert.match(readable, /Momentum\n\nScore \(0–1000\)\n\nScores measure momentum\./);
+  assert.equal(readable.match(/North/g)?.length, 1);
+  assert.equal(supplementNativeProse(readable, program, true), readable);
+  const different = supplementNativeProse(prose, program.replace('score:763.9', 'score:763.8'), true);
+  assert.match(different, /\| East \| 763\.8 \|/);
+  assert.equal(supplementNativeProse(prose, program.replace('"Ranking"', '"Another ranking"'), true).match(/North/g)?.length, 2);
+});
+
 test('native layout, data and reactive arithmetic are accepted without a V2 translation', () => {
   const programs = [
     'root = Col([Title("Options"), Table(["Plan", "USD/month"], [["Basic", 10], ["Team", 25]])])',

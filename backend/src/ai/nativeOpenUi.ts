@@ -1,7 +1,7 @@
 import { createParser, evaluate, parseExpression, split, tokenize, walkAST, type ASTNode, type LibraryJSONSchema } from '@openuidev/lang-core';
 import { claimsChartIsDeferred, contradictsMonthlyChart, monthlyChartDataFallback, nativeTechnicalReviewContext, reviewNativeAnswer, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import { DIAGRAM_NODE_TONES, hasRenderableDiagramTopology } from './nativeDiagramTopology.js';
-import { nativeMarkdownOutline, nativeMarkdownTables, type NativeMarkdownTable } from './nativeMarkdown.js';
+import { nativeMarkdownOutline, nativeMarkdownTables, nativeTableDecimalKey, type NativeMarkdownTable } from './nativeMarkdown.js';
 import { reviewEditorialVisuals } from './nativeOpenUiEditorial.js';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
 import { formatInitialNativeCurrency, initialNativeReadouts, initialNativeValueReader, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
@@ -259,8 +259,9 @@ export function supplementNativeProse(prose: string, program: string, includeAll
   const lines: string[] = [];
   const seen = new Set<string>();
   // Compare parsed, complete tables instead of raw delimiter padding. Keep
-  // cell contents literal so links, citations, code and data differences survive.
-  const tableKey = ({ head, rows }: NativeMarkdownTable) => JSON.stringify([head, rows]);
+  // links, citations and code literal. Compare numeric formatting without changing the authored cells.
+  const tableKey = ({ head, rows }: NativeMarkdownTable) =>
+    JSON.stringify([head, rows.map(row => row.map(nativeTableDecimalKey))]);
   const scopeLabel = (value: string) => /\x60|\]\(/.test(value) ? value.trim() : nativeReadableTextKey(value);
   const outline = nativeMarkdownOutline(prose);
   const authoredHeadings = new Map<string, string[]>();
@@ -292,6 +293,22 @@ export function supplementNativeProse(prose: string, program: string, includeAll
       matched = true;
     }
     return matched;
+  };
+  const chartHasReadableData = (head: string[], rows: string[][], scope: readonly string[]) => {
+    if (!scope.length || !rows.length) return false;
+    const scoped = outline.tables.filter(table =>
+      isSingleScope([table.headings.map(scopeLabel)], scope) && table.rows.length === rows.length);
+    return scoped.some(table => {
+      // Associate by the category heading and exact ordered values. Each
+      // plotted column must be independently readable in the same table.
+      const columns = head.map((heading, column) =>
+        table.head.flatMap((label, index) => {
+          if (column === 0 && label.toLowerCase() !== heading.toLowerCase()) return [];
+          return table.rows.every((row, i) =>
+            nativeTableDecimalKey(row[index]) === nativeTableDecimalKey(rows[i][column])) ? [index] : [];
+        }));
+      return columns.every(matches => matches.length === 1) && new Set(columns.flat()).size === head.length;
+    });
   };
   const seenHeadings = new Set<string>();
   const seenTables = new Set<string>();
@@ -436,7 +453,12 @@ export function supplementNativeProse(prose: string, program: string, includeAll
             ? formatInitialNativeCurrency(amount, currency) : String(amount))]);
         }
         const yLabel = scalar(presentation.yLabel);
-        addTable([scalar(presentation.xLabel) || x, ...(series.length === 1 && yLabel ? [yLabel] : series)], rows, scope);
+        const headings = [scalar(presentation.xLabel) || x, ...(series.length === 1 && yLabel ? [yLabel] : series)];
+        if (series.length === 1 && chartHasReadableData(headings, rows, scope)) {
+          if (yLabel) add(yLabel, scope);
+        } else {
+          addTable(headings, rows, scope);
+        }
       }
       add(scalar(presentation.note));
     } else if (node.typeName === 'Diagram') {

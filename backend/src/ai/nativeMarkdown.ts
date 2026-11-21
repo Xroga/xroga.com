@@ -6,6 +6,15 @@ const fenceMarker = /^ {0,3}(\x60{3,}|~{3,})(.*)$/;
 const startsNewBlock = /^(?:#{1,4}\s|\s*>)/;
 const indentedCode = /^(?: {4}|\t)/;
 
+/** Compare decimal formatting without rounding or changing the displayed cell. */
+export function nativeTableDecimalKey(value: string): string {
+  const parsed = /^(-?)(0|[1-9]\d*|[1-9]\d{0,2}(?:,\d{3})+)(?:\.(\d+))?$/.exec(value);
+  if (!parsed) return value;
+  const [, sign, integer, decimal = ''] = parsed;
+  const fraction = decimal.replace(/0+$/, '');
+  return sign + integer.replaceAll(',', '') + (fraction ? '.' + fraction : '');
+}
+
 function cells(line: string): string[] {
   const source = line.trim().replace(/^\|/, '').replace(/(?<!\\)\|$/, '');
   // Keep pipes inside code spans and escaped pipes within their cells.
