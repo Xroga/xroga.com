@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "bed9db187474d1a7a365d214d77086b5f88c6fe3",
+  "source_sha": "d7061d6c530f94cfc96183448d338af4bb487fcb",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -23802,7 +23802,7 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sha256": "5f20692793f131998120fa2e6c3f247375de62768e581628a557495b7e020915"
+      "sha256": "e0e0072b7becb0e4eec382927a117dc9c4e6af2c8d88e42850cbc8a339a0e4cf"
     },
     {
       "path": "frontend/src/lib/gameBuilderContent.ts",

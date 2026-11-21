@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "734c73f379b545782210c4385496e9d1bd67bac968d34912e5130a8a5cf30763",
+  "reviewRegistrySha256": "b6ece78637fa02c0c9a383dc17e9d896506c1ff7d843661c03f1efa3959d5fd9",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -6620,7 +6620,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "5ad78803a9689423de64"
+        "id": "6e06699e14d3b1a54053"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -10452,7 +10452,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "5ad78803a9689423de64"
+        "id": "6e06699e14d3b1a54053"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -32538,15 +32538,15 @@
       }
     },
     {
-      "id": "5ad78803a9689423de64",
+      "id": "6e06699e14d3b1a54053",
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 589,
+      "line": 615,
       "enclosing": "decodeBase64UrlUtf8",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "5f20692793f131998120fa2e6c3f247375de62768e581628a557495b7e020915",
+      "sourceSha256": "e0e0072b7becb0e4eec382927a117dc9c4e6af2c8d88e42850cbc8a339a0e4cf",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. Re-bound 2026-11-04: Diff from the reviewed source d80e1ce5489b is only `export` added to BusinessActionConfirmationInline so the V2 turn can render the existing confirmation review. The reviewed call (decodeBase64UrlUtf8 Array/Uint8Array conversion) is unchanged; no new call, receiver, persistence or egress was added. Re-bound 2026-11-15: reviewed diff adds keyboard focus, group semantics and focus outline only to the pre renderer. The Uint8Array.from call in decodeBase64UrlUtf8 and its source position are unchanged. No persistence, authentication or network behavior changed. This refresh does not certify production tenancy. Re-bound 2026-11-17: the research approval card presents the exact query and question as text and retains the full payload for inspection. The approval handler, network requests and the reviewed Uint8Array.from conversion are unchanged. The candidate ID moved because presentation lines precede that conversion. Re-bound 2026-11-18: removed the later automatic prose paragraph splitter. The entire reviewed in-memory Uint8Array conversion function and its call identity are unchanged, with no new persistence, authority or network operation. Re-bound 2026-11-18: removed the later synthesized introduction callout. The entire reviewed in-memory Uint8Array conversion function and its call identity are unchanged, with no new persistence, authority or network operation.",

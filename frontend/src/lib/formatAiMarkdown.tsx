@@ -212,6 +212,8 @@ export function BusinessActionConfirmationInline({
       false,
     );
 
+  const [researchReviewOpen, setResearchReviewOpen] = useState(false);
+
   useEffect(
     () => {
       let active =
@@ -272,7 +274,9 @@ export function BusinessActionConfirmationInline({
           busy ||
           confirmation
             ?.status !==
-            'pending'
+            'pending' ||
+          (confirmation.toolkit === 'xroga-native-research' &&
+            (!researchReviewOpen || !confirmation.researchReview?.length))
         ) {
           return;
         }
@@ -347,9 +351,9 @@ export function BusinessActionConfirmationInline({
       },
       [
         busy,
-        confirmation
-          ?.status,
+        confirmation,
         confirmationId,
+        researchReviewOpen,
       ],
     );
 
@@ -461,7 +465,29 @@ export function BusinessActionConfirmationInline({
         ) : null}
       </span>
 
-      {status === 'pending' && (approval || confirmation?.researchReview?.length) ? (
+      {status === 'pending' && savedSearch && confirmation?.researchReview?.length ? (
+        <>
+          <button type="button" aria-expanded={researchReviewOpen}
+            className="self-start text-[12px] font-medium underline underline-offset-2"
+            onClick={() => setResearchReviewOpen(open => !open)}>
+            Review information to share
+          </button>
+          {researchReviewOpen && (
+            <span role="region" aria-label="Information to send" className="flex min-w-0 flex-col gap-3">
+              {confirmation.researchReview.map(({ label, value }, index) => (
+                <span key={index} className="flex min-w-0 flex-col gap-1 text-[12px]">
+                  <strong className="font-medium">{label}</strong>
+                  <span className="whitespace-pre-wrap break-words">{value}</span>
+                </span>
+              ))}
+              <button type="button" disabled={Boolean(busy)} onClick={confirm}
+                className="self-start rounded-lg bg-[var(--accent)] px-3 py-1.5 text-[12px] font-semibold text-white disabled:opacity-50">
+                {busy === 'confirm' ? 'Confirming…' : 'Approve information sharing'}
+              </button>
+            </span>
+          )}
+        </>
+      ) : status === 'pending' && !savedSearch && approval ? (
         <span className="flex flex-wrap items-center gap-2 text-[12px] text-[var(--foreground)]/70">
           <a href={reviewHref} className="font-medium underline underline-offset-2">{privateRead ? 'Review and confirm' : 'Review details'}</a>
           {maximumSpend ? <span>Up to {maximumSpend}</span> : null}
