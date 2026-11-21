@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 import ts from 'typescript';
 import { meaningfulSidebarTitle, visiblePage, sortPinned } from './sidebarOrganization';
+import { stableConversationTitle } from './conversationTitle';
 
 const read=(p:string)=>readFileSync(new URL(p,import.meta.url),'utf-8');
 const sidebar=read('../components/layout/SidebarProjectHistory.tsx');
@@ -88,6 +89,7 @@ test('a queued sidebar save cannot move a previous account’s conversation to t
    if (name === '@/lib/supabase/client') return { createClient: () => client };
    if (name === '@/lib/storageSafe') return { sidebarMessagesForStorage: (messages: unknown[]) => messages };
    if (name === '@/lib/sidebarProjectTask') return {};
+   if (name === './conversationTitle') return { stableConversationTitle };
    throw new Error('Unexpected fixture dependency: ' + name);
   },
   setTimeout: (callback: () => void) => timers.push(callback), clearTimeout() {},

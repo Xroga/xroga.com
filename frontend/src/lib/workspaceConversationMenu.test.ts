@@ -8,7 +8,7 @@ const menu = read('../components/terminal/WorkspaceConversationMenu.tsx');
 const styles = read('../components/terminal/WorkspaceConversationMenu.module.css');
 
 test('workspace header unifies conversation and project actions', () => {
-  const header = view.slice(view.indexOf('<header className="xv-workspace-header"'), view.indexOf('</header>'));
+  const header = view.slice(view.indexOf('className={cn("xv-workspace-header"'), view.indexOf('</header>'));
   assert.match(header, /<WorkspaceConversationMenu\s*\/>/);
   assert.match(header, /<WorkspaceIdentityMenu incognito\s*\/>/);
   assert.doesNotMatch(header, /activeProject \? <WorkspaceIdentityMenu\s*\/> : null/);

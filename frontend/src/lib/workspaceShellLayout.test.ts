@@ -157,7 +157,7 @@ test('the shell keeps one radius without a visible outline', () => {
 test('the title bar is outside the scrolling container', () => {
   // In the rendered tree the header is a sibling *before* the body that holds the
   // panes, so the transcript moves underneath it rather than carrying it along.
-  const header = VIEW.indexOf('<header className="xv-workspace-header"');
+  const header = VIEW.indexOf('className={cn("xv-workspace-header"');
   // Matched on the class rather than on `<div className="…"`: the body carries a ref
   // and a style for the resizable split now, so its attributes span several lines.
   const body = VIEW.indexOf('className="xv-workspace-body"');
