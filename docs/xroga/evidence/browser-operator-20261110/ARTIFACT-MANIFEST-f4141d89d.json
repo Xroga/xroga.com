@@ -2,13 +2,13 @@
   "source": {
     "repo": "Xroga/xroga.com",
     "branch": "claude/ops-integrated-20261112",
-    "commit": "22a798a475a65332915346b04c10031540612a76",
+    "commit": "f4141d89daf66f1155d0204607b5e0a50ade0eee",
     "working_tree_clean": true
   },
   "build": {
     "command": "npx wxt build (apps/xroga-browser-extension) with WXT_PRODUCT_PERMISSIONS=1 and the staging WXT_XROGA_* values",
     "node": "v24.18.0",
-    "built_at": "2026-11-21T13:39:55.0043104Z",
+    "built_at": "2026-11-21T13:41:02.6435342Z",
     "extension_id": "ogebkgkppocnjeojdbkiokcpeaenonop",
     "api_origin": "https://browser-op-1110---xroga-api-universal-staging-422lt7eujq-uk.a.run.app",
     "workspace_origin": "https://xrogaaicom-git-claude-live-run-943-20261110-xrogas-projects.vercel.app"
@@ -47,9 +47,9 @@
     "last_backend_source_commit": "16c9d82f0"
   },
   "zip": {
-    "path": "C:\\xr-review-builds\\xroga-browser-operator-staging-0.2.8-22a798a47.zip",
+    "path": "C:\\xr-review-builds\\xroga-browser-operator-staging-0.2.8-f4141d89d.zip",
     "bytes": 1156912,
-    "sha256": "68487B77590BE3BA0EEA53371258A824D708694E06BF601B8410485F61342353"
+    "sha256": "210A795459962F4F4016168C2567C862603826857D0F6576CFFB295EB2C61A7D"
   },
   "files": [
     {
