@@ -54,3 +54,6 @@ Build commit `ffc5d68cc`, ZIP `C:\xr-review-builds\xroga-browser-operator-stagin
 - Real DeepSeek on the generated painted editor (reasoning off, vision on): seed 4 now 2 of 3 (4 and 7 turns; it was 0 of 2 and 13+ turns before), seeds 1 and 2 pass in 6-7 turns, seed 3 one failure and one pass in 3 and 9 turns, canvas-menu 3 turns, timeline split 18 turns (pass).
 - TraceDraw through the product chain, with marks, run to a 460 s window: **still not completed** (47 turns). The model reads some marks wrongly in the dense real editor ("hit the Hints toggle, not Window"), then switches to the script console. The editor itself also loads slowly in a test browser (39 MB; 61-80% after 22 s). Open.
 - Staging cleanup after the product runs: tag, temporary revisions and the throwaway user removed again; allowlist back to three ids.
+
+## Final artifact (supersedes the ZIPs named above)
+Build commit `24a5d5c00`, ZIP `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-24a5d5c00.zip`, SHA-256 `1C46F34D16E7315C9E0680AEF56E8FEB894E32C753ED87437B30DD32D4A85479`, manifest `ARTIFACT-MANIFEST-24a5d5c00.json`. Upgrade from ffc5d68cc passes (same id, storage kept, worker alive, side panel loads); 1429 unit tests pass. Rollback: the ffc5d68cc ZIP.
