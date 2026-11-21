@@ -3,9 +3,9 @@
 .headerShadow::after {
   content: '';
   position: absolute;
-  left: 0; right: 0; top: 100%; height: 28px; z-index: 0;
+  left: 0; right: 0; top: 100%; height: 16px; z-index: 0;
   pointer-events: none;
-  background: linear-gradient(to bottom, rgba(0,0,0,.32), rgba(0,0,0,.11) 37%, transparent);
+  background: linear-gradient(to bottom, transparent, rgba(0,0,0,.13) 20%, transparent);
   opacity: 0; transform: translateY(-3px);
   transition: opacity 240ms ease, transform 240ms ease;
 }
@@ -17,10 +17,20 @@
   max-inline-size: calc(100% - 20px);
   z-index: 1;
 }
+:global(.terminal-skin-gray) .browserControl [data-xroga-extension-trigger],
+:global(.terminal-skin-dark) .browserControl [data-xroga-extension-trigger],
+:global(.terminal-skin-amoled) .browserControl [data-xroga-extension-trigger] {
+  border: 0;
+}
+:global(.terminal-skin-dark) .browserControl [data-xroga-extension-trigger],
+:global(.terminal-skin-amoled) .browserControl [data-xroga-extension-trigger] {
+  background: #fff;
+  color: #16181d;
+}
 :global(.terminal-skin-light) .headerShadow::after,
 :global(.terminal-skin-light-grid) .headerShadow::after,
 :global(.terminal-skin-solar) .headerShadow::after {
-  background: linear-gradient(to bottom, rgba(15,23,42,.14), rgba(15,23,42,.045) 47%, transparent);
+  background: linear-gradient(to bottom, transparent, rgba(15,23,42,.08) 20%, transparent);
 }
 
 /* R5Program/Uiverse button, scaled to 28px with a stronger circular outline and clicked fill.

@@ -759,6 +759,19 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     await architectureSharePage.close();
     await dialog.getByRole('button', { name: 'Close share dialog' }).click();
   }
+  const installDisclosure = page.locator('summary').filter({ hasText: /^Install Xroga Extension$/ });
+  await expect(installDisclosure).toBeVisible();
+  const installNotice = installDisclosure.locator('..').getByText('Coming soon', { exact: true });
+  const workspaceUrl = page.url();
+  await expect(installNotice).toBeHidden();
+  await installDisclosure.focus();
+  await installDisclosure.press('Enter');
+  await expect(installNotice).toBeVisible();
+  await expect(installDisclosure.locator('..').getByRole('link')).toHaveCount(0);
+  await expect(page).toHaveURL(workspaceUrl);
+  await installDisclosure.press('Enter');
+  await expect(installNotice).toBeHidden();
+
   const pairingWorkspace = new URL('/workspace', page.url());
   pairingWorkspace.searchParams.set('conversation', architectureSession);
   pairingWorkspace.searchParams.set('browserExtension', 'abcdefghijklmnopabcdefghijklmnop');
