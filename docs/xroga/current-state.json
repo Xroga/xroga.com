@@ -5236,7 +5236,7 @@
       "id": "surface:e0ab1e1220bfa120c45b",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeDocumentDownload.ts",
-      "sha256": "b24fd95591422457a0211f740980b8c5fd8ca6ab19c563c9b26ab5a6b0ad6766",
+      "sha256": "a9404c386ae56b234174b9f860a7e0a044a03e74316a631aaa0ea9fcdfb8eaac",
       "symbols": [
         "NativeDocumentFormat",
         "afterFormat",
@@ -5247,6 +5247,7 @@
         "body",
         "candidate",
         "declinesDownload",
+        "descriptionWord",
         "direct",
         "document",
         "documentDeliverable",
@@ -5257,6 +5258,7 @@
         "followups",
         "formatInstructions",
         "inline",
+        "inlinePrefix",
         "isNativeDocumentFormat",
         "nativeDocumentDelivery",
         "nativeDocumentFormats",
@@ -152968,7 +152970,7 @@
     {
       "id": "test-suite:0ff3fc98dc7085435219",
       "sourcePath": "backend/src/ai/nativeDocumentDownload.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { nativeDocumentDelivery, nativeDocumentRequiresAttachment, requestedNativeDocumentFormat } from './nativeDocumentDownload.js';
+import { nativeDocumentDelivery, nativeDocumentPrompt, nativeDocumentRequiresAttachment, requestedNativeDocumentFormat } from './nativeDocumentDownload.js';
 import { buildNativeOpenUiShare, readNativeOpenUiShare } from './nativeOpenUiShare.js';
 
 test('recognizes direct Office and PDF deliverables', () => {
@@ -46,6 +46,24 @@ test('recognizes a downloadable format requested after the document content', ()
   assert.equal(requestedNativeDocumentFormat(memo), 'docx');
   assert.equal(requestedNativeDocumentFormat('Prepare a client report about launch readiness.\nPlease attach it as a downloadable PDF.'), 'pdf');
   assert.equal(requestedNativeDocumentFormat('Draft a short project brief. Export the brief as DOCX.'), 'docx');
+});
+
+test('treats explicitly formatted named sheets, agendas and handbooks as local artifacts', () => {
+  const cueSheet = 'Create a downloadable editable DOCX cue sheet for a fictional volunteer planetarium show. Use a Cues section and an Operator checkout section. Keep these exact cue names, start times and durations together: Red Beacon, 19:20, 45 seconds; Star Sweep, 19:22, 75 seconds; Final Chime, 19:25, 10 seconds. In checkout, remind the operator to review the cue order and durations before opening. No outside lookup, messages, uploads or other external action.';
+  for (const [prompt, format] of [
+    [cueSheet, 'docx'],
+    ['Draft an agenda as PDF for the rehearsal.', 'pdf'],
+    ['Create a DOCX one-page shift checklist.', 'docx'],
+    ['Create a volunteer handbook. Provide the handbook as a downloadable DOCX.', 'docx'],
+    ['Prepare an XLSX sign-in sheet using these fields.', 'xlsx'],
+    ['Build a downloadable DOCX template editor.', undefined],
+    ['Create a PDF inspection sheet generator.', undefined],
+    ['Create an event agenda tool with PDF downloads.', undefined],
+  ] as const) assert.equal(requestedNativeDocumentFormat(prompt), format, prompt);
+  const instructions = nativeDocumentPrompt('docx');
+  assert.match(instructions, /Workspace handles the local download/);
+  assert.match(instructions, /Write only the document body/);
+  assert.match(instructions, /without an OpenUI program/);
 });
 
 test('withholds incomplete artifacts and preserves a validated local download in an authorized share projection', () => {

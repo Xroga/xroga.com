@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "25531a897b5d77160f09d02ac500a098171e403f",
+  "source_sha": "da423bf2e13b37d21e4229431b3dec89b3693f6f",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17230,7 +17230,7 @@
     },
     {
       "path": "backend/src/ai/nativeDocumentDownload.ts",
-      "sha256": "b24fd95591422457a0211f740980b8c5fd8ca6ab19c563c9b26ab5a6b0ad6766"
+      "sha256": "a9404c386ae56b234174b9f860a7e0a044a03e74316a631aaa0ea9fcdfb8eaac"
     },
     {
       "path": "backend/src/ai/nativeMarkdown.ts",

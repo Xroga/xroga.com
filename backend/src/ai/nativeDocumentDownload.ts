@@ -11,20 +11,22 @@ export function isNativeDocumentFormat(value: unknown): value is NativeDocumentF
 // Only direct deliverable requests qualify. Mentions in questions, code,
 // attachments, and proposed software features must not add a file control.
 const request = /^(?:please\s+)?(?:(?:can|could|would)\s+you\s+)?(?:create|make|write|draft|generate|prepare|build|give\s+me)\s+/i;
-const document = '(?:document|report|proposal|brief|memo|letter|summary|guide|plan|handout|worksheet|invoice|statement|workbook|spreadsheet|slide deck|slides|deck|presentation|file)';
+const document = '(?:document|report|proposal|brief|memo|letter|summary|guide|plan|handout|worksheet|sheet|checklist|agenda|schedule|runbook|playbook|handbook|timeline|invoice|statement|workbook|spreadsheet|slide deck|slides|deck|presentation|file)';
 const extensions = '\\.?(?:docx|pdf|xlsx|pptx)';
 const fileFormat = '(' + extensions + '|word|excel|powerpoint)';
-const optionalDescription = '(?:\\s+(?:[\\p{L}]+\\s+){0,3}' + document + ')';
-const beforePrefix = '^(?:(?:a|an|the|my)\\s+)?(?:[\\p{L}]+\\s+){0,3}';
+const descriptionWord = '[\\p{L}\\p{N}-]+\\s+';
+const beforePrefix = '^(?:(?:a|an|the|my)\\s+)?';
+const optionalDescription = '(?:\\s+(?:' + descriptionWord + '){0,3}' + document + ')';
+const inlinePrefix = beforePrefix + '(?:' + descriptionWord + '){0,3}';
 const beforeBoundary = '(?=\\s*(?:[.,!?]|$)|\\s+(?:from|using|with|about|based on|on|for)\\b)';
-const beforeFormat = new RegExp(beforePrefix + '(' + extensions + ')' + optionalDescription + '?' + beforeBoundary, 'iu');
-const beforeNamedFormat = new RegExp(beforePrefix + '(word|excel|powerpoint)' + optionalDescription + beforeBoundary, 'iu');
-const afterFormat = new RegExp('^(?:(?:a|an|the|my)\\s+)?(?:[\\p{L}]+\\s+){0,5}' + document
+const beforeFormat = new RegExp(inlinePrefix + '(' + extensions + ')' + optionalDescription + '?' + beforeBoundary, 'iu');
+const beforeNamedFormat = new RegExp(inlinePrefix + '(word|excel|powerpoint)' + optionalDescription + beforeBoundary, 'iu');
+const afterFormat = new RegExp(beforePrefix + '(?:' + descriptionWord + '){0,5}' + document
   + '\\s+(?:as|in)\\s+(?:(?:a|an)\\s+)?' + fileFormat + '\\b', 'iu');
 const exportFormat = new RegExp('^(?:please\\s+)?(?:(?:can|could|would)\\s+you\\s+)?(?:export|save|download|convert)\\s+'
   + '(?:(?:this|that|it|the\\s+(?:answer|report|document)|your\\s+(?:answer|report))\\s+)?(?:as|to)\\s+(?:(?:a|an)\\s+)?' + fileFormat + '\\b', 'i');
-const documentDeliverable = new RegExp('^(?:(?:a|an|the|my)\\s+)?'
-  + '(?:(?!(?:with|from|using|for|about|that|by|through|as|in|and|or)\\b)[\\p{L}\\p{N}-]+\\s+){0,5}' + document + '\\b', 'iu');
+const documentDeliverable = new RegExp(beforePrefix
+  + '(?:(?!(?:with|from|using|for|about|that|by|through|as|in|and|or)\\b)' + descriptionWord + '){0,5}' + document + '\\b', 'iu');
 const followupExport = new RegExp('(?:^|[.!?]\\s+|\\n+)\\s*(?:please\\s+)?(?:provide|attach|export|save|include)\\s+'
   + '(?:it|the\\s+' + document + ')\\s+(?:as|in)\\s+(?:(?:a|an)\\s+)?(?:downloadable\\s+)?' + fileFormat + '\\b', 'giu');
 const declinesDownload = /\b(?:no|do\s+not|don['’]t|without)\s+(?:(?:create|export|give|make|generate|attach|include|provide|a|an|the)\s+)*(?:files?|downloads?|docx|pdf|xlsx|pptx)\b/i;
@@ -67,10 +69,10 @@ export function nativeDocumentPrompt(format: NativeDocumentFormat, missingAttach
       + 'For calculations, immediately follow the table with "## Formulas" and one list item per formula like "- C2: =A2*B2". Use one arithmetic operator between local numeric cells/numbers, or SUM, AVERAGE, MIN or MAX on one local numeric range. Do not add external references or a second table.'
     : format === 'pptx'
       ? 'Use a level-one deck title, then one level-two heading per slide with its complete visible text or bullets underneath. Do not add other level-two sections or use fenced code. Preserve the supplied facts and keep each slide readable.'
-      : 'Use headings and complete prose with the supplied facts.';
+      : 'Write the requested headings and use prose, lists or editable tables as appropriate. Put each fact or instruction where it is useful and avoid repeating the same rows or details in another section.';
   return '\n\nWrite the complete requested ' + format.toUpperCase() + ' artifact as readable Markdown in the primary answer. ' +
     formatInstructions + ' ' +
-    'The chat may offer to download that text as a local file. Do not invent a file URL, storage receipt, or claim a file was already created. ' +
+    'Workspace handles the local download after it validates the answer. Write only the document body. Omit capability disclaimers, manual conversion instructions, file URLs and claims about file delivery. For a document-only request, submit the Markdown without an OpenUI program. ' +
     'When required source material is missing or unreadable, explain what is needed and do not invent its contents.';
 }
 

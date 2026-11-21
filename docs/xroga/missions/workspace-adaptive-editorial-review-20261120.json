@@ -49,6 +49,7 @@
       "Distinguish public software names, normal currency units, and citation requests from actual destinations or official-only restrictions.",
       "Store settled automatic Search evidence under its authenticated request correlation before answer synthesis.",
       "Preserve a document's requested format when the format is specified after the creation brief, and keep its tables editable in Word.",
+      "Recognize explicit local file formats on named document subtypes and keep file delivery instructions out of the authored document.",
       "Remove directions to unavailable calculator inputs while retaining the worked calculation and unrelated content.",
       "Keep calculator sensitivity and boundary examples distinct from the active result being checked.",
       "Keep a sensitivity chart's computed series separate from the calculator's selected value while still checking explicit labeled scalar rows.",
