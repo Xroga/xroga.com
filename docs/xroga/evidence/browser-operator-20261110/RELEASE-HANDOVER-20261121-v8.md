@@ -117,3 +117,6 @@ Build commit `6cbfe81d3` (working tree clean at build), ZIP `C:\xr-review-builds
 
 ## Round 4 addendum (2026-11-22): 20 workers
 Real DeepSeek, product limit 21, 20 independent three-step pages: workers 89, 147, 210, 234 s, all 20 of 20 correct, 20 active at once, no 429; single agent 175 s (one run). One run opened 26 worker windows for 20 tasks. At median no gain over one agent, so the per-run ceiling stays 12 (the constant was raised to 20 for the test and set back, with the reason in the source). Two-tenant isolation at the backend is covered by the route tests (another account gets 403 or 404 on session, run, turn, finish, resume, extend and probe). The consolidated report is `FINAL-ENGINEERING-REPORT-20261122.md`.
+
+## Build addendum 5 (round 4)
+Build commit `3073aadd8` (working tree clean), ZIP `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-3073aadd8.zip`, SHA-256 `BEA1F050CC8F8C5C82CA950B802398EA1304A3DF30A28E5BB067BC33154EE28C`, manifest `ARTIFACT-MANIFEST-3073aadd8.json`. Upgrade from `6cbfe81d3` keeps extension id, storage, service worker and side panel. Extension unit suite 1458 passed; the last full scenario run (304 of 304) was on the previous commit and this round changed only the worker ceiling comment, a check and fixtures. Rollback: the `6cbfe81d3` ZIP. Staging only.
