@@ -26,14 +26,17 @@ export function registerTeamMembershipTests(admin: SupabaseClient, request: ApiR
     const [owner, member, stranger] = people;
     assert.equal((await request('/api/team-membership')).status, 401);
     assert.equal((await request('/api/team-membership', owner.token)).status, 403);
-    const start = new Date(), end = new Date(start.getTime() + 86400000);
-    const paid = await admin.rpc('activate_xroga_paid_cycle', { p_user_id: owner.id,
-      p_provider_reference: `teams-synthetic-${randomUUID()}`, p_starts_at: start.toISOString(), p_ends_at: end.toISOString() });
-    assert.equal(paid.error, null);
-    const billingMember = await admin.from('whop_memberships').insert({ user_id: owner.id,
-      whop_membership_id: `mem_teams_${randomUUID()}`, whop_plan_id: 'plan_hlV1A10I5QfSP',
-      whop_account_id: 'biz_qhYONL4RebGX96', status: 'active' });
-    assert.equal(billingMember.error, null);
+    async function activateIndividualPaid(userId: string) {
+      const start = new Date(), end = new Date(start.getTime() + 86400000);
+      const paid = await admin.rpc('activate_xroga_paid_cycle', { p_user_id: userId,
+        p_provider_reference: `teams-synthetic-${randomUUID()}`, p_starts_at: start.toISOString(), p_ends_at: end.toISOString() });
+      assert.equal(paid.error, null);
+      const billingMember = await admin.from('whop_memberships').insert({ user_id: userId,
+        whop_membership_id: `mem_teams_${randomUUID()}`, whop_plan_id: 'plan_hlV1A10I5QfSP',
+        whop_account_id: 'biz_qhYONL4RebGX96', status: 'active' });
+      assert.equal(billingMember.error, null);
+    }
+    await activateIndividualPaid(owner.id);
     assert.equal((await request('/api/team-membership?userId=' + owner.id, stranger.token)).status, 403);
     const teamId = randomUUID();
     const otherId = randomUUID();
@@ -87,6 +90,28 @@ export function registerTeamMembershipTests(admin: SupabaseClient, request: ApiR
     assert.deepEqual((await delivery('resend')).data, { claimed: false }, 'expired invitations cannot be resent');
     assert.ok((await stranger.client.rpc('xroga_team_claim_invite_email',
       { p_actor: owner.id, p_team: teamId, p_email: member.email, p_action: 'invite', p_request: randomUUID() })).error);
+    // Basejump's MIT invitation acceptance test treats the invitee as a separate
+    // principal and reads membership back after acceptance. Here that read must
+    // go through Xroga's server, and the invitee needs their own Paid plan.
+    await activateIndividualPaid(member.id);
+    assert.equal((await request(`/api/team-membership/${teamId}`, member.token)).status, 404);
+    assert.equal((await act(owner.id, 'invite', { p_team: teamId, p_value: member.email })).error, null);
+    assert.equal((await request('/api/team-membership', member.token, 'POST', { action: 'accept', teamId })).status, 200);
+    const visibleTeams = await request('/api/team-membership', member.token);
+    assert.equal(visibleTeams.status, 200);
+    assert.deepEqual((await visibleTeams.json()).data.map((entry: { id: string; role: string; status: string }) =>
+      [entry.id, entry.role, entry.status]), [[teamId, 'member', 'active']]);
+    const roster = await request(`/api/team-membership/${teamId}`, member.token);
+    assert.equal(roster.status, 200);
+    assert.ok((await roster.json()).data.members.some((entry: { userId: string; role: string }) =>
+      entry.userId === member.id && entry.role === 'member'));
+    const change = (token: string, command: unknown) => request('/api/team-membership', token, 'POST', command);
+    assert.equal((await change(member.token, { action: 'set_role', teamId, userId: member.id, role: 'admin' })).status, 404);
+    assert.equal((await change(owner.token, { action: 'set_role', teamId, userId: member.id, role: 'admin' })).status, 200);
+    assert.equal((await change(member.token, { action: 'remove', teamId, userId: owner.id })).status, 404);
+    assert.equal((await change(owner.token, { action: 'remove', teamId, userId: member.id })).status, 200);
+    assert.equal((await request(`/api/team-membership/${teamId}`, member.token)).status, 404);
+    assert.deepEqual((await (await request('/api/team-membership', member.token)).json()).data, []);
     // The entire isolated stack is torn down after this suite; never delete application teams via client APIs.
   });
 }

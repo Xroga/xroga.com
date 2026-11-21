@@ -325,6 +325,54 @@
       "tests": "backend/tests/engineeringResourceLedger.local.integration.ts",
       "evidence": "Batch 4 migration, development only and not applied to production. Exercised against a real disposable PostgreSQL: an override replaces the default for one owner only and applies even to a record-only category, clearing reverts, invalid values are rejected, and the table and functions are unreachable by anon and authenticated roles. Not a live Supabase receipt.",
       "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "xroga_teams",
+      "migration": "20261121194826_xroga_team_membership.sql",
+      "migrationSha256": "aa8aa4afb125df838e36ce833d25e4cda83b1590632966ccd4ba89a0917ff618",
+      "authorizationMigration": "20261121194826_xroga_team_membership.sql",
+      "authorizationSha256": "aa8aa4afb125df838e36ce833d25e4cda83b1590632966ccd4ba89a0917ff618",
+      "boundary": "Team identity and primary owner. RLS enabled and no browser grants. The API verifies the actor and serializes mutations on the team row.",
+      "tests": "scripts/security/full-supabase-history.mjs; backend/src/security/teamMembership.local.integration.ts",
+      "evidence": "The prior fresh disposable migration run observed this table but stopped at the exact-table inventory gate. Role and flow acceptance must run on the updated source. No production observation or successful email delivery is claimed.",
+      "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "xroga_team_members",
+      "migration": "20261121194826_xroga_team_membership.sql",
+      "migrationSha256": "aa8aa4afb125df838e36ce833d25e4cda83b1590632966ccd4ba89a0917ff618",
+      "authorizationMigration": "20261121194826_xroga_team_membership.sql",
+      "authorizationSha256": "aa8aa4afb125df838e36ce833d25e4cda83b1590632966ccd4ba89a0917ff618",
+      "boundary": "Active and pending memberships. RLS enabled and no browser grants. The server-only RPC scopes membership transitions to the authenticated actor and exact team.",
+      "tests": "scripts/security/full-supabase-history.mjs; backend/src/security/teamMembership.local.integration.ts",
+      "evidence": "The prior fresh disposable migration run observed this table but stopped at the exact-table inventory gate. Role and flow acceptance must run on the updated source. No production observation or successful email delivery is claimed.",
+      "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "xroga_team_activity",
+      "migration": "20261121194826_xroga_team_membership.sql",
+      "migrationSha256": "aa8aa4afb125df838e36ce833d25e4cda83b1590632966ccd4ba89a0917ff618",
+      "authorizationMigration": "20261121194826_xroga_team_membership.sql",
+      "authorizationSha256": "aa8aa4afb125df838e36ce833d25e4cda83b1590632966ccd4ba89a0917ff618",
+      "boundary": "Membership audit events. RLS enabled and no browser grants. The server-only detail action limits access to active members and omits private invitation activity.",
+      "tests": "scripts/security/full-supabase-history.mjs; backend/src/security/teamMembership.local.integration.ts",
+      "evidence": "The prior fresh disposable migration run observed this table but stopped at the exact-table inventory gate. Role and flow acceptance must run on the updated source. No production observation or successful email delivery is claimed.",
+      "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "xroga_team_invite_delivery",
+      "migration": "20261121201200_xroga_team_invite_delivery.sql",
+      "migrationSha256": "ea214120446acb667da179faa674f78fd1b1d998ca70b2a7dfeb16f7e80d01dd",
+      "authorizationMigration": "20261121201200_xroga_team_invite_delivery.sql",
+      "authorizationSha256": "ea214120446acb667da179faa674f78fd1b1d998ca70b2a7dfeb16f7e80d01dd",
+      "boundary": "One-attempt invitation claim and delivery ledger. RLS enabled and no browser grants. The service scopes claims to the verified team manager and intended recipient.",
+      "tests": "scripts/security/full-supabase-history.mjs; backend/src/security/teamMembership.local.integration.ts",
+      "evidence": "The prior fresh disposable migration run observed this table but stopped at the exact-table inventory gate. Role and flow acceptance must run on the updated source. No production observation or successful email delivery is claimed.",
+      "productionChanges": false
     }
   ]
 }
