@@ -11,7 +11,10 @@
     "frontend/src/app/globals.css",
     "frontend/src/components/dashboard/DashboardView.tsx",
     "frontend/src/components/dashboard/WorkspaceScrollPolish.module.css",
-    "frontend/src/lib/workspaceEmptyComposer.test.ts"
+    "frontend/src/lib/sidebarComposerRegression20261023.test.ts",
+    "frontend/src/lib/workspaceChatbarScrollBoundary20261103.test.ts",
+    "frontend/src/lib/workspaceEmptyComposer.test.ts",
+    "frontend/src/lib/workspaceShellLayout.test.ts"
   ],
   "decisions": {"keep": ["Toolbar layout, extension control, native scrolling, and opaque composer surface"], "extend": ["Show the content-only fade after scrolling", "Keep the scrollbar reachable next to the composer"], "replace": ["Replace scrollport clipping with a layout inset"], "deprecate": ["Full-width toolbar shadow"]},
   "architecture": {"change": "extends_canonical", "reason": "Reuses the current transcript scroll listener and theme surface; no new service.", "rfc": null},
