@@ -895,6 +895,18 @@ ${ledger}` : ''),
           capture = await this.#withThumb(this.#screenshotImage({ ...outcome, call: { ...outcome.call, toolName: 'screenshot' }, result: shot }));
           // The model sees this action's result in the attached image: the action owes no further evidence.
           if (capture) this.#debt = this.#debt.filter(d => d.toolCallId !== outcome.call.toolCallId);
+          // A canvas reports no effect of its own, so the pictures are compared: a click after which not one pixel changed hit nothing that
+          // reacts. Repeating such clicks near the same place is the loop to break, with a different way of finding the target.
+          if (capture) {
+            const same = this.#lastCanvasPicture !== undefined && this.#lastCanvasPicture === capture.data;
+            this.#lastCanvasPicture = capture.data;
+            this.#canvasNoChange = same ? this.#canvasNoChange + 1 : 0;
+            if (same && this.#canvasNoChange >= 3) {
+              notes.push(note(`${this.#canvasNoChange} canvas actions in a row changed nothing on the page. Stop aiming by eye at this spot. Take screenshot with region [x0, y0, x1, y1] around the label you want (for a menu bar, the whole top strip) and read its exact position from the enlarged grid, or use another way in: a keyboard shortcut or menu key (Alt, F10), the application's command box or script console.`));
+            } else if (same) {
+              notes.push(note('The page looks exactly as before this action: it hit nothing that reacts. Do not click near this point again; re-read where the target is.'));
+            }
+          }
           if (capture) notes.push(note('The screenshot after this action, with the 0 to 1 coordinate grid, is attached. Check it: if the wrong menu or item opened, say which one and aim again from this image. No separate screenshot is needed.'));
         }
       }
@@ -1544,6 +1556,8 @@ ${ledger}` : ''),
    * A tool already in the list is never replaced, and the run holds at most 40 of them.
    */
   #askedText = '';
+  #lastCanvasPicture: string | undefined;
+  #canvasNoChange = 0;
   #giveUpChallenged = false;
   #toolsUsed = new Set<string>();
   #plan = new TaskPlan();

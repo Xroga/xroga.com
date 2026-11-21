@@ -31,3 +31,16 @@ Every fact below is tagged DOC (read in the provider documentation), PROBE (a re
 - A milestone is **verified** only when its declared check (text on the page, or part of the URL) is observed when the model reports it done; a failed check refuses the update. No check means the milestone shows as **reported**, never verified.
 - The loop sets **recovering** when a tool fails while a milestone is working, back to **working** on the next success, and **waiting** during an approval or hand-over. The plan is restored from the conversation after a restart.
 - Live DeepSeek (simulated page): planned 5/5 on a multi-deliverable request and 0/5 on a simple question. Real Chromium: a three-page task planned first and ended with 3 of 3 milestones verified from page state (`saved: Grace Hopper|...`, `chosen: Order 1003`, rows present); 7 of 7 small tasks produced no plan.
+
+## Feature matrix (2026-11-21)
+| Model feature | Official DeepSeek API | Zurelay (this model) | Xroga exposure | Live test | User value | Remediation / status |
+|---|---|---|---|---|---|---|
+| Tool calling (function tools, tool_choice) | yes | yes (custom tools 400) | every turn | 25/25, 12/12 real-Chromium evals; staging product chain | core | none needed |
+| Image input | yes (vision guide) | yes, text+image only | backend gate `ZURELAY_DEEPSEEK_VISION_VERIFIED`=1 on staging revision 00146-wod; extension takes vision from the backend | PROBE 2026-11-20; staging product chain read a bare-image page (2 turns, 15.8 s) | canvas/visual apps | production flag unverified (release gate) |
+| Reasoning effort none/high/max | thinking on by default | header confirms none/high/max; low→high | product sends none (backend) | matched 6-task eval: none 6/6, high 5/6, max 6/6; high/max 2-10x output tokens, not faster | speed/cost | keep none; escalation not built (no measured gain) |
+| reasoning_content continuity with tools | required when thinking+tools (else 400) | as official | not needed while effort is none | — | — | build only with escalation |
+| Context 1M / output 384K | yes | yes | product turn: 32K window, 2,048 output, 96 KB request cap | — | longer tasks without compaction | cost decision; unchanged |
+| Automatic prompt caching | yes | yes (cached input $0.00074/M) | used implicitly (stable prefix) | cacheRead ~90% of input in evals | cost | none |
+| Streaming | yes | yes (SSE) | backend calls non-streaming for browser turns | — | lower first-token latency | candidate; not changed |
+| Web search | separate product | not documented for chat | not exposed | — | — | not enabled |
+| Structured output | yes | yes | not used (tool calls cover it) | — | — | none |
