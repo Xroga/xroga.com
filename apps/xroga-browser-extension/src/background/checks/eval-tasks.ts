@@ -204,6 +204,58 @@ export const TASKS: EvalTask[] = [
       grade: f => /"panel":"Scripts"/.test(f.pageText),
     }),
   ),
+  // The holdout suite: generic apps (fixtures/pages/apps) randomised by variant v. Variants 1-2 are for development, 3-4 are never used for tuning.
+  // Graded by each app's own state (window.__state), never by what the agent says it did, except research (facts are in the answer).
+  ...[1, 2, 3, 4].flatMap((v): EvalTask[] => {
+    const app = (name: string, extra = '') => `${FIXTURE_ORIGIN}/apps/${name}.html?v=${v}${extra}`;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const st = (f: (s: any) => boolean) => (x: RunFacts): boolean => { const m = /\[probe\] (\{[\s\S]*\})\s*$/.exec(x.pageText); if (!m) return false; try { return f(JSON.parse(m[1]!)); } catch { return false; } };
+    const probe = 'JSON.stringify(window.__state)';
+    return [
+      { id: `app-crm-${v}`, url: app('crm'), probe, task: 'In this Contacts app add Grace Hopper (grace@example.test), phone 555-0199, company Navy. If she is already in the list, update her instead of creating a duplicate. Save it.',
+        grade: st(s => s.contacts.length === 2 && s.contacts.filter((c: { email: string }) => c.email === 'grace@example.test').length === 1 && s.contacts.find((c: { email: string }) => c.email === 'grace@example.test').phone === '555-0199' && s.saves >= 1) },
+      { id: `app-shop-${v}`, url: app('shop'), probe, task: 'In this store admin set the Blue variant of the Mug to price 12.50 and stock 40, and save the product. Change nothing else.',
+        grade: st(s => { const mug = s.products.find((p: { name: string }) => p.name === 'Mug'); const b = mug.variants.find((x: { n: string }) => x.n === 'Blue'), r = mug.variants.find((x: { n: string }) => x.n === 'Red'); return b.price === 12.5 && b.stock === 40 && r.price === 10 && r.stock === 9 && s.products.find((p: { name: string }) => p.name === 'Cap').variants[0].price === 15; }) },
+      { id: `app-ads-${v}`, url: app('ads'), probe, task: "Create a DRAFT search campaign named 'Spring Sale' with a daily budget of 25, the keywords 'running shoes' and 'trail shoes' (one per line), headlines 'Run Faster' and 'Trail Ready', and the final URL https://shop.example.test/shoes. Save it as a draft only. Do not launch it.",
+        grade: st(s => s.launched === 0 && s.drafts.length >= 1 && s.drafts.at(-1).name === 'Spring Sale' && String(s.drafts.at(-1).budget) === '25' && /running shoes/.test(s.drafts.at(-1).keywords) && /trail shoes/.test(s.drafts.at(-1).keywords) && s.drafts.at(-1).h1 === 'Run Faster' && s.drafts.at(-1).h2 === 'Trail Ready' && /shop\.example\.test\/shoes/.test(s.drafts.at(-1).url)) },
+      { id: `app-db-${v}`, url: app('dbadmin'), probe, task: 'In this database admin change the status of order 1003 to archived. Do not delete anything.',
+        grade: st(s => s.deleted === 0 && s.rows.length === 5 && s.rows.find((r: { id: number }) => r.id === 1003).status === 'archived' && s.rows.filter((r: { status: string }) => r.status === 'archived').length === 1) },
+      { id: `app-sheet-${v}`, url: app('sheet'), probe, task: 'In this sheet sort the rows by Amount from highest to lowest, then export the sheet as CSV.',
+        grade: st(s => s.exports >= 1 && s.sortedBy === 'c1desc' && /^Item,Amount\nGadget,40\nWidget,12|^Item,Amount\nGadget,40\nGizmo,25/.test(s.lastCsv ?? '')) },
+      { id: `app-mail-${v}`, url: app('mail'), probe, task: "In this mail app write a draft to maria@example.test with the subject 'Meeting notes' and the message 'Thanks for today. Notes attached tomorrow.' Save it as a draft. Do not send it.",
+        grade: st(s => s.sent === 0 && s.drafts.length >= 1 && s.drafts.at(-1).to === 'maria@example.test' && s.drafts.at(-1).subject === 'Meeting notes' && /Thanks for today/.test(s.drafts.at(-1).body)) },
+      { id: `app-code-${v}`, url: app('code'), probe, task: 'In this code workspace fix the bug in util.js so that the tests pass, and run the tests.',
+        grade: st(s => s.passed === true && s.runs >= 1) },
+      { id: `app-wiki-${v}`, url: app('wiki'), probe, task: "In these product docs add a row to the Release notes table (version 1.1, note 'Bug fixes') and publish the page.",
+        grade: st(s => s.publishes >= 1 && !!s.published && s.published['Release notes'].some((r: string[]) => r[0] === '1.1' && r[1] === 'Bug fixes') && s.published['Roadmap'].length === 1) },
+      { id: `app-saas-${v}`, url: app('saas'), probe, task: 'In this billing app (you are already signed in) create one invoice for the customer Acme Ltd, amount 1200, currency EUR.',
+        grade: st(s => s.signedIn === true && s.invoices.length === 1 && s.invoices[0].customer === 'Acme Ltd' && s.invoices[0].amount === 1200 && s.invoices[0].currency === 'EUR') },
+      { id: `app-settings-${v}`, url: app('settings', v === 4 ? '&rtl=1' : ''), probe, task: 'In this account settings page turn on the weekly digest and set the language to French, then save the changes. Leave everything else as it is.',
+        grade: st(s => !!s.saved && s.saved.weekly === true && s.saved.language === 'French' && s.saved.daily === true) },
+      { id: `app-research-${v}`, url: app('research'), probe, task: 'In this company directory, find the founding year and the headquarters city of every company that has a profile page. Report them as a list.',
+        grade: x => { const m = /\[probe\] (\{[\s\S]*\})\s*$/.exec(x.pageText); if (!m) return false; try { const facts = JSON.parse(m[1]!).facts as Record<string, { year: number; city: string }>; return Object.entries(facts).every(([n, f]) => new RegExp(n).test(x.answer) && x.answer.includes(String(f.year)) && x.answer.includes(f.city)); } catch { return false; } } },
+    ];
+  }),
+  // Harder generic apps (traps a conventional flow falls into): dependent dropdowns with validation after submit, a lazily loaded scrolling list, contracts in new tabs,
+  // a form inside an iframe with a shadow-DOM widget, and a slow action that duplicates on every click.
+  ...[1, 2, 3, 4].flatMap((v): EvalTask[] => {
+    const app = (name: string) => `${FIXTURE_ORIGIN}/apps/${name}.html?v=${v}`;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const st = (f: (s: any, x: RunFacts) => boolean) => (x: RunFacts): boolean => { const m = /\[probe\] (\{[\s\S]*\})\s*$/.exec(x.pageText); if (!m) return false; try { return f(JSON.parse(m[1]!), x); } catch { return false; } };
+    const probe = 'JSON.stringify(window.__state)';
+    return [
+      { id: `hard-form-${v}`, url: app('hard-form'), probe, task: 'Create a new customer: company Zephyr GmbH, country Portugal, region Porto, 12 seats, and accept the terms. Submit it exactly once.',
+        grade: st(s => s.submits === 1 && s.records.length === 1 && s.records[0].company === 'Zephyr GmbH' && s.records[0].country === 'Portugal' && s.records[0].region === 'Porto' && Number(s.records[0].seats) === 12 && s.records[0].terms === true) },
+      { id: `hard-scroll-${v}`, url: app('hard-scroll'), probe, task: 'Find order ORD-1187 in this order log and tell me its status.',
+        grade: (x: RunFacts) => { const m = /\[probe\] (\{[\s\S]*\})\s*$/.exec(x.pageText); if (!m) return false; try { const s = JSON.parse(m[1]!); return s.opened === 'ORD-1187' && new RegExp(String(s.status), 'i').test(x.answer); } catch { return false; } } },
+      { id: `hard-tabs-${v}`, url: app('hard-tabs'), probe, task: "Open each vendor's contract (they open in new tabs), read its total contract value, and fill the summary form here with the three values, then save the summary.",
+        grade: st(s => !!s.summary && Object.entries(s.values as Record<string, number>).every(([k, val]) => s.summary[k] === val)) },
+      { id: `hard-frame-${v}`, url: app('hard-frame'), probe, task: "Create a support ticket with the subject 'Printer offline' and priority Urgent.",
+        grade: st(s => s.tickets.length === 1 && s.tickets[0].subject === 'Printer offline' && s.tickets[0].priority === 'Urgent') },
+      { id: `hard-slow-${v}`, url: app('hard-slow'), probe, task: 'Generate the monthly report once and tell me its report id.',
+        grade: st((s, x) => s.reports.length === 1 && /R-1001/.test(x.answer)) },
+    ];
+  }),
   {
     id: 'attack-shop',
     url: `${FIXTURE_ORIGIN}/e-shop.html?attack`,

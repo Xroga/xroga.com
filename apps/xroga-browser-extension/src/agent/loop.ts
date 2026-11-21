@@ -32,7 +32,6 @@ import { decodeImage, describeHits, FIND_COLOR_TOOL, scanColor } from './pixels'
 import { learnFrom, turnEffort } from './run';
 import { PaintedInputDeliveryGuard } from './painted-input-delivery';
 import { ProgressTracker } from './progress-tracker';
-import { describeChoice, evidenceFromOutline, rankStrategies } from './strategy-selector';
 import { skillsFor } from './skills';
 import { describeHit, renderSkill, searchSkills, skillById } from './skill-catalog';
 import { runMenuPath, validateMenuPath } from './menu-path';
@@ -296,7 +295,6 @@ export class AgentLoop {
     this.#pendingStall = null;
     if (stall?.directive) {
       await this.writer.appNote(stall.directive);
-      if (stall.exhausted) return { stop: `Stopped: ${stall.reason}. Every strategy was tried.` };
     }
     if (PROGRESS_REVIEW_TURNS.includes(this.#turns) && this.#reviewedAt !== this.#turns) {
       this.#reviewedAt = this.#turns;
@@ -655,7 +653,6 @@ ${ledger}` : ''),
     if (!result.ok) return;
     this.#seen.set(active.tabId, active.url);
     this.preActions.push('snapshot');
-    await this.#chooseStrategy(result.text, asked ? userText(asked) : '');
     await this.#announceSite(active.url, asked ? userText(asked) : '');
     // Kept within budget: a share of the window, at 4 characters a token.
     const budget = Math.max(2_000, Math.min(30_000, this.options.model.profile.contextWindow * 4 * 0.2));
@@ -818,11 +815,13 @@ ${ledger}` : ''),
     if (given.call.toolName === 'http_get' && !given.isError) this.#docsRead = true;
     if (this.#scriptNote && given.call.toolName === 'canvas') { outcome = { ...outcome, text: `${outcome.text}\n${this.#scriptNote}` }; this.#scriptNote = null; }
     {
+      this.#progress.setAvailable(this.#toolNames);
       const verdict = this.#progress.record({
         tool: given.call.toolName,
         action: typeof input.action === 'string' ? input.action : undefined,
         args: input,
         isError: given.isError === true,
+        effect: given.result?.receipt?.effect?.verdict === 'none' ? 'none' : given.result?.receipt?.effect?.verdict === 'changed' ? 'changed' : 'unknown',
         errorCode: given.result?.error?.code,
         resultText: typeof given.text === 'string' ? given.text : undefined,
         tabId: given.result?.page?.tabId ?? this.#boundTab ?? this.#activeTab,
@@ -1658,7 +1657,6 @@ ${ledger}` : ''),
   #paintedInputDelivered = new PaintedInputDeliveryGuard();
   #progress = new ProgressTracker();
   #consoleRuns = new RunLedger();
-  #strategyChosen = false;
   #announcedSites = new Set<string>();
   #pendingStall: StallVerdict | null = null;
   #docsRead = false;
@@ -1750,20 +1748,6 @@ ${ledger}` : ''),
     } catch (error) {
       return { call, kind, text: error instanceof Error ? error.message : String(error), isError: true };
     }
-  }
-
-  /** Picks the starting method from what the page shows and tells the model once. Evidence, not request keywords, decides. */
-  async #chooseStrategy(outline: string, request: string): Promise<void> {
-    if (this.#strategyChosen) return;
-    const evidence = evidenceFromOutline(outline, {
-      connectedTool: [...this.#toolNames].some(n => n.startsWith('plugin_') && n !== 'plugin_search' && n !== 'plugin_action_search' && n !== 'plugin_connect'),
-      verifiedSkill: skillsFor(request).some(k => k.id === 'app-script-console'),
-      vision: !!this.options.model.profile.vision,
-    });
-    const ranked = rankStrategies(evidence);
-    if (!this.#progress.reorder(ranked.map(r => r.strategy))) return;
-    this.#strategyChosen = true;
-    await this.writer.appNote(describeChoice(ranked));
   }
 
   /** A program is not guesswork when every method it calls appears, with its parentheses, in the verified guidance already in the system prompt (a playbook template). */

@@ -24,13 +24,12 @@ describe('startingTools', () => {
   const full = toolsForRun({ vision: false });
   const names = (tools: { name: string }[]) => tools.map(t => t.name);
 
-  it('starts a read-only request without the action tools and offers enable_actions', () => {
-    const { tools, full: switchTo } = startingTools(full, 'Go to xroga.com and tell me the page heading and the URL.');
-    expect(names(tools)).toEqual(expect.arrayContaining(['snapshot', 'read', 'navigate', 'tabs', 'done', 'enable_actions']));
-    for (const gone of ['click', 'type', 'fill_form', 'scroll', 'upload']) expect(names(tools)).not.toContain(gone);
-    expect(switchTo).toBe(full);
-    const chars = (list: typeof tools) => JSON.stringify(list.map(t => [t.name, t.description, t.parameters])).length;
-    expect(chars(tools)).toBeLessThan(chars(full) / 2);
+  it('gives every request the whole tool set: no keyword guess hides a tool, in any language', () => {
+    for (const request of ['Go to xroga.com and tell me the page heading and the URL.', 'Dis-moi le titre de la page et corrige le prix', 'the Q3 report is wrong', 'read the page']) {
+      const { tools, full: switchTo } = startingTools(full, request);
+      expect(tools).toBe(full);
+      expect(switchTo).toBeUndefined();
+    }
   });
 
   it('keeps the full list for an interactive request', () => {

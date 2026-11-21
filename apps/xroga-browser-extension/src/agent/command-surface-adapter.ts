@@ -10,7 +10,7 @@ export type CallTool = (tool: string, input: Record<string, unknown>) => Promise
 export interface ElementTarget { ref?: string; role?: string; name?: string }
 
 export interface ConsoleArgs {
-  /** Menu items to click in order to open the console, by name (for example Tools, Scripts, Scripts Panel). Simpler than open steps. */
+  /** Menu items to click in order to open the console, by name (for example File, Export). Simpler than open steps. */
   openPath?: string[];
   /** Steps that open the console (menu clicks, keys), each {tool, args}; every one must succeed. */
   open?: Array<{ tool: string; args: Record<string, unknown> }>;
@@ -118,7 +118,7 @@ export const SCRIPT_CONSOLE_TOOL = {
   group: 'acting' as const,
   description:
     'Run ONE program in an app scripting console (a painted editor with a Scripts, Macro or Console panel) as a fixed sequence with no model turn between phases: ' +
-    'open the console (openPath: the menu items to click in order, for example ["Tools","Scripts","Scripts Panel"]), check it is the right editor (editorText), click into it (editorAt), replace its text with the program, run it, read the Output, ' +
+    'open the console (openPath: the menu items to click in order, for example ["View","Console"]), check it is the right editor (editorText), click into it (editorAt), replace its text with the program, run it, read the Output, ' +
     'check the Output matches expectOutput, then optionally export (exportSteps). Pass clearSteps (the app Clear button) so the Output of an earlier run is never mistaken for this one; without it the Output must differ from a baseline read. It stops at the first phase that fails or shows an unexpected state and returns every receipt. ' +
     'Name the editor, Run and Clear controls by ref from the latest snapshot (editor: {ref}, run: {ref}, clear: {ref}); use viewport fractions (editorAt, executeAt) only for a painted editor the outline does not list. Read the app documentation first so the program uses real API names. The same program is never run twice on one document.',
   parameters: {

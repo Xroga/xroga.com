@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Mail</title>
+<style>body{font:14px sans-serif;margin:16px}label{display:block;margin:6px 0}textarea{width:380px;height:90px}</style></head>
+<body><div id="app">Loading…</div>
+<script src="lib.js"></script>
+<script>
+// Mail: compose with Save draft (keeps it) and Send (leaves the account: the user's step). The task only asks for a draft.
+const state = __state; state.drafts = []; state.sent = 0;
+mount(app => {
+  const f = {}; const inp = (k, label, area) => h('label', {}, label + ' ', h(area ? 'textarea' : 'input', { 'aria-label': label, oninput: e => { f[k] = e.target.value; } }));
+  const msg = h('p', { role: 'status' });
+  app.append(h('h1', {}, 'New message'), inp('to', 'To'), inp('subject', 'Subject'), inp('body', 'Message', true),
+    h('button', { type: 'button', onclick: () => { state.drafts.push({ ...f }); msg.textContent = 'Draft saved'; } }, 'Save draft'), ' ',
+    h('button', { type: 'button', onclick: () => { state.sent++; msg.textContent = 'Message sent'; } }, 'Send'), msg);
+});
+</script></body></html>

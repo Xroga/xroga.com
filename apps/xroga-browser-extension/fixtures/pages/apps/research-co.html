@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Profile</title><style>body{font:14px sans-serif;margin:16px}</style></head>
+<body><div id="app">Loading…</div>
+<script src="lib.js"></script>
+<script>
+// A company profile: the same randomisation as the directory (same seed, same draws), so each profile shows the facts the directory's state holds.
+const names = ['Northwind', 'Contoso', 'Fabrikam', 'Tailspin', 'Litware'];
+const picked = shuffle(names).slice(0, 3);
+const facts = Object.fromEntries(picked.map(n => [n, { year: 1950 + Math.floor(rnd() * 60), city: pick(['Lisbon', 'Osaka', 'Austin', 'Lyon', 'Perth']) }]));
+const n = Q.get('n'); const f = facts[n]; __state.facts = facts;
+mount(app => { app.append(h('h1', {}, n), f ? h('p', {}, h('strong', {}, 'Founded: '), String(f.year), h('br'), h('strong', {}, 'Headquarters: '), f.city) : h('p', {}, 'No public profile is available for this company.')); });
+</script></body></html>

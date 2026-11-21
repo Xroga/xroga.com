@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Account settings</title>
+<style>body{font:14px sans-serif;margin:16px}fieldset{margin:10px 0}label{display:block;margin:6px 0}.sw{display:inline-block}</style></head>
+<body><div id="app">Loading…</div>
+<script src="lib.js"></script>
+<script>
+// An unfamiliar settings page: the section order, wording (English, French, Arabic by variant), control types (toggle vs checkbox vs select), a late-loading section and an overlay all vary.
+const SETS = [{ n: 'Notifications', w: 'Weekly digest', d: 'Daily digest', save: 'Save changes', lang: 'Language', opts: ['English', 'French', 'German'] }, { n: 'Notifications', w: 'Weekly digest', d: 'Daily digest', save: 'Save changes', lang: 'Language', opts: ['English', 'French', 'German'] }, { n: 'Alertes', w: 'Résumé hebdomadaire', d: 'Résumé quotidien', save: 'Enregistrer', lang: 'Langue', opts: ['English', 'French', 'German'] }, { n: 'Alertes', w: 'Résumé hebdomadaire', d: 'Résumé quotidien', save: 'Enregistrer', lang: 'Langue', opts: ['English', 'French', 'German'] }];
+const L = SETS[SEED % 4];
+const state = __state; state.settings = { weekly: false, daily: true, language: 'English' }; state.saves = 0; state.saved = null;
+mount(app => {
+  const note = h('span', { role: 'status' }); const sections = shuffle(['n', 'l']); const draft = { ...state.settings };
+  const notif = h('fieldset', {}, h('legend', {}, L.n),
+    SEED % 2 ? h('label', {}, h('input', { type: 'checkbox', 'aria-label': L.w, onchange: e => { draft.weekly = e.target.checked; } }), ' ' + L.w) : h('div', {}, L.w + ' ', h('button', { type: 'button', role: 'switch', 'aria-checked': 'false', 'aria-label': L.w, onclick: e => { const on = e.target.getAttribute('aria-checked') !== 'true'; e.target.setAttribute('aria-checked', String(on)); e.target.textContent = on ? 'On' : 'Off'; draft.weekly = on; } }, 'Off')),
+    h('label', {}, h('input', { type: 'checkbox', checked: true, 'aria-label': L.d, onchange: e => { draft.daily = e.target.checked; } }), ' ' + L.d));
+  const lang = h('fieldset', {}, h('legend', {}, L.lang), h('label', {}, L.lang + ' ', h('select', { 'aria-label': L.lang, onchange: e => { draft.language = e.target.value; } }, ...L.opts.map(o => h('option', { value: o }, o)))));
+  app.append(h('h1', {}, 'Settings'), ...sections.map(s => (s === 'n' ? notif : lang)), h('button', { type: 'button', onclick: () => { state.settings = { ...draft }; state.saved = { ...draft }; state.saves++; note.textContent = 'Saved'; } }, L.save), note);
+});
+</script></body></html>

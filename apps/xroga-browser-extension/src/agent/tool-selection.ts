@@ -45,8 +45,15 @@ export function isReadOnlyRequest(request: string): boolean {
   return READ_CUE.test(text) && !ACTION.test(text);
 }
 
-/** The tool list a run starts with, and the full list to switch to when the model calls `enable_actions`. */
+/**
+ * Whether a read-looking request starts without the action tools. Off: the English keyword guess above cannot tell a read from a task in another language,
+ * an implicit task ("the Q3 report is wrong"), or a mixed one, and a withheld tool costs a model turn to get back. The action tools are a quarter of the
+ * catalogue and are served from the provider's prompt cache, so every run now starts with the whole set. The classifier stays for measurement.
+ */
+export const GATE_ACTION_TOOLS = false;
+
+/** The tool list a run starts with, and the full list to switch to when the model calls `enable_actions` (only when the gate is on). */
 export function startingTools(full: AgentTool[], request: string): { tools: AgentTool[]; full?: AgentTool[] } {
-  if (!isReadOnlyRequest(request)) return { tools: full };
+  if (!GATE_ACTION_TOOLS || !isReadOnlyRequest(request)) return { tools: full };
   return { tools: [...full.filter(t => !ACTION_TOOLS.has(t.name)), ENABLE_ACTIONS_TOOL], full };
 }

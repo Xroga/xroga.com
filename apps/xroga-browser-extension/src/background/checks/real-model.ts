@@ -8,6 +8,7 @@ import { activeBranch, getRun, listConversations } from '@src/store/conversation
 import { defineCheck } from './registry';
 import { sleep, waitForLoad } from './helpers';
 import { panel } from './panel-chat';
+import { recentTimings } from '@src/agent/timing';
 
 const BASE = `${BROWSER_API_ORIGIN}/api/browser/local`;
 
@@ -68,7 +69,7 @@ defineCheck({
           conversationId ??= (await listConversations()).find(c => !before.has(c.id))?.id;
           const run = conversationId ? await getRun(conversationId) : undefined;
           status = run?.status ?? 'starting';
-          if (i % 20 === 0) (report.polls as unknown[]).push({ i, bridgePaired: workspacePaired(), status, turns: run?.turns, transcript: last.slice(-120) });
+          if (i % 20 === 0) (report.polls as unknown[]).push({ i, bridgePaired: workspacePaired(), status, turns: run?.turns, transcript: last.slice(-120), phases: Object.fromEntries(Object.entries(recentTimings().at(-1)?.phases ?? {}).map(([k, v]) => [k, `${v.count}x ${v.totalMs}ms`])) });
           // 'interrupted' with the reason 'Syncing the saved result' is the short moment after a run ends while its result is sent to the server.
           // With args.approve, the check plays the person: it presses the first approval button of a waiting card (and records which).
           if (args.approve && status === 'awaiting_user' && i % 10 === 0) {

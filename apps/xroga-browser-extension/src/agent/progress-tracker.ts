@@ -1,12 +1,39 @@
-/** Code-owned progress fingerprints and strategy switching.
- * A run is "stalled" when the same call lands on the same observed state, or the same tool keeps failing, a small bounded number of times.
- * Then the code (not a prompt reminder at turn 20/35/50) moves the run down the strategy ladder and, when the ladder is spent, stops with a blocker.
+/** A per-run ledger of what was tried and what it did, and the evidence-based stall diagnosis built from it.
+ *
+ * There is no fixed ladder of strategies and no order the model must follow. The ledger records, for each KIND of method the run has used (reading the page's
+ * controls, pointing at what the screenshot shows, the keyboard, a batch, the application's own commands, a connected tool, navigation, workers), how often it
+ * was used, how often it failed or changed nothing, and on which targets. When actions stop making progress the model is shown that evidence, the likely cause
+ * the layer's own error codes point to, and which kinds of method are available to it and not yet tried. The choice stays the model's. Nothing here ends a run.
  * In-memory run state only.
  */
-import { diagnose, directiveFor, isTerminal } from './failure-diagnosis';
+import { diagnose, directiveFor, isTerminal, type Diagnosis } from './failure-diagnosis';
 
-export type Strategy = 'CONNECTED_TOOL' | 'DOM_A11Y' | 'DOM_BATCH' | 'VISUAL_GUI' | 'APP_NATIVE' | 'RECOVERY';
-export const STRATEGY_LADDER: readonly Strategy[] = ['DOM_A11Y', 'DOM_BATCH', 'VISUAL_GUI', 'APP_NATIVE', 'RECOVERY'];
+export type MethodClass = 'dom' | 'visual' | 'keyboard' | 'batch' | 'native' | 'connected' | 'navigate' | 'workers' | 'read' | 'skill' | 'other';
+
+/** Kinds of method a model can act with; reading and skill lookup are not attempts at the task. */
+const ACTING: ReadonlySet<MethodClass> = new Set(['dom', 'visual', 'keyboard', 'batch', 'native', 'connected', 'navigate', 'workers']);
+
+const TOOL_CLASS: Record<string, MethodClass> = {
+  click: 'dom', type: 'dom', set: 'dom', fill_form: 'dom', hover: 'dom', drag: 'dom', scroll: 'dom', upload: 'dom', handle_dialog: 'dom',
+  canvas: 'visual', find_color: 'visual',
+  press: 'keyboard',
+  batch: 'batch',
+  run_script_console: 'native', menu_path: 'native', site_action: 'native',
+  plugin_read: 'connected', plugin_act: 'connected', plugin_chain: 'connected', http_get: 'connected',
+  navigate: 'navigate', tabs: 'navigate',
+  delegate: 'workers', start_parallel_tasks: 'workers',
+  snapshot: 'read', read: 'read', find: 'read', screenshot: 'read', wait: 'read', read_attachment: 'read', confirm_download: 'read',
+  find_skill: 'skill', read_skill: 'skill', plugin_search: 'skill', plugin_action_search: 'skill',
+};
+
+/** The kind of method a call is. A click given a point on the screenshot is pointing at pixels, not at a control. */
+export function methodOf(tool: string, args?: unknown): MethodClass {
+  if (tool === 'click' || tool === 'drag' || tool === 'hover') {
+    const t = (args as { target?: { x?: unknown } } | undefined)?.target;
+    if (t && typeof t === 'object' && 'x' in t) return 'visual';
+  }
+  return TOOL_CLASS[tool] ?? 'other';
+}
 
 export interface ProgressObservation {
   tool: string;
@@ -16,6 +43,8 @@ export interface ProgressObservation {
   /** Normalised call arguments (hashed, not stored). */
   args?: unknown;
   isError: boolean;
+  /** What the layer saw the action do: the page changed, nothing changed, or it cannot tell (a canvas paints its own result). */
+  effect?: 'changed' | 'none' | 'unknown';
   /** Result text and page identity after the call. */
   resultText?: string;
   tabId?: number | null;
@@ -25,16 +54,16 @@ export interface ProgressObservation {
 export interface StallVerdict {
   stalled: boolean;
   reason?: string;
-  strategy: Strategy;
-  switched: boolean;
+  /** Kept for the loop's contract: nothing in the tracker ends a run. */
   exhausted: boolean;
   directive?: string;
-  /** Why the last failure happened, from the layer's code, and what to do next. */
-  diagnosis?: string;
+  /** Why the last failure happened, from the layer's code. */
+  diagnosis?: Diagnosis;
 }
 
 const REPEAT_LIMIT = 3; // identical call on identical state
 const FAILURE_LIMIT = 3; // same tool/action failing in a row
+const UNPRODUCTIVE_LIMIT = 4; // acting calls in a row that each failed or changed nothing
 
 function hash(s: string): string {
   let h = 5381;
@@ -48,39 +77,56 @@ export function fingerprint(o: ProgressObservation): { call: string; state: stri
   return { call, state };
 }
 
-const DIRECTIVES: Record<Strategy, string> = {
-  CONNECTED_TOOL: 'Strategy changed to CONNECTED_TOOL: use the authorized connected tool or API for this work instead of the page.',
-  DOM_A11Y: 'Strategy changed to DOM_A11Y: take a fresh snapshot and use the named controls in it.',
-  DOM_BATCH: 'Strategy changed to DOM_BATCH: stop single clicks. Group the remaining steps into one batch call with preconditions.',
-  VISUAL_GUI: 'Strategy changed to VISUAL_GUI: take a fresh screenshot of the bound tab and act on what it shows, not on remembered coordinates or earlier element ids.',
-  APP_NATIVE: 'Strategy changed to APP_NATIVE: use the app script console, command palette or keyboard commands instead of menus, and read its Output to verify.',
-  RECOVERY: 'Strategy changed to RECOVERY: inspect the current document and tabs, undo or remove any duplicate or partial work, then continue from the verified state or finish with the exact blocker.',
+interface Entry { attempts: number; failed: number; unchanged: number; lastCode?: string }
+
+const KIND_WORDS: Record<MethodClass, string> = {
+  dom: 'acting on the page\'s controls by name or reference', visual: 'pointing at what the screenshot shows', keyboard: 'keyboard input and shortcuts',
+  batch: 'a batch of steps', native: 'the application\'s own commands or a verified action', connected: 'a connected tool or API', navigate: 'navigation or another tab',
+  workers: 'workers', read: 'reading', skill: 'skills', other: 'other tools',
+};
+
+const CAUSE: Partial<Record<Diagnosis, string>> = {
+  stale_reference: 'the page changed under the references you hold',
+  element_not_found: 'the target is not where you looked (another frame, tab, scroll position or not loaded yet)',
+  ambiguous_target: 'the description matches several controls',
+  occluded_or_blocked: 'something covers the control (an overlay, a dialog), or it is outside the view',
+  value_not_applied: 'the control did not take the input (disabled, read-only, or it needs another step first)',
+  timeout_flaky: 'the page or network is slow or unstable',
+  navigation_problem: 'the destination did not load as expected',
+  policy_blocked: 'the action is outside what this session may do',
+  invalid_call: 'the call itself was malformed',
 };
 
 export class ProgressTracker {
-  #strategyIndex = 0;
-  #order: readonly Strategy[] = STRATEGY_LADDER;
   #lastCall = '';
   #lastState = '';
   #repeat = 0;
   #failures = 0;
   #failureKey = '';
-  #switches = 0;
-  #cycles = 0;
+  #unproductive = 0;
+  #stalls = 0;
+  readonly #ledger = new Map<MethodClass, Entry>();
+  #available = new Set<MethodClass>();
 
-  get strategy(): Strategy { return this.#order[this.#strategyIndex]!; }
-  get order(): readonly Strategy[] { return this.#order; }
-
-  /** Starts a new order chosen from evidence about the page. Only before any method has stalled: a switch already made is never undone. */
-  reorder(order: readonly Strategy[]): boolean {
-    if (this.#switches > 0 || order.length === 0 || order[order.length - 1] !== 'RECOVERY') return false;
-    this.#order = order;
-    this.#strategyIndex = 0;
-    return true;
+  /** The tools the run can use now: which kinds of method exist for it. */
+  setAvailable(toolNames: Iterable<string>): void {
+    this.#available = new Set([...toolNames].map(n => methodOf(n)).filter(c => ACTING.has(c)));
   }
-  get switches(): number { return this.#switches; }
+
+  get stalls(): number { return this.#stalls; }
+  /** What has been tried: kind, attempts, failures, calls that changed nothing. */
+  get ledger(): ReadonlyMap<MethodClass, Readonly<Entry>> { return this.#ledger; }
 
   record(o: ProgressObservation): StallVerdict {
+    const cls = methodOf(o.tool, o.args);
+    const acting = ACTING.has(cls);
+    if (acting) {
+      const e = this.#ledger.get(cls) ?? { attempts: 0, failed: 0, unchanged: 0 };
+      e.attempts++;
+      if (o.isError) { e.failed++; e.lastCode = o.errorCode; }
+      else if (o.effect === 'none') e.unchanged++;
+      this.#ledger.set(cls, e);
+    }
     const f = fingerprint(o);
     if (f.call === this.#lastCall && f.state === this.#lastState) this.#repeat++;
     else this.#repeat = 1;
@@ -92,38 +138,45 @@ export class ProgressTracker {
       if (isTerminal(d)) {
         // Only a person can decide this. The run is NOT stopped (a handover or an approval may be about to resolve it and the model may have another route):
         // the model is told once, at once, not to retry the same call and to ask the user or report the exact blocker.
-        return { stalled: true, reason: `${key} needs a decision outside the run (${o.errorCode ?? d})`, strategy: this.strategy, switched: false, exhausted: false, diagnosis: d, directive: `${directiveFor(d)} Do not repeat this call.` };
+        return { stalled: true, reason: `${key} needs a decision outside the run (${o.errorCode ?? d})`, exhausted: false, diagnosis: d, directive: `${directiveFor(d)} Do not repeat this call.` };
       }
-    }
-    if (o.isError) {
       this.#failures = key === this.#failureKey ? this.#failures + 1 : 1;
       this.#failureKey = key;
     } else {
       this.#failures = 0;
       this.#failureKey = '';
     }
+    if (acting) this.#unproductive = o.isError || o.effect === 'none' ? this.#unproductive + 1 : 0;
     const lastDiagnosis = o.isError ? diagnose(o.errorCode, o.resultText ?? '') : undefined;
     let reason: string | undefined;
     if (this.#repeat >= REPEAT_LIMIT) reason = `the same ${key} call produced the same page state ${this.#repeat} times`;
     else if (this.#failures >= FAILURE_LIMIT) reason = `${key} failed ${this.#failures} times in a row`;
-    if (!reason) return { stalled: false, strategy: this.strategy, switched: false, exhausted: false };
+    else if (this.#unproductive >= UNPRODUCTIVE_LIMIT) reason = `${this.#unproductive} actions in a row failed or changed nothing`;
+    if (!reason) return { stalled: false, exhausted: false };
     this.#repeat = 0;
     this.#failures = 0;
     this.#failureKey = '';
+    this.#unproductive = 0;
     this.#lastCall = '';
-    if (this.#strategyIndex >= this.#order.length - 1) {
-      // Every method has been tried without progress. This does NOT end the run: only real resource and authorization controls may do that.
-      // The order starts again with a different instruction: look at the application fresh and rethink, instead of repeating what failed.
-      this.#cycles++;
-      this.#strategyIndex = 0;
-      this.#switches++;
-      const advice = this.#cycles >= 3
-        ? 'This is the third full round without progress. Check whether something outside your control is the real blocker (a login, a missing permission, an input only the user has, a feature the application does not offer). If so, say exactly what and finish with done(partial); otherwise change the approach completely.'
-        : 'Look at the application again from scratch with a fresh snapshot or screenshot, reconsider the goal and what the evidence shows, and try an approach you have not used yet.';
-      return { stalled: true, reason, strategy: this.strategy, switched: true, exhausted: false, directive: `Every method has been tried without progress (${reason}). ${advice}` };
-    }
-    this.#strategyIndex++;
-    this.#switches++;
-    return { stalled: true, reason, strategy: this.strategy, switched: true, exhausted: false, directive: `Stalled: ${reason}. ${DIRECTIVES[this.strategy]}${lastDiagnosis ? ' ' + directiveFor(lastDiagnosis) : ''}`, ...(lastDiagnosis ? { diagnosis: lastDiagnosis } : {}) };
+    this.#stalls++;
+    return { stalled: true, reason, exhausted: false, directive: this.#directive(reason, lastDiagnosis), ...(lastDiagnosis ? { diagnosis: lastDiagnosis } : {}) };
+  }
+
+  #directive(reason: string, diagnosis?: Diagnosis): string {
+    const tried = [...this.#ledger].map(([c, e]) => `${KIND_WORDS[c]} x${e.attempts}${e.failed || e.unchanged ? ` (${e.failed} failed, ${e.unchanged} changed nothing)` : ''}`);
+    const untried = [...this.#available].filter(c => !this.#ledger.has(c) && c !== 'navigate' && c !== 'workers').map(c => KIND_WORDS[c]);
+    const cause = diagnosis && CAUSE[diagnosis] ? `Most likely: ${CAUSE[diagnosis]}.` : 'Work out the cause from the latest observation before acting again.';
+    const parts = [
+      `Not making progress: ${reason}.`,
+      tried.length ? `Tried so far: ${tried.join('; ')}.` : '',
+      cause,
+      diagnosis ? directiveFor(diagnosis) : '',
+      'Decide from what the page shows now, and take a method or target that differs materially from the one that failed.',
+      untried.length ? `Available and not yet tried in this task: ${untried.join('; ')}.` : 'Every kind of method available to you has been tried.',
+      this.#stalls >= 3 || !untried.length
+        ? 'If the evidence says nothing available can do this (a login, a missing permission, an input only the user has, a feature the application does not offer), say exactly what, keep the verified work, and finish with done(partial).'
+        : '',
+    ];
+    return parts.filter(Boolean).join(' ');
   }
 }

@@ -31,6 +31,12 @@ export interface TimingSummary {
 }
 
 const SAMPLE_LIMIT = 200;
+const RECENT: RunTimings[] = [];
+
+/** The phase summaries of the most recent runs of this worker, finished or not (newest last). */
+export function recentTimings(): TimingSummary[] {
+  return RECENT.map(r => r.summary());
+}
 
 export class RunTimings {
   readonly #started: number;
@@ -39,6 +45,9 @@ export class RunTimings {
 
   constructor(private readonly now: () => number = () => performance.now()) {
     this.#started = this.now();
+    // Every recorder is reachable while its run is still going, so a run that never finishes (or is cut off) can still be profiled.
+    RECENT.push(this);
+    if (RECENT.length > 8) RECENT.shift();
   }
 
   /** Names a moment (first mark wins), such as the run's first model request. */

@@ -51,7 +51,7 @@ describe('ProgressTracker with diagnosis', () => {
     expect(t.record(fail('URL_NOT_ALLOWED', 1)).stalled).toBe(false);
     t.record(fail('URL_NOT_ALLOWED', 2));
     const v = t.record(fail('URL_NOT_ALLOWED', 3));
-    expect(v.stalled && v.switched).toBe(true);
+    expect(v.stalled).toBe(true);
     expect(v.diagnosis).toBe('policy_blocked');
   });
   it('attaches the covering-overlay advice to a stalled click', () => {
