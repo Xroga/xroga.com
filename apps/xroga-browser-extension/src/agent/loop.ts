@@ -94,6 +94,8 @@ export interface Request {
 }
 
 export interface LoopOptions {
+  /** How hard the model is asked to think: told, after every tool call, whether the run stalled. The server decides what is allowed. */
+  effort?: { noteTurn(stalled: boolean): void };
   /** Where the run's time goes; measured only, never used to decide anything. */
   timings?: RunTimings;
   conversationId: string;
@@ -828,6 +830,7 @@ ${ledger}` : ''),
         url: given.result?.page?.url,
       });
       if (verdict.stalled) this.#pendingStall = verdict;
+      this.options.effort?.noteTurn(verdict.stalled);
     }
     this.#toolCounts.set(given.call.toolName, (this.#toolCounts.get(given.call.toolName) ?? 0) + 1);
     // Opening or switching to a page changes nothing a second attempt could duplicate: a navigation that fails (a certificate warning,
@@ -1445,7 +1448,8 @@ ${ledger}` : ''),
 
   /** One notice per run when the server refused the reasoning option. */
   async #noteDropped(): Promise<void> {
-    if (!this.options.model.reasoningDropped || this.#droppedNoted) return;
+    // The Xroga model path sets reasoning on the server (effort control), so "dropped" there is not a refusal worth telling the person about.
+    if (!this.options.model.reasoningDropped || this.#droppedNoted || this.options.effort) return;
     this.#droppedNoted = true;
     const entry = await this.writer.ui('notice', { text: REASONING_DROPPED, tone: 'info' });
     this.options.emit({

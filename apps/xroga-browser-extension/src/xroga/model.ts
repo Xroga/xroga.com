@@ -2,6 +2,7 @@ import { createModel, resolveProfile } from '@src/llm';
 import type { ResolvedModel } from '@src/agent/run';
 import { workspaceRequest } from './bridge';
 import { fitRequest } from './fit-request';
+import { EffortControl, outputRoom } from './effort';
 
 export const XROGA_MODEL = 'deepseek_v4_1_flash_1017';
 export const XROGA_REF = { providerId: 'xroga-workspace', model: XROGA_MODEL };
@@ -67,6 +68,7 @@ export async function startXrogaModelRun(
   signal: AbortSignal,
   attachmentCount: number,
   resumeId?: string,
+  effort: EffortControl = new EffortControl(),
 ) {
   const start = (await (resumeId
     ? resumeRun(resumeId, signal)
@@ -101,7 +103,7 @@ export async function startXrogaModelRun(
     throw new Error('This browser task has reached its time or turn limit.');
   }
   const chat = createModel(
-    { kind: 'openai-compatible', baseUrl: MODEL_URL, modelName: XROGA_MODEL, maxOutputTokens: 2_048 },
+    { kind: 'openai-compatible', baseUrl: MODEL_URL, modelName: XROGA_MODEL, maxOutputTokens: 6_144 },
     {
       fetch: async (url, init) => {
         if (String(url) !== `${MODEL_URL}/chat/completions` || typeof init?.body !== 'string') {
@@ -127,7 +129,10 @@ export async function startXrogaModelRun(
                     messages: request.messages,
                     tools: request.tools,
                     tool_choice: request.tool_choice,
-                    max_tokens: Math.min(2_048, request.max_tokens ?? request.max_completion_tokens ?? 2_048),
+                    // Reasoning tokens count against the output limit: a thinking turn gets more room than the 2,048 of a plain one. The server asks
+                    // for the effort it allows (none, high, max), sets the room and the spend ceiling for it, and answers with the effort it used.
+                    reasoning_effort: effort.level,
+                    max_tokens: Math.min(outputRoom(effort.level), request.max_tokens ?? request.max_completion_tokens ?? outputRoom(effort.level)),
                   },
                 },
                 signal,
@@ -196,7 +201,7 @@ export async function startXrogaModelRun(
     modelName: XROGA_MODEL,
     // The server refuses requests over 96,000 bytes. A smaller window here made compaction (itself a model call) fire on almost every turn
     // of a long task, so the window stays at 32,000 and a refused request is recovered through the overflow path above instead.
-    overrides: { contextWindow: 32_000, maxOutput: 2_048, vision: start.vision === true },
+    overrides: { contextWindow: 32_000, maxOutput: 4_096, vision: start.vision === true },
   });
   const model: ResolvedModel = { ref: XROGA_REF, chat, profile, reasoning: 'none', reasoningDropped: true };
   /**

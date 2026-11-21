@@ -53,7 +53,10 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
     await request.authority?.revalidate();
     if (exhausted) throw Object.assign(new Error('capacity'), { code: 'PAID_PROVIDER_CAPACITY_UNAVAILABLE', nextUnlockAt: '2026-11-12T00:00:00.000Z' });
     assert.equal(request.modelId, 'deepseek_v4_1_flash_1017');
-    assert.equal(request.platformCostCeiling, 3_000);
+    // The default browser turn reasons at `high` and gets the high policy's output room and spend ceiling; a picture probe stays at `none`.
+    const expected = request.body.reasoning_effort === 'none' ? { ceiling: 3_000, maxTokens: [2_048, 512] } : request.body.reasoning_effort === 'high' ? { ceiling: 5_000, maxTokens: [4_096] } : { ceiling: 8_000, maxTokens: [6_144] };
+    assert.equal(request.platformCostCeiling, expected.ceiling);
+    assert.ok(expected.maxTokens.includes(request.body.max_tokens as number), `max_tokens ${String(request.body.max_tokens)} for ${String(request.body.reasoning_effort)}`);
     assert.equal(request.body.stream, false);
     received.push({ runId: request.job.runId, idempotency: request.idempotencyKey, messages: request.body.messages });
     return { id: 'fixture-model', choices: [{ finish_reason: 'stop', message: { content: 'Read the catalog.' } }],

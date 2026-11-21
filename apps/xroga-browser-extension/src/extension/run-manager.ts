@@ -93,6 +93,7 @@ import { endOf } from './analytics-payload';
 import { onWorkspaceDisconnect, postWorkspace, workspacePaired, workspaceRequest } from '@src/xroga/bridge';
 import { ACTIVITY_LIMIT, browserActivity } from '@src/xroga/activity';
 import { startXrogaModelRun } from '@src/xroga/model';
+import { EffortControl } from '@src/xroga/effort';
 import { HTTP_GET_TOOL, PLUGIN_CONNECT_TOOL, REPO_RUN_TOOL, CHANGE_REPO_TOOL, runRepositoryTool, changeRepositoryTool, nativeAppCall, nativeAppTool, rankAppTools, runPluginConnect, runPluginTool, runPublicGet, PLUGIN_TOOLS, PLUGIN_CHAIN_TOOL, runPluginChain, type AppToolInfo } from '@src/xroga/plugins';
 import { repairingPluginCaller, type PluginToolName } from '@src/xroga/plugin-repair';
 import { SEARCH_HOME, browserTarget } from '@src/xroga/navigation';
@@ -1411,7 +1412,7 @@ export class RunManager {
         unverified,
         messages: branch => toModelMessages(branch, { vision: model.profile.vision, unverified }),
       });
-      if (model.reasoningDropped) await this.#notice(conversationId, REASONING_DROPPED, 'info');
+      if (model.reasoningDropped && model.ref.providerId !== 'xroga-workspace') await this.#notice(conversationId, REASONING_DROPPED, 'info');
       if (!result) {
         await this.#notice(conversationId, 'Nothing to compact yet: the conversation is still short.', 'info');
         return;
@@ -1657,6 +1658,7 @@ export class RunManager {
       void count('runs.started');
       let end: LoopEnd | undefined;
       let canonical: Awaited<ReturnType<typeof startXrogaModelRun>> | undefined;
+      const effort = new EffortControl();
       let recoveryReadOnly = false;
       let interrupted: ReturnType<typeof planRestore>['results'] = [];
       try {
@@ -1689,6 +1691,7 @@ export class RunManager {
             controller.signal,
             attachmentCount,
             restore?.canonicalBrowserRunId,
+            effort,
           );
           record.canonicalBrowserRunId = canonical.runId;
           await putRun(record);
@@ -1788,6 +1791,7 @@ export class RunManager {
         let pluginRun: (name: PluginToolName, body: unknown) => ReturnType<typeof runPluginTool> = () => Promise.reject(new Error('Connected apps are not ready.'));
         const pluginCaller = repairingPluginCaller((name, body) => pluginRun(name, body), slug => [...appTools.values()].some(info => info.slug === slug && info.kind === 'write'));
         const loop = new AgentLoop({
+          effort,
           timings,
           conversationId,
           runId,

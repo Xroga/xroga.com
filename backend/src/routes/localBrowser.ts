@@ -35,6 +35,27 @@ const MAX_TURNS = 400;
 // entitlement ledger, and a refused reservation stops the run with its progress saved (BROWSER_ALLOWANCE_EXHAUSTED).
 const SEGMENT_TURNS = 96;
 const TURN_CEILING_MICROS = 3_000;
+/**
+ * The reasoning a browser turn asks the model for. Zurelay takes exactly `none`, `high` or `max` for this model (probed 2026-11-21: any other word is a
+ * 400 naming those three; `low` and `medium` are accepted but answered as `high`, so they are not offered). The server decides: the extension may ask,
+ * but only for a value in this list, and `XROGA_BROWSER_REASONING_DEFAULT` (none, high, max) is the rollback switch for what an unspecified turn gets.
+ * More reasoning needs more output room (reasoning tokens are part of completion_tokens) and a higher spend ceiling for the turn; both come from here.
+ */
+export type BrowserEffort = 'none' | 'high' | 'max';
+const EFFORTS: readonly BrowserEffort[] = ['none', 'high', 'max'];
+const TURN_POLICY: Record<BrowserEffort, { maxTokens: number; ceilingMicros: number; timeoutMs: number }> = {
+  none: { maxTokens: 2_048, ceilingMicros: TURN_CEILING_MICROS, timeoutMs: 80_000 },
+  high: { maxTokens: 4_096, ceilingMicros: 5_000, timeoutMs: 100_000 },
+  max: { maxTokens: 6_144, ceilingMicros: 8_000, timeoutMs: 120_000 },
+};
+export function defaultBrowserEffort(env: NodeJS.ProcessEnv = process.env): BrowserEffort {
+  const value = env.XROGA_BROWSER_REASONING_DEFAULT;
+  return EFFORTS.includes(value as BrowserEffort) ? (value as BrowserEffort) : 'high';
+}
+export function browserTurnPolicy(requested: BrowserEffort | undefined, env: NodeJS.ProcessEnv = process.env) {
+  const effort = requested ?? defaultBrowserEffort(env);
+  return { effort, ...TURN_POLICY[effort] };
+}
 const MINUTE = 60_000;
 const SEGMENT_MS = 90 * MINUTE;
 /** A run's wall-clock segment is renewed when less than this is left. */
@@ -226,13 +247,16 @@ const message = z.object({
   content: z.union([z.string().max(48_000), z.array(z.union([textPart, imagePart])).max(24), z.null()]).optional(),
   tool_calls: z.array(toolCall).max(20).optional(),
   tool_call_id: z.string().max(200).optional(),
+  /** The model's own reasoning for a tool call it made, returned with its tool result when the provider needs it. Private: never shown or stored. */
+  reasoning_content: z.string().max(24_000).optional(),
 }).strict();
 const turnBody = z.object({
   turn: z.number().int().min(1),
   messages: z.array(message).min(1).max(140),
   tools: z.array(tool).max(64).optional(),
   tool_choice: z.enum(['auto', 'none', 'required']).optional(),
-  max_tokens: z.number().int().min(1).max(4_096).optional(),
+  max_tokens: z.number().int().min(1).max(8_192).optional(),
+  reasoning_effort: z.enum(['none', 'high', 'max']).optional(),
   vision_probe_png: z.string().min(32).max(24_000).regex(/^[A-Za-z0-9+/]+={0,2}$/).optional(),
 }).strict();
 const endBody = z.object({
@@ -915,7 +939,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
   router.post('/runs/:runId/turn', withLease(async (req, res, rt, row, lease) => {
     active(row);
     const ctx = requireTenantContext(req.tenantContext);
-    const { turn, vision_probe_png: probe, ...body } = turnBody.parse(req.body);
+    const { turn, vision_probe_png: probe, reasoning_effort: askedEffort, ...body } = turnBody.parse(req.body);
     const vetted = vetTurnImages(body.messages, !!resolveModelSpec(MODEL)?.supportsImages);
     checkData(vetted.textOnly);
     const image = probe ? visionProbe(row.runId, turn, probe) : undefined;
@@ -928,7 +952,9 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
         ...(typeof prompt.content === 'string' ? [{ type: 'text', text: prompt.content }] : prompt.content ?? []), image,
       ] }]
       : body.messages;
-    const maxTokens = image ? body.max_tokens ?? 512 : body.max_tokens ?? 2_048;
+    // A picture check (the vision probe) is a short, non-reasoning call. Every other turn gets the policy for the effort the client asked for or the server default.
+    const policy = image ? { effort: 'none' as const, ...TURN_POLICY.none, maxTokens: 512 } : browserTurnPolicy(askedEffort);
+    const maxTokens = Math.min(body.max_tokens ?? policy.maxTokens, policy.maxTokens);
     // Images are bounded on their own (count, size and dimensions above); the text cap counts everything else.
     const requestBytes = Buffer.byteLength(JSON.stringify({ ...body, messages }).replace(/data:image\/png;base64,[A-Za-z0-9+/=]+/g, 'data:image/png;base64,'));
     if (requestBytes > 96_000) throw new BrowserRequestError(400, 'BROWSER_CONTEXT_TOO_LARGE');
@@ -945,7 +971,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     task.startedAt ??= new Date().toISOString();
     task.attempts = 1;
     row.state.productManifest.localBrowserTurn = turn;
-    row.state.productManifest.localBrowserSpendMicros = priorSpend + TURN_CEILING_MICROS;
+    row.state.productManifest.localBrowserSpendMicros = priorSpend + policy.ceilingMicros;
     row.state.updatedAt = new Date().toISOString();
     await rt.runs.stateStore(ctx.userId, () => lease).save(row.state);
 
@@ -967,11 +993,11 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const timings: Record<string, number> = {};
     try {
       const result = await dispatch({ job, authority: { context: ctx, revalidate },
-        modelId: MODEL, signal: AbortSignal.any([abort.signal, AbortSignal.timeout(80_000)]),
+        modelId: MODEL, signal: AbortSignal.any([abort.signal, AbortSignal.timeout(policy.timeoutMs)]),
         onTiming: (phase, elapsed) => { timings[phase] = Math.round(elapsed); },
-        body: { ...body, messages, stream: false, reasoning_effort: 'none', max_tokens: maxTokens },
+        body: { ...body, messages, stream: false, reasoning_effort: policy.effort, max_tokens: maxTokens },
         estimatedInputTokens: Math.ceil(requestBytes / 3),
-        maximumOutputTokens: maxTokens, platformCostCeiling: TURN_CEILING_MICROS,
+        maximumOutputTokens: maxTokens, platformCostCeiling: policy.ceilingMicros,
         idempotencyKey: `${digest.slice(0, 8)}-${digest.slice(8, 12)}-4${digest.slice(13, 16)}-8${digest.slice(17, 20)}-${digest.slice(20, 32)}`,
       });
       const choice = result.choices?.[0];
@@ -987,9 +1013,11 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
       console.info('[browser-turn]', { runId: row.runId, turn, timings, requestBytes,
         elapsedMs: Math.round(performance.now() - started), inputTokens: result.usage.prompt_tokens,
         cachedTokens: result.usage.prompt_tokens_details?.cached_tokens ?? 0, outputTokens: result.usage.completion_tokens,
-        settledMicroUsd: settled });
+        settledMicroUsd: settled, effort: policy.effort, reasoningTokens: result.usage.completion_tokens_details?.reasoning_tokens ?? 0 });
       return res.json({ id: result.id, model: MODEL, choice: { finish_reason: choice.finish_reason,
-        message: { content: choice.message.content, tool_calls: choice.message.tool_calls } }, usage: result.usage });
+        message: { content: choice.message.content, tool_calls: choice.message.tool_calls,
+          ...(typeof choice.message.reasoning_content === 'string' && choice.message.reasoning_content ? { reasoning_content: choice.message.reasoning_content.slice(0, 24_000) } : {}) } },
+        usage: result.usage, effort: policy.effort });
     } catch (error) {
       // The shared model gate was full and no provider call was made (nothing settled, nothing to retry on the provider's side). This is
       // a queue, not a failure: the turn's reserved spend is given back and the extension asks again after a short wait.
