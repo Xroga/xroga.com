@@ -5,6 +5,7 @@ import {presentResearchResult} from '../services/integrations/researchResult.js'
 import type {TenantModelScope} from './tenantModelDispatch.js';
 import {AuthorityError} from '../security/authority/enforce.js';
 import { officialResearchDomains } from './researchSearchProvider.js';
+import type { ChatPipelineResult } from './pipeline.js';
 
 export const RESEARCH_ANSWER_MAXIMUM_MICRO_USD=5_000;
 export const researchAnswerRequestSchema=z.object({
@@ -15,6 +16,26 @@ export const researchAnswerRequestSchema=z.object({
  &&value.goalContract.requiredCapabilities.every(c=>['conversation.respond','research.public-web','repository.read'].includes(c))),
  'Research synthesis cannot authorize execution or external actions');
 export type ResearchAnswerRequest=z.infer<typeof researchAnswerRequestSchema>;
+
+/** Public research receipts and accounting belong to the server. Return the
+ * finished answer and source metadata needed for the ordinary Workspace. */
+export function publicWorkspaceResearchAnswer(result: Pick<ChatPipelineResult,
+  'response' | 'completion' | 'responseSource' | 'intent' | 'webSources'>) {
+  const presentation = result.responseSource;
+  return {
+    response: result.response,
+    completion: result.completion,
+    ...(presentation ? { responseSource: {
+      format: presentation.format, text: presentation.text,
+      ...(presentation.downloadFormat ? { downloadFormat: presentation.downloadFormat } : {}),
+    } } : {}),
+    intent: result.intent,
+    webSources: result.webSources?.map(({ title, url, snippet, siteName, siteIconDomain, publishedAt }) =>
+      ({ title, url, snippet, siteName, siteIconDomain, publishedAt, source: 'web' })),
+    publicWebRetrieved: true as const,
+    engine: 'xroga' as const,
+  };
+}
 
 const inlineCodeSpans=/(?<!\x60)(\x60+)(?!\x60)[\s\S]*?(?<!\x60)\1(?!\x60)/g;
 const inlineMarkdownLinks=/\[([^\]\r\n]+)\]\([ \t]*(?:<([^<>\r\n]+)>|((?:[^\s()<>]|\([^()\r\n]*\))+))(?:[ \t]+(?:"[^"\r\n]*"|'[^'\r\n]*'|\([^()\r\n]*\)))?[ \t]*\)/g;

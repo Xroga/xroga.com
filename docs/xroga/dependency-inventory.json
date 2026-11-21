@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "072ca6b4fc8f31c1f174a9563950647e7a058cac",
+  "source_sha": "8b36445c4de918f3aafcaa250f1b72cf4eefabc2",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17310,7 +17310,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "7b4139a59362b8a99a699dd6800ae12ac46fa7c3c1bf3b2b380568d0138326d4"
+      "sha256": "70ae7c28be531fc8ff76d13bf2818ec214bf75f6642c0bb07cf677799ca02371"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -17382,7 +17382,7 @@
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "sha256": "3e0c6d317b96bf8fe3c38d706caecfeb1b0bc0e3a8fbc0e57fa6a9e577cbafd9"
+      "sha256": "2988e07f4fd2c044caf10a3ffa828022228190948d9ff293a7812445098554c4"
     },
     {
       "path": "backend/src/ai/researchSearchProvider.ts",
@@ -18778,7 +18778,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sha256": "8e116ae5296634e5a493aea0cee9434255186deaced4ce27754f92d05e760f43"
+      "sha256": "ecaa975be6c7ae1a0251c3673410eb361256a73d4e02bbe81ff26d487c1529d1"
     },
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
@@ -19438,7 +19438,7 @@
     },
     {
       "path": "backend/src/services/integrations/researchResult.ts",
-      "sha256": "27ecd374b1e6229921f15159f1e8e6278925ac52958cd29af6b40717699a7a39"
+      "sha256": "0095c09bfbfcdb0dbea7af1a667d4c9ed5cd9bd36b0363eeb7b423048da00af0"
     },
     {
       "path": "backend/src/services/integrations/supabaseAccess.ts",
@@ -20278,7 +20278,7 @@
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/actions/confirm/[id]/page.tsx",
-      "sha256": "6482073070ffb51c6258a6fd7e0a3e8d5d744b34d612bc62d7f6b73e7b42a066"
+      "sha256": "dce5419ab84dd08d1ed687551bfbf00bc8e62006aaed8b35d7501c99f5c63d6f"
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/analytics/page.tsx",
@@ -23566,7 +23566,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "c258e8605447027cf9c9cb386395cdf8ffbba9cd68384f7f9029858bc3560313"
+      "sha256": "79b0840fcd922111c1fad9b216fdef661f22efcf858faf3b6244d271eb1b92eb"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -23802,7 +23802,7 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sha256": "80d7289b647a9db11e83766d5ad97fab981af52edec8982f5c5efd00ccad282a"
+      "sha256": "5f20692793f131998120fa2e6c3f247375de62768e581628a557495b7e020915"
     },
     {
       "path": "frontend/src/lib/gameBuilderContent.ts",
@@ -26681,7 +26681,7 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/phase1.ts",
-      "line": 179,
+      "line": 180,
       "credentialsInUrl": false
     },
     {
@@ -34010,7 +34010,7 @@
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "line": 37,
+      "line": 58,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37356,14 +37356,14 @@
     },
     {
       "path": "backend/src/services/integrations/researchResult.ts",
-      "line": 64,
+      "line": 91,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/researchResult.ts",
-      "line": 104,
+      "line": 131,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

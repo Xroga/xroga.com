@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
-import {researchAnswerRequestSchema,RESEARCH_ANSWER_MAXIMUM_MICRO_USD,researchCitationIssues,bindCitationLinks} from './researchAnswer.js';
+import {researchAnswerRequestSchema,RESEARCH_ANSWER_MAXIMUM_MICRO_USD,researchCitationIssues,bindCitationLinks,publicWorkspaceResearchAnswer} from './researchAnswer.js';
 import {runChatPipeline} from './pipeline.js';
 import {goalContractSchema} from './universal/goalContract.js';
 import {confirmBusinessAction,getBusinessActionConfirmation} from '../services/integrations/businessActionConfirmations.js';
@@ -12,6 +12,25 @@ import {nativeReleaseFixture} from '../services/publish/__tests__/nativeReleaseF
 import {harness} from '../storage/testing/harness.js';
 import {actionPlanDigest} from '../services/integrations/businessAction.js';
 import {workspacePublicSearchQuery} from './workspacePublicSearch.js';
+
+test('public Workspace research omits private data, provider receipts and usage from its response payload', () => {
+  const result = {
+    response: 'Public explanation [1].',
+    completion: {status:'complete'} as const,
+    intent:'research',
+    responseSource:{format:'xroga-response-json-v1' as const,text:'{}',contract:{strategyId:'PRIVATE_MARKER'} as never},
+    webSources:[{title:'Retrieved page',url:'https://example.org/docs',snippet:'Public excerpt.',
+      source:'PRIVATE_MARKER',siteName:'Publisher',storageKey:'PRIVATE_MARKER'}],
+    modelId:'PRIVATE_MARKER',usage:{totalTokensUsed:920},approval:{criticalParameters:'PRIVATE_MARKER'},
+  };
+  const body = JSON.parse(JSON.stringify(publicWorkspaceResearchAnswer(result)));
+  assert.deepEqual(body,{
+    response: result.response, completion: result.completion, intent: 'research',
+    responseSource:{format:'xroga-response-json-v1',text:'{}'},
+    webSources:[{title:'Retrieved page',url:'https://example.org/docs',snippet:'Public excerpt.',source:'web',siteName:'Publisher'}],
+    publicWebRetrieved:true, engine:'xroga',
+  });
+});
 
 test('research attribution binds canonical pages without treating code or chart arrays as citations',()=>{
  const sources=[{url:'https://example.com/docs'},{url:'https://example.com/other'}];
@@ -263,7 +282,7 @@ test('one exact research approval completes its original rich answer, saves evid
 
  const lastConfirmation=confirmation.row;
  const ranking={...automaticRequest,prompt:rankingPrompt,
-  goalContract:goalContractSchema.parse({...currentGoal,sourcePolicy:{mode:'official_only',scope:'public_web',officialDomains:['evil.example']}})};
+  goalContract:goalContractSchema.parse({...currentGoal,semanticIntent:'PROPOSE',sourcePolicy:{mode:'official_only',scope:'public_web',officialDomains:['evil.example']}})};
  mode='automatic-ranking';
  const ranked=await runChatPipeline(ranking);
  assert.equal(ranked.intent,'research');

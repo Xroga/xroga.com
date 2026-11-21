@@ -1112,9 +1112,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "7b4139a59362b8a99a699dd6800ae12ac46fa7c3c1bf3b2b380568d0138326d4",
+      "sourceSha256": "70ae7c28be531fc8ff76d13bf2818ec214bf75f6642c0bb07cf677799ca02371",
       "callIds": [
-        "9cd71e5a7fa3d7df5bee"
+        "6781907bf45fd19a626b"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2690,13 +2690,21 @@
         "previousCallIds": [
           "db8cfe93b82fb3c4b04f"
         ]
+      },
+      "workspaceResearchPrivacy": {
+        "baseline": "077ea3640075b80eaa3bfebca28a2be5e58dc9a9",
+        "previousSha256": "7b4139a59362b8a99a699dd6800ae12ac46fa7c3c1bf3b2b380568d0138326d4",
+        "scope": "Public-answer proposals with only public research capabilities may use the existing metered read. Build and tenant persistence are unchanged.",
+        "previousCallIds": [
+          "9cd71e5a7fa3d7df5bee"
+        ]
       }
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "7b4139a59362b8a99a699dd6800ae12ac46fa7c3c1bf3b2b380568d0138326d4",
+      "sourceSha256": "70ae7c28be531fc8ff76d13bf2818ec214bf75f6642c0bb07cf677799ca02371",
       "callIds": [
-        "139e888ae2690919a1ea"
+        "10dbab43eaaf4866b75f"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -4271,6 +4279,14 @@
         "scope": "Only source positions moved for the reviewed, unchanged build conversions. Automatic public Search synthesis reserves through the existing account ledger while separate private research retains its signed bound.",
         "previousCallIds": [
           "a208147f40acfa66cc51"
+        ]
+      },
+      "workspaceResearchPrivacy": {
+        "baseline": "077ea3640075b80eaa3bfebca28a2be5e58dc9a9",
+        "previousSha256": "7b4139a59362b8a99a699dd6800ae12ac46fa7c3c1bf3b2b380568d0138326d4",
+        "scope": "Public-answer proposals with only public research capabilities may use the existing metered read. Build and tenant persistence are unchanged.",
+        "previousCallIds": [
+          "139e888ae2690919a1ea"
         ]
       }
     },
@@ -15852,9 +15868,9 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sourceSha256": "8e116ae5296634e5a493aea0cee9434255186deaced4ce27754f92d05e760f43",
+      "sourceSha256": "ecaa975be6c7ae1a0251c3673410eb361256a73d4e02bbe81ff26d487c1529d1",
       "callIds": [
-        "006420f2256a9d86cc5a"
+        "dbf2b5a720f5ae54b672"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in toolUiLink. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -16007,6 +16023,14 @@
           "006420f2256a9d86cc5a"
         ],
         "scope": "Exact existing call chains and owner predicates only. The prior review grants no automatic public Search authority."
+      },
+      "workspaceResearchPrivacy": {
+        "baseline": "077ea3640075b80eaa3bfebca28a2be5e58dc9a9",
+        "previousSha256": "8e116ae5296634e5a493aea0cee9434255186deaced4ce27754f92d05e760f43",
+        "scope": "Restrict consumer research serialization to answer, source, status and explicit consent fields. Stored authority and scoped caller behaviors are unchanged.",
+        "previousCallIds": [
+          "006420f2256a9d86cc5a"
+        ]
       }
     },
     {
@@ -28622,9 +28646,9 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sourceSha256": "80d7289b647a9db11e83766d5ad97fab981af52edec8982f5c5efd00ccad282a",
+      "sourceSha256": "5f20692793f131998120fa2e6c3f247375de62768e581628a557495b7e020915",
       "callIds": [
-        "fdfcea22f1ec0d0fb1b6"
+        "5ad78803a9689423de64"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
@@ -28715,6 +28739,14 @@
           "a34869d5c2975f5bca99"
         ],
         "scope": "Two progress labels changed. The reviewed effect call and confirmation authority are byte-identical."
+      },
+      "workspaceResearchPrivacy": {
+        "baseline": "077ea3640075b80eaa3bfebca28a2be5e58dc9a9",
+        "previousSha256": "80d7289b647a9db11e83766d5ad97fab981af52edec8982f5c5efd00ccad282a",
+        "scope": "Restrict consumer research serialization to answer, source, status and explicit consent fields. Stored authority and scoped caller behaviors are unchanged.",
+        "previousCallIds": [
+          "fdfcea22f1ec0d0fb1b6"
+        ]
       }
     },
     {
