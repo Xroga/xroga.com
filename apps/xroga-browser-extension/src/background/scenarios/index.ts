@@ -30,6 +30,7 @@ import './set-s-subagents';
 import './expect-count';
 import './diagnostics';
 import './native-inputs';
+import './blob-frames';
 import './canvas-point';
 import './canvas-script-editor';
 import './variants-form';

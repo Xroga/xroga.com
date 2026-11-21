@@ -1,6 +1,6 @@
 // The controller: sessions, tabs, refs and tool dispatch. It runs in the extension's service worker;
 // its clients are in-process (the extension's agent, the test panel) and, later, an MCP bridge.
-import { installBlobHook } from './blob-capture';
+import { installBlobHook, removeBlobHook } from './blob-capture';
 import { isLayerError, LayerError } from '../protocol/errors';
 import type { ErrorCode, ProtocolError } from '../protocol/errors';
 import { isReadOnly, listTools, toolSpec } from '../protocol/catalogue';
@@ -412,7 +412,10 @@ export class Controller {
     const state = this.#tabs.get(tabId);
     // Removed first: an attach still in progress sees its state gone and closes what it attached.
     this.#tabs.delete(tabId);
-    if (state?.attachment) await state.attachment.close().catch(() => undefined);
+    if (state?.attachment) {
+      await removeBlobHook(state.attachment.cdp);
+      await state.attachment.close().catch(() => undefined);
+    }
     this.registry.tabDetached(tabId);
   }
 

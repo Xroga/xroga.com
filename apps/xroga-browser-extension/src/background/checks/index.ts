@@ -30,6 +30,7 @@ import './confirm-download';
 import './parallel-bench';
 import './parallel-real';
 import './panel-real';
+import './chaos-restore';
 import './focus-competing';
 import './direct-read';
 import './click-bench';

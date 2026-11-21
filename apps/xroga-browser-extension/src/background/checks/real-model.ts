@@ -2,7 +2,7 @@
 // The check enrolls this Chrome as a device for that account (the same authorize and exchange steps as pairing), then sends real tasks from the
 // side panel and measures each: wall time, model turns and the final answer. It needs args { jwt, account }; nothing here runs in a normal build.
 import { BROWSER_API_ORIGIN } from '@src/xroga/workspace';
-import { workspacePaired } from '@src/xroga/bridge';
+import { workspacePaired, workspaceRequest } from '@src/xroga/bridge';
 import { deviceProof, directConfigured, directReady, enrollDevice, savedDevice, verifyDevice } from '@src/xroga/device';
 import { activeBranch, getRun, listConversations } from '@src/store/conversations';
 import { defineCheck } from './registry';
@@ -47,6 +47,23 @@ defineCheck({
 
     const window = (await chrome.windows.getCurrent()).id!;
     const report: Record<string, unknown> = { extensionId: chrome.runtime.id, device: report0.device, tasks: [], polls: [] };
+    // args.maxProbe: what the staging backend does with each effort a device asks for, through the real route (device auth, run ownership, ledger): the effort it used and the
+    // reasoning tokens the provider reported. The run is cancelled at the end.
+    if (args.maxProbe) {
+      const probes: Array<Record<string, unknown>> = [];
+      try {
+        const started = (await workspaceRequest('start', { goal: 'Reasoning effort probe: answer with one number.', startUrl: 'https://example.com', attachmentCount: 0 })) as { runId: string };
+        for (const [i, asked] of (['max', 'high', 'none'] as const).entries()) {
+          const t0 = Date.now();
+          const r = (await workspaceRequest('turn', { runId: started.runId, body: { turn: i + 1, messages: [{ role: 'user', content: 'What is 17 times 23? Reply with the number only.' }], max_tokens: 512, reasoning_effort: asked } })) as { effort?: string; usage?: { completion_tokens?: number; completion_tokens_details?: { reasoning_tokens?: number } }; choice?: { message?: { content?: string } } };
+          probes.push({ asked, used: r.effort, reasoningTokens: r.usage?.completion_tokens_details?.reasoning_tokens, outputTokens: r.usage?.completion_tokens, ms: Date.now() - t0, answer: r.choice?.message?.content?.slice(0, 40) });
+        }
+        await workspaceRequest('finish', { runId: started.runId, body: { status: 'cancelled', actions: [] } }).catch(() => undefined);
+      } catch (error) {
+        probes.push({ error: String((error as Error)?.message ?? error).slice(0, 200) });
+      }
+      report.maxProbe = probes;
+    }
     for (const task of tasks) {
       // The page tab is the one in front, as a person's tab is while the agent works on it (a hidden tab makes every screenshot several seconds slower); the panel runs in a second tab.
       const page = await chrome.tabs.create({ windowId: window, url: task.url, active: true });

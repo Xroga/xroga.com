@@ -20,6 +20,11 @@ mount(async app => {
         const r = await API('merge', { keepId: ticked[0], dropId: ticked[1] }); ticked = []; msg.className = r.status === 200 ? 'ok' : ''; msg.textContent = r.status === 200 ? 'Merged' : 'Merge failed'; render();
       } }, 'Merge selected')));
   };
-  app.append(view, msg); await render();
+  // Rename one contact: its own small form (the write the chaos checks interrupt).
+  const who = h('select', { 'aria-label': 'Contact to rename' }), nn = h('input', { 'aria-label': 'New name' });
+  const fill = async () => { const { body } = await API('list'); who.innerHTML = ''; body.forEach(c => who.append(h('option', { value: c.id }, c.name + ' (' + c.org + ')'))); };
+  const rename = h('form', { onsubmit: async e => { e.preventDefault(); const r = await API('update', { id: who.value, name: nn.value }); msg.textContent = r.status === 200 ? 'Contact saved' : 'Not saved (' + r.status + ')'; render(); fill(); } },
+    h('h2', {}, 'Rename a contact'), h('label', {}, 'Contact to rename ', who), ' ', h('label', {}, 'New name ', nn), ' ', h('button', { type: 'submit' }, 'Save contact'));
+  app.append(view, msg, rename); await render(); await fill();
 });
 </script></body></html>

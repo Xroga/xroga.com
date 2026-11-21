@@ -1,0 +1,57 @@
+{
+ "names": [
+  "real-model"
+ ],
+ "args": {
+  "account": "e538035a-01d0-4a46-ab4c-ff99c7b42d82",
+  "maxProbe": true,
+  "maxPolls": 10,
+  "tasks": []
+ },
+ "timedOut": false,
+ "reports": [
+  {
+   "name": "real-model",
+   "ok": true,
+   "startedAt": "2026-11-21T23:18:01.940Z",
+   "durationMs": 7971,
+   "result": {
+    "extensionId": "ogebkgkppocnjeojdbkiokcpeaenonop",
+    "device": {
+     "configured": true,
+     "saved": true,
+     "verified": true,
+     "ready": true
+    },
+    "tasks": [],
+    "polls": [],
+    "maxProbe": [
+     {
+      "asked": "max",
+      "used": "max",
+      "reasoningTokens": 8,
+      "outputTokens": 11,
+      "ms": 1673,
+      "answer": "391"
+     },
+     {
+      "asked": "high",
+      "used": "high",
+      "reasoningTokens": 17,
+      "outputTokens": 20,
+      "ms": 2011,
+      "answer": "391"
+     },
+     {
+      "asked": "none",
+      "used": "none",
+      "outputTokens": 2,
+      "ms": 1442,
+      "answer": "391"
+     }
+    ]
+   }
+  }
+ ],
+ "console": []
+}

@@ -45,29 +45,52 @@ export function clearCapturedBlobs(): void {
  * one non-enumerable property. Nothing leaves the page: the extension reads a Blob from this table only for a download the agent's own action started.
  */
 export const BLOB_HOOK_SOURCE = `(() => {
-  try {
-    if (window.__xrogaBlobs) return;
-    const held = new Map();
-    Object.defineProperty(window, '__xrogaBlobs', { value: held, enumerable: false });
-    const original = URL.createObjectURL;
-    URL.createObjectURL = function (obj) {
-      const url = original.apply(this, arguments);
-      try {
-        if (typeof Blob !== 'undefined' && obj instanceof Blob && obj.size <= ${MAX_BYTES}) {
-          held.set(url, obj);
-          while (held.size > ${MAX_HELD}) held.delete(held.keys().next().value);
-        }
-      } catch (e) { /* the page's call already succeeded */ }
-      return url;
-    };
-  } catch (e) { /* a page that forbids this keeps working untouched */ }
+  // Installed in this window and, when it runs on a page that is already loaded, in the frames below it that share its origin (a cross-origin frame cannot be reached and is not touched).
+  // Frames that load later get the same script from the new-document registration.
+  const install = w => {
+    try {
+      if (w.__xrogaBlobs) return;
+      const held = new Map();
+      Object.defineProperty(w, '__xrogaBlobs', { value: held, enumerable: false, configurable: true });
+      const original = w.URL.createObjectURL;
+      Object.defineProperty(w, '__xrogaCreate', { value: original, enumerable: false, configurable: true });
+      w.URL.createObjectURL = function (obj) {
+        const url = original.apply(this, arguments);
+        try {
+          if (typeof w.Blob !== 'undefined' && obj instanceof w.Blob && obj.size <= ${MAX_BYTES}) {
+            held.set(url, obj);
+            while (held.size > ${MAX_HELD}) held.delete(held.keys().next().value);
+          }
+        } catch (e) { /* the page's call already succeeded */ }
+        return url;
+      };
+    } catch (e) { /* a page that forbids this keeps working untouched */ }
+    try { for (let i = 0; i < w.frames.length; i++) install(w.frames[i]); } catch (e) { /* cross-origin frames throw: skipped */ }
+  };
+  install(window);
+})();`;
+
+/** Puts the page's own createObjectURL back and drops the table, in this frame and in its same-origin frames. */
+export const BLOB_UNHOOK_SOURCE = `(() => {
+  const undo = w => {
+    try {
+      if (w.__xrogaCreate) { w.URL.createObjectURL = w.__xrogaCreate; delete w.__xrogaCreate; }
+      if (w.__xrogaBlobs) { w.__xrogaBlobs.clear(); delete w.__xrogaBlobs; }
+      for (let i = 0; i < w.frames.length; i++) undo(w.frames[i]);
+    } catch (e) { /* a cross-origin frame cannot be reached, and is not touched */ }
+  };
+  undo(window);
 })();`;
 
 /** The expression the page runs: reads the Blob it remembered (or fetches its blob address) and answers base64 and type, or why not. */
 export function blobReadExpression(url: string): string {
   return `(async () => {
     try {
-      const kept = window.__xrogaBlobs && window.__xrogaBlobs.get(${JSON.stringify(url)});
+      // Only a file made in this page's own origin (its frames included): a blob address of another origin, such as a cross-origin frame's, is not read, so frame isolation holds the same way whether or not the page already revoked it.
+      if (!${JSON.stringify(url)}.startsWith('blob:' + location.origin + '/')) return { error: 'the file belongs to another origin' };
+      // The Blob table of this frame, then of the frames below it that share its origin (reading a cross-origin frame throws and is skipped: the browser's frame isolation stands).
+      const find = w => { try { const k = w.__xrogaBlobs && w.__xrogaBlobs.get(${JSON.stringify(url)}); if (k) return k; for (let i = 0; i < w.frames.length; i++) { const r = find(w.frames[i]); if (r) return r; } } catch (e) { /* cross-origin */ } return undefined; };
+      const kept = find(window);
       const b = kept || await (await fetch(${JSON.stringify(url)})).blob();
       if (b.size > ${MAX_BYTES}) return { error: 'too large' };
       const buf = new Uint8Array(await b.arrayBuffer());
@@ -90,13 +113,33 @@ interface CdpLike {
 }
 
 /** Puts the hook into the page now and into every document it loads next (top frame). Never throws. */
+const hookIds = new WeakMap<object, string>();
 export async function installBlobHook(cdp: CdpLike): Promise<void> {
   try {
-    await cdp.send(undefined, 'Page.addScriptToEvaluateOnNewDocument', { source: BLOB_HOOK_SOURCE });
+    const added = await cdp.send<{ identifier?: string }>(undefined, 'Page.addScriptToEvaluateOnNewDocument', { source: BLOB_HOOK_SOURCE });
+    if (added?.identifier) hookIds.set(cdp, added.identifier);
     await cdp.send(undefined, 'Runtime.evaluate', { expression: BLOB_HOOK_SOURCE, returnByValue: true });
   } catch {
     /* the page keeps working; blobs are then read by address only */
   }
+}
+
+/** Takes the hook out again when the extension lets go of the tab: the page's own function is restored and nothing stays behind. Never throws. */
+export async function removeBlobHook(cdp: CdpLike): Promise<void> {
+  try {
+    const id = hookIds.get(cdp);
+    if (id) await cdp.send(undefined, 'Page.removeScriptToEvaluateOnNewDocument', { identifier: id }, 2_000);
+    hookIds.delete(cdp);
+    await cdp.send(undefined, 'Runtime.evaluate', { expression: BLOB_UNHOOK_SOURCE, returnByValue: true }, 2_000);
+  } catch {
+    /* the tab is gone or detached: the page's table goes with it */
+  }
+}
+
+/** The addresses of the files held now (for checks). */
+export function listCapturedBlobs(now = Date.now()): string[] {
+  prune(now);
+  return [...held.keys()];
 }
 
 /** Reads a blob address from the page that owns it and holds the bytes. Never throws: a page that revoked it first simply leaves nothing held. */
