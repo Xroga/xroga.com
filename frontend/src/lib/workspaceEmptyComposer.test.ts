@@ -338,9 +338,16 @@ test('workspace navigation uses independent arrows and hides both at the bottom'
   assert.match(NAV, /new ResizeObserver\(schedule\)/);
   assert.match(NAV, /prefers-reduced-motion: reduce/);
   assert.match(NAV, /M440-160v-487L216-423/);
-  assert.match(POLISH, /\.headerShadow\[data-scrolled='true'\]::after/);
   assert.match(POLISH, /\.navigation\[data-visible='true'\]/);
-  assert.match(DASHBOARD, /data-scrolled=\{headerScrolled/);
+});
+
+test('the top scroll fade stays inside the conversation pane, never on the toolbar', () => {
+  const POLISH = read('../components/dashboard/WorkspaceScrollPolish.module.css');
+  assert.doesNotMatch(POLISH, /\.header(?:Shadow|Chrome)::(?:before|after)/);
+  assert.doesNotMatch(DASHBOARD, /<header[^>]*data-scrolled/);
+  assert.match(DASHBOARD, /className="xv-terminal-panel"[^>]*>\s*\{terminalPane\}\s*\{hasConversation && \([\s\S]*?data-scrolled=\{transcriptScrolled/);
+  assert.match(POLISH, /\.transcriptFade\s*\{[^}]*inset-inline: max\(9%,[^}]*block-size: 10px;[^}]*pointer-events: none;[^}]*opacity: 0;/);
+  assert.match(POLISH, /\.transcriptFade\[data-scrolled='true'\]\s*\{ opacity: 1; \}/);
 });
 
 test('Chrome extension control overlays only its own corner and does not add a transcript row', () => {

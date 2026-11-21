@@ -55,7 +55,7 @@ export function DashboardView({ browserOperator }: { browserOperator?: ReactNode
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
   const incognito = hydrated && incognitoRaw;
   const paneRef = useRef<HTMLDivElement>(null);
-  const [headerScrolled, setHeaderScrolled] = useState(false);
+  const [transcriptScrolled, setTranscriptScrolled] = useState(false);
   const shellRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const workspaceWidth = useThemeStore((s) => s.workspaceWidth);
@@ -148,7 +148,7 @@ export function DashboardView({ browserOperator }: { browserOperator?: ReactNode
     if (!scroller) return;
     const sync = () => {
       const scrolled = scroller.scrollTop > 2;
-      setHeaderScrolled(current => current === scrolled ? current : scrolled);
+      setTranscriptScrolled(current => current === scrolled ? current : scrolled);
     };
     sync();
     scroller.addEventListener('scroll', sync, { passive: true });
@@ -249,7 +249,7 @@ export function DashboardView({ browserOperator }: { browserOperator?: ReactNode
         {/* One continuous application toolbar. It sits outside the terminal's scroll
             container on purpose: a title bar that scrolls away with the history is a
             document header, not a window chrome. */}
-        <header className={cn("xv-workspace-header", scrollPolish.headerShadow)} data-scrolled={headerScrolled ? "true" : "false"} data-testid="terminal-identity-header">
+        <header className={cn("xv-workspace-header", scrollPolish.headerChrome)} data-testid="terminal-identity-header">
           <div className="xv-workspace-identity-cluster" style={{ minWidth: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
             {incognito ? (
               <WorkspaceIdentityMenu incognito />
@@ -298,6 +298,14 @@ export function DashboardView({ browserOperator }: { browserOperator?: ReactNode
         >
           <div className="xv-terminal-panel" ref={paneRef}>
             {terminalPane}
+            {hasConversation && (
+              <div
+                aria-hidden="true"
+                className={scrollPolish.transcriptFade}
+                data-testid="workspace-transcript-fade"
+                data-scrolled={transcriptScrolled ? 'true' : 'false'}
+              />
+            )}
           </div>
           {/* The split is draggable. Rendered only while the workspace is open, so a
               closed workspace has no invisible grab strip down the middle of the

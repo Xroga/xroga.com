@@ -1,0 +1,39 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-TRANSCRIPT-FADE-20261122",
+  "baseSha": "010695c845d093e3df6b74670d083cd39a14ce7b",
+  "requirementIds": ["XR-MISSION-055", "XR-MISSION-056"],
+  "state": "CODE_COMPLETE",
+  "risk": "low",
+  "scope": "Replace the full-width toolbar shadow with a short, soft scroll fade bounded by the conversation pane and centered on its content.",
+  "changedFiles": [
+    "frontend/e2e/command3-auth.spec.ts",
+    "frontend/src/components/dashboard/DashboardView.tsx",
+    "frontend/src/components/dashboard/WorkspaceScrollPolish.module.css",
+    "frontend/src/lib/workspaceEmptyComposer.test.ts"
+  ],
+  "decisions": {"keep": ["Toolbar layout, extension control, conversation scrolling, and composer treatment"], "extend": ["Show the content-only fade after scrolling"], "replace": [], "deprecate": ["Full-width toolbar shadow"]},
+  "architecture": {"change": "extends_canonical", "reason": "Reuses the current transcript scroll listener and theme surface; no new service.", "rfc": null},
+  "schemaImpact": {"changed": false, "migrations": [], "rollout": "No data changes.", "rollback": "No schema rollback."},
+  "securityImpact": {
+    "auth": {"changed": false, "description": "No auth flow changes."},
+    "tenant": {"changed": false, "description": "No resource access changes."},
+    "approval": {"changed": false, "description": "No approval changes."},
+    "credentials": {"changed": false, "description": "No credentials."},
+    "egress": {"changed": false, "description": "No network or external action changes."},
+    "cost": {"changed": false, "description": "No inference or provider usage."},
+    "billing": {"changed": false, "description": "No billing changes."}
+  },
+  "tests": [
+    {"command": "node --test frontend/src/lib/workspaceEmptyComposer.test.ts", "scope": "Assert the new fade is conversation-owned, non-interactive, and hidden before scrolling; assert the toolbar has no pseudo-element shadow.", "negative": true, "reference": "frontend/src/lib/workspaceEmptyComposer.test.ts"},
+    {"command": "GitHub Actions: Isolated Supabase authenticated browser verification", "scope": "Check fade visibility and transcript-only bounds at desktop and mobile widths.", "negative": true, "reference": "frontend/e2e/command3-auth.spec.ts"}
+  ],
+  "rollout": "Verify the scoped preview, run the release gates, and stage the same source before promotion.",
+  "rollback": "Re-promote the previous verified frontend build; no database changes.",
+  "knownGaps": [],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": ["frontend/src/lib/workspaceEmptyComposer.test.ts", "frontend/e2e/command3-auth.spec.ts"],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {"state": "BLOCKED", "blockers": ["Run the signed-in browser and release checks on the candidate."], "authenticatedE2e": "BLOCKED", "stagedSecurity": "NOT_APPLICABLE", "liveUrl": null, "deployedSha": null}
+}

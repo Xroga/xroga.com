@@ -792,6 +792,18 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     const transcriptTop = (await transcript.boundingBox())!.y;
     const header = browserOperator.locator('xpath=ancestor::header[1]');
     const headerBounds = (await header.boundingBox())!;
+    await expect(header).not.toHaveAttribute('data-scrolled');
+    const fade = transcript.locator('..').getByTestId('workspace-transcript-fade');
+    const fadeBounds = (await fade.boundingBox())!;
+    const transcriptBounds = (await transcript.boundingBox())!;
+    expect(fadeBounds.y).toBeGreaterThanOrEqual(headerBounds.y + headerBounds.height - 1);
+    expect(fadeBounds.x).toBeGreaterThan(transcriptBounds.x);
+    expect(fadeBounds.x + fadeBounds.width).toBeLessThan(transcriptBounds.x + transcriptBounds.width);
+    expect(fadeBounds.height).toBeLessThanOrEqual(10);
+    await transcript.evaluate(element => { element.scrollTop = 0; });
+    await expect(fade).toHaveCSS('opacity', '0');
+    await transcript.evaluate(element => { element.scrollTop = element.scrollHeight; });
+    await expect(fade).toHaveCSS('opacity', '1');
     expect(expanded.y).toBeGreaterThanOrEqual(headerBounds.y + headerBounds.height);
     expect(expanded.x).toBeGreaterThanOrEqual(headerBounds.x - 1);
     expect(expanded.x + expanded.width).toBeLessThanOrEqual(width + 1);

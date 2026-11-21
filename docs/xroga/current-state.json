@@ -69484,7 +69484,7 @@
       "id": "surface:793b89822aa62ee49888",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/dashboard/DashboardView.tsx",
-      "sha256": "a1727715de3646c7845925ff83dd0b2432383367e379d8633569d0d37139f825",
+      "sha256": "baf1aa535fb62de0054efa31467f48a6e9a07f260f793f21656a80c26d2dc907",
       "symbols": [
         "DashboardView",
         "activeProject",
@@ -148602,86 +148602,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:d9bf7b5e1b5d7a77b3a3",
+      "id": "frontend-call:6733c96805dad8962ffc",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 884,
+      "line": 896,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:f4d32a1db5c437a37bf1",
+      "id": "frontend-call:36b7080e95df8020d38a",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 887,
+      "line": 899,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:6a1d1c7e25f8849d38ca",
+      "id": "frontend-call:2fcc9c2c631f53e0b43a",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1658,
+      "line": 1670,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:96d236266243af901d41",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1659,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:dc9ae38283cdccf18bc2",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1664,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:6ec0cbefc57286e6e9b9",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1665,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:676e364653af1dbfc194",
+      "id": "frontend-call:c48a3b091b1b096a4d9e",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1671,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:7a25530323d35eafce9b",
+      "id": "frontend-call:bcf34b72370caabf348a",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1676,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:5421f1471b54c856f063",
+      "id": "frontend-call:635ede4cd260f3bbe0d3",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1733,
+      "line": 1677,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:98abc13f45ec0244234e",
+      "id": "frontend-call:78ecda9b9556d4ee5bb2",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1734,
+      "line": 1683,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:6587b3c1c8644925ae66",
+      "id": "frontend-call:d91c7037edcc258823a5",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1741,
+      "line": 1688,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:157ad8ef3b35a7ed1766",
+      "id": "frontend-call:34a7b5e7ffb23bdc980a",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1755,
+      "line": 1745,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:a467ba046b5ea3b0172b",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1746,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:ad113d008ff86d03e915",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1753,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:7c6ef94d6ce9f43386c7",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1767,
       "callee": "fetch",
       "reachable": false
     },
@@ -159190,7 +159190,7 @@
     {
       "id": "test-suite:9bbc27bda2a16a87c8f8",
       "sourcePath": "frontend/src/lib/workspaceEmptyComposer.test.ts",
-      "declaredTests": 27,
+      "declaredTests": 28,
       "skipLocations": [],
       "focusLocations": []
     },
