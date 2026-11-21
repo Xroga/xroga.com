@@ -4,6 +4,7 @@ import { test } from 'node:test';
 
 const read = (p: string) => readFileSync(new URL(p, import.meta.url), 'utf8');
 const dock = read('../components/terminal/TerminalDock.tsx');
+const navigation = read('../components/terminal/WorkspaceScrollNavigation.tsx');
 const starter = read('../components/dashboard/WorkspaceNewTerminal.tsx');
 const voice = read('../components/terminal/XrogaVoiceControl.tsx');
 const audio = read('../components/icons/animated/AudioLinesIcon.tsx');
@@ -18,7 +19,8 @@ test('an actionable model selector and live voice remain after removing decorati
   assert.match(voice, /from '\.\.\/icons\/animated\/AudioLinesIcon'/);
   assert.match(audio, /scaleY: \[1, 1\.4, 0\.6, 1\]/);
   assert.match(voice, /<AudioLinesIcon\b[^>]*size=\{22\}/);
-  assert.match(dock, /aria-label=\{showJumpToLatest/);
+  assert.match(dock, /<WorkspaceScrollNavigation/);
+  assert.match(navigation, /aria-label="Scroll to last response"/);
   assert.doesNotMatch(dock, /data-short-tip|data-tooltip/);
 });
 
