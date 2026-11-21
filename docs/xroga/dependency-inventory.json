@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "897d8de9b11278e1901469f52059420c642d15b8",
+  "source_sha": "bed9db187474d1a7a365d214d77086b5f88c6fe3",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -21194,7 +21194,7 @@
     },
     {
       "path": "frontend/src/components/dashboard/DashboardView.tsx",
-      "sha256": "37209a2a7bf5de2ceddd1f1d19bba1e8b04992b7b90e53568c6386c6777cbdb7"
+      "sha256": "81667fb8c6778334158ea39636369fd08366746cb2d8aca5d52a0d07cf34e7e9"
     },
     {
       "path": "frontend/src/components/dashboard/DashboardWelcome.tsx",
