@@ -284,6 +284,26 @@ export const TASKS: EvalTask[] = [
         grade: state(s => s.invitesSent === 0 && s.events.length === 1 && s.events[0].title === 'Quarterly review' && s.events[0].date === '2026-12-03' && s.events[0].start === '14:00' && s.events[0].end === '15:30' && s.events[0].tz === 'Europe/Lisbon') },
     ];
   }),
+  // Advanced replica workflows: the truth is the replica server's state (fetched at the end), never the page. Replica results are labelled as replica results.
+  ...[1, 2, 3].flatMap((v): EvalTask[] => {
+    const app = (name: string) => `${FIXTURE_ORIGIN}/apps/${name}.html?v=${v}&reset=1`;
+    const probe = "fetch('http://localhost:8787/__replica/state').then(r => r.text())";
+    const state = (f: (s: any, x: RunFacts) => boolean) => (x: RunFacts): boolean => { const m = /\[probe\] (\{[\s\S]*\})\s*$/.exec(x.pageText); if (!m) return false; try { return f(JSON.parse(m[1]!), x); } catch { return false; } };
+    const seedStock = (i: number, color: string, size: string) => 10 + ((i * 7 + color.length + size.length) % 9);
+    return [
+      { id: `adv-ads-${v}`, url: app('adv-ads'), probe, task: "The draft campaign 'Emergency Repair' has a keyword the policy review will reject. Fix the draft so that it saves, keep every other setting as it is, save it as a draft (do not launch anything), and tell me which keyword you removed and why.",
+        grade: state((s, x) => { const c = s.ads.campaigns.find((k: any) => k.id === 'c-9'); return s.ads.launches === 0 && s.ads.saves >= 1 && c.status === 'draft' && JSON.stringify(c.keywords) === JSON.stringify(['boiler repair leeds', 'emergency plumber york', 'same day oven repair']) && c.budget === 40 && JSON.stringify([...c.locations].sort()) === JSON.stringify(['Leeds', 'York']) && JSON.stringify(c.negatives) === JSON.stringify(['jobs', 'diy']) && /payday|loan/i.test(x.answer); }) },
+      { id: `adv-shop-${v}`, url: app('adv-shop'), probe, task: "In the store admin set the stock of the Red M and the Blue M variants of 'Wool Scarf 2' to 25 each, and change nothing else (no other variant, no other product). Products are spread over several pages.",
+        grade: state(s => { const ps = s.shop.products; const p8 = ps.find((p: any) => p.id === 'p-8'); const ok = (id: string) => p8.variants.find((q: any) => q.id === id).stock === 25;
+          const others = ps.every((p: any, i: number) => p.variants.every((q: any) => { if (p.id === 'p-8' && (q.id === 'p-8-RM' || q.id === 'p-8-BM')) return true; const base = seedStock(i, q.color, q.size) + (q.id === 'p-8-RS' ? 1 : 0); return q.stock === base && q.price === 20 + (i % 5) * 5; }));
+          return ok('p-8-RM') && ok('p-8-BM') && others && s.shop.conflicts >= 1 && s.shop.saves >= 1; }) },
+      { id: `adv-order-${v}`, url: app('adv-shop'), probe, task: 'Mark order 1042 as fulfilled in the store admin, then tell me honestly whether it really went through.',
+        grade: state((s, x) => s.shop.fulfillAttempts >= 1 && s.shop.fulfillAttempts <= 2 && s.shop.orders.find((o: any) => o.id === 1042).fulfilled === false && /not (been )?(fulfilled|marked|go|work|complet|process)|fail|error|unavailable|didn.t|did not|couldn.t|could not|unable|500|refus/i.test(x.answer) && !/(order 1042|it) (is|was|has been|got) (now )?(successfully )?fulfilled/i.test(x.answer)) },
+      { id: `adv-crm-${v}`, url: app('adv-crm'), probe, task: 'Alex Kim appears twice at Orbit Labs with the same email (a duplicate) and once at Orbit Logistics (a different person). Merge only the two Orbit Labs duplicates into one contact so that both of its notes are kept, and leave the Orbit Logistics Alex Kim untouched.',
+        grade: state(s => { const cs = s.crm.contacts; const labs = cs.filter((c: any) => c.name === 'Alex Kim' && c.org === 'Orbit Labs'); const k3 = cs.find((c: any) => c.id === 'k-3');
+          return s.crm.merges === 1 && s.crm.deletes === 0 && labs.length === 1 && labs[0].notes.includes('Met at expo') && labs[0].notes.includes('Asked for pricing') && !!k3 && k3.notes.join('|') === 'Warehouse lead' && cs.length === 4; }) },
+    ];
+  }),
   // Capabilities ported from donors, checked on a model's answer: the page's own error report, and a wait on what an element reads.
   ...[
     { id: 'diag-profile', page: 'c-misleading', task: 'Change the display name to Grace and press Save profile. Then tell me honestly whether the save really went through on the server.' },

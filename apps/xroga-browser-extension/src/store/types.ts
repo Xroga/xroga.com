@@ -189,6 +189,8 @@ export interface GuardState {
   errorsInRow: number;
   /** Consecutive calls in which the last window held at most two distinct calls and none changed the page (see agent/guards.ts). Absent in older records. */
   cycle?: number;
+  /** How many times each write (method and path) was refused by the server, 4xx/5xx or a network failure (see agent/guards.ts). Absent in older records. */
+  writeFails?: Record<string, number>;
   /** Plain-text endings after a mutation, and refusals of done(success) in a row. */
   plainEndings: number;
   doneRefusals: number;

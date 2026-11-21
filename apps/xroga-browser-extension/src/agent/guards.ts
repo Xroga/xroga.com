@@ -32,6 +32,23 @@ export interface GuardVerdict {
 }
 
 const NO_EFFECT_TOOLS = new Set(['click', 'set', 'type', 'press', 'fill_form']);
+
+/**
+ * Writes the server refused. An action's receipt lists the requests it started with their status (`request: POST «/api/orders/fulfill» → 500 (...)`). A write
+ * (POST, PUT, PATCH, DELETE) answered 4xx or 5xx, or one that failed on the network, did not happen, whatever the page prints next to it. The first such answer
+ * is a nudge to check the saved state and not to press the control again to see what happens; the same write refused a second time stops the retrying: the
+ * blocker is reported with what was verified, not tried a third time.
+ */
+export function refusedWrites(text: string | undefined): Array<{ write: string; why: string }> {
+  if (!text) return [];
+  const out: Array<{ write: string; why: string }> = [];
+  for (const m of text.matchAll(/request: (POST|PUT|PATCH|DELETE) «([^»]+)»(?: → (\d{3})| FAILED (\S+))/g)) {
+    const status = m[3] ? Number(m[3]) : undefined;
+    if (status !== undefined && status < 400) continue;
+    out.push({ write: `${m[1]} ${m[2]}`, why: status !== undefined ? `HTTP ${status}` : `network failure ${m[4]}` });
+  }
+  return out;
+}
 const LOOKING_TOOLS = new Set(['snapshot', 'read', 'find', 'screenshot']);
 
 /** The tab a recorded look was at: its tabId, or the active tab when it named none. */
@@ -115,7 +132,24 @@ export class Guards {
       if (count >= rule.limit) waste = rule.note;
     }
     const verdict = this.#check(tool, args, result, isError);
+    const refused = this.#refusedWrite(result);
+    if (refused && !verdict.stop) return refused;
     return waste && !verdict.stop && !verdict.nudge ? { ...verdict, nudge: waste } : verdict;
+  }
+
+  /** A write the server refused: a nudge the first time, a stop the second time for the same write. */
+  #refusedWrite(result: Result | undefined): GuardVerdict | undefined {
+    const refused = refusedWrites(result?.text);
+    if (!refused.length) return undefined;
+    const counts = (this.state.writeFails ??= {});
+    let worst: { write: string; why: string; n: number } | undefined;
+    for (const r of refused) {
+      counts[r.write] = (counts[r.write] ?? 0) + 1;
+      if (!worst || counts[r.write]! > worst.n) worst = { ...r, n: counts[r.write]! };
+    }
+    if (!worst) return undefined;
+    if (worst.n >= 2) return { stop: `the server refused the same write twice (${worst.write}: ${worst.why}); it did not happen, whatever the page shows.`, guard: 'errors' };
+    return { nudge: `The server refused this write (${worst.write}: ${worst.why}): it did NOT happen, whatever the page now shows. Do not press the control again to see what happens. Check the saved state, then fix the cause (a required field, the account, a stale page) or report the failure with what you verified.` };
   }
 
   #check(tool: string, args: Record<string, unknown>, result: Result | undefined, isError: boolean): GuardVerdict {

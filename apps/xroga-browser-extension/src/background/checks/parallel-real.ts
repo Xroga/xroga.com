@@ -53,10 +53,14 @@ defineCheck({
           const n = Math.min(20, args.pages ?? 4);
           await panel(page.id!, 'type-send', { text: TASKS[arm]!(n) });
           let maxActive = 0;
+          let maxWindows = 0;
+          const everJobs = new Map<string, { label: string; state: string; windowId?: number; result?: string }>();
           const sampler = setInterval(async () => {
             const jobs = Object.values(((await chrome.storage.local.get('xroga_parallel_jobs_v1')).xroga_parallel_jobs_v1 ?? {}) as Record<string, { state: string; conversationId?: string }>);
             const active = jobs.filter(j => (j.state === 'starting' || j.state === 'running') && j.conversationId && !known.has(j.conversationId)).length;
             if (active > maxActive) maxActive = active;
+            maxWindows = Math.max(maxWindows, (await chrome.windows.getAll()).length);
+            for (const [id, j] of Object.entries(((await chrome.storage.local.get('xroga_parallel_jobs_v1')).xroga_parallel_jobs_v1 ?? {}) as Record<string, { label: string; state: string; windowId?: number; result?: string; conversationId?: string }>)) if (j.conversationId && !known.has(j.conversationId)) everJobs.set(id, { label: j.label, state: j.state, windowId: j.windowId, result: j.result?.slice(0, 120) });
           }, 150);
           for (let i = 0; i < 40 && (await panel(page.id!, 'read')).status === 'Done'; i++) await sleep(50);
           let last = await panel(page.id!, 'read');
@@ -71,7 +75,7 @@ defineCheck({
           const codes = ALL_CODES.slice(0, Math.min(20, args.pages ?? 4));
           const found = codes.filter(c => text.includes(c));
           const workers = (await listConversations()).filter(c => !known.has(c.id) && c.title.startsWith('Worker: '));
-          out.push({ arm, rep, ms, status: last.status, found: found.length, ok: found.length === codes.length, pages: codes.length, workers: workers.length, maxActive });
+          out.push({ arm, rep, ms, status: last.status, found: found.length, ok: found.length === codes.length, pages: codes.length, maxWindows, jobs: everJobs.size, byState: [...everJobs.values()].reduce((m: Record<string, number>, j) => ((m[j.state] = (m[j.state] ?? 0) + 1), m), {}), failedJobs: [...everJobs.values()].filter(j => j.state !== 'completed').map(j => `${j.label}:${j.state}:${j.result ?? ''}`).slice(0, 8), workers: workers.length, maxActive });
         }
       }
       return { model: args.model, runs: out };

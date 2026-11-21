@@ -15,7 +15,7 @@ rows = []
 if d.get('reports'):
     for r in d['reports'][0]['result']['runs']:
         rows.append({'task': r['task'], 'success': r['success'], 'turns': r['turns'], 'ms': r['ms'], 'tokens': r['tokens'], 'timing': r.get('timing'),
-                     'calls': [c.split(' ')[0] for c in r['calls']], 'regionCalls': sum('"region"' in c for c in r['calls'])})
+                     'calls': [c.split(' ')[0] for c in r['calls']], 'probe': (r.get('probe') or '')[:2500], 'answerTail': (r.get('answer') or '')[:400], 'regionCalls': sum('"region"' in c for c in r['calls'])})
 else:
     rows.append({'task': task, 'success': False, 'timeout': True})
 with open(out, 'a', encoding='utf8') as fh:

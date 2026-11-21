@@ -33,6 +33,7 @@
 //   POST /__posthog/reset         clears them; { fail: n } makes the next n events fail
 //   GET  /__live/keys             provider keys from this process's environment, only when NB_LIVE=1 (for the
 //                                 live provider check; keys are never written to a file)
+import { handleReplica } from './replica.mjs';
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { extname, join, normalize, resolve } from 'node:path';
@@ -108,6 +109,7 @@ async function handle(req, res) {
 
   if (req.method === 'OPTIONS') return send(res, 204, '');
 
+  if (path.startsWith('/__replica/')) return handleReplica(req, res, path, readBody);
   if (path.startsWith('/__')) {
     if (path === '/__requests') {
       const requests = [...counters].map(([key, n]) => {
