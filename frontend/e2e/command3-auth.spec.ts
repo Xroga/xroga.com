@@ -804,6 +804,18 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     await expect(fade).toHaveCSS('opacity', '0');
     await transcript.evaluate(element => { element.scrollTop = element.scrollHeight; });
     await expect(fade).toHaveCSS('opacity', '1');
+    await expect(transcript).toHaveCSS('clip-path', 'none');
+    const dockFrame = page.locator('[data-composer-frame="single"]');
+    const composerBottom = (await dockFrame.boundingBox())!;
+    expect(transcriptBounds.y + transcriptBounds.height).toBeLessThanOrEqual(composerBottom.y + composerBottom.height + 1);
+    const end = await transcript.evaluate(element => element.scrollTop);
+    const railX = transcriptBounds.x + transcriptBounds.width - 6;
+    const railY = transcriptBounds.y + transcriptBounds.height - 12;
+    await page.mouse.move(railX, railY);
+    await page.mouse.wheel(0, -260);
+    await expect.poll(() => transcript.evaluate(element => element.scrollTop)).toBeLessThan(end);
+    await page.mouse.wheel(0, 1000);
+    await expect.poll(() => transcript.evaluate(element => Math.ceil(element.scrollTop))).toBeGreaterThanOrEqual(Math.floor(end));
     expect(expanded.y).toBeGreaterThanOrEqual(headerBounds.y + headerBounds.height);
     expect(expanded.x).toBeGreaterThanOrEqual(headerBounds.x - 1);
     expect(expanded.x + expanded.width).toBeLessThanOrEqual(width + 1);

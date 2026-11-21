@@ -148602,86 +148602,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:6733c96805dad8962ffc",
+      "id": "frontend-call:b89dce44b480d5fe9a9d",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 896,
+      "line": 908,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:36b7080e95df8020d38a",
+      "id": "frontend-call:382f0c391fada8678bc5",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 899,
+      "line": 911,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:2fcc9c2c631f53e0b43a",
+      "id": "frontend-call:0a4e1f20d8fb36f24a22",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1670,
+      "line": 1682,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:c48a3b091b1b096a4d9e",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1671,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:bcf34b72370caabf348a",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1676,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:635ede4cd260f3bbe0d3",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1677,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:78ecda9b9556d4ee5bb2",
+      "id": "frontend-call:28949c5d6b3408ea05ad",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1683,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:d91c7037edcc258823a5",
+      "id": "frontend-call:a9a968e45e6b449ddd0f",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1688,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:34a7b5e7ffb23bdc980a",
+      "id": "frontend-call:1b2ebef1732e72090173",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1745,
+      "line": 1689,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:a467ba046b5ea3b0172b",
+      "id": "frontend-call:64ca3a3a991461287952",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1746,
+      "line": 1695,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:ad113d008ff86d03e915",
+      "id": "frontend-call:59a37e193f3b73051e47",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1753,
+      "line": 1700,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:7c6ef94d6ce9f43386c7",
+      "id": "frontend-call:6068852bea49ef2d8025",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1767,
+      "line": 1757,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:8892e7733cad12ec7905",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1758,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:6935648dcab1279fa9bb",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1765,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:03dc5adc57a60fac446f",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1779,
       "callee": "fetch",
       "reachable": false
     },
@@ -159190,7 +159190,7 @@
     {
       "id": "test-suite:9bbc27bda2a16a87c8f8",
       "sourcePath": "frontend/src/lib/workspaceEmptyComposer.test.ts",
-      "declaredTests": 28,
+      "declaredTests": 29,
       "skipLocations": [],
       "focusLocations": []
     },
