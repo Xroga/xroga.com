@@ -5,6 +5,7 @@ export function validateCurrentMigrationAdditions(additions,files,readMigration)
   assert.equal(additions.scope,'REVIEWED_CURRENT_MIGRATION_ADDITIONS_NOT_PRODUCTION_SCHEMA_OBSERVATION');
   assert.equal(additions.historicalCatalogUnchanged,true);
   const sidebar='20261021233500_sidebar_organization.sql',parents='20261022003000_sidebar_exact_parent_guards.sql';
+  const teams='20261121194826_xroga_team_membership.sql',inviteDelivery='20261121201200_xroga_team_invite_delivery.sql';
   const reviewed={product_feedback:['20261018211950_product_feedback_admin.sql','20261021100000_feedback_founder_authorization.sql'],
     xroga_sidebar_chats:[sidebar,sidebar],xroga_sidebar_items:[sidebar,parents],
     xroga_sidebar_legacy_title_backup:[sidebar,sidebar],xroga_sidebar_sections:[sidebar,parents],
@@ -29,7 +30,9 @@ export function validateCurrentMigrationAdditions(additions,files,readMigration)
     existing_source_archives:['20261027020000_existing_source_archives.sql','20261027020000_existing_source_archives.sql'],
     existing_source_changes:['20261027030000_existing_source_changes.sql','20261027030000_existing_source_changes.sql'],
     engineering_resource_reservations:['20261029100000_engineering_resource_ledger.sql','20261029100000_engineering_resource_ledger.sql'],
-    engineering_resource_limits:['20261029100000_engineering_resource_ledger.sql','20261029100000_engineering_resource_ledger.sql']};
+    engineering_resource_limits:['20261029100000_engineering_resource_ledger.sql','20261029100000_engineering_resource_ledger.sql'],
+    xroga_teams:[teams,teams],xroga_team_members:[teams,teams],xroga_team_activity:[teams,teams],
+    xroga_team_invite_delivery:[inviteDelivery,inviteDelivery]};
   assert.deepEqual(additions.tables.map(t=>`${t.schema}.${t.table_name}`),Object.keys(reviewed).map(name=>'public.'+name));
   for(const entry of additions.tables){
     assert.deepEqual([entry.migration,entry.authorizationMigration],reviewed[entry.table_name],'Only the explicitly reviewed creation and ownership migrations apply');

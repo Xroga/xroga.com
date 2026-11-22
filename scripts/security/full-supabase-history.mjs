@@ -134,6 +134,28 @@ try {
   }
   evidence.workflowCheckpointRoleChecks='PASS_BROWSER_DENIED_SERVICE_ALLOWED';
 
+  // Keep invitation and membership data inaccessible to ordinary browser roles.
+  const teamTables=['xroga_teams','xroga_team_members','xroga_team_activity','xroga_team_invite_delivery'];
+  for(const name of teamTables){
+    const table=catalog.tables.find(t=>t.schema==='public'&&t.table_name===name);
+    assert.ok(table?.rls_enabled,'Teams tables require RLS');
+    assert.deepEqual(table.grants.filter(g=>['anon','authenticated','PUBLIC'].includes(g.role)),[],'No browser grant on Teams tables');
+  }
+  for(const role of ['anon','authenticated','service_role']){
+    await db.query('begin');
+    try {
+      await db.query(`set local role ${role}`);
+      for(const name of teamTables){
+        const {rows:[entry]}=await db.query('select has_table_privilege(current_user,$1,\'SELECT\') as allowed',['public.'+name]);
+        assert.equal(entry.allowed,role==='service_role');
+      }
+      const {rows}=await db.query("select has_function_privilege(current_user,p.oid,'EXECUTE') as allowed from pg_proc p where p.pronamespace='public'::regnamespace and p.proname in ('xroga_team_membership','xroga_team_claim_invite_email')");
+      assert.equal(rows.length,2,'Both Teams entry points must be installed');
+      for(const entry of rows)assert.equal(entry.allowed,role==='service_role');
+    } finally { await db.query('rollback'); }
+  }
+  evidence.teamsRoleChecks='PASS_BROWSER_TABLE_AND_FUNCTION_DENIED_SERVICE_ALLOWED';
+
   const delivery=catalog.tables.find(t=>t.schema==='public'&&t.table_name==='google_canonical_deliveries');
   assert.ok(delivery?.rls_enabled,'Google deliveries require RLS');
   assert.deepEqual(delivery.grants.filter(g=>['anon','authenticated','PUBLIC'].includes(g.role)),[],'No browser grant on Google delivery payloads');

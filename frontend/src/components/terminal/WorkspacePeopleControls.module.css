@@ -2,18 +2,27 @@
 .control:disabled { opacity:.4; cursor:not-allowed; }
 .control>div { max-width:19px; max-height:19px; overflow:hidden; border-radius:50%; }
 .overlay { position:fixed; inset:0; z-index:2147483000; background:rgba(0,0,0,.54); }
-.drawer { position:absolute; right:0; top:0; bottom:0; width:min(400px,100vw); padding:24px; overflow:auto; background:#141414!important; color:#f6f6f6; border-left:1px solid #383838; box-shadow:-24px 0 60px #0008; }
-:global(body.theme-white) .drawer,:global(body.theme-beige) .drawer { background:#fafafa!important; color:#171717; border-color:#ddd; }
-.drawer header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
-.drawer h2 { margin:12px 0 4px; font-size:18px; }
-.drawer p { font-size:12px; line-height:1.6; margin-bottom:20px; color:var(--muted); overflow-wrap:anywhere; }
-.drawer a { display:block; padding:12px 0; border-bottom:1px solid var(--card-border); font-size:13px; }
-.drawer a:last-of-type { margin-bottom:24px; }
-.teamIntro { padding:8px 0 24px; border-bottom:1px solid #ffffff22; }
-.teamIntro h2 { max-width:15rem; font:500 25px/1.2 Georgia,serif; }
-.teamSection { padding:22px 0; border-bottom:1px solid #ffffff22; }
-.teamSection h3 { margin:0 0 8px; font-size:13px; }
-.teamSection p { margin:0 0 12px; }
+.drawer { position:absolute; inset-block:0; right:0; width:min(440px,100%); padding:0 22px max(24px,env(safe-area-inset-bottom)); overflow:auto; overscroll-behavior:contain; background:var(--background); color:var(--foreground); border-left:1px solid var(--card-border); box-shadow:-12px 0 40px #0005; }
+.drawerHeader { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:20px 0 12px; }
+.drawerHeader h2 { font-size:19px; font-weight:650; }
+.drawerHeader button { display:grid; place-items:center; width:36px; height:36px; flex-shrink:0; border-radius:8px; }
+.drawerHeader button:hover { background:var(--terminal-ui-raised); }
+.drawerHeader p,.teamSection p,.settingsIntro p { color:var(--muted); line-height:1.55; overflow-wrap:anywhere; }
+.drawerHeader p,.teamSection p { font-size:13px; }
+.settingsLink { display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:42px; padding:8px 12px; border:1px solid var(--card-border); border-radius:10px; background:var(--terminal-ui-raised); font-size:13px; font-weight:650; }
+.settingsPage { width:min(100%,960px); margin:0 auto; padding:clamp(18px,4vw,48px); color:var(--foreground); }
+.backLink { display:inline-flex; align-items:center; gap:8px; margin-bottom:24px; font-size:13px; }
+.settingsIntro { display:grid; gap:8px; margin-bottom:20px; }
+.settingsIntro h1 { font-size:clamp(24px,4vw,36px); font-weight:650; }
+.settingsIntro p { max-width:60ch; }
+.teamSection { display:grid; gap:10px; padding:18px 0; border-bottom:1px solid var(--card-border); }
+.teamSection h2 { font-size:15px; font-weight:650; }
+.teamSection h3 { margin:4px 0 0; font-size:13px; font-weight:650; }
+.teamSection label { display:grid; gap:6px; font-size:13px; font-weight:600; }
+.teamSection input,.teamSection select { width:100%; max-width:28rem; min-height:38px; padding:6px 9px; color:var(--foreground); background:var(--background); border:1px solid var(--card-border); border-radius:8px; font-size:14px; }
+.teamSection ul { display:grid; gap:8px; font-size:13px; }
+.teamActions { display:flex; flex-wrap:wrap; column-gap:12px; }
 .teamSection button,.teamSection a { display:inline-flex; align-items:center; gap:8px; width:auto; padding:8px 0; color:inherit; font-size:12px; font-weight:650; background:transparent; border:0; cursor:pointer; text-decoration:underline; text-underline-offset:3px; }
 .teamSection button:disabled { opacity:.4; cursor:not-allowed; }
+.settingsLink:focus-visible,.backLink:focus-visible,.drawerHeader button:focus-visible,.teamSection :is(button,a,input,select):focus-visible { outline:2px solid currentColor; outline-offset:2px; }
 @media(max-width:1023px) { .control { width:27px; padding:0; justify-content:center; flex-shrink:0; } .control>span { display:none; } }

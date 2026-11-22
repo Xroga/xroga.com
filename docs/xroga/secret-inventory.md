@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `fc9938a7effd4f7fd8e4c6237fb8914f9a8c593c`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `5186977f0a540416c2e7d53e8ee8f1043a6f2354`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -12,7 +12,8 @@ Values are forbidden. Source SHA: `fc9938a7effd4f7fd8e4c6237fb8914f9a8c593c`. Na
 | BIGMODEL_API_KEY | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | historical-zhipu |
 | BLACK_HOLE_CUTOVER_STAGE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | BLACK_HOLE_ROLLOUT_PERCENT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| BREVO_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
+| BREVO_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-brevo-com |
+| BREVO_SENDER_EMAIL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-brevo-com |
 | BROWSERBASE_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | browserbase |
 | BROWSERBASE_PROJECT_ID | PUBLIC_IDENTIFIER | OPTIONAL_OR_DEFAULTED | browserbase |
 | CARTESIA_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-cartesia-ai, endpoint-api-elevenlabs-io, endpoint-api-fish-audio, endpoint-api-suno-ai |
@@ -135,6 +136,7 @@ Values are forbidden. Source SHA: `fc9938a7effd4f7fd8e4c6237fb8914f9a8c593c`. Na
 | NEXT_PUBLIC_XROGA_BUILDER | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend |
 | NEXT_PUBLIC_XROGA_DRIVE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend |
 | NEXT_PUBLIC_XROGA_EXISTING_SOURCE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend |
+| NEXT_PUBLIC_XROGA_TEAMS_PREVIEW_API_ORIGIN | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend |
 | NODE_ENV | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | api, endpoint-127-0-0-1, endpoint-accounts-google-com, endpoint-api-github-com, endpoint-api-vercel-com, endpoint-backend-composio-dev, endpoint-chrome-google-com, endpoint-chromewebstore-googleapis-com, endpoint-github-com, endpoint-localhost, endpoint-oauth2-googleapis-com, endpoint-vercel-com, endpoint-www-googleapis-com, endpoint-xroga-api-fly-dev, endpoint-xrogaaicom-vercel-app |
 | OPENAI_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | OPENAI_TRANSCRIBE_MODEL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-openai-com |
@@ -339,6 +341,8 @@ Values are forbidden. Source SHA: `fc9938a7effd4f7fd8e4c6237fb8914f9a8c593c`. Na
 | XROGA_SOFTWARE_AGENT_V2_SHADOW | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_STAGING_AUTH_BUILD | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1 |
 | XROGA_STORAGE_RECONCILE_MODE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_TEAMS_INVITE_WEB_ORIGIN | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-brevo-com |
+| XROGA_TEAMS_PREVIEW_SUPABASE_ORIGIN | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_TEST_CREDENTIAL_KEK | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_TRUSTED_PROXY_HOPS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | YOUTUBE_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-www-googleapis-com, endpoint-www-youtube-com |

@@ -124,11 +124,13 @@ import { registerBuildProjectReceiptTests } from './buildProjectReceipt.local.in
 import { registerBudgetOwnerTests } from './budgetOwner.local.integration.js';
 import { registerGrowthEventReplayTests } from '../growth/eventReplay.local.integration.js';
 import { registerChatBoundaryTests } from './chatBoundary.local.integration.js';
+import { registerTeamMembershipTests } from './teamMembership.local.integration.js';
 
 if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || process.env.SUPABASE_URL !== 'http://127.0.0.1:54321' || process.env.E2E_BACKEND_URL !== 'http://127.0.0.1:4000') throw new Error('Real disposable loopback services required; no hosted/prod fallback');
 const url=process.env.SUPABASE_URL, api=process.env.E2E_BACKEND_URL;
 const admin=createClient(url,process.env.SUPABASE_SERVICE_ROLE_KEY!,{auth:{persistSession:false,autoRefreshToken:false}});
 const users: Array<{id:string;token:string;context:TenantContext;project:string;file:string;run:string;provider:string;session:string;cost:string}>=[];
+registerTeamMembershipTests(admin,request);
 registerBrowserMaintainTests();
 registerProviderKeyRevisionTests(admin, () => users);
 registerOAuthSessionTests(admin, () => users);
