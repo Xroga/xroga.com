@@ -8,6 +8,7 @@ const publicFactSubject = /\b(?:prices?|pricing|fares?|exchange rates?|stock quo
 const weatherLookup = /^(?:what(?:['’]s| is)\s+(?:the\s+)?)?(?:weather(?: forecast)?|forecast)\s+(?:in|for|at)\s+\p{L}[\p{L}\p{M} .,'’-]{1,75}[?!]?$/iu;
 const publicOfficeLookup = /^who\s+(?:is|was)\s+(?:the\s+)?(?:current\s+)?(?:president|prime minister|governor|mayor|chief executive officer|ceo)\s+of\s+\p{L}[\p{L}\p{M} .,'’-]{1,75}[?!]?$/iu;
 const publicInstitutionLeadership = /^[Ww]ho (?:currently )?(?:leads|heads) (?:the )?[A-Z][A-Z0-9]{1,15}[?!]?$/u;
+const publicPolicyPublisher = /\b(?:which|what)\s+(?:government(?:al)?\s+)?(?:agency|department|ministry|regulator|commission|public authority|city council)\s+(?:recently\s+)?(?:published|issued|released|announced)\b[^.!?]{0,96}\b(?:polic(?:y|ies)|guidance|directives?|rules?)\b/iu;
 const publicSourceLookup = /\b(?:summari[sz]e|check|compare|find|cite|link)\b[^.!?;]{0,90}\b(?:dated |recent |current )?public sources?\b/iu;
 // Implicit discovery covers entities with public descriptions and observable
 // rankings. The semantic plan decides whether retrieval is useful. These
@@ -43,6 +44,7 @@ const presentationInstruction = /(?:[,.;]\s*|\s+and\s+)(?:please\s+)?(?:give|exp
 const officialVerificationFooter = /(?:[,.;]\s*|\s+)(?:and\s+)?(?:which official source (?:confirms|verifies) (?:it|this)|cite (?:an?|the) official (?:source|reference))[?!.]*$/iu;
 const instructionStart = /^(?:please\s+)?(?:(?:search|browse)\s+(?:(?:the\s+)?(?:public\s+)?(?:web|internet)\s+)?(?:for\s+)?|look up\s+|research\s+|what\s+(?:is|are)\s+(?:the\s+)?)/iu;
 const sourcePreface = /^(?:using|from|with)\s+(?:only\s+)?official\s+[^.!?]+[.!?]\s*/iu;
+const publicSourcePreface = /^(?:i\s+(?:need|want)|(?:please\s+)?(?:cite|include|use|provide))\s+(?:a\s+)?(?:dated\s+)?public sources?\s*[:：]\s*/iu;
 const linkFooter = /\s*;\s*link\s+(?:them|each|all)(?:\s+(?:of them|\d+|one|two|three|four|five|six|seven|eight|nine|ten))?[?!.]*$/iu;
 
 function isPublicSourceHost(domain: string): boolean {
@@ -78,7 +80,7 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
   if (!message || message.length > 32_000) return;
   // Instructions about how to explain a result carry no retrieval terms.
   // Keep each qualifier and subsequent clause subject to the privacy checks.
-  const request = message.replace(citationFooter, '').replace(presentationInstruction, '')
+  const request = message.replace(publicSourcePreface, '').replace(citationFooter, '').replace(presentationInstruction, '')
     .replace(linkFooter, '').replace(currencyPeriod, '$1 per $2').replace(/\s*;\s*/g, ', ').trimEnd();
   const publicOffice = publicOfficeTopic(request) !== undefined;
   const officialLookup = requestsOfficialLinkCoverage(request) || publicSourceLookup.test(request);
@@ -105,7 +107,8 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
     || officialOnly && asksForOfficial && !requestsOfficialCitation && !officialLookup)) return;
   const explicitExplanation = explicitWebLookup.test(request)
     && explanatoryLookup.test(request.replace(explicitWebLookup, ''));
-  if (!officialDomains.length && !publicFactSubject.test(request) && !explicitExplanation && !discovery && !publicOffice && !officialLookup) return;
+  const publicFact = publicFactSubject.test(request) || publicPolicyPublisher.test(request);
+  if (!officialDomains.length && !publicFact && !explicitExplanation && !discovery && !publicOffice && !officialLookup) return;
 
   const topic = request.replace(bareDomain, host => isSoftwareName(host) ? host : '').replace(/\(\s*\)/g, '')
     .replace(explicitWebLookup, '').replace(instructionStart, '').replace(sourcePreface, '')

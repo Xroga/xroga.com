@@ -24,7 +24,7 @@ import { assessBlackHoleComplexity } from './black-hole/complexity.js';
 import { MODELS, type ModelId } from './models.js';
 import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT } from './nativeOpenUi.js';
-import { nativeDocumentDelivery, nativeDocumentPrompt, nativeDocumentRequiresAttachment, nativeDocumentRequiresPriorAnswer, requestedNativeDocumentFormat, type NativeDocumentFormat } from './nativeDocumentDownload.js';
+import { nativeDocumentDelivery, nativeDocumentPrompt, nativeDocumentRequiresAttachment, nativeDocumentRequiresPriorAnswer, plannedNativeDocument, requestedNativeDocumentFormat, type NativeDocumentFormat } from './nativeDocumentDownload.js';
 import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
 import { presentPublicResearchAnswer } from './researchAnswer.js';
 import { nativeOpenUiPlainPrompt, workspaceNativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
@@ -988,11 +988,15 @@ export async function runChatPipeline(opts: {
 
   const prepared = await prepareAttachments(opts.attachments);
   const hasAttachments = prepared.hasImages || prepared.hasDocuments;
-  const requestedDownload = opts.approvedResearch ? undefined : requestedNativeDocumentFormat(opts.prompt);
-  const missingDownloadAttachment = Boolean(requestedDownload && nativeDocumentRequiresAttachment(opts.prompt) &&
+  const answerGoal = opts.goalContract?.semanticIntent;
+  const plannedDownload = answerGoal === 'ANSWER' || answerGoal === 'INVESTIGATE'
+    ? plannedNativeDocument(opts.prompt, opts.goalContract?.answerObligations) : undefined;
+  const requestedDownload = opts.approvedResearch ? undefined : requestedNativeDocumentFormat(opts.prompt) ?? plannedDownload?.format;
+  const downloadSource = requestedDownload === plannedDownload?.format ? plannedDownload?.source : undefined;
+  const missingDownloadAttachment = Boolean(requestedDownload && (downloadSource === 'attachment' || nativeDocumentRequiresAttachment(opts.prompt)) &&
     ((!prepared.images.length && !prepared.documents.length) || !prepared.documents.every(document =>
       document.chars > 0 && document.text.trim() && !document.text.startsWith('[DOCX received'))));
-  const missingDownloadHistory = Boolean(requestedDownload && nativeDocumentRequiresPriorAnswer(opts.prompt)
+  const missingDownloadHistory = Boolean(requestedDownload && (downloadSource === 'conversation' || nativeDocumentRequiresPriorAnswer(opts.prompt))
     && !opts.history?.some(message => message.content.trim()));
   const missingDownloadSource = missingDownloadAttachment || missingDownloadHistory;
   const downloadInstruction = !requestedDownload ? '' : missingDownloadHistory

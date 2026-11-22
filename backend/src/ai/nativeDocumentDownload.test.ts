@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { compactNativeDocumentProse, nativeDocumentDelivery, nativeDocumentPrompt, nativeDocumentRequiresAttachment, nativeDocumentRequiresPriorAnswer, requestedNativeDocumentFormat } from './nativeDocumentDownload.js';
+import { compactNativeDocumentProse, nativeDocumentDelivery, nativeDocumentPrompt, nativeDocumentRequiresAttachment, nativeDocumentRequiresPriorAnswer, plannedNativeDocument, requestedNativeDocumentFormat } from './nativeDocumentDownload.js';
 import { buildNativeOpenUiShare, readNativeOpenUiShare } from './nativeOpenUiShare.js';
 import { completeNativeWorkspaceAnswer } from './nativeOpenUiWorkspace.js';
+import { answerObligationsSchema, type AnswerObligations } from './responsePresentation.js';
 
 test('recognizes direct Office and PDF deliverables', () => {
   assert.equal(requestedNativeDocumentFormat('Create a PDF executive report from this attached dataset.'), 'pdf');
@@ -58,6 +59,26 @@ test('requires the referenced prior answer for a contextual export', () => {
   assert.equal(nativeDocumentRequiresPriorAnswer('Make a DOCX report about earlier project decisions.'), false);
   assert.deepEqual(nativeDocumentDelivery('docx', true, prompt, 'Paste the content to export.', { status: 'complete' }),
     { completion: { status: 'partial', reason: 'presentation_contract' } });
+});
+
+test('existing model obligations identify multilingual downloads with a literal supported format', () => {
+  const formatRequest = (sourceQuote: string, format: 'docx' | 'pdf', source: 'prompt' | 'conversation' = 'prompt'): AnswerObligations[0] => ({
+    id: 'document', origin: 'requested', description: 'Editable download requested in chat', formats: ['prose'],
+    sourceQuote, download: { format, source },
+  });
+  const arabic = 'أنشئ مستند DOCX قابل للتحرير لخطة الاجتماع';
+  const french = 'Transformez le compte rendu ci-dessus en PDF téléchargeable';
+  assert.equal(requestedNativeDocumentFormat(arabic), undefined);
+  assert.deepEqual(plannedNativeDocument(arabic, answerObligationsSchema.parse([formatRequest(arabic, 'docx')])), { format: 'docx', source: 'prompt' });
+  assert.deepEqual(plannedNativeDocument(french, [formatRequest(french, 'pdf', 'conversation')]), { format: 'pdf', source: 'conversation' });
+  assert.equal(plannedNativeDocument(arabic, [formatRequest(arabic, 'pdf')]), undefined);
+  assert.equal(plannedNativeDocument(arabic, [formatRequest('Make a DOCX', 'docx')]), undefined);
+  assert.equal(plannedNativeDocument(arabic, [{ ...formatRequest(arabic, 'docx'), origin: 'necessary-support' }]), undefined);
+  assert.equal(plannedNativeDocument(arabic + '. Do not create a file.', [formatRequest(arabic, 'docx')]), undefined);
+  const twoFormats = 'Create a DOCX or PDF';
+  assert.equal(plannedNativeDocument(twoFormats, [formatRequest(twoFormats, 'docx')]), undefined);
+  assert.equal(plannedNativeDocument(french + '. ' + arabic,
+    [formatRequest(arabic, 'docx'), { ...formatRequest(french, 'pdf'), id: 'pdf-document' }]), undefined);
 });
 
 test('concise file deliverables keep their format without an opening verb', () => {

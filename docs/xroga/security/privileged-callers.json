@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "549e7a07ed52df5abf377bdc8c4dc18db568a775434f13704a0b65cdf095c32f",
+  "reviewRegistrySha256": "62851fd862dc2a894d07692b7845c926a033568d573ca758207bdafb29ce7af4",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -3936,11 +3936,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d55a2bc1d31f353c8c21"
+        "id": "a2872f0bf59426f5f5a4"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "8f870c04c0ddab6c11f2"
+        "id": "3626a886d2b7084715ef"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4096,7 +4096,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "9852088dee45327bb0d1"
+        "id": "634a309285fa8ac39aca"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6704,7 +6704,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "263fc12118f6091e650f"
+        "id": "6a61ea9f416e3391405d"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -6764,7 +6764,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "9852088dee45327bb0d1"
+        "id": "634a309285fa8ac39aca"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7672,11 +7672,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "d55a2bc1d31f353c8c21"
+        "id": "a2872f0bf59426f5f5a4"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "8f870c04c0ddab6c11f2"
+        "id": "3626a886d2b7084715ef"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10464,7 +10464,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "263fc12118f6091e650f"
+        "id": "6a61ea9f416e3391405d"
       }
     ]
   },
@@ -11421,15 +11421,15 @@
       }
     },
     {
-      "id": "d55a2bc1d31f353c8c21",
+      "id": "a2872f0bf59426f5f5a4",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3988,
+      "line": 3992,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "8421acd5e8233fe3207a59285288db1366c2d3f266eb76966302d2488d3546b4",
+      "sourceSha256": "bb507f29d6a4d8bf10e42f83e38b9a72235b2447c8d49a1154fbfa3d294b222e",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Native reasoning alignment changes only answer options and their canonical output reservation. These two in-memory conversion expressions remain byte-identical. No new persistence call, authority or security certification is inferred. The tenant dispatch test verifies reservation and wire maxima match.",
@@ -11442,15 +11442,15 @@
       }
     },
     {
-      "id": "8f870c04c0ddab6c11f2",
+      "id": "3626a886d2b7084715ef",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4172,
+      "line": 4176,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "8421acd5e8233fe3207a59285288db1366c2d3f266eb76966302d2488d3546b4",
+      "sourceSha256": "bb507f29d6a4d8bf10e42f83e38b9a72235b2447c8d49a1154fbfa3d294b222e",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Native reasoning alignment changes only answer options and their canonical output reservation. These two in-memory conversion expressions remain byte-identical. No new persistence call, authority or security certification is inferred. The tenant dispatch test verifies reservation and wire maxima match.",
@@ -12660,15 +12660,15 @@
       }
     },
     {
-      "id": "9852088dee45327bb0d1",
+      "id": "634a309285fa8ac39aca",
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 142,
+      "line": 144,
       "enclosing": "normalizeSectionData",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "3bc391b9a9bfc1aef62be437bcff7442c3d683635f754e874b587b4297894a10"
+      "sourceSha256": "6b3e4102e8be165dc5885e9d9b3961549db871500464a215e9f4eabb295c4790"
     },
     {
       "id": "64b99cfd7d4a42c04576",
@@ -33046,15 +33046,15 @@
       "sourceSha256": "c73176a55e776661d1374be102e9b46b42fbd160122407941203a059408f5b47"
     },
     {
-      "id": "263fc12118f6091e650f",
+      "id": "6a61ea9f416e3391405d",
       "path": "frontend/src/lib/xrogaFileExports.ts",
-      "line": 119,
+      "line": 148,
       "enclosing": "exportDocumentPdf",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "206c3d1dd60a23470ef366f85ae58af72948ce36c22fe86d931eb67eb9264116",
+      "sourceSha256": "9a5904250137cd3bf019ef63c53b592dfd33a42a5b9a6a986c05bb97cd4b98a7",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in exportDocumentPdf, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",

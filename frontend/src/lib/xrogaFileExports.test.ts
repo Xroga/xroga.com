@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import ExcelJS from 'exceljs';
 import JSZip from 'jszip';
-import { PDFDocument } from 'pdf-lib';
+import { decodePDFRawStream, PDFArray, PDFDocument, PDFRawStream, StandardFonts } from 'pdf-lib';
 import type { XrogaBlock } from './xrogaBlocks';
 import { exportAnswerFile, exportDocumentDocx, exportDocumentPdf, exportPresentationPptx, exportTableXlsx, PdfUnsupportedCharactersError } from './xrogaFileExports';
 
@@ -52,6 +52,23 @@ test('DOCX renders Markdown data as a Word table with accessible row grouping an
   assert.doesNotMatch(relationships, /bad\.example/);
 });
 
+test('DOCX preserves mixed-language text, marks RTL paragraphs and keeps a Unicode filename', async () => {
+  const content = '# تقرير الإطلاق\n\nThe time is 14:30 UTC.\n\n- الموعد ١٤:٣٠ UTC\n\n| الحالة | Ref |\n| --- | --- |\n| جاهز | AX-07 |';
+  const file = await exportAnswerFile(content, 'docx', new Set());
+  assert.equal(file.filename, 'تقرير-الإطلاق.docx');
+  const zip = await JSZip.loadAsync(await file.blob.arrayBuffer());
+  const xml = await zip.file('word/document.xml')!.async('string');
+  const paragraphs = xml.match(/<w:p(?:\s[^>]*)?>[\s\S]*?<\/w:p>/g) ?? [];
+  for (const phrase of ['تقرير الإطلاق', 'الموعد ١٤:٣٠ UTC', 'جاهز']) {
+    const paragraph = paragraphs.find(item => item.includes(phrase));
+    assert.ok(paragraph, phrase);
+    assert.match(paragraph, /<w:bidi(?:\/|>)/);
+  }
+  const english = paragraphs.find(item => item.includes('The time is 14:30 UTC.'));
+  assert.ok(english);
+  assert.doesNotMatch(english, /<w:bidi(?:\/|>)/);
+});
+
 test('PDF export creates multiple parseable pages and rejects unsupported glyphs', async () => {
   const content = '# Report\n' + Array.from({ length: 180 }, (_, index) => `Paragraph ${index + 1}: This is verified sample content for pagination.`).join('\n');
   const file = await exportDocumentPdf({ schemaVersion: 1, id: 'pdf-1', type: 'document', content, format: 'markdown' } as DocumentBlock);
@@ -61,6 +78,24 @@ test('PDF export creates multiple parseable pages and rejects unsupported glyphs
   await assert.rejects(() => exportDocumentPdf({ schemaVersion: 1, id: 'pdf-2', type: 'document', content: 'مرحبا', format: 'text' } as DocumentBlock), PdfUnsupportedCharactersError);
   const latin = await exportAnswerFile('# Résumé\n\nCafé — €25.', 'pdf', new Set());
   assert.equal((await PDFDocument.load(await latin.blob.arrayBuffer())).getTitle(), 'Résumé');
+});
+
+test('PDF export wraps verified long URLs and keeps unsupported destinations out of the file', async () => {
+  const token = 'https://example.com/path/' + 'original-identifier-'.repeat(15) + 'finish';
+  const download = await exportAnswerFile('Official: [source](' + token + ')\n[Unverified label](https://bad.example/claim)', 'pdf', new Set([token]));
+  const pdf = await PDFDocument.load(await download.blob.arrayBuffer());
+  const page = pdf.getPage(0);
+  const contents = page.node.Contents();
+  assert.ok(contents instanceof PDFArray);
+  const operators = contents.asArray().map(ref => Buffer.from(decodePDFRawStream(pdf.context.lookup(ref, PDFRawStream)).decode()).toString()).join('\n');
+  const lines = [...operators.matchAll(/<([0-9a-f]+)> Tj/gi)].map(match => Buffer.from(match[1]!, 'hex').toString('ascii'));
+  const font = await pdf.embedFont(StandardFonts.Helvetica);
+  assert.ok(lines.length > 1);
+  const extracted = lines.join('');
+  assert.ok(extracted.includes(token), 'every character in the verified URL is retained');
+  assert.match(extracted, /Unverified label/);
+  assert.doesNotMatch(extracted, /bad\.example/);
+  assert.ok(lines.every(line => font.widthOfTextAtSize(line, 10.5) <= page.getWidth() - 96));
 });
 
 test('native Office requests create real slide and formula content', async () => {
@@ -126,4 +161,16 @@ test('PPTX export contains every requested slide and visible slide text', async 
   assert.ok(zip.file('ppt/slides/slide1.xml'));
   assert.ok(zip.file('ppt/slides/slide2.xml'));
   assert.match(await zip.file('ppt/slides/slide2.xml')!.async('string'), /Results/);
+});
+
+test('PPTX keeps Arabic and Latin slide text editable and direction-specific', async () => {
+  const file = await exportAnswerFile('# خطة المشروع\n\n## المرحلة الأولى\nتأكيد الموعد ١٤:٣٠ UTC\n\n## English notes\nKeep reference AX-07.', 'pptx', new Set());
+  assert.equal(file.filename, 'خطة-المشروع.pptx');
+  const zip = await JSZip.loadAsync(await file.blob.arrayBuffer());
+  const rtl = await zip.file('ppt/slides/slide1.xml')!.async('string');
+  const ltr = await zip.file('ppt/slides/slide2.xml')!.async('string');
+  assert.match(rtl, /<a:pPr[^>]*rtl="1"/);
+  assert.match(rtl, /<a:t>تأكيد الموعد ١٤:٣٠ UTC<\/a:t>/);
+  assert.match(ltr, /<a:t>Keep reference AX-07\.<\/a:t>/);
+  assert.doesNotMatch(ltr, /<a:pPr[^>]*rtl="1"/);
 });

@@ -1,6 +1,7 @@
 import type { PublicCompletionState } from './completionDiagnostics.js';
 import { nativeMarkdownTables } from './nativeMarkdown.js';
 import { parseNativeSlideDeck, parseNativeWorkbook } from './nativeOfficeContent.js';
+import type { AnswerObligations } from './responsePresentation.js';
 
 export const nativeDocumentFormats = ['docx', 'pdf', 'xlsx', 'pptx'] as const;
 export type NativeDocumentFormat = typeof nativeDocumentFormats[number];
@@ -67,6 +68,22 @@ export function requestedNativeDocumentFormat(prompt: string): NativeDocumentFor
   if (/\b(?:or|and|plus|instead of)\s+(?:an?\s+)?(?:\.?(?:docx|pdf|xlsx|pptx)|word|excel|powerpoint)\b/i.test(trailing)
       || declinesDownload.test(followups.length ? body : trailing)) return;
   return candidate;
+}
+
+const namedFormats: Record<NativeDocumentFormat, string> = {
+  docx: 'docx|word', pdf: 'pdf', xlsx: 'xlsx|excel', pptx: 'pptx|powerpoint',
+};
+
+/** The existing planner can interpret file requests in the user's language.
+ * A supported format must still appear in the exact quoted request. */
+export function plannedNativeDocument(prompt: string, obligations: AnswerObligations = []) {
+  const downloads = obligations.filter(item => item.origin === 'requested' && item.download);
+  if (downloads.length !== 1 || declinesDownload.test(prompt)) return;
+  const { sourceQuote, download } = downloads[0]!;
+  if (!sourceQuote || !download || !prompt.includes(sourceQuote)) return;
+  const mentioned = nativeDocumentFormats.filter(format =>
+    new RegExp(`(?<![\\p{L}\\p{N}])(?:${namedFormats[format]})(?![\\p{L}\\p{N}])`, 'iu').test(sourceQuote));
+  return mentioned.length === 1 && mentioned[0] === download.format ? download : undefined;
 }
 
 export function nativeDocumentRequiresAttachment(prompt: string): boolean {

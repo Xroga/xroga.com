@@ -1112,9 +1112,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "8421acd5e8233fe3207a59285288db1366c2d3f266eb76966302d2488d3546b4",
+      "sourceSha256": "bb507f29d6a4d8bf10e42f83e38b9a72235b2447c8d49a1154fbfa3d294b222e",
       "callIds": [
-        "d55a2bc1d31f353c8c21"
+        "a2872f0bf59426f5f5a4"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2692,19 +2692,19 @@
         ]
       },
       "workspaceResearchPrivacy": {
-        "baseline": "9b027634cbdd98f7c5f1c22721ca0f2fb7574584",
-        "previousSha256": "c3e731c80a6846a44e39e51eb906cfc390b12386a06315302043fe7760c4c730",
-        "scope": "Require referenced source content for a prior-answer export. Authority, provider and tenant calls are unchanged.",
+        "baseline": "8530c904c54b32dba220dc013cfdc7bc0c6ca76e",
+        "previousSha256": "8421acd5e8233fe3207a59285288db1366c2d3f266eb76966302d2488d3546b4",
+        "scope": "Recognize source-quoted, model-planned local downloads. Verified authority, model dispatch, storage and tenant call shapes are unchanged.",
         "previousCallIds": [
-          "ad5b1cc2693f3e5e2715"
+          "d55a2bc1d31f353c8c21"
         ]
       }
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "8421acd5e8233fe3207a59285288db1366c2d3f266eb76966302d2488d3546b4",
+      "sourceSha256": "bb507f29d6a4d8bf10e42f83e38b9a72235b2447c8d49a1154fbfa3d294b222e",
       "callIds": [
-        "8f870c04c0ddab6c11f2"
+        "3626a886d2b7084715ef"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -4282,11 +4282,11 @@
         ]
       },
       "workspaceResearchPrivacy": {
-        "baseline": "9b027634cbdd98f7c5f1c22721ca0f2fb7574584",
-        "previousSha256": "c3e731c80a6846a44e39e51eb906cfc390b12386a06315302043fe7760c4c730",
-        "scope": "Require referenced source content for a prior-answer export. Authority, provider and tenant calls are unchanged.",
+        "baseline": "8530c904c54b32dba220dc013cfdc7bc0c6ca76e",
+        "previousSha256": "8421acd5e8233fe3207a59285288db1366c2d3f266eb76966302d2488d3546b4",
+        "scope": "Recognize source-quoted, model-planned local downloads. Verified authority, model dispatch, storage and tenant call shapes are unchanged.",
         "previousCallIds": [
-          "a9b5076f06cdc7252343"
+          "8f870c04c0ddab6c11f2"
         ]
       }
     },
@@ -29110,9 +29110,9 @@
     },
     {
       "path": "frontend/src/lib/xrogaFileExports.ts",
-      "sourceSha256": "206c3d1dd60a23470ef366f85ae58af72948ce36c22fe86d931eb67eb9264116",
+      "sourceSha256": "9a5904250137cd3bf019ef63c53b592dfd33a42a5b9a6a986c05bb97cd4b98a7",
       "callIds": [
-        "263fc12118f6091e650f"
+        "6a61ea9f416e3391405d"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in exportDocumentPdf, with no database or Storage client receiver.",

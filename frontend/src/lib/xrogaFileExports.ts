@@ -1,4 +1,5 @@
 import type { XrogaBlock } from './xrogaBlocks';
+import type { IParagraphOptions } from 'docx';
 import type { NativeDocumentFormat } from '../../../backend/src/ai/nativeDocumentDownload';
 import { nativeMarkdownTables } from '../../../backend/src/ai/nativeMarkdown';
 import { parseNativeSlideDeck, parseNativeWorkbook, type NativeWorkbookFormula } from '../../../backend/src/ai/nativeOfficeContent';
@@ -13,19 +14,29 @@ export class PdfUnsupportedCharactersError extends Error {}
 
 function fileStem(title: string | undefined, fallback: string): string {
   const value = (title ?? fallback).replace(/\\/g, '/').split('/').pop() ?? fallback;
-  return value.normalize('NFKD').replace(/[^a-zA-Z0-9._-]+/g, '-').replace(/^[.-]+|[.-]+$/g, '').slice(0, 72) || fallback;
+  const stem = value.normalize('NFC').replace(/[^\p{L}\p{M}\p{N}._-]+/gu, '-').replace(/^[.-]+|[.-]+$/g, '');
+  return [...stem].slice(0, 72).join('') || fallback;
 }
 
 function validateSize(length: number, limit: number, label: string): void {
   if (length > limit) throw new Error(`${label} is too large to export in the browser.`);
 }
 
-function plainText(value: string): string {
-  return value.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '$1 ($2)').replace(/\*\*|__|`/g, '');
+function plainText(value: string, verifiedLinks?: ReadonlySet<string>): string {
+  return value.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, (_, label: string, url: string) =>
+    safeWebUrl(url) && (!verifiedLinks || verifiedLinks.has(url)) ? label + ' (' + url + ')' : label).replace(/\*\*|__|`/g, '');
 }
 
 function safeWebUrl(url: string): boolean {
-  try { return ['http:', 'https:'].includes(new URL(url).protocol); } catch { return false; }
+  try {
+    const target = new URL(url);
+    return !target.username && !target.password && ['http:', 'https:'].includes(target.protocol);
+  } catch { return false; }
+}
+
+function isRightToLeft(text: string): boolean {
+  const firstLetter = text.match(/\p{L}/u)?.[0] ?? '';
+  return /[\p{Script=Arabic}\p{Script=Hebrew}\p{Script=Syriac}\p{Script=Thaana}\p{Script=Nko}\p{Script=Adlam}]/u.test(firstLetter);
 }
 
 /** The canonical Markdown block is persisted in the chat; the file is regenerated on demand. */
@@ -45,6 +56,8 @@ export async function exportDocumentDocx(block: DocumentBlock, verifiedLinks?: R
     if (cursor < line.length) runs.push(new TextRun(plainText(line.slice(cursor))));
     return runs;
   };
+  const paragraph = (line: string, options: Pick<IParagraphOptions, 'heading' | 'bullet'> = {}) =>
+    new Paragraph({ ...options, bidirectional: isRightToLeft(plainText(line, verifiedLinks)) || undefined, children: inlineRuns(line) });
   const lines = block.content.replace(/\r\n?/g, '\n').split('\n');
   const tables = new Map((block.format === 'markdown' ? nativeMarkdownTables(block.content) : []).map(table => [table.start, table]));
   const children: Array<InstanceType<typeof Paragraph> | InstanceType<typeof Table>> = [];
@@ -54,7 +67,7 @@ export async function exportDocumentDocx(block: DocumentBlock, verifiedLinks?: R
       const rows = [table.head, ...table.rows].map((row, rowIndex) => new TableRow({
         tableHeader: rowIndex === 0,
         cantSplit: true,
-        children: row.map(cell => new TableCell({ children: [new Paragraph({ children: inlineRuns(cell) })] })),
+        children: row.map(cell => new TableCell({ children: [paragraph(cell)] })),
       }));
       children.push(new Table({ rows, width: { size: 100, type: WidthType.PERCENTAGE } }));
       index = table.end - 1;
@@ -64,10 +77,10 @@ export async function exportDocumentDocx(block: DocumentBlock, verifiedLinks?: R
     const heading = line.match(/^(#{1,3})\s+(.+)$/);
     const bullet = line.match(/^[-*]\s+(.+)$/);
     children.push(heading
-      ? new Paragraph({ text: plainText(heading[2]!), heading: [HeadingLevel.HEADING_1, HeadingLevel.HEADING_2, HeadingLevel.HEADING_3][heading[1]!.length - 1] })
+      ? paragraph(heading[2]!, { heading: [HeadingLevel.HEADING_1, HeadingLevel.HEADING_2, HeadingLevel.HEADING_3][heading[1]!.length - 1] })
       : bullet
-        ? new Paragraph({ text: plainText(bullet[1]!), bullet: { level: 0 } })
-        : new Paragraph({ children: inlineRuns(line) }));
+        ? paragraph(bullet[1]!, { bullet: { level: 0 } })
+        : paragraph(line));
   }
   const doc = new Document({ title: block.title ?? 'Xroga document', creator: 'Xroga', sections: [{ children }] });
   const blob = await Packer.toBlob(doc);
@@ -75,7 +88,7 @@ export async function exportDocumentDocx(block: DocumentBlock, verifiedLinks?: R
 }
 
 /** PDF export deliberately fails on unsupported glyphs instead of silently corrupting them. */
-export async function exportDocumentPdf(block: DocumentBlock): Promise<XrogaExportFile> {
+export async function exportDocumentPdf(block: DocumentBlock, verifiedLinks?: ReadonlySet<string>): Promise<XrogaExportFile> {
   validateSize(block.content.length, 200_000, 'Document');
   const { PDFDocument, StandardFonts, rgb } = await import('pdf-lib');
   const pdf = await PDFDocument.create();
@@ -86,6 +99,7 @@ export async function exportDocumentPdf(block: DocumentBlock): Promise<XrogaExpo
   const characterSets = { body: new Set(font.getCharacterSet()), heading: new Set(bold.getCharacterSet()) };
   const pageSize: [number, number] = [595.28, 841.89];
   const margin = 48;
+  const availableWidth = pageSize[0] - margin * 2;
   let page = pdf.addPage(pageSize);
   let y = pageSize[1] - margin;
   const addLine = (text: string, size: number, isBold = false) => {
@@ -96,7 +110,7 @@ export async function exportDocumentPdf(block: DocumentBlock): Promise<XrogaExpo
   for (const raw of block.content.split(/\r?\n/)) {
     const heading = raw.match(/^#{1,3}\s+(.+)$/);
     const size = heading ? (heading[0].startsWith('# ') ? 19 : 15) : 10.5;
-    const text = plainText(heading?.[1] ?? raw).replace(/\t/g, '    ');
+    const text = plainText(heading?.[1] ?? raw, verifiedLinks).replace(/\t/g, '    ');
     if (!text.trim()) { y -= 7; continue; }
     const characters = heading ? characterSets.heading : characterSets.body;
     for (const character of text) {
@@ -109,8 +123,23 @@ export async function exportDocumentPdf(block: DocumentBlock): Promise<XrogaExpo
     let line = '';
     for (const word of words) {
       const candidate = line ? `${line} ${word}` : word;
-      if (line && activeFont.widthOfTextAtSize(candidate, size) > pageSize[0] - margin * 2) { addLine(line, size, Boolean(heading)); line = word; }
-      else line = candidate;
+      if (activeFont.widthOfTextAtSize(candidate, size) <= availableWidth) {
+        line = candidate;
+        continue;
+      }
+      if (line) addLine(line, size, Boolean(heading));
+      if (activeFont.widthOfTextAtSize(word, size) <= availableWidth) {
+        line = word;
+        continue;
+      }
+      line = '';
+      for (const character of word) {
+        if (line && activeFont.widthOfTextAtSize(line + character, size) > availableWidth) {
+          addLine(line, size, Boolean(heading));
+          line = '';
+        }
+        line += character;
+      }
     }
     if (line) addLine(line, size, Boolean(heading));
     if (heading) y -= 5;
@@ -130,7 +159,9 @@ async function writeTableXlsx(block: TableBlock, formulas: readonly NativeWorkbo
   const ExcelJS = excelPackage.default ?? excelPackage;
   const workbook = new ExcelJS.Workbook();
   workbook.creator = 'Xroga';
-  const sheet = workbook.addWorksheet(fileStem(block.title, 'Data').slice(0, 31));
+  // Excel's limit is in UTF-16 units. Keep a supplementary character intact at the boundary.
+  const sheetName = fileStem(block.title, 'Data').slice(0, 31).replace(/[\uD800-\uDBFF]$/, '');
+  const sheet = workbook.addWorksheet(sheetName);
   sheet.columns = block.columns.map((column) => ({ header: column.label, key: column.key, width: Math.min(42, Math.max(12, column.label.length + 4)) }));
   sheet.getRow(1).font = { bold: true };
   sheet.views = [{ state: 'frozen', ySplit: 1 }];
@@ -162,9 +193,13 @@ export async function exportPresentationPptx(block: PresentationBlock): Promise<
   for (const item of block.slides) {
     const slide = deck.addSlide();
     slide.background = { color: 'F8FAFC' };
-    slide.addText(item.title.slice(0, 200), { x: 0.7, y: 0.55, w: 11.9, h: 0.8, fontFace: 'Aptos Display', fontSize: 28, bold: true, color: '0F172A', breakLine: false, fit: 'shrink' });
+    const titleRtl = isRightToLeft(item.title);
+    slide.addText(item.title.slice(0, 200), { x: 0.7, y: 0.55, w: 11.9, h: 0.8, fontFace: 'Aptos Display', fontSize: 28, bold: true, color: '0F172A', breakLine: false, fit: 'shrink',
+      rtlMode: titleRtl, align: titleRtl ? 'right' : 'left' });
     const body = [item.body, ...(item.bullets ?? []).map((bullet) => `• ${bullet}`)].filter(Boolean).join('\n\n');
-    if (body) slide.addText(body.slice(0, 4_000), { x: 0.8, y: 1.7, w: 11.7, h: 4.7, fontFace: 'Aptos', fontSize: 20, color: '334155', valign: 'top', breakLine: false, fit: 'shrink' });
+    const bodyRtl = isRightToLeft(body);
+    if (body) slide.addText(body.slice(0, 4_000), { x: 0.8, y: 1.7, w: 11.7, h: 4.7, fontFace: 'Aptos', fontSize: 20, color: '334155', valign: 'top', breakLine: false, fit: 'shrink',
+      rtlMode: bodyRtl, align: bodyRtl ? 'right' : 'left' });
   }
   const output = await deck.write({ outputType: 'arraybuffer', compression: true });
   return { filename: `${fileStem(block.title, 'presentation')}.pptx`, blob: new Blob([output as ArrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation' }) };
@@ -183,12 +218,12 @@ export async function exportAnswerFile(response: string, format: NativeDocumentF
     const data = parseNativeSlideDeck(response);
     if (!data) throw new Error('This answer has no complete slide deck to download.');
     return exportPresentationPptx({ schemaVersion: 1, id: 'answer-slides', type: 'presentation', title: data.title,
-      slides: data.slides.map(slide => ({ ...slide, title: plainText(slide.title), body: plainText(slide.body) })) });
+      slides: data.slides.map(slide => ({ ...slide, title: plainText(slide.title, verifiedLinks), body: plainText(slide.body, verifiedLinks) })) });
   }
   const heading = /^#{1,3}[ \t]+([^\r\n]+)/m.exec(response)?.[1]?.trim();
   const document: DocumentBlock = { schemaVersion: 1, id: 'answer-document', type: 'document', content: response,
     title: shared ? 'Shared Xroga answer' : heading?.slice(0, 100) || 'Xroga document', format: 'markdown' };
-  return format === 'docx' ? exportDocumentDocx(document, verifiedLinks) : exportDocumentPdf(document);
+  return format === 'docx' ? exportDocumentDocx(document, verifiedLinks) : exportDocumentPdf(document, verifiedLinks);
 }
 
 export function downloadExportedFile(file: XrogaExportFile): void {

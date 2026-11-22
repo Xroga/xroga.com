@@ -5242,7 +5242,7 @@
       "id": "surface:e0ab1e1220bfa120c45b",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeDocumentDownload.ts",
-      "sha256": "3afd341bb8edb264feedb4597f2dc1022899f334da01bd793295c300eadcf503",
+      "sha256": "cfa560f9b406cffa4548ef4beacefe61cc438654649181ff5c03ede6c954415d",
       "symbols": [
         "NativeDocumentFormat",
         "afterFormat",
@@ -5261,6 +5261,7 @@
         "direct",
         "document",
         "documentDeliverable",
+        "downloads",
         "exportFormat",
         "extensions",
         "fileFormat",
@@ -5274,12 +5275,15 @@
         "isNativeDocumentFormat",
         "key",
         "labels",
+        "mentioned",
+        "namedFormats",
         "nativeDocumentDelivery",
         "nativeDocumentFormats",
         "nativeDocumentPrompt",
         "nativeDocumentRequiresAttachment",
         "nativeDocumentRequiresPriorAnswer",
         "optionalDescription",
+        "plannedNativeDocument",
         "priorContent",
         "priorExport",
         "raw",
@@ -5296,7 +5300,8 @@
       "imports": [
         "./completionDiagnostics.js",
         "./nativeMarkdown.js",
-        "./nativeOfficeContent.js"
+        "./nativeOfficeContent.js",
+        "./responsePresentation.js"
       ],
       "runtimeImports": [
         "backend/src/ai/nativeMarkdown.ts",
@@ -5321,6 +5326,7 @@
         "backend/src/ai/nativeOpenUiShare.ts:3",
         "backend/src/ai/nativeOpenUiWorkspace.ts:10",
         "backend/src/ai/pipeline.ts:27",
+        "backend/src/ai/responsePresentation.ts:3",
         "backend/src/ai/universal/semanticRequestPlanner.ts:14",
         "frontend/src/lib/xrogaBlocks.ts:4",
         "frontend/src/lib/xrogaResponseDocument.ts:5"
@@ -5408,7 +5414,7 @@
         "backend/src/ai/nativeOpenUiValues.ts:4",
         "backend/src/ai/nativeOpenUiWorkspace.ts:9",
         "frontend/src/components/native-openui/upstream/components/markdown.tsx:10",
-        "frontend/src/lib/xrogaFileExports.ts:3"
+        "frontend/src/lib/xrogaFileExports.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -5510,7 +5516,7 @@
       ],
       "callers": [
         "backend/src/ai/nativeDocumentDownload.ts:3",
-        "frontend/src/lib/xrogaFileExports.ts:4"
+        "frontend/src/lib/xrogaFileExports.ts:5"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -7730,7 +7736,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "8421acd5e8233fe3207a59285288db1366c2d3f266eb76966302d2488d3546b4",
+      "sha256": "bb507f29d6a4d8bf10e42f83e38b9a72235b2447c8d49a1154fbfa3d294b222e",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -7748,6 +7754,7 @@
         "all",
         "answer",
         "answerContract",
+        "answerGoal",
         "applied",
         "architectBlock",
         "architectPlanSummary",
@@ -7837,6 +7844,7 @@
         "docs",
         "document",
         "downloadInstruction",
+        "downloadSource",
         "earlyShipBlockers",
         "easArtifactUrl",
         "easBuildOk",
@@ -7961,6 +7969,7 @@
         "pkg",
         "plainNative",
         "plan",
+        "plannedDownload",
         "portable",
         "preferred",
         "preflightUsage",
@@ -10405,7 +10414,7 @@
       "id": "surface:74760a8c78ac888599fd",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/responsePresentation.ts",
-      "sha256": "3bc391b9a9bfc1aef62be437bcff7442c3d683635f754e874b587b4297894a10",
+      "sha256": "6b3e4102e8be165dc5885e9d9b3961549db871500464a215e9f4eabb295c4790",
       "symbols": [
         "AnswerObligations",
         "GENERIC_HEADING",
@@ -10498,10 +10507,12 @@
         "wanted"
       ],
       "imports": [
+        "./nativeDocumentDownload.js",
         "./responseIcons.js",
         "zod"
       ],
       "runtimeImports": [
+        "backend/src/ai/nativeDocumentDownload.ts",
         "backend/src/ai/responseIcons.ts"
       ],
       "entryPoints": [
@@ -10511,6 +10522,7 @@
       "callers": [
         "backend/src/ai/answerCoverage.test.ts:4",
         "backend/src/ai/answerCoverage.ts:2",
+        "backend/src/ai/nativeDocumentDownload.test.ts:6",
         "backend/src/ai/openaiCompat.egress.test.ts:10",
         "backend/src/ai/pipeline.ts:31",
         "backend/src/ai/responseCoverage.test.ts:3",
@@ -10534,6 +10546,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/answerCoverage.test.ts",
+        "backend/src/ai/nativeDocumentDownload.test.ts",
         "backend/src/ai/openaiCompat.egress.test.ts",
         "backend/src/ai/presentationRelevance.test.ts",
         "backend/src/ai/responseCoverage.test.ts",
@@ -15306,7 +15319,7 @@
       "id": "surface:82ff96c046038933cdb9",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/workspacePublicSearch.ts",
-      "sha256": "488d0cd67bada59c0545c4cafac60cd931c559629dc3a623c4f13ba8d07e2933",
+      "sha256": "1708af2798acd4f9fc23ad79e3d04d93796760023c131054caa072f552a3f3df",
       "symbols": [
         "asksForOfficial",
         "bareDomain",
@@ -15340,14 +15353,17 @@
         "presentationInstruction",
         "privateDiscoveryContext",
         "privateOrContextual",
+        "publicFact",
         "publicFactSubject",
         "publicInstitutionLeadership",
         "publicLookup",
         "publicOffice",
         "publicOfficeLookup",
         "publicOfficeTopic",
+        "publicPolicyPublisher",
         "publicSoftwareNames",
         "publicSourceLookup",
+        "publicSourcePreface",
         "request",
         "requestsOfficialCitation",
         "requestsOfficialLinkCoverage",
@@ -42877,8 +42893,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:3997",
-        "backend/src/ai/pipeline.ts:4000",
+        "backend/src/ai/pipeline.ts:4001",
+        "backend/src/ai/pipeline.ts:4004",
         "backend/src/ai/projectMemory.ts:7",
         "backend/src/ai/sessionMemory.ts:7",
         "backend/src/builder/providerTransports.ts:10",
@@ -43151,7 +43167,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:133",
-        "backend/src/ai/pipeline.ts:3996",
+        "backend/src/ai/pipeline.ts:4000",
         "backend/src/ai/tenantModelDispatch.ts:6",
         "backend/src/config/supabaseTransport.security.test.ts:6",
         "backend/src/routes/integrations.ts:19",
@@ -123239,7 +123255,7 @@
       "id": "surface:af830989f3d28a10af01",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaFileExports.ts",
-      "sha256": "206c3d1dd60a23470ef366f85ae58af72948ce36c22fe86d931eb67eb9264116",
+      "sha256": "9a5904250137cd3bf019ef63c53b592dfd33a42a5b9a6a986c05bb97cd4b98a7",
       "symbols": [
         "DocumentBlock",
         "ExcelJS",
@@ -123250,8 +123266,10 @@
         "activeFont",
         "addLine",
         "anchor",
+        "availableWidth",
         "blob",
         "body",
+        "bodyRtl",
         "bold",
         "buffer",
         "bullet",
@@ -123276,10 +123294,12 @@
         "exportPresentationPptx",
         "exportTableXlsx",
         "fileStem",
+        "firstLetter",
         "font",
         "heading",
         "index",
         "inlineRuns",
+        "isRightToLeft",
         "item",
         "line",
         "lines",
@@ -123289,6 +123309,7 @@
         "output",
         "page",
         "pageSize",
+        "paragraph",
         "pdf",
         "plainText",
         "raw",
@@ -123297,11 +123318,15 @@
         "runs",
         "safeWebUrl",
         "sheet",
+        "sheetName",
         "size",
         "slide",
+        "stem",
         "table",
         "tables",
+        "target",
         "text",
+        "titleRtl",
         "url",
         "validateSize",
         "value",
@@ -153191,7 +153216,7 @@
     {
       "id": "test-suite:0ff3fc98dc7085435219",
       "sourcePath": "backend/src/ai/nativeDocumentDownload.test.ts",
-      "declaredTests": 8,
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -153485,7 +153510,7 @@
     {
       "id": "test-suite:d2498a6171b68795395c",
       "sourcePath": "backend/src/ai/researchAnswer.test.ts",
-      "declaredTests": 10,
+      "declaredTests": 11,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -160163,7 +160188,7 @@
     {
       "id": "test-suite:5500ae34c3d41d033590",
       "sourcePath": "frontend/src/lib/xrogaFileExports.test.ts",
-      "declaredTests": 8,
+      "declaredTests": 11,
       "skipLocations": [],
       "focusLocations": []
     },

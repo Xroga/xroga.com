@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { RESPONSE_ICONS } from './responseIcons.js';
+import { nativeDocumentFormats } from './nativeDocumentDownload.js';
 
 /** Presentation data never grants tool, account or execution authority. The
  * existing semantic request selects this ordered plan in its existing call. */
@@ -17,6 +18,7 @@ export const answerObligationsSchema = z.array(z.object({
   sourceQuote: z.string().min(1).max(400).optional(),
   origin: z.enum(['requested', 'necessary-support']),
   formats: z.array(presentationSectionSchema.shape.kind).min(1).max(3),
+  download: z.object({ format: z.enum(nativeDocumentFormats), source: z.enum(['prompt', 'attachment', 'conversation']) }).strict().optional(),
 }).strict()).max(16);
 export type AnswerObligations = z.infer<typeof answerObligationsSchema>;
 
@@ -46,7 +48,7 @@ export function assessPresentationCoverage(plan: PresentationPlan, obligations?:
 export const PRESENTATION_PLAN_INSTRUCTIONS = `For a read-only answer, return a compact outline, never the finished answer. Keep each description, heading and instruction to a short phrase. Omit unused optional fields and do not repeat the request or add examples, prose, code or component data to the outline.
 Local answer components such as an interactive calculator, slider, reset button, chart, diagram, or comparison do not require software implementation. For an answer composed of these components, select ANSWER and conversation.respond, with attachment.analyze if reading an uploaded file. Words like build or create do not imply a software project when the deliverable is the answer itself. Preserve real software or external action requests.
 A form, worksheet, or editable draft requested inside the answer is a deliverable. Record it as an obligation even when the outline has no dedicated visual kind. Drafting the artifact does not grant permission to send, publish, or integrate it.
-Use answerObligations entries {id,description,origin,formats,sourceQuote?}. Use short IDs. Keep distinct requested concepts separate. For origin "requested", copy the shortest verbatim clause that establishes the requirement into sourceQuote (at most 400 characters). For "necessary-support", omit sourceQuote.
+Use answerObligations entries {id,description,origin,formats,sourceQuote?,download?}. Use short IDs. Keep distinct requested concepts separate. For origin "requested", copy the shortest verbatim clause that establishes the requirement into sourceQuote (at most 400 characters). For "necessary-support", omit sourceQuote. For one explicitly requested chat download, set download to {format: docx|pdf|xlsx|pptx, source: prompt|attachment|conversation}. Use attachment or conversation when the file must use that source, even if it is missing. Quote the request for the actual file in the user's language, including the format. A file mentioned as an input, a topic, or an application's output is not a chat download.
 Use presentation entries {kind,heading,instruction,covers} in reading order, at most eight. Bind each obligation to its required formats using covers. Formats and kinds: prose, cards, table, graph, steps, chart, calculator, metrics, tabs. A short factual or conversational answer needs no widgets: use an empty presentation.
 Choose visuals only when requested or materially useful. Use tables for comparisons or relevant data shape, graphs for relationships, steps for sequences, cards for distinct options, charts for comparable values, calculators for adjustable inputs, metrics for key numbers, and tabs for genuine alternatives. Keep essential content visible, with one main home per concept. Preserve units and assumptions, and use only supported evidence for sourced claims. These fields grant no authority to call a tool or take an action.`;
 type Kind = PresentationPlan[number]['kind'];

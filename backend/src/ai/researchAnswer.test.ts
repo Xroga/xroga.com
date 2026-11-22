@@ -492,6 +492,29 @@ test('public research can request an explanation without exporting editorial ins
   }
 });
 
+test('public policy publishers can be researched without admitting internal policy requests', () => {
+  for (const prompt of [
+    'Which government department published the latest UK heat-pump subsidy policy?',
+    'Which regulator issued the recent guidance on Australian bank disclosures?',
+    'What ministry announced the latest French school assessment rules?',
+  ]) {
+    assert.equal(workspacePublicSearchQuery(prompt)?.query, prompt.slice(0, -1));
+  }
+  assert.equal(workspacePublicSearchQuery('I need a public source: which agency published the latest policy?')?.query,
+    'which agency published the latest policy');
+  assert.equal(workspacePublicSearchQuery('Please cite dated public sources: Which ministry recently issued the latest flood rules?')?.query,
+    'Which ministry recently issued the latest flood rules');
+  for (const prompt of [
+    'Which department published our latest policy?',
+    'Which department issued the latest guidance in the attached file?',
+    'What regulator announced the latest policy using our draft as context?',
+    'Which department published the latest policy? Do not browse.',
+    'Use public sources: which commission published our latest internal policy?',
+    'I need a public source: which ministry published the latest rule? Do not browse.',
+    'What is the latest policy?',
+  ]) assert.equal(workspacePublicSearchQuery(prompt), undefined, prompt);
+});
+
 test('automatic Search distinguishes software names, public pricing units, and source citation preferences from private URLs',()=>{
  const versions=workspacePublicSearchQuery('Compare the newest stable Next.js release and the previous major version. Mention official release dates and upgrade risks.');
  assert.match(versions?.query??'',/Next\.js release/);
