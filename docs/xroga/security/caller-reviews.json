@@ -27487,31 +27487,6 @@
       "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
     },
     {
-      "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "sourceSha256": "0dbd96995b155733fa243bf3ce5cab4f3a5e374f86e566ff29f850f3cae8f8c1",
-      "callIds": [
-        "8204b932fb1d657bcf51"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Native Array.from copies a local Map iterator into React state for rendering validated plugin search results. This disposition covers only that conversion, not adjacent connector search or any consequential integration action.",
-      "reason": "Exact current-source receiver and surrounding data flow were inspected. Only the native in-memory conversion is excluded. No adjacent authority, persistence or provider boundary is certified.",
-      "evidence": [
-        {
-          "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-          "marker": "setApps(Array.from(available.values()));"
-        }
-      ],
-      "beforeCurrentMainIntegration": {
-        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
-        "sourceSha256": "0dbd96995b155733fa243bf3ce5cab4f3a5e374f86e566ff29f850f3cae8f8c1",
-        "callIds": [
-          "8204b932fb1d657bcf51"
-        ],
-        "disposition": "NOT_PERSISTENCE"
-      },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
-    },
-    {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
       "sourceSha256": "c2edaea30162f2313c6de6e121be4c68b0676b19014ed31da5c4cd98eddee839",
       "callIds": [
