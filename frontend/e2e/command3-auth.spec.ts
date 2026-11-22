@@ -807,6 +807,9 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await installDisclosure.focus();
   await installDisclosure.press('Enter');
   await expect(installNotice).toBeVisible();
+  const noticeBounds = (await installNotice.boundingBox())!;
+  const scrollBounds = (await page.getByTestId('terminal-scroll').boundingBox())!;
+  expect(noticeBounds.y + noticeBounds.height).toBeLessThanOrEqual(scrollBounds.y + 1);
   await expect(installDisclosure.locator('..').getByRole('link')).toHaveCount(0);
   await expect(page).toHaveURL(workspaceUrl);
   await installDisclosure.press('Enter');
@@ -856,15 +859,22 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     await expect.poll(() => transcript.evaluate(element => element.scrollTop)).toBeLessThan(end);
     await page.mouse.wheel(0, 1000);
     await expect.poll(() => transcript.evaluate(element => Math.ceil(element.scrollTop))).toBeGreaterThanOrEqual(Math.floor(end));
-    expect(expanded.y).toBeGreaterThanOrEqual(headerBounds.y + headerBounds.height);
+    expect(expanded.y).toBeGreaterThanOrEqual(headerBounds.y - 1);
+    expect(expanded.y + expanded.height).toBeLessThanOrEqual(transcriptTop + 1);
     expect(expanded.x).toBeGreaterThanOrEqual(headerBounds.x - 1);
     expect(expanded.x + expanded.width).toBeLessThanOrEqual(width + 1);
     await browserOperator.click();
     await expect(panel).toHaveJSProperty('open', false);
     const collapsed = (await panel.boundingBox())!;
+    const collapsedHeader = (await header.boundingBox())!;
+    const collapsedTranscript = (await transcript.boundingBox())!;
     expect(collapsed.width).toBeLessThan(expanded.width);
-    expect(Math.abs((await transcript.boundingBox())!.y - transcriptTop)).toBeLessThanOrEqual(1);
-    await browserOperator.click();
+    expect(collapsed.y + collapsed.height).toBeLessThanOrEqual(collapsedTranscript.y + 1);
+    expect(Math.abs((collapsedTranscript.y - collapsedHeader.y - collapsedHeader.height)
+      - (transcriptTop - headerBounds.y - headerBounds.height))).toBeLessThanOrEqual(1);
+    await browserOperator.press('Enter');
+    await expect(panel).toHaveJSProperty('open', true);
+    await expect.poll(async () => Math.abs((await transcript.boundingBox())!.y - transcriptTop)).toBeLessThanOrEqual(1);
   }
   expect(chatCalls).toBe(9);
   await page.goto('/workspace?conversation=' + architectureSession);
