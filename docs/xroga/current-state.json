@@ -78591,7 +78591,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/WorkspaceStarterIdeas.tsx:13",
-        "frontend/src/components/layout/Sidebar.tsx:88"
+        "frontend/src/components/layout/Sidebar.tsx:86"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -78695,7 +78695,7 @@
         "frontend/src/components/icons/GitHubIcon.tsx:4",
         "frontend/src/components/layout/MobileNav.tsx:7",
         "frontend/src/components/layout/PageFullscreenFrame.tsx:5",
-        "frontend/src/components/layout/Sidebar.tsx:78",
+        "frontend/src/components/layout/Sidebar.tsx:76",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:25",
         "frontend/src/components/layout/ThemeToggle.tsx:5",
         "frontend/src/components/projects/GitHubProjectCard.tsx:5",
@@ -79085,8 +79085,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/MobileNav.tsx:14",
-        "frontend/src/components/layout/Sidebar.tsx:91"
+        "frontend/src/components/layout/MobileNav.tsx:14"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -79294,7 +79293,7 @@
       ],
       "callers": [
         "frontend/src/components/layout/MobileNav.tsx:15",
-        "frontend/src/components/layout/Sidebar.tsx:84",
+        "frontend/src/components/layout/Sidebar.tsx:82",
         "frontend/src/components/ui/ProfileQuickMenu.tsx:10"
       ],
       "reachable": true,
@@ -79352,7 +79351,7 @@
       ],
       "callers": [
         "frontend/src/components/layout/MobileNav.tsx:11",
-        "frontend/src/components/layout/Sidebar.tsx:86",
+        "frontend/src/components/layout/Sidebar.tsx:84",
         "frontend/src/components/settings/SettingsView.tsx:24"
       ],
       "reachable": true,
@@ -80076,7 +80075,7 @@
       "callers": [
         "frontend/src/app/(shell)/dashboard/projects/page.tsx:16",
         "frontend/src/components/layout/MobileNav.tsx:10",
-        "frontend/src/components/layout/Sidebar.tsx:87"
+        "frontend/src/components/layout/Sidebar.tsx:85"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80319,8 +80318,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/MobileNav.tsx:13",
-        "frontend/src/components/layout/Sidebar.tsx:92"
+        "frontend/src/components/layout/MobileNav.tsx:13"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80436,7 +80434,7 @@
       "callers": [
         "frontend/src/components/dashboard/WorkspaceShowcaseStarts.tsx:21",
         "frontend/src/components/layout/MobileNav.tsx:9",
-        "frontend/src/components/layout/Sidebar.tsx:83"
+        "frontend/src/components/layout/Sidebar.tsx:81"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80549,7 +80547,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:81"
+        "frontend/src/components/layout/Sidebar.tsx:79"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80852,7 +80850,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:80"
+        "frontend/src/components/layout/Sidebar.tsx:78"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80976,7 +80974,7 @@
       ],
       "callers": [
         "frontend/src/components/layout/MobileNav.tsx:12",
-        "frontend/src/components/layout/Sidebar.tsx:82"
+        "frontend/src/components/layout/Sidebar.tsx:80"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -81245,7 +81243,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:90",
+        "frontend/src/components/layout/Sidebar.tsx:88",
         "frontend/src/components/ui/ProfileQuickMenu.tsx:13"
       ],
       "reachable": true,
@@ -81349,7 +81347,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:85"
+        "frontend/src/components/layout/Sidebar.tsx:83"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -81407,7 +81405,7 @@
       "callers": [
         "frontend/src/app/(shell)/dashboard/projects/page.tsx:17",
         "frontend/src/components/layout/MobileNav.tsx:8",
-        "frontend/src/components/layout/Sidebar.tsx:79"
+        "frontend/src/components/layout/Sidebar.tsx:77"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -81793,7 +81791,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/WorkspaceShowcaseStarts.tsx:23",
-        "frontend/src/components/layout/Sidebar.tsx:89",
+        "frontend/src/components/layout/Sidebar.tsx:87",
         "frontend/src/components/terminal/WorkspacePeopleControls.tsx:14",
         "frontend/src/components/ui/ProfileQuickMenu.tsx:12"
       ],
@@ -81976,7 +81974,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:44"
+        "frontend/src/components/layout/Sidebar.tsx:42"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82027,7 +82025,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:51"
+        "frontend/src/components/layout/Sidebar.tsx:49"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82078,7 +82076,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:43"
+        "frontend/src/components/layout/Sidebar.tsx:41"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82133,7 +82131,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:42"
+        "frontend/src/components/layout/Sidebar.tsx:40"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82184,7 +82182,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:49"
+        "frontend/src/components/layout/Sidebar.tsx:47"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82236,7 +82234,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:48"
+        "frontend/src/components/layout/Sidebar.tsx:46"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82289,7 +82287,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:47"
+        "frontend/src/components/layout/Sidebar.tsx:45"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82341,7 +82339,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:52"
+        "frontend/src/components/layout/Sidebar.tsx:50"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82398,7 +82396,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:46"
+        "frontend/src/components/layout/Sidebar.tsx:44"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82450,7 +82448,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:50"
+        "frontend/src/components/layout/Sidebar.tsx:48"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82503,7 +82501,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:41"
+        "frontend/src/components/layout/Sidebar.tsx:39"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82665,7 +82663,7 @@
       "callers": [
         "frontend/src/components/dashboard/IncognitoDashboard.tsx:4",
         "frontend/src/components/layout/IncognitoModeButton.tsx:10",
-        "frontend/src/components/layout/Sidebar.tsx:76",
+        "frontend/src/components/layout/Sidebar.tsx:74",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:36"
       ],
       "reachable": true,
@@ -83944,7 +83942,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:77"
+        "frontend/src/components/layout/Sidebar.tsx:75"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -84293,7 +84291,7 @@
         "frontend/src/components/homepage/HomepageWorkspaceTour.tsx:26",
         "frontend/src/components/image/ImageLandingPage.tsx:14",
         "frontend/src/components/layout/MarketingFooter.tsx:4",
-        "frontend/src/components/layout/Sidebar.tsx:53",
+        "frontend/src/components/layout/Sidebar.tsx:51",
         "frontend/src/components/marketing/AiAppBuilderLanding.tsx:15",
         "frontend/src/components/marketing/AiCodingAgentLanding.tsx:25",
         "frontend/src/components/marketing/CapabilityPage.tsx:2",
@@ -84903,7 +84901,7 @@
       "id": "surface:7da6f201c8b9c4811bef",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
-      "sha256": "39efbd0c786649998ec6d6af5102887326ad1592f5005ba3a5eca40a99124bdb",
+      "sha256": "92a6ed8fe6cbd5acdf5864084e6b9984327273f2135ea7ff1969e016fde1fc42",
       "symbols": [
         "EDGE_DRAG_THRESHOLD_PX",
         "HOVER_OPEN_DELAY_MS",
@@ -85002,11 +85000,9 @@
         "./ThemeToggle",
         "@/components/icons/animated/AirplayIcon",
         "@/components/icons/animated/AnimatedIcon",
-        "@/components/icons/animated/ChartColumnIncreasingIcon",
         "@/components/icons/animated/CogIcon",
         "@/components/icons/animated/ConnectIcon",
         "@/components/icons/animated/FolderOpenIcon",
-        "@/components/icons/animated/HeartPulseIcon",
         "@/components/icons/animated/LayoutGridIcon",
         "@/components/icons/animated/LocateFixedIcon",
         "@/components/icons/animated/NewTerminalIcon",
@@ -85059,11 +85055,9 @@
       "runtimeImports": [
         "frontend/src/components/icons/animated/AirplayIcon.tsx",
         "frontend/src/components/icons/animated/AnimatedIcon.tsx",
-        "frontend/src/components/icons/animated/ChartColumnIncreasingIcon.tsx",
         "frontend/src/components/icons/animated/CogIcon.tsx",
         "frontend/src/components/icons/animated/ConnectIcon.tsx",
         "frontend/src/components/icons/animated/FolderOpenIcon.tsx",
-        "frontend/src/components/icons/animated/HeartPulseIcon.tsx",
         "frontend/src/components/icons/animated/LayoutGridIcon.tsx",
         "frontend/src/components/icons/animated/LocateFixedIcon.tsx",
         "frontend/src/components/icons/animated/NewTerminalIcon.tsx",
@@ -85221,7 +85215,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:56"
+        "frontend/src/components/layout/Sidebar.tsx:54"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -85318,7 +85312,7 @@
       ],
       "callers": [
         "frontend/src/components/layout/AppShell.tsx:5",
-        "frontend/src/components/layout/Sidebar.tsx:93"
+        "frontend/src/components/layout/Sidebar.tsx:89"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -85576,7 +85570,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:55"
+        "frontend/src/components/layout/Sidebar.tsx:53"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -85675,7 +85669,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:54",
+        "frontend/src/components/layout/Sidebar.tsx:52",
         "frontend/src/components/terminal/WorkspaceSearchButton.tsx:4"
       ],
       "reachable": true,
@@ -85813,7 +85807,7 @@
       ],
       "callers": [
         "frontend/src/components/homepage/HomepageWorkspaceTour.tsx:27",
-        "frontend/src/components/layout/Sidebar.tsx:94"
+        "frontend/src/components/layout/Sidebar.tsx:90"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -85868,7 +85862,7 @@
         "frontend/src/components/dashboard/DashboardHomeView.tsx:22",
         "frontend/src/components/integrations/PluginMarketplace.tsx:57",
         "frontend/src/components/layout/AppShell.tsx:19",
-        "frontend/src/components/layout/Sidebar.tsx:98",
+        "frontend/src/components/layout/Sidebar.tsx:94",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:61",
         "frontend/src/components/layout/SidebarSearchModal.tsx:6",
         "frontend/src/components/library/LibraryWorkspace.tsx:10",
@@ -90207,7 +90201,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:101"
+        "frontend/src/components/layout/Sidebar.tsx:97"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -91187,7 +91181,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:69",
+        "frontend/src/components/layout/Sidebar.tsx:67",
         "frontend/src/components/settings/GeneralSettingsPanel.tsx:11"
       ],
       "reachable": true,
@@ -91235,7 +91229,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:70",
+        "frontend/src/components/layout/Sidebar.tsx:68",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:37"
       ],
       "reachable": true,
@@ -103560,7 +103554,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:57"
+        "frontend/src/components/layout/Sidebar.tsx:55"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -103984,7 +103978,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:59"
+        "frontend/src/components/layout/Sidebar.tsx:57"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -104307,7 +104301,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:58"
+        "frontend/src/components/layout/Sidebar.tsx:56"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -104645,7 +104639,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:60",
+        "frontend/src/components/layout/Sidebar.tsx:58",
         "frontend/src/components/ui/ProfileQuickMenu.tsx:19"
       ],
       "reachable": true,
@@ -104828,7 +104822,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:45"
+        "frontend/src/components/layout/Sidebar.tsx:43"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -104997,7 +104991,7 @@
       "callers": [
         "frontend/src/components/integrations/PluginMarketplace.tsx:58",
         "frontend/src/components/layout/AppShell.tsx:20",
-        "frontend/src/components/layout/Sidebar.tsx:99",
+        "frontend/src/components/layout/Sidebar.tsx:95",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:62",
         "frontend/src/components/terminal/TerminalChatBar.tsx:31",
         "frontend/src/components/terminal/WorkspacePeopleControls.tsx:8",
@@ -105532,7 +105526,7 @@
         "frontend/src/components/dashboard/WorkspaceStarterIdeas.tsx:8",
         "frontend/src/components/layout/AppShell.tsx:8",
         "frontend/src/components/layout/IncognitoModeButton.tsx:8",
-        "frontend/src/components/layout/Sidebar.tsx:73",
+        "frontend/src/components/layout/Sidebar.tsx:71",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:29",
         "frontend/src/components/showcase/ShowcaseResumeBridge.tsx:14",
         "frontend/src/components/terminal/ChatbarQueueOutside.tsx:4",
@@ -105672,7 +105666,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:71",
+        "frontend/src/components/layout/Sidebar.tsx:69",
         "frontend/src/components/settings/GeneralSettingsPanel.tsx:9",
         "frontend/src/components/terminal/ImageStudioCard.tsx:20"
       ],
@@ -105897,7 +105891,7 @@
         "frontend/src/components/layout/AnimatedNavIcon.tsx:8",
         "frontend/src/components/layout/AppShell.tsx:14",
         "frontend/src/components/layout/IncognitoModeButton.tsx:7",
-        "frontend/src/components/layout/Sidebar.tsx:75",
+        "frontend/src/components/layout/Sidebar.tsx:73",
         "frontend/src/components/library/LibraryWorkspace.tsx:9",
         "frontend/src/components/terminal/DevWorkspacePanel.tsx:33",
         "frontend/src/components/terminal/ProjectWorkspaceRail.tsx:6",
@@ -105946,7 +105940,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:72"
+        "frontend/src/components/layout/Sidebar.tsx:70"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -110402,7 +110396,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:100",
+        "frontend/src/components/layout/Sidebar.tsx:96",
         "frontend/src/components/workspace/WorkspaceAuthGate.tsx:31",
         "frontend/src/lib/runGuestLaneChat.ts:3",
         "frontend/src/lib/userScopedCache.test.ts:11",
@@ -114455,7 +114449,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:97",
+        "frontend/src/components/layout/Sidebar.tsx:93",
         "frontend/src/store/useProjectWorkspaceStore.ts:24"
       ],
       "reachable": true,
@@ -118265,7 +118259,7 @@
         "frontend/src/components/homepage-next/s01/CapabilityFocus.tsx:20",
         "frontend/src/components/homepage/HomepageClient.tsx:11",
         "frontend/src/components/layout/PublicMarketingHeader.tsx:20",
-        "frontend/src/components/layout/Sidebar.tsx:68",
+        "frontend/src/components/layout/Sidebar.tsx:66",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:23",
         "frontend/src/components/pricing/PricingPageClient.tsx:37",
         "frontend/src/components/settings/DataAiSettingsPanel.tsx:6",
@@ -120524,7 +120518,7 @@
       ],
       "callers": [
         "frontend/src/components/bootstrap/UserCacheScopeBootstrap.tsx:1",
-        "frontend/src/components/layout/Sidebar.tsx:67",
+        "frontend/src/components/layout/Sidebar.tsx:65",
         "frontend/src/components/settings/SecuritySettingsPanel.tsx:10",
         "frontend/src/lib/userScopedCache.test.ts:5"
       ],
@@ -120731,7 +120725,7 @@
         "frontend/src/components/layout/MobileNav.tsx:6",
         "frontend/src/components/layout/PageFullscreenFrame.tsx:4",
         "frontend/src/components/layout/ProcessingLogo.tsx:5",
-        "frontend/src/components/layout/Sidebar.tsx:40",
+        "frontend/src/components/layout/Sidebar.tsx:38",
         "frontend/src/components/layout/SidebarNavScroller.tsx:4",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:58",
         "frontend/src/components/layout/ThemeToggle.tsx:9",
@@ -123303,7 +123297,7 @@
         "frontend/src/components/integrations/PluginDetail.tsx:52",
         "frontend/src/components/layout/HeaderActionMeter.tsx:5",
         "frontend/src/components/layout/MiniActionMeter.tsx:4",
-        "frontend/src/components/layout/Sidebar.tsx:66",
+        "frontend/src/components/layout/Sidebar.tsx:64",
         "frontend/src/components/notifications/NotificationBell.tsx:7",
         "frontend/src/components/notifications/NotificationExperience.tsx:7",
         "frontend/src/components/notifications/SidebarNotificationCenter.tsx:11",
@@ -123707,7 +123701,7 @@
         "frontend/src/components/incognito/IncognitoFullscreenBackground.tsx:6",
         "frontend/src/components/layout/AppShell.tsx:13",
         "frontend/src/components/layout/IncognitoModeButton.tsx:6",
-        "frontend/src/components/layout/Sidebar.tsx:74",
+        "frontend/src/components/layout/Sidebar.tsx:72",
         "frontend/src/components/providers/AppProviders.tsx:6",
         "frontend/src/components/settings/PrivacySettingsPanel.tsx:5",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:39",
@@ -123806,7 +123800,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/DashboardView.tsx:15",
-        "frontend/src/components/layout/Sidebar.tsx:96",
+        "frontend/src/components/layout/Sidebar.tsx:92",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:9",
         "frontend/src/components/terminal/DevWorkspacePanel.tsx:22",
         "frontend/src/components/terminal/ProjectDeliveryPanel.tsx:33",
@@ -123938,7 +123932,7 @@
         "frontend/src/components/icons/animated/VercelIcon.tsx:11",
         "frontend/src/components/layout/AnimatedNavIcon.tsx:7",
         "frontend/src/components/layout/AppShell.tsx:10",
-        "frontend/src/components/layout/Sidebar.tsx:61",
+        "frontend/src/components/layout/Sidebar.tsx:59",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:10",
         "frontend/src/components/layout/ThemeToggle.tsx:7",
         "frontend/src/components/providers/ThemeProvider.tsx:5",
@@ -146310,7 +146304,27 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:3c2506356f16a3108da1",
+      "id": "finding:d4a951493760e168a069",
+      "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
+      "line": 176,
+      "kind": "COMING_SOON",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:6e98f7013a6f3b5fd07f",
+      "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
+      "line": 177,
+      "kind": "COMING_SOON",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:abddd91de097b61978cb",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
       "line": 180,
       "kind": "COMING_SOON",
@@ -146320,29 +146334,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:13ebb9e7fdd1f725be92",
+      "id": "finding:15509ceef94f7b7a33e6",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
-      "line": 181,
-      "kind": "COMING_SOON",
-      "reachable": true,
-      "state": "PARTIAL",
-      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
-      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
-    },
-    {
-      "id": "finding:da8910eec46b603117d5",
-      "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
-      "line": 184,
-      "kind": "COMING_SOON",
-      "reachable": true,
-      "state": "PARTIAL",
-      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
-      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
-    },
-    {
-      "id": "finding:3e99212b7d1a11100dd6",
-      "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
-      "line": 536,
+      "line": 530,
       "kind": "SIMULATED",
       "reachable": true,
       "state": "PARTIAL",
@@ -146350,9 +146344,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:c1cdf14e48529bbf1b70",
+      "id": "finding:8875ba2b3ba5c0f12469",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
-      "line": 850,
+      "line": 839,
       "kind": "COMING_SOON",
       "reachable": true,
       "state": "PARTIAL",
@@ -157784,7 +157778,7 @@
     {
       "id": "test-suite:e5ae140af2290ed8b909",
       "sourcePath": "frontend/src/components/layout/mobileChrome.test.ts",
-      "declaredTests": 20,
+      "declaredTests": 21,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -158855,7 +158849,7 @@
     {
       "id": "test-suite:474a5f49385e5310152e",
       "sourcePath": "frontend/src/lib/sidebarCompactNav.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
