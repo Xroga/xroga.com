@@ -188,3 +188,10 @@ Source: the owner's recording of Codex setting up a Facebook Page (19 min, ends 
 
 **Still open:** form batching beyond typeahead (most turns are still one call per field and re-reading after saves); holdout forms; CI gates of PR #976 (running); PR #997; real-account acceptance.
 
+## Round 15 (2026-11-23): lost acknowledgement and positional deletes
+**Task `adv-mail-lost-{1,2,3}` (REPLICA):** four drafts in the webmail replica where the first save is applied on the server but answered with a 504 ("gateway timed out, you may be offline"), and the page's autosave can make the same call silently. Graded on server state: exactly 4 drafts, each once, none sent, one lost acknowledgement recorded.
+**Live DeepSeek, first build:** 2 of 3 passed. The failed run created a duplicate Ana draft (autosave and the manual save both applied), then deleted "the first Delete draft" with `nth: 0`, which resolved to another row's button (Carla), and ended `partial` with an honest report.
+**Fix (`core/interaction/resolve.ts`):** a destructive control picked only by position among several identically named ones is refused (AMBIGUOUS_TARGET) listing every match with its row; a harmless control still accepts `nth`. `CONTROLLED`: scenario `S3-nth-delete-among-twins-is-refused`. Unit suite unchanged (1515); all Chromium scenarios pass.
+**Live DeepSeek, after the fix:** 6 of 6 passed (24 to 25 turns; 107 to 271 s). n is small; the earlier failure was one of three, so this is indicative, not a rate. Not shown: recovery when the lost acknowledgement hits a record with no later duplicate check, a real Chrome/service-worker kill during a save, and a real offline emulation.
+Release: addendum 15 of the handover (ZIP `f398c503c`).
+
