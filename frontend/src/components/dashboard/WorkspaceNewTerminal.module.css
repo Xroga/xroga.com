@@ -77,7 +77,7 @@
 }
 .automatic > * { display: none !important; }
 .automatic::after {
-  content: "Type or speak in your native language. Xroga picks the right tools automatically.";
+  content: "Type or speak in your native language, and the right tools handle the work automatically.";
   display: block;
   width: 100%;
 }
