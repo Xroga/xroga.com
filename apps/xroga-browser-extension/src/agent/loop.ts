@@ -36,6 +36,7 @@ import { DeadSpots } from './dead-spots';
 import { RepeatDetector } from './repeat-detector';
 import type { PictureChange } from './pixels';
 import { skillsFor } from './skills';
+import { demosFor, renderDemo, saveDemo, type SavedDemo } from './demo-tool';
 import { describeHit, renderSkill, searchSkills, skillById } from './skill-catalog';
 import { runMenuPath, validateMenuPath } from './menu-path';
 import { identify, matchSite, renderWhy } from './site-context';
@@ -1173,6 +1174,13 @@ ${ledger}` : ''),
       }
       return { call, kind, text: refusal(open), isError: true };
     }
+    // Two different values read for one fact (a phone number, a price) and never settled: success is refused once with both values, so the answer does not
+    // report one of them as true while the other is still on the page.
+    const conflicts = this.#plan.conflicts();
+    if (outcomeArg === 'success' && conflicts.length && !this.#factRefused) {
+      this.#factRefused = true;
+      return { call, kind, isError: true, text: `Not accepted as success yet: ${conflicts.map(f => `${f.key} was read as "${f.earlier}" and as "${f.value}"`).join('; ')}. Check which is right at its source and record it with plan fact status verified, or say in your answer that it is unresolved.` };
+    }
     // A batch job's list: success is refused while an item is not verified (twice; then the run ends as partial with the counts), so a count is never the model's word.
     if (this.#plan.hasLedger) {
       const notDone = this.#plan.ledgerOpen();
@@ -1707,6 +1715,7 @@ ${ledger}` : ''),
   /** Page loads seen in this run; an item of the plan's list is verified only after a load later than the one it was saved at. */
   #loadSeq = 0;
   #ledgerRefusals = 0;
+  #factRefused = false;
 
   /** The plan shown to the user: restored from the last plan result stored in this conversation, so a restarted worker or a reopened panel continues the same list. */
   #restorePlan(branch: Array<{ type: string; message?: { role?: string; parts?: Array<{ type: string; toolName?: string; result?: unknown }> } }>): void {
@@ -1740,6 +1749,27 @@ ${ledger}` : ''),
       if (!active || !active.url.includes(check.url)) return false;
     }
     return true;
+  }
+
+  /** record_demo: the layer's recorder plus a per-site list kept on this device (see demo-tool.ts). */
+  async #recordDemo(call: ToolCallRequest, kind: ToolKind, args: Record<string, unknown>): Promise<CallOutcome> {
+    const { layer, signal } = this.options;
+    const tabs = await layer.tabs().catch(() => undefined);
+    const active = tabs?.tabs.find(t => t.tabId === (this.#boundTab ?? tabs.activeTabId));
+    let origin = '';
+    try { origin = active ? new URL(active.url).origin : ''; } catch { origin = ''; }
+    if (args.action === 'list') {
+      const saved = origin ? await demosFor(origin) : [];
+      return { call, kind, isError: false, text: saved.length ? saved.map(d => renderDemo(d.name, d.steps)).join('\n\n') : `No demonstrations are kept for ${origin || 'this page'}.` };
+    }
+    if (args.action !== 'start' && args.action !== 'stop') return { call, kind, isError: true, text: 'error: action is start, stop or list' };
+    const r = await layer.call('demo', { action: args.action }, signal).catch((e: unknown) => ({ ok: false as const, error: { message: e instanceof Error ? e.message : String(e) } }));
+    if (!r.ok) return { call, kind, isError: true, text: `error: ${(r as { error?: { message?: string } }).error?.message ?? 'the recorder could not run in this tab'}` };
+    if (args.action === 'start') return { call, kind, isError: false, text: 'Recording. Ask the user to do the task in this tab now and to tell you when they are done; then call record_demo with action stop and a short name. Do not act in the tab meanwhile.' };
+    const steps = (((r as { data?: { steps?: SavedDemo['steps'] } }).data?.steps) ?? []).slice(0, 300);
+    const name = typeof args.name === 'string' && args.name.trim() ? args.name.trim().slice(0, 80) : 'demonstrated task';
+    if (steps.length && origin) await saveDemo({ origin, name, savedAt: Date.now(), steps });
+    return { call, kind, isError: false, text: renderDemo(name, steps) };
   }
 
   async #planTool(call: ToolCallRequest, kind: ToolKind, args: Record<string, unknown>): Promise<CallOutcome> {
@@ -1788,7 +1818,12 @@ ${ledger}` : ''),
       if (err) return fail(err);
       return done();
     }
-    return fail('action is set, update, items or mark');
+    if (args.action === 'fact') {
+      const conflict = this.#plan.setFact(args.id, args.note, typeof args.check === 'object' && args.check && typeof (args.check as { text?: unknown }).text === 'string' ? String((args.check as { text: string }).text) : undefined, args.status === 'verified');
+      if (conflict && !conflict.startsWith('CONFLICT')) return fail(conflict);
+      return done(conflict ?? undefined);
+    }
+    return fail('action is set, update, items, mark or fact');
   }
 
   #reviewedAt = -1;
@@ -2167,6 +2202,8 @@ ${ledger}` : ''),
       outcome = await this.#skillTool(call, kind, args);
     } else if (call.toolName === 'site_action') {
       outcome = await this.#runSiteAction(call, kind, args);
+    } else if (call.toolName === 'record_demo') {
+      outcome = await this.#recordDemo(call, kind, args);
     } else if (call.toolName === 'plan') {
       outcome = await this.#planTool(call, kind, args);
     } else if (call.toolName === 'menu_path') {

@@ -173,6 +173,8 @@ export interface ProbeApi {
   watchBlock(el: Element): string;
   blockMutations(): number;
   hasText(text: string, fields?: boolean): boolean;
+  startDemo(): boolean;
+  stopDemo(): Array<{ t: number; kind: 'mouse' | 'key'; x?: number; y?: number; step: 'click' | 'set' | 'press'; role: string; name: string; value?: string; row?: string }>;
   /** What the element reads: a form control's value, otherwise its visible text (at most 400 characters). */
   reading(el: Element): string;
   /** The value of an attribute (aria-expanded, aria-selected, data-state), or null when it is not set (at most 200 characters). */
@@ -437,8 +439,69 @@ export function probeMain(): void {
     }, { capture: true, passive: true });
   }
 
+  // Demonstration recording (the `demo` tool): the person's trusted clicks, field changes and Enter presses, as role, name, value and row. Off until started;
+  // secrets are never kept (a password, card, CVC, IBAN or one-time-code field records "(hidden)"). The layer removes the inputs it dispatched itself.
+  type DemoRec = { t: number; kind: 'mouse' | 'key'; x?: number; y?: number; step: 'click' | 'set' | 'press'; role: string; name: string; value?: string; row?: string };
+  let demo: DemoRec[] | null = null;
+  const DEMO_ROLE: Record<string, string> = { A: 'link', BUTTON: 'button', SELECT: 'combobox', TEXTAREA: 'textbox', SUMMARY: 'button' };
+  const INPUT_ROLE: Record<string, string> = { checkbox: 'checkbox', radio: 'radio', submit: 'button', button: 'button', reset: 'button', image: 'button' };
+  const demoRole = (el: Element) => el.getAttribute('role') || (el.tagName === 'INPUT' ? (INPUT_ROLE[(el as HTMLInputElement).type] ?? 'textbox') : (DEMO_ROLE[el.tagName] ?? el.tagName.toLowerCase()));
+  const demoTarget = (t: EventTarget | null): Element | null =>
+    t instanceof Element ? t.closest('a,button,input,select,textarea,summary,[role=button],[role=link],[role=tab],[role=menuitem],[role=option],[role=checkbox],[role=switch],[role=radio],[role=combobox],[role=textbox],[role=treeitem],[contenteditable=true]') : null;
+  const demoRow = (el: Element) => { const r = el.closest('li,tr,[role=row],[role=listitem],article'); return r ? shownText(r, 60) || undefined : undefined; };
+  const demoSecret = (el: Element) => {
+    const i = el as HTMLInputElement;
+    return i.type === 'password' || /cc-|one-time-code/.test((i.autocomplete || '').toLowerCase()) || /card|cvv|cvc|iban|ssn|passw|otp|pin\b/i.test(`${i.name} ${i.id} ${el.getAttribute('aria-label') ?? ''}`);
+  };
+  const demoPush = (r: DemoRec) => { if (!demo) return; demo.push(r); if (demo.length > 300) demo.shift(); };
+  if (typeof g.addEventListener === 'function') {
+    g.addEventListener('click', (e: Event) => {
+      if (!demo || !e.isTrusted) return;
+      const el = demoTarget(e.target);
+      if (!el || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA' || (el.tagName === 'INPUT' && demoRole(el) === 'textbox')) return;
+      const m = e as MouseEvent;
+      demoPush({ t: Date.now(), kind: 'mouse', x: m.clientX, y: m.clientY, step: 'click', role: demoRole(el), name: nameOf(el).replace(/\s+/g, ' ').slice(0, 80), row: demoRow(el) });
+    }, { capture: true, passive: true });
+    // A field's value is taken as it is typed (one step per field, updated by each keystroke), so the step carries the time of the last input: the layer's
+    // own typing is then matched to its dispatch and removed. A select is taken on change (a person's pick is one event).
+    let demoField: Element | null = null;
+    const demoSet = (el: Element, kind: 'mouse' | 'key') => {
+      const role = demoRole(el);
+      if (role === 'checkbox' || role === 'radio' || role === 'switch' || !holdsValue(el)) return;
+      const value = demoSecret(el) ? '(hidden)' : el.tagName === 'SELECT' ? ((el as HTMLSelectElement).selectedOptions[0]?.text ?? '') : (el as HTMLInputElement).value;
+      const last = demo && demo[demo.length - 1];
+      if (last && demoField === el && last.step === 'set') { last.value = String(value).slice(0, 200); last.t = Date.now(); return; }
+      demoField = el;
+      demoPush({ t: Date.now(), kind, step: 'set', role, name: nameOf(el).replace(/\s+/g, ' ').slice(0, 80), value: String(value).slice(0, 200), row: demoRow(el) });
+    };
+    g.addEventListener('input', (e: Event) => {
+      if (!demo || !e.isTrusted || !(e.target instanceof Element) || e.target.tagName === 'SELECT') return;
+      demoSet(e.target, 'key');
+    }, { capture: true, passive: true });
+    g.addEventListener('change', (e: Event) => {
+      if (!demo || !e.isTrusted || !(e.target instanceof Element) || e.target.tagName !== 'SELECT') return;
+      demoSet(e.target, 'mouse');
+    }, { capture: true, passive: true });
+    g.addEventListener('keydown', (e: Event) => {
+      const k = e as KeyboardEvent;
+      if (!demo || !e.isTrusted || k.key !== 'Enter' || !(e.target instanceof Element)) return;
+      demoPush({ t: Date.now(), kind: 'key', step: 'press', role: demoRole(e.target), name: nameOf(e.target).replace(/\s+/g, ' ').slice(0, 80), value: 'Enter' });
+    }, { capture: true, passive: true });
+  }
+
   const api = {
     version: 1,
+
+    startDemo() {
+      demo = [];
+      return true;
+    },
+
+    stopDemo() {
+      const out = demo ?? [];
+      demo = null;
+      return out;
+    },
 
     state(el: Element) {
       const tag = el.tagName.toLowerCase();

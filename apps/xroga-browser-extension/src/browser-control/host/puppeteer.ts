@@ -1,5 +1,6 @@
 // The only module that imports Puppeteer. It connects through ExtensionTransport (chrome.debugger) and
 // hands out the page whose frame manager tracks frames, out-of-process iframes included.
+import { logAgentInput } from './cdp-session';
 import { connect, ExtensionTransport } from 'puppeteer-core/internal/puppeteer-core-browser.js';
 import type { KeyInput, PageEvent, ProtocolType } from 'puppeteer-core/internal/puppeteer-core-browser.js';
 import type { Browser } from 'puppeteer-core/internal/api/Browser.js';
@@ -22,6 +23,17 @@ export interface PuppeteerConnection {
 
 export async function connectTab(tabId: number): Promise<PuppeteerConnection> {
   const transport = await ExtensionTransport.connectTab(tabId);
+  // Puppeteer's keyboard sends its key events through this transport, not through sendRaw: they are logged here as the agent's, like every other input.
+  const send = typeof transport.send === 'function' ? transport.send.bind(transport) : undefined;
+  if (send) transport.send = (message: string) => {
+    try {
+      const m = JSON.parse(message) as { method?: unknown; params?: unknown };
+      if (typeof m.method === 'string' && m.method.startsWith('Input.')) logAgentInput(tabId, m.method, (m.params ?? {}) as Record<string, unknown>);
+    } catch {
+      /* not JSON: nothing to log */
+    }
+    return send(message);
+  };
   // The debugger is attached from here on: any failure detaches it again, or the tab could not be attached later.
   let browser: Browser | undefined;
   try {

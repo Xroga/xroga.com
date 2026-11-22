@@ -46,7 +46,8 @@ export function recentAgentInput(tabId: number, sinceMs: number): AgentInput[] {
   const from = Date.now() - sinceMs;
   return agentInputs.filter(a => a.tabId === tabId && a.t >= from);
 }
-function logAgentInput(tabId: number, method: string, params: Record<string, unknown>): void {
+/** Also called for commands that reach Chrome another way (Puppeteer's keyboard): every agent input must be in this log, or the person-guard and the recorder take it for the person's. */
+export function logAgentInput(tabId: number, method: string, params: Record<string, unknown>): void {
   let kind: AgentInput['kind'] | null = null;
   if (method === 'Input.dispatchMouseEvent') kind = params.type === 'mouseWheel' ? 'wheel' : params.type === 'mouseMoved' ? null : 'mouse';
   else if (method === 'Input.dispatchKeyEvent' || method === 'Input.insertText' || method === 'Input.imeSetComposition') kind = 'key';

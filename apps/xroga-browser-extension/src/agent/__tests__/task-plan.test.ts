@@ -74,3 +74,19 @@ describe('TaskPlan', () => {
   });
 });
 
+describe('TaskPlan facts', () => {
+  it('a second, different value for one fact is a conflict until it is settled; the same value in another format is not', () => {
+    const plan = new TaskPlan();
+    expect(plan.setFact('whatsapp number', '+92 325 6743964', 'cta capture 1')).toBeNull();
+    expect(plan.setFact('WhatsApp number', '+92-325-674-3964')).toBeNull();
+    const conflict = plan.setFact('whatsapp number', '+44 7366 847680', 'destination capture');
+    expect(conflict).toMatch(/CONFLICT: whatsapp number was "\+92 325 6743964".*now "\+44 7366 847680"/);
+    expect(plan.conflicts()).toHaveLength(1);
+    expect(plan.render()).toMatch(/conflict: whatsapp number/);
+    expect(TaskPlan.restore(plan.snapshot()).conflicts()).toHaveLength(1);
+    expect(plan.setFact('whatsapp number', '+92 325 6743964', 'checked on the business profile', true)).toBeNull();
+    expect(plan.conflicts()).toHaveLength(0);
+    expect(plan.setFact('', 'x')).toMatch(/needs id/);
+  });
+});
+

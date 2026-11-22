@@ -11,7 +11,10 @@ export interface Milestone { id: string; title: string; status: MilestoneStatus;
 export type LedgerStatus = 'pending' | 'saved' | 'verified' | 'failed' | 'skipped';
 /** One item of a batch job (a draft, a row, a record). `savedAt` is the page-load count when it was marked saved: verified needs a later load. */
 export interface LedgerItem { key: string; status: LedgerStatus; note?: string; savedAt?: number }
-export interface PlanSnapshot { revision: number; milestones: Milestone[]; ledger?: LedgerItem[] }
+/** A fact the work depends on (a phone number, a price, an account id), as read from a page or a source. Two different values for one key is a conflict to settle before reporting success. */
+export interface Fact { key: string; value: string; source?: string; earlier?: string; earlierSource?: string; settled?: boolean }
+export interface PlanSnapshot { revision: number; milestones: Milestone[]; ledger?: LedgerItem[]; facts?: Fact[] }
+export const MAX_FACTS = 60;
 
 export const MAX_LEDGER = 300;
 const LEDGER_SETTABLE = new Set<string>(['saved', 'verified', 'failed', 'skipped', 'pending']);
@@ -35,6 +38,7 @@ export class TaskPlan {
   #revision = 0;
   #milestones: Milestone[] = [];
   #ledger: LedgerItem[] = [];
+  #facts: Fact[] = [];
 
   static restore(snapshot: PlanSnapshot | undefined): TaskPlan {
     const p = new TaskPlan();
@@ -42,6 +46,7 @@ export class TaskPlan {
       p.#revision = Number.isSafeInteger(snapshot.revision) ? snapshot.revision : 0;
       p.#milestones = snapshot.milestones.filter(m => m && ID.test(m.id) && typeof m.title === 'string').slice(0, MAX_MILESTONES).map(m => ({ ...m }));
     }
+    if (snapshot && Array.isArray(snapshot.facts)) p.#facts = snapshot.facts.filter(f => f && typeof f.key === 'string' && typeof f.value === 'string').slice(0, MAX_FACTS).map(f => ({ ...f }));
     if (snapshot && Array.isArray(snapshot.ledger)) {
       p.#ledger = snapshot.ledger.filter(i => i && typeof i.key === 'string' && LEDGER_SETTABLE.has(i.status)).slice(0, MAX_LEDGER).map(i => ({ ...i }));
     }
@@ -51,7 +56,36 @@ export class TaskPlan {
   get active(): boolean { return this.#milestones.length > 0; }
   get hasLedger(): boolean { return this.#ledger.length > 0; }
   snapshot(): PlanSnapshot {
-    return { revision: this.#revision, milestones: this.#milestones.map(m => ({ ...m })), ...(this.#ledger.length ? { ledger: this.#ledger.map(i => ({ ...i })) } : {}) };
+    return { revision: this.#revision, milestones: this.#milestones.map(m => ({ ...m })), ...(this.#ledger.length ? { ledger: this.#ledger.map(i => ({ ...i })) } : {}), ...(this.#facts.length ? { facts: this.#facts.map(f => ({ ...f })) } : {}) };
+  }
+
+  /**
+   * Records a fact. The same key with a different value (spacing, case and punctuation ignored) keeps both and is a conflict until it is recorded again as
+   * settled (`settled`: the value was checked at its source). Returns the conflict text, or null.
+   */
+  setFact(key: unknown, value: unknown, source?: string, settled = false): string | null {
+    if (typeof key !== 'string' || !key.trim() || typeof value !== 'string' || !value.trim()) return 'fact needs id (a short name such as "whatsapp number") and note (its value)';
+    const k = key.trim().slice(0, 60);
+    const v = value.trim().slice(0, 200);
+    const same = (a: string, b: string) => a.replace(/[\s().,-]+/g, '').toLowerCase() === b.replace(/[\s().,-]+/g, '').toLowerCase();
+    const old = this.#facts.find(f => f.key.toLowerCase() === k.toLowerCase());
+    this.#revision++;
+    if (!old) {
+      if (this.#facts.length >= MAX_FACTS) return `at most ${MAX_FACTS} facts`;
+      this.#facts.push({ key: k, value: v, ...(source ? { source: source.slice(0, 120) } : {}), ...(settled ? { settled: true } : {}) });
+      return null;
+    }
+    if (same(old.value, v)) { if (settled) { old.settled = true; delete old.earlier; delete old.earlierSource; } return null; }
+    if (settled) { Object.assign(old, { value: v, settled: true, ...(source ? { source: source.slice(0, 120) } : {}) }); delete old.earlier; delete old.earlierSource; return null; }
+    const earlier = old.value, earlierSource = old.source;
+    Object.assign(old, { value: v, earlier, settled: false, ...(source ? { source: source.slice(0, 120) } : {}) });
+    if (earlierSource) old.earlierSource = earlierSource;
+    return `CONFLICT: ${k} was "${earlier}"${earlierSource ? ` (${earlierSource})` : ''} and is now "${v}"${source ? ` (${source})` : ''}. Find which is right at its source, then record it again with status verified.`;
+  }
+
+  /** Facts read twice with different values and not settled since. */
+  conflicts(): Fact[] {
+    return this.#facts.filter(f => f.earlier !== undefined && !f.settled);
   }
 
   /** Sets the batch job's items (a short, unique name each: a recipient, a record id). An item that keeps its key keeps its state. */
@@ -196,6 +230,7 @@ export class TaskPlan {
     const mark: Record<MilestoneStatus, string> = { pending: '[ ]', working: '[~]', verified: '[x]', reported: '[?]', recovering: '[!]', waiting: '[…]', blocked: '[#]' };
     const lines = this.#milestones.map(m => `${mark[m.status]} ${m.id}: ${m.title} (${m.status}${m.basis === 'inferred' ? ', inferred' : m.basis === 'user' ? ', needs you' : ''}${m.check ? ', verifiable' : ''}${m.note ? `; ${m.note}` : ''})`);
     if (this.#ledger.length) lines.push(this.ledgerSummary());
+    for (const f of this.conflicts()) lines.push(`conflict: ${f.key} "${f.earlier}" or "${f.value}"`);
     return lines.join('\n');
   }
 }
@@ -209,11 +244,12 @@ export const PLAN_TOOL = {
     'action "set": milestones is a list of {id, title, check?}: a title names a deliverable (not a click), check {text} or {url} is something observable on the page when the milestone is truly done. Call set again to revise the plan when you find a better method. ' +
     'action "update": id and status working, done, blocked or waiting, plus an optional note. A milestone is shown as verified only when its check is seen on the page; without a check it shows as "reported". It never limits what you may do. ' +
     'For a batch of many items (drafts, rows, records): action "items" with keys (a short unique name each, no duplicates) keeps the list and survives an interruption; action "mark" with keys and status saved, failed or skipped. ' +
+    'action "fact": id and note (a value the work depends on, read from a page); a different value for the same id is reported as a conflict. ' +
     '"verified" is accepted only for an item already marked saved, after a page load since (reload or reopen it), with check {text} visible on the page. Report only verified items as done.',
   parameters: {
     type: 'object',
     properties: {
-      action: { type: 'string', enum: ['set', 'update', 'items', 'mark'] },
+      action: { type: 'string', enum: ['set', 'update', 'items', 'mark', 'fact'] },
       keys: { type: 'array', maxItems: MAX_LEDGER, items: { type: 'string', maxLength: 80 } },
       check: { type: 'object', properties: { text: { type: 'string', maxLength: 200 } } },
       milestones: {

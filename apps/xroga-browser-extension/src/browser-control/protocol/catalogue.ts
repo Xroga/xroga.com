@@ -11,6 +11,7 @@ import {
   HoverArgsSchema,
   DragArgsSchema,
   CanvasArgsSchema,
+  DemoArgsSchema,
   DiagnosticsArgsSchema,
   NavigateArgsSchema,
   PressArgsSchema,
@@ -152,6 +153,15 @@ export const TOOL_SPECS: ToolSpec[] = [
     name: 'wait',
     description: 'Wait for text to appear or disappear, an element state, a URL, or a fixed time.',
     args: WaitArgsSchema,
+    readOnly: true,
+    capability: 'core',
+    available: true,
+  },
+  {
+    // Offered to the model only through the agent tool record_demo, never directly.
+    name: 'demo',
+    description: "Record the user's own clicks, field changes and Enter presses in this tab (start), and return them as role and name steps (stop).",
+    args: DemoArgsSchema,
     readOnly: true,
     capability: 'core',
     available: true,

@@ -205,7 +205,9 @@ export function toolsForRun(options: {
         (t.required || !options.disabled?.includes(t.name)) &&
         (t.name !== 'screenshot' || options.vision || options.localScreenshots) &&
         // Pointer actions on a canvas are offered with the point options: to a model that can see, or to an editor-like task.
-        (t.name !== 'canvas' || options.pointAt),
+        (t.name !== 'canvas' || options.pointAt) &&
+        // The recorder is offered through the agent tool record_demo only.
+        t.name !== 'demo',
     )
     .map(withAt)
     .map(t =>

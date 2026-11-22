@@ -211,6 +211,10 @@ export const WaitArgsSchema = z.strictObject({
   ms: z.number().int().min(0).max(60_000).optional(),
 });
 
+export const DemoArgsSchema = z.strictObject({
+  action: z.enum(['start', 'stop']),
+});
+
 export const DiagnosticsArgsSchema = z.strictObject({
   ...readCommon,
   kind: z.enum(['both', 'console', 'network']).optional(),
@@ -288,6 +292,7 @@ export type ScrollArgs = z.infer<typeof ScrollArgsSchema>;
 export type WaitArgs = z.infer<typeof WaitArgsSchema>;
 export type NavigateArgs = z.infer<typeof NavigateArgsSchema>;
 export type DiagnosticsArgs = z.infer<typeof DiagnosticsArgsSchema>;
+export type DemoArgs = z.infer<typeof DemoArgsSchema>;
 export type TabsArgs = z.infer<typeof TabsArgsSchema>;
 export type HandleDialogArgs = z.infer<typeof HandleDialogArgsSchema>;
 export type UploadArgs = z.infer<typeof UploadArgsSchema>;

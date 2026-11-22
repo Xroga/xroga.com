@@ -229,3 +229,25 @@ defineScenario({
   },
 });
 
+// The recorder keeps only what the person does: the layer's own clicks and typing during a recording are taken out, and a stop without a start returns nothing.
+defineScenario({
+  id: 'S3-demo-recorder-leaves-out-agent-input',
+  set: 'C',
+  title: 'start a demonstration, let the agent click and type, stop: none of the agent input is recorded as coming from the user',
+  covers: 'demo start and stop work in a real page; inputs dispatched by the layer are matched and removed',
+  async run(ctx) {
+    await ctx.open(`${FIXTURE_ORIGIN}/c-typeahead.html`);
+    await ctx.call('snapshot');
+    const start = await ctx.call('demo', { action: 'start' });
+    await ctx.call('set', { target: { role: 'textbox', name: 'Name' }, value: 'Grace' });
+    await ctx.call('press', { keys: 'Enter' });
+    const stop = await ctx.call('demo', { action: 'stop' });
+    const steps = ((stop as { data?: { steps?: unknown[] } }).data?.steps) ?? null;
+    return outcome(
+      'start ok, stop ok, zero steps (all input came from the agent)',
+      JSON.stringify({ start: start.ok, stop: stop.ok, steps }),
+      start.ok === true && stop.ok === true && Array.isArray(steps) && steps.length === 0,
+    );
+  },
+});
+

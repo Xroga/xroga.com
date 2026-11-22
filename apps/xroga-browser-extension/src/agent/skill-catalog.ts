@@ -233,6 +233,49 @@ metadata:
 - Read the confirmation or resulting page and report exactly what it shows.
 - Consequential forms (payment, account creation, applications, messages) need the user's approval before the final submit.`,
   },
+  // Adapted 2026-11-23 from boringmarketer/boring-marketing-skills @ 7c6678c (MIT, Boring Marketing, LLC), skills/google-business-profile, as collected in
+  // sickn33/agentic-awesome-skills @ f6f68685. Rewritten for browser execution; no scripts, keys or paid services.
+  {
+    verified: 'curated',
+    md: `---
+name: google-business-profile
+description: Audit or complete a Google Business Profile (Maps listing) against the businesses that win the local map pack, fix what loses calls, and draft posts.
+license: MIT (adapted from boringmarketer/boring-marketing-skills)
+metadata:
+  domain: local-business
+  hosts: business.google.com
+  keywords: google business profile gbp google my business maps listing map pack local seo reviews categories service area posts
+  requires: browser
+  risk: write
+  docs: ""
+---
+- Search the way customers do: the main service alone, "[service] near me" and "[service] [city]", from the city centre and the area around the business. Note query, place, date for each look.
+- Compare the business with the top 3 on the same fields: name as shown, primary category, rating and review count, reviews per month and owner reply share, photo count and newest date, newest post, hours, services, the page the website button opens, distance.
+- Fix risks first: the name must match real signage (no added keywords or city), a business serving customers at their address hides it and lists service areas, every phone number on the profile reaches someone, the website link carries tracking (utm_source=google, utm_medium=organic, utm_campaign=gbp), every button works, messages and suggested edits reach someone, hours (including holidays) are true.
+- Then rank gaps: primary category against the top 3, review pace and replies, real job photos, description, hours, offers. Distance is stated, not fought.
+- Posts: one a week from real jobs, seasonal prevention, real questions or a real offer with an end date; the point in the first two lines, no phone number in the text, a real photo screened for faces, plates and addresses.
+- Every change to the live profile and every post is published only with the owner's approval; facts only the owner knows (hours, services, offers) are asked, never invented.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
+name: business-presence-setup
+description: Create or complete the public presence of a business (a social Page, a profile, a listing) from what the business really offers: identity, contact, services, buttons, messaging, first post.
+license: Xroga-internal
+metadata:
+  domain: business-presence
+  hosts: facebook.com business.facebook.com instagram.com linkedin.com business.google.com
+  keywords: business page profile listing facebook page instagram business linkedin company page about bio contact button services greeting auto reply cover logo
+  requires: browser
+  risk: write
+  docs: ""
+---
+- Read the business first (its website, earlier conversation, attached files): name, category, what it sells, area, real contact details. Never invent a phone number, address, price or claim; ask for what is missing.
+- Create or find the page without making a duplicate (search the account's pages first). If a name is refused, use the closest name the site suggests.
+- Fill identity and contact in one pass per form, then services, the main action button (call, message, book) and the messaging greeting or instant reply; leave publishing posts and anything paid to the owner's approval.
+- Check that each saved value shows after a reload, that every phone number on the page is the same one, and that buttons open the right place. Record the values you depend on with plan fact and settle any two that differ.
+- Finish with what is saved, what waits on the owner (codes, payments, missing facts) and what was left unpublished.`,
+  },
   {
     verified: 'curated',
     md: `---
