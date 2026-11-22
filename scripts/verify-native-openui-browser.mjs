@@ -518,6 +518,8 @@ try {
       assert.ok(Math.abs(inputsBounds.width - resultsBounds.width) < 2, 'Inputs and results share one width');
       assert.ok(Math.abs(inputsBounds.y + inputsBounds.height - resultsBounds.y) < 2, 'Inputs and results have no gap between panels');
       if ([390, 1440].includes(viewport.width)) {
+        const contrast = await new AxeBuilder({ page }).include('.native-answer-controls').withRules(['color-contrast']).analyze();
+        assert.deepEqual(contrast.violations.map(issue => issue.id), [], 'Calculator controls stay readable in ' + theme);
         await page.screenshot({ path: resolve(output, channel + '-compact-calculator-' + viewport.width + '-' + theme + '.png'), fullPage: true });
       }
       await open('referenceRecovered');

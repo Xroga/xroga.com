@@ -78,7 +78,7 @@
 }
 .native-evaluation-composer p { margin: 0; font-size: .875rem; color: var(--iui-muted); overflow-wrap: anywhere; }
 .native-evaluation-composer-actions { display: flex; justify-content: end; }
-.native-evaluation button {
+.native-evaluation button:not(:where(.xroga-native-openui *)) {
   display: inline-flex;
   align-items: center;
   gap: .45rem;
@@ -91,5 +91,5 @@
   padding: .45rem .75rem;
   cursor: pointer;
 }
-.native-evaluation button:disabled { opacity: .55; cursor: default; }
+.native-evaluation button:disabled:not(:where(.xroga-native-openui *)) { opacity: .55; cursor: default; }
 .native-evaluation :focus-visible { outline: 2px solid var(--iui-ink); outline-offset: 3px; }
