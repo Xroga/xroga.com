@@ -86,3 +86,5 @@ Build commit `664f170f8` (working tree clean), ZIP `C:\xr-review-builds\xroga-br
 - **Workers on the new build:** 8 pages, real DeepSeek: parallel 185 s, 8 of 8 codes, 3 workers active at once; single agent 170 s, 8 of 8 (`live-model/parallel-real-8pages-round7-20261122.json`). Same conclusion as before: correct, not faster.
 - Chromium scenarios 307 of 307 PASS (`scenarios-full-20261122f.json`); extension unit suite 1478 passed, 4 skipped.
 
+
+**Release after round 8.** Build commit `9d57e0c71` (working tree clean), ZIP `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-9d57e0c71.zip`, SHA-256 `19B4C554383645A0E181CF9CE15D04277EE593F8622EA959303C635C247A6652`, manifest `ARTIFACT-MANIFEST-9d57e0c71.json`. Upgrade smoke from the `6649442dd` ZIP in real Chromium: same id, storage kept, service worker alive, side panel loads. Backend unchanged (tag `browser-op-1110` on `effort-hm9`; rollback `00146-wod`). Staging only; production not live with any of this.
