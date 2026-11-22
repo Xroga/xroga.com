@@ -1,5 +1,5 @@
 /* The toolbar anchors its controls; only the transcript paints a scroll fade. */
-.headerChrome { position: relative; z-index: 6; isolation: isolate; }
+.headerChrome { position: relative; z-index: 6; isolation: isolate; display: flex; flex-wrap: wrap; }
 .transcriptFade {
   position: absolute;
   inset-block-start: 0;
@@ -13,11 +13,32 @@
 }
 .transcriptFade[data-scrolled='true'] { opacity: 1; }
 .browserControl {
-  position: absolute;
-  inset-block-start: calc(100% + 6px);
-  inset-inline-end: 10px;
-  max-inline-size: calc(100% - 20px);
-  z-index: 1;
+  position: relative;
+  inset: auto;
+  z-index: 6;
+  display: flex;
+  flex: 0 0 100%;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  max-inline-size: 100%;
+  margin-top: 6px;
+  padding-inline: 10px;
+}
+.browserControl > details { max-inline-size: 100%; }
+.browserControl [data-xroga-extension-trigger] {
+  min-height: 27px;
+  max-width: 100%;
+  padding: 4px 9px;
+  gap: 6px;
+  border-radius: 999px;
+  font-size: 11px;
+  line-height: 1;
+  white-space: nowrap;
+}
+.browserControl [data-xroga-extension-trigger] svg {
+  width: 14px;
+  height: 14px;
 }
 :global(.terminal-skin-gray) .browserControl [data-xroga-extension-trigger],
 :global(.terminal-skin-dark) .browserControl [data-xroga-extension-trigger],
@@ -28,6 +49,19 @@
 :global(.terminal-skin-amoled) .browserControl [data-xroga-extension-trigger] {
   background: #fff;
   color: #16181d;
+}
+@media (max-width: 639px) {
+  .browserControl { margin-top: 4px; padding-inline: 10px; }
+  .browserControl [data-xroga-extension-trigger] {
+    min-height: 24px;
+    padding: 3px 8px;
+    gap: 5px;
+    font-size: 10px;
+  }
+  .browserControl [data-xroga-extension-trigger] svg {
+    width: 13px;
+    height: 13px;
+  }
 }
 /* R5Program/Uiverse button, scaled to 28px with a stronger circular outline and clicked fill.
    A single horizontal pair sits quietly above the composer, never over it. */
