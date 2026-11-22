@@ -97,7 +97,6 @@ export function TerminalSkinPicker() {
         aria-label={`Terminal skin: ${auto ? 'Auto' : active.label}`}
       >
         <AnimatedIcon icon={PaletteIcon} size={14} intro={false} />
-        <span className="xv-skin-trigger-label">Skin</span>
       </button>
 
       {open && typeof document !== 'undefined' ? createPortal(

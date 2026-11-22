@@ -8540,10 +8540,11 @@ body.xv-terminal-fullscreen-active .xv-terminal-header {
 
 .xv-skin-trigger {
   display: inline-flex;
+  justify-content: center;
   align-items: center;
-  gap: 0.35rem;
+  width: 28px;
   height: 28px;
-  padding: 0 0.5rem;
+  padding: 0;
   border-radius: 0.55rem;
   /* Readable at rest, not only on hover. This carried `--muted` text on a 72%
      translucent ground with a hairline border, which on the dark skins left the
@@ -8563,10 +8564,6 @@ body.xv-terminal-fullscreen-active .xv-terminal-header {
   border-color: color-mix(in srgb, var(--foreground) 30%, transparent);
   color: var(--foreground);
 }
-/* The label is the first thing to go when the header is tight; the swatch alone
-   still identifies the active skin. */
-.xv-skin-trigger-label { display: none; }
-@media (min-width: 520px) { .xv-skin-trigger-label { display: inline; } }
 .xv-skin-dot {
   width: 11px;
   height: 11px;
@@ -14303,17 +14300,15 @@ body.theme-beige .xv-cba-kbd { color: var(--muted) !important; background: color
     border: 0 !important;
     box-shadow: none !important;
   }
-  .xv-workspace-header-tools .xv-ws-launch > span:not(.xv-animated-icon-host) { display: none !important; }
   .xv-workspace-header-tools button > .xv-animated-icon-host { display: inline-flex !important; }
   .xv-workspace-header-tools .xv-ws-launch {
     display: inline-flex !important;
-    width: 30px !important;
     min-width: 30px !important;
-    padding: 0 !important;
     justify-content: center;
     color: var(--foreground) !important;
     opacity: .82 !important;
   }
+  .xv-workspace-header-tools .xv-ws-launch--icon { width: 30px; padding: 0; }
 }
 
 /* Mobile workspace: one connected frame, with the toolbar as its top edge. */
@@ -14948,24 +14943,15 @@ body.xv-sidebar-resizing .xv-terminal-dock {
     gap: 0.35rem;
     padding-inline: 0.5rem;
   }
-  .xv-workspace-header .xv-ws-launch:not(.xv-ws-launch--icon) > span {
-    display: none;
-  }
-  .xv-workspace-header .xv-ws-launch:not(.xv-ws-launch--icon) {
-    min-width: 32px;
-    width: 32px;
-    padding-inline: 0;
-    justify-content: center;
-  }
 }
 
-/* Workspace-only header controls: text links on desktop, icon-only on mobile.
-   Resting controls have no outlined pill; focus-visible remains accessible. */
+.xv-workspace-header-tools .xv-ws-launch:not(.xv-ws-launch--icon) { white-space: nowrap; }
+
+/* Project edits keeps its label. Other workspace actions use named icons. */
 .xv-workspace-header-tools .xv-skin-trigger {
-  min-height: 30px;
+  width: 30px;
   height: 30px;
-  gap: 6px;
-  padding: 0 7px;
+  padding: 0;
   border: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
@@ -14980,17 +14966,4 @@ body.xv-sidebar-resizing .xv-terminal-dock {
 .xv-workspace-header-tools .xv-skin-trigger:focus-visible {
   outline: 2px solid var(--accent, currentColor);
   outline-offset: 2px;
-}
-@media (min-width: 1024px) {
-  .xv-workspace-header-tools .xv-skin-trigger-label { display: inline; }
-}
-@media (max-width: 1023px) {
-  .xv-workspace-header-tools .xv-skin-trigger {
-    width: 32px;
-    min-width: 32px;
-    height: 32px;
-    padding: 0;
-    justify-content: center;
-  }
-  .xv-workspace-header-tools .xv-skin-trigger-label { display: none !important; }
 }
