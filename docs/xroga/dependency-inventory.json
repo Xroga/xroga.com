@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "1df8e366f03015e6e3a6bed1e54edb712134b51f",
+  "source_sha": "3edb47753f201622afcec9edd3db8dafdab53ec7",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17330,7 +17330,7 @@
     },
     {
       "path": "backend/src/ai/prompts.ts",
-      "sha256": "dd3f1f00a0270f55fd99d535ec134d091c935bb30d2d208321ae1f1c34a17c3a"
+      "sha256": "151eb258f82a88ad7520041f961aa5d8dde2f65d24a1ccfd393d3683f79ddf81"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -17382,11 +17382,15 @@
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "sha256": "d3766a726cf0ad295f418a8b7099a7a3a4f64c1031ea92c77b9f1698704d40fe"
+      "sha256": "02ae787e5ca15e0af45cebc4973bc929525fe4e3219148320b8cf0d128b6e465"
     },
     {
       "path": "backend/src/ai/researchSearchProvider.ts",
       "sha256": "6f1b66a88773710c56eccf3f0d66638731b1ede49a90cbfc049d37ae3df50c28"
+    },
+    {
+      "path": "backend/src/ai/researchWebsiteEvidence.ts",
+      "sha256": "00c809881a09a3e1fc1188b58de1e33fc97b0b2e5fb73a30b8dc40d0b07df06f"
     },
     {
       "path": "backend/src/ai/resourceLedger.ts",
@@ -23166,7 +23170,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SourceCitation.tsx",
-      "sha256": "b77760523902ba08393179ccea3e5b3f7a21a280dcc4f5d0a05e5e9213ae8ee6"
+      "sha256": "5d9987441ca73dadb29a9657b3e5463ee72ce3c2934974fd4fddf5f3c479d9dc"
     },
     {
       "path": "frontend/src/components/terminal/SourceLogo.tsx",
@@ -23802,7 +23806,7 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sha256": "e0e0072b7becb0e4eec382927a117dc9c4e6af2c8d88e42850cbc8a339a0e4cf"
+      "sha256": "306a243431edbac3859e6f9b99a4c440571d432da9500fc960de72053d42ede2"
     },
     {
       "path": "frontend/src/lib/gameBuilderContent.ts",
@@ -24590,7 +24594,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaCitations.ts",
-      "sha256": "7c34966a2a3606bfab6185342ae6fd575b4ae9663b0cb4bbedd92cea80867655"
+      "sha256": "13d48cf592f8b35c51eb0963bd8368d3b3ab0b39a9f3fb798b6ad89c077a1619"
     },
     {
       "path": "frontend/src/lib/xrogaConnect.ts",
@@ -34017,21 +34021,21 @@
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "line": 83,
+      "line": 84,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "line": 113,
+      "line": 116,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "line": 114,
+      "line": 117,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -34039,6 +34043,48 @@
     {
       "path": "backend/src/ai/researchSearchProvider.ts",
       "line": 24,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/researchWebsiteEvidence.ts",
+      "line": 36,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/researchWebsiteEvidence.ts",
+      "line": 62,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/researchWebsiteEvidence.ts",
+      "line": 75,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/researchWebsiteEvidence.ts",
+      "line": 78,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/researchWebsiteEvidence.ts",
+      "line": 80,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/researchWebsiteEvidence.ts",
+      "line": 81,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
