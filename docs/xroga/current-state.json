@@ -137903,7 +137903,7 @@
       "sourcePath": "supabase/migrations/20261108181114_local_browser_device_sessions.sql",
       "version": "20261108181114",
       "order": 162,
-      "sha256": "cecc94fa90df95543974fad939bd3a23a526f2bf4933369fc28e9e09abbb0bf3"
+      "sha256": "a0446ad05e05873fc44376df1780dfce88bfdac94ea09e32e6d0e2025ab593c5"
     },
     {
       "id": "migration:e8fe1b1de1637b067d83",

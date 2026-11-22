@@ -1,6 +1,6 @@
 -- Browser device grants are written only by the backend's existing PostgreSQL connection.
 -- Store digests, never an extension credential or a Workspace access token.
-CREATE TABLE public.local_browser_device_sessions (
+CREATE TABLE IF NOT EXISTS public.local_browser_device_sessions (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   owner_id uuid NOT NULL REFERENCES auth.users (id) ON DELETE CASCADE,
   extension_id text NOT NULL CHECK (extension_id ~ '^[a-p]{32}$'),
@@ -20,4 +20,4 @@ CREATE TABLE public.local_browser_device_sessions (
 
 ALTER TABLE public.local_browser_device_sessions ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON public.local_browser_device_sessions FROM PUBLIC, anon, authenticated, service_role;
-CREATE INDEX local_browser_device_sessions_expiry_idx ON public.local_browser_device_sessions (expires_at);
+CREATE INDEX IF NOT EXISTS local_browser_device_sessions_expiry_idx ON public.local_browser_device_sessions (expires_at);
