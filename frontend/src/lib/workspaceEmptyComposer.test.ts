@@ -403,7 +403,7 @@ test('the conversation scrollport ends at the composer without clipping its nati
 test('the live transcript keeps the starter headline and one-line native-language helper', () => {
   assert.doesNotMatch(DASHBOARD, /<DashboardWelcome/);
   assert.match(DOCK, /showStarterExperience &&\s*!incognito \? \(\s*<WorkspaceStartHeader \/>/);
-  assert.match(START_CSS, /content:\s*"Type or speak in your native language\. Xroga picks the right tools automatically\."/);
+  assert.match(START_CSS, /content:\s*"Type or speak in your native language, and the right tools handle the work automatically\."/);
   assert.match(START_CSS, /\.automatic\s*\{[^}]*white-space:\s*nowrap/);
   assert.match(START_CSS, /\.cardWords>span\s*\{[^}]*font:\s*11px\/1\.4/);
   assert.match(START_CSS, /@container \(max-width: 580px\)[\s\S]*?\.cardWords>span\s*\{[^}]*font-size:\s*10\.5px/);
