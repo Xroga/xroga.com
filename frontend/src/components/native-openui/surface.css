@@ -155,6 +155,10 @@
 .native-answer-metric { display: grid; gap: .1rem; margin: 0; align-content: start; }
 .native-answer-metric dt { color: var(--iui-muted); font-size: .875rem; font-weight: 550; }
 .native-answer-metric dd { margin: 0; font-size: 1.375rem; font-weight: 650; line-height: 1.2; letter-spacing: -.025em; font-variant-numeric: tabular-nums; }
+.xroga-native-openui .iui-grid > .native-answer-metric { container-type: inline-size; }
+.xroga-native-openui .iui-grid > .native-answer-metric > dd:first-of-type {
+  font-size: clamp(.9375rem, 12cqi, 1.375rem);
+}
 .native-answer-metric[data-tone="info"] dd:first-of-type { color: var(--native-accent); }
 .native-answer-metric[data-tone="success"] dd:first-of-type { color: var(--iui-success); }
 .native-answer-metric[data-tone="warning"] dd:first-of-type { color: var(--iui-warning); }
