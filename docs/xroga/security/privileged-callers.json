@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "47cd465087686a94d9ac39b7bc3c1be109155d2b43763addc427a35e8de69422",
+  "reviewRegistrySha256": "3a51843c5f77c1677b127b9c409c549366470bf1381185c471a8a6fde14a15c1",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -4096,7 +4096,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "634a309285fa8ac39aca"
+        "id": "1966e0b544fc8426dd7e"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6796,7 +6796,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "634a309285fa8ac39aca"
+        "id": "1966e0b544fc8426dd7e"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -12724,7 +12724,7 @@
       }
     },
     {
-      "id": "634a309285fa8ac39aca",
+      "id": "1966e0b544fc8426dd7e",
       "path": "backend/src/ai/responsePresentation.ts",
       "line": 144,
       "enclosing": "normalizeSectionData",
@@ -12732,7 +12732,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "6b3e4102e8be165dc5885e9d9b3961549db871500464a215e9f4eabb295c4790"
+      "sourceSha256": "d1dde66cc1bbe2a0f523db68db294f5c4f26640c89fef46270493c228651588e"
     },
     {
       "id": "64b99cfd7d4a42c04576",
@@ -33206,7 +33206,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "9a5904250137cd3bf019ef63c53b592dfd33a42a5b9a6a986c05bb97cd4b98a7",
+      "sourceSha256": "27e070bb2e26ee0880745fe40550cc7ff8dde9035903bab7beb35a7a5068e7bf",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in exportDocumentPdf, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",

@@ -1,11 +1,11 @@
 {
   "version": "1.0",
   "identity": {
-    "repository": "https://github.com/Xroga/xroga.com.git",
-    "branch": "codex/workspace-search-ranking-basis",
-    "sha": "ef53e362f2f673d491f744a97743a90d68a9cf8d",
-    "sourceTimestampUtc": "2026-11-22T21:06:53+05:00",
-    "auditStartedUtc": "2026-11-22T16:10:25.782Z",
+    "repository": "https://github.com/Xroga/xroga.com",
+    "branch": "",
+    "sha": "5d432868330d6b48268c652e73bee30926435ee2",
+    "sourceTimestampUtc": "2026-11-22T22:33:38+05:00",
+    "auditStartedUtc": "2026-11-22T17:40:10.653Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -5242,7 +5242,7 @@
       "id": "surface:e0ab1e1220bfa120c45b",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeDocumentDownload.ts",
-      "sha256": "cfa560f9b406cffa4548ef4beacefe61cc438654649181ff5c03ede6c954415d",
+      "sha256": "6409db7b4cff4d88eb57088c0133d47b3a60a33c351358d56abfa6940ed7af76",
       "symbols": [
         "NativeDocumentFormat",
         "afterFormat",
@@ -5253,6 +5253,7 @@
         "body",
         "candidate",
         "compactNativeDocumentProse",
+        "competingFormat",
         "conciseDeliverable",
         "conciseFormat",
         "declinesDownload",
@@ -5261,7 +5262,9 @@
         "direct",
         "document",
         "documentDeliverable",
+        "downloadableText",
         "downloads",
+        "explicitTextExport",
         "exportFormat",
         "extensions",
         "fileFormat",
@@ -5283,6 +5286,7 @@
         "nativeDocumentRequiresAttachment",
         "nativeDocumentRequiresPriorAnswer",
         "optionalDescription",
+        "otherFormat",
         "plannedNativeDocument",
         "priorContent",
         "priorExport",
@@ -5294,6 +5298,8 @@
         "table",
         "tableNames",
         "text",
+        "textPrefix",
+        "textRequested",
         "trailing",
         "wantsFormula"
       ],
@@ -6371,7 +6377,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "77a082ec996630fd5cfbb3a02e8fdab0eb654dd575e3923ff68a6302dff9192b",
+      "sha256": "e9e7dea5304a2bb9ae2c25ac4b3e3576d91b9e77c96ee50691821479dbdf3290",
       "symbols": [
         "accessibilityRule",
         "answerScopeRule",
@@ -6565,7 +6571,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "backend/src/ai/nativeDocumentDownload.test.ts:4",
+        "backend/src/ai/nativeDocumentDownload.test.ts:30",
         "backend/src/ai/nativeOpenUi.test.ts:5",
         "backend/src/ai/nativeOpenUiValues.test.ts:8",
         "backend/src/lib/richShareSnapshot.test.ts:4",
@@ -6840,7 +6846,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/nativeDocumentDownload.test.ts:5",
+        "backend/src/ai/nativeDocumentDownload.test.ts:31",
         "backend/src/ai/nativeOpenUi.test.ts:7",
         "backend/src/ai/nativeOpenUiEditorial.test.ts:5",
         "backend/src/ai/nativeOpenUiValues.test.ts:5",
@@ -10598,7 +10604,7 @@
       "id": "surface:74760a8c78ac888599fd",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/responsePresentation.ts",
-      "sha256": "6b3e4102e8be165dc5885e9d9b3961549db871500464a215e9f4eabb295c4790",
+      "sha256": "d1dde66cc1bbe2a0f523db68db294f5c4f26640c89fef46270493c228651588e",
       "symbols": [
         "AnswerObligations",
         "GENERIC_HEADING",
@@ -10706,7 +10712,7 @@
       "callers": [
         "backend/src/ai/answerCoverage.test.ts:4",
         "backend/src/ai/answerCoverage.ts:2",
-        "backend/src/ai/nativeDocumentDownload.test.ts:6",
+        "backend/src/ai/nativeDocumentDownload.test.ts:32",
         "backend/src/ai/openaiCompat.egress.test.ts:10",
         "backend/src/ai/pipeline.ts:31",
         "backend/src/ai/responseCoverage.test.ts:3",
@@ -14869,7 +14875,7 @@
       "id": "surface:2caccad5e3c57290edad",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "450d77c6f89e9334ef2345d316895580732bda5b614ad3d87d42f4d4643f75fa",
+      "sha256": "982d71c45c0bf2b0e032b083f368752a5d03d1d611dddd86826d894c91026276",
       "symbols": [
         "SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS",
         "SEMANTIC_PLANNER_HEDGE_DELAY_MS",
@@ -123648,7 +123654,7 @@
       "id": "surface:af830989f3d28a10af01",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaFileExports.ts",
-      "sha256": "9a5904250137cd3bf019ef63c53b592dfd33a42a5b9a6a986c05bb97cd4b98a7",
+      "sha256": "27e070bb2e26ee0880745fe40550cc7ff8dde9035903bab7beb35a7a5068e7bf",
       "symbols": [
         "DocumentBlock",
         "ExcelJS",
@@ -130806,7 +130812,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "e8cbff3a1a8cd9c609573559063ddd68bcf9b0ef83a395cb6e990116d40302b1",
+      "sha256": "1c1bf7a32a6580ca3ae105fada870a60ba12433b357a7e453cb9eb8d582f0f85",
       "symbols": [
         "accessibility",
         "answer",
@@ -153572,7 +153578,7 @@
     {
       "id": "test-suite:0ff3fc98dc7085435219",
       "sourcePath": "backend/src/ai/nativeDocumentDownload.test.ts",
-      "declaredTests": 9,
+      "declaredTests": 11,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -160551,7 +160557,7 @@
     {
       "id": "test-suite:5500ae34c3d41d033590",
       "sourcePath": "frontend/src/lib/xrogaFileExports.test.ts",
-      "declaredTests": 11,
+      "declaredTests": 12,
       "skipLocations": [],
       "focusLocations": []
     },

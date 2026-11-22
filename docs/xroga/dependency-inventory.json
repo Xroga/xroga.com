@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "ef53e362f2f673d491f744a97743a90d68a9cf8d",
+  "source_sha": "5d432868330d6b48268c652e73bee30926435ee2",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17230,7 +17230,7 @@
     },
     {
       "path": "backend/src/ai/nativeDocumentDownload.ts",
-      "sha256": "cfa560f9b406cffa4548ef4beacefe61cc438654649181ff5c03ede6c954415d"
+      "sha256": "6409db7b4cff4d88eb57088c0133d47b3a60a33c351358d56abfa6940ed7af76"
     },
     {
       "path": "backend/src/ai/nativeMarkdown.ts",
@@ -17258,7 +17258,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "77a082ec996630fd5cfbb3a02e8fdab0eb654dd575e3923ff68a6302dff9192b"
+      "sha256": "e9e7dea5304a2bb9ae2c25ac4b3e3576d91b9e77c96ee50691821479dbdf3290"
     },
     {
       "path": "backend/src/ai/nativeOpenUiRecovery.ts",
@@ -17410,7 +17410,7 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "sha256": "6b3e4102e8be165dc5885e9d9b3961549db871500464a215e9f4eabb295c4790"
+      "sha256": "d1dde66cc1bbe2a0f523db68db294f5c4f26640c89fef46270493c228651588e"
     },
     {
       "path": "backend/src/ai/router.ts",
@@ -17650,7 +17650,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "450d77c6f89e9334ef2345d316895580732bda5b614ad3d87d42f4d4643f75fa"
+      "sha256": "982d71c45c0bf2b0e032b083f368752a5d03d1d611dddd86826d894c91026276"
     },
     {
       "path": "backend/src/ai/usageAccounting.ts",
@@ -24638,7 +24638,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaFileExports.ts",
-      "sha256": "9a5904250137cd3bf019ef63c53b592dfd33a42a5b9a6a986c05bb97cd4b98a7"
+      "sha256": "27e070bb2e26ee0880745fe40550cc7ff8dde9035903bab7beb35a7a5068e7bf"
     },
     {
       "path": "frontend/src/lib/xrogaOutputAdapters.ts",
@@ -33099,14 +33099,14 @@
     },
     {
       "path": "backend/src/ai/nativeDocumentDownload.ts",
-      "line": 125,
+      "line": 136,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeDocumentDownload.ts",
-      "line": 129,
+      "line": 140,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
