@@ -61,6 +61,7 @@ export const SKILLS: Skill[] = [
     ].join('\n'),
   },
   {
+    // Expert points added 2026-11-23 from coreyhaines31/marketingskills @ 5b2b400 (MIT, Copyright (c) 2025 Corey Haines), skills/ads and references/platform-setup-checklists.md, and from the competitor recordings (default audits).
     id: 'google-ads',
     when: has(/\b(?:google ads|adwords|search campaign|performance max|pmax|ad group|negative keywords?|search terms|quality score|keyword planner|responsive search ads?)\b/i),
     body: [
@@ -71,6 +72,7 @@ export const SKILLS: Skill[] = [
       '- Bidding: with under about 30 conversions a month use Maximize Clicks with a CPC cap or manual CPC to gather data, then Maximize Conversions, then target CPA. Set a target CPA from the customer value and margin the user gives, never a guess. Read the expected CPC range in Keyword Planner and tell the user the range; do not promise leads or returns.',
       '- Ads: a responsive search ad with up to 15 headlines (30 characters each) and 4 descriptions (90 characters each): the service, the place, the real offer, proof and a call to action. Add sitelinks, callouts and a call asset. Use only claims found on the business website.',
       '- Before launch confirm a conversion action exists and is counting (calls from ads, form submit, phone click). Use the budget the user gave and say roughly how many clicks it buys at the expected CPC.',
+      '- Before finishing, check the defaults Google switches on and set each to the plan, saying which: Search campaigns include the Display Network and Search partners; location option "presence or interest" (use presence for a local service); broad match and auto-applied recommendations; automatically created assets. Universal negatives also include careers, reviews and complaints; auto-tagging and enhanced conversions on.',
       '- Leave everything as a draft or paused. Show the settings in a short list and ask for one approval before enabling anything or spending.',
     ].join('\n'),
   },
@@ -84,6 +86,8 @@ export const SKILLS: Skill[] = [
       '- Tracking first: in Events Manager create or select the dataset (pixel), install it through the site platform’s integration or the base code, add the Conversions API when the platform offers it, and check PageView, Lead, AddToCart and Purchase with Test events. Do not optimise for a conversion that does not fire.',
       '- Structure: one campaign per objective; one to three ad sets (broad targeting, interests, and a lookalike or custom audience from a customer list or site visitors); two to four ads per ad set with different angles (problem, offer, proof). Local businesses use a location radius around the business. Give each ad set enough daily budget for about 50 optimisation events a week, or merge ad sets.',
       '- Ads: a hook in the first line of the primary text, the offer, proof and one clear call to action; headline up to about 40 characters; the user’s own images or video; a destination that matches the promise. Use only real claims. Declare special ad categories (housing, jobs, credit, politics) when they apply.',
+      '- The current Meta delivery system rewards broad targeting with several distinct creatives (different angles and formats) over stacked interests; use interests only as a light filter. Name things Platform_Objective_Audience_Offer_Date. Raise a budget by about 20% at a time, at most every 3 to 5 days, so learning does not reset.',
+      '- Before finishing, check the defaults Meta switches on and set each to the plan, saying which: Advantage+ audience and location expansion, Advantage+ placements (all placements), Advantage+ creative enhancements and music, automatic budget across ad sets, and the ad account currency and time zone.',
       '- Leave the campaign as a draft or paused. Show the settings and ask for one approval before publishing or spending.',
     ].join('\n'),
   },

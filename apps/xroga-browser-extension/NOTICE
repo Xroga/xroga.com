@@ -14,3 +14,5 @@ Adapted ideas and code from other open-source projects (see docs/xroga/oss-capab
 - OpenBrowser (https://github.com/dylansantwani/openbrowser), MIT: batch planner, src/agent/batch-plan.ts (attributed in the file header).
 - browser-agent (https://github.com/uiuing/browser-agent), MIT: failure diagnosis and recovery chain, adapted in src/agent/failure-diagnosis.ts from packages/extension/src/engine/orchestrator/healing.ts.
 - Agent Skills specification (https://github.com/agentskills/agentskills), Apache-2.0: the SKILL.md frontmatter format implemented in src/agent/skill-md.ts.
+
+coreyhaines31/marketingskills (commit 5b2b400), MIT License, Copyright (c) 2025 Corey Haines: expert points in the bundled Google Ads and Meta Ads skills (src/agent/skills.ts) are adapted from skills/ads and references/platform-setup-checklists.md.
