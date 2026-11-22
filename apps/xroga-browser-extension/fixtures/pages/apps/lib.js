@@ -15,7 +15,7 @@ if (VARIANT.rtl) document.documentElement.dir = 'rtl';
 const STORE_KEY = 'holdout:' + location.pathname + ':' + SEED;
 window.mount = build => setTimeout(() => {
   try { const saved = sessionStorage.getItem(STORE_KEY); if (saved) Object.assign(__state, JSON.parse(saved)); } catch { /* no storage: state starts fresh */ }
-  setInterval(() => { try { sessionStorage.setItem(STORE_KEY, JSON.stringify(__state)); } catch { /* ignore */ } }, 150); document.getElementById('app').innerHTML = ''; build(document.getElementById('app')); if (VARIANT.overlay) cookieBanner(); }, VARIANT.delay);
+  const keep = () => { try { sessionStorage.setItem(STORE_KEY, JSON.stringify(__state)); } catch { /* ignore */ } }; setInterval(keep, 150); addEventListener('pagehide', keep); addEventListener('beforeunload', keep); document.getElementById('app').innerHTML = ''; build(document.getElementById('app')); if (VARIANT.overlay) cookieBanner(); }, VARIANT.delay);
 window.cookieBanner = () => {
   const d = document.createElement('div');
   d.setAttribute('role', 'dialog'); d.setAttribute('aria-label', 'Cookie notice');
