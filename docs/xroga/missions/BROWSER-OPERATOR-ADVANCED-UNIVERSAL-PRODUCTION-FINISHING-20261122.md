@@ -169,7 +169,7 @@ At each useful checkpoint, provide one compact factual matrix with:
 - [Xroga PR #976](https://github.com/Xroga/xroga.com/pull/976)
 - [Source-first 72-repository integration mission](./BROWSER-OPERATOR-SOURCE-FIRST-72-REPO-INTEGRATION-20261121.md)
 - [Full-power high/max and 64 universal acceptance mission](./BROWSER-OPERATOR-FULL-POWER-REASONING-UNIVERSAL-ACCEPTANCE-20261121.md)
-- [64 universal acceptance contracts](./BROWSER-OPERATOR-64-UNIVERSAL-ACCEPTANCE-SEEDS-20261121.json)
+- [64 universal acceptance contracts](../acceptance-specs/BROWSER-OPERATOR-64-UNIVERSAL-ACCEPTANCE-SEEDS-20261121.json)
 - [Latest final engineering report](../evidence/browser-operator-20261110/FINAL-ENGINEERING-REPORT-20261122.md)
 - [v8 full handover](../evidence/browser-operator-20261110/RELEASE-HANDOVER-20261121-v8.md)
 

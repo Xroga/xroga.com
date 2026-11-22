@@ -385,8 +385,8 @@ Avoid fabricated "~99% universal coverage" based on tiny synthetic samples. A 20
 - [Source-first 72-repository playbook](./BROWSER-OPERATOR-SOURCE-FIRST-72-REPO-INTEGRATION-20261121.md)
 - [Advanced universal production finishing mission](./BROWSER-OPERATOR-ADVANCED-UNIVERSAL-PRODUCTION-FINISHING-20261122.md)
 - [Full-power DeepSeek engineering mission](./BROWSER-OPERATOR-FULL-POWER-REASONING-UNIVERSAL-ACCEPTANCE-20261121.md)
-- [64 universal baseline tests](./BROWSER-OPERATOR-64-UNIVERSAL-ACCEPTANCE-SEEDS-20261121.json)
-- [36 advanced acceptance contracts](./BROWSER-OPERATOR-36-ADVANCED-REAL-WORLD-ACCEPTANCE-20261122.json)
+- [64 universal baseline tests](../acceptance-specs/BROWSER-OPERATOR-64-UNIVERSAL-ACCEPTANCE-SEEDS-20261121.json)
+- [36 advanced acceptance contracts](../acceptance-specs/BROWSER-OPERATOR-36-ADVANCED-REAL-WORLD-ACCEPTANCE-20261122.json)
 - [Latest engineering report](../evidence/browser-operator-20261110/FINAL-ENGINEERING-REPORT-20261122.md)
 - [Latest release handover](../evidence/browser-operator-20261110/RELEASE-HANDOVER-20261121-v8.md)
 

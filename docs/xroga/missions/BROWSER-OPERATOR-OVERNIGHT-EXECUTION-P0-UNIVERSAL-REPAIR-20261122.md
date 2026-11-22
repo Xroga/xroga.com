@@ -31,7 +31,7 @@ Read, in order:
 3. \`docs/xroga/missions/BROWSER-OPERATOR-UNIVERSAL-COMPLEX-APPS-CANVA-HIGGSFIELD-ADS-ENGINEERING-20261122.md\` (detailed generic action-engineering contracts, real media/editor/Ads/DB/SEO workflows, and the full 72-link donor register)
 4. \`docs/xroga/missions/BROWSER-OPERATOR-ADVANCED-UNIVERSAL-PRODUCTION-FINISHING-20261122.md\`
 5. \`docs/xroga/missions/BROWSER-OPERATOR-SOURCE-FIRST-72-REPO-INTEGRATION-20261121.md\`, \`docs/xroga/oss-capability-ledger.json\`
-6. \`docs/xroga/missions/BROWSER-OPERATOR-36-ADVANCED-REAL-WORLD-ACCEPTANCE-20261122.json\` and the existing 64-test suite.
+6. \`docs/xroga/acceptance-specs/BROWSER-OPERATOR-36-ADVANCED-REAL-WORLD-ACCEPTANCE-20261122.json\` and the existing 64-test suite.
 7. Actual \`git status\`, PR HEAD, main diff, installed extension version/hash, staging API revision/tag and model/tool route. Recheck current PR #976 HEAD; earlier inspection just before this order showed \`6742dde831d1f64a70065de080e7ef5f6e28e748\`. **That is a snapshot, not a build guarantee.**
 
 Establish a baseline with reliable logs, run the quickest meaningful existing tests, and list exact failed/untested items. **Do not spend the first hour rewriting a new plan**. By the end of this timebox, reproduce one general failure with a useful full trace, identify the code owner, and start fixing it.
@@ -137,7 +137,7 @@ Prioritize **measurable generic capability gaps** using:
 
 ## 7. P0: Advanced universal task demonstrations, not basic 3-click fixtures
 
-Keep the existing quick tests, but the overnight acceptance emphasis is **complex workflows with actual outcomes and unfamiliar variants**. Full contracts: \`docs/xroga/missions/BROWSER-OPERATOR-36-ADVANCED-REAL-WORLD-ACCEPTANCE-20261122.json\`. Do not memorize or insert page-specific steps in the system prompt.
+Keep the existing quick tests, but the overnight acceptance emphasis is **complex workflows with actual outcomes and unfamiliar variants**. Full contracts: \`docs/xroga/acceptance-specs/BROWSER-OPERATOR-36-ADVANCED-REAL-WORLD-ACCEPTANCE-20261122.json\`. Do not memorize or insert page-specific steps in the system prompt.
 
 Select representative complex tasks for the 4–5-hour window:
 1. **Canva-like design or unfamiliar web editor:** multi-layer layout with image/text, drag/drop and resize, save, export and inspect real image/file. Where a live authorized Canva account is available, run a safe disposable project; otherwise mark a replica honestly.
@@ -215,7 +215,7 @@ At the end of **actual executed work**, leave one concise human-readable report 
 - [Universal complex-app 72-repo engineering manual](./BROWSER-OPERATOR-UNIVERSAL-COMPLEX-APPS-CANVA-HIGGSFIELD-ADS-ENGINEERING-20261122.md)
 - [Advanced production-finishing mission](./BROWSER-OPERATOR-ADVANCED-UNIVERSAL-PRODUCTION-FINISHING-20261122.md)
 - [Source-first 72-repo implementation playbook](./BROWSER-OPERATOR-SOURCE-FIRST-72-REPO-INTEGRATION-20261121.md)
-- [36 advanced acceptance contracts](./BROWSER-OPERATOR-36-ADVANCED-REAL-WORLD-ACCEPTANCE-20261122.json)
+- [36 advanced acceptance contracts](../acceptance-specs/BROWSER-OPERATOR-36-ADVANCED-REAL-WORLD-ACCEPTANCE-20261122.json)
 - [Full-power reasoning and 64 universal seeds](./BROWSER-OPERATOR-FULL-POWER-REASONING-UNIVERSAL-ACCEPTANCE-20261121.md)
 - [Current reported engineering status](../evidence/browser-operator-20261110/FINAL-ENGINEERING-REPORT-20261122.md)
 - [v8 handover and exact build addenda](../evidence/browser-operator-20261110/RELEASE-HANDOVER-20261121-v8.md)
