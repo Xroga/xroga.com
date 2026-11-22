@@ -1,7 +1,7 @@
 'use client';
 
-import { CircleHelp, Loader2, Send, X } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { Frown, Laugh, Loader2, Meh, Send, Smile, X } from 'lucide-react';
+import { useEffect, useId, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 
 import { addFeedback } from '@/lib/feedbackStorage';
@@ -13,13 +13,14 @@ import {
 import styles from './ScheduledFeedbackPrompt.module.css';
 
 const RATING_OPTIONS = [
-  { label: 'Good', value: 4 },
-  { label: 'Excellent', value: 5 },
-  { label: 'Fair', value: 3 },
-  { label: 'Poor', value: 1 },
+  { label: 'Excellent', value: 5, tone: 'positive', icon: Laugh },
+  { label: 'Good', value: 4, tone: 'positive', icon: Smile },
+  { label: 'Fair', value: 3, tone: 'fair', icon: Meh },
+  { label: 'Poor', value: 1, tone: 'poor', icon: Frown },
 ] as const;
 
 export function ScheduledFeedbackPrompt() {
+  const messageId = useId();
   const [open, setOpen] = useState(false);
   const [experience, setExperience] = useState('');
   const [interacted, setInteracted] = useState(false);
@@ -88,40 +89,33 @@ export function ScheduledFeedbackPrompt() {
     <aside className={styles.card} aria-label="Xroga feedback"
       onPointerDown={keepOpen} onFocusCapture={keepOpen}>
       <header className={styles.header}>
-        <div className={styles.title}>
-          <CircleHelp aria-hidden="true" />
-          <span>How was your experience today?</span>
-        </div>
+        <h2 className={styles.title}>How was your experience today?</h2>
         <button type="button" onClick={() => setOpen(false)} className={styles.closeButton}
           aria-label="Close feedback prompt">
           <X aria-hidden="true" />
         </button>
       </header>
 
-      <p className={styles.intro}>Your feedback helps us decide what Xroga should improve next.</p>
-      <div className={styles.divider} />
-
-      <form onSubmit={handleSubmit} className={styles.form}>
+      <form onSubmit={handleSubmit} className={styles.form} aria-busy={submitting}>
         <div className={styles.ratingGroup} role="group" aria-label="Rate your experience">
-          {RATING_OPTIONS.map((option) => (
-            <button key={option.label} type="button" onClick={() => setRating(option.value)}
-              className={rating === option.value ? styles.selectedRating : ''}
-              aria-pressed={rating === option.value}>
-              {option.label}
+          {RATING_OPTIONS.map(({ label, value, tone, icon: Face }) => (
+            <button key={value} type="button" onClick={() => setRating(value)}
+              aria-label={label} title={label} data-tone={tone}
+              aria-pressed={rating === value} disabled={submitting}>
+              <Face size={20} aria-hidden="true" />
             </button>
           ))}
         </div>
 
-        <label className={styles.field}>
-          <span>Your message</span>
-          <textarea value={experience} onChange={(event) => { keepOpen(); setExperience(event.target.value); }}
-            placeholder="What worked well? What should we improve?" rows={3} maxLength={2000} disabled={submitting} />
-        </label>
-
-        <button type="submit" className={styles.submitButton} disabled={submitting}>
-          {submitting ? <Loader2 className={styles.spinner} aria-hidden="true" /> : <Send aria-hidden="true" />}
-          {submitting ? 'Sending…' : 'Send feedback'}
-        </button>
+        <div className={styles.field}>
+          <label htmlFor={messageId} className="sr-only">Your message</label>
+          <textarea id={messageId} value={experience} onChange={(event) => { keepOpen(); setExperience(event.target.value); }}
+            placeholder="What worked well? What should we improve?" rows={2} maxLength={2000} disabled={submitting} />
+          <button type="submit" className={styles.submitButton} disabled={submitting}
+            aria-label={submitting ? 'Sending feedback' : 'Send feedback'} title="Send feedback">
+            {submitting ? <Loader2 className={styles.spinner} aria-hidden="true" /> : <Send aria-hidden="true" />}
+          </button>
+        </div>
       </form>
     </aside>
   );

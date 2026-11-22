@@ -3,7 +3,7 @@ import { test, expect, type Page } from '@playwright/test';
 async function chooseStarter(page: Page, feature: string) {
   const input = page.locator('[data-terminal-composer]');
   const previous = await input.inputValue();
-  await page.getByRole('menuitem', { name: feature, exact: true }).hover();
+  await page.getByRole('menuitem', { name: feature, exact: true }).click();
   const detail = page.getByRole('region', { name: `${feature} action`, exact: true });
   await expect(detail).toBeVisible();
   await detail.getByRole('button', { name: 'Use this in chat' }).click();
@@ -343,9 +343,11 @@ test('feature menus open only on click, support keyboard and never send', async 
   await chooseStarter(page, 'Images');
   await expect(input).toHaveValue(/My goal: Create an image of:/);
   await page.locator('[data-capability="build"]').click();
-  // PR833 makes focus reveal the category detail. Both the detail action and
-  // Back remain keyboard reachable, with Escape dismissing the whole portal.
-  await page.getByRole('menuitem', { name: 'Apps', exact: true }).focus();
+  // Focus alone should leave the categories visible; Enter explicitly opens one.
+  const apps = page.getByRole('menuitem', { name: 'Apps', exact: true });
+  await apps.focus();
+  await expect(page.getByRole('region', { name: 'Apps action', exact: true })).toHaveCount(0);
+  await apps.press('Enter');
   await expect(page.getByRole('region', { name: 'Apps action', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Back to categories', exact: true }).focus();
   await page.keyboard.press('Enter');
