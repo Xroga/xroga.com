@@ -10,6 +10,14 @@ type DocumentBlock = Extract<XrogaBlock, { type: 'document' }>;
 type TableBlock = Extract<XrogaBlock, { type: 'spreadsheet' }>;
 type PresentationBlock = Extract<XrogaBlock, { type: 'presentation' }>;
 
+test('TXT exports the saved answer as readable UTF-8 with only verified destinations', async () => {
+  const source = '# Café brief\n\nRésumé / خطة\n- 07:30: [Official](https://example.org/guide)\n- [Private claim](https://example.org/unverified)';
+  const file = await exportAnswerFile(source, 'txt', new Set(['https://example.org/guide']));
+  assert.equal(file.filename, 'Café-brief.txt');
+  assert.equal(file.blob.type, 'text/plain;charset=utf-8');
+  assert.equal(await file.blob.text(), 'Café brief\n\nRésumé / خطة\n- 07:30: Official (https://example.org/guide)\n- Private claim');
+});
+
 test('DOCX export is a real Word package with headings and source hyperlink', async () => {
   const block = { schemaVersion: 1, id: 'doc-1', type: 'document', content: '# Report\nA sourced finding.\n[Official source](https://example.org/report)', format: 'markdown' } as DocumentBlock;
   const file = await exportDocumentDocx(block);

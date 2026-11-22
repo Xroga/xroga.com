@@ -223,6 +223,11 @@ export async function exportAnswerFile(response: string, format: NativeDocumentF
   const heading = /^#{1,3}[ \t]+([^\r\n]+)/m.exec(response)?.[1]?.trim();
   const document: DocumentBlock = { schemaVersion: 1, id: 'answer-document', type: 'document', content: response,
     title: shared ? 'Shared Xroga answer' : heading?.slice(0, 100) || 'Xroga document', format: 'markdown' };
+  if (format === 'txt') {
+    validateSize(response.length, 200_000, 'Document');
+    const text = plainText(response.replace(/^ {0,3}#{1,6}[ \t]+/gm, ''), verifiedLinks);
+    return { filename: `${fileStem(document.title, 'document')}.txt`, blob: new Blob([text], { type: 'text/plain;charset=utf-8' }) };
+  }
   return format === 'docx' ? exportDocumentDocx(document, verifiedLinks) : exportDocumentPdf(document, verifiedLinks);
 }
 

@@ -3,7 +3,7 @@ import { nativeMarkdownTables } from './nativeMarkdown.js';
 import { parseNativeSlideDeck, parseNativeWorkbook } from './nativeOfficeContent.js';
 import type { AnswerObligations } from './responsePresentation.js';
 
-export const nativeDocumentFormats = ['docx', 'pdf', 'xlsx', 'pptx'] as const;
+export const nativeDocumentFormats = ['docx', 'pdf', 'xlsx', 'pptx', 'txt'] as const;
 export type NativeDocumentFormat = typeof nativeDocumentFormats[number];
 
 export function isNativeDocumentFormat(value: unknown): value is NativeDocumentFormat {
@@ -13,16 +13,18 @@ export function isNativeDocumentFormat(value: unknown): value is NativeDocumentF
 // Only direct deliverable requests qualify. Mentions in questions, code,
 // attachments, and proposed software features must not add a file control.
 const request = /^(?:please\s+)?(?:(?:can|could|would)\s+you\s+)?(?:create|make|write|draft|generate|prepare|build|give\s+me)\s+/i;
-const document = '(?:document|report|proposal|brief|memo|letter|summary|guide|plan|handout|worksheet|sheet|checklist|agenda|schedule|runbook|playbook|handbook|timeline|invoice|statement|workbook|spreadsheet|slide deck|slides|deck|presentation|file)';
-const extensions = '\\.?(?:docx|pdf|xlsx|pptx)';
+const document = '(?:document|report|proposal|brief|memo|letter|summary|guide|plan|handout|worksheet|sheet|checklist|agenda|schedule|runbook|playbook|handbook|postmortem|timeline|invoice|statement|workbook|spreadsheet|slide deck|slides|deck|presentation|file)';
+const extensions = '\\.?(?:docx|pdf|xlsx|pptx|txt)';
 const fileFormat = '(' + extensions + '|word|excel|powerpoint)';
 const descriptionWord = '[\\p{L}\\p{N}-]+\\s+';
 const beforePrefix = '^(?:(?:a|an|the|my)\\s+)?';
 const optionalDescription = '(?:\\s+(?:' + descriptionWord + '){0,3}' + document + ')';
 const inlinePrefix = beforePrefix + '(?:' + descriptionWord + '){0,3}';
-const beforeBoundary = '(?=\\s*(?:[.,!?]|$)|\\s+(?:from|using|with|about|based on|on|for)\\b)';
+const otherFormat = '\\b(?:or|and|plus|instead of)\\s+(?:an?\\s+)?' + fileFormat + '\\b';
+const beforeBoundary = '(?=\\s*(?:[.,!?]|$)|\\s+(?:from|using|with|about|based on|on|for)\\b|\\s+' + otherFormat + ')';
 const beforeFormat = new RegExp(inlinePrefix + '(' + extensions + ')' + optionalDescription + '?' + beforeBoundary, 'iu');
 const beforeNamedFormat = new RegExp(inlinePrefix + '(word|excel|powerpoint)' + optionalDescription + beforeBoundary, 'iu');
+const competingFormat = new RegExp(otherFormat, 'iu');
 const afterFormat = new RegExp(beforePrefix + '(?:' + descriptionWord + '){0,5}' + document
   + '\\s+(?:as|in)\\s+(?:(?:a|an)\\s+)?' + fileFormat + '\\b', 'iu');
 const exportFormat = new RegExp('^(?:please\\s+)?(?:(?:can|could|would)\\s+you\\s+)?(?:export|save|download|convert)\\s+'
@@ -35,7 +37,9 @@ const documentDeliverable = new RegExp(beforePrefix
   + '(?:(?!(?:with|from|using|for|about|that|by|through|as|in|and|or)\\b)' + descriptionWord + '){0,5}' + document + '\\b', 'iu');
 const followupExport = new RegExp('(?:^|[.!?]\\s+|\\n+)\\s*(?:please\\s+)?(?:provide|attach|export|save|include)\\s+'
   + '(?:it|the\\s+' + document + ')\\s+(?:as|in)\\s+(?:(?:a|an)\\s+)?(?:downloadable\\s+)?' + fileFormat + '\\b', 'giu');
-const declinesDownload = /\b(?:no|do\s+not|don['’]t|without)\s+(?:(?:create|export|give|make|generate|attach|include|provide|a|an|the)\s+)*(?:files?|downloads?|docx|pdf|xlsx|pptx)\b/i;
+const downloadableText = /^(?:(?:a|an|the)\s+)?downloadable\s+(?:plain[- ]text|UTF-8 text)\b(?:\s+UTF-8\b)?\s+/iu;
+const explicitTextExport = /(?:^|[.!?]\s+|\n+)(?:please\s+)?(?:export|save|download|attach)\s+(?:(?:it|this|the (?:answer|document|file))\s+)?as\s+(?:a\s+)?(?:downloadable\s+plain[- ]text(?:\s+UTF-8)?|plain[- ]text\s+file)(?=\s*(?:[.!?]|$))/iu;
+const declinesDownload = /\b(?:no|do\s+not|don['’]t|without)\s+(?:(?:create|export|give|make|generate|attach|include|provide|a|an|the)\s+)*(?:files?|downloads?|docx|pdf|xlsx|pptx|txt)\b/i;
 const conciseFormat = new RegExp('^(?:(?:downloadable|editable|printable|[\\p{L}\\p{N}]+-(?:page|slide))\\s+){0,2}(' + extensions + ')\\s+', 'iu');
 
 function conciseDeliverable(text: string): RegExpExecArray | null {
@@ -59,19 +63,24 @@ export function requestedNativeDocumentFormat(prompt: string): NativeDocumentFor
   const followups = body !== text && documentDeliverable.test(body) ? [...body.matchAll(followupExport)] : [];
   if (followups.length > 1 || inline && followups.length) return;
   const selection = inline ?? followups[0];
+  const textPrefix = body !== text ? downloadableText.exec(body) : null;
+  const textRequested = Boolean(textPrefix && documentDeliverable.test(body.slice(textPrefix[0].length)))
+    || Boolean(explicitTextExport.test(text) && (body === text || documentDeliverable.test(body)));
+  if (textRequested && !selection && !declinesDownload.test(text)) return 'txt';
+  if (textRequested && selection && !/^\.?txt$/i.test(selection[1] ?? '')) return;
   if (!selection) return;
   const raw = selection[1]?.toLowerCase().replace(/^\./, '');
   if (raw === 'word' && !direct && /\b(?:as|in)\s+(?:a|an)\s+word\s*$/i.test(selection[0])) return;
   const candidate = raw === 'word' ? 'docx' : raw === 'excel' ? 'xlsx' : raw === 'powerpoint' ? 'pptx' : raw;
   if (!isNativeDocumentFormat(candidate)) return;
   const trailing = body.slice(selection.index + selection[0].length);
-  if (/\b(?:or|and|plus|instead of)\s+(?:an?\s+)?(?:\.?(?:docx|pdf|xlsx|pptx)|word|excel|powerpoint)\b/i.test(trailing)
+  if (competingFormat.test(selection[0]) || competingFormat.test(trailing)
       || declinesDownload.test(followups.length ? body : trailing)) return;
   return candidate;
 }
 
 const namedFormats: Record<NativeDocumentFormat, string> = {
-  docx: 'docx|word', pdf: 'pdf', xlsx: 'xlsx|excel', pptx: 'pptx|powerpoint',
+  docx: 'docx|word', pdf: 'pdf', xlsx: 'xlsx|excel', pptx: 'pptx|powerpoint', txt: 'txt|plain[- ]text',
 };
 
 /** The existing planner can interpret file requests in the user's language.
@@ -108,7 +117,9 @@ export function nativeDocumentPrompt(format: NativeDocumentFormat, missingAttach
       + 'For calculations, immediately follow the table with "## Formulas" and one list item per formula like "- C2: =A2*B2". Use one arithmetic operator between local numeric cells/numbers, or SUM, AVERAGE, MIN or MAX on one local numeric range. Do not add external references or a second table.'
     : format === 'pptx'
       ? 'Use a level-one deck title, then one level-two heading per slide with its complete visible text or bullets underneath. Do not add other level-two sections or use fenced code. Preserve the supplied facts and keep each slide readable.'
-      : 'Write the requested headings and use prose, lists or editable tables as appropriate. For a document populated from supplied facts, keep each entry in one place. A checklist that refers to a table should point to it without repeating its names or values. When the user names the sections and asks for a specific reminder, include the named sections and that reminder without adding template fields or extra checklist items. Use a list for separate fields when requested. Add derived values or extra instructions only when the user asks for them, and check those calculations against the original values.';
+      : format === 'txt'
+        ? 'Preserve the requested spelling, Unicode characters and line breaks. Use simple headings and lists and no fenced code for the document body.'
+        : 'Write the requested headings and use prose, lists or editable tables as appropriate. For a document populated from supplied facts, keep each entry in one place. A checklist that refers to a table should point to it without repeating its names or values. When the user names the sections and asks for a specific reminder, include the named sections and that reminder without adding template fields or extra checklist items. Use a list for separate fields when requested. Add derived values or extra instructions only when the user asks for them, and check those calculations against the original values.';
   return '\n\nWrite the complete requested ' + format.toUpperCase() + ' artifact as readable Markdown in the primary answer. ' +
     formatInstructions + ' ' +
     'Workspace handles the local download after it validates the answer. Write only the document body. Omit capability disclaimers, manual conversion instructions, file URLs and claims about file delivery. For a document-only request, submit the Markdown without an OpenUI program. ' +

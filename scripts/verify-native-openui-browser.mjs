@@ -185,6 +185,7 @@ const { nativeDocumentDelivery, requestedNativeDocumentFormat } = await tsImport
 const documentFixtures = {
   docx: { prompt: 'Draft a workshop proposal with editable sections. Provide it as a downloadable DOCX.', text: '# Workshop Proposal\n\n## Scope\n\nDiscuss the training plan.\n\n| Task | Evidence |\n| --- | --- |\n| User navigation | [Unverified claim](https://fake.example/report) |' },
   pdf: { prompt: 'Create a PDF executive report from this attached dataset.', text: '# Executive Report\n\nTotal verified revenue: $1,000.' },
+  txt: { prompt: 'Make a downloadable plain-text UTF-8 handoff brief.', text: '# Field Brief\n\nRésumé / خطة\n\n07:30 • Start walkthrough.' },
   xlsx: { prompt: 'Create an XLSX budget spreadsheet with formulas.', text: '# Budget\n\n| Item | Quantity | Cost | Total |\n| --- | --- | --- | --- |\n| Workshop | 2 | 25 | |\n| Total | | | |\n\n## Formulas\n- D2: =B2*C2\n- D3: =SUM(D2:D2)' },
   pptx: { prompt: 'Create a professional PPTX slide deck from these supplied notes.', text: '# Workshop Plans\n\n## Recommended timing\nThe workshop lasts 90 minutes.\n\n## Preparation\nBring the training guide.' },
   unsupportedPdf: { prompt: 'Create a PDF report.', text: '# Report\n\nمرحبا' },
@@ -277,8 +278,8 @@ try {
     const createObjectURL = URL.createObjectURL.bind(URL);
     URL.createObjectURL = (blob) => { window.downloadMime = blob.type; return createObjectURL(blob); };
   });
-  const filenames = { docx: 'Workshop-Proposal.docx', pdf: 'Executive-Report.pdf', xlsx: 'Budget.xlsx', pptx: 'Workshop-Plans.pptx' };
-  for (const format of ['docx', 'pdf', 'xlsx', 'pptx']) {
+  const filenames = { docx: 'Workshop-Proposal.docx', pdf: 'Executive-Report.pdf', xlsx: 'Budget.xlsx', pptx: 'Workshop-Plans.pptx', txt: 'Field-Brief.txt' };
+  for (const format of Object.keys(filenames)) {
     const label = 'Download ' + format.toUpperCase();
     await downloadPage.goto(origin + '/?case=download-' + format);
     await downloadPage.getByRole('button', { name: label }).waitFor();
@@ -309,6 +310,9 @@ try {
       assert.match(sheet, /<c r="D2"><f>B2\*C2<\/f><v>50<\/v><\/c>/);
       assert.match(sheet, /<c r="D3"><f>SUM\(D2:D2\)<\/f><v>50<\/v><\/c>/);
       assert.doesNotMatch(sheet, /externalLink|WEBSERVICE/);
+    } else if (format === 'txt') {
+      assert.equal(mime, 'text/plain;charset=utf-8');
+      assert.equal(bytes.toString('utf8'), 'Field Brief\n\nRésumé / خطة\n\n07:30 • Start walkthrough.');
     } else {
       assert.equal(mime, 'application/vnd.openxmlformats-officedocument.presentationml.presentation');
       const pptx = await JSZip.loadAsync(bytes);
@@ -320,7 +324,7 @@ try {
   for (const name of ['noExport', 'partial', 'unsafeFormula']) {
     await downloadPage.goto(origin + '/?case=download-' + name);
     await downloadPage.getByRole('region', { name: 'Answer' }).waitFor();
-    assert.equal(await downloadPage.getByRole('button', { name: /^Download (DOCX|PDF|XLSX|PPTX)$/ }).count(), 0);
+    assert.equal(await downloadPage.getByRole('button', { name: /^Download (DOCX|PDF|XLSX|PPTX|TXT)$/ }).count(), 0);
   }
   await downloadPage.goto(origin + '/?case=download-unsupportedPdf');
   await downloadPage.getByRole('button', { name: 'Download PDF', exact: true }).click();

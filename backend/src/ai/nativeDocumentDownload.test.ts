@@ -1,6 +1,26 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { compactNativeDocumentProse, nativeDocumentDelivery, nativeDocumentPrompt, nativeDocumentRequiresAttachment, nativeDocumentRequiresPriorAnswer, plannedNativeDocument, requestedNativeDocumentFormat } from './nativeDocumentDownload.js';
+
+test('plain-text downloads require an actual file request and use the existing delivery contract', () => {
+  for (const prompt of [
+    'Make a downloadable plain-text UTF-8 shift brief for an inspection crew.',
+    'Create a TXT inventory report with the original names.',
+    'Write a fictional postmortem with a timeline. Export as downloadable plain-text UTF-8.',
+    'Export this as a plain text file.',
+  ]) assert.equal(requestedNativeDocumentFormat(prompt), 'txt', prompt);
+  for (const prompt of [
+    'Write a short plain text brief for an inspection crew.',
+    'Explain how to make a TXT report.',
+    'Build a downloadable plain-text editor.',
+    'Make a downloadable plain-text brief. Export the brief as PDF.',
+    'Create a TXT report or DOCX report.',
+    'Make a downloadable plain-text brief, but do not create a file.',
+  ]) assert.equal(requestedNativeDocumentFormat(prompt), undefined, prompt);
+  assert.deepEqual(nativeDocumentDelivery('txt', false, 'Make a TXT brief', '# Café\n\nRésumé / خطة',
+    { status: 'complete' }), { completion: { status: 'complete' }, downloadFormat: 'txt' });
+  assert.match(nativeDocumentPrompt('txt'), /Unicode characters and line breaks/);
+});
 import { buildNativeOpenUiShare, readNativeOpenUiShare } from './nativeOpenUiShare.js';
 import { completeNativeWorkspaceAnswer } from './nativeOpenUiWorkspace.js';
 import { answerObligationsSchema, type AnswerObligations } from './responsePresentation.js';
