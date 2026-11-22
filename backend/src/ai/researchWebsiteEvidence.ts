@@ -1,10 +1,13 @@
 import { publicHttpsUrl } from '../security/egress/urlPolicy.js';
-import { nativeMarkdownTables } from './nativeMarkdown.js';
+import { nativeMarkdownTableRow, nativeMarkdownTables } from './nativeMarkdown.js';
 
 const entityLabel = /^(?:company|organization|organisation|entity|provider|vendor|project|product|name)$/i;
 const websiteLabel = /^(?:official\s+)?(?:site|website|link|url)(?:\s+url)?$/i;
 const linkOnlySummary = /^ {0,3}(#{1,6})[ \t]+(?:what (?:the )?(?:official )?(?:links|sites|websites) verify|(?:official )?(?:link|site|website) (?:verification|coverage))[ \t]*$/i;
+const linkCoverageRecap = /^ {0,3}(?:[-*+]\s+)?(?:\*\*|__)?(?:official )?(?:link|site|website) (?:verification|coverage)(?:\*\*|__)?[.:](?:\*\*|__)?\s+.+\b(?:verified|established|recorded|found)\b/iu;
 const nextHeading = /^ {0,3}(#{1,6})[ \t]/;
+const siteLink = /^\[[^\]\r\n]+\]\(<?([^<>\s)]+)>?\)$/;
+const siteValue = /^(?:https?:\/\/)?[a-z0-9.-]+\.[a-z]{2,}(?:\/[^\s<>]*)?$/iu;
 
 type ResearchPage = { url: string; snippet?: string };
 type Website = { url: string; sourceNumber: number };
@@ -18,10 +21,14 @@ function entityKey(text: string) {
     .normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{M}\p{N}]+/gu, ' ').trim();
 }
 
+function siteCell(value: string) {
+  return value.replace(/(?:\s*\[\d+\])+$/u, '').trim();
+}
+
 function websiteDestination(text: string, allowQuery = false): URL | undefined {
-  const anchor = /^\[[^\]\r\n]+\]\(<?([^<>\s)]+)>?\)(?:\s*\[\d+\])*$/.exec(text);
-  const value = anchor?.[1] ?? text;
-  if (!/^(?:https:\/\/)?[a-z0-9.-]+\.[a-z]{2,}(?:\/[^\s<>]*)?$/iu.test(value)) return;
+  const cell = siteCell(text);
+  const value = siteLink.exec(cell)?.[1] ?? cell;
+  if (!siteValue.test(value) || /^http:\/\//iu.test(value)) return;
   try {
     const url = publicHttpsUrl(/^https:\/\//i.test(value) ? value : 'https://' + value);
     if (allowQuery || !url.search) return url;
@@ -75,7 +82,7 @@ export function bindListedWebsiteRows(response: string, sources: readonly Resear
   if (!tables.length) return { response, destinations: new Set<string>(), rows: undefined };
 
   const candidates = listedWebsites(sources);
-  const retrieved = new Set(sources.map(source => source.url));
+  const retrieved = new Map(sources.map((source, index) => [source.url, index + 1]));
   const lines = response.replace(/\r\n?/g, '\n').split('\n');
   const destinations = new Set<string>();
   const linkedEntities = new Set<string>();
@@ -87,20 +94,27 @@ export function bindListedWebsiteRows(response: string, sources: readonly Resear
       const options = candidates.get(key);
       const verified = options?.size === 1 ? options.values().next().value : undefined;
       const current = websiteDestination(row[site]!, true);
-      if (key && current && retrieved.has(current.href)) {
-        linkedEntities.add(key);
-      } else if (verified) {
-        destinations.add(verified.url);
-        const host = new URL(verified.url).hostname.replace(/^www\./iu, '');
-        const bound = '[' + host + '](<' + verified.url + '>) [' + verified.sourceNumber + ']';
-        if (row[site] !== bound) {
-          const updated = [...row];
-          updated[site] = bound;
-          lines[table.start + 2 + index] = '| ' + updated.map(cell => cell.replaceAll('|', '\\|')).join(' | ') + ' |';
+      const sourceNumber = current && retrieved.get(current.href);
+      const website = current && sourceNumber ? { url: current.href, sourceNumber } : verified;
+      const cell = siteCell(row[site]!);
+      let bound = row[site]!;
+      if (key && website) {
+        destinations.add(website.url);
+        if (!sourceNumber || !siteLink.test(cell)) {
+          const host = new URL(website.url).hostname.replace(/^www\./iu, '');
+          bound = '[' + host + '](<' + website.url + '>) [' + website.sourceNumber + ']';
         }
         linkedEntities.add(key);
       } else {
         missingRows++;
+        // A bare domain from a fragment can look like a verified result even
+        // when the publisher's excerpt never identified its owner.
+        if (siteValue.test(cell)) bound = 'Official link not verified';
+      }
+      if (row[site] !== bound) {
+        const updated = [...row];
+        updated[site] = bound;
+        lines[table.start + 2 + index] = nativeMarkdownTableRow(updated);
       }
     });
   }
@@ -116,6 +130,10 @@ export function bindListedWebsiteRows(response: string, sources: readonly Resear
       continue;
     }
     if (fence) continue;
+    if (linkCoverageRecap.test(lines[index]!) && tables.some(table => table.end <= index)) {
+      coverageSections.push({ start: index, end: index + 1 });
+      continue;
+    }
     const heading = linkOnlySummary.exec(lines[index]!);
     if (!heading || !tables.some(table => table.start < index)) continue;
     let end = index + 1;

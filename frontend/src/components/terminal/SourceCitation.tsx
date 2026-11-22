@@ -75,7 +75,22 @@ export function SourceCitation({ source, number, label, showTitle = false, refer
       card.style.top = top + 'px';
       card.style.visibility = 'visible';
     };
-    const onScroll = () => setOpen(false);
+    const onScroll = (event: Event) => {
+      if (!anchor.matches(':focus-visible')) {
+        setOpen(false);
+        return;
+      }
+      const scroller = event.target;
+      if (scroller instanceof HTMLElement && scroller.contains(anchor)) {
+        const bounds = anchor.getBoundingClientRect();
+        const clip = scroller.getBoundingClientRect();
+        if (bounds.right <= clip.left || bounds.left >= clip.right || bounds.bottom <= clip.top || bounds.top >= clip.bottom) {
+          setOpen(false);
+          return;
+        }
+      }
+      position();
+    };
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setOpen(false);
     };

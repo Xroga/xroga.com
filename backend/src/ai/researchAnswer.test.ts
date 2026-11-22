@@ -44,6 +44,27 @@ test('public research keeps a disclosed forecast comparison and rejects an estim
   assert.match(actual.response, /1\.2 GWh \(projected\)/);
   assert.doesNotMatch(actual.response, /\| Position \|/);
 });
+
+test('a generic valuation column cannot hide incompatible row measurements', () => {
+  const sources = [{ url: 'https://finance.example/rounds' }];
+  const response = [
+    '# Top 2 materials labs', '',
+    'The ranking below uses the latest reported figures [1].', '',
+    '| # | Lab | Latest valuation | Round / as of |', '| --- | --- | --- | --- |',
+    '| 1 | Ames | $400M | Closed [1] |', '| 2 | Brant | $200M pre-money | Reported [1] |',
+    '', '## Why the order holds', '', 'The #1 slot is uncertain.',
+    '', 'Reporting dates differ [1].',
+  ].join('\n');
+  const answer = presentPublicResearchAnswer(response, { status: 'complete' }, sources, 'Rank both labs.');
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'factual_review' });
+  assert.deepEqual(nativeMarkdownTables(answer.response)[0]?.head, ['Lab', 'Reported valuation', 'Round / as of']);
+  assert.match(answer.response, /\$200M pre-money/);
+  assert.match(answer.response, /Reporting dates differ \[1\]/);
+  assert.doesNotMatch(answer.response, /the order holds|ranking below uses|#1 slot/iu);
+
+  const comparable = response.replace('$400M', '$400M pre-money');
+  assert.equal(presentPublicResearchAnswer(comparable, { status: 'complete' }, sources, 'Rank both labs.').response, comparable);
+});
 import {runChatPipeline} from './pipeline.js';
 import {goalContractSchema} from './universal/goalContract.js';
 import {confirmBusinessAction,getBusinessActionConfirmation} from '../services/integrations/businessActionConfirmations.js';
@@ -145,6 +166,24 @@ test('website rows use same-entity publisher evidence and remove a stale link-on
   assert.equal(answer.requiresReadableFallback, true);
   assert.equal(presentPublicResearchAnswer(answer.response, answer.completion, sources, prompt).response, answer.response,
     'reopening the saved corrected answer does not add a second coverage note');
+});
+
+test('bare domains are clickable only when grounded and truncated rows cannot verify ownership', () => {
+  const sources = [
+    { url: 'https://example.org/research', snippet: 'Company | Sector | Website\nResearch | www.unclear.example.com' },
+    { url: 'https://known.example.org/' },
+  ];
+  const response = [
+    '| Company | Official site | Source |', '| --- | --- | --- |',
+    '| Known | known.example.org [2] | Official page [2] |',
+    '| Unclear | www.unclear.example.com [1] | Directory field `a | b` [1] |',
+    '', '- **Link verification.** Both sites were verified.',
+  ].join('\n');
+  const answer = presentPublicResearchAnswer(response, { status: 'complete' }, sources, 'Compare two companies and link each official website.');
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'source_coverage' });
+  assert.match(answer.response, /\[known\.example\.org\]\(<https:\/\/known\.example\.org\/>\) \[2\]/);
+  assert.match(answer.response, /\| Unclear \| Official link not verified \| Directory field `a \| b` \[1\] \|/);
+  assert.doesNotMatch(answer.response, /unclear\.example\.com|Both sites were verified/);
 });
 
 test('one exact research approval completes its original rich answer, saves evidence and cannot replay either provider',async t=>{

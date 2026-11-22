@@ -25,6 +25,11 @@ function cells(line: string): string[] {
   }, ['']).map(cell => cell.trim());
 }
 
+export function nativeMarkdownTableRow(cells: readonly string[]): string {
+  const escapePipe = (cell: string) => cell.replace(/(`[^`]*`)|\|/g, (_match, code) => code ?? '\\|');
+  return '| ' + cells.map(escapePipe).join(' | ') + ' |';
+}
+
 /** Renderable table syntax shared with the native Markdown renderer. */
 export function readNativeMarkdownTable(lines: readonly string[], index: number): (NativeMarkdownTable & { end: number }) | undefined {
   if (!lines[index]?.includes('|') || !delimiter.test(lines[index + 1] ?? '')) return;

@@ -1,7 +1,8 @@
-import { nativeMarkdownTables } from './nativeMarkdown.js';
+import { nativeMarkdownTableRow, nativeMarkdownTables } from './nativeMarkdown.js';
 
 const rankingHeading = /\b(?:rank(?:ing|ed)?|top\s+\d+|leaderboard)\b/iu;
 const ordinalClaim = /\b(?:ranks?|positions?)\s+#?\d+\b|\b(?:first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth) place\b/iu;
+const rankingAnalysis = /\b(?:order|ranking) (?:holds|is (?:defensible|valid)|(?:below|above) uses)\b|#\d+\s+(?:slot|position|rank)\b|\b(?:below|among|within) the top (?:\d+|three|four|five|ten)\b/iu;
 const postMoney = /\bpost[\s\-‐‑–]money\b/iu;
 const preMoney = /\bpre[\s\-‐‑–]money\b/iu;
 const provisionalDeal = /\b(?:in talks|under negotiation|unclosed|(?:has )?not (?:yet )?(?:a )?(?:closed|completed))\b/iu;
@@ -10,11 +11,6 @@ const projectedValue = /\b(?:forecast(?:ed)?|projected|projection|estimate(?:d)?
 const actualMeasure = /\b(?:actual|realized|realised|audited)\b/iu;
 const statusColumn = /\b(?:status|date|round|basis|method|qualification)\b/iu;
 const note = 'The sources report figures on different bases or include provisional values. I couldn’t verify a comparable ranking, so the table shows the reported evidence without positions.';
-
-function markdownRow(cells: string[]) {
-  const escapePipe = (cell: string) => cell.replace(/(`[^`]*`)|\|/g, (_match, code) => code ?? '\\|');
-  return '| ' + cells.map(escapePipe).join(' | ') + ' |';
-}
 
 /** A narrow negative check for contradictions stated in the answer itself.
  * These qualifiers never establish that an apparently comparable figure is true. */
@@ -26,16 +22,20 @@ export function withholdIncomparableResearchRanking(response: string): string | 
     if (rank < 0) return [];
     const qualifiers = headers.flatMap((header, index) => statusColumn.test(header) ? [index] : []);
     const measures = headers.flatMap((header, index) => {
-      const conflictingValue = postMoney.test(header) ? preMoney : preMoney.test(header) ? postMoney
+      const postMoneyBasis = postMoney.test(header);
+      const preMoneyBasis = preMoney.test(header);
+      const financing = preMoneyBasis || postMoneyBasis || (/\bvaluation\b/iu.test(header) && !statusColumn.test(header));
+      const conflictingValue = postMoneyBasis ? preMoney : preMoneyBasis ? postMoney
         : actualMeasure.test(header) ? projectedValue : undefined;
-      if (!conflictingValue) return [];
-      const financing = preMoney.test(header) || postMoney.test(header);
+      if (!financing && !conflictingValue) return [];
       const closedBasis = financing && !provisionalBasis.test(header);
-      const incompatible = table.rows.some(row => {
-        const marked = [row[index], ...qualifiers.map(column => row[column])].join(' ');
-        return conflictingValue.test(marked) || (closedBasis && provisionalDeal.test(marked));
-      });
-      if (!incompatible) return [];
+      const marked = table.rows.map(row => [row[index], ...qualifiers.map(column => row[column])].join(' '));
+      // An explicit basis in only some valuation rows cannot establish that the
+      // remaining unknown figures were measured on that basis.
+      const mixedBasis = financing && !preMoneyBasis && !postMoneyBasis
+        && [preMoney, postMoney].some(basis => marked.some(value => basis.test(value)) && !marked.every(value => basis.test(value)));
+      const incompatible = marked.some(value => conflictingValue?.test(value) || (closedBasis && provisionalDeal.test(value)));
+      if (!mixedBasis && !incompatible) return [];
       const measure = header.replace(actualMeasure, '').trim().toLowerCase() || 'value';
       const label = financing ? 'Reported valuation' : 'Reported ' + measure;
       return [{ index, label }];
@@ -66,8 +66,8 @@ export function withholdIncomparableResearchRanking(response: string): string | 
       const { table, rank, measures } = ranking;
       const header = table.head.map((cell, column) => measures.find(item => item.index === column)?.label ?? cell);
       const omitRank = (row: string[]) => row.filter((_, column) => column !== rank);
-      output.push(markdownRow(omitRank(header)), markdownRow(omitRank(header).map(() => '---')));
-      output.push(...table.rows.map(row => markdownRow(omitRank(row))));
+      output.push(nativeMarkdownTableRow(omitRank(header)), nativeMarkdownTableRow(omitRank(header).map(() => '---')));
+      output.push(...table.rows.map(row => nativeMarkdownTableRow(omitRank(row))));
       index = table.end - 1;
       continue;
     }
@@ -82,9 +82,13 @@ export function withholdIncomparableResearchRanking(response: string): string | 
           ? heading[2]!.replace(/^top\s+\d+\s+/iu, '') : 'Reported figures'));
         continue;
       }
+      if (heading && affectedRoots.has(rootHeading) && rankingAnalysis.test(heading[2]!)) {
+        output.push(heading[1] + ' Evidence qualifications');
+        continue;
+      }
       if (affectedRoots.has(rootHeading) && !line.includes('|')) {
         // Keep evidence and caveats from this section while withholding claims about the rejected order.
-        if (ordinalClaim.test(line)) continue;
+        if (ordinalClaim.test(line) || rankingAnalysis.test(line) || /\bquantif(?:y|ies) consistently\b/iu.test(line)) continue;
         output.push(line.replace(/\bthis ranking uses\b/iu, 'the intended comparison used'));
         continue;
       }
