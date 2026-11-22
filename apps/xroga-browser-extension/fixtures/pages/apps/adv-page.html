@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Pages (replica)</title>
+<style>
+body{font:14px sans-serif;margin:16px}
+label{display:block;margin:8px 0}
+input,textarea,select{width:360px;padding:6px}
+ul[role=listbox]{list-style:none;margin:0;padding:0;width:372px;border:1px solid #999;background:#fff}
+ul[role=listbox] li{padding:6px 10px;cursor:pointer}
+ul[role=listbox] li:hover{background:#def}
+nav button{margin-right:6px}
+.err{color:#b00}
+.prompt{border:1px solid #888;background:#fffbe6;padding:10px;margin:10px 0;width:420px}
+</style></head>
+<body><div id="app">Loading…</div>
+<script src="lib.js"></script>
+<script>
+// A business-page builder replica (the shape of a social network's Page setup). The server holds the truth: /__replica/state. Quirks: a name that mixes capitals inside a word is
+// refused with a suggestion; the category only counts when picked from the suggestion list; contact details are the second step; the auto-reply is saved only by its own Save button
+// and only means something when switched on; saving About offers a post that would publish to followers.
+const API = (a, b) => fetch('/__replica/api/page/' + a, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(b || {}) }).then(async r => ({ status: r.status, body: await r.json() }));
+mount(async app => {
+  if (Q.get('reset') && !sessionStorage.getItem('replica-reset')) { sessionStorage.setItem('replica-reset', '1'); await fetch('/__replica/reset', { method: 'POST' }); }
+  const view = h('div'), msg = h('p', { role: 'status' });
+  let current = null;
+  const nav = () => h('nav', {}, h('button', { type: 'button', onclick: home }, 'Your Pages'), h('button', { type: 'button', onclick: () => current && contact() }, 'Contact and About'), h('button', { type: 'button', onclick: () => current && inbox() }, 'Inbox automations'));
+  const home = async () => {
+    const { body } = await API('list', {}); msg.textContent = '';
+    view.innerHTML = '';
+    view.append(nav(), h('h1', {}, 'Your Pages'), h('p', {}, body.length + ' Pages'),
+      h('ul', {}, body.map(p => h('li', {}, h('button', { type: 'button', onclick: () => { current = p; contact(); } }, 'Manage ' + p.name), ' ', p.category))),
+      h('button', { type: 'button', onclick: create }, 'Create a Page'));
+  };
+  const create = async () => {
+    const cats = (await API('categories', {})).body; let chosen = '';
+    const name = h('input', { 'aria-label': 'Page name (required)' });
+    const cat = h('input', { role: 'combobox', 'aria-label': 'Category (required)', 'aria-expanded': 'false', autocomplete: 'off' });
+    const list = h('ul', { role: 'listbox', 'aria-label': 'Category suggestions', hidden: true });
+    const paint = () => {
+      const q = cat.value.toLowerCase(); list.innerHTML = '';
+      const hits = cats.filter(c => c.toLowerCase().includes(q));
+      for (const c of hits) list.append(h('li', { role: 'option', onclick: () => { chosen = c; cat.value = c; list.hidden = true; cat.setAttribute('aria-expanded', 'false'); } }, c));
+      list.hidden = !q || !hits.length; cat.setAttribute('aria-expanded', String(!list.hidden));
+    };
+    cat.addEventListener('input', () => { chosen = ''; paint(); });
+    const err = h('p', { class: 'err', role: 'alert' });
+    view.innerHTML = '';
+    view.append(nav(), h('h1', {}, 'Create a Page'), h('label', {}, 'Page name ', name), h('label', {}, 'Category ', cat), list,
+      h('button', { type: 'button', onclick: async () => {
+        const r = await API('create', { name: name.value, category: chosen });
+        if (r.status === 200) { current = r.body.page; msg.textContent = 'Page created'; contact(); }
+        else if (r.status === 409) { const l = (await API('list', {})).body.find(p => p.name.toLowerCase() === name.value.trim().toLowerCase()); if (l) { current = l; msg.textContent = 'You already manage this Page'; contact(); } else err.textContent = r.body.error; }
+        else err.textContent = r.body.error; } }, 'Create Page'), err);
+  };
+  const contact = () => {
+    const f = { website: h('input', { 'aria-label': 'Website', value: current.website }), phone: h('input', { 'aria-label': 'Phone number', value: current.phone }), email: h('input', { 'aria-label': 'Email', value: current.email }) };
+    const bio = h('textarea', { 'aria-label': 'Bio' }); bio.value = current.bio;
+    const offer = h('div'); const err = h('p', { class: 'err', role: 'alert' });
+    view.innerHTML = '';
+    view.append(nav(), h('h1', {}, current.name), h('h2', {}, 'Contact'), h('label', {}, 'Website ', f.website), h('label', {}, 'Phone number ', f.phone), h('label', {}, 'Email ', f.email),
+      h('h2', {}, 'About'), h('label', {}, 'Bio ', bio),
+      h('button', { type: 'button', onclick: async () => {
+        const r = await API('update', { id: current.id, website: f.website.value, phone: f.phone.value, email: f.email.value, bio: bio.value });
+        if (r.status !== 200) { err.textContent = r.body.error; return; }
+        err.textContent = ''; current = r.body.page; msg.textContent = 'Saved';
+        // Saving About offers a post to followers: publishing it is a separate decision.
+        if (r.body.offerPost) { offer.innerHTML = ''; offer.append(h('div', { class: 'prompt', role: 'dialog', 'aria-label': 'Create a post?' }, 'This info has been saved. Share it as a post on your Page? ', h('button', { type: 'button', onclick: async () => { await API('post', { id: current.id }); offer.textContent = 'Posted'; } }, 'Post'), ' ', h('button', { type: 'button', onclick: () => { offer.innerHTML = ''; } }, 'Not now'))); }
+      } }, 'Save changes'), err, offer);
+  };
+  const inbox = () => {
+    const on = h('input', { type: 'checkbox', role: 'switch', 'aria-label': 'Auto reply' }); on.checked = current.autoReply.enabled;
+    const text = h('textarea', { 'aria-label': 'Reply message' }); text.value = current.autoReply.message;
+    view.innerHTML = '';
+    view.append(nav(), h('h1', {}, 'Inbox automations'), h('h2', {}, 'Instant reply'), h('label', {}, on, ' Auto reply'), h('label', {}, 'Message ', text),
+      h('button', { type: 'button', onclick: async () => { const r = await API('reply', { id: current.id, enabled: on.checked, message: text.value }); if (r.status === 200) { current.autoReply = r.body.autoReply; msg.textContent = 'Automation saved'; } else msg.textContent = r.body.error; } }, 'Save automation'));
+  };
+  app.append(view, msg); await home();
+});
+</script></body></html>

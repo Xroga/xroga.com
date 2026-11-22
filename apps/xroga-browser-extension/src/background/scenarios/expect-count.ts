@@ -135,3 +135,29 @@ defineScenario({
     );
   },
 });
+
+// A value typed into a field is on the page, yet innerText never holds it: a plan milestone whose check is an email address or a saved sentence cost a live run seven bookkeeping turns.
+defineScenario({
+  id: 'S3-wait-text-sees-field-values',
+  set: 'C',
+  title: 'wait for text that only exists as a field value (and with the sentence full stop kept): met; the same text as "gone" and a password field: not seen',
+  covers: 'a positive text check also reads input and textarea values (never passwords), and ignores a trailing full stop quoted from a sentence',
+  async run(ctx) {
+    await ctx.open(`${FIXTURE_ORIGIN}/c-field-text.html`);
+    await ctx.call('snapshot');
+    const tryWait = async (args: Record<string, unknown>) => {
+      try { return (await ctx.call('wait', { timeoutMs: 400, ...args })).ok ? 'met' : 'unmet'; } catch { return 'unmet'; }
+    };
+    const email = await tryWait({ text: 'hello@field.example.test' });
+    const dotted = await tryWait({ text: 'hello@field.example.test.' });
+    const note = await tryWait({ text: 'call 555 0142' });
+    const secret = await tryWait({ text: 'hunter2-secret' });
+    const goneStillThere = await tryWait({ textGone: 'hello@field.example.test' });
+    return outcome(
+      'email met, dotted email met, note met, password unmet, textGone on a field value met (fields are not read for gone)',
+      JSON.stringify({ email, dotted, note, secret, goneStillThere }),
+      email === 'met' && dotted === 'met' && note === 'met' && secret === 'unmet' && goneStillThere === 'met',
+    );
+  },
+});
+

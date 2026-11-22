@@ -38,7 +38,7 @@ async function unmet(ctx: ToolContext, args: WaitArgs, previous: { reading?: str
     const url = (await ctx.controller.host.tabs.get(ctx.tab().tabId))?.url ?? '';
     if (!url.includes(args.url)) out.push(`URL is ${url}`);
   }
-  if (args.text !== undefined && !(await probe.callGlobal<boolean>(main, 'hasText', args.text))) {
+  if (args.text !== undefined && !(await probe.callGlobal<boolean>(main, 'hasText', args.text, true))) {
     out.push(`${quote(args.text)} is not on the page`);
   }
   if (args.textGone !== undefined && (await probe.callGlobal<boolean>(main, 'hasText', args.textGone))) {

@@ -172,7 +172,7 @@ export interface ProbeApi {
   selectContents(el: Element): boolean;
   watchBlock(el: Element): string;
   blockMutations(): number;
-  hasText(text: string): boolean;
+  hasText(text: string, fields?: boolean): boolean;
   /** What the element reads: a form control's value, otherwise its visible text (at most 400 characters). */
   reading(el: Element): string;
   /** The value of an attribute (aria-expanded, aria-selected, data-state), or null when it is not set (at most 200 characters). */
@@ -835,12 +835,22 @@ export function probeMain(): void {
       return v === null ? null : v.slice(0, 200);
     },
 
-    hasText(text: string) {
+    hasText(text: string, fields?: boolean) {
       const norm = (t: string) => t.replace(/\s+/g, ' ').trim().toLowerCase();
-      const hay = norm(document.body?.innerText ?? '');
+      let hay = norm(document.body?.innerText ?? '');
+      // What is typed into a form field is on the page too (an email, a bio, a saved reply), yet innerText never contains it. Only for a check that something IS there; never passwords or hidden fields.
+      if (fields) {
+        for (const el of Array.from(document.querySelectorAll('input, textarea'))) {
+          const f = el as HTMLInputElement;
+          if (['password', 'hidden', 'file'].includes(f.type) || typeof f.value !== 'string' || !f.value) continue;
+          hay += ' ' + norm(f.value.slice(0, 2000));
+        }
+      }
       const want = norm(text);
+      const has = (w: string) => hay.includes(w) || hay.replace(/\s+/g, '').includes(w.replace(/\s+/g, ''));
       // A value split across separate elements (a name and its phone number in two cells) reads run together to a model: also compare with all whitespace removed (Browser Agent verify.ts textPresentIn).
-      return hay.includes(want) || hay.replace(/\s+/g, '').includes(want.replace(/\s+/g, ''));
+      // A model quoting a value out of a sentence often keeps the sentence's full stop or comma ("write to hello@x.test."): the value is there without it.
+      return has(want) || (/[.,;:!?]$/.test(want) && has(want.replace(/[.,;:!?]+$/, '')));
     },
 
     /** Selects the whole content of a focused field or editor, so the next insertion replaces it. */

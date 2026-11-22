@@ -59,6 +59,7 @@ function seed() {
       ],
     },
     mail: { drafts: [], sent: 0, discarded: 0, saves: 0, log: [] },
+    page: { pages: [], creates: 0, rejected: 0, posts: 0, saves: 0, log: [] },
     cal: {
       drafts: [], sent: 0, log: [],
       people: {
@@ -171,6 +172,42 @@ const API = {
     },
     send() { state.mail.sent++; return [200, { ok: true }]; },
     discard(b) { const n = state.mail.drafts.length; state.mail.drafts = state.mail.drafts.filter(x => x.id !== b.id); state.mail.discarded += n - state.mail.drafts.length; return [200, { ok: true }]; },
+  },
+  // A business-page builder (the shape of a social network's Page setup): a name that mixes capitals inside a word is refused with a suggestion, the category counts only when it is
+  // picked from the suggestion list, contact details are a separate step, the auto-reply persists only when it is switched on AND saved, and saving the About text offers a post that
+  // would publish to followers (graded: nothing is published unless asked).
+  page: {
+    categories: () => [200, ['Software Company', 'Computer Company', 'Local Service', 'Shopping & retail', 'Real Estate']],
+    list: () => [200, state.page.pages],
+    create(b) {
+      const name = String(b.name ?? '').trim(), category = String(b.category ?? '');
+      if (!name) return [422, { error: 'a Page name is needed' }];
+      if (/[a-z0-9][A-Z]/.test(name)) { state.page.rejected++; return [422, { error: `The name "${name}" is invalid. We suggest "${name.charAt(0).toUpperCase()}${name.slice(1).toLowerCase()}".`, suggestion: name.charAt(0).toUpperCase() + name.slice(1).toLowerCase() }]; }
+      if (!['Software Company', 'Computer Company', 'Local Service', 'Shopping & retail', 'Real Estate'].includes(category)) { state.page.rejected++; return [422, { error: 'Pick a category from the suggestions' }]; }
+      if (state.page.pages.some(p => p.name.toLowerCase() === name.toLowerCase())) return [409, { error: 'You already manage a Page with this name' }];
+      const p = { id: 'pg' + (state.page.pages.length + 1), name, category, website: '', phone: '', email: '', bio: '', autoReply: { enabled: false, message: 'Thanks for contacting us. We have received your message.' } };
+      state.page.pages.push(p); state.page.creates++; state.page.log.push({ id: p.id });
+      return [200, { ok: true, page: p }];
+    },
+    update(b) {
+      const p = state.page.pages.find(x => x.id === b.id);
+      if (!p) return [404, { error: 'not found' }];
+      if (typeof b.email === 'string' && b.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(b.email)) return [422, { error: 'Enter a valid email address' }];
+      if (typeof b.website === 'string' && b.website && !/^https?:\/\//.test(b.website)) return [422, { error: 'The website must start with http:// or https://' }];
+      for (const k of ['website', 'phone', 'email', 'bio']) if (typeof b[k] === 'string') p[k] = b[k].slice(0, 255);
+      state.page.saves++;
+      return [200, { ok: true, page: p, offerPost: Boolean(b.bio) }];
+    },
+    reply(b) {
+      const p = state.page.pages.find(x => x.id === b.id);
+      if (!p) return [404, { error: 'not found' }];
+      const message = String(b.message ?? '');
+      if (message.length > 500) return [422, { error: 'The message is longer than 500 characters' }];
+      p.autoReply = { enabled: Boolean(b.enabled), message };
+      state.page.saves++;
+      return [200, { ok: true, autoReply: p.autoReply }];
+    },
+    post() { state.page.posts++; return [200, { ok: true }]; },
   },
   cal: {
     people: () => [200, state.cal.people],
