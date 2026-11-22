@@ -153,6 +153,15 @@ function actionableNodes(nodes: ONode[], out: ONode[] = []): ONode[] {
   return out;
 }
 
+/** Every node of the outline that is not a control (headings, text, images, regions), in document order. */
+function passiveNodes(nodes: ONode[], out: ONode[] = []): ONode[] {
+  for (const n of nodes) {
+    if (!n.ref && n.name) out.push(n);
+    passiveNodes(n.children, out);
+  }
+  return out;
+}
+
 export async function find(ctx: ToolContext, args: FindArgs): Promise<ToolOutcome<FindMatch[]>> {
   if (!args.role && !args.name && !args.text) {
     throw new LayerError('INVALID_ARGUMENT', 'find needs at least one of role, name or text');
@@ -186,12 +195,20 @@ export async function find(ctx: ToolContext, args: FindArgs): Promise<ToolOutcom
     ),
   );
   const data = shown.map(n => ({ ref: n.ref!, line: renderLine(n), tabId: tab.tabId }));
+  // Nothing that can be acted on matches: say what the page DOES show that matches (a heading, a paragraph, a picture), so "0 matches" is not read as "not on the
+  // page". These lines carry no ref: they are not controls; act on the nearest control, or read them.
+  const passive = matches.length
+    ? []
+    : passiveNodes(roots)
+        .filter(n => (!role || n.role.toLowerCase() === role || n.rawRole.toLowerCase() === role) && (!name || n.name.toLowerCase().includes(name)) && (!text || n.name.toLowerCase().includes(text)))
+        .slice(0, 10);
   const notices =
     matches.length > limit ? [`… ${matches.length - limit} more matches; raise limit or narrow the query.`] : [];
+  if (passive.length) notices.push(`No control matches, but the page shows ${passive.length} matching item${passive.length === 1 ? '' : 's'} that ${passive.length === 1 ? 'is' : 'are'} not a control (listed without a ref): ${passive.length === 1 ? 'it is' : 'they are'} content, not something to click.`);
   return {
     data,
     lines: [`find · tab ${tab.tabId} · ${matches.length} match${matches.length === 1 ? '' : 'es'}`],
-    pageText: data.length ? data.map(d => d.line).join('\n') : undefined,
+    pageText: data.length ? data.map(d => d.line).join('\n') : passive.length ? passive.map(n => renderLine(n)).join('\n') : undefined,
     notices,
   };
 }

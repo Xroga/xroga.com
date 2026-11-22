@@ -12,6 +12,13 @@ export const NO_EFFECT_STRONG = 3;
 export const NO_EFFECT_STOP = 10;
 export const ERROR_NUDGE = 5;
 export const ERROR_STOP = 20;
+/**
+ * Calls in a row on one page (same tab and address) after which nothing on it has changed: no action had an effect, nothing navigated. Twenty such calls
+ * (about two minutes of looking and trying) mean the thing asked for is not reachable there; the run ends with what it found instead of trying for many
+ * more minutes. A read further into a long page (an offset) is progress and is not counted.
+ */
+export const STILL_STOP = 20;
+export const STILL_NUDGE = 12;
 /** Calls in a row that only looked at pages before the agent is told to act or finish. */
 export const READ_STREAK_NUDGE = 5;
 /**
@@ -156,10 +163,27 @@ export class Guards {
     const s = this.state;
     const sig = signature(tool, args, result, isError);
     s.recent = [...s.recent, sig].slice(-REPEAT_WINDOW);
+    // Calls in a row on one page that changed nothing there (STILL_STOP). Failed calls count too: a page where every attempt fails or does nothing is the same dead end.
+    // A failed call carries no page of its own; it belongs to the page the run is on. Waiting (a slow page, workers' progress) is not counted.
+    let still = s.still;
+    if (!POLLING_TOOLS.has(tool)) {
+      const page = result?.page ? `${result.page.tabId ?? ''}|${result.page.url ?? ''}` : (tool === 'navigate' || tool === 'tabs') && typeof args.url === 'string' ? `${args.tabId ?? ''}|${args.url}` : s.still?.page ?? `${args.tabId ?? ''}|`;
+      // Focus moving (Tab, Shift+Tab) is a change, but not one that gets anywhere on its own.
+      const signals = result?.receipt?.effect.signals ?? [];
+      const focusOnly = signals.length > 0 && signals.every(x => /^focus /.test(x));
+      const moved = (result?.receipt?.effect.verdict === 'changed' && !focusOnly) || (tool === 'read' && typeof args.offset === 'number' && args.offset > 0);
+      still = s.still && s.still.page === page && !moved ? { page, calls: s.still.calls + 1 } : { page, calls: moved ? 0 : 1 };
+      s.still = still;
+    }
     s.errorsInRow = isError ? s.errorsInRow + 1 : 0;
     if (s.errorsInRow >= ERROR_STOP) return { stop: `${ERROR_STOP} calls in a row failed.`, guard: 'errors' };
     if (s.errorsInRow >= ERROR_NUDGE && s.errorsInRow % ERROR_NUDGE === 0) {
       return { nudge: `${s.errorsInRow} calls in a row failed. Read the exact error of the last one, say what it means, and switch to a materially different method (a different tool, the screenshot and a pointer action, a keyboard shortcut, the application's own command or script console, a connected API). Keep the work already done.`, reobserve: true };
+    }
+
+    if (still && !POLLING_TOOLS.has(tool)) {
+      if (still.calls >= STILL_STOP) return { stop: `${still.calls} calls on this page in a row changed nothing on it: what was asked for is not reachable there with the controls the page shows.`, guard: 'no_effect' };
+      if (still.calls === STILL_NUDGE) return { nudge: `${still.calls} calls on this page in a row changed nothing on it. If what you are looking for is not on this page, say so now with what you found (done with outcome partial or failed and the evidence); otherwise take an action that changes something.` };
     }
 
     const key = NO_EFFECT_TOOLS.has(tool) ? targetKey(args, result) : null;

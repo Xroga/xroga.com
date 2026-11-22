@@ -50,6 +50,8 @@ if (!flag('--no-build')) {
   execFileSync('corepack', ['pnpm', 'exec', 'wxt', 'build'], {
     cwd: root,
     stdio: ['ignore', 'ignore', 'inherit'],
+    // corepack is a .cmd shim on Windows, which Node starts only through a shell.
+    shell: process.platform === 'win32',
     env: { ...process.env, WXT_AUTORUN_URL: base, ...(productPermissions ? { WXT_PRODUCT_PERMISSIONS: '1' } : {}) },
   });
 }

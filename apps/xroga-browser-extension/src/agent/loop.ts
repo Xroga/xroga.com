@@ -94,6 +94,9 @@ export interface Request {
   chars: number;
 }
 
+/** Diagnosed stalls in a row, with no action that changed anything between them, after which a run ends with its findings (see afterToolCall). */
+export const NO_PROGRESS_STALLS = 4;
+
 export interface LoopOptions {
   /** How hard the model is asked to think: told, after every tool call, whether the run stalled. The server decides what is allowed. */
   effort?: { noteTurn(stalled: boolean): void };
@@ -758,6 +761,11 @@ ${ledger}` : ''),
       };
     }
     const args = (call.input ?? {}) as Record<string, unknown>;
+    // A view-source: page cannot be controlled or read by the extension: opening one leaves the tab unusable (every later call fails) until it is navigated away.
+    // The page's markup is reachable another way: read (the page's text and structure) or, for the raw file, http_get.
+    if ((call.toolName === 'navigate' || call.toolName === 'tabs') && typeof args.url === 'string' && /^\s*view-source:/i.test(args.url)) {
+      return { call, kind, isError: true, text: 'Refused, nothing was opened: a view-source: page cannot be controlled or read by the extension and would leave the tab unusable. To see the markup, use read on the page itself, or http_get for the raw file where it is available.' };
+    }
     // A click at a point that already did nothing twice on this same, unchanged page is refused before it is sent (dead-spots.ts).
     if (call.toolName === 'canvas' && Array.isArray(args.at) && args.at.length === 2 && ['click', 'double_click', 'right_click'].includes(String(args.action))) {
       const why = this.#deadSpots.refusal(Number(args.at[0]), Number(args.at[1]));
@@ -836,6 +844,10 @@ ${ledger}` : ''),
         url: given.result?.page?.url,
       });
       if (verdict.stalled) this.#pendingStall = verdict;
+      // Four diagnosed dead ends in a row, each after the agent was told to change its method, with not one action changing anything in between: the evidence says
+      // this cannot be done with what is reachable (the thing asked for is not there, or only a person can do it). The run ends with its verified work and that
+      // finding, instead of trying for many more minutes.
+      if (this.#progress.stallsSinceProgress >= NO_PROGRESS_STALLS) this.#guardStop ??= { reason: `no progress after ${this.#progress.stallsSinceProgress} diagnosed dead ends in a row; no action changed anything since the first`, guard: 'no_effect' };
       this.options.effort?.noteTurn(verdict.stalled);
     }
     this.#toolCounts.set(given.call.toolName, (this.#toolCounts.get(given.call.toolName) ?? 0) + 1);

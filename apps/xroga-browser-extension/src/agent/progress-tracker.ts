@@ -105,6 +105,8 @@ export class ProgressTracker {
   #failureKey = '';
   #unproductive = 0;
   #stalls = 0;
+  /** Stalls called since an acting call last changed something: diagnosed dead ends in a row. */
+  #stallsSinceProgress = 0;
   readonly #ledger = new Map<MethodClass, Entry>();
   #available = new Set<MethodClass>();
 
@@ -114,6 +116,7 @@ export class ProgressTracker {
   }
 
   get stalls(): number { return this.#stalls; }
+  get stallsSinceProgress(): number { return this.#stallsSinceProgress; }
   /** What has been tried: kind, attempts, failures, calls that changed nothing. */
   get ledger(): ReadonlyMap<MethodClass, Readonly<Entry>> { return this.#ledger; }
 
@@ -147,18 +150,22 @@ export class ProgressTracker {
       this.#failureKey = '';
     }
     if (acting) this.#unproductive = o.isError || o.effect === 'none' ? this.#unproductive + 1 : 0;
+    if (acting && !o.isError && o.effect === 'changed') this.#stallsSinceProgress = 0;
     const lastDiagnosis = o.isError ? diagnose(o.errorCode, o.resultText ?? '') : undefined;
     let reason: string | undefined;
     if (this.#repeat >= REPEAT_LIMIT) reason = `the same ${key} call produced the same page state ${this.#repeat} times`;
     else if (this.#failures >= FAILURE_LIMIT) reason = `${key} failed ${this.#failures} times in a row`;
     else if (this.#unproductive >= UNPRODUCTIVE_LIMIT) reason = `${this.#unproductive} actions in a row failed or changed nothing`;
     if (!reason) return { stalled: false, exhausted: false };
+    const errorStreak = this.#failures >= FAILURE_LIMIT && this.#repeat < REPEAT_LIMIT;
     this.#repeat = 0;
     this.#failures = 0;
     this.#failureKey = '';
     this.#unproductive = 0;
     this.#lastCall = '';
     this.#stalls++;
+    // Error streaks have their own guard (guards.ts); this counts the dead ends where actions went through and changed nothing.
+    if (!errorStreak) this.#stallsSinceProgress++;
     return { stalled: true, reason, exhausted: false, directive: this.#directive(reason, lastDiagnosis), ...(lastDiagnosis ? { diagnosis: lastDiagnosis } : {}) };
   }
 

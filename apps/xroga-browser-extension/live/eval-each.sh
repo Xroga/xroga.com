@@ -5,7 +5,7 @@
 out="$1"; tmo="$2"; extra="$3"; shift 3
 for task in "$@"; do
   args="{\"kind\":\"openai-compatible\",\"model\":\"deepseek-v4.1-flash-1017\",\"baseUrl\":\"https://api.zurelay.com/v1\",\"contextWindow\":64000,\"modes\":[\"auto\"],${extra}\"tasks\":[\"${task}\"]}"
-  timeout $((tmo + 30)) node fixtures/autorun.mjs eval --no-build --timeout "$tmo" --args "$args" > /dev/null 2>&1
+  timeout $((tmo + 90)) node fixtures/autorun.mjs eval ${EV_BUILD:---no-build} --timeout "$tmo" --args "$args" > /dev/null 2>&1
   python - "$out" "$task" <<'EOF'
 import json, glob, os, sys, time
 out, task = sys.argv[1], sys.argv[2]

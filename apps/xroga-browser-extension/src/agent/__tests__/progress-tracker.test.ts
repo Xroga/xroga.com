@@ -70,3 +70,13 @@ describe('ProgressTracker ledger', () => {
     expect(t.ledger.size).toBe(0);
   });
 });
+
+describe('stalls since progress', () => {
+  it('counts diagnosed dead ends in a row and resets when an action changes something', () => {
+    const t = new ProgressTracker();
+    for (let i = 0; i < 8; i++) t.record(clickAt(i));
+    expect(t.stallsSinceProgress).toBe(2);
+    t.record(click('moved on', 'changed'));
+    expect(t.stallsSinceProgress).toBe(0);
+  });
+});
