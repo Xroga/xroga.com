@@ -26,7 +26,7 @@ import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT } from './nativeOpenUi.js';
 import { nativeDocumentDelivery, nativeDocumentPrompt, nativeDocumentRequiresAttachment, requestedNativeDocumentFormat, type NativeDocumentFormat } from './nativeDocumentDownload.js';
 import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
-import { bindCitationLinks, researchCitationIssues } from './researchAnswer.js';
+import { presentPublicResearchAnswer } from './researchAnswer.js';
 import { nativeOpenUiPlainPrompt, workspaceNativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
 import { assessPresentationCoverage, createPresentationProjection, nativePresentedAnswerMaxTokens, NATIVE_WORKSPACE_REASONING_RESERVE_TOKENS, presentationRequestInstructions, presentationResponseFormat, presentedAnswerMaxTokens, type PresentationResponseFormat } from './responsePresentation.js';
 import { prepareAnswerCoverage, requiredNativeFormats } from './answerCoverage.js';
@@ -1271,14 +1271,18 @@ export async function runChatPipeline(opts: {
     const answer = completeNativeWorkspaceAnswer(result.text, result.finishReason, evidenceIds,
       route.kind !== 'research' && !researchBlock && !opts.projectEvidence ? opts.prompt : undefined,
       diagnostic => console.warn('[native-openui-validation]', diagnostic), formats);
-    const response = publicWebRetrieved ? bindCitationLinks(answer.response, sources) : answer.response;
-    const completion = publicWebRetrieved && answer.completion.status === 'complete' && researchCitationIssues(response, sources).length
-      ? { status: 'partial' as const, reason: 'source_attribution' as const } : answer.completion;
+    const researchPresentation = publicWebRetrieved
+      ? presentPublicResearchAnswer(answer.response, answer.completion, sources, opts.prompt) : undefined;
+    const { response, completion } = researchPresentation ?? answer;
     opts.onDelta?.(response);
     const delivery = nativeDocumentDelivery(requestedDownload, missingDownloadAttachment, opts.prompt, response, completion);
     return {
       ...answer,
       response, completion: delivery.completion,
+      // The original program can contain prose bound before link verification.
+      // Keep the corrected, readable answer as the single source on recovery.
+      ...(researchPresentation?.requiresReadableFallback
+        ? { responseSource: { format: NATIVE_UI_FORMAT, text: '' } } : {}),
       ...(delivery.downloadFormat ? { responseSource: { ...answer.responseSource, downloadFormat: delivery.downloadFormat } } : {}),
       intent: route.kind, usage: usageToTokenUsage(usage), webSources: research?.sources,
       ...(publicWebRetrieved ? { publicWebRetrieved } : {}),
@@ -1288,10 +1292,10 @@ export async function runChatPipeline(opts: {
 
   const document = projection?.finish(result.text);
   const prose = document ? document.response || "Xroga couldn't finish the requested structured answer." : result.text;
-  const response = publicWebRetrieved ? bindCitationLinks(prose, sources) : prose;
-  const reportedCompletion = publicCompletionState(result.finishReason, document?.reviewText ?? response);
-  const completion = publicWebRetrieved && reportedCompletion.status === 'complete' && researchCitationIssues(response, sources).length
-    ? { status: 'partial' as const, reason: 'source_attribution' as const } : reportedCompletion;
+  const reportedCompletion = publicCompletionState(result.finishReason, document?.reviewText ?? prose);
+  const researchPresentation = publicWebRetrieved
+    ? presentPublicResearchAnswer(prose, reportedCompletion, sources, opts.prompt) : undefined;
+  const { response, completion } = researchPresentation ?? { response: prose, completion: reportedCompletion };
   if (publicWebRetrieved) opts.onDelta?.(response);
   // A valid semantic decision with invalid display metadata, or an incomplete
   // document, is preserved as partial. Never repair it with another model call.
@@ -1302,7 +1306,8 @@ export async function runChatPipeline(opts: {
     response,
     completion: presentationIncomplete && result.finishReason === 'stop' && completion.status === 'complete'
       ? { status: 'partial', reason: 'presentation_contract' } : completion,
-    ...(document ? { responseSource: { format: 'xroga-response-json-v1' as const, text: document.original, contract: answerContract } } : {}),
+    ...(document && !researchPresentation?.requiresReadableFallback
+      ? { responseSource: { format: 'xroga-response-json-v1' as const, text: document.original, contract: answerContract } } : {}),
     intent: route.kind,
     usage: usageToTokenUsage(usage),
     webSources: research?.sources,

@@ -79,6 +79,10 @@ const cases = {
     requiredFormats: ['chart'],
     completion: 'complete',
   },
+  signedStackedBars: {
+    text: 'Two cash flow series with gains and losses across two months.',
+    program: 'root = Col([Chart("bar", [{month:"Jan",sales:4000,adjustments:-2000},{month:"Feb",sales:-3500,adjustments:1500}], "month", ["sales","adjustments"], "currency", "USD", true, 440)])',
+  },
   compare: { text: 'Team costs $25 and Basic costs $10.', program: 'root = Col([Title("Plan comparison"), Text("Pick Basic for an individual or Team for collaboration."), Table(["Plan", "USD/month"], [["Team", 25], ["Basic", 10]])])' },
   wideComparison: {
     text: 'Compare documentation rows and sort the supplied measurements.',
@@ -508,6 +512,26 @@ try {
       assert.equal(await page.getByText('Cash flow in dollars', { exact: true }).count(), 1);
       if (viewport.width === 390) {
         await page.getByRole('region', { name: 'Answer', exact: true }).screenshot({ path: resolve(output, 'signed-chart-390-' + theme + '.png') });
+      }
+      await open('signedStackedBars');
+      const stacked = page.getByRole('img', { name: 'bar chart of sales, adjustments by month' });
+      await stacked.waitFor();
+      const geometry = await stacked.evaluate(svg => {
+        const zero = Number(svg.querySelector('line.iui-chart-grid:not([stroke-dasharray])')?.getAttribute('y1'));
+        const bars = [...svg.querySelectorAll('rect[fill^="var(--iui-chart-"]')].map(rect => ({
+          top: Number(rect.getAttribute('y')),
+          height: Number(rect.getAttribute('height')),
+        }));
+        return { zero, bars, width: svg.clientWidth, height: svg.clientHeight };
+      });
+      assert.ok(geometry.zero > 0);
+      assert.equal(geometry.bars.length, 4);
+      for (const index of [0, 3]) assert.ok(geometry.bars[index].top < geometry.zero && geometry.bars[index].height > 0);
+      for (const index of [1, 2]) assert.ok(geometry.bars[index].top >= geometry.zero && geometry.bars[index].height > 0);
+      if (geometry.width < 440) assert.ok(geometry.height <= 317, 'Compact panes constrain tall charts');
+      await page.getByRole('table', { name: 'Chart data' }).getByRole('cell', { name: '-$2,000.00', exact: true }).waitFor();
+      if ([390, 1440].includes(viewport.width)) {
+        await page.getByRole('region', { name: 'Answer', exact: true }).screenshot({ path: resolve(output, 'signed-stacked-' + viewport.width + '-' + theme + '.png') });
       }
       if (captured) {
         await open("capturedSearch");

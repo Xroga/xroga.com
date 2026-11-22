@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
-import {researchAnswerRequestSchema,RESEARCH_ANSWER_MAXIMUM_MICRO_USD,researchCitationIssues,bindCitationLinks,publicWorkspaceResearchAnswer} from './researchAnswer.js';
+import {researchAnswerRequestSchema,RESEARCH_ANSWER_MAXIMUM_MICRO_USD,researchCitationIssues,bindCitationLinks,publicWorkspaceResearchAnswer,presentPublicResearchAnswer} from './researchAnswer.js';
 import {runChatPipeline} from './pipeline.js';
 import {goalContractSchema} from './universal/goalContract.js';
 import {confirmBusinessAction,getBusinessActionConfirmation} from '../services/integrations/businessActionConfirmations.js';
@@ -40,6 +40,27 @@ test('research attribution binds canonical pages without treating code or chart 
  assert.deepEqual(researchCitationIssues('Unsupported claim [3].',sources),['unresolved-source:3','missing-source-attribution']);
  assert.deepEqual(researchCitationIssues('Supported [1].\n```ts\narray[99]\n```\n```xroga-ui\n{"type":"chart","values":[99],"summary":"Documented [2]"}\n```',sources),[]);
  assert.deepEqual(researchCitationIssues('No citations supplied.',sources),['missing-source-attribution']);
+});
+
+test('explicit official-link coverage keeps retrieved destinations and marks unverified entries partial', () => {
+  const project = 'https://example.org/project';
+  const manual = 'https://example.net/manual';
+  const outside = 'https://unretrieved.example/guessed';
+  const sources = [{ url: project }, { url: manual }];
+  const prompt = 'Compare two projects; link their official sites and cite the results.';
+  const valid = presentPublicResearchAnswer(
+    `1. [Project](${project}) [1]\n2. [Manual](${manual}) [2]`,
+    { status: 'complete' }, sources, prompt);
+  assert.deepEqual(valid.completion, { status: 'complete' });
+  const incomplete = presentPublicResearchAnswer(
+    `1. [Project](${project}) [1]\n2. [Guessed](${outside}) [2]\n\n${outside}.\n\n~~~text\n${outside}\n~~~`,
+    { status: 'complete' }, sources, prompt);
+  assert.deepEqual(incomplete.completion, { status: 'partial', reason: 'source_coverage' });
+  assert.equal(incomplete.response.split(outside).length, 2, 'Literal code keeps its exact text');
+  assert.match(incomplete.response, /Guessed \(link not verified\)/);
+  assert.match(incomplete.response, /couldn’t verify every requested official link/);
+  assert.deepEqual(presentPublicResearchAnswer('The comparison [1] [2]', { status: 'complete' }, sources, prompt).completion,
+    { status: 'partial', reason: 'source_coverage' });
 });
 
 test('one exact research approval completes its original rich answer, saves evidence and cannot replay either provider',async t=>{
@@ -344,7 +365,8 @@ test('one exact research approval completes its original rich answer, saves evid
  ]});
  const expanded=await runChatPipeline({...ranking,goalContract:expandedGoal});
  assert.equal(expanded.publicWebRetrieved,true);
- assert.equal(expanded.completion?.status,'complete');
+ assert.deepEqual(expanded.completion,{status:'partial',reason:'source_coverage'},
+  'Having enough retrieved pages does not deliver the official links requested for each row');
  assert.equal(expanded.webSources?.length,10);
  assert.equal(searches,13);
  assert.equal(models,10,'A full public source set reaches exactly one synthesis call');
@@ -412,6 +434,7 @@ test('public discovery includes implicit rankings and comparisons without export
   'أفضل شركات الذكاء الاصطناعي في 2026',
   '2026 की सबसे अच्छी एआई कंपनियाँ कौन सी हैं?',
   '2026 年最好的人工智能公司有哪些？',
+  'Top 10 best AI companies in 2026; official sites, ranking criteria, and dated sources.',
  ]) {
   const result=workspacePublicSearchQuery(prompt);
   assert.ok(result?.query,prompt);
@@ -428,6 +451,7 @@ test('public discovery includes implicit rankings and comparisons without export
   'Top AI companies, no web search',
   'Explain why companies use AI',
   'Rank these companies using the previous answer',
+  'Top 10 AI companies; use the confidential customer list.',
  ]) assert.equal(workspacePublicSearchQuery(prompt),undefined,prompt);
 });
 
