@@ -7,7 +7,7 @@
   width: auto !important; height: auto !important; max-height: none !important;
   padding: 18px 24px !important;
   display: flex; align-items: safe center; justify-content: center;
-  overflow-y: auto !important; overflow-x: hidden; scrollbar-width: none;
+  overflow-y: auto !important; overflow-x: hidden; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain;
   color: var(--foreground);
   --composer-surface: var(--terminal-ui-raised);
   container-type: inline-size;
@@ -60,22 +60,37 @@
 .dock :global(.xv-send__glow) { display: none; }
 .dock :global(.xv-send)>svg { color: var(--terminal-ui-surface) !important; stroke: var(--terminal-ui-surface) !important; }
 .dock.dock.dock :global(.xv-chatbar-row-modern) { gap: 4px; }
- .automatic { position: relative; display: grid; place-items: center; margin: 14px auto 20px; max-width: 620px; color: var(--muted); font: 12px/1.5 Arial,sans-serif; letter-spacing: .015em; text-align: center; min-height: 24px; }
-.automatic strong { color: var(--foreground); font-weight: 600; }
-.automaticFirst,.automaticDetail { grid-area: 1/1; display: block; width: 100%; transition: opacity .3s ease,filter .3s ease; }
-.automaticFirst[data-visible='false'],.automaticDetail[data-visible='false'] { opacity: 0; visibility: hidden; }
-.automaticDetail[data-visible='true'] { visibility: visible; animation: automaticReveal .5s ease-out both; }
-@keyframes automaticReveal { from { opacity: 0; filter: blur(7px); transform: translateY(5px); } to { opacity: 1; filter: blur(0); transform: translateY(0); } }
+ .automatic {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 620px;
+  margin: 10px auto 14px;
+  color: var(--muted);
+  font: clamp(9px, 2.4cqw, 12px)/1.25 Arial,sans-serif;
+  letter-spacing: -.015em;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 0;
+}
+.automatic > * { display: none !important; }
+.automatic::after {
+  content: "Type or speak in your native language, and the right tools handle the work automatically.";
+  display: block;
+  width: 100%;
+}
 .cards { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)) minmax(180px,.8fr); gap: 12px; max-width: 900px; margin-inline: auto; }
 .cardShell,.carouselShell { min-width: 0; position: relative; }
-.card { width: 100%; height: 100%; position: relative; display: flex; align-items: center; min-height: 118px; padding: 18px; text-align: left; background: color-mix(in srgb,var(--terminal-ui-raised) 75%,var(--terminal-ui-inset)); border: 1px solid var(--terminal-ui-border); border-radius: 14px; overflow: hidden; color: var(--foreground); min-width: 0; cursor: pointer; transition: background-color .18s,border-color .18s; }
+.card { width: 100%; height: 100%; position: relative; display: flex; align-items: center; min-height: 112px; padding: 16px; text-align: left; background: color-mix(in srgb,var(--terminal-ui-raised) 75%,var(--terminal-ui-inset)); border: 1px solid var(--terminal-ui-border); border-radius: 14px; overflow: hidden; color: var(--foreground); min-width: 0; cursor: pointer; transition: background-color .18s,border-color .18s; }
 .card:hover,.card[aria-expanded='true'] { background: var(--terminal-ui-inset); border-color: color-mix(in srgb,var(--foreground) 35%,transparent); }
 .cardCopy { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 10px; width: 100%; }
 .cardIcon { display: flex; color: var(--foreground); }
 .cardIcon svg { width: 22px; height: 22px; stroke-width: 1.8; }
 .cardWords { display: block; min-width: 0; }
 .cardWords strong { display: flex; align-items: center; gap: 5px; font: 500 22px/1.2 Georgia,'Times New Roman',serif; margin-bottom: 5px; }
-.cardWords>span { display: block; font: 12px/1.5 Arial,sans-serif; color: var(--muted); text-wrap: pretty; }
+.cardWords>span { display: block; font: 11px/1.4 Arial,sans-serif; color: var(--muted); text-wrap: pretty; }
 .cardArrow { width: 14px; height: 14px; color: var(--muted); }
 .card:focus-visible,.tool:focus-visible { outline: 2px solid var(--foreground); outline-offset: 3px; }
 .visual { position: absolute; width: 100px; height: 100px; right: -28px; top: -16px; color: var(--foreground); opacity: .07; pointer-events: none; transition: transform .35s,opacity .35s; }
@@ -102,10 +117,10 @@
 .carouselShell .card .visual { width: 92px; height: 92px; top: 25px; right: calc(50% - 46px); opacity: .16; }
 .carouselShell .card .cardIcon { display: none; }
 @container (max-width: 720px) {
-  .cards { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
-  .card { min-height: 110px; padding: 14px; }
+  .cards { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+  .card { min-height: 104px; padding: 12px; }
   .carouselShell { grid-column: 1/-1; grid-row: auto; }
-  .carouselShell .card { min-height: 110px; align-items: center; padding-bottom: 35px; }
+  .carouselShell .card { min-height: 104px; align-items: center; padding-bottom: 30px; }
   .carouselShell .card .cardCopy { flex-direction: row; align-items: center; gap: 12px; padding-right: 50px; }
   .carouselShell .card .cardIcon { display: flex; }
   .carouselShell .card .cardWords>span { max-width: none; }
@@ -113,7 +128,7 @@
   .hero { margin-bottom: 22px; }
 }
 @container (max-width: 580px) {
-  .card { min-height: 112px; padding: 12px; }
+  .card { min-height: 100px; padding: 10px; }
   .cardCopy { display: grid; grid-template-columns: 18px minmax(0,1fr); gap: 7px; align-items: center; }
   .cardIcon svg { width: 18px; height: 18px; }
   .cardWords { display: contents; }
@@ -122,7 +137,7 @@
   .carouselShell .card .cardIcon { display: none; }
   .cardWords strong { font-size: 19px; margin-bottom: 0; }
   .carouselShell .cardWords strong { margin-bottom: 5px; }
-  .cardWords>span { font-size: 12px; line-height: 1.4; }
+  .cardWords>span { font-size: 10.5px; line-height: 1.35; }
   .visual { width: 70px; height: 70px; }
   .superIntelligence { font-size: 31px; }
   .tagline { font-size: 16px; }
@@ -131,11 +146,11 @@
   .dock.dock.dock :global(.xv-chatbar-primary-tools) { gap: 5px; }
   .tool { padding: 5px; width: 29px; }
   .tool span { display: none; }
-  .automatic { font-size: 11px; margin: 12px 0 15px; }
+  .automatic { font-size: clamp(9px, 2.4cqw, 11px); margin: 8px 0 12px; }
 }
 @media (max-width: 639px) {
   .repoStatus { display: none; }
-  .dock.dock.dock { padding: 12px !important; }
+  .dock.dock.dock { padding: 18px 12px 12px !important; }
   .dock.dock.dock :global(.xv-chatbar-input-form) { padding: 6px 7px !important; }
   .dock.dock.dock :global(.xv-chatbar-tools) { gap: 4px; }
   .dock.dock.dock :global(.xv-chatbar-compose-field) { min-height: 32px !important; }
@@ -146,7 +161,7 @@
   .tagline { font-size: clamp(9px,2.8cqw,11px); }
   .hero { margin-bottom: 16px; }
   .automatic { margin: 10px 0 12px; }
-  .card { padding: 10px; min-height: 106px; }
+  .card { padding: 9px; min-height: 94px; }
   .carouselShell .card .cardCopy { padding-right: 0; }
   .carouselShell .card .visual { display: none; }
   .dock :global(.xv-companion-blackhole)>button { padding: 3px 5px; gap: 1px; }
@@ -157,7 +172,7 @@
   .tool { width: 25px; padding: 3px; }
   .dock.dock.dock :global(.xv-chatbar-primary-tools) { gap: 3px; }
 }
-@media (prefers-reduced-motion: reduce) { .card,.tool,.visual { transition: none; } .dynamicWord,.automaticDetail[data-visible='true'] { animation: none; filter: none; opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .card,.tool,.visual { transition: none; } .dynamicWord { animation: none; filter: none; opacity: 1; transform: none; } }
 .window :global(.xv-workspace-header),.dock :global(.xv-chatbar-tools) { --accent: var(--foreground); }
 .dock :global(.xv-companion-blackhole) svg[data-testid='mobile-model-icon'] { width: 22px; height: 22px; color: var(--foreground) !important; }
 @media (max-height: 700px) and (min-width: 640px) {
@@ -169,8 +184,8 @@
 /* Five readable mobile cards. */
 @media (max-width: 639px) {
  .cards { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
- .card { min-height: 106px; padding: 11px; }
- .carouselShell .card { min-height: 104px; padding-bottom: 32px; }
+ .card { min-height: 98px; padding: 10px; }
+ .carouselShell .card { min-height: 96px; padding-bottom: 28px; }
  .hero { margin-bottom: 12px; }
 }
 

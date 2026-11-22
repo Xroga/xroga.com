@@ -350,12 +350,14 @@ test('the top scroll fade stays inside the conversation pane, never on the toolb
   assert.match(POLISH, /\.transcriptFade\[data-scrolled='true'\]\s*\{ opacity: 1; \}/);
 });
 
-test('Chrome extension control overlays only its own corner and does not add a transcript row', () => {
+test('Chrome extension control sits in a compact toolbar row without covering the workspace title', () => {
   const POLISH = read('../components/dashboard/WorkspaceScrollPolish.module.css');
   const OPERATOR = read('../components/browser/WorkspaceBrowserOperator.tsx');
   assert.match(DASHBOARD, /<header[\s\S]*?className=\{scrollPolish\.browserControl\}>\{browserOperator\}[\s\S]*?<\/header>/);
-  assert.doesNotMatch(DASHBOARD, /<\/header>\s*\{browserOperator\}/);
-  assert.match(POLISH, /\.browserControl\s*\{[^}]*position:\s*absolute/);
+  assert.match(POLISH, /\.headerChrome\s*\{[^}]*display:\s*flex[^}]*flex-wrap:\s*wrap/);
+  assert.match(POLISH, /\.browserControl\s*\{[^}]*position:\s*relative[^}]*flex:\s*0 0 100%/);
+  assert.match(POLISH, /\.browserControl \[data-xroga-extension-trigger\]\s*\{[^}]*font-size:\s*11px[^}]*white-space:\s*nowrap/);
+  assert.match(POLISH, /@media \(max-width: 639px\)[\s\S]*?\.browserControl \[data-xroga-extension-trigger\][\s\S]*?font-size:\s*10px/);
   assert.match(OPERATOR, /Install Xroga Extension/);
   assert.match(OPERATOR, /supported local browser automation tasks/);
   assert.match(OPERATOR, /!showConnection[\s\S]*?Coming soon/);
@@ -398,9 +400,13 @@ test('the conversation scrollport ends at the composer without clipping its nati
   assert.match(CSS, /:is\(\.xv-kimi-composer-frame, \.xv-chatbar-queue-outside\)\s*\{[^}]*pointer-events: auto/);
 });
 
-test('the live transcript does not mount the starter headline as a scrolling wall', () => {
+test('the live transcript keeps the starter headline and one-line native-language helper', () => {
   assert.doesNotMatch(DASHBOARD, /<DashboardWelcome/);
   assert.match(DOCK, /showStarterExperience &&\s*!incognito \? \(\s*<WorkspaceStartHeader \/>/);
+  assert.match(START_CSS, /content:\s*"Type or speak in your native language, and the right tools handle the work automatically\."/);
+  assert.match(START_CSS, /\.automatic\s*\{[^}]*white-space:\s*nowrap/);
+  assert.match(START_CSS, /\.cardWords>span\s*\{[^}]*font:\s*11px\/1\.4/);
+  assert.match(START_CSS, /@container \(max-width: 580px\)[\s\S]*?\.cardWords>span\s*\{[^}]*font-size:\s*10\.5px/);
 });
 
 
