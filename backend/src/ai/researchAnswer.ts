@@ -24,7 +24,7 @@ export type ResearchAnswerRequest=z.infer<typeof researchAnswerRequestSchema>;
 /** Public research receipts and accounting belong to the server. Return the
  * finished answer and source metadata needed for the ordinary Workspace. */
 export function publicWorkspaceResearchAnswer(result: Pick<ChatPipelineResult,
-  'response' | 'completion' | 'responseSource' | 'intent' | 'webSources'>) {
+  'response' | 'completion' | 'responseSource' | 'intent' | 'webSources' | 'publicWebRetrieved'>) {
   const presentation = result.responseSource;
   return {
     response: result.response,
@@ -36,7 +36,7 @@ export function publicWorkspaceResearchAnswer(result: Pick<ChatPipelineResult,
     intent: result.intent,
     webSources: result.webSources?.map(({ title, url, snippet, siteName, siteIconDomain, publishedAt }) =>
       ({ title, url, snippet, siteName, siteIconDomain, publishedAt, source: 'web' })),
-    publicWebRetrieved: true as const,
+    ...(result.publicWebRetrieved ? { publicWebRetrieved: true as const } : {}),
     engine: 'xroga' as const,
   };
 }

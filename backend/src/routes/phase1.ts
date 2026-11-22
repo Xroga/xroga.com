@@ -1555,14 +1555,10 @@ router.post(
             )
           : message.trim();
 
-      const automaticSearch = !businessEvidence && !businessToolkit && !projectEvidence
-        ? new AbortController()
-        : undefined;
-      const onClientClose = () => automaticSearch?.abort();
-      if (automaticSearch) {
-        if (res.destroyed) onClientClose();
-        else res.once('close', onClientClose);
-      }
+      const automaticSearch = new AbortController();
+      const onClientClose = () => automaticSearch.abort();
+      if (res.destroyed) onClientClose();
+      else res.once('close', onClientClose);
       const result =
         await runChatPipeline(
           {
@@ -1585,11 +1581,16 @@ router.post(
                   projectEvidence,
                 }
               : {}),
-            ...(automaticSearch ? { autoPublicSearch: true, autoPublicSearchSignal: automaticSearch.signal } : {}),
+            workspaceSearch: {
+              prompt: businessEvidence || businessToolkit ? undefined : message.trim(),
+              signal: automaticSearch.signal,
+            },
           },
         ).finally(() => res.off('close', onClientClose));
 
-      if (result.publicWebRetrieved) return res.json(publicWorkspaceResearchAnswer(result));
+      if (result.publicWebRetrieved || result.intent === 'research_unavailable') {
+        return res.json(publicWorkspaceResearchAnswer(result));
+      }
 
       return res.json(
         {

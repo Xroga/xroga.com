@@ -17,6 +17,7 @@ import {
 import {
   runWebIntelligence,
   webDecisionFromGoalContract,
+  type WorkspacePublicSearch,
 } from './black-hole/webIntelligence.js';
 import { decideConversion } from './black-hole/converterPolicy.js';
 import { analyzeTask } from './black-hole/taskClass.js';
@@ -973,9 +974,7 @@ export async function runChatPipeline(opts: {
   onDelta?: DeltaFn;
   goalContract?: GoalContract;
   projectEvidence?: string;
-  /** Set only by the authenticated ordinary chat route for the original turn. */
-  autoPublicSearch?: true;
-  autoPublicSearchSignal?: AbortSignal;
+  workspaceSearch?: WorkspacePublicSearch;
   /** Private server continuation, populated only by the exact native research adapter. */
   approvedResearch?:{bundle:ResearchBundle;evidence:string};
 }): Promise<ChatPipelineResult> {
@@ -1104,14 +1103,6 @@ export async function runChatPipeline(opts: {
 
   if (!opts.approvedResearch&&route.useResearch && !explicitlyDisablesResearch(opts.prompt)) {
     const goal = opts.goalContract;
-    // A selected project can be ambient metadata on an ordinary chat turn.
-    // Forward only the independently admitted public query. Actual project
-    // evidence, attachments and project/worker model scopes still require review.
-    const autoPublicSearch = opts.autoPublicSearch && goal
-      && !opts.attachments?.length && !opts.projectEvidence && !opts.modelScope
-      && (goal.semanticIntent === 'ANSWER' || goal.semanticIntent === 'INVESTIGATE' || goal.semanticIntent === 'PROPOSE')
-      && (goal.requiredCapabilities.includes('research.public-web') || goal.freshnessRequirement !== 'NONE')
-      && goal.requiredCapabilities.every(capability => capability === 'research.public-web' || capability === 'conversation.respond');
     try {
       const web = await runWebIntelligence({
         userId: opts.userId,
@@ -1119,9 +1110,9 @@ export async function runChatPipeline(opts: {
           researchAnswer:{prompt:opts.prompt,...(opts.history?{history:opts.history.slice(-12).map(h=>({role:h.role,content:h.content.slice(0,8000)}))}:{}),
             ...(opts.goalContract?{goalContract:opts.goalContract}:{}),...(opts.projectEvidence?{projectEvidence:opts.projectEvidence}:{} )}},
         prompt: opts.prompt,
-        ...(autoPublicSearch ? { autoPublicSearch: true, autoPublicSearchSignal: opts.autoPublicSearchSignal } : {}),
-        ...(opts.goalContract
-          ? { decision: webDecisionFromGoalContract(opts.goalContract) ?? undefined }
+        workspaceSearch: opts.workspaceSearch,
+        ...(goal
+          ? { decision: webDecisionFromGoalContract(goal) ?? undefined }
           : {}),
       });
 
@@ -1153,11 +1144,11 @@ export async function runChatPipeline(opts: {
     )
   ) {
     const unavailableMessage = publicQueryUnverified
-      ? 'I couldn’t identify a self-contained public search query. Give me the public topic or a verified official domain to search.'
+      ? 'I couldn’t identify a public topic to search. Send the topic or official domain you want me to look up.'
       : researchProviderFailed
         ? 'Current public-web evidence is temporarily unavailable. No unsourced current answer was generated.'
         : 'No qualifying current sources were returned. No unsourced current answer was generated.';
-    if (opts.goalContract?.freshnessRequirement === 'CURRENT_REQUIRED') {
+    if (opts.goalContract?.freshnessRequirement === 'CURRENT_REQUIRED' && !publicQueryUnverified) {
       throw new RuntimeFailure(
         researchProviderFailed ? 'PROVIDER_UNAVAILABLE' : 'TOOL_UNAVAILABLE',
         unavailableMessage,
@@ -1245,7 +1236,7 @@ export async function runChatPipeline(opts: {
       modelMaximumCostMicroUsd:opts.modelScope?.maximumCostMicroUsd,
       conservativeInputReservation:publicWebRetrieved,
       modelRevalidateBeforeDispatch:opts.modelScope?.revalidateBeforeDispatch,
-      signal: publicWebRetrieved ? opts.autoPublicSearchSignal : undefined,
+      signal: publicWebRetrieved ? opts.workspaceSearch?.signal : undefined,
       temperature: 0.5,
       // The provider adapter publishes only after canonical usage settlement.
       onDelta: native || publicWebRetrieved ? undefined

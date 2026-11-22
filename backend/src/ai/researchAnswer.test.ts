@@ -74,13 +74,14 @@ import {createTenantContext} from '../security/tenantContext.js';
 import {nativeReleaseFixture} from '../services/publish/__tests__/nativeReleaseFixture.js';
 import {harness} from '../storage/testing/harness.js';
 import {actionPlanDigest} from '../services/integrations/businessAction.js';
-import {workspacePublicSearchQuery,workspaceSearchNeedsExactReview} from './workspacePublicSearch.js';
+import {hasNonPublicSearchTerms,workspacePublicSearchQuery} from './workspacePublicSearch.js';
 
 test('public Workspace research omits private data, provider receipts and usage from its response payload', () => {
   const result = {
     response: 'Public explanation [1].',
     completion: {status:'complete'} as const,
     intent:'research',
+    publicWebRetrieved:true as const,
     responseSource:{format:'xroga-response-json-v1' as const,text:'{}',contract:{strategyId:'PRIVATE_MARKER'} as never},
     webSources:[{title:'Retrieved page',url:'https://example.org/docs',snippet:'Public excerpt.',
       source:'PRIVATE_MARKER',siteName:'Publisher',storageKey:'PRIVATE_MARKER'}],
@@ -92,6 +93,13 @@ test('public Workspace research omits private data, provider receipts and usage 
     responseSource:{format:'xroga-response-json-v1',text:'{}'},
     webSources:[{title:'Retrieved page',url:'https://example.org/docs',snippet:'Public excerpt.',source:'web',siteName:'Publisher'}],
     publicWebRetrieved:true, engine:'xroga',
+  });
+  assert.deepEqual(JSON.parse(JSON.stringify(publicWorkspaceResearchAnswer({
+    ...result, intent:'research_unavailable', response:'Send the public topic you want me to look up.',
+    completion:undefined, responseSource:undefined, publicWebRetrieved:undefined, webSources:[],
+  }))), {
+    response:'Send the public topic you want me to look up.',
+    intent:'research_unavailable', webSources:[], engine:'xroga',
   });
 });
 
@@ -226,7 +234,7 @@ test('one exact research approval completes its original rich answer, saves evid
       assert.match(body.query,expectedPublicQuery!);
       assert.ok([...body.query].length<=128);
     }else assert.deepEqual(body,{query:'price of btc currently',count:10});
-    assert.doesNotMatch(JSON.stringify(body),/UNRELATED_PRIOR|MUST_NOT_LEAVE|substituted planner context|AMBIENT_PRIVATE_REPOSITORY|evil.example/);
+    assert.doesNotMatch(JSON.stringify(body),/UNRELATED_PRIOR|MUST_NOT_LEAVE|substituted planner context|AMBIENT_PRIVATE_REPOSITORY|evil.example|WORKSPACE_INTERNAL_CONTEXT/);
    }
    const results=mode==='automatic-no-sources'?[]:[
     ...(mode==='automatic-official'?[{title:'NASA Eclipses',url:'https://science.nasa.gov/eclipses/',summary:'Public source excerpt',
@@ -368,8 +376,9 @@ test('one exact research approval completes its original rich answer, saves evid
  const currentPrompt='price of btc currently';
  const currentGoal=goalContractSchema.parse({...goal,goal:'substituted planner context',desiredOutcome:'substituted planner context',
   requiredCapabilities:['conversation.respond'],projectContext:{repo:'example/AMBIENT_PRIVATE_REPOSITORY',branch:'main'}});
- const automaticRequest={userId:owner,tenantContext:context,prompt:currentPrompt,goalContract:currentGoal,autoPublicSearch:true as const,
+ const automaticRequest={userId:owner,tenantContext:context,prompt:currentPrompt,goalContract:currentGoal,workspaceSearch:{prompt:currentPrompt},
   history:[{role:'user' as const,content:unrelatedHistory},{role:'assistant' as const,content:'SYNTHETIC_CREDENTIAL_MUST_NOT_LEAVE'}]};
+ const withPublicPrompt=(prompt:string)=>({...automaticRequest,prompt,workspaceSearch:{prompt}});
  const confirmedRow=confirmation.row;
  process.env.XROGA_NATIVE_OPENUI_WORKSPACE='1';
  mode='automatic';
@@ -383,9 +392,16 @@ test('one exact research approval completes its original rich answer, saves evid
  assert.equal(automaticSearch?.settled_micro_usd,750);assert.equal(automaticSearch?.search_calls,1);
 
  mode='ok';
- const privatePending=await runChatPipeline({...automaticRequest,history:[],prompt:'Search my confidential client notes for latest account details'});
- assert.equal(privatePending.intent,'confirmation_required');assert.equal(privatePending.publicWebRetrieved,undefined);
- assert.equal(confirmation.row?.plan.authority?.actionClass,'SENSITIVE_DATA_EXPORT');
+ for (const privatePrompt of [
+   'Search my confidential client notes for latest account details',
+   'Look up the current release notes at https://docs.example.org/?session=TEST_PRIVATE_ID',
+ ]) {
+   const unavailable=await runChatPipeline(withPublicPrompt(privatePrompt));
+   assert.equal(unavailable.intent,'research_unavailable');
+   assert.equal(unavailable.publicWebRetrieved,undefined);
+   assert.doesNotMatch(unavailable.response,/confirm|review action|TEST_PRIVATE_ID/i);
+ }
+ assert.equal(confirmation.row,confirmedRow,'Workspace must never create a research confirmation');
  assert.equal(searches,4);assert.equal(models,3);
 
  mode='automatic-no-sources';
@@ -398,13 +414,13 @@ test('one exact research approval completes its original rich answer, saves evid
  await assert.rejects(runChatPipeline(automaticRequest));
  assert.equal(searches,5);assert.equal(models,3);assert.equal(reservations.size,beforeDeniedReservation);
  const abort=new AbortController();abort.abort();
- await assert.rejects(runChatPipeline({...automaticRequest,autoPublicSearchSignal:abort.signal}));
+ await assert.rejects(runChatPipeline({...automaticRequest,workspaceSearch:{prompt:currentPrompt,signal:abort.signal}}));
  assert.equal(searches,5);assert.equal(models,3);assert.equal(reservations.size,beforeDeniedReservation);
 
  mode='automatic-official';
  const nasaPrompt='Using only official NASA sources, look up the difference between solar and lunar eclipses, why they don’t happen every month, and cite your sources.';
  const nasaGoal=goalContractSchema.parse({...currentGoal,sourcePolicy:{mode:'official_only',scope:'public_web',officialDomains:['evil.example']}});
- const nasa=await runChatPipeline({...automaticRequest,prompt:nasaPrompt,goalContract:nasaGoal});
+ const nasa=await runChatPipeline({...withPublicPrompt(nasaPrompt),goalContract:nasaGoal});
  assert.equal(nasa.publicWebRetrieved,true);assert.equal(nasa.webSources?.length,1);
  assert.equal(nasa.webSources?.[0]?.siteIconDomain,'science.nasa.gov');
  assert.match(nasa.response,/https:\/\/science.nasa.gov\/eclipses\//);
@@ -418,14 +434,17 @@ test('one exact research approval completes its original rich answer, saves evid
  assert.equal(automaticAuditCount,auditsBeforeStorage);assert.equal(reservations.size,heldBeforeStorage);
 
  mode='ok';
- const projectPending=await runChatPipeline({...automaticRequest,history:[],projectEvidence:'Authorized repository evidence.'});
- assert.equal(projectPending.intent,'confirmation_required');
- assert.equal(projectPending.publicWebRetrieved,undefined);
- assert.equal(confirmation.row?.plan.authority?.actionClass,'SENSITIVE_DATA_EXPORT');
+ const projectUnavailable=await runChatPipeline({
+   ...withPublicPrompt('Find the latest release schedule for this project.'),
+   projectEvidence:'MUST_NOT_LEAVE repository evidence.',
+ });
+ assert.equal(projectUnavailable.intent,'research_unavailable');
+ assert.equal(projectUnavailable.publicWebRetrieved,undefined);
+ assert.equal(confirmation.row,confirmedRow);
  assert.equal(searches,6);assert.equal(models,4);
 
  const lastConfirmation=confirmation.row;
- const ranking={...automaticRequest,prompt:rankingPrompt,
+ const ranking={...withPublicPrompt(rankingPrompt),
   goalContract:goalContractSchema.parse({...currentGoal,semanticIntent:'PROPOSE',sourcePolicy:{mode:'official_only',scope:'public_web',officialDomains:['evil.example']}})};
  mode='automatic-ranking';
  const ranked=await runChatPipeline(ranking);
@@ -447,8 +466,9 @@ test('one exact research approval completes its original rich answer, saves evid
  assert.equal(confirmation.row,lastConfirmation);
  assert.equal(searches,8);assert.equal(models,6);
 
- await assert.rejects(runChatPipeline({...automaticRequest,prompt:'What should I know about that?'}),
-  {code:'TOOL_UNAVAILABLE',message:/self-contained public search query/});
+ const ambiguous=await runChatPipeline(withPublicPrompt('What should I know about that?'));
+ assert.equal(ambiguous.intent,'research_unavailable');
+ assert.match(ambiguous.response,/public topic/i);
  assert.equal(confirmation.row,lastConfirmation,'An unclassified public query must not manufacture a write approval');
  assert.equal(searches,8);assert.equal(models,6);
 
@@ -459,7 +479,11 @@ test('one exact research approval completes its original rich answer, saves evid
   ['Who is the current CEO of Microsoft, and which official source confirms it?',/CEO of Microsoft/],
  ] as const){
   expectedPublicQuery=query;
-  const answer=await runChatPipeline({...ranking,prompt});
+  const answer=await runChatPipeline({
+   ...withPublicPrompt(prompt),
+   goalContract:ranking.goalContract,
+   projectEvidence:'Authorized repository context WORKSPACE_INTERNAL_CONTEXT.',
+  });
   assert.equal(answer.intent,'research');
   assert.equal(answer.publicWebRetrieved,true);
   assert.match(answer.response,/https:\/\/example\.com\/docs/);
@@ -623,7 +647,7 @@ test('public research can request an explanation without exporting editorial ins
     ['Search the web for the newest stable Node.js release, give your reasoning.', 'the newest stable Node.js release'],
     ['Find the latest train fares and explain your methodology.', 'Find the latest train fares'],
   ]) {
-    assert.equal(workspaceSearchNeedsExactReview(prompt), false, prompt);
+    assert.equal(hasNonPublicSearchTerms(prompt), false, prompt);
     assert.equal(workspacePublicSearchQuery(prompt)?.query, query, prompt);
   }
   for (const prompt of [
@@ -631,7 +655,7 @@ test('public research can request an explanation without exporting editorial ins
     'Find the latest train fares and give your recommendation, then include our itinerary.',
     'Research the newest release and explain your reasoning using my private notes.',
   ]) {
-    assert.equal(workspaceSearchNeedsExactReview(prompt), true, prompt);
+    assert.equal(hasNonPublicSearchTerms(prompt), true, prompt);
     assert.equal(workspacePublicSearchQuery(prompt), undefined, prompt);
   }
 });

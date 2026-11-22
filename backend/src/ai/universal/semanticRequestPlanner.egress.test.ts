@@ -153,7 +153,10 @@ test('actual semantic planner carries issued actor, platform reservation and exa
   assert.deepEqual(literal.goalContract.requiredAuthorities, ['model:execute']);
   assert.deepEqual(literal.capabilityIds, ['conversation.respond']);
   assert.deepEqual([effects, reservations, settlements, receipts], [3, 3, 3, 3]);
-  const answer = await runChatPipeline({ ...literalRequest, prompt: literalPrompt, goalContract: literal.goalContract, autoPublicSearch: true });
+  const answer = await runChatPipeline({
+    ...literalRequest, prompt: literalPrompt, goalContract: literal.goalContract,
+    workspaceSearch: { prompt: literalPrompt },
+  });
   assert.equal(answer.response, 'Yes');
   assert.equal(answer.route.useResearch, false);
   assert.deepEqual(answer.completion, { status: 'complete' });

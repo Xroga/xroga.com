@@ -251,7 +251,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "4a47a4d7205dc86f0624f0a78f477708a137adfa3fac5ed2f8dd2a6c7d9f48b9",
+      "sha256": "01c533bfe2127d849264b9fdd5c8528cbfac161994842a818f4a9cfa1cd6089b",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/black-hole/webIntelligence.ts",
         "sha256": "f7ee10618d7993cc8e827b7f77d23eec06e663232d26a44c598a48825fbb6b7d"
@@ -322,7 +322,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "bb507f29d6a4d8bf10e42f83e38b9a72235b2447c8d49a1154fbfa3d294b222e",
+      "sha256": "0d72f9ebb7a4072e05fe675a956a4515ed5c2b52d37e2fefcde9f1a0830fc10c",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"

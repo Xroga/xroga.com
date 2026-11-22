@@ -98,9 +98,8 @@ function publicOfficeTopic(prompt: string): string | undefined {
   if (publicOfficeLookup.test(topic) || publicInstitutionLeadership.test(topic)) return topic;
 }
 
-/** Egress still needs exact review when a request actually refers to private,
- * personal or conversation data. A bare routing miss is not such evidence. */
-export function workspaceSearchNeedsExactReview(prompt: string): boolean {
+/** Public lookup terms must be self-contained and safe to send to Search. */
+export function hasNonPublicSearchTerms(prompt: string): boolean {
   const request = prompt.trim().replace(citationFooter, '').replace(presentationInstruction, '');
   const office = publicOfficeTopic(request);
   return containsCredentialSecretText(prompt) || privateOrContextual.test(request)
@@ -126,7 +125,7 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
     || (request.toLowerCase().match(/\b[a-z]{7,}\b/g) ?? []).some(word => discoverySpellings.has(categorySpellingKey(word))));
   if ((!publicLookup.test(request) && !discovery && !weatherLookup.test(request) && !publicOffice && !officialLookup && !publisherDomains.length)
     || explicitlyDisablesResearch(message)
-    || workspaceSearchNeedsExactReview(message) || specificIdentityOrUrl.test(message)
+    || hasNonPublicSearchTerms(message) || specificIdentityOrUrl.test(message)
     || !/^[\p{L}\p{M}\p{N}\p{Sc} ,.'’!?()&–،؟。？！、-]+$/u.test(request)) return;
 
   // A domain becomes a filter only when the user supplied it in this request
