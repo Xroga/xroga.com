@@ -53,7 +53,7 @@ Window trace at the ceiling of 12 (earlier tonight): 20 jobs, 20 completed, at m
 | Two signed-in owners through real Chrome | NOT RUN (one extension instance per device) |
 
 ## 8. Release artifact
-RELEASE_ARTIFACT
+Build commit `664f170f8` (working tree clean), ZIP `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-664f170f8.zip`, SHA-256 `E348DBCB05E6A7F7F4F94AF663C4FB68E281EFE9629A41F1AA2A928204763E45`, manifest `ARTIFACT-MANIFEST-664f170f8.json` (35 files, staging origins, extension id `ogebkgkppocnjeojdbkiokcpeaenonop`). Upgrade smoke from `05f62baa7` in real Chromium: same id, storage kept, service worker alive, side panel loads. Paired backend: tag `browser-op-1110` on `xroga-api-universal-staging-effort-hm9` (image digest `sha256:352d3124…eb01e`); rollback: retag to `00146-wod`. Staging only; production is not live with any of this. Overnight staging cleanup: disposable user deleted, temporary tag `effort-hm` and revisions `effort-hm7`/`effort-hm8` deleted, main traffic (100% on `00001-tdc`) untouched.
 
 ## 9. Owner-required external steps
 1. Independent security review and PR #997 re-attestation (blob capture review is a self-review).
