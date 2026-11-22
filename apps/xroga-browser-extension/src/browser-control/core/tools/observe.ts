@@ -24,7 +24,7 @@ import { quote } from '../text';
 const REUSE_MS = 2_000;
 
 /** The refs with the print this observation showed for each. */
-function shownOf(observation: Observation, refs: string[]): Array<[string, Shown]> {
+export function shownOf(observation: Observation, refs: string[]): Array<[string, Shown]> {
   return refs.flatMap(ref => {
     const what = observation.shown.get(ref);
     return what ? [[ref, what] as [string, Shown]] : [];

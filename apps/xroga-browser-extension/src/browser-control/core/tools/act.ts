@@ -5,7 +5,7 @@ import type { ClickArgs, DragArgs, HoverArgs, ScrollArgs, Target } from '../../p
 import type { ActionReceipt } from '../../protocol/results';
 import type { ScrollInfo } from '../../probe';
 import type { ToolContext, ToolOutcome } from '../controller';
-import { resolveTarget } from '../interaction/resolve';
+import { resolveTarget, withReplacements } from '../interaction/resolve';
 import type { ResolvedTarget } from '../interaction/resolve';
 import { revealedControlAt, waitForActionable } from '../interaction/actionability';
 import type { Actionable } from '../interaction/actionability';
@@ -32,6 +32,9 @@ export async function withTarget<T>(
   }
   try {
     return await fn(resolved);
+  } catch (error) {
+    // A node that left the page between the lookup and the action (a re-render) is reported with the matching controls now in the page.
+    throw resolved.via === 'ref' ? await withReplacements(ctx, resolved.record, error) : error;
   } finally {
     await releaseTarget(ctx, resolved);
   }

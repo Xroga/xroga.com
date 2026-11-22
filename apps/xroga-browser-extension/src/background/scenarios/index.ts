@@ -28,6 +28,7 @@ import './set-i';
 import './set-u';
 import './set-s-subagents';
 import './expect-count';
+import './role-recovery';
 import './diagnostics';
 import './native-inputs';
 import './blob-frames';

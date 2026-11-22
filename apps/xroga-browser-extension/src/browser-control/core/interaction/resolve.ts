@@ -10,7 +10,7 @@ import { cleanText } from '../perception/ax';
 import type { AXNode } from '../perception/ax';
 import type { ONode } from '../perception/outline';
 import type { Observation } from '../perception/observe';
-import { observeTab, recentObservation } from '../tools/observe';
+import { observeTab, recentObservation, shownOf } from '../tools/observe';
 import { NodeArg } from '../probe-client';
 import { fingerprint } from '../hash';
 import { quote } from '../text';
@@ -75,7 +75,15 @@ async function resolveSemantic(
     matches.push(n);
   });
   const label = `${target.role}${name !== undefined ? ` ${quote(name)}` : ''}`;
-  if (!matches.length) throw new LayerError('NO_MATCH', `No element matches ${label}`);
+  if (!matches.length) {
+    // The page was just read: say at once what IS there under that name or role (a link where a heading was asked for, "Drafts 4" where "Drafts" was), so the next call
+    // is aimed at a real control instead of another guess or a snapshot just to find out.
+    const near = nearMisses(roots, role, name);
+    throw new LayerError(
+      'NO_MATCH',
+      `No element matches ${label}.${near.length ? ` Nearest in the page now: ${near.map(m => `[${m.ref}] ${m.role} ${quote(m.name, 60)}`).join('; ')}. Use one of these refs, or the role and name shown.` : ''}`,
+    );
+  }
   if (target.nth !== undefined) {
     const pick = matches[target.nth];
     if (!pick)
@@ -93,6 +101,31 @@ async function resolveSemantic(
     );
   }
   return asShown(ctx, observation, matches[0].ref!);
+}
+
+/**
+ * Controls that nearly match a role and name that matched nothing: the same name under another role, or a name that contains it or is contained in it
+ * (case and spacing ignored), best first, at most six. Only actionable nodes are offered, since only those can be targeted by ref.
+ */
+export function nearMisses(roots: ONode[], role: string, name: string | undefined): ONode[] {
+  const norm = (x: string) => cleanText(x).toLowerCase();
+  const want = name === undefined ? undefined : norm(name);
+  const scored: Array<{ n: ONode; score: number }> = [];
+  walk(roots, n => {
+    if (!n.ref) return;
+    const sameRole = n.role.toLowerCase() === role || n.rawRole.toLowerCase() === role;
+    const have = norm(n.name);
+    if (want === undefined || !want) {
+      if (sameRole) scored.push({ n, score: 3 });
+      return;
+    }
+    if (!have) return;
+    const exact = have === want;
+    const related = exact || have.includes(want) || (have.length >= 3 && want.includes(have));
+    if (!related) return;
+    scored.push({ n, score: exact ? (sameRole ? 0 : 1) : sameRole ? 2 : 3 });
+  });
+  return scored.sort((x, y) => x.score - y.score).slice(0, 6).map(x => x.n);
 }
 
 /** 'button "Delete" in row "…"', using the last observation for the enclosing row or list item. */
@@ -138,7 +171,42 @@ export async function resolveTarget(
       `This target form needs the "${capability}" capability, which this version does not have. To act at a point on a painted canvas, use the canvas tool, or click with a ref of the canvas plus \`at\` (a point inside it).`,
     );
   }
-  return resolveRecord(ctx, record, via);
+  try {
+    return await resolveRecord(ctx, record, via);
+  } catch (error) {
+    // A ref the page has replaced (a re-render, a new document, a row that now holds another record) is still refused, as before: acting on whatever now sits there could
+    // change another record. What changes is the message: it names the controls that match the old one now, with refs that can be used at once.
+    if (via === 'ref') throw await withReplacements(ctx, record, error);
+    throw error;
+  }
+}
+
+/**
+ * The error, with the controls that match the lost ref's role and name now in the page named after it (usable refs). Any other error, and an error with nothing to
+ * offer, comes back unchanged.
+ */
+export async function withReplacements(ctx: ToolContext, record: RefRecord, error: unknown): Promise<unknown> {
+  if (!(error instanceof LayerError) || !REPLACED.has(error.code) || error.delivered !== false) return error;
+  const now = await replacements(ctx, record).catch(() => []);
+  if (!now.length) return error;
+  return new LayerError(error.code, `${error.message} Now in the page: ${now.map(m => `[${m.ref}] ${m.role} ${quote(m.name, 60)}`).join('; ')}. Check which one you meant, then use its ref.`, {
+    delivered: error.delivered,
+    hint: error.hint,
+    details: error.details,
+  });
+}
+
+const REPLACED = new Set(['STALE_DOCUMENT', 'NODE_DETACHED', 'TARGET_CHANGED']);
+
+/** On a fresh look at the page: the controls that match the role and name a lost ref was shown with, offered as usable refs (up to four). */
+async function replacements(ctx: ToolContext, record: RefRecord): Promise<ONode[]> {
+  const name = shownName(record.print);
+  if (!name) return [];
+  const observation = await observeTab(ctx);
+  const found = nearMisses(observation.tree, record.print.role.toLowerCase(), name).slice(0, 4);
+  if (!found.length) return [];
+  ctx.session.known.add(ctx.tab().tabId, shownOf(observation, found.map(n => n.ref!)));
+  return found;
 }
 
 /** Resolves and revalidates a known record (also used again after the user approved an action). */
