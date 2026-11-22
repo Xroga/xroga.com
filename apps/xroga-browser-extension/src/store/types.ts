@@ -192,7 +192,7 @@ export interface GuardState {
   /** How many times each write (method and path) was refused by the server, 4xx/5xx or a network failure (see agent/guards.ts). Absent in older records. */
   writeFails?: Record<string, number>;
   /** Calls in a row on the same page that changed nothing on it (see agent/guards.ts). Absent in older records. */
-  still?: { page: string; calls: number };
+  still?: { page: string; calls: number; byPage?: Record<string, number> };
   /** Plain-text endings after a mutation, and refusals of done(success) in a row. */
   plainEndings: number;
   doneRefusals: number;

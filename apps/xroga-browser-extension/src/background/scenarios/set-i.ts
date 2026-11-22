@@ -226,8 +226,10 @@ scenario(
       `${FIXTURE_ORIGIN}/g-writes.html`,
       (call, i) => {
         if (i > 0) text = lastToolText(call) || text;
-        if (i === 0) return { toolCalls: [{ name: 'snapshot', input: {}, id: 's' }] };
-        if (i === 1)
+        // The framed widget loads after the page; one second lets it attach, so the first outline is not taken before the frame exists (a rare empty outline in a full run).
+        if (i === 0) return { toolCalls: [{ name: 'wait', input: { seconds: 1 }, id: 'w' }] };
+        if (i === 1) return { toolCalls: [{ name: 'snapshot', input: {}, id: 's' }] };
+        if (i === 2)
           return {
             toolCalls: [{ name: 'click', input: { target: { ref: refIn(text, /button "Remove item"/) } }, id: 'c' }],
           };

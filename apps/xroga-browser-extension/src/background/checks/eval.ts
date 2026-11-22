@@ -270,7 +270,7 @@ async function runOne(
     timing: Object.fromEntries(Object.entries(timings.summary().phases ?? {}).map(([k, v]) => [k, Math.round((v as { totalMs: number }).totalMs)])),
     plan: branch.flatMap(e => (e.type === 'message' && e.message.role === 'tool' ? e.message.parts : [])).filter(p => p.type === 'tool-result' && p.toolName === 'plan').map(p => (p.type === 'tool-result' ? p.text : '')).at(-1) ?? null,
     // What the grader's page expression returned when the run ended (the application's own state), for diagnosing a graded failure.
-    probe: probed.slice(0, 2500),
+    probe: probed.slice(0, 20000),
     calls: calls.map((c, i) => `${c.name} ${c.args}`.slice(0, 160) + ` => ${String(results[i] ?? '').replace(/\s+/g, ' ').slice(0, 260)}`),
   };
 }

@@ -71,3 +71,23 @@ defineScenario({
     );
   },
 });
+
+// Port of Browser Agent's element_state postcondition (uiuing/browser-agent @ a8517e2c, MIT, verify.ts), as `enabled`: a button that locks after sending is proof the send happened.
+defineScenario({
+  id: 'S3-expect-enabled',
+  set: 'C',
+  title: 'click "Send once" expecting it to be disabled afterwards (met), and a button that stays enabled with the same expectation (unmet)',
+  covers: 'the enabled postcondition reads the target after the action and says what it found',
+  async run(ctx) {
+    await ctx.open(`${FIXTURE_ORIGIN}/c-enabled.html`);
+    await ctx.call('snapshot');
+    const locked = await ctx.call('click', { target: { role: 'button', name: 'Send once' }, expect: { enabled: false } });
+    const stays = await ctx.call('click', { target: { role: 'button', name: 'Do nothing' }, expect: { enabled: false } });
+    const p = [post(locked), post(stays)];
+    return outcome(
+      'Send once met (disabled); Do nothing unmet saying the target is enabled',
+      JSON.stringify(p),
+      p[0]?.status === 'met' && p[1]?.status === 'unmet' && (p[1]?.detail ?? '').includes('the target is enabled'),
+    );
+  },
+});

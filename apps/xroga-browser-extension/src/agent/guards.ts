@@ -19,6 +19,7 @@ export const ERROR_STOP = 20;
  */
 export const STILL_STOP = 20;
 export const STILL_NUDGE = 12;
+export const STILL_FINAL = 16;
 /** Calls in a row that only looked at pages before the agent is told to act or finish. */
 export const READ_STREAK_NUDGE = 5;
 /**
@@ -172,7 +173,12 @@ export class Guards {
       const signals = result?.receipt?.effect.signals ?? [];
       const focusOnly = signals.length > 0 && signals.every(x => /^focus /.test(x));
       const moved = (result?.receipt?.effect.verdict === 'changed' && !focusOnly) || (tool === 'read' && typeof args.offset === 'number' && args.offset > 0);
-      still = s.still && s.still.page === page && !moved ? { page, calls: s.still.calls + 1 } : { page, calls: moved ? 0 : 1 };
+      // Counted per page since the last real change, so leaving a page and coming back (a detour to a linked page, a reload) does not restart its count.
+      const byPage = moved ? {} : { ...(s.still?.byPage ?? (s.still ? { [s.still.page]: s.still.calls } : {})) };
+      if (!moved) byPage[page] = (byPage[page] ?? 0) + 1;
+      const keys = Object.keys(byPage);
+      if (keys.length > 12) delete byPage[keys[0]!];
+      still = { page, calls: byPage[page] ?? 0, byPage };
       s.still = still;
     }
     s.errorsInRow = isError ? s.errorsInRow + 1 : 0;
@@ -183,6 +189,7 @@ export class Guards {
 
     if (still && !POLLING_TOOLS.has(tool)) {
       if (still.calls >= STILL_STOP) return { stop: `${still.calls} calls on this page in a row changed nothing on it: what was asked for is not reachable there with the controls the page shows.`, guard: 'no_effect' };
+      if (still.calls === STILL_FINAL) return { nudge: `${still.calls} calls on this page changed nothing and the last reminder was not followed. Your next call must be done: say what you found and what is not there, with outcome partial or failed. Do not try another variation.`, reobserve: false };
       if (still.calls === STILL_NUDGE) return { nudge: `${still.calls} calls on this page in a row changed nothing on it. If what you are looking for is not on this page, say so now with what you found (done with outcome partial or failed and the evidence); otherwise take an action that changes something.` };
     }
 

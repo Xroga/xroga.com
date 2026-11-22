@@ -142,8 +142,9 @@ const API = {
     },
   },
   docs: {
-    list: b => { const q = String(b.q ?? '').toLowerCase(); return [200, state.docs.items.filter(d => !q || (d.title + ' ' + d.body).toLowerCase().includes(q)).map(d => ({ id: d.id, title: d.title, owner: d.owner, modified: d.modified }))]; },
-    get: b => { const d = state.docs.items.find(x => x.id === b.id); return d ? [200, d] : [404, { error: 'not found' }]; },
+    // A document the person created appears in the drive like any other (owner "You", modified today); the grader still reads `created`.
+    list: b => { const q = String(b.q ?? '').toLowerCase(); return [200, [...state.docs.items, ...state.docs.created.map(d => ({ ...d, owner: 'You', modified: new Date().toISOString().slice(0, 10) }))].filter(d => !q || (d.title + ' ' + d.body).toLowerCase().includes(q)).map(d => ({ id: d.id, title: d.title, owner: d.owner, modified: d.modified }))]; },
+    get: b => { const d = state.docs.items.find(x => x.id === b.id) ?? state.docs.created.find(x => x.id === b.id); return d ? [200, { owner: 'You', modified: new Date().toISOString().slice(0, 10), ...d }] : [404, { error: 'not found' }]; },
     create(b) {
       const title = String(b.title ?? '').trim(), body = String(b.body ?? '');
       if (!title) return [422, { error: 'title required' }];

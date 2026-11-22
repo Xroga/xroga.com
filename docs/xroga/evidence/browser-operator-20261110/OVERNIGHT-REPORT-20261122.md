@@ -68,3 +68,12 @@ Build commit `664f170f8` (working tree clean), ZIP `C:\xr-review-builds\xroga-br
 4. No real third-party account was exercised; advanced workflows are proven on stateful replicas only.
 5. No new donor modules ported overnight.
 6. Excess turns on the document workflow: adv-docs-1 reached the correct server state but used all 40 turns (206 s); the cause was not analysed overnight.
+
+## Round 7 (2026-11-22 morning): what was fixed after the report above
+- **Still guard, second pass.** Counts are kept per page since the last real change, so a detour to another page and back no longer restarts them; at 16 calls a second, firmer reminder says the next call must be `done`. Unit tests added. Impossible-task runs after this change: 2 of 2 answered honestly (181 s and 150 s; before: 300 s cap with no answer).
+- **The 40-turn documents run was a fixture bug, not an agent bug.** The test drive's server never listed documents the agent created, so the agent could not confirm its own save and kept investigating. Fixed in `fixtures/replica.mjs`. Documents runs after the fix: 4 of 5 passed in 19-23 turns (81-134 s); the fifth failed only because the grader demanded the first sentence of a document although the task allows any exact sentence, so the grader now accepts any sentence of each document (`eval-tasks.ts`). Files `live-model/stall-and-docs-round6-20261122.jsonl`, `adv-docs-after-fixture-fix-20261122.jsonl`. The saved eval record now keeps up to 20,000 characters of server state (it was cut at 2,500, which hid this).
+- **`I-block-limit` flake.** The scenario took its first outline before the embedded frame attached; it now waits one second first. Full Chromium scenario suite after the change: 306 of 306 PASS (`scenarios-full-20261122e.json`).
+- **Donor port: `enabled` postcondition** (uiuing/browser-agent @ a8517e2c, MIT, the element_state gap listed in `OSS-REUSE-LEDGER.md`): `expect: { enabled: true|false }` on a target, with the page's reading in the failure message. Unit tests plus Chromium scenario `S3-expect-enabled` (a button that locks after sending: met; one that stays enabled: unmet "the target is enabled"). `attribute_equals` is not ported (needs a new probe operation).
+- Extension unit suite: 1477 passed, 4 skipped.
+- Remaining: items 1 and 3-5 under section 10 stand (impossible tasks still take 2.5-3 minutes; TraceDraw and painted-menu seed 4 not re-run; no real third-party account; only one donor port this round).
+

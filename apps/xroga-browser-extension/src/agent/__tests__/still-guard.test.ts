@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { Guards, STILL_NUDGE, STILL_STOP } from '../guards';
+import { Guards, STILL_FINAL, STILL_NUDGE, STILL_STOP } from '../guards';
 
 const look = (i: number) => ({ ok: true, text: `look ${i}`, page: { tabId: 1, url: 'https://a.test/' } }) as never;
 const changed = { ok: true, text: 'x', page: { tabId: 1, url: 'https://a.test/' }, receipt: { effect: { verdict: 'changed', signals: [] } } } as never;
@@ -42,5 +42,25 @@ describe('calls on one page that change nothing', () => {
       if (v.stop) stopped = i;
     }
     expect(stopped).toBe(STILL_STOP);
+  });
+  it('a detour to another page and back does not restart the count', () => {
+    const g = new Guards();
+    const away = (i: number) => ({ ok: true, text: 'z', page: { tabId: 1, url: 'https://b.test/' } }) as never;
+    let stopped = 0;
+    for (let i = 1; i <= STILL_STOP + 6 && !stopped; i++) {
+      const v = i % 5 === 0 ? g.record('find', { role: `d${i}` }, away(i), false) : g.record('find', { role: `r${i}` }, look(i), false);
+      if (v.stop) stopped = i;
+    }
+    expect(stopped).toBeGreaterThan(0);
+    expect(stopped).toBeLessThanOrEqual(STILL_STOP + 6);
+  });
+  it('says the next call must be done once the first reminder was ignored', () => {
+    const g = new Guards();
+    let final = '';
+    for (let i = 1; i <= STILL_FINAL; i++) {
+      const v = g.record('find', { role: `r${i}` }, look(i), false);
+      if (i === STILL_FINAL) final = v.nudge ?? '';
+    }
+    expect(final).toMatch(/next call must be done/);
   });
 });

@@ -483,8 +483,8 @@ export async function checkExpectation(
       }
     }
   }
-  if (expect.value !== undefined || expect.checked !== undefined || expect.gone !== undefined) {
-    if (!target) return { status: 'not_checked', detail: 'value, checked and gone need a target' };
+  if (expect.value !== undefined || expect.checked !== undefined || expect.gone !== undefined || expect.enabled !== undefined) {
+    if (!target) return { status: 'not_checked', detail: 'value, checked, enabled and gone need a target' };
     let state: ProbeState | null = null;
     try {
       state = await probe.call<ProbeState>(target.frame, target.objectId, 'state');
@@ -500,6 +500,8 @@ export async function checkExpectation(
     }
     if (expect.checked !== undefined && state?.checked !== expect.checked)
       failures.push(`checked is ${state?.checked}`);
+    if (expect.enabled !== undefined && (state?.enabled ?? false) !== expect.enabled)
+      failures.push(state?.enabled ? 'the target is enabled' : 'the target is disabled');
   }
   return failures.length ? { status: 'unmet', detail: failures.join('; ') } : { status: 'met' };
 }

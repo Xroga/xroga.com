@@ -65,3 +65,11 @@ describe('the postconditions exists and count', () => {
     expect(ExpectationSchema.safeParse({ exists: { role: 'row', eval: 'x' } }).success).toBe(false);
   });
 });
+
+describe('the postcondition enabled', () => {
+  it('accepts true and false and refuses another type', () => {
+    expect(ExpectationSchema.safeParse({ enabled: true }).success).toBe(true);
+    expect(ExpectationSchema.safeParse({ enabled: false, text: 'Sent' }).success).toBe(true);
+    expect(ExpectationSchema.safeParse({ enabled: 'yes' }).success).toBe(false);
+  });
+});
