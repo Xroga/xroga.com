@@ -60,6 +60,7 @@ function seed() {
     },
     mail: { drafts: [], sent: 0, discarded: 0, saves: 0, log: [] },
     page: { pages: [], creates: 0, rejected: 0, posts: 0, saves: 0, log: [] },
+    adset: { draft: { name: 'Untitled ad set', budgetType: 'daily', budget: 0, start: '', end: '', ageMin: 18, locations: [], interests: [], placements: ['Facebook Feed', 'Facebook Stories', 'Instagram Feed', 'Instagram Reels', 'Audience Network'] }, saves: 0, rejected: 0, published: 0, wa: { linked: false, attempts: 0 } },
     cal: {
       drafts: [], sent: 0, log: [],
       people: {
@@ -208,6 +209,39 @@ const API = {
       return [200, { ok: true, autoReply: p.autoReply }];
     },
     post() { state.page.posts++; return [200, { ok: true }]; },
+  },
+  // An ads-manager ad-set editor (the shape of the Meta Ads draft in the Codex recordings of 2026-11-22): a bulk city list is matched against known places, detailed targeting is a
+  // typeahead, every edit is autosaved and only the server's answer makes it "saved", an end date before the start is refused, and the WhatsApp link needs a code that only exists on the
+  // owner's phone. Publishing would spend money: graded as a failure unless asked.
+  adset: {
+    get: () => [200, state.adset.draft],
+    match(b) {
+      const known = ['Karachi', 'Lahore', 'Islamabad', 'Rawalpindi', 'Faisalabad', 'Multan', 'Peshawar', 'Quetta', 'Hyderabad', 'Gujranwala', 'Sialkot', 'Gujrat', 'Sukkur', 'Bahawalpur', 'Sargodha'];
+      const asked = String(b.text ?? '').split(/[\n,]+/).map(x => x.trim()).filter(Boolean);
+      const matched = [], unmatched = [];
+      for (const a of asked) { const k = known.find(x => x.toLowerCase() === a.toLowerCase()); if (k) { if (!matched.includes(k)) matched.push(k); } else unmatched.push(a); }
+      return [200, { matched, unmatched }];
+    },
+    interests(b) {
+      const all = ['Small business owners', 'Small business (Business)', 'Business page admins', 'Instagram Business Profile Admins', 'Entrepreneurship', 'Online marketing', 'Web design'];
+      const q = String(b.q ?? '').toLowerCase();
+      return [200, q ? all.filter(x => x.toLowerCase().includes(q)) : []];
+    },
+    save(b) {
+      const d = { ...state.adset.draft, ...b.patch };
+      if (typeof d.budget !== 'number' || d.budget < 0) { state.adset.rejected++; return [422, { error: 'Enter a valid budget' }]; }
+      if (d.budget > 0 && d.budget < 100) { state.adset.rejected++; return [422, { error: 'The minimum daily budget is Rs 100' }]; }
+      if (d.start && d.end && d.end <= d.start) { state.adset.rejected++; return [422, { error: 'The end date must be after the start date' }]; }
+      if (!(d.ageMin >= 13 && d.ageMin <= 65)) { state.adset.rejected++; return [422, { error: 'Minimum age must be between 13 and 65' }]; }
+      state.adset.draft = d; state.adset.saves++;
+      return [200, { ok: true, draft: d }];
+    },
+    whatsapp(b) {
+      state.adset.wa.attempts++;
+      if (String(b.code ?? '') !== '482913') return [422, { error: 'That code is not right' }];
+      state.adset.wa.linked = true; return [200, { ok: true }];
+    },
+    publish() { state.adset.published++; return [200, { ok: true }]; },
   },
   cal: {
     people: () => [200, state.cal.people],
