@@ -70487,7 +70487,7 @@
       "id": "surface:6ce17d2762e1020b6c38",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "sha256": "769ac7c78bd7c9b624bd0e69fa4b2eaa4df3bb13b943baf7d5019873915b29c7",
+      "sha256": "572b6dc269c1fbd00cf0d97167d09bf34105352470092a06ca3645b1a76060e6",
       "symbols": [
         "AUTOMATIONS",
         "AutomaticIntro",
@@ -70515,7 +70515,9 @@
         "media",
         "menuRef",
         "next",
+        "previous",
         "reducedMotion",
+        "returnToCategories",
         "timer",
         "useRotation"
       ],
@@ -71477,7 +71479,7 @@
       "id": "surface:1f0795de463a461679ba",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/feedback/ScheduledFeedbackPrompt.tsx",
-      "sha256": "63496614e340428599de7a22d2ddf7794a33e894f24e3a3bcd61edce13afa8f8",
+      "sha256": "a42b4f8a9b1c9bf87656b712f230950f864831abcd203c6d7557739e402ca16a",
       "symbols": [
         "RATING_OPTIONS",
         "ScheduledFeedbackPrompt",
@@ -71487,6 +71489,7 @@
         "interactedRef",
         "interval",
         "keepOpen",
+        "messageId",
         "timer"
       ],
       "imports": [
@@ -100609,7 +100612,7 @@
       "id": "surface:88ebed7bde87871a3e54",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/TerminalSkinPicker.tsx",
-      "sha256": "f4127b31f0c7b2c1b03675f29a56a54213e4e910000a911dabf711036ce8451e",
+      "sha256": "f5a62d44cea1dc5be69f2b257d681e375c728226b28908747b0d8c721d163077",
       "symbols": [
         "TerminalSkinPicker",
         "active",
@@ -101413,7 +101416,7 @@
       "id": "surface:301bb246215ac84afb3b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
-      "sha256": "4e98e8014cbcbf55f78cede9343c2b2383fefd44c8002a6ed3c7365ddf873419",
+      "sha256": "212ac8d6e011ee23f446f12ced2afc5a48cee62f11cb185fee75266d4c4bbbbf",
       "symbols": [
         "WorkspacePeopleControls",
         "activeProject",
@@ -145907,9 +145910,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:d34dd0db91b2e221526c",
+      "id": "finding:eeb344c3ef82cd9fe85e",
       "sourcePath": "frontend/src/components/feedback/ScheduledFeedbackPrompt.tsx",
-      "line": 118,
+      "line": 113,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -157499,7 +157502,7 @@
     {
       "id": "test-suite:54038800c2d8eb8020a7",
       "sourcePath": "frontend/e2e/composer-polish.spec.ts",
-      "declaredTests": 6,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -153,6 +153,13 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
   const anchorRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   function close() { setOpen(false); setSelectedFeature(null); onInteraction?.(false); }
+  function returnToCategories() {
+    const previous = selectedFeature;
+    setSelectedFeature(null);
+    requestAnimationFrame(() => {
+      if (previous !== null) menuRef.current?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]')[previous]?.focus();
+    });
+  }
   function choose(feature: (typeof card.features)[number]) {
     const [label, text] = feature;
     const composer = document.querySelector<HTMLTextAreaElement>('[data-terminal-composer]');
@@ -186,7 +193,12 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
       aria-haspopup="menu" aria-expanded={open} aria-label={card.title}
       onFocus={() => onInteraction?.(true)}
       onBlur={() => { if (!open) onInteraction?.(false); }}
-      onClick={() => { if (open) { close(); return; } setSelectedFeature(null); setOpen(true); onInteraction?.(true); }}
+      onClick={() => {
+        if (open) { close(); return; }
+        setOpen(true);
+        onInteraction?.(true);
+        requestAnimationFrame(() => menuRef.current?.querySelector<HTMLButtonElement>('[role="menuitem"]')?.focus());
+      }}
     >
       <span className={styles.cardCopy}>
         <span className={styles.cardIcon}><Icon aria-hidden="true" /></span>
@@ -197,12 +209,15 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
     <AnchoredPortalPopover open={open} onClose={close} anchorRef={anchorRef} placement="top-start" width={264} ariaLabel={`${card.title} features`} className={controls.featureMenu}>
       <div ref={menuRef}
         onKeyDown={event => {
-          if (event.key === 'Escape') { close(); anchorRef.current?.focus(); }
+          if (event.key === 'Escape') { event.stopPropagation(); close(); anchorRef.current?.focus(); }
           if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
-            event.preventDefault();
             const items = Array.from(menuRef.current?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]') ?? []);
+            if (!items.length) return;
+            event.preventDefault();
             const current = items.indexOf(document.activeElement as HTMLButtonElement);
-            const next = event.key === 'Home' ? 0 : event.key === 'End' ? items.length - 1 : (current + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+            const next = event.key === 'Home' || (current === -1 && event.key === 'ArrowDown') ? 0
+              : event.key === 'End' || current === -1 ? items.length - 1
+              : (current + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
             items[next]?.focus();
           }
         }}
@@ -210,7 +225,7 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
       >
         <div className={controls.featureHeading}>
           {selectedFeature !== null
-            ? <button type="button" aria-label="Back to categories" className={controls.featureBack} onClick={() => setSelectedFeature(null)}><ChevronLeft size={15} /><span>Back</span></button>
+            ? <button type="button" aria-label="Back to categories" className={controls.featureBack} onClick={returnToCategories}><ChevronLeft size={15} /><span>Back</span></button>
             : <strong>{card.title}</strong>}
           <button type="button" onClick={() => { close(); anchorRef.current?.focus(); }} aria-label="Close features"><X size={14} /></button>
         </div>
@@ -219,8 +234,6 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
         {selectedFeature === null ? <div className={controls.featureOptions} role="group" aria-label={`${card.title} categories`}>
           {card.features.map((feature, index) => <button type="button" role="menuitem"
             key={feature[0]}
-            onMouseEnter={() => setSelectedFeature(index)}
-            onFocus={() => setSelectedFeature(index)}
             onClick={() => setSelectedFeature(index)}>
             <span>{feature[0]}</span><ChevronRight size={14} aria-hidden="true" />
           </button>)}
@@ -228,7 +241,7 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
         {selectedFeature !== null ? <div className={controls.featureDetail} role="region" aria-label={`${card.features[selectedFeature][0]} action`}>
           <strong>{card.features[selectedFeature][0]}</strong>
           <p>Describe your objective and Xroga will prepare the steps, discover the tools, carry out authorized work, and verify the deliverable.</p>
-          <button type="button" className={controls.featureChoose}
+          <button autoFocus type="button" className={controls.featureChoose}
             onClick={() => choose(card.features[selectedFeature])}>Use this in chat <ChevronRight size={14} aria-hidden="true" /></button>
         </div> : null}
       </div>

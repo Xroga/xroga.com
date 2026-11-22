@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a43ce90d8de3a86a7bec062506ca359d6f69f651",
+  "source_sha": "3e9017391baf33fc06fefbf4170d7e6a9232925b",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -21250,7 +21250,7 @@
     },
     {
       "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "sha256": "769ac7c78bd7c9b624bd0e69fa4b2eaa4df3bb13b943baf7d5019873915b29c7"
+      "sha256": "572b6dc269c1fbd00cf0d97167d09bf34105352470092a06ca3645b1a76060e6"
     },
     {
       "path": "frontend/src/components/dashboard/WorkspaceResumeList.tsx",
@@ -21318,7 +21318,7 @@
     },
     {
       "path": "frontend/src/components/feedback/ScheduledFeedbackPrompt.tsx",
-      "sha256": "63496614e340428599de7a22d2ddf7794a33e894f24e3a3bcd61edce13afa8f8"
+      "sha256": "a42b4f8a9b1c9bf87656b712f230950f864831abcd203c6d7557739e402ca16a"
     },
     {
       "path": "frontend/src/components/game-builder/AtmosphericBackdrop.tsx",
@@ -23186,7 +23186,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalSkinPicker.tsx",
-      "sha256": "f4127b31f0c7b2c1b03675f29a56a54213e4e910000a911dabf711036ce8451e"
+      "sha256": "f5a62d44cea1dc5be69f2b257d681e375c728226b28908747b0d8c721d163077"
     },
     {
       "path": "frontend/src/components/terminal/TextGeneratingAnimation.tsx",
@@ -23238,7 +23238,7 @@
     },
     {
       "path": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
-      "sha256": "4e98e8014cbcbf55f78cede9343c2b2383fefd44c8002a6ed3c7365ddf873419"
+      "sha256": "212ac8d6e011ee23f446f12ced2afc5a48cee62f11cb185fee75266d4c4bbbbf"
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceScrollNavigation.tsx",
