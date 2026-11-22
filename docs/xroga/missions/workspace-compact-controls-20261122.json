@@ -7,6 +7,7 @@
   "risk": "low",
   "scope": "Compact scheduled feedback, keep Project edits as the only labeled workspace toolbar action, and require explicit activation to reveal starter details.",
   "changedFiles": [
+    "frontend/e2e/chat-turn-rail.spec.ts",
     "frontend/e2e/composer-polish.spec.ts",
     "frontend/e2e/workspace-new-terminal.spec.ts",
     "frontend/src/app/globals.css",
