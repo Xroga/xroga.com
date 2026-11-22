@@ -161,3 +161,6 @@ Full report: `OVERNIGHT-REPORT-20261122.md` (10 sections). Highlights: dead-spot
 
 ## Build addendum 7 (round 6)
 Build commit `664f170f8`, ZIP `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-664f170f8.zip`, SHA-256 `E348DBCB05E6A7F7F4F94AF663C4FB68E281EFE9629A41F1AA2A928204763E45`, manifest `ARTIFACT-MANIFEST-664f170f8.json`. Upgrade from `05f62baa7` keeps id, storage, service worker and side panel. Backend tag `browser-op-1110` on `xroga-api-universal-staging-effort-hm9`; rollback `00146-wod`. Production not live with any of this.
+
+## Build addendum 8 (round 7)
+Build commit `6649442dd`, ZIP `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-6649442dd.zip`, SHA-256 `607623AF72693D3F6BF9E8F5570CB29C69852A3D91CEFF8E477ED6650E48BF90`, manifest `ARTIFACT-MANIFEST-6649442dd.json`. Unit suite 1477 passed; Chromium scenarios 306 of 306 PASS (`scenarios-full-20261122e.json`); upgrade from `664f170f8` keeps id, storage, service worker and side panel. Backend unchanged. Production not live with any of this.

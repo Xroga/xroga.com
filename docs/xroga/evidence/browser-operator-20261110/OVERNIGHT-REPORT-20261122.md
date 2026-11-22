@@ -77,3 +77,5 @@ Build commit `664f170f8` (working tree clean), ZIP `C:\xr-review-builds\xroga-br
 - Extension unit suite: 1477 passed, 4 skipped.
 - Remaining: items 1 and 3-5 under section 10 stand (impossible tasks still take 2.5-3 minutes; TraceDraw and painted-menu seed 4 not re-run; no real third-party account; only one donor port this round).
 
+
+**Release after round 7.** Build commit `6649442dd` (working tree clean), ZIP `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-6649442dd.zip`, SHA-256 `607623AF72693D3F6BF9E8F5570CB29C69852A3D91CEFF8E477ED6650E48BF90`, manifest `ARTIFACT-MANIFEST-6649442dd.json`. Upgrade smoke from the `664f170f8` ZIP in real Chromium: same id, storage kept, service worker alive, side panel loads. The backend is unchanged (tag `browser-op-1110` on `effort-hm9`; rollback `00146-wod`). Staging only; production not live with any of this.
