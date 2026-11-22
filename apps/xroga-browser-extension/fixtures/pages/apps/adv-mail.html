@@ -40,7 +40,7 @@ mount(async app => {
     const bodyEl = h('textarea', { 'aria-label': 'Message body' }); bodyEl.value = d ? d.body : '';
     const keep = h('input', { type: 'checkbox', 'aria-label': 'Keep paragraph spacing' });
     const persist = async () => {
-      const r = await API('save', { id, to: to.value, subject: subject.value, body: bodyEl.value, keepSpacing: keep.checked });
+      const r = await API('save', { id, to: to.value, subject: subject.value, body: bodyEl.value, keepSpacing: keep.checked, lose: Q.get('lose') });
       if (r.status === 200) { id = r.body.draft.id; dirty = false; msg.textContent = 'Draft saved'; } else msg.textContent = 'Not saved: ' + (r.body.error || r.status);
     };
     const touch = () => { dirty = true; msg.textContent = ''; clearTimeout(timer); timer = setTimeout(persist, 2500); };

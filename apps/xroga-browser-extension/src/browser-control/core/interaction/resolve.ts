@@ -27,6 +27,11 @@ export interface ResolvedTarget {
   via: 'ref' | 'semantic';
 }
 
+/** Roles of an element that stands for one record in a list or table. */
+const ROW_ROLES = new Set(['listitem', 'row', 'article', 'group', 'treeitem', 'gridcell']);
+/** A control whose name says it removes something: picked by position it can remove the wrong record. */
+const DESTRUCTIVE_NAME = /\b(delete|remove|discard|trash|destroy|erase|archive|cancel subscription|unsubscribe)\b/i;
+
 function walk(nodes: ONode[], visit: (n: ONode, ancestors: ONode[]) => void, ancestors: ONode[] = []): void {
   for (const n of nodes) {
     visit(n, ancestors);
@@ -68,11 +73,23 @@ async function resolveSemantic(
   const role = target.role.toLowerCase();
   const name = target.name === undefined ? undefined : cleanText(target.name);
   const matches: ONode[] = [];
-  walk(roots, n => {
+  const rowOf = new Map<ONode, string>();
+  walk(roots, (n, ancestors) => {
     if (!n.ref) return;
     if (n.role.toLowerCase() !== role && n.rawRole.toLowerCase() !== role) return;
     if (name !== undefined && n.name !== name) return;
     matches.push(n);
+    // The record the control belongs to: the nearest row-like ancestor's name, else the words around the control in the nearest ancestor that has any besides its own name.
+    const row = [...ancestors].reverse().find(a => ROW_ROLES.has(a.role.toLowerCase()) && a.name);
+    if (row) rowOf.set(n, row.name);
+    else {
+      for (const a of [...ancestors].reverse()) {
+        const words: string[] = [];
+        walk(a.children, c => { if (c.kind === 'text' && c.name && c.name !== n.name) words.push(c.name); });
+        const text = cleanText(words.join(' '));
+        if (text) { rowOf.set(n, text); break; }
+      }
+    }
   });
   const label = `${target.role}${name !== undefined ? ` ${quote(name)}` : ''}`;
   if (!matches.length) {
@@ -82,6 +99,15 @@ async function resolveSemantic(
     throw new LayerError(
       'NO_MATCH',
       `No element matches ${label}.${near.length ? ` Nearest in the page now: ${near.map(m => `[${m.ref}] ${m.role} ${quote(m.name, 60)}`).join('; ')}. Use one of these refs, or the role and name shown.` : ''}`,
+    );
+  }
+  // The Nth of several identically named controls is a position, not an identity: for a destructive one (delete, remove, discard...) the page may have reordered since the model last
+  // looked, and the wrong record goes. Refused with each match's row, so the next call can name the row (`within`) or use a ref from the fresh list.
+  if (target.nth !== undefined && matches.length > 1 && DESTRUCTIVE_NAME.test(name ?? '')) {
+    const list = matches.slice(0, 10).map(m => `[${m.ref}] ${m.role} ${quote(m.name, 40)}${rowOf.get(m) ? ` in ${quote(rowOf.get(m)!, 60)}` : ''}`);
+    throw new LayerError(
+      'AMBIGUOUS_TARGET',
+      `${matches.length} elements match ${label}, and nth is only a position: ${list.join('; ')}. For ${name ? quote(name) : 'a destructive control'} use the ref of the one in the right row.`,
     );
   }
   if (target.nth !== undefined) {

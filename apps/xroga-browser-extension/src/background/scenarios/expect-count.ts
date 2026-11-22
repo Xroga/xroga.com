@@ -187,3 +187,23 @@ defineScenario({
   },
 });
 
+// "The Nth Delete button" is a position: after a re-order it removes another record. A destructive control picked by nth among identical ones is refused with each match's row; a harmless one still accepts nth.
+defineScenario({
+  id: 'S3-nth-delete-among-twins-is-refused',
+  set: 'C',
+  title: 'delete picked by nth among two identical Delete draft buttons is refused and lists the rows; Open by nth still works',
+  covers: 'a destructive control chosen only by position is refused with the row of each match; a non-destructive control still accepts nth',
+  async run(ctx) {
+    await ctx.open(`${FIXTURE_ORIGIN}/c-two-deletes.html`);
+    await ctx.call('snapshot');
+    const refused = await ctx.call('click', { target: { role: 'button', name: 'Delete draft', nth: 0 } });
+    const open = await ctx.call('click', { target: { role: 'button', name: 'Open', nth: 1 } });
+    const rows = JSON.stringify(await ctx.call('read', {}));
+    return outcome(
+      'delete by nth refused naming both rows and nothing deleted; Open nth 1 worked',
+      JSON.stringify({ refused: refused.ok, why: refused.error?.message?.slice(0, 260), open: open.ok, stillBoth: /ana@x\.test/.test(rows) && /carla@x\.test/.test(rows) }),
+      refused.ok === false && /ana@x\.test/.test(refused.error?.message ?? '') && /carla@x\.test/.test(refused.error?.message ?? '') && open.ok === true && /ana@x\.test/.test(rows) && /carla@x\.test/.test(rows),
+    );
+  },
+});
+

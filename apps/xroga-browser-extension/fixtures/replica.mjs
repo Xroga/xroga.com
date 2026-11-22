@@ -169,6 +169,8 @@ const API = {
       if (d) Object.assign(d, { to, subject, body });
       else { d = { id: 'm' + (state.mail.saves + 1), to, subject, body }; state.mail.drafts.push(d); }
       state.mail.saves++; state.mail.log.push({ id: d.id, to });
+      // A lost acknowledgement (?lose=1): the first save is applied, but the answer never arrives intact. Repeating a save that did go through makes a duplicate draft.
+      if (b.lose && !state.mail.lostOnce) { state.mail.lostOnce = true; state.mail.lostAcks = (state.mail.lostAcks ?? 0) + 1; return [504, { error: 'The gateway timed out. You may be offline.' }]; }
       return [200, { ok: true, draft: d }];
     },
     send() { state.mail.sent++; return [200, { ok: true }]; },
