@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/workspace-search-ranking-basis",
-    "sha": "9a0ae12bda7acb88982657e1b8089abc09e19f7a",
-    "sourceTimestampUtc": "2026-11-22T22:56:41+05:00",
-    "auditStartedUtc": "2026-11-22T17:57:16.634Z",
+    "sha": "c874f4867ea12504164e38167ec7092a726d6888",
+    "sourceTimestampUtc": "2026-11-22T23:02:23+05:00",
+    "auditStartedUtc": "2026-11-22T18:04:45.126Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -88912,7 +88912,7 @@
       "id": "surface:e67e2018c5fc720f5a55",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/Editorial.tsx",
-      "sha256": "e7c3286dce0fa7cbc261876c18c5f63dead4b113d2aa03eb23b62e4fc7f58aec",
+      "sha256": "128a0ef52f919dc61bbb5138cc1da8fe8f4f1afd306ae39041f88520068b3f5a",
       "symbols": [
         "Controls",
         "Metric",
@@ -88930,6 +88930,7 @@
         "nativeVisuals",
         "offersDraftCopy",
         "renderCitation",
+        "shortNumericReadout",
         "streaming",
         "value"
       ],
@@ -130812,7 +130813,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "5704bc3aa1bcf11c22346d24e56b9ab70e2fc8d5667f7e364733520e65d75fc9",
+      "sha256": "c4633c9c023fb985bb1cf8f3a9d9a44d4a752a24200bb02d5b2b2ea90d1c58c9",
       "symbols": [
         "accessibility",
         "answer",
