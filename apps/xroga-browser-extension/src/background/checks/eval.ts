@@ -5,6 +5,7 @@
 // writes the task calls for, declines every other card, and cancels hand-overs and questions; the approving user allows
 // every card and answers every question, with a canary "password" when asked for one, and cancels hand-overs. In Auto
 // mode no write card appears. Keys come from the fixture server's environment and are never stored.
+import { EffortControl } from '@src/xroga/effort';
 import { AgentLoop } from '@src/agent/loop';
 import type { LoopEnd } from '@src/agent/loop';
 import { agentSystemPrompt } from '@src/agent/prompt';
@@ -123,6 +124,8 @@ async function runOne(
     overrides: { ...(args.contextWindow ? { contextWindow: args.contextWindow } : {}), ...(args.vision ? { vision: true } : {}) },
     detectedContext: detected,
   });
+  // `adaptive`: the run's own EffortControl decides each request's effort, as the product's Xroga model path does.
+  const adaptive = args.rawEffort === 'adaptive' ? new EffortControl('high', { adaptive: true }) : undefined;
   const forced = args.rawEffort;
   const chat = createModel(
     {
@@ -137,7 +140,7 @@ async function runOne(
           fetch: ((input: RequestInfo | URL, init?: RequestInit) => {
             if (typeof init?.body === 'string' && String(input).includes('/chat/completions')) {
               const body = JSON.parse(init.body) as Record<string, unknown>;
-              body.reasoning_effort = forced;
+              body.reasoning_effort = adaptive ? adaptive.level : forced;
               init = { ...init, body: JSON.stringify(body) };
             }
             return fetch(input, init);
@@ -167,6 +170,7 @@ async function runOne(
     signal: abort.signal,
     emit: () => undefined,
     turnCap: args.turnCap ?? 25,
+    ...(adaptive ? { effort: adaptive } : {}),
     mode: () => mode,
   });
   const started = Date.now();

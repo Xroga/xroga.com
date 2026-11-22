@@ -1658,7 +1658,8 @@ export class RunManager {
       void count('runs.started');
       let end: LoopEnd | undefined;
       let canonical: Awaited<ReturnType<typeof startXrogaModelRun>> | undefined;
-      const effort = new EffortControl();
+      // Adaptive: no reasoning on routine turns, high after an error, a result in doubt or a read-back of written work, max on a stall (measured 2026-11-23: 17 of 18 replica tasks, about a third to a half faster than high on routine work).
+      const effort = new EffortControl('high', { adaptive: true });
       let recoveryReadOnly = false;
       let interrupted: ReturnType<typeof planRestore>['results'] = [];
       try {

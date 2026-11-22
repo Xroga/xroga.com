@@ -101,7 +101,7 @@ export const NO_PROGRESS_STALLS = 4;
 
 export interface LoopOptions {
   /** How hard the model is asked to think: told, after every tool call, whether the run stalled. The server decides what is allowed. */
-  effort?: { noteTurn(stalled: boolean): void };
+  effort?: { noteTurn(stalled: boolean, signal?: { error?: boolean; uncertain?: boolean; verify?: boolean }): void };
   /** Where the run's time goes; measured only, never used to decide anything. */
   timings?: RunTimings;
   conversationId: string;
@@ -854,7 +854,18 @@ ${ledger}` : ''),
       // this cannot be done with what is reachable (the thing asked for is not there, or only a person can do it). The run ends with its verified work and that
       // finding, instead of trying for many more minutes.
       if (this.#progress.stallsSinceProgress >= NO_PROGRESS_STALLS) this.#guardStop ??= { reason: `no progress after ${this.#progress.stallsSinceProgress} diagnosed dead ends in a row; no action changed anything since the first`, guard: 'no_effect' };
-      this.options.effort?.noteTurn(verdict.stalled);
+      // What this call says about the next turn: a failure, a result in doubt, or a read-back of written work (see EffortControl, adaptive runs).
+      const resultText = typeof given.text === 'string' ? given.text.slice(0, 1500) : '';
+      const wrote = !given.isError && given.result?.receipt?.effect?.verdict === 'changed' && ['click', 'set', 'fill_form', 'type', 'press', 'batch', 'drag', 'canvas'].includes(given.call.toolName);
+      if (wrote) this.#wroteSinceCheck = true;
+      const reading = given.call.toolName === 'read' || given.call.toolName === 'snapshot' || (given.call.toolName === 'navigate' && input.action === 'reload');
+      const verify = reading && this.#wroteSinceCheck;
+      if (verify) this.#wroteSinceCheck = false;
+      this.options.effort?.noteTurn(verdict.stalled, {
+        error: given.isError === true,
+        uncertain: given.result?.receipt?.postcondition?.status === 'unmet' || /\b(timed out|not saved|could not be saved|you may be offline|failed to save|try again)\b/i.test(resultText),
+        verify,
+      });
     }
     this.#toolCounts.set(given.call.toolName, (this.#toolCounts.get(given.call.toolName) ?? 0) + 1);
     // Opening or switching to a page changes nothing a second attempt could duplicate: a navigation that fails (a certificate warning,
@@ -1787,6 +1798,8 @@ ${ledger}` : ''),
   #paintedInputDelivered = new PaintedInputDeliveryGuard();
   #progress = new ProgressTracker();
   #repeats = new RepeatDetector();
+  /** A write since the last read-back: the next read or reload is a check of written work. */
+  #wroteSinceCheck = false;
   #consoleRuns = new RunLedger();
   #announcedSites = new Set<string>();
   #pendingStall: StallVerdict | null = null;

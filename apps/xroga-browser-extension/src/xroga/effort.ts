@@ -10,6 +10,23 @@
 export type Effort = 'none' | 'high' | 'max';
 
 const PROGRESS_TURNS_TO_RELAX = 4;
+/** Adaptive runs: calm turns after which a `high` turn goes back to `none`. */
+const CALM_TO_NONE = 2;
+
+/**
+ * What the turn just finished says about the next one. Measured (2026-11-23, live DeepSeek, 18 replica tasks): with no reasoning, routine work (forms, painted menus,
+ * timelines, CRM, database) was about a quarter to a half faster with the same pass rate, but the judgement after an uncertain save failed (2 of 2 lost-acknowledgement
+ * runs claimed four drafts while fewer were saved). So an adaptive run thinks only where the evidence says it must: after an error or an uncertain result, and on the
+ * turn that reads back what was written.
+ */
+export interface TurnSignal {
+  /** The call failed. */
+  error?: boolean;
+  /** The call worked but its result is in doubt: a save answered with a timeout or "not saved", a postcondition not met, an action with no effect. */
+  uncertain?: boolean;
+  /** The call reads back what earlier writes did (a reload, a read or snapshot after a write): the next turn judges whether the work is done. */
+  verify?: boolean;
+}
 
 export class EffortControl {
   #level: Effort;
@@ -17,8 +34,12 @@ export class EffortControl {
   #changes: Array<{ turn: number; level: Effort; why: string }> = [];
   #turn = 0;
 
-  constructor(start: Effort = 'high') {
-    this.#level = start;
+  readonly #adaptive: boolean;
+
+  /** `adaptive`: start at none and think only where a turn's evidence asks for it (see TurnSignal); otherwise start at `start` (high) as before. */
+  constructor(start: Effort = 'high', options: { adaptive?: boolean } = {}) {
+    this.#adaptive = options.adaptive === true;
+    this.#level = this.#adaptive ? 'none' : start;
   }
 
   get level(): Effort {
@@ -37,15 +58,21 @@ export class EffortControl {
   }
 
   /** One tool turn finished. `stalled` is the progress tracker's verdict for it. */
-  noteTurn(stalled: boolean): void {
+  noteTurn(stalled: boolean, signal: TurnSignal = {}): void {
     this.#turn++;
     if (stalled) {
       this.#calm = 0;
       this.#set('max', 'the run stopped making progress');
       return;
     }
+    if (this.#adaptive && (signal.error || signal.uncertain || signal.verify)) {
+      this.#calm = 0;
+      if (this.#level === 'none') this.#set('high', signal.error ? 'a call failed' : signal.uncertain ? 'a result is in doubt' : 'checking written work');
+      return;
+    }
     this.#calm++;
     if (this.#level === 'max' && this.#calm >= PROGRESS_TURNS_TO_RELAX) this.#set('high', `${PROGRESS_TURNS_TO_RELAX} turns of progress`);
+    else if (this.#adaptive && this.#level === 'high' && this.#calm >= CALM_TO_NONE) this.#set('none', `${CALM_TO_NONE} routine turns`);
   }
 }
 

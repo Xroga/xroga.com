@@ -41,3 +41,32 @@ describe('outputRoom', () => {
     expect(outputRoom('max')).toBeGreaterThan(outputRoom('high'));
   });
 });
+
+describe('EffortControl, adaptive', () => {
+  it('starts without reasoning, thinks after an error, a result in doubt or a read-back, and relaxes after two routine turns', () => {
+    const e = new EffortControl('high', { adaptive: true });
+    expect(e.level).toBe('none');
+    e.noteTurn(false);
+    expect(e.level).toBe('none');
+    e.noteTurn(false, { uncertain: true });
+    expect(e.level).toBe('high');
+    e.noteTurn(false);
+    expect(e.level).toBe('high');
+    e.noteTurn(false);
+    expect(e.level).toBe('none');
+    e.noteTurn(false, { verify: true });
+    expect(e.level).toBe('high');
+    e.noteTurn(false, { error: true });
+    expect(e.level).toBe('high');
+    e.noteTurn(true);
+    expect(e.level).toBe('max');
+  });
+
+  it('a run that is not adaptive behaves as before', () => {
+    const e = new EffortControl();
+    expect(e.level).toBe('high');
+    e.noteTurn(false, { error: true });
+    expect(e.level).toBe('high');
+  });
+});
+
