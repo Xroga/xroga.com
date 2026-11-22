@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "c874f4867ea12504164e38167ec7092a726d6888",
+  "source_sha": "5787e0f537261753a88bc4190fab9dbb14139786",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17682,7 +17682,7 @@
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "sha256": "1708af2798acd4f9fc23ad79e3d04d93796760023c131054caa072f552a3f3df"
+      "sha256": "69ed720b51b2ec3d8a957c00883a9682237bc3d668d2fbaeb5818f20981ee1e4"
     },
     {
       "path": "backend/src/ai/zurelayWire.ts",
@@ -34667,7 +34667,21 @@
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "line": 98,
+      "line": 53,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/workspacePublicSearch.ts",
+      "line": 83,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/workspacePublicSearch.ts",
+      "line": 136,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

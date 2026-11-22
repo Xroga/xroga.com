@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "c874f4867ea12504164e38167ec7092a726d6888",
+  "source_sha": "5787e0f537261753a88bc4190fab9dbb14139786",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -6416,9 +6416,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "d8ecc28d307eed9fb24e261e7824d3abb8f2266de595441f9fc9742975a6e974",
-      "byte_size": 5863083,
-      "modified_timestamp": "2026-11-22T18:04:49.787Z",
+      "sha256": "c0d7294a0f97fb2fda0b17d21bdf3293d83e79445140366794540399507aa27c",
+      "byte_size": 5863373,
+      "modified_timestamp": "2026-11-22T19:11:49.901Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -8834,9 +8834,9 @@
       "source_id": "SRC-82ff96c046038933",
       "filename": "workspacePublicSearch.ts",
       "path_or_url": "backend/src/ai/workspacePublicSearch.ts",
-      "sha256": "1708af2798acd4f9fc23ad79e3d04d93796760023c131054caa072f552a3f3df",
-      "byte_size": 13845,
-      "modified_timestamp": "2026-11-22T08:32:16.939Z",
+      "sha256": "69ed720b51b2ec3d8a957c00883a9682237bc3d668d2fbaeb5818f20981ee1e4",
+      "byte_size": 15913,
+      "modified_timestamp": "2026-11-22T19:09:11.755Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",
