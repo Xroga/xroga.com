@@ -129,6 +129,9 @@ export const Diagram = defineComponent({
     }, [renderable]);
     if (!result) return <p role="status">The diagram relationships could not be rendered. {props.description}</p>;
     const fitViewOptions = { padding: result.outsideLanes ? 0.2 : compact ? 0.08 : 0.14, maxZoom: 1.1 };
+    const height = compact
+      ? Math.min(900, Math.max(224, result.rowCount * 145 - 24))
+      : Math.min(500, Math.max(216, result.rowCount * 92 + 32));
     return (
       <figure ref={diagram} className="native-diagram" aria-labelledby={title}>
         <figcaption>
@@ -136,8 +139,7 @@ export const Diagram = defineComponent({
           <p>{props.description}</p>
         </figcaption>
         {compact !== undefined && <ReactFlowProvider key={graphKey}>
-        <div className="native-diagram-canvas"
-          style={{ height: compact ? Math.min(900, Math.max(260, result.rowCount * 145 + 24)) : Math.min(540, Math.max(260, result.rowCount * 96 + 44)) }}>
+        <div className="native-diagram-canvas" style={{ height }}>
           <ReactFlow
             id={diagramId}
             nodeTypes={nodeTypes}

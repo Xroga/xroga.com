@@ -51,7 +51,10 @@ function useWidth() {
   const [width, setWidth] = useState(0);
   useLayoutEffect(() => {
     if (!element) return;
-    const measure = () => setWidth(element.clientWidth);
+    const measure = () => {
+      const style = getComputedStyle(element);
+      setWidth(element.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight));
+    };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(element);
@@ -355,10 +358,11 @@ export const Chart = defineComponent({
     const visible = useContext(NativeVisualContent);
     const original = toSpec(props);
     if (!original) return <p>Chart data is incomplete or unsuitable for this chart.</p>;
-    // Size the actual plot to its pane, including a narrow split view or zoom.
-    const spec = width && width < 440
-      ? { ...original, height: Math.min(original.height, Math.max(180, Math.round(width * .72))) }
-      : original;
+    // Simple comparisons fit inside the conversation. Dense plots keep more room
+    // for their marks and the data table remains available at every pane size.
+    const limit = original.rows.length <= 12 && original.series.length <= 2 ? 216 : 360;
+    const paneLimit = width > 0 ? Math.max(156, Math.round(width * .68)) : limit;
+    const spec = { ...original, height: Math.min(original.height, limit, paneLimit) };
     const pie = spec.type === "pie" || spec.type === "donut";
     const labels = spec.presentation;
     const captionTitle = labels?.title && !visible?.titles.has(nativeReadableTextKey(labels.title)) ? labels.title : undefined;

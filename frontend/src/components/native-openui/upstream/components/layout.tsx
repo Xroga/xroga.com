@@ -12,14 +12,18 @@ const FLEX: Record<string, string> = { start: "flex-start", end: "flex-end", cen
 const boundedSpace = (preferred: string, limit: string) => `min(${preferred}, var(${limit}, ${preferred}))`;
 
 type FlexProps = { gap?: number; align?: string; justify?: string; wrap?: boolean };
-const flexStyle = (p: FlexProps, column = false): CSSProperties => ({
-  ...(column ? { "--iui-column-gap": space(p.gap) } as CSSProperties : { gap: space(p.gap) }),
-  alignItems: p.align ? FLEX[p.align] : undefined,
-  justifyContent: p.justify ? FLEX[p.justify] : undefined,
-  flexWrap: p.wrap ? "wrap" : undefined,
-  // A centered column centers its wrapped lines too.
-  textAlign: column && (p.align === "center" || p.align === "end") ? p.align : undefined,
-});
+const flexStyle = (p: FlexProps, column = false): CSSProperties => {
+  const preferred = space(p.gap);
+  const gap = preferred && boundedSpace(preferred, "--iui-layout-gap-limit");
+  return {
+    ...(column ? { "--iui-column-gap": gap } as CSSProperties : { gap }),
+    alignItems: p.align ? FLEX[p.align] : undefined,
+    justifyContent: p.justify ? FLEX[p.justify] : undefined,
+    flexWrap: p.wrap ? "wrap" : undefined,
+    // A centered column centers its wrapped lines too.
+    textAlign: column && (p.align === "center" || p.align === "end") ? p.align : undefined,
+  };
+};
 
 export const Box = defineComponent({
   name: "Box",
@@ -41,12 +45,13 @@ export const Box = defineComponent({
   description: "Flex container, a column by default. radius also clips the content.",
   component: ({ props, renderNode }) => {
     const row = props.direction === "row";
+    const padding = space(props.padding);
     return (
       <div
         className={cx("iui-box", row ? "iui-row" : "iui-col", !row && props.gap == null && "iui-flow")}
         style={{
           ...flexStyle(props, !row),
-          padding: space(props.padding),
+          padding: padding && boundedSpace(padding, "--iui-card-padding-limit"),
           background: bg(props.background),
           ...onColor(props.background),
           borderRadius: radius(props.radius),
@@ -125,7 +130,8 @@ export const Grid = defineComponent({
     const gap = boundedSpace(space(props.gap) ?? "12px", "--iui-grid-gap-limit");
     // The requested count is an upper bound, including inside narrow chat cards.
     // Preserve explicit minimums and give unspecified children readable space.
-    const min = `max(${Math.max(0, props.minChildWidth ?? 180)}px, (100% - ${columns - 1} * ${gap}) / ${columns})`;
+    const preferred = `${Math.max(0, props.minChildWidth ?? 180)}px`;
+    const min = `max(${boundedSpace(preferred, "--iui-grid-child-min-limit")}, (100% - ${columns - 1} * ${gap}) / ${columns})`;
     return (
       <div
         className="iui-grid"

@@ -390,7 +390,9 @@ try {
       assert.ok(paintedNumbers.every(item=>item.lines===1),'Metrics must adapt to their container without splitting decimal values');
       if([390,1440].includes(viewport.width))await page.screenshot({path:resolve(output,'metric-grid-'+viewport.width+'-'+theme+'.png'),fullPage:true});
       await open('chartHeading');
-      await page.getByRole('img',{name:'line chart of balance by year',exact:true}).waitFor();
+      const compactChart = page.getByRole('img',{name:'line chart of balance by year',exact:true});
+      await compactChart.waitFor();
+      assert.ok((await compactChart.boundingBox()).height <= 216, 'Simple charts fit the reading column at their actual render height');
       assert.equal(await page.getByText('Balance by year',{exact:true}).count(),1);
       await page.locator('figcaption').getByText('Balance (USD)',{exact:true}).waitFor();
       await page.getByText('Annual compounding.',{exact:true}).waitFor();
