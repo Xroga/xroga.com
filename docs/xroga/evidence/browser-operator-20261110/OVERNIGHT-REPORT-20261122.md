@@ -79,3 +79,10 @@ Build commit `664f170f8` (working tree clean), ZIP `C:\xr-review-builds\xroga-br
 
 
 **Release after round 7.** Build commit `6649442dd` (working tree clean), ZIP `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-6649442dd.zip`, SHA-256 `607623AF72693D3F6BF9E8F5570CB29C69852A3D91CEFF8E477ED6650E48BF90`, manifest `ARTIFACT-MANIFEST-6649442dd.json`. Upgrade smoke from the `664f170f8` ZIP in real Chromium: same id, storage kept, service worker alive, side panel loads. The backend is unchanged (tag `browser-op-1110` on `effort-hm9`; rollback `00146-wod`). Staging only; production not live with any of this.
+
+## Round 8 (2026-11-22 midday)
+- **Second donor port: `attribute` postcondition** (uiuing/browser-agent attribute_equals, MIT): `expect: { attribute: "aria-expanded=true" }` reads the target's attribute through a new probe operation, never reads `value` (use `value`), and masks the reading for sensitive fields. Unit test and Chromium scenario `S3-expect-attribute`. Both gaps the ledger listed for that donor are now closed. The compact tool catalogue grew by about 200 characters; its size test limit moved from 0.865 to 0.875 of the original and says why.
+- **Visual set again (real DeepSeek, effort `high`, 8 runs):** 7 of 8 passed, p50 33 s: painted-menu 1, 2, 3 and 4 (one of two) passed, timeline-split 2 of 2, canvas-menu passed (3 turns, 13 s). The one failure was painted-menu seed 4 (22 turns): the model mis-read which painted label was Tools, clicked the wrong labels, and then honestly reported failure and corrected its own earlier wrong claims. Painted-menu seed 4 therefore remains intermittent (a vision reading miss; 1 pass, 1 fail this round). File `live-model/visual-round7-20261122.jsonl`.
+- **Workers on the new build:** 8 pages, real DeepSeek: parallel 185 s, 8 of 8 codes, 3 workers active at once; single agent 170 s, 8 of 8 (`live-model/parallel-real-8pages-round7-20261122.json`). Same conclusion as before: correct, not faster.
+- Chromium scenarios 307 of 307 PASS (`scenarios-full-20261122f.json`); extension unit suite 1478 passed, 4 skipped.
+

@@ -91,3 +91,24 @@ defineScenario({
     );
   },
 });
+
+// Port of Browser Agent's attribute_equals (uiuing/browser-agent @ a8517e2c, MIT, verify.ts): a menu button that now says aria-expanded="true" proves the menu opened.
+defineScenario({
+  id: 'S3-expect-attribute',
+  set: 'C',
+  title: 'click "Open menu" expecting aria-expanded true (met), and a button without the attribute with the same expectation (unmet)',
+  covers: 'the attribute postcondition reads the target after the action and says what it found',
+  async run(ctx) {
+    await ctx.open(`${FIXTURE_ORIGIN}/c-enabled.html`);
+    await ctx.call('snapshot');
+    const opened = await ctx.call('click', { target: { role: 'button', name: 'Open menu' }, expect: { attribute: 'aria-expanded=true' } });
+    const plain = await ctx.call('click', { target: { role: 'button', name: 'Do nothing' }, expect: { attribute: 'aria-expanded=true' } });
+    const p = [post(opened), post(plain)];
+    return outcome(
+      'Open menu met; Do nothing unmet saying aria-expanded is not set',
+      JSON.stringify(p),
+      p[0]?.status === 'met' && p[1]?.status === 'unmet' && (p[1]?.detail ?? '').includes('aria-expanded is not set'),
+    );
+  },
+});
+

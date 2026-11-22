@@ -175,6 +175,8 @@ export interface ProbeApi {
   hasText(text: string): boolean;
   /** What the element reads: a form control's value, otherwise its visible text (at most 400 characters). */
   reading(el: Element): string;
+  /** The value of an attribute (aria-expanded, aria-selected, data-state), or null when it is not set (at most 200 characters). */
+  attribute(el: Element, name: string): string | null;
   recentInput(ms: number): Array<{ t: number; kind: 'mouse' | 'key' | 'wheel' | 'touch'; x?: number; y?: number }>;
   navigationTarget(el: Element, mode: 'activate' | 'enter'): NavigationTarget | null;
   focused(): Element | null;
@@ -826,6 +828,11 @@ export function probeMain(): void {
       if (typeof v === 'string' && ['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName)) return v.slice(0, 400);
       const h = el as HTMLElement;
       return String(h.innerText ?? el.textContent ?? '').slice(0, 400);
+    },
+
+    attribute(el: Element, name: string) {
+      const v = el.getAttribute(name);
+      return v === null ? null : v.slice(0, 200);
     },
 
     hasText(text: string) {

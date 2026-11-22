@@ -4,5 +4,6 @@
 <h1>Locking buttons</h1>
 <p><button type="button" id="send" onclick="this.disabled = true; document.getElementById('s').textContent = 'Sent'">Send once</button></p>
 <p><button type="button" id="noop">Do nothing</button></p>
+<p><button type="button" aria-expanded="false" onclick="this.setAttribute('aria-expanded', 'true')">Open menu</button></p>
 <p id="s" role="status"></p>
 </body></html>

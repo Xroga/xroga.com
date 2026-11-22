@@ -483,8 +483,8 @@ export async function checkExpectation(
       }
     }
   }
-  if (expect.value !== undefined || expect.checked !== undefined || expect.gone !== undefined || expect.enabled !== undefined) {
-    if (!target) return { status: 'not_checked', detail: 'value, checked, enabled and gone need a target' };
+  if (expect.value !== undefined || expect.checked !== undefined || expect.gone !== undefined || expect.enabled !== undefined || expect.attribute !== undefined) {
+    if (!target) return { status: 'not_checked', detail: 'value, checked, enabled, attribute and gone need a target' };
     let state: ProbeState | null = null;
     try {
       state = await probe.call<ProbeState>(target.frame, target.objectId, 'state');
@@ -500,6 +500,21 @@ export async function checkExpectation(
     }
     if (expect.checked !== undefined && state?.checked !== expect.checked)
       failures.push(`checked is ${state?.checked}`);
+    if (expect.attribute !== undefined) {
+      const cut = expect.attribute.indexOf('=');
+      if (cut < 1 || expect.attribute.toLowerCase().startsWith('value=')) return { status: 'not_checked', detail: 'attribute must read name=value (not value=; use value)' };
+      const attrName = expect.attribute.slice(0, cut), attrWant = expect.attribute.slice(cut + 1);
+      let read: string | null = null;
+      try {
+        read = await probe.call<string | null>(target.frame, target.objectId, 'attribute', attrName);
+      } catch {
+        read = null;
+      }
+      if (read !== attrWant) {
+        const hidden = masked || isSensitiveState(state, target.record.print.name);
+        failures.push(hidden ? `${attrName} differs (masked)` : read === null ? `${attrName} is not set` : `${attrName} is ${quote(read)}`);
+      }
+    }
     if (expect.enabled !== undefined && (state?.enabled ?? false) !== expect.enabled)
       failures.push(state?.enabled ? 'the target is enabled' : 'the target is disabled');
   }

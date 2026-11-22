@@ -38,7 +38,8 @@ export const ExpectationSchema = z
     value: z.string().optional().describe("The target's value equals this"),
     checked: z.boolean().optional().describe('The target is checked (true) or unchecked (false)'),
     gone: z.boolean().optional().describe('The target is no longer in the page'),
-    enabled: z.boolean().optional().describe('The target is enabled (true) or disabled (false): a Save button that unlocks, a Submit that locks after sending'),
+    attribute: z.string().optional().describe('name=value'),
+    enabled: z.boolean().optional().describe('Target enabled (true) or disabled'),
     exists: CountQuerySchema.optional().describe('An element with this role (and a name containing this text) is on the page'),
     count: CountQuerySchema.extend({
       equals: z.number().int().min(0).optional(),

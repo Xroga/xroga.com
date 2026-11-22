@@ -73,3 +73,10 @@ describe('the postcondition enabled', () => {
     expect(ExpectationSchema.safeParse({ enabled: 'yes' }).success).toBe(false);
   });
 });
+
+describe('the postcondition attribute', () => {
+  it('is a name=value string', () => {
+    expect(ExpectationSchema.safeParse({ attribute: 'aria-expanded=true' }).success).toBe(true);
+    expect(ExpectationSchema.safeParse({ attribute: { name: 'x' } }).success).toBe(false);
+  });
+});
