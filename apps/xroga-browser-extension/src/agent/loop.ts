@@ -1504,12 +1504,21 @@ ${ledger}` : ''),
     });
   }
 
+  /** Every row event of the run takes the next number: a later event of an action always outranks an earlier one (ui/protocol.ts ToolRow). */
+  #rowSeq = 0;
   #row(call: ToolCallRequest, status: ToolRow['status'], outcome?: CallOutcome): ToolRow {
+    const page = outcome?.result?.page;
+    const args = (call.input ?? {}) as Record<string, unknown>;
+    const tabId = page?.tabId ?? (typeof args.tabId === 'number' ? args.tabId : undefined);
     return {
       toolCallId: call.toolCallId,
       tool: call.toolName,
       args: call.input,
       status,
+      actionId: `${this.options.runId}:${call.toolCallId}`,
+      seq: ++this.#rowSeq,
+      ...(tabId !== undefined ? { tabId } : {}),
+      ...(page?.rev !== undefined ? { epoch: page.rev } : {}),
       ...(outcome ? { text: outcome.text, result: outcome.result ? storedResult(outcome.result) : undefined } : {}),
       ...(outcome?.result?.receipt?.allowedBy ? { allowedBy: outcome.result.receipt.allowedBy } : {}),
       thumbnail: outcome?.image?.thumb ?? outcome?.localThumbnail,
@@ -1517,6 +1526,8 @@ ${ledger}` : ''),
   }
 
   async #record(outcome: CallOutcome): Promise<void> {
+    // The layer's receipt carries the id of the action it belongs to, so the stored record, the panel row and the receipt name one action.
+    if (outcome.result?.receipt) outcome = { ...outcome, result: { ...outcome.result, receipt: { ...outcome.result.receipt, actionId: `${this.options.runId}:${outcome.call.toolCallId}` } } };
     const result = outcome.result ? storedResult(outcome.result) : undefined;
     const entry = await this.writer.toolResult(
       outcome.call.toolCallId,

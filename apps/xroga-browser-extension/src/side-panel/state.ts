@@ -62,10 +62,23 @@ function upsert(entries: DisplayEntry[], entry: DisplayEntry): DisplayEntry[] {
   return next;
 }
 
+const TERMINAL: ReadonlySet<ToolRow['status']> = new Set(['done', 'failed', 'skipped']);
+
+/**
+ * Whether an incoming row event may change the row already shown. Events of one action arrive start, update, end, but a panel that reconnects or a port that
+ * replays can deliver them late or twice: an event with a lower `seq` than the one shown is stale, an equal one is a replay, and a finished action never goes
+ * back to running (a late "running" must not undo a result). Rows without a `seq` (stored before it existed) keep the old rule, except for that last point.
+ */
+export function mayApplyRow(shown: ToolRow, incoming: ToolRow): boolean {
+  if (shown.seq !== undefined && incoming.seq !== undefined) return incoming.seq > shown.seq;
+  return !(TERMINAL.has(shown.status) && !TERMINAL.has(incoming.status));
+}
+
 function updateRow(entries: DisplayEntry[], messageId: string, row: ToolRow): DisplayEntry[] {
   return entries.map(e => {
     if (e.kind !== 'assistant' || e.id !== messageId) return e;
     const i = e.tools.findIndex(r => r.toolCallId === row.toolCallId);
+    if (i >= 0 && !mayApplyRow(e.tools[i]!, row)) return e;
     const tools = i < 0 ? [...e.tools, row] : e.tools.map((r, j) => (j === i ? { ...r, ...row } : r));
     return { ...e, tools };
   });

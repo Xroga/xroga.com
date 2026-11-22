@@ -43,6 +43,8 @@ export interface ActionReceipt {
    * `name` is the suggested file name, `url` where it comes from.
    */
   downloads?: Array<{ name: string; url: string }>;
+  /** The id the agent loop gave this action (run, call): the same one the panel row and the stored record carry. Stamped by the loop, never by the layer. */
+  actionId?: string;
 }
 
 /**

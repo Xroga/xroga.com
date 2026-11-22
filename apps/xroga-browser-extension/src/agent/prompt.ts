@@ -129,7 +129,7 @@ function toolGuide(tools: string[]): string {
 /** Every reply costs seconds of the user's time, so the agent is told to spend fewer of them. */
 export const EFFICIENCY = `## No limits from skills
 
-Skills, playbooks and sites named here are help, not limits: for any authorized task in any application, inspect it, pick tools, act and verify with your own reasoning. Never call a task unsupported for lack of a playbook.
+Skills, playbooks and sites named here are help, not limits: for any authorized task in any application, inspect it, pick tools, act and verify with your own reasoning. Never call a task unsupported for lack of a playbook, and never ask for an integration or a new login for what an open signed-in tab already shows: operate the tab.
 
 ## Working efficiently
 

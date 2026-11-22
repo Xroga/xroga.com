@@ -93,6 +93,14 @@ export interface ToolRow {
   allowedBy?: 'user' | 'site-rule' | 'auto';
   /** A screenshot's thumbnail, as a data URL. */
   thumbnail?: string;
+  /**
+   * The causal identity of the action, the same in the panel, the stored record and the layer's receipt: `actionId` (run and call), `seq` (rises with every event of a run,
+   * so a late or replayed event can be told from the current one), the tab it ran on and the page revision it was decided on (`epoch`). Absent on rows stored before this.
+   */
+  actionId?: string;
+  seq?: number;
+  tabId?: number;
+  epoch?: number;
 }
 
 /**
