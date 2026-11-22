@@ -2090,6 +2090,9 @@ The name ${asked} was not offered in this task. Do not search again: call one of
       throw new Error('Chrome did not open a worker window.');
     }
     const win = created as chrome.windows.Window & { id: number };
+    // A worker that fails to start leaves nothing behind: not its window, and not a half-made conversation titled "Worker: …" (such leftovers were counted as extra
+    // workers when a failed task was given again).
+    let made: string | undefined;
     try {
       // The run reads the tab address to admit the task, so wait until the page has one.
       for (let i = 0; i < 40; i++) {
@@ -2101,6 +2104,7 @@ The name ${asked} was not offered in this task. Do not search again: call one of
       const parent = await getConversation(parentId);
       const mode = this.#modes.get(parentId) ?? parent?.mode ?? 'ask';
       const conversation = await createConversation({ mode, tabs: [tabId] });
+      made = conversation.id;
       this.#workerConversations.add(conversation.id);
       const live = await getLive(parentId);
       if (live) await setLive(conversation.id, live);
@@ -2114,6 +2118,10 @@ The name ${asked} was not offered in this task. Do not search again: call one of
       return { conversationId: conversation.id, windowId: win.id };
     } catch (error) {
       await chrome.windows.remove(win.id).catch(() => undefined);
+      if (made && !this.#runs.has(made)) {
+        this.#workerConversations.delete(made);
+        await deleteConversation(made).catch(() => undefined);
+      }
       throw error;
     }
   }
