@@ -2,10 +2,10 @@
   "version": "1.0",
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
-    "branch": "codex/workspace-release-compat-20261122",
-    "sha": "455bfe55fc5021503ab583cd8b0260933a4fb6cd",
-    "sourceTimestampUtc": "2026-11-22T04:34:47+05:00",
-    "auditStartedUtc": "2026-11-22T02:16:59.814Z",
+    "branch": "codex/workspace-universal-closeout-20261122",
+    "sha": "a92ce585854573c7e1e4627dea4a63f82b59bb77",
+    "sourceTimestampUtc": "2026-11-22T16:50:10+05:00",
+    "auditStartedUtc": "2026-11-22T11:50:54.925Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -110665,7 +110665,7 @@
       "id": "surface:015cc267f70323e72e46",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sha256": "306a243431edbac3859e6f9b99a4c440571d432da9500fc960de72053d42ede2",
+      "sha256": "3290f207aefd6b8282b9d43beb60fbf2932fec799b943651d3ff1c9b0a20b351",
       "symbols": [
         "AppMark",
         "BusinessActionConfirmationInline",
