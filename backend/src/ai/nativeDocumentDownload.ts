@@ -13,7 +13,7 @@ export function isNativeDocumentFormat(value: unknown): value is NativeDocumentF
 // Only direct deliverable requests qualify. Mentions in questions, code,
 // attachments, and proposed software features must not add a file control.
 const request = /^(?:please\s+)?(?:(?:can|could|would)\s+you\s+)?(?:create|make|write|draft|generate|prepare|build|give\s+me)\s+/i;
-const document = '(?:document|report|proposal|brief|memo|letter|summary|guide|plan|handout|worksheet|sheet|checklist|agenda|schedule|runbook|playbook|handbook|postmortem|timeline|invoice|statement|workbook|spreadsheet|slide deck|slides|deck|presentation|file)';
+const document = '(?:document|report|proposal|brief|memo|letter|summary|guide|plan|handout|worksheet|sheet|checklist|agenda|schedule|runbook|playbook|handbook|postmortem|timeline|invoice|statement|budget|workbook|spreadsheet|slide deck|slides|deck|presentation|file)';
 const extensions = '\\.?(?:docx|pdf|xlsx|pptx|txt)';
 const fileFormat = '(' + extensions + '|word|excel|powerpoint)';
 const descriptionWord = '[\\p{L}\\p{N}-]+\\s+';
@@ -21,7 +21,7 @@ const beforePrefix = '^(?:(?:a|an|the|my)\\s+)?';
 const optionalDescription = '(?:\\s+(?:' + descriptionWord + '){0,3}' + document + ')';
 const inlinePrefix = beforePrefix + '(?:' + descriptionWord + '){0,3}';
 const otherFormat = '\\b(?:or|and|plus|instead of)\\s+(?:an?\\s+)?' + fileFormat + '\\b';
-const beforeBoundary = '(?=\\s*(?:[.,!?]|$)|\\s+(?:from|using|with|about|based on|on|for)\\b|\\s+' + otherFormat + ')';
+const beforeBoundary = '(?=\\s*(?:[.,!?]|$)|\\s+(?:from|using|with|about|based on|on|for|showing|containing|listing|including|covering|titled|named|that)\\b|\\s+' + otherFormat + ')';
 const beforeFormat = new RegExp(inlinePrefix + '(' + extensions + ')' + optionalDescription + '?' + beforeBoundary, 'iu');
 const beforeNamedFormat = new RegExp(inlinePrefix + '(word|excel|powerpoint)' + optionalDescription + beforeBoundary, 'iu');
 const competingFormat = new RegExp(otherFormat, 'iu');

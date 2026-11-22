@@ -21,6 +21,12 @@ test('plain-text downloads require an actual file request and use the existing d
     { status: 'complete' }), { completion: { status: 'complete' }, downloadFormat: 'txt' });
   assert.match(nativeDocumentPrompt('txt'), /Unicode characters and line breaks/);
 });
+
+test('recognizes a named document followed by a description of its contents', () => {
+  assert.equal(requestedNativeDocumentFormat('Create a downloadable XLSX budget showing typed numeric values and text IDs.'), 'xlsx');
+  assert.equal(requestedNativeDocumentFormat('Draft an editable DOCX handbook covering volunteer onboarding.'), 'docx');
+  assert.equal(requestedNativeDocumentFormat('Build an XLSX budgeting app showing current team targets.'), undefined);
+});
 import { buildNativeOpenUiShare, readNativeOpenUiShare } from './nativeOpenUiShare.js';
 import { completeNativeWorkspaceAnswer } from './nativeOpenUiWorkspace.js';
 import { answerObligationsSchema, type AnswerObligations } from './responsePresentation.js';
