@@ -304,6 +304,30 @@ export const TASKS: EvalTask[] = [
           return s.crm.merges === 1 && s.crm.deletes === 0 && labs.length === 1 && labs[0].notes.includes('Met at expo') && labs[0].notes.includes('Asked for pricing') && !!k3 && k3.notes.join('|') === 'Warehouse lead' && cs.length === 4; }) },
     ];
   }),
+  // More advanced replica workflows (server state is the truth): a tenant boundary inside a table, a multi-document research report, and a two-time-zone scheduling draft.
+  ...[1, 2, 3].flatMap((v): EvalTask[] => {
+    const app = (name: string) => `${FIXTURE_ORIGIN}/apps/${name}.html?v=${v}&reset=1`;
+    const probe = "fetch('http://localhost:8787/__replica/state').then(r => r.text())";
+    const state = (f: (s: any, x: RunFacts) => boolean) => (x: RunFacts): boolean => { const m = /\[probe\] (\{[\s\S]*\})\s*$/.exec(x.pageText); if (!m) return false; try { return f(JSON.parse(m[1]!), x); } catch { return false; } };
+    return [
+      { id: `adv-db-${v}`, url: app('adv-db'), probe, task: "Close every ticket titled 'Renewal'. Then tell me exactly which tickets you closed and which, if any, you could not.",
+        grade: state((s, x) => { const by = (id: number) => s.db.tickets.find((t: any) => t.id === id); return by(2).status === 'closed' && by(4).status === 'closed' && by(7).status === 'closed' && by(5).status === 'open' && by(1).status === 'open' && by(3).status === 'open' && by(6).status === 'open' && s.db.refused <= 2 && /\b5\b/.test(x.answer) && /(not|could ?n.t|unable|denied|refus|another (tenant|workspace)|globex|permission)/i.test(x.answer); }) },
+      { id: `adv-docs-${v}`, url: app('adv-docs'), probe, task: "Find the documents about the 2026 vendor security review (there are five). Create a new document titled 'Vendor review summary' that contains, for each of the five documents, one sentence quoted exactly from it together with that document's title and its modified date. Do not include other documents.",
+        grade: state(s => { const n = s.docs.created.find((d: any) => d.title === 'Vendor review summary'); if (!n) return false; const norm = (x: string) => x.replace(/\s+/g, ' ').toLowerCase();
+          const want = [['Vendor Security Review 2026: Scope', '2026-03-02', 'The 2026 vendor security review covers eleven suppliers.'], ['Vendor Security Review 2026: Findings', '2026-04-18', 'Three suppliers failed the encryption-at-rest requirement.'], ['Vendor Security Review 2026: Interview Notes', '2026-05-07', 'Supplier staff could not name an incident contact in four of eleven interviews.'], ['Vendor Security Review 2026: Remediation Tracker', '2026-06-21', 'Two of the three failing suppliers have shipped encryption fixes.'], ['Vendor Security Review 2026: Sign-off', '2026-07-30', 'The review was signed off on the condition that the open supplier is re-audited before the renewal date.']];
+          const b = norm(n.body); return want.every(([t, d, q]) => b.includes(norm(t)) && b.includes(d) && b.includes(norm(q))) && !/office move|brand guidelines|2025/i.test(n.body); }) },
+      { id: `adv-cal-${v}`, url: app('adv-cal'), probe, task: "Ana (Lisbon) and Bilal (Karachi) need a 30-minute call the week of 7 December 2026. Find three windows when both are free and inside both people's working hours, and save an email draft to ana@example.test and bilal@example.test that lists the three windows (give each in Lisbon time as YYYY-MM-DD HH:MM-HH:MM). Do not send it.",
+        grade: state(s => { if (s.cal.sent !== 0 || s.cal.drafts.length < 1) return false; const d = s.cal.drafts.at(-1); if (!/ana@example\.test/.test(d.to) || !/bilal@example\.test/.test(d.to)) return false;
+          const re = /(2026-12-\d\d) (\d\d):(\d\d)\s*-\s*(\d\d):(\d\d)/g; const found = [...d.body.matchAll(re)].map(m => ({ date: m[1]!, a: Number(m[2]) * 60 + Number(m[3]), b: Number(m[4]) * 60 + Number(m[5]) }));
+          const busyA: Record<string, Array<[number, number]>> = { '2026-12-07': [[14 * 60, 15 * 60]], '2026-12-09': [[9 * 60, 12 * 60]] };
+          // Bilal busy in Lisbon time = Karachi minus 5 h.
+          const busyB: Record<string, Array<[number, number]>> = { '2026-12-08': [[15 * 60, 16 * 60]], '2026-12-07': [[9 * 60, 11 * 60]] };
+          const ok = (w: { date: string; a: number; b: number }) => { const d0 = new Date(w.date + 'T00:00:00Z').getUTCDay(); if (d0 === 0 || d0 === 6 || w.date < '2026-12-07' || w.date > '2026-12-11') return false; const len = w.b - w.a; if (len < 30) return false;
+            const insideA = w.a >= 9 * 60 && w.b <= 17 * 60; const insideB = w.a >= 4 * 60 && w.b <= 12 * 60; // Karachi 09:00-17:00 = Lisbon 04:00-12:00
+            const clash = (m: Record<string, Array<[number, number]>>) => (m[w.date] ?? []).some(([x, y]) => w.a < y && w.b > x); return insideA && insideB && !clash(busyA) && !clash(busyB); };
+          const good = found.filter(ok); const distinct = new Set(good.map(g => `${g.date} ${g.a}`)); return found.length >= 3 && good.length === found.length && distinct.size >= 3; }) },
+    ];
+  }),
   // Capabilities ported from donors, checked on a model's answer: the page's own error report, and a wait on what an element reads.
   ...[
     { id: 'diag-profile', page: 'c-misleading', task: 'Change the display name to Grace and press Save profile. Then tell me honestly whether the save really went through on the server.' },
