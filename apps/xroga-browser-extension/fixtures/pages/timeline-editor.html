@@ -6,7 +6,7 @@
 <!-- A painted timeline: a ruler (top 15%), one clip track. Click the ruler to move the playhead, press s to split the clip under the playhead,
      drag a clip to move it. Units are thousandths of the canvas width. State is exposed as window.clips for the test, never drawn as text. -->
 <canvas id="c" role="img" aria-label="Timeline editor"></canvas>
-<ul aria-label="Clips" style="position:absolute;left:-9999px"><li>Clip A starts at 100 and ends at 400</li></ul>
+<ul id="cliplist" aria-label="Clips" style="position:absolute;left:-9999px"><li>Clip A starts at 100 and ends at 400</li></ul>
 <script>
 const c = document.getElementById('c'), g = c.getContext('2d');
 c.width = innerWidth; c.height = innerHeight;
@@ -14,6 +14,8 @@ window.clips = [{ id: 'A', s: 100, e: 400 }];
 window.playhead = 250;
 const Y0 = 0.4, Y1 = 0.7;
 function draw() {
+  // The off-screen clip list follows the real clips (it used to stay at its first text after a split, which told the agent the split had not happened).
+  const list = document.getElementById('cliplist'); if (list && window.clips) list.innerHTML = window.clips.map(k => '<li>Clip ' + k.id + ' starts at ' + Math.round(k.s) + ' and ends at ' + Math.round(k.e) + '</li>').join('');
   g.fillStyle = '#222'; g.fillRect(0, 0, c.width, c.height);
   g.fillStyle = '#444'; g.fillRect(0, 0, c.width, c.height * 0.15);
   for (const k of window.clips) { g.fillStyle = '#3a7'; g.fillRect(k.s / 1000 * c.width, Y0 * c.height, (k.e - k.s) / 1000 * c.width - 2, (Y1 - Y0) * c.height); }

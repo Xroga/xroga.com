@@ -32,6 +32,7 @@ import { decodeImage, describeHits, FIND_COLOR_TOOL, scanColor } from './pixels'
 import { learnFrom, turnEffort } from './run';
 import { PaintedInputDeliveryGuard } from './painted-input-delivery';
 import { ProgressTracker } from './progress-tracker';
+import { DeadSpots } from './dead-spots';
 import { skillsFor } from './skills';
 import { describeHit, renderSkill, searchSkills, skillById } from './skill-catalog';
 import { runMenuPath, validateMenuPath } from './menu-path';
@@ -757,6 +758,11 @@ ${ledger}` : ''),
       };
     }
     const args = (call.input ?? {}) as Record<string, unknown>;
+    // A click at a point that already did nothing twice on this same, unchanged page is refused before it is sent (dead-spots.ts).
+    if (call.toolName === 'canvas' && Array.isArray(args.at) && args.at.length === 2 && ['click', 'double_click', 'right_click'].includes(String(args.action))) {
+      const why = this.#deadSpots.refusal(Number(args.at[0]), Number(args.at[1]));
+      if (why) return { call, kind, isError: true, text: why };
+    }
     // The same text typed twice into a painted editor, or typed without replace after an error, is the splice failure: stop it in code.
     if (call.toolName === 'canvas' && args.action === 'type' && typeof args.text === 'string' && args.text.length > 40) {
       const tabId = typeof args.tabId === 'number' ? args.tabId : this.#boundTab ?? this.#activeTab;
@@ -900,9 +906,12 @@ ${ledger}` : ''),
     // A pointer action on a painted canvas is always followed by a look at the result. The look is taken here, with the coordinate grid, and
     // goes back with the action: the model checks it (right menu? right object?) and aims its next action in the same turn instead of
     // spending a turn on a screenshot.
-    if (!capture && this.options.model.profile.vision && outcome.call.toolName === 'canvas' && outcome.result?.ok) {
+    // A key pressed on a painted page (a shortcut, a split, a delete) changes only pixels: the layer sees no DOM effect and reports "effect: none", which reads as
+    // "nothing happened". Once the run is working with canvas pictures, a key gets the same after-picture as a pointer action, so the model sees what it did.
+    const paintedKey = (outcome.call.toolName === 'press' || (outcome.call.toolName === 'canvas' && (outcome.call.input as { action?: unknown } | undefined)?.action === 'key')) && this.#lastCanvasPicture !== undefined;
+    if (!capture && this.options.model.profile.vision && (outcome.call.toolName === 'canvas' || paintedKey) && outcome.result?.ok) {
       const a = (outcome.call.input ?? {}) as Record<string, unknown>;
-      if (a.action !== 'type' && a.action !== 'key') {
+      if (a.action !== 'type' && (a.action !== 'key' || paintedKey)) {
         await new Promise(r => setTimeout(r, 250));
         const tabId = outcome.result.page?.tabId ?? a.tabId ?? this.#activeTab;
         const shot = await this.#time('tool.aftershot' as never, () => this.options.layer.call('screenshot', { ...(typeof tabId === 'number' ? { tabId } : {}), grid: true, marks: true }, this.options.signal)).catch(() => undefined);
@@ -916,6 +925,9 @@ ${ledger}` : ''),
             const same = this.#lastCanvasPicture !== undefined && this.#lastCanvasPicture === capture.data;
             this.#lastCanvasPicture = capture.data;
             this.#canvasNoChange = same ? this.#canvasNoChange + 1 : 0;
+            if (paintedKey && !same) notes.push(note('The key changed the painted picture (the layer saw no change in the page structure, which is normal for a canvas). Judge the result from the attached picture, not from "effect: none".'));
+            if (!same) this.#deadSpots.changed();
+            else if (Array.isArray(a.at) && a.at.length === 2 && ['click', 'double_click', 'right_click'].includes(String(a.action))) this.#deadSpots.missed(Number(a.at[0]), Number(a.at[1]));
             // Where the click really landed, next to what is around it: the picture the model aims from is rebuilt as an enlarged crop with a crosshair.
             if (same && Array.isArray(a.at) && a.at.length === 2) {
               const [cx, cy] = a.at as [number, number];
@@ -928,6 +940,8 @@ ${ledger}` : ''),
             }
             if (same && this.#canvasNoChange >= 3) {
               notes.push(note(`${this.#canvasNoChange} canvas actions in a row changed nothing on the page. Stop aiming by eye at this spot. Take screenshot with region [x0, y0, x1, y1] around the label you want (for a menu bar, the whole top strip) and read its exact position from the enlarged grid, or use another way in: a keyboard shortcut or menu key (Alt, F10), the application's command box or script console.`));
+            } else if (same && paintedKey) {
+              notes.push(note('The picture did not change after this key: the canvas may not have keyboard focus (click on it first) or the key does nothing here.'));
             } else if (same) {
               notes.push(note('The page looks exactly as before this action: it hit nothing that reacts. Do not click near this point again; re-read where the target is.'));
             }
@@ -1102,7 +1116,10 @@ ${ledger}` : ''),
     // The challenge never blocks a genuine stop (a login, a CAPTCHA, an approval, missing information): the second `done` is accepted as it is.
     if (outcomeArg !== 'success' && !this.#giveUpChallenged && !this.#recoveryReadOnly) {
       this.#giveUpChallenged = true;
-      const blocked = /log ?in|sign ?in|password|captcha|2fa|mfa|verification code|approv|authori[sz]|permission|credential|payment|declined|cancel|not allowed|blocked by/i.test(`${summary} ${String(args.summary ?? '')}`);
+      // A stop because a server refused the work (a write answered 4xx/5xx in a receipt this run saw, or one the summary names) is a real external blocker too: challenging
+      // it only sent the agent back to press the same failing control.
+      const refusedByServer = Object.keys(this.guards.state.writeFails ?? {}).length > 0 || /\b(?:HTTP|status|answered|returned|error)\s*(?:40[0-9]|42[29]|5\d\d)\b|\b(?:40[0-9]|42[29]|5\d\d) \((?:the server|forbidden|refused)|row-level security|another tenant|refused by the server/i.test(`${summary} ${String(args.summary ?? '')}`);
+      const blocked = refusedByServer || /log ?in|sign ?in|password|captcha|2fa|mfa|verification code|approv|authori[sz]|permission|credential|payment|declined|cancel|not allowed|blocked by/i.test(`${summary} ${String(args.summary ?? '')}`);
       const untried = ['canvas', 'batch', 'press', 'menu_path', 'run_script_console', 'screenshot', 'find', 'scroll', 'drag', 'http_get', 'find_skill']
         .filter(n => this.#toolNames.has(n) && !this.#toolsUsed.has(n));
       if (!blocked && untried.length && this.#toolsUsed.size > 0) {
@@ -1586,6 +1603,8 @@ ${ledger}` : ''),
   #aimNoted = false;
   #lastCanvasPicture: string | undefined;
   #canvasNoChange = 0;
+  /** Points that were clicked on an unchanged painted page and did nothing (dead-spots.ts). */
+  readonly #deadSpots = new DeadSpots();
   #giveUpChallenged = false;
   #toolsUsed = new Set<string>();
   #plan = new TaskPlan();

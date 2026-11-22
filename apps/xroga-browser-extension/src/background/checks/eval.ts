@@ -76,7 +76,9 @@ async function runOne(
     urlPolicy: { allow: [], deny: [], blocked: [] },
     decideWrite: () => ({ decision: mode === 'auto' ? 'run' : 'ask', by: 'auto', canRemember: true }),
   });
-  const tab = await chrome.tabs.create({ url: task.url, active: false });
+  // The task's page is the tab in front, as a person's tab is while the agent works on it: a background tab makes every screenshot several seconds slower,
+  // which is not what the product does and made visual tasks time out in the evaluation only.
+  const tab = await chrome.tabs.create({ url: task.url, active: true });
   await waitForLoad(tab.id!);
   session.shareTab(tab.id!);
   const cards: Array<{ target: string; answer: string }> = [];
