@@ -680,7 +680,9 @@ export class Session {
     if (tool === 'tabs') return null;
     const explicit = typeof args.tabId === 'number' ? args.tabId : undefined;
     const target = args.target as { ref?: string } | undefined;
-    const ref = target?.ref ?? ((args.ref ?? args.scope ?? args.within) as string | undefined);
+    const asked = (args.ref ?? args.scope ?? args.within) as string | undefined;
+    // A scope or within written as a role and name (`dialog "Name"`) names no ref: the tab is the active one.
+    const ref = target?.ref ?? (asked !== undefined && !/^[a-z]+\d+$/i.test(asked) && asked !== args.ref ? undefined : asked);
     if (ref) {
       const record = this.controller.registry.get(ref);
       // A label this registry never issued can never become valid, whatever the tab.

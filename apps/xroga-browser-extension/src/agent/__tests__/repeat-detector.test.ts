@@ -52,3 +52,26 @@ describe('RepeatDetector', () => {
     expect([click(f, 'New message'), fill(f)].filter(Boolean)).toHaveLength(0);
   });
 });
+
+describe('RepeatDetector: the same form saved again with the same values', () => {
+  const set = (d: RepeatDetector, name: string, value: unknown) => d.record('set', { value }, `set · [a2] checkbox «${name}» · pointer`, false);
+  const save = (d: RepeatDetector) => d.record('click', {}, 'click · [a4] button «Save» · pointer · submit: allowed by Auto mode · dispatched', false);
+
+  it('tells once, on the third identical re-fill and save', () => {
+    const d = new RepeatDetector();
+    const notes: Array<string | undefined> = [];
+    for (let i = 0; i < 5; i++) notes.push(set(d, 'Weekly digest', true), save(d));
+    const given = notes.filter(Boolean);
+    expect(given).toHaveLength(1);
+    expect(given[0]).toMatch(/saved this same form with the same values 3 times/);
+  });
+
+  it('does not tell for different values each time, or for a plain Save with nothing typed', () => {
+    const d = new RepeatDetector();
+    const notes: Array<string | undefined> = [];
+    for (let i = 0; i < 6; i++) notes.push(set(d, 'Weekly digest', i), save(d));
+    for (let i = 0; i < 6; i++) notes.push(save(d));
+    expect(notes.filter(n => n && /saved this same form/.test(n))).toHaveLength(0);
+  });
+});
+

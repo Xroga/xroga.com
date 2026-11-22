@@ -9,7 +9,7 @@ export const SemanticTargetSchema = z.strictObject({
   role: z.string().min(1).describe('Accessibility role, such as "button" or "link"'),
   name: z.string().optional().describe('Accessible name; matched exactly after whitespace is collapsed'),
   nth: z.number().int().min(0).optional().describe('Zero-based index among the matches, in document order'),
-  within: ref.optional().describe('Only match inside the element with this ref'),
+  within: z.string().min(1).max(120).optional().describe('Only inside this ref, or inside `dialog "Name"` (role and part of the name)'),
 });
 export const SelectorTargetSchema = z.strictObject({
   selector: z.string().min(1).describe('CSS selector (capability "selector")'),
@@ -73,7 +73,7 @@ const actionCommon = {
 
 export const SnapshotArgsSchema = z.strictObject({
   ...readCommon,
-  scope: ref.optional().describe('Only the subtree of this ref'),
+  scope: z.string().min(1).max(120).optional().describe('Only the subtree of this ref or of `dialog "Name"`'),
   mode: z
     .enum(['interactive', 'all'])
     .optional()

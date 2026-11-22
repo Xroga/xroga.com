@@ -207,3 +207,25 @@ defineScenario({
   },
 });
 
+// Codex's failing trace named a container and the control inside it in one locator (dialog >> option). `within` takes a role and part of a name as well as a ref, so that is one call here too.
+defineScenario({
+  id: 'S3-within-a-named-container',
+  set: 'C',
+  title: 'an option that exists inside a dialog and outside it is clicked inside the dialog by within `dialog "link whatsapp"`; a missing container is refused with what is there',
+  covers: 'a semantic target can be scoped to the one container named by role and name, with a case-insensitive part of the name accepted',
+  async run(ctx) {
+    await ctx.open(`${FIXTURE_ORIGIN}/c-dialog-options.html`);
+    const plain = await ctx.call('click', { target: { role: 'option', name: 'GB +44' } });
+    const scoped = await ctx.call('click', { target: { role: 'option', name: 'GB +44', within: 'dialog "link whatsapp"' } });
+    const read = JSON.stringify(await ctx.call('read', {}));
+    const snap = await ctx.call('snapshot', { scope: 'dialog "link whatsapp"' });
+    const inside = JSON.stringify(snap);
+    const missing = await ctx.call('click', { target: { role: 'option', name: 'GB +44', within: 'dialog Payment' } });
+    return outcome(
+      'without within the two identical options are ambiguous; with within the dialog one is clicked; a missing dialog is refused',
+      JSON.stringify({ plain: plain.ok, plainWhy: plain.error?.code, scoped: scoped.ok, said: /dialog list/.test(read), missing: missing.ok, why: missing.error?.message?.slice(0, 160) }),
+      plain.ok === false && scoped.ok === true && /dialog list/.test(read) && snap.ok === true && /Phone number country/.test(inside) && !/Page country codes/.test(inside) && missing.ok === false && /No dialog/.test(missing.error?.message ?? ''),
+    );
+  },
+});
+

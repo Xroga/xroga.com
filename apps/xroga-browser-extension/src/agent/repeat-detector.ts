@@ -20,9 +20,17 @@ export function signatureOf(tool: string, args: Record<string, unknown>, text: s
   return `${tool} ${hit[1]} «${name}»`;
 }
 
+/**
+ * The same form saved again with the same values. A reload that seems to show an unsaved form makes a model re-apply every field and press Save again, several times, which
+ * changes nothing (or, on a create form, adds duplicates). The values typed since the last submit, with the submit control, make the key; the third identical one is told once.
+ */
+const RESAVES = 3;
+
 export class RepeatDetector {
   #history: string[] = [];
   #told = new Set<string>();
+  #typed: string[] = [];
+  #saves = new Map<string, number>();
 
   /** Records one acting call; returns the advice the first time a block has been done REPEATS times in a row. */
   record(tool: string, args: Record<string, unknown>, text: string, isError: boolean): string | undefined {
@@ -32,6 +40,8 @@ export class RepeatDetector {
       this.#history = [];
       return undefined;
     }
+    const again = this.#resave(tool, args, text);
+    if (again) return again;
     this.#history.push(signatureOf(tool, args, text));
     if (this.#history.length > MAX_HISTORY) this.#history.shift();
     const h = this.#history;
@@ -49,5 +59,27 @@ export class RepeatDetector {
       return `You have now done this same sequence ${REPEATS} times in a row: ${block.join(' → ')}. If more items remain, do not carry on one call at a time: put ALL the remaining repetitions in one batch call (the steps in order, each item's values in its own steps, targets by role and name because a ref only lasts until the page changes), then check the result with a snapshot or read. batch stops at the first failure and returns the trail. Skip this if each item needs something you must read first.`;
     }
     return undefined;
+  }
+
+  #resave(tool: string, args: Record<string, unknown>, text: string): string | undefined {
+    const hit = /\[\w+\]\s+(\w+)\s+«([^»]*)»/.exec(text.slice(0, 400));
+    if (tool === 'set' && hit) this.#typed.push(`${hit[1]} ${hit[2]}=${JSON.stringify(args.value)}`);
+    else if (tool === 'fill_form' && Array.isArray(args.fields)) this.#typed.push(...args.fields.map(f => JSON.stringify((f as { value?: unknown }).value)));
+    else if ((tool === 'click' || tool === 'press') && /\bsubmit:/.test(text.slice(0, 600)) && hit) {
+      const key = `${hit[1]} ${hit[2]} | ${[...this.#typed].sort().join(';')}`;
+      this.#typed = [];
+      if (!this.#typedAny(key)) return undefined;
+      const n = (this.#saves.get(key) ?? 0) + 1;
+      this.#saves.set(key, n);
+      if (n === RESAVES) {
+        return `You have now saved this same form with the same values ${RESAVES} times (${hit[2]!.slice(0, 40)}). Saving it again will not change anything, and on a create form it can add a duplicate. If a reload shows it unsaved, find out why instead (the request status of the save, diagnostics, whether the page restores its own state), or finish with what you can show and say what stays unverified.`;
+      }
+    }
+    return undefined;
+  }
+
+  /** A save with nothing typed before it (a plain Save button) is not the same loop as a form re-filled with the same values: only the second kind counts. */
+  #typedAny(key: string): boolean {
+    return !key.endsWith('| ');
   }
 }

@@ -49,6 +49,28 @@ function asShown(ctx: ToolContext, observation: Observation, ref: string): RefRe
   return shown ? { ...record, ...shown } : record;
 }
 
+/** A ref such as "a12", as opposed to a container written as text. */
+export const isRef = (text: string): boolean => /^[a-z]+\d+$/i.test(text);
+
+/**
+ * A container written as `dialog "Link WhatsApp"` or `listitem ana@x.test`: its role, then the name (exact, else a case-insensitive part of it). The one element that matches; none
+ * or several are refused with what is there. One call replaces a snapshot taken only to find the container's ref (the shape of Playwright's `dialog >> option`).
+ */
+export function findContainer(roots: ONode[], text: string): ONode {
+  const m = /^(\w+)(?:\s+(.+))?$/.exec(text.trim());
+  if (!m) throw new LayerError('INVALID_ARGUMENT', `"${text}" is neither a ref nor a role and name such as dialog "Name"`);
+  const wantRole = m[1]!.toLowerCase();
+  const wantName = m[2] === undefined ? undefined : cleanText(m[2].replace(/^["\u00ab]|["\u00bb]$/g, ''));
+  const all: ONode[] = [];
+  walk(roots, n => { if (n.role.toLowerCase() === wantRole || n.rawRole.toLowerCase() === wantRole) all.push(n); });
+  let hits = wantName === undefined ? all : all.filter(n => n.name === wantName);
+  if (!hits.length && wantName !== undefined) hits = all.filter(n => n.name.toLowerCase().includes(wantName.toLowerCase()));
+  const label = `${m[1]}${wantName !== undefined ? ` ${quote(wantName)}` : ''}`;
+  if (!hits.length) throw new LayerError('NO_MATCH', `No ${label} is on the page to look inside.${all.length ? ` ${wantRole}s present: ${all.slice(0, 6).map(n => quote(n.name, 50)).join('; ')}` : ''}`);
+  if (hits.length > 1) throw new LayerError('AMBIGUOUS_TARGET', `${hits.length} elements match ${label} to look inside: ${hits.slice(0, 8).map(n => `${n.ref ? `[${n.ref}] ` : ''}${quote(n.name, 50)}`).join('; ')}`);
+  return hits[0]!;
+}
+
 /**
  * The ref of the one actionable node a semantic target names; it refuses to guess. `fresh` takes a new capture instead
  * of reusing a recent one, for `wait`, which looks for a change the page made on its own.
@@ -61,7 +83,10 @@ async function resolveSemantic(
   const observation = fresh ? await observeTab(ctx) : await recentObservation(ctx);
   const tabId = ctx.tab().tabId;
   let roots = observation.tree;
-  if (target.within) {
+  const container = target.within && !isRef(target.within) ? target.within : undefined;
+  if (container) {
+    roots = findContainer(roots, container).children;
+  } else if (target.within) {
     const within = lookupRef(ctx.controller.registry, ctx.session.known, target.within, tabId);
     let found: ONode | undefined;
     walk(roots, n => {

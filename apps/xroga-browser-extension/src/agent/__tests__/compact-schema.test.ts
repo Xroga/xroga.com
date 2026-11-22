@@ -30,7 +30,8 @@ describe('compactSchema', () => {
   it('makes the full tool catalogue smaller than the 32,064 characters it was by about a fifth', () => {
     // 0.84 until the diagnostics tool, wait.reading and count.delta (about 1,000 characters, served from the provider's prompt cache) were added.
     // 0.875 with the enabled and attribute postconditions (about 200 characters across the tools that take expect).
-    expect(size(tools)).toBeLessThan(32_064 * 0.875);
+    // 0.89 with within taking `dialog "Name"` (a container named by role and part of its name, about 450 characters across the tools that take a semantic target).
+    expect(size(tools)).toBeLessThan(32_064 * 0.89);
   });
 
   it('offers the at option of click only to a run that asks for it', () => {

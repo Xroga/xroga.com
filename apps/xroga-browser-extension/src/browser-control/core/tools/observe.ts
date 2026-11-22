@@ -5,7 +5,8 @@ import type { FindArgs, ReadArgs, ScreenshotArgs, SnapshotArgs } from '../../pro
 import type { FindMatch, ScreenshotData, SnapshotData } from '../../protocol/results';
 import type { ToolContext, ToolOutcome } from '../controller';
 import { lookupRef } from '../refs';
-import type { RefRecord, Shown } from '../refs';
+import type { Shown } from '../refs';
+import { findContainer, isRef } from '../interaction/resolve';
 import { captureTier1 } from '../perception/capture';
 import { buildObservation } from '../perception/observe';
 import type { Observation } from '../perception/observe';
@@ -35,7 +36,7 @@ export function shownOf(observation: Observation, refs: string[]): Array<[string
 /** Captures the tab and builds an observation. Does not change the session's known set. */
 export async function observeTab(
   ctx: ToolContext,
-  options: { mode?: 'interactive' | 'all'; scope?: RefRecord; window?: 'viewport' | 'near' | 'page' } = {},
+  options: { mode?: 'interactive' | 'all'; scope?: { frameId: string; backendNodeId: number }; window?: 'viewport' | 'near' | 'page' } = {},
 ): Promise<Observation> {
   const attachment = await ctx.attach();
   const tab = ctx.tab();
@@ -85,7 +86,14 @@ export async function snapshot(
   as: 'full' | 'diff' = 'full',
 ): Promise<ToolOutcome<SnapshotData>> {
   const tab = ctx.tab();
-  const scope = args.scope ? lookupRef(ctx.controller.registry, ctx.session.known, args.scope, tab.tabId) : undefined;
+  let scope: { frameId: string; backendNodeId: number } | undefined;
+  if (args.scope && isRef(args.scope)) scope = lookupRef(ctx.controller.registry, ctx.session.known, args.scope, tab.tabId);
+  else if (args.scope) {
+    // `dialog "Link WhatsApp"`: the subtree of the one container with that role and name, without a snapshot first to find its ref.
+    const whole = await observeTab(ctx, { mode: 'all' });
+    const node = findContainer(whole.tree, args.scope);
+    scope = { frameId: node.frameId, backendNodeId: node.backendNodeId! };
+  }
   const observation = await observeTab(ctx, { mode: args.mode, scope, window: args.window });
   const previous = ctx.session.seen.get(tab.tabId);
   if (scope) ctx.session.known.add(tab.tabId, shownOf(observation, observation.refs));
