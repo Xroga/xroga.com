@@ -108,3 +108,5 @@ In the 10-draft runs the model created nine drafts in one batch call by itself; 
 - Chromium scenarios 308 of 308 PASS (`scenarios-full-20261122g.json`); extension unit suite 1493 passed, 4 skipped.
 - **Remaining against the recordings:** a live run that uses `items`/`mark`; a real MV3 interruption in the middle of a batch job (only the stored-state restore is tested); verifying many items in one call is possible but the model does not choose it reliably; the competitor's source and speed on the same task were not measured (only its recording was viewed).
 
+
+**Release after round 9.** Build commit `50c8965b8` (working tree clean), ZIP `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-50c8965b8.zip`, SHA-256 `E7EF7706E2445E4F706EC447C263C9D2E1051B6DF27F2BFBCFB7A4C78BC2B02D`, manifest `ARTIFACT-MANIFEST-50c8965b8.json`. Upgrade smoke from the `9d57e0c71` ZIP in real Chromium: same id, storage kept, service worker alive, side panel loads. Backend unchanged (tag `browser-op-1110` on `effort-hm9`; rollback `00146-wod`). Staging only; production not live with any of this.
