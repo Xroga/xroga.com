@@ -1604,7 +1604,12 @@ const components:
     table: ({
       children,
     }) => (
-      <div className="overflow-x-auto rounded-xl border border-[var(--card-border)]/60">
+      <div
+        tabIndex={0}
+        role="group"
+        aria-label="Answer table"
+        className="overflow-x-auto rounded-xl border border-[var(--card-border)]/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
+      >
         <table className="w-full text-[13px] sm:text-[14px]">
           {children}
         </table>

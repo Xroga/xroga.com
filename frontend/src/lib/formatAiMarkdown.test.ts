@@ -43,6 +43,7 @@ test('CommonMark content renders links, emphasis, fenced code, and tables with e
   assert.match(html, /language-ts/);
   assert.match(html, /const ready = true;/);
   assert.match(html, /TypeScript/);
+  assert.match(html, /tabindex="0" role="group" aria-label="Answer table"/);
   assert.match(html, /aria-label="Copy code"/);
   assert.match(html, /<td[^>]*><\/td>/, 'the empty GFM cell must remain in the table');
   assert.doesNotMatch(html, /onerror|src="x"/i);
