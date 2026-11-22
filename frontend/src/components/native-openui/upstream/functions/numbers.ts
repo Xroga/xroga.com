@@ -18,6 +18,14 @@ export const Sqrt = defineFunction({
   fn: ({ number }) => finite(Math.sqrt(number)),
 });
 
+export const RoundUp = defineFunction({
+  name: "RoundUp",
+  description: "Rounds up to a whole number without changing an integer, e.g. @RoundUp(3.01) is 4 and @RoundUp(3) is 3",
+  params: z.object({ value: z.number() }),
+  returns: z.number(),
+  fn: ({ value }) => Math.ceil(value),
+});
+
 export const Random = defineFunction({
   name: "Random",
   description: "Random number from min to max (integer true: a whole number, max included); draws anew each time, so call it inside @Set",

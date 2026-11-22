@@ -84,6 +84,13 @@ var Sqrt = defineFunction({
   returns: z2.number(),
   fn: ({ number }) => finite(Math.sqrt(number))
 });
+var RoundUp = defineFunction({
+  name: "RoundUp",
+  description: "Rounds up to a whole number without changing an integer, e.g. @RoundUp(3.01) is 4 and @RoundUp(3) is 3",
+  params: z2.object({ value: z2.number() }),
+  returns: z2.number(),
+  fn: ({ value }) => Math.ceil(value)
+});
 var Random = defineFunction({
   name: "Random",
   description: "Random number from min to max (integer true: a whole number, max included); draws anew each time, so call it inside @Set",
@@ -222,10 +229,10 @@ function format(value, options) {
 }
 var Format = defineFunction2({
   name: "Format",
-  description: 'Number as text: "number" 12,345.6, "currency" $12,345.68 (currency is a code like "EUR"), "percent" 45 -> 45%, "compact" 1.2M ($1.2M with a currency)',
+  description: 'Number as text: "number" 12,345.6, "fixed" 12,345.60 (exact requested decimal places, default 2), "currency" $12,345.68 (currency is a code like "EUR"), "percent" 45 -> 45%, "compact" 1.2M ($1.2M with a currency)',
   params: z3.object({
     value: z3.number(),
-    kind: z3.enum(["number", "currency", "percent", "compact"]).optional(),
+    kind: z3.enum(["number", "currency", "percent", "compact", "fixed"]).optional(),
     decimals: z3.number().optional(),
     currency: z3.string().optional()
   }),
@@ -235,6 +242,10 @@ var Format = defineFunction2({
     const d = decimals === void 0 ? void 0 : Math.min(Math.max(Math.trunc(decimals), 0), 10);
     const digits = (fallbackMax, fallbackMin = 0) => d === void 0 ? { minimumFractionDigits: fallbackMin, maximumFractionDigits: fallbackMax } : { minimumFractionDigits: fallbackMin && d, maximumFractionDigits: d };
     switch (kind) {
+      case "fixed": {
+        const precision = d ?? 2;
+        return format(value, { minimumFractionDigits: precision, maximumFractionDigits: precision });
+      }
       case "currency":
         return format(value, { style: "currency", currency: currencyCode(currency), ...digits(2, 2) });
       case "percent":
@@ -616,6 +627,7 @@ var nativeFunctions = [
   Payment,
   Percent,
   Pow,
+  RoundUp,
   Sqrt,
   Format,
   Plural,

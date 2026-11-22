@@ -616,6 +616,10 @@ test('a named official publisher fixes the source scope without a model-supplied
     ['nist.gov', 'nasa.gov']);
   assert.deepEqual(workspacePublicSearchQuery('Using only official pages (nist.gov), look up the latest NIST digital identity guidance.', true)?.officialDomains,
     ['nist.gov']);
+  assert.deepEqual(workspacePublicSearchQuery('Search the public web for the NOAA definition of a marine heatwave. Use only official NOAA pages (noaa.gov). Give the duration and threshold. Do not take any external action.', true), {
+    query: 'the NOAA definition of a marine heatwave. Give the duration and threshold site:noaa.gov',
+    officialDomains: ['noaa.gov'],
+  });
   for (const denied of [
     'Using only official Unknown Agency pages, find current published records.',
     'Using only official NIST and Unknown Agency pages, compare public standards.',

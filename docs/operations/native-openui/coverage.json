@@ -69,6 +69,7 @@
     "Payment",
     "Percent",
     "Pow",
+    "RoundUp",
     "Sqrt",
     "Format",
     "Plural",

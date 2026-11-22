@@ -100,6 +100,10 @@
 .xroga-native-openui .iui-markdown > .iui-md-h + * {
   margin-block-start: .4rem;
 }
+.xroga-native-openui .iui-markdown > :is(p, ul, ol, blockquote) {
+  max-inline-size: 68ch;
+}
+.xroga-native-openui .iui-markdown > p { text-wrap: pretty; }
 .xroga-native-openui .iui-text:not(.iui-text-xs, .iui-text-sm) { font-size: 1rem; line-height: 1.65; }
 .xroga-native-openui .iui-caption { font-size: .875rem; line-height: 1.55; }
 .xroga-native-openui .iui-check { align-items: flex-start; }
@@ -114,7 +118,7 @@
   border-radius: 12px;
   padding: var(--iui-card-padding-limit);
 }
-.xroga-native-openui .iui-card:has(> .native-answer-controls) { max-inline-size: 40rem; }
+.xroga-native-openui .iui-card:has(> .native-answer-controls) { max-inline-size: 36rem; }
 .xroga-native-openui .iui-grid:has(> .native-answer-metric):not(:has(> :not(.native-answer-metric))) {
   --iui-grid-child-min-limit: 7.5rem;
   --iui-grid-gap-limit: .625rem;
@@ -123,15 +127,16 @@
 .xroga-native-openui .iui-card > .iui-text { font-size: .9375rem; }
 .xroga-native-openui .iui-table-scroll { border-color: var(--native-line); }
 .xroga-native-openui .iui-table :is(td,th) {
-  padding: .55rem .7rem;
+  padding: .5rem clamp(.5rem, 1.4vw, .75rem);
   font-size: .875rem;
   line-height: 1.5;
+  vertical-align: top;
   /* Keep ordinary words in table intrinsic widths. The table's own
      scroll container can handle wider layouts at narrow answer widths. */
   overflow-wrap: break-word;
   word-break: normal;
 }
-.xroga-native-openui .iui-table th { font-weight: 650; }
+.xroga-native-openui .iui-table th { font-weight: 650; white-space: normal; }
 .xroga-native-openui .iui-table th button { min-height: 1.75rem; }
 .xroga-native-openui .iui-slider-head { font-size: .9375rem; }
 .xroga-native-openui .iui-range { --iui-range-thumb: var(--native-accent); --iui-range-track: var(--native-accent-soft); }
@@ -182,28 +187,51 @@
 .native-answer-controls-grid > :is(button, .iui-button) { align-self: end; justify-self: start; }
 .native-answer-draft-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-block-start: .75rem; }
 .native-answer-draft-actions > [role="status"] { color: var(--iui-muted); font-size: .8125rem; }
-.xroga-native-openui .iui-flow > .native-answer-metric:has(+ .native-answer-controls) {
-  max-inline-size: 40rem;
-  padding: .875rem 1rem .625rem;
+/* Adjacent controls and readouts form one tool, even when the program
+   does not put them in an explicit Card. Leave articles and charts full width. */
+.xroga-native-openui .iui-flow:not(.iui-card) > :is(
+  .native-answer-metric:has(+ .native-answer-controls),
+  .native-answer-controls:has(+ .native-answer-metric, + [data-native-readouts]),
+  .native-answer-metric + .native-answer-controls,
+  .native-answer-controls + .native-answer-metric,
+  .native-answer-controls + [data-native-readouts]
+) {
+  max-inline-size: 36rem;
+  padding: .75rem;
   border: 1px solid var(--native-line);
+  background: var(--native-panel);
+}
+.xroga-native-openui .iui-flow:not(.iui-card) > :is(
+  .native-answer-metric:has(+ .native-answer-controls),
+  .native-answer-controls:has(+ .native-answer-metric, + [data-native-readouts])
+) {
   border-block-end: 0;
-  border-radius: 14px 14px 0 0;
-  background: var(--native-panel);
+  border-start-start-radius: 12px;
+  border-start-end-radius: 12px;
 }
-.xroga-native-openui .iui-flow > .native-answer-metric + .native-answer-controls {
-  max-inline-size: 40rem;
-  position: relative;
+.xroga-native-openui .iui-flow:not(.iui-card) > :is(
+  .native-answer-metric + .native-answer-controls,
+  .native-answer-controls + .native-answer-metric,
+  .native-answer-controls + [data-native-readouts]
+) {
   margin-block-start: 0;
-  padding: 1.75rem 1rem .875rem;
-  border: 1px solid var(--native-line);
-  border-block-start: 0;
-  border-radius: 0 0 14px 14px;
-  background: var(--native-panel);
+  border-end-start-radius: 12px;
+  border-end-end-radius: 12px;
 }
-.xroga-native-openui .iui-flow > .native-answer-metric + .native-answer-controls legend {
+.xroga-native-openui .iui-flow:not(.iui-card) > :is(
+  .native-answer-metric + .native-answer-controls,
+  .native-answer-controls:has(+ .native-answer-metric, + [data-native-readouts])
+) {
+  position: relative;
+  padding-block-start: 1.875rem;
+}
+.xroga-native-openui .iui-flow:not(.iui-card) > :is(
+  .native-answer-metric + .native-answer-controls,
+  .native-answer-controls:has(+ .native-answer-metric, + [data-native-readouts])
+) > legend {
   position: absolute;
-  inset-block-start: .35rem;
-  inset-inline-start: 1rem;
+  inset-block-start: .45rem;
+  inset-inline-start: .75rem;
 }
 
 .native-chart-caption { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: .25rem .75rem; margin-block: 0 .5rem; }

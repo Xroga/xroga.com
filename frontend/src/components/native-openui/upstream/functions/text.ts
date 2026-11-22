@@ -21,10 +21,10 @@ function format(value: number, options: Intl.NumberFormatOptions): string {
 export const Format = defineFunction({
   name: "Format",
   description:
-    'Number as text: "number" 12,345.6, "currency" $12,345.68 (currency is a code like "EUR"), "percent" 45 -> 45%, "compact" 1.2M ($1.2M with a currency)',
+    'Number as text: "number" 12,345.6, "fixed" 12,345.60 (exact requested decimal places, default 2), "currency" $12,345.68 (currency is a code like "EUR"), "percent" 45 -> 45%, "compact" 1.2M ($1.2M with a currency)',
   params: z.object({
     value: z.number(),
-    kind: z.enum(["number", "currency", "percent", "compact"]).optional(),
+    kind: z.enum(["number", "currency", "percent", "compact", "fixed"]).optional(),
     decimals: z.number().optional(),
     currency: z.string().optional(),
   }),
@@ -32,12 +32,16 @@ export const Format = defineFunction({
   fn: ({ value, kind = "number", decimals, currency }) => {
     if (!Number.isFinite(value)) throw new Error("value is not a finite number");
     const d = decimals === undefined ? undefined : Math.min(Math.max(Math.trunc(decimals), 0), 10);
-    // decimals caps the digits; only currency pads to it, so 600 never reads "600.0".
+    // Preserve existing number, currency and percent formatting in saved programs.
     const digits = (fallbackMax: number, fallbackMin = 0) =>
       d === undefined
         ? { minimumFractionDigits: fallbackMin, maximumFractionDigits: fallbackMax }
         : { minimumFractionDigits: fallbackMin && d, maximumFractionDigits: d };
     switch (kind) {
+      case "fixed": {
+        const precision = d ?? 2;
+        return format(value, { minimumFractionDigits: precision, maximumFractionDigits: precision });
+      }
       case "currency":
         return format(value, { style: "currency", currency: currencyCode(currency), ...digits(2, 2) });
       case "percent":

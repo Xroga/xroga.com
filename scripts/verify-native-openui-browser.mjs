@@ -64,6 +64,19 @@ const cases = {
     text: 'Some visuals could not be validated. The available explanation and verified visuals are shown below.\n\nThe API verifies organization membership before reading rows.',
     program: 'root = Col([table])\ntable = Table(["Check", "Where"], [["Membership", "API"]])',
   },
+  recoveredDecisionTable: {
+    text: 'Some visuals could not be validated. The available explanation and verified visuals are shown below.\n\nChoose Birch. It is the only room within budget with step-free access and 18 seats.\n\n| Room | Seats | Access | Cost | Decision |\n| --- | --- | --- | --- | --- |\n| Alder | 24 | Stairs | $50 | Fails accessibility |\n| Birch | 18 | Step-free | $65 | Meets every requirement |\n| Cedar | 30 | Step-free | $85 | Over budget |\n\nBirch has no spare seats.',
+    program: 'root = Col([Markdown(body)])\nbody = "Choose Birch. It is the only room within budget with step-free access and 18 seats.\\n\\n| Room | Seats | Access | Cost | Decision |\\n| --- | --- | --- | --- | --- |\\n| Alder | 24 | Stairs | $50 | Fails accessibility |\\n| Birch | 18 | Step-free | $65 | Meets every requirement |\\n| Cedar | 30 | Step-free | $85 | Over budget |\\n\\nBirch has no spare seats."',
+  },
+  compactEditableEstimate: {
+    text: 'At the initial values, the total is 9.60 L and four 2.5 L tins.',
+    program: [
+      'root = Col([Title("Paint coverage calculator", "lg"), Controls([Input($area, "Wall area", "number"), Input($coats, "Coats", "number"), Input($coverage, "Coverage", "number"), Input($extra, "Extra", "number"), Button("Reset", @Reset($area, $coats, $coverage, $extra))], "Paint job inputs", 2), Grid([Metric("Paint required", @Format(litres, "fixed", 2) + " L"), Metric("Tins to buy", @RoundUp(litres / 2.5))], 2), Markdown(body)])',
+      '$area = 48', '$coats = 2', '$coverage = 11', '$extra = 10',
+      'litres = $area * $coats / $coverage * (1 + $extra / 100)',
+      'body = "At the initial values, the total is 9.60 L and four 2.5 L tins."',
+    ].join('\n'),
+  },
   referenceRecovered: {
     raw: 'Check current tenant membership before reading rows.\n<<<XROGA_OPENUI_V1>>>\nroot = Col([table, unavailableDetails])\ntable = Table(["Check", "Where"], [["Membership", "API"]])',
   },
@@ -485,6 +498,27 @@ try {
       await page.getByRole('cell', { name: 'Membership', exact: true }).waitFor();
       if ([390, 1440].includes(viewport.width)) {
         await page.screenshot({ path: resolve(output, channel + '-recovered-' + viewport.width + '-' + theme + '.png'), fullPage: true });
+      }
+      await open('recoveredDecisionTable');
+      await page.getByRole('cell', { name: 'Meets every requirement', exact: true }).waitFor();
+      assert.equal(await page.getByRole('table').count(), 1);
+      assert.equal(await page.getByText('Birch has no spare seats.', { exact: true }).count(), 1);
+      await open('compactEditableEstimate');
+      const fields = page.getByRole('group', { name: 'Paint job inputs', exact: true });
+      const initial = page.locator('.native-answer-metric-value').first();
+      await page.getByText('9.60 L', { exact: true }).waitFor();
+      await fields.getByRole('textbox', { name: 'Wall area', exact: true }).fill('72');
+      assert.equal(await initial.innerText(), '14.40 L');
+      assert.equal(await page.locator('.native-answer-metric-value').last().innerText(), '6');
+      await fields.getByRole('button', { name: 'Reset', exact: true }).click();
+      assert.equal(await initial.innerText(), '9.60 L');
+      const inputsBounds = await fields.boundingBox();
+      const resultsBounds = await page.locator('.iui-grid:has(.native-answer-metric)').boundingBox();
+      assert.ok(inputsBounds.width <= 576, JSON.stringify({ viewport, inputsBounds }));
+      assert.ok(Math.abs(inputsBounds.width - resultsBounds.width) < 2, 'Inputs and results share one width');
+      assert.ok(Math.abs(inputsBounds.y + inputsBounds.height - resultsBounds.y) < 2, 'Inputs and results have no gap between panels');
+      if ([390, 1440].includes(viewport.width)) {
+        await page.screenshot({ path: resolve(output, channel + '-compact-calculator-' + viewport.width + '-' + theme + '.png'), fullPage: true });
       }
       await open('referenceRecovered');
       await page.getByText('Check current tenant membership before reading rows.', { exact: true }).waitFor();

@@ -314,13 +314,17 @@
         "signature": "Pow(base: number, exponent: number) → number",
         "description": "base raised to exponent"
       },
+      "RoundUp": {
+        "signature": "RoundUp(value: number) → number",
+        "description": "Rounds up to a whole number without changing an integer, e.g. @RoundUp(3.01) is 4 and @RoundUp(3) is 3"
+      },
       "Sqrt": {
         "signature": "Sqrt(number: number) → number",
         "description": "Square root; null for a negative number"
       },
       "Format": {
-        "signature": "Format(value: number, kind?: \"number\" | \"currency\" | \"percent\" | \"compact\", decimals?: number, currency?: string) → string",
-        "description": "Number as text: \"number\" 12,345.6, \"currency\" $12,345.68 (currency is a code like \"EUR\"), \"percent\" 45 -> 45%, \"compact\" 1.2M ($1.2M with a currency)"
+        "signature": "Format(value: number, kind?: \"number\" | \"currency\" | \"percent\" | \"compact\" | \"fixed\", decimals?: number, currency?: string) → string",
+        "description": "Number as text: \"number\" 12,345.6, \"fixed\" 12,345.60 (exact requested decimal places, default 2), \"currency\" $12,345.68 (currency is a code like \"EUR\"), \"percent\" 45 -> 45%, \"compact\" 1.2M ($1.2M with a currency)"
       },
       "Plural": {
         "signature": "Plural(n: number, word: string, plural?: string) → string",
@@ -2617,6 +2621,24 @@
             "type": "number"
           }
         },
+        "RoundUp": {
+          "description": "Rounds up to a whole number without changing an integer, e.g. @RoundUp(3.01) is 4 and @RoundUp(3) is 3",
+          "params": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          "returns": {
+            "type": "number"
+          }
+        },
         "Sqrt": {
           "description": "Square root; null for a negative number",
           "params": {
@@ -2636,7 +2658,7 @@
           }
         },
         "Format": {
-          "description": "Number as text: \"number\" 12,345.6, \"currency\" $12,345.68 (currency is a code like \"EUR\"), \"percent\" 45 -> 45%, \"compact\" 1.2M ($1.2M with a currency)",
+          "description": "Number as text: \"number\" 12,345.6, \"fixed\" 12,345.60 (exact requested decimal places, default 2), \"currency\" $12,345.68 (currency is a code like \"EUR\"), \"percent\" 45 -> 45%, \"compact\" 1.2M ($1.2M with a currency)",
           "params": {
             "type": "object",
             "properties": {
@@ -2649,7 +2671,8 @@
                   "number",
                   "currency",
                   "percent",
-                  "compact"
+                  "compact",
+                  "fixed"
                 ]
               },
               "decimals": {
@@ -5571,6 +5594,24 @@
           "type": "number"
         }
       },
+      "RoundUp": {
+        "description": "Rounds up to a whole number without changing an integer, e.g. @RoundUp(3.01) is 4 and @RoundUp(3) is 3",
+        "params": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        "returns": {
+          "type": "number"
+        }
+      },
       "Sqrt": {
         "description": "Square root; null for a negative number",
         "params": {
@@ -5590,7 +5631,7 @@
         }
       },
       "Format": {
-        "description": "Number as text: \"number\" 12,345.6, \"currency\" $12,345.68 (currency is a code like \"EUR\"), \"percent\" 45 -> 45%, \"compact\" 1.2M ($1.2M with a currency)",
+        "description": "Number as text: \"number\" 12,345.6, \"fixed\" 12,345.60 (exact requested decimal places, default 2), \"currency\" $12,345.68 (currency is a code like \"EUR\"), \"percent\" 45 -> 45%, \"compact\" 1.2M ($1.2M with a currency)",
         "params": {
           "type": "object",
           "properties": {
@@ -5603,7 +5644,8 @@
                 "number",
                 "currency",
                 "percent",
-                "compact"
+                "compact",
+                "fixed"
               ]
             },
             "decimals": {

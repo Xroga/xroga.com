@@ -1,6 +1,7 @@
 "use client";
 
 import { defineComponent, FormNameContext } from "@openuidev/react-lang";
+import { isElementNode } from "@openuidev/lang-core";
 import { useContext, useId, type CSSProperties, type ReactNode } from "react";
 import { z } from "zod/v4";
 import { InlineNativeSections, NativeVisualContent, placeNativeSections, VisibleMarkdownTables } from "./markdown";
@@ -126,6 +127,9 @@ export const Grid = defineComponent({
   }),
   description: "Equal columns (default 2). With minChildWidth (px), columns drop on narrow screens.",
   component: ({ props, renderNode }) => {
+    const readouts = props.children.length > 0 && props.children.every(
+      child => isElementNode(child) && child.typeName === "Metric",
+    );
     const columns = Math.min(12, Math.max(1, Math.round(props.columns ?? 2)));
     const gap = boundedSpace(space(props.gap) ?? "12px", "--iui-grid-gap-limit");
     // The requested count is an upper bound, including inside narrow chat cards.
@@ -135,6 +139,7 @@ export const Grid = defineComponent({
     return (
       <div
         className="iui-grid"
+        data-native-readouts={readouts || undefined}
         style={{
           gap,
           gridTemplateColumns: `repeat(auto-fill, minmax(min(100%, ${min}), 1fr))`,

@@ -12,6 +12,27 @@ $principal = 20000
 $apr = 8
 payment = @Payment($principal, $apr / 12, 60)`;
 
+test('fixed decimal readouts preserve the requested precision without changing saved formats', () => {
+  const source = [
+    'root = Col([Metric("Litres", @Format($amount, "fixed", 2) + " L"), Metric("Saved numeric", @Format($amount, "number", 2)), Metric("Saved currency", @Format($amount, "currency", 2, "USD"))])',
+    '$amount = 9.6',
+  ].join('\n');
+  assert.deepEqual(initialNativeReadouts(source), [
+    { label: 'Litres', value: '9.60 L' },
+    { label: 'Saved numeric', value: '9.6' },
+    { label: 'Saved currency', value: '$9.60' },
+  ]);
+});
+
+test('whole-unit estimates round up unrounded values without incrementing whole values', () => {
+  const source = 'root = Col([Metric("Fractional", @RoundUp(4.0001)), Metric("Whole", @RoundUp(4)), Metric("Zero", @RoundUp(0))])';
+  assert.deepEqual(initialNativeReadouts(source), [
+    { label: 'Fractional', value: '5' },
+    { label: 'Whole', value: '4' },
+    { label: 'Zero', value: '0' },
+  ]);
+});
+
 test('readable table snapshots evaluate dynamic column headings without fabricating blank cells', () => {
   const source = 'root = Col([Table(["Compounding", "Balance after " + @Plural($years, "year")], [["Monthly", @Format(18193.96734, "currency", 2, "USD")]])])\n$years = 10';
   const prose = supplementNativeProse('Initial calculation.', source, true);
