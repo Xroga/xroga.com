@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/workspace-release-compat-20261122",
-    "sha": "c49740a94c259a331afcba5527c28d0331c2bcfd",
-    "sourceTimestampUtc": "2026-11-23T03:08:50+05:00",
-    "auditStartedUtc": "2026-11-22T22:09:11.480Z",
+    "sha": "7e06b6c3bffc6bd93c3259411d1be38b7503918e",
+    "sourceTimestampUtc": "2026-11-23T04:01:58+05:00",
+    "auditStartedUtc": "2026-11-22T23:03:08.125Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -6200,7 +6200,7 @@
       "id": "surface:1f75013440702d094c2c",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiFunctions.generated.ts",
-      "sha256": "08d1e4e77107e79094088d98d3d8305275f0e4ab2a5b70190f5cbc6b49a5a004",
+      "sha256": "0a53531851e6bc7fcea06942531baa7aaab72e026a98dec9c6ca3ed6ca980c0e",
       "symbols": [
         "AddDays",
         "AddMonths",
@@ -6236,6 +6236,7 @@
         "Random",
         "Replace",
         "Reverse",
+        "RoundUp",
         "Slice",
         "Split",
         "Sqrt",
@@ -6302,6 +6303,7 @@
         "order",
         "out",
         "parts",
+        "precision",
         "r",
         "ranked",
         "raw",
@@ -6376,7 +6378,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "e9e7dea5304a2bb9ae2c25ac4b3e3576d91b9e77c96ee50691821479dbdf3290",
+      "sha256": "6ee4c888acfd43707c01d0a70cb8a0bef9d56a03f859067b50b2c3ccf606f961",
       "symbols": [
         "accessibilityRule",
         "answerScopeRule",
@@ -15507,7 +15509,7 @@
       "id": "surface:82ff96c046038933cdb9",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/workspacePublicSearch.ts",
-      "sha256": "c86cd25ea7ef335449cc0e54739534ea173111da3e58c8ec91b5c59b7c957e72",
+      "sha256": "2307bcb8eb142c026166d3123a6febb63d813a5de9576cc4c6cde2bf99c0c324",
       "symbols": [
         "answerOnlySuffix",
         "asksForOfficial",
@@ -89406,7 +89408,7 @@
       "id": "surface:8de58719362d2969910e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/functions.ts",
-      "sha256": "983d077904f2f514b829264428c72d86b565314bf5d99f27285270c056ef081a",
+      "sha256": "846d0f1b54da72f91e8d97dc63a3bd1ec510341ce1beec336f928ecfa16fbf1c",
       "symbols": [
         "nativeFunctions"
       ],
@@ -89999,7 +90001,7 @@
       "id": "surface:f60271f3a570336ef22f",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/layout.tsx",
-      "sha256": "c161474b7e0cfa66ff9da4da0fca428080048c2c85b38782bd81a0210fd3f3a6",
+      "sha256": "6cff986ba9f818d18987b0dc3af75511fc07ea8f11a2a9ea068a7792ca76cb5c",
       "symbols": [
         "Box",
         "Card",
@@ -90025,6 +90027,7 @@
         "padding",
         "preferred",
         "preservedTables",
+        "readouts",
         "replacedBlocks",
         "replacement",
         "row",
@@ -90035,6 +90038,7 @@
       "imports": [
         "./markdown",
         "./style",
+        "@openuidev/lang-core",
         "@openuidev/react-lang",
         "react",
         "zod/v4"
@@ -90054,6 +90058,7 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
+        "@openuidev/lang-core",
         "@openuidev/react-lang",
         "react",
         "zod/v4"
@@ -90245,7 +90250,7 @@
         "frontend/src/components/native-openui/upstream/components/chart.tsx:7",
         "frontend/src/components/native-openui/upstream/components/controls.tsx:15",
         "frontend/src/components/native-openui/upstream/components/extra.tsx:7",
-        "frontend/src/components/native-openui/upstream/components/layout.tsx:6",
+        "frontend/src/components/native-openui/upstream/components/layout.tsx:7",
         "frontend/src/components/native-openui/upstream/components/markdown.test.ts:10",
         "frontend/src/components/native-openui/upstream/components/table.tsx:7",
         "frontend/src/components/native-openui/upstream/components/text.tsx:9"
@@ -90333,7 +90338,7 @@
         "frontend/src/components/native-openui/library.tsx:12",
         "frontend/src/components/native-openui/upstream/components/controls.tsx:16",
         "frontend/src/components/native-openui/upstream/components/extra.tsx:10",
-        "frontend/src/components/native-openui/upstream/components/layout.tsx:7",
+        "frontend/src/components/native-openui/upstream/components/layout.tsx:8",
         "frontend/src/components/native-openui/upstream/components/markdown.tsx:5",
         "frontend/src/components/native-openui/upstream/components/svg.tsx:5",
         "frontend/src/components/native-openui/upstream/components/table.tsx:8",
@@ -90797,7 +90802,7 @@
       "id": "surface:0401f528e274114413db",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/functions/numbers.ts",
-      "sha256": "a165969fc08879e326fb04041f377c1bb38fcf0d5a4570b8bf3291e8d36ae515",
+      "sha256": "dcf2feeed9e138375251a39bbf8725f6e54911e41743783336c8197f6916eb7d",
       "symbols": [
         "Allocate",
         "Clamp",
@@ -90807,6 +90812,7 @@
         "Percent",
         "Pow",
         "Random",
+        "RoundUp",
         "Sqrt",
         "TEMPS",
         "UNITS",
@@ -90929,7 +90935,7 @@
       "id": "surface:cc41683c21e29fcf58ca",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/functions/text.ts",
-      "sha256": "bb07529302d391b27670a651f45383cc2fb77a1d3bcf6965ac37664257c39dcb",
+      "sha256": "56e230111d847e673df4e8418081e469ada4384fe4b41aded64ff377d3bd584c",
       "symbols": [
         "Capitalize",
         "Default",
@@ -90949,6 +90955,7 @@
         "digits",
         "format",
         "parts",
+        "precision",
         "sign",
         "textFunctions",
         "total",
@@ -100133,7 +100140,7 @@
       "id": "surface:1c7b16689dab18205e28",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/ReasoningAndFollowUps.tsx",
-      "sha256": "8479b2acfacc16c020df615ca04adfea6c5543ce6fe4bfac1137c6c29e2f104c",
+      "sha256": "4b81b8a35ebcd0a82365f5abbd66721ed898f8c63bef93a0e31ca0ac1c52f8a6",
       "symbols": [
         "ModernResponseText",
         "ResponseBody",
@@ -102623,7 +102630,7 @@
       "id": "surface:dbda11c4aa4a037c288d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/XrogaBlockView.tsx",
-      "sha256": "792091a73e92fb147483a4340d698e299916f196bb3a3caaf8cd7dfe2e36fcda",
+      "sha256": "fd6ceb5d460d99f8d0ddd1cf9764bcc6f60f80222c53e0a1147f723a9033b483",
       "symbols": [
         "ApprovalRenderer",
         "ArtifactRenderer",
@@ -130826,7 +130833,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "c4633c9c023fb985bb1cf8f3a9d9a44d4a752a24200bb02d5b2b2ea90d1c58c9",
+      "sha256": "ed595f16daebe4054a6eca592fdf86a228879ef445cc4f4e0e3693cb26c178fb",
       "symbols": [
         "accessibility",
         "answer",
@@ -130878,6 +130885,7 @@
         "failedEquation",
         "fallback",
         "fallbackAnswer",
+        "fields",
         "file",
         "filenames",
         "firstCheck",
@@ -130892,8 +130900,10 @@
         "heights",
         "icon",
         "index",
+        "initial",
         "ink",
         "inlineLinks",
+        "inputsBounds",
         "label",
         "labelAudit",
         "labels",
@@ -130923,6 +130933,7 @@
         "region",
         "renderedEdge",
         "results",
+        "resultsBounds",
         "rgb",
         "rhythm",
         "scale",
@@ -145545,7 +145556,7 @@
   ],
   "findings": [
     {
-      "id": "finding:5c39c79032650043e9a6",
+      "id": "finding:428cba4d71de7f05d74a",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
       "line": 80,
       "kind": "PLACEHOLDER",
@@ -153613,7 +153624,7 @@
     {
       "id": "test-suite:cf78e18abc3aa283d701",
       "sourcePath": "backend/src/ai/nativeOpenUiValues.test.ts",
-      "declaredTests": 22,
+      "declaredTests": 24,
       "skipLocations": [],
       "focusLocations": []
     },
