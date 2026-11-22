@@ -54,21 +54,25 @@ test('the settings sections are a scrolling row rather than a dropdown', () => {
   assert.match(TABS, /inline: 'center'/, 'an off-screen tab is never brought into view');
 });
 
-test('the bottom bar uses the same glyphs as the sidebar', () => {
+test('shared bottom bar and sidebar destinations use the same glyphs', () => {
   for (const icon of [
     'TerminalIcon',
     'LayoutGridIcon',
     'FolderOpenIcon',
     'ConnectIcon',
     'RocketIcon',
-    'HeartPulseIcon',
-    'ChartColumnIncreasingIcon',
     'CogIcon',
   ]) {
     assert.match(NAV, new RegExp(`icon: ${icon}`), `the bottom bar is missing ${icon}`);
     assert.match(SIDEBAR, new RegExp(`\\b${icon}\\b`), `${icon} is not the sidebar's glyph`);
   }
   assert.ok(!/lucide-react/.test(NAV), 'the bottom bar still uses static lucide glyphs');
+});
+
+test('Growth and Operations remain mobile shortcuts, not More menu entries', () => {
+  assert.match(NAV, /icon: HeartPulseIcon/);
+  assert.match(NAV, /icon: ChartColumnIncreasingIcon/);
+  assert.doesNotMatch(SIDEBAR, /label: '(?:Growth|Operations)',/);
 });
 
 test('every bottom tab is icon-only while its label remains accessible', () => {
@@ -276,8 +280,6 @@ test('the sidebar rows that were given new glyphs kept them', () => {
     ["'Showcase'", 'AirplayIcon'],
     ["'Community'", 'UsersRoundIcon'],
     ["'Share Feedback'", 'SmileIcon'],
-    ["'Growth'", 'ChartColumnIncreasingIcon'],
-    ["'Operations'", 'HeartPulseIcon'],
   ]) {
     const at = SIDEBAR.indexOf(`label: ${label},`);
     assert.ok(at > 0, `the ${label} row is gone`);
