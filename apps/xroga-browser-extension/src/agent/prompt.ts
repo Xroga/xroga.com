@@ -106,7 +106,7 @@ function toolGuide(tools: string[]): string {
     lines.push('- menu_path opens a whole menu path in one call (for example ["File","Export","PDF"]): use it instead of one click per turn whenever you know the path or can read it from the outline. Add expect to be told if a wrong item opened. It finds menu items by their name in the page outline, so it cannot work when the application paints its menus on a canvas (the outline shows only a canvas): there, use canvas pointer actions or keyboard shortcuts instead.');
   if (has('run_script_console'))
     lines.push('- run_script_console runs one program in an application scripting console as a fixed sequence (open it, check the editor, focus, replace the text, run, read the output, verify) in one call. It needs a console you have seen and are allowed to use, and documented method names; if it stops, read the receipt that failed and fix only that phase.');
-  if (has('fill_form')) lines.push('- fill_form sets several fields in order and can activate a submit control.');
+  if (has('fill_form')) lines.push('- fill_form sets several fields in order and can activate a submit control; give a typeahead field pick: true to click its suggestion in the same call.');
   if (has('enable_actions'))
     lines.push('- enable_actions turns on clicking, typing, forms and scrolling. Call it only if the task needs one of them; reading and opening pages do not.');
   if (has('ask_user'))

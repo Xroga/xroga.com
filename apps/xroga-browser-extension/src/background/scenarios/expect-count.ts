@@ -161,3 +161,29 @@ defineScenario({
   },
 });
 
+// A typeahead takes three calls by hand (type, wait for the list, click the suggestion); fill_form's `pick` does it inside one call, and an ambiguous or missing suggestion is refused with what is offered.
+defineScenario({
+  id: 'S3-fill-form-picks-typeahead-suggestion',
+  set: 'C',
+  title: 'fill_form types a name and a search, then picks the exact suggestion in one call; an ambiguous pick is refused',
+  covers: 'a field with pick clicks the named suggestion once the list has arrived, and says what is offered when the name is ambiguous',
+  async run(ctx) {
+    await ctx.open(`${FIXTURE_ORIGIN}/c-typeahead.html`);
+    await ctx.call('snapshot');
+    const ok = await ctx.call('fill_form', { fields: [{ target: { role: 'textbox', name: 'Name' }, value: 'Grace' }, { target: { role: 'combobox', name: 'Interest' }, value: 'Small business owners', pick: true }] });
+    const chosen = JSON.stringify(await ctx.call('read', {}));
+    const bad = await ctx.call('fill_form', { fields: [{ target: { role: 'combobox', name: 'Interest' }, value: 'Small business', pick: true }] });
+    // Without pick: a combobox whose exactly named suggestion appears is picked anyway; free text with no such suggestion stays as typed.
+    await ctx.call('navigate', { action: 'reload' });
+    await ctx.call('snapshot');
+    const auto = await ctx.call('fill_form', { fields: [{ target: { role: 'combobox', name: 'Interest' }, value: 'Entrepreneurship' }] });
+    const autoRead = JSON.stringify(await ctx.call('read', {}));
+    const free = await ctx.call('fill_form', { fields: [{ target: { role: 'combobox', name: 'Interest' }, value: 'zzz free text' }] });
+    return outcome(
+      'one call set the name and picked "Small business owners"; the vague pick was refused',
+      JSON.stringify({ ok: ok.ok, okWhy: ok.error?.message?.slice(0, 300), chosen: chosen.slice(0, 300), bad: bad.ok, why: bad.error?.message?.slice(0, 160) }),
+      ok.ok === true && /Small business owners[\s\S]*Small business owners/.test(chosen) && bad.ok === false && auto.ok === true && /Entrepreneurship[\s\S]*Entrepreneurship/.test(autoRead) && free.ok === true,
+    );
+  },
+});
+

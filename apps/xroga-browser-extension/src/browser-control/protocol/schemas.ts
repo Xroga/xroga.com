@@ -129,7 +129,16 @@ export const SetArgsSchema = z.strictObject({
 export const FillFormArgsSchema = z.strictObject({
   ...actionCommon,
   fields: z
-    .array(z.strictObject({ target: TargetSchema, value: z.union([z.string(), z.boolean(), z.array(z.string())]) }))
+    .array(
+      z.strictObject({
+        target: TargetSchema,
+        value: z.union([z.string(), z.boolean(), z.array(z.string())]),
+        pick: z
+          .union([z.string(), z.literal(true)])
+          .optional()
+          .describe('Typeahead: then click this suggestion (true: named like the value)'),
+      }),
+    )
     .min(1),
   submit: TargetSchema.optional().describe('Activate this element after every field is set'),
 });

@@ -10,6 +10,7 @@ import { receiptLines } from '../text';
 import { click } from './act';
 import { withPageState } from './navigate';
 import { set } from './text';
+import { wait } from './wait';
 
 export interface FillData {
   receipts: ActionReceipt[];
@@ -34,6 +35,25 @@ export async function fillForm(ctx: ToolContext, args: FillFormArgs): Promise<To
         timeoutMs: args.timeoutMs,
       });
       if (outcome.receipt) receipts.push(outcome.receipt);
+      // A typeahead only commits when a suggestion is picked from its list: the list is looked up fresh after the typing (it often arrives a moment later) and the suggestion is clicked.
+      // A combobox the model did not mark with pick still gets its exactly named suggestion clicked when one appears (a short look; free text in a combobox is left as typed).
+      const auto = field.pick === undefined && typeof field.value === 'string' && field.value.trim() !== '' && /^combobox/.test(outcome.receipt?.target ?? '');
+      if ((field.pick !== undefined || auto) && typeof field.value === 'string') {
+        const name = field.pick === undefined || field.pick === true ? field.value : field.pick;
+        if (auto) {
+          const seen = await wait(ctx, { target: { role: 'option', name }, state: 'visible', timeoutMs: 1_200 }).then(() => true, () => false);
+          if (!seen) continue;
+        }
+        // Not clicked before it exists: wait for the suggestion to be on the page (a missing one is reported by the click below with what is offered).
+        await wait(ctx, { target: { role: 'option', name }, state: 'visible', timeoutMs: args.timeoutMs ?? 4_000 }).catch(() => undefined);
+        const picked = await click(ctx, {
+          target: { role: 'option', name },
+          intent: args.intent,
+          observe: 'none',
+          timeoutMs: args.timeoutMs ?? 4_000,
+        });
+        if (picked.receipt) receipts.push(picked.receipt);
+      }
     } catch (error) {
       const set = receipts.some(r => r.dispatched !== false);
       const delivered = set ? true : isLayerError(error) ? error.delivered : 'unknown';
