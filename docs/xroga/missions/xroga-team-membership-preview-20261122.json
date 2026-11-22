@@ -20,7 +20,11 @@
     "docs/operations/teams-invite-email-preview.md",
     "docs/operations/teams-collaboration-references.md",
     "frontend/src/components/terminal/TeamMembershipPanel.tsx",
+    "frontend/src/components/terminal/TeamMembershipAccess.tsx",
     "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
+    "frontend/src/components/terminal/WorkspacePeopleControls.module.css",
+    "frontend/src/app/(shell)/settings/teams/page.tsx",
+    "frontend/e2e/teams-settings-local.spec.ts",
     "frontend/src/lib/teamMembershipSelection.ts",
     "frontend/src/lib/teamMembershipSelection.test.ts",
     "scripts/ci/ignore-vercel-build.mjs",
@@ -47,7 +51,8 @@
     {"command": "node --test scripts/ci/ignore-vercel-build.test.mjs", "scope": "Reject missing or production Teams deploy settings", "negative": true, "reference": "scripts/ci/ignore-vercel-build.test.mjs"},
     {"command": "GitHub Actions: Isolated Supabase authenticated browser verification", "scope": "Real separate accounts, forged RPC denial, individual Paid gating, membership removal, send claims, rate limit, expiry and revocation", "negative": true, "reference": "backend/src/security/teamMembership.local.integration.ts"},
     {"command": "tsx --test backend/src/services/teamInviteEmail.test.ts", "scope": "Fixed Brevo endpoint, Preview link admission, single attempt and response classification", "negative": true, "reference": "backend/src/services/teamInviteEmail.test.ts"},
-    {"command": "tsx --test frontend/src/lib/teamMembershipSelection.test.ts", "scope": "Never render a stale roster for another team, an invalidated revision or loss of active membership.", "negative": true, "reference": "frontend/src/lib/teamMembershipSelection.test.ts"}
+    {"command": "tsx --test frontend/src/lib/teamMembershipSelection.test.ts", "scope": "Never render a stale roster for another team, an invalidated revision or loss of active membership.", "negative": true, "reference": "frontend/src/lib/teamMembershipSelection.test.ts"},
+    {"command": "GitHub Actions: Isolated Supabase authenticated browser verification", "scope": "Verify the right-side drawer and full page share a real synthetic Paid membership, while guests and Free users cannot create teams.", "negative": true, "reference": "frontend/e2e/teams-settings-local.spec.ts"}
   ],
   "rollout": "Review-only draft PR; a source-pinned Preview requires dedicated Auth, API and storage settings and completed isolation tests.",
   "rollback": "Disable the branch-specific environment settings and leave unrelated environments unchanged.",

@@ -58715,6 +58715,50 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:fd7697f351e6f5bcc208",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/app/(shell)/settings/teams/page.tsx",
+      "sha256": "d17a837ed808d2a6d8e19116e39cce8ce12c34a35b7b8d80da3d1fe8b93984f7",
+      "symbols": [
+        "TeamSettingsPage",
+        "metadata"
+      ],
+      "imports": [
+        "@/components/terminal/TeamMembershipAccess",
+        "@/components/terminal/WorkspacePeopleControls.module.css",
+        "lucide-react",
+        "next",
+        "next/link"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/terminal/TeamMembershipAccess.tsx",
+        "frontend/src/components/terminal/WorkspacePeopleControls.module.css"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(shell)/settings/teams/page.tsx"
+      ],
+      "callers": [],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react",
+        "next",
+        "next/link"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:d03b87764c0ee947323a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/(workspace)/dashboard/page.tsx",
@@ -76607,7 +76651,7 @@
         "frontend/src/components/terminal/SwarmMessageLog.tsx:56",
         "frontend/src/components/terminal/TerminalSkinPicker.tsx:7",
         "frontend/src/components/terminal/WorkspaceLauncher.tsx:3",
-        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:12",
+        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:13",
         "frontend/src/components/ui/ProfileQuickMenu.tsx:6",
         "frontend/src/components/ui/Uiverse.tsx:5"
       ],
@@ -78921,7 +78965,7 @@
       "callers": [
         "frontend/src/components/terminal/MessageBubbleActions.tsx:13",
         "frontend/src/components/terminal/MessageShareModal.tsx:17",
-        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:14"
+        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:15"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -79684,7 +79728,7 @@
       "callers": [
         "frontend/src/components/dashboard/WorkspaceShowcaseStarts.tsx:23",
         "frontend/src/components/layout/Sidebar.tsx:89",
-        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:13",
+        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:14",
         "frontend/src/components/ui/ProfileQuickMenu.tsx:12"
       ],
       "reachable": true,
@@ -83704,6 +83748,7 @@
         "frontend/src/app/(shell)/dashboard/library/page.tsx",
         "frontend/src/app/(shell)/dashboard/projects/page.tsx",
         "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(shell)/settings/teams/page.tsx",
         "frontend/src/app/(workspace)/dashboard/page.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx"
@@ -83721,10 +83766,11 @@
         "frontend/src/components/library/LibraryWorkspace.tsx:10",
         "frontend/src/components/notifications/NotificationExperience.tsx:8",
         "frontend/src/components/providers/AppProviders.tsx:8",
+        "frontend/src/components/terminal/TeamMembershipAccess.tsx:4",
         "frontend/src/components/terminal/TerminalChatBar.tsx:35",
         "frontend/src/components/terminal/WorkspaceConversationMenu.tsx:7",
         "frontend/src/components/terminal/WorkspaceLauncher.tsx:10",
-        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:7",
+        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:8",
         "frontend/src/components/workspace/WorkspaceAuthGate.tsx:23",
         "frontend/src/context/TerminalChatContext.tsx:74"
       ],
@@ -94189,7 +94235,7 @@
       "callers": [
         "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx:4",
         "frontend/src/components/terminal/MessageBubbleActions.tsx:14",
-        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:10"
+        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:11"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -95493,10 +95539,59 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:26a17935c7a6f35e9090",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/terminal/TeamMembershipAccess.tsx",
+      "sha256": "68cb123b3636d16a1833aacdc86148fb3281c4426c2b59d8b0875ccd4c507df5",
+      "symbols": [
+        "TEAM_SETTINGS_PATH",
+        "TeamMembershipAccess",
+        "next"
+      ],
+      "imports": [
+        "./TeamMembershipPanel",
+        "./WorkspacePeopleControls.module.css",
+        "@/components/layout/WorkspaceIdentityContext",
+        "next/link"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/layout/WorkspaceIdentityContext.tsx",
+        "frontend/src/components/terminal/TeamMembershipPanel.tsx",
+        "frontend/src/components/terminal/WorkspacePeopleControls.module.css"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(shell)/settings/teams/page.tsx",
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/app/(shell)/settings/teams/page.tsx:4",
+        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:17"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "next/link"
+      ],
+      "authBoundary": [
+        "frontend/src/components/terminal/TeamMembershipAccess.tsx#useWorkspaceIdentity"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:9a3d0f5fb7baaf59bba8",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/TeamMembershipPanel.tsx",
-      "sha256": "4270105fe6a3515fbccf3a0e1c3164fba66f1a12da89fe8a842b00e5b0875625",
+      "sha256": "fdb0f290afdfe4859f6102ab30492df51f54531f993b3026ab91296d1b38702d",
       "symbols": [
         "Command",
         "Detail",
@@ -95515,6 +95610,7 @@
         "err",
         "fingerprint",
         "initials",
+        "invitations",
         "inviteAttempt",
         "isolated",
         "manage",
@@ -95540,10 +95636,12 @@
         "frontend/src/lib/teamMembershipSelection.ts"
       ],
       "entryPoints": [
+        "frontend/src/app/(shell)/settings/teams/page.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:15"
+        "frontend/src/components/terminal/TeamMembershipAccess.tsx:5",
+        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:16"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -96819,21 +96917,25 @@
       "id": "surface:301bb246215ac84afb3b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
-      "sha256": "27f3b3508973e1ee48c048862b69b46e88f75b58cfdcfa9a849f2c29a0278e5d",
+      "sha256": "4c06bc4b7d8b49ec2f437d5e22d99ad2a3b30c8395b7408138bcc1bc905edf7f",
       "symbols": [
         "WorkspacePeopleControls",
         "activeProject",
+        "closeRef",
         "drawerRef",
         "escape",
         "first",
+        "headingId",
         "identity",
         "last",
         "nodes",
-        "previous",
-        "transcript"
+        "transcript",
+        "trigger",
+        "triggerRef"
       ],
       "imports": [
         "./MessageShareModal",
+        "./TeamMembershipAccess",
         "./TeamMembershipPanel",
         "./WorkspacePeopleControls.module.css",
         "@/components/icons/animated/AnimatedIcon",
@@ -96844,6 +96946,7 @@
         "@/context/TerminalChatContext",
         "@/store/useProjectWorkspaceStore",
         "lucide-react",
+        "next/link",
         "react",
         "react-dom"
       ],
@@ -96853,6 +96956,7 @@
         "frontend/src/components/icons/animated/UsersRoundIcon.tsx",
         "frontend/src/components/layout/WorkspaceIdentityContext.tsx",
         "frontend/src/components/terminal/MessageShareModal.tsx",
+        "frontend/src/components/terminal/TeamMembershipAccess.tsx",
         "frontend/src/components/terminal/TeamMembershipPanel.tsx",
         "frontend/src/components/terminal/WorkspacePeopleControls.module.css",
         "frontend/src/components/workspace/WorkspaceAuthGate.tsx",
@@ -96870,6 +96974,7 @@
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "lucide-react",
+        "next/link",
         "react",
         "react-dom"
       ],
@@ -100339,7 +100444,7 @@
         "frontend/src/components/layout/Sidebar.tsx:99",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:61",
         "frontend/src/components/terminal/TerminalChatBar.tsx:36",
-        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:8",
+        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:9",
         "frontend/src/context/TerminalChatContext.tsx:75"
       ],
       "reachable": true,
@@ -100873,7 +100978,7 @@
         "frontend/src/components/terminal/WorkspaceConversationMenu.tsx:6",
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx:20",
         "frontend/src/components/terminal/WorkspaceLauncher.tsx:9",
-        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:6"
+        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:7"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -101758,6 +101863,7 @@
         "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(shell)/settings/page.tsx",
+        "frontend/src/app/(shell)/settings/teams/page.tsx",
         "frontend/src/app/(workspace)/dashboard/page.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
@@ -104461,6 +104567,7 @@
         "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(shell)/settings/page.tsx",
+        "frontend/src/app/(shell)/settings/teams/page.tsx",
         "frontend/src/app/(workspace)/dashboard/page.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
@@ -106192,6 +106299,7 @@
         "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(shell)/settings/page.tsx",
+        "frontend/src/app/(shell)/settings/teams/page.tsx",
         "frontend/src/app/(workspace)/dashboard/page.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
@@ -109244,6 +109352,7 @@
         "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(shell)/settings/page.tsx",
+        "frontend/src/app/(shell)/settings/teams/page.tsx",
         "frontend/src/app/(workspace)/dashboard/page.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
@@ -111882,6 +111991,7 @@
         "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(shell)/settings/page.tsx",
+        "frontend/src/app/(shell)/settings/teams/page.tsx",
         "frontend/src/app/(workspace)/dashboard/page.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
@@ -112040,6 +112150,7 @@
         "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(shell)/settings/page.tsx",
+        "frontend/src/app/(shell)/settings/teams/page.tsx",
         "frontend/src/app/(workspace)/dashboard/page.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
@@ -112301,6 +112412,7 @@
         "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(shell)/settings/page.tsx",
+        "frontend/src/app/(shell)/settings/teams/page.tsx",
         "frontend/src/app/(workspace)/dashboard/page.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
@@ -112443,6 +112555,7 @@
         "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(shell)/settings/page.tsx",
+        "frontend/src/app/(shell)/settings/teams/page.tsx",
         "frontend/src/app/(workspace)/dashboard/page.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
@@ -112924,6 +113037,7 @@
         "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(shell)/settings/page.tsx",
+        "frontend/src/app/(shell)/settings/teams/page.tsx",
         "frontend/src/app/(workspace)/dashboard/page.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
@@ -113184,6 +113298,7 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
+        "frontend/src/app/(shell)/settings/teams/page.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
@@ -113786,6 +113901,7 @@
         "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(shell)/settings/page.tsx",
+        "frontend/src/app/(shell)/settings/teams/page.tsx",
         "frontend/src/app/(workspace)/dashboard/page.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
@@ -117624,7 +117740,7 @@
         "frontend/src/components/terminal/WorkspaceConversationMenu.tsx:8",
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx:24",
         "frontend/src/components/terminal/WorkspaceLauncher.tsx:6",
-        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:9",
+        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:10",
         "frontend/src/context/TerminalChatContext.tsx:165",
         "frontend/src/context/TerminalChatContext.tsx:204",
         "frontend/src/context/TerminalChatContext.tsx:2709",
@@ -137396,7 +137512,7 @@
     {
       "id": "workflow:a7962a7c78b10b796636",
       "sourcePath": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "e538ab028b5902f47714a9142cac5b61017f52686c5b47735bd794d3abe86481",
+      "sha256": "c6de64b2c56f01c152ed0a4e31bbba9ed5734e1b41ce16111254a5648c7e1c17",
       "sourceEntrypoints": [
         "frontend/e2e/phase4-admin-share.security.mjs",
         "frontend/e2e/phase4-api-clients.security.mjs",
@@ -150461,6 +150577,13 @@
       "id": "test-suite:6515480b640298a9f74c",
       "sourcePath": "frontend/e2e/showcase-spec.spec.ts",
       "declaredTests": 11,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:54250ccde88db7391bd8",
+      "sourcePath": "frontend/e2e/teams-settings-local.spec.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

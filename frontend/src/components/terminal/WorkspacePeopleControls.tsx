@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useId, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { Share2, UsersRound, ExternalLink, X } from 'lucide-react';
+import Link from 'next/link';
+import { Share2, ExternalLink, X } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
 import { useWorkspaceAuthGate } from '@/components/workspace/WorkspaceAuthGate';
@@ -12,7 +13,8 @@ import styles from './WorkspacePeopleControls.module.css';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { UsersRoundIcon } from '@/components/icons/animated/UsersRoundIcon';
 import { ShareIcon } from '@/components/icons/animated/ShareIcon';
-import { TeamMembershipPanel, teamMembershipPreviewAvailable } from './TeamMembershipPanel';
+import { teamMembershipPreviewAvailable } from './TeamMembershipPanel';
+import { TeamMembershipAccess, TEAM_SETTINGS_PATH } from './TeamMembershipAccess';
 
 export function WorkspacePeopleControls() {
   const { messages } = useTerminalChat();
@@ -22,13 +24,17 @@ export function WorkspacePeopleControls() {
   const [open, setOpen] = useState(false);
   const [share, setShare] = useState(false);
   const drawerRef = useRef<HTMLElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const headingId = useId();
   const transcript = messages.filter(message => message.role === 'user' || message.role === 'assistant').map(message => `${message.role === 'user' ? 'You' : 'Xroga'}:\n${message.content}`).join('\n\n');
   useEffect(() => {
     if (teamMembershipPreviewAvailable() && new URLSearchParams(location.search).get('teamInvites') === '1') setOpen(true);
   }, []);
   useEffect(() => {
     if (!open) return;
-    const previous = document.activeElement as HTMLElement | null;
+    const trigger = triggerRef.current;
+    closeRef.current?.focus();
     const escape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setOpen(false);
       if (event.key === 'Tab') {
@@ -40,23 +46,24 @@ export function WorkspacePeopleControls() {
       }
     };
     document.addEventListener('keydown', escape);
-    return () => { document.removeEventListener('keydown', escape); previous?.focus(); };
+    return () => { document.removeEventListener('keydown', escape); trigger?.focus(); };
   }, [open]);
   return <>
     <button type="button" className={styles.control} aria-label="Share conversation" title="Share a read-only conversation snapshot" disabled={!transcript.trim()} onClick={() => { if (identity.status === 'guest') { requestAuthGate('integration'); return; } setShare(true); }}><AnimatedIcon icon={ShareIcon} size={14} intro={false} /><span>Share</span></button>
-    <button type="button" className={styles.control} aria-label="Team" onClick={() => setOpen(true)}><AnimatedIcon icon={UsersRoundIcon} size={15} intro={false} /><span>Team</span></button>
+    <button ref={triggerRef} type="button" className={styles.control} aria-label="Team" aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen(true)}><AnimatedIcon icon={UsersRoundIcon} size={15} intro={false} /><span>Team</span></button>
     <MessageShareModal open={share} onClose={() => setShare(false)} response={transcript} contentLabel="conversation snapshot" />
     {open ? createPortal(<div className={styles.overlay} onClick={() => setOpen(false)}>
-      <aside ref={drawerRef} className={styles.drawer} role="dialog" aria-label="Team workspace" aria-modal="true" onClick={event => event.stopPropagation()}>
-        <header><strong>Team</strong><button autoFocus type="button" aria-label="Close team panel" onClick={() => setOpen(false)}><X size={18} /></button></header>
-        <div className={styles.teamIntro}><UsersRound size={22} /><h2>Work together, with clear access.</h2><p>{activeProject?.repo || 'This workspace'} · {identity.displayName}</p></div>
-        <section className={styles.teamSection}><h3>Conversation sharing</h3><p>Share a read-only snapshot of this conversation. It does not grant access to files, connected accounts or project editing.</p><button type="button" disabled={!transcript.trim()} onClick={() => { setOpen(false); setShare(true); }}><Share2 size={15} /> Share conversation</button></section>
-        <section className={styles.teamSection}><h3>Project collaborators</h3><p>Repository collaborators are managed by GitHub. Inviting someone there does not give them Xroga workspace access or charge your plan.</p>{activeProject?.repo ? <a href={`https://github.com/${activeProject.repo}/settings/access`} target="_blank" rel="noreferrer">Manage GitHub access <ExternalLink size={14} /></a> : <p>Connect a GitHub repository to manage its collaborators.</p>}</section>
-        {identity.userId && identity.status === 'authenticated' && teamMembershipPreviewAvailable()
-          ? <TeamMembershipPanel key={identity.userId} userId={identity.userId} />
-          : teamMembershipPreviewAvailable() && identity.status === 'guest'
-            ? <section className={styles.teamSection}><h3>Team invitations</h3><a href="/auth/login?next=%2Fworkspace%3FteamInvites%3D1">Sign in to review your invitations</a></section>
-            : <section className={styles.teamSection}><h3>Xroga workspace roles</h3><p>Team membership is available only in the isolated Preview. Sharing a snapshot does not grant team access.</p></section>}
+      <aside ref={drawerRef} className={styles.drawer} role="dialog" aria-labelledby={headingId} aria-modal="true" onClick={event => event.stopPropagation()}>
+        <header className={styles.drawerHeader}>
+          <div><h2 id={headingId}>Team workspace</h2><p>{activeProject?.repo || 'This workspace'} · {identity.displayName}</p></div>
+          <button ref={closeRef} type="button" aria-label="Close team panel" onClick={() => setOpen(false)}><X size={18} aria-hidden="true" /></button>
+        </header>
+        <Link className={styles.settingsLink} href={TEAM_SETTINGS_PATH} prefetch={false} onClick={() => setOpen(false)}>
+          Open full Team settings <ExternalLink size={14} aria-hidden="true" />
+        </Link>
+        <TeamMembershipAccess inDrawer />
+        <section className={styles.teamSection}><h2>Conversation sharing</h2><p>Share a read-only snapshot. This does not share files, connected accounts or project editing.</p><button type="button" disabled={!transcript.trim()} onClick={() => { setOpen(false); setShare(true); }}><Share2 size={15} aria-hidden="true" /> Share conversation</button></section>
+        <section className={styles.teamSection}><h2>Project collaborators</h2><p>GitHub repository access is separate from Xroga team membership.</p>{activeProject?.repo ? <a href={`https://github.com/${activeProject.repo}/settings/access`} target="_blank" rel="noreferrer">Manage GitHub access <ExternalLink size={14} aria-hidden="true" /></a> : <p>Connect a GitHub repository to manage its collaborators.</p>}</section>
       </aside>
     </div>, document.body) : null}
   </>;

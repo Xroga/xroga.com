@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "d400e2f7ecbfc5b9f85194192000e4c67b824942",
+  "source_sha": "d2990b362f868d3f9e872cb8fa02d683d60cf1d1",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16561,7 +16561,7 @@
     },
     {
       "path": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "e538ab028b5902f47714a9142cac5b61017f52686c5b47735bd794d3abe86481"
+      "sha256": "c6de64b2c56f01c152ed0a4e31bbba9ed5734e1b41ce16111254a5648c7e1c17"
     },
     {
       "path": ".github/workflows/command4-authority.yml",
@@ -20036,6 +20036,10 @@
       "sha256": "3da7fc6ae667f0a8fb5e3e1f66bdfb7731196ebb76c33c06261fdea447f04436"
     },
     {
+      "path": "frontend/src/app/(shell)/settings/teams/page.tsx",
+      "sha256": "d17a837ed808d2a6d8e19116e39cce8ce12c34a35b7b8d80da3d1fe8b93984f7"
+    },
+    {
       "path": "frontend/src/app/(workspace)/dashboard/page.tsx",
       "sha256": "1d6f71041372093d5c4960c7ff8ede0325bb1858a11ff714a218056073bb9785"
     },
@@ -22608,8 +22612,12 @@
       "sha256": "46620a18afa66deeb284cde5c4ca101b88509f249e48d331678aa302e5082c84"
     },
     {
+      "path": "frontend/src/components/terminal/TeamMembershipAccess.tsx",
+      "sha256": "68cb123b3636d16a1833aacdc86148fb3281c4426c2b59d8b0875ccd4c507df5"
+    },
+    {
       "path": "frontend/src/components/terminal/TeamMembershipPanel.tsx",
-      "sha256": "4270105fe6a3515fbccf3a0e1c3164fba66f1a12da89fe8a842b00e5b0875625"
+      "sha256": "fdb0f290afdfe4859f6102ab30492df51f54531f993b3026ab91296d1b38702d"
     },
     {
       "path": "frontend/src/components/terminal/TerminalBuildReport.tsx",
@@ -22685,7 +22693,7 @@
     },
     {
       "path": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
-      "sha256": "27f3b3508973e1ee48c048862b69b46e88f75b58cfdcfa9a849f2c29a0278e5d"
+      "sha256": "4c06bc4b7d8b49ec2f437d5e22d99ad2a3b30c8395b7408138bcc1bc905edf7f"
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceSearchButton.tsx",
@@ -29970,7 +29978,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
-      "line": 54,
+      "line": 66,
       "credentialsInUrl": false
     },
     {

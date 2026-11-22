@@ -116,6 +116,7 @@ jobs:
     env:
       XB01_DISPOSABLE_SUPABASE: '1'
       NEXT_PUBLIC_API_URL: http://127.0.0.1:4000
+      NEXT_PUBLIC_XROGA_TEAMS_PREVIEW_API_ORIGIN: http://127.0.0.1:4000
       E2E_BACKEND_URL: http://127.0.0.1:4000
       XROGA_TEAMS_PREVIEW_SUPABASE_ORIGIN: http://127.0.0.1:54321
       # Production billing is verified by launch-production-verification.yml
@@ -243,7 +244,7 @@ jobs:
           if [ "$XB01_BROWSER_VERIFICATION_SCOPE" = 'proxy-origin-only' ]; then
             node ../node_modules/@playwright/test/cli.js test e2e/proxy-origin-local.spec.ts
           else
-            node ../node_modules/@playwright/test/cli.js test e2e/command3-auth.spec.ts e2e/companion-public.spec.ts e2e/batch01-founder-local.spec.ts e2e/proxy-origin-local.spec.ts e2e/phase4-cookie-isolation.spec.ts
+            node ../node_modules/@playwright/test/cli.js test e2e/command3-auth.spec.ts e2e/companion-public.spec.ts e2e/batch01-founder-local.spec.ts e2e/proxy-origin-local.spec.ts e2e/phase4-cookie-isolation.spec.ts e2e/teams-settings-local.spec.ts
           fi
       - name: Real tenant authorization and concurrency integration
         # Independent evidence still runs after a browser assertion fails, but

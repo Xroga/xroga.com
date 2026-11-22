@@ -52,6 +52,7 @@ export function TeamMembershipPanel({ userId }: { userId: string }) {
   const active = teams?.find(team => team.id === selected && team.status === 'active');
   const activeId = active?.id;
   const detail = currentTeamResponse(teamResponse, activeId, revision);
+  const invitations = teams?.filter(team => team.status === 'pending');
 
   useEffect(() => {
     const controller = new AbortController();
@@ -105,11 +106,20 @@ export function TeamMembershipPanel({ userId }: { userId: string }) {
   }
 
   return <section className={styles.teamSection}>
-    <h3>Team membership</h3>
+    <h2>Team membership</h2>
     {error ? <p role="alert">{error}</p> : null}
     {notice ? <p role="status">{notice}</p> : null}
     {!teams && !error ? <p role="status">Loading teams…</p> : null}
     {teams ? <>
+      <h3>Your invitations</h3>
+      {invitations?.length ? invitations.map(team => <div key={team.id}>
+        <p>Invitation to {team.name}</p>
+        <div className={styles.teamActions}>
+          <button type="button" disabled={busy} onClick={() => void submit({ action: 'accept', teamId: team.id })}>Accept</button>
+          <button type="button" disabled={busy} onClick={() => void submit({ action: 'decline', teamId: team.id })}>Decline</button>
+        </div>
+      </div>) : <p>No pending invitations.</p>}
+      <h3>Your teams</h3>
       <form onSubmit={create} className="grid gap-2">
         <label>Team name <input value={name} onChange={event => setName(event.target.value)} required maxLength={80} /></label>
         <button type="submit" disabled={busy}>Create team</button>
@@ -124,11 +134,6 @@ export function TeamMembershipPanel({ userId }: { userId: string }) {
         <option value="">Choose a team</option>
         {teams.filter(team => team.status === 'active').map(team => <option value={team.id} key={team.id}>{team.name} ({team.role})</option>)}
       </select></label>
-      {teams.filter(team => team.status === 'pending').map(team => <div key={team.id}>
-        <p>Invitation to {team.name}</p>
-        <button disabled={busy} onClick={() => void submit({ action: 'accept', teamId: team.id })}>Accept</button>
-        <button disabled={busy} onClick={() => void submit({ action: 'decline', teamId: team.id })}>Decline</button>
-      </div>)}
     </> : null}
     {active && !detail && !error ? <p role="status">Loading team details…</p> : null}
     {active && detail ? <>
@@ -143,10 +148,13 @@ export function TeamMembershipPanel({ userId }: { userId: string }) {
         }
         void submit({ action, teamId: active.id, email: recipient, requestId: inviteAttempt.current.requestId });
       }}>
+        <h3>Manage invitations</h3>
         <label>Account email <input type="email" required maxLength={254} value={email} disabled={busy} onChange={event => setEmail(event.target.value)} /></label>
-        <button type="submit" value="invite" disabled={busy}>Send invitation</button>
-        <button type="submit" value="resend" disabled={busy}>Resend pending invitation</button>
-        <button type="submit" value="revoke" disabled={busy}>Revoke pending invitation</button>
+        <div className={styles.teamActions}>
+          <button type="submit" value="invite" disabled={busy}>Send invitation</button>
+          <button type="submit" value="resend" disabled={busy}>Resend pending invitation</button>
+          <button type="submit" value="revoke" disabled={busy}>Revoke pending invitation</button>
+        </div>
       </form> : null}
       <h3>Members</h3>
       <ul>{detail.members.map(member => {
@@ -163,7 +171,7 @@ export function TeamMembershipPanel({ userId }: { userId: string }) {
         </li>;
       })}</ul>
       <h3>Recent membership activity</h3>
-      <ul>{detail.activity.map(event => <li key={event.id}>{detail.members.find(member => member.userId === event.actor_user_id)?.name ?? 'Former member'} {actions[event.action]} · {new Date(event.created_at).toLocaleDateString()}</li>)}</ul>
+      {detail.activity.length ? <ul>{detail.activity.map(event => <li key={event.id}>{detail.members.find(member => member.userId === event.actor_user_id)?.name ?? 'Former member'} {actions[event.action] ?? 'updated team membership'} · {new Date(event.created_at).toLocaleDateString()}</li>)}</ul> : <p>No membership activity yet.</p>}
     </> : null}
   </section>;
 }
