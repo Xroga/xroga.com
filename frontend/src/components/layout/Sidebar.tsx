@@ -18,8 +18,6 @@ import {
   MessageCirclePlus,
   Terminal,
   Rocket,
-  Activity,
-  TrendingUp,
   FolderGit2,
   LayoutTemplate,
   Sparkles,
@@ -88,8 +86,6 @@ import { FolderOpenIcon } from '@/components/icons/animated/FolderOpenIcon';
 import { AirplayIcon } from '@/components/icons/animated/AirplayIcon';
 import { UsersRoundIcon } from '@/components/icons/animated/UsersRoundIcon';
 import { SmileIcon } from '@/components/icons/animated/SmileIcon';
-import { ChartColumnIncreasingIcon } from '@/components/icons/animated/ChartColumnIncreasingIcon';
-import { HeartPulseIcon } from '@/components/icons/animated/HeartPulseIcon';
 import { SidebarNavScroller } from './SidebarNavScroller';
 import { ThemeToggle } from './ThemeToggle';
 import compactStyles from './SidebarCompact.module.css';
@@ -186,10 +182,8 @@ const navItems: NavEntry[] = [
   },
   { href: '/dashboard/publish', motion: 'launch' as const, label: 'Publish', icon: Rocket, animated: RocketIcon, tip: 'Ship web, extensions, desktop and mobile through your accounts.' },
   {
-    id: 'more', label: 'More', icon: Ellipsis, tip: 'Operations, growth, settings and community.',
+    id: 'more', label: 'More', icon: Ellipsis, tip: 'Settings, discovery and feedback.',
     children: [
-      { href: '/dashboard/operations', label: 'Operations', icon: Activity, animated: HeartPulseIcon, tip: 'Releases, health and approvals.' },
-      { href: '/dashboard/growth', label: 'Growth', icon: TrendingUp, animated: ChartColumnIncreasingIcon, tip: 'Campaigns, experiments and attribution.' },
       { href: '/settings', label: 'Settings', icon: Settings, animated: CogIcon, tip: 'Theme, account and preferences.' },
       { href: '/features', label: 'Explore', icon: Compass, animated: TelescopeIcon, tip: 'Explore what Xroga can do.' },
       { href: '/showcase', label: 'Showcase', icon: LayoutTemplate, animated: AirplayIcon, tip: 'Explore reusable product templates.' },
@@ -825,13 +819,8 @@ export function Sidebar({ displayName, email }: SidebarProps) {
                     }
                   >
                     <div className="xv-sidebar-hover-menu__card xv-sidebar-compact-flyout">
-                      {entry.children.map((child, index) => (
-                        <div key={child.label}>
-                          {index === 0 ? <p className="xv-sidebar-hover-menu__eyebrow">OPERATIONS &amp; GROWTH</p> : null}
-                          {index === 3 ? <p className="xv-sidebar-hover-menu__eyebrow xv-sidebar-menu-divider">DISCOVER</p> : null}
-                          {renderMenuChild(child)}
-                        </div>
-                      ))}
+                      <p className="xv-sidebar-hover-menu__eyebrow">More</p>
+                      {entry.children.map((child) => <div key={child.href}>{renderMenuChild(child)}</div>)}
                     </div>
                   </SidebarHoverMenu>
                 ) : isGroup(entry) ? (

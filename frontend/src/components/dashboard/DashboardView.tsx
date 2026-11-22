@@ -10,7 +10,7 @@ import {
   WORKSPACE_MAX_WIDTH,
   WORKSPACE_MIN_WIDTH,
 } from '@/store/useThemeStore';
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { useTerminalChat } from '@/context/TerminalChatContext';
@@ -24,6 +24,7 @@ import { MinimizeIcon } from '@/components/icons/animated/MinimizeIcon';
 import { markFreshTerminalIntent } from '@/lib/repoContext';
 import { BillingSuccessExperience } from '@/components/billing/BillingSuccessExperience';
 import startStyles from './WorkspaceNewTerminal.module.css';
+import scrollPolish from './WorkspaceScrollPolish.module.css';
 import { RepoContextBar } from '@/components/terminal/RepoContextBar';
 
 
@@ -54,6 +55,7 @@ export function DashboardView({ browserOperator }: { browserOperator?: ReactNode
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
   const incognito = hydrated && incognitoRaw;
   const paneRef = useRef<HTMLDivElement>(null);
+  const [transcriptScrolled, setTranscriptScrolled] = useState(false);
   const shellRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const workspaceWidth = useThemeStore((s) => s.workspaceWidth);
@@ -138,6 +140,20 @@ export function DashboardView({ browserOperator }: { browserOperator?: ReactNode
   useEffect(() => {
     useThemeStore.getState().setBrowserPanelOpen(false);
   }, []);
+
+  // The toolbar is already fixed above the transcript. Fade only its shadow
+  // as the actual workspace conversation moves beneath it.
+  useEffect(() => {
+    const scroller = paneRef.current?.querySelector<HTMLElement>('.xv-terminal-scroll');
+    if (!scroller) return;
+    const sync = () => {
+      const scrolled = scroller.scrollTop > 2;
+      setTranscriptScrolled(current => current === scrolled ? current : scrolled);
+    };
+    sync();
+    scroller.addEventListener('scroll', sync, { passive: true });
+    return () => scroller.removeEventListener('scroll', sync);
+  }, [messages.length, workspaceOpen]);
 
   /**
    * Keep the composer over the terminal pane, and only the terminal pane.
@@ -233,7 +249,7 @@ export function DashboardView({ browserOperator }: { browserOperator?: ReactNode
         {/* One continuous application toolbar. It sits outside the terminal's scroll
             container on purpose: a title bar that scrolls away with the history is a
             document header, not a window chrome. */}
-        <header className="xv-workspace-header" data-testid="terminal-identity-header">
+        <header className={cn("xv-workspace-header", scrollPolish.headerChrome)} data-testid="terminal-identity-header">
           <div className="xv-workspace-identity-cluster" style={{ minWidth: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
             {incognito ? (
               <WorkspaceIdentityMenu incognito />
@@ -269,9 +285,11 @@ export function DashboardView({ browserOperator }: { browserOperator?: ReactNode
               </button>
             </div>
           )}
+          {browserOperator && (
+            <div className={scrollPolish.browserControl}>{browserOperator}</div>
+          )}
         </header>
 
-        {browserOperator}
         <div
           ref={bodyRef}
           className="xv-workspace-body"
@@ -280,6 +298,14 @@ export function DashboardView({ browserOperator }: { browserOperator?: ReactNode
         >
           <div className="xv-terminal-panel" ref={paneRef}>
             {terminalPane}
+            {hasConversation && (
+              <div
+                aria-hidden="true"
+                className={scrollPolish.transcriptFade}
+                data-testid="workspace-transcript-fade"
+                data-scrolled={transcriptScrolled ? 'true' : 'false'}
+              />
+            )}
           </div>
           {/* The split is draggable. Rendered only while the workspace is open, so a
               closed workspace has no invisible grab strip down the middle of the

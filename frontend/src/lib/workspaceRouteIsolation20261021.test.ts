@@ -5,6 +5,7 @@ import { test } from 'node:test';
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
 const shell = read('../components/layout/AppShell.tsx');
 const dock = read('../components/terminal/TerminalDock.tsx');
+const navigation = read('../components/terminal/WorkspaceScrollNavigation.tsx');
 const view = read('../components/dashboard/DashboardView.tsx');
 const identity = read('../components/terminal/WorkspaceIdentityMenu.tsx');
 const sidebar = read('../components/layout/Sidebar.tsx');
@@ -67,6 +68,9 @@ test('conversation navigation uses 1 marker per user request and reply with adap
 test('automatic intro replaces first line in the same position; scroll control has direct arrows', () => {
   assert.match(starter, /className=\{styles\.automaticFirst\} data-visible=\{!showDetail\}/);
   assert.match(starter, /className=\{styles\.automaticDetail\} data-visible=\{showDetail\}/);
-  assert.match(dock, /<ArrowDown size=\{19\}/);
-  assert.match(dock, /<ArrowUp size=\{19\}/);
+  assert.match(dock, /<WorkspaceScrollNavigation/);
+  assert.match(navigation, /aria-label="Scroll to first response"/);
+  assert.match(navigation, /aria-label="Scroll to last response"/);
+  assert.match(navigation, /<NavigationArrow down \/>/);
+  assert.match(navigation, /<NavigationArrow \/>/);
 });

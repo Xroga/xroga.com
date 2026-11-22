@@ -157,7 +157,7 @@ test('the shell keeps one radius without a visible outline', () => {
 test('the title bar is outside the scrolling container', () => {
   // In the rendered tree the header is a sibling *before* the body that holds the
   // panes, so the transcript moves underneath it rather than carrying it along.
-  const header = VIEW.indexOf('<header className="xv-workspace-header"');
+  const header = VIEW.indexOf('className={cn("xv-workspace-header"');
   // Matched on the class rather than on `<div className="…"`: the body carries a ref
   // and a style for the resizable split now, so its attributes span several lines.
   const body = VIEW.indexOf('className="xv-workspace-body"');
@@ -380,6 +380,8 @@ test('the terminal pane scrolls when there is something to scroll, and not befor
   assert.match(VIEW, /data-conversation=\{hasConversation \? 'true' : 'false'\}/, 'the pane cannot report its state');
   assert.match(VIEW, /const hasConversation = messages\.length > 0;/, 'the state is not read from the transcript');
 
-  // Compact once earned: a thumb, not a groove down the edge of the window.
-  assert.match(CSS, /\.xv-terminal-scroll::-webkit-scrollbar \{ width: 4px; \}/, 'the bar is wide again');
+  // The native target is easier to grab without thickening the visible thumb.
+  assert.match(CSS, /\.xv-terminal-scroll::-webkit-scrollbar \{ width: 12px; \}/, 'the scrollbar loses its wider hit target');
+  assert.match(CSS, /\.xv-terminal-scroll::-webkit-scrollbar-track \{ background: transparent; \}/, 'the transparent gutter paints a full-height groove');
+  assert.match(CSS, /\.xv-terminal-scroll::-webkit-scrollbar-thumb\s*\{[^}]*border-inline: 2px solid transparent/);
 });

@@ -52,6 +52,7 @@ flowchart LR
   endpoint_aptos_dev["Source-defined endpoint aptos.dev - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_asana_com["Source-defined endpoint asana.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_backend_composio_dev["Source-defined endpoint backend.composio.dev - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_base44_com["Source-defined endpoint base44.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_bolt_new["Source-defined endpoint bolt.new - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_brandland_zendesk_com["Source-defined endpoint brandland.zendesk.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_build_avax_network["Source-defined endpoint build.avax.network - CONFIGURED_BUT_UNVERIFIED"]
@@ -154,6 +155,7 @@ flowchart LR
   endpoint_supabase_management_tests_invalid["Source-defined endpoint supabase-management-tests.invalid - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_supabase_com["Source-defined endpoint supabase.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_support_bolt_new["Source-defined endpoint support.bolt.new - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_support_google_com["Source-defined endpoint support.google.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_temporal_io["Source-defined endpoint temporal.io - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_token_actions_githubusercontent_com["Source-defined endpoint token.actions.githubusercontent.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_twitter_com["Source-defined endpoint twitter.com - CONFIGURED_BUT_UNVERIFIED"]
@@ -189,6 +191,7 @@ flowchart LR
   endpoint_www_pcrf_net["Source-defined endpoint www.pcrf.net - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_www_perplexity_ai["Source-defined endpoint www.perplexity.ai - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_www_pinterest_com["Source-defined endpoint www.pinterest.com - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_www_postgresql_org["Source-defined endpoint www.postgresql.org - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_www_reddit_com["Source-defined endpoint www.reddit.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_www_redditinc_com["Source-defined endpoint www.redditinc.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_www_semrush_com["Source-defined endpoint www.semrush.com - CONFIGURED_BUT_UNVERIFIED"]
@@ -250,6 +253,7 @@ flowchart LR
   frontend -. "source host/reference; unverified" .-> endpoint_aptos_dev
   frontend -. "source host/reference; unverified" .-> endpoint_asana_com
   api -. "source host/reference; unverified" .-> endpoint_backend_composio_dev
+  frontend -. "source host/reference; unverified" .-> endpoint_base44_com
   frontend -. "source host/reference; unverified" .-> endpoint_bolt_new
   frontend -. "source host/reference; unverified" .-> endpoint_brandland_zendesk_com
   frontend -. "source host/reference; unverified" .-> endpoint_build_avax_network
@@ -352,6 +356,7 @@ flowchart LR
   api -. "source host/reference; unverified" .-> endpoint_supabase_management_tests_invalid
   frontend -. "source host/reference; unverified" .-> endpoint_supabase_com
   frontend -. "source host/reference; unverified" .-> endpoint_support_bolt_new
+  frontend -. "source host/reference; unverified" .-> endpoint_support_google_com
   frontend -. "source host/reference; unverified" .-> endpoint_temporal_io
   api -. "source host/reference; unverified" .-> endpoint_token_actions_githubusercontent_com
   frontend -. "source host/reference; unverified" .-> endpoint_twitter_com
@@ -387,6 +392,7 @@ flowchart LR
   frontend -. "source host/reference; unverified" .-> endpoint_www_pcrf_net
   frontend -. "source host/reference; unverified" .-> endpoint_www_perplexity_ai
   frontend -. "source host/reference; unverified" .-> endpoint_www_pinterest_com
+  frontend -. "source host/reference; unverified" .-> endpoint_www_postgresql_org
   frontend -. "source host/reference; unverified" .-> endpoint_www_reddit_com
   frontend -. "source host/reference; unverified" .-> endpoint_www_redditinc_com
   frontend -. "source host/reference; unverified" .-> endpoint_www_semrush_com

@@ -7,5 +7,5 @@ export default function Page() {
   return <EditorialHub path="/blog" title="Guides for building software with AI responsibly."
     description={metadata.description as string} eyebrow="Xroga learning library"
     intro="Clear explanations and decision frameworks for moving from generated output to software a team can inspect, operate, and improve."
-    items={BLOG_ARTICLES.map((article) => ({ href: `/blog/${article.slug}`, title: article.title, description: article.description, meta: `Updated ${article.updated ?? '2026-09-09'}` }))} />;
+    items={[...BLOG_ARTICLES].sort((a,b) => (b.updated ?? '').localeCompare(a.updated ?? '')).map((article) => ({ href: `/blog/${article.slug}`, title: article.title, description: article.description, meta: `Updated ${article.updated ?? '2026-09-09'}` }))} />;
 }

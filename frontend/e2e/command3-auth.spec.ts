@@ -132,6 +132,45 @@ test.afterAll(async () => {
   if (outsiderId) expect((await admin.auth.admin.deleteUser(outsiderId)).error).toBeNull();
 });
 
+test('sidebar search finds saved projects and chat previews without crossing accounts', async ({ page }) => {
+  const sectionTitle = `Roadmap collection ${run}`;
+  expect((await admin.from('xroga_sidebar_sections').insert({ user_id: ownerId, project_id: ownerProjectId, title: sectionTitle })).error).toBeNull();
+  await page.goto('/auth/login?next=%2Fworkspace');
+  const form = page.locator('form', { has: page.locator('#login-email') });
+  await form.locator('#login-email').fill(ownerEmail);
+  await form.locator('#login-password').fill(password);
+  await form.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await expect(page).toHaveURL(/\/workspace/, { timeout: AUTH_TRANSITION_TIMEOUT_MS });
+  expect(await browserSession(page)).toEqual({ status: 200, authenticated: true });
+
+  const trigger = page.getByRole('button', { name: 'Search workspace', exact: true }).filter({ visible: true }).first();
+  await trigger.click();
+  const dialog = page.getByRole('dialog', { name: 'Search workspace' });
+  const input = dialog.getByRole('searchbox');
+  await expect(input).toBeFocused();
+  await input.fill('command3 demo owner');
+  await expect(dialog.getByRole('link', { name: new RegExp(`command3-demo-owner-${run}`) }))
+    .toHaveAttribute('href', `/workspace?project=${ownerProjectId}`);
+  await input.fill('Roadmap collection');
+  await expect(dialog.getByRole('link', { name: new RegExp(sectionTitle) }))
+    .toHaveAttribute('href', `/workspace?project=${ownerProjectId}`);
+  await input.fill('Persisted outsider conversation');
+  await expect(dialog.getByRole('status')).toHaveText('No matching saved work.');
+  await input.press('Escape');
+  await expect(dialog).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+
+  await trigger.click();
+  await input.fill('Persisted owner first');
+  const result = dialog.getByRole('link', { name: new RegExp(conversations.first.title) });
+  await expect(result).toHaveAttribute('href', `/workspace?conversation=${conversations.first.id}`);
+  await input.press('ArrowDown');
+  await expect(result).toBeFocused();
+  await result.press('Enter');
+  await expect(page.locator('[data-terminal-composer]')).toHaveAttribute('data-draft-session', conversations.first.id);
+  await expect(page.getByText(conversations.first.reply, { exact: true })).toBeVisible();
+});
+
 test('setup remains retryable after a failed save and exits only after a durable skip', async ({ page }) => {
   const previous = { status: 'completed', current_step: 'complete', backfilled: true };
   const reset = await admin.from('profiles').update({ onboarding: { status: 'not_started' } }).eq('id', outsiderId);
@@ -759,13 +798,26 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     await architectureSharePage.close();
     await dialog.getByRole('button', { name: 'Close share dialog' }).click();
   }
+  const installDisclosure = page.locator('summary').filter({ hasText: /^Install Xroga Extension$/ });
+  await expect(installDisclosure).toBeVisible();
+  const installNotice = installDisclosure.locator('..').getByText('Coming soon', { exact: true });
+  const workspaceUrl = page.url();
+  await expect(installNotice).toBeHidden();
+  await installDisclosure.focus();
+  await installDisclosure.press('Enter');
+  await expect(installNotice).toBeVisible();
+  await expect(installDisclosure.locator('..').getByRole('link')).toHaveCount(0);
+  await expect(page).toHaveURL(workspaceUrl);
+  await installDisclosure.press('Enter');
+  await expect(installNotice).toBeHidden();
+
   const pairingWorkspace = new URL('/workspace', page.url());
   pairingWorkspace.searchParams.set('conversation', architectureSession);
   pairingWorkspace.searchParams.set('browserExtension', 'abcdefghijklmnopabcdefghijklmnop');
   pairingWorkspace.searchParams.set('browserPair', '11111111-1111-4111-8111-111111111111');
   await page.goto(pairingWorkspace.href);
-  const browserOperator = page.getByText('Browser Operator', { exact: true });
-  await expect(browserOperator).toHaveCount(1);
+  const browserOperator = page.locator('summary').filter({ hasText: /^Install Xroga Extension$/ });
+  await expect(browserOperator).toBeVisible();
   await expect(renderedArchitecture.locator('.react-flow__edge')).toHaveCount(1, { timeout: 20_000 });
   await page.mouse.move(0, 0);
   await expect(page.getByText('Conversation restored', { exact: true })).toHaveCount(0, { timeout: 10_000 });
@@ -776,19 +828,48 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     const panel = browserOperator.locator('..');
     await expect(panel).toHaveJSProperty('open', true);
     const expanded = (await panel.boundingBox())!;
-    expect(expanded.y + expanded.height).toBeLessThanOrEqual((await transcript.boundingBox())!.y + 1);
+    const transcriptTop = (await transcript.boundingBox())!.y;
+    const header = browserOperator.locator('xpath=ancestor::header[1]');
+    const headerBounds = (await header.boundingBox())!;
+    await expect(header).not.toHaveAttribute('data-scrolled');
+    const fade = transcript.locator('..').getByTestId('workspace-transcript-fade');
+    const fadeBounds = (await fade.boundingBox())!;
+    const transcriptBounds = (await transcript.boundingBox())!;
+    expect(fadeBounds.y).toBeGreaterThanOrEqual(headerBounds.y + headerBounds.height - 1);
+    expect(fadeBounds.x).toBeGreaterThan(transcriptBounds.x);
+    expect(fadeBounds.x + fadeBounds.width).toBeLessThan(transcriptBounds.x + transcriptBounds.width);
+    expect(fadeBounds.height).toBeLessThanOrEqual(10);
+    await transcript.evaluate(element => { element.scrollTop = 0; });
+    await expect(fade).toHaveCSS('opacity', '0');
+    await transcript.evaluate(element => { element.scrollTop = element.scrollHeight; });
+    await expect(fade).toHaveCSS('opacity', '1');
+    await expect(transcript).toHaveCSS('clip-path', 'none');
+    const dockFrame = page.locator('[data-composer-frame="single"]');
+    const composerBottom = (await dockFrame.boundingBox())!;
+    expect(transcriptBounds.y + transcriptBounds.height).toBeLessThanOrEqual(composerBottom.y + composerBottom.height + 1);
+    const end = await transcript.evaluate(element => element.scrollTop);
+    const railX = transcriptBounds.x + transcriptBounds.width - 6;
+    const railY = transcriptBounds.y + transcriptBounds.height - 12;
+    await page.mouse.move(railX, railY);
+    await page.mouse.wheel(0, -260);
+    await expect.poll(() => transcript.evaluate(element => element.scrollTop)).toBeLessThan(end);
+    await page.mouse.wheel(0, 1000);
+    await expect.poll(() => transcript.evaluate(element => Math.ceil(element.scrollTop))).toBeGreaterThanOrEqual(Math.floor(end));
+    expect(expanded.y).toBeGreaterThanOrEqual(headerBounds.y + headerBounds.height);
+    expect(expanded.x).toBeGreaterThanOrEqual(headerBounds.x - 1);
     expect(expanded.x + expanded.width).toBeLessThanOrEqual(width + 1);
     await browserOperator.click();
     await expect(panel).toHaveJSProperty('open', false);
     const collapsed = (await panel.boundingBox())!;
-    expect(collapsed.y + collapsed.height).toBeLessThanOrEqual((await transcript.boundingBox())!.y + 1);
+    expect(collapsed.width).toBeLessThan(expanded.width);
+    expect(Math.abs((await transcript.boundingBox())!.y - transcriptTop)).toBeLessThanOrEqual(1);
     await browserOperator.click();
   }
   expect(chatCalls).toBe(9);
   await writeFile('test-results/native-workspace/evidence.json', JSON.stringify({
     source: expectedRelease, route: '/workspace', auth: 'isolated Supabase ordinary accounts',
     model: 'deterministic transport fixtures, zero provider calls', nativeActions: ['file handoff', 'citation link', 'keyboard calculator', 'copy readback', 'database save and reopen', 'private share owner/guest/other account', 'continuation', 'browser cancellation', 'client validation fallback', 'partial native recovery, copy and reopen', 'reviewed partial chart', 'legacy research receipt without refocus or redispatch', 'automatic public lookup, citation and source count after Copy, Share and Reopen', 'connected diagram, nested table and code in one persisted answer'],
-    viewports: [320, 390, 768, 1280, 1440], themes: ['black', 'white'], browserOperator: 'one in-flow panel, expanded and collapsed above the saved architecture answer',
+    viewports: [320, 390, 768, 1280, 1440], themes: ['black', 'white'], browserOperator: 'one compact header control expands within the viewport without shifting the saved answer',
   }, null, 2));
 });
 

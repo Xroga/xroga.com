@@ -563,7 +563,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       if (!s.githubRepoName?.includes('/') || s.messageCount <= 0) continue;
       push(s.githubRepoName, s.githubBranch || 'main', '/', {
         id: s.id,
-        title: meaningfulSidebarTitle(s.title,null),
+        title: meaningfulSidebarTitle(s.title,s.preview),
         updatedAt: s.updatedAt,
         status: (s.status as TerminalHistoryStatus) || 'complete',
         githubRepoName: s.githubRepoName,
@@ -822,7 +822,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
           terminalNumber: c.terminalNumber || previous.terminalNumber,
           updatedAt: Date.parse(c.updatedAt) > Date.parse(previous.updatedAt) ? c.updatedAt : previous.updatedAt });
       } else {
-        map.set(c.id, { id: c.id, title: meaningfulSidebarTitle(c.title,null), preview: c.preview, updatedAt: c.updatedAt,
+        map.set(c.id, { id: c.id, title: meaningfulSidebarTitle(c.title,c.preview), preview: c.preview, updatedAt: c.updatedAt,
           githubRepoName: c.githubRepoName, githubBranch: c.githubBranch || 'main',
           projectRoot: '/', cloudSynced: true, kind: 'cloud', terminalNumber: c.terminalNumber,
           status: c.status as TerminalHistoryStatus });

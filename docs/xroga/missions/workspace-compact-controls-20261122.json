@@ -1,0 +1,48 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-COMPACT-CONTROLS-20261122",
+  "baseSha": "f9f2216c15647458bf5cf14878161dbbf37f3962",
+  "requirementIds": ["XR-MISSION-055", "XR-MISSION-056"],
+  "state": "CODE_COMPLETE",
+  "risk": "low",
+  "scope": "Compact scheduled feedback, keep Project edits as the only labeled workspace toolbar action, and require explicit activation to reveal starter details.",
+  "changedFiles": [
+    "frontend/e2e/chat-turn-rail.spec.ts",
+    "frontend/e2e/composer-polish.spec.ts",
+    "frontend/e2e/workspace-new-terminal.spec.ts",
+    "frontend/src/app/globals.css",
+    "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
+    "frontend/src/components/feedback/ScheduledFeedbackPrompt.module.css",
+    "frontend/src/components/feedback/ScheduledFeedbackPrompt.tsx",
+    "frontend/src/components/terminal/TerminalSkinPicker.tsx",
+    "frontend/src/components/terminal/WorkspacePeopleControls.module.css",
+    "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
+    "frontend/src/lib/feedbackAdminAccess.test.ts",
+    "frontend/src/lib/workspaceComposerPolish20261021.test.ts",
+    "frontend/src/lib/workspaceMobileToolbar20261103.test.ts"
+  ],
+  "decisions": {"keep": ["Feedback ratings, payload, schedule, auth and validation", "Toolbar and starter actions"], "extend": ["Accessible icon names, focus restoration and responsive tests"], "replace": ["Full feedback send row with a corner icon", "Hover and focus disclosure with click or keyboard activation"], "deprecate": ["Redundant toolbar text and feedback explanatory line"]},
+  "architecture": {"change": "extends_canonical", "reason": "Uses the existing feedback form, toolbar and anchored menu without adding a service.", "rfc": null},
+  "schemaImpact": {"changed": false, "migrations": [], "rollout": "Frontend only.", "rollback": "No schema rollback."},
+  "securityImpact": {
+    "auth": {"changed": false, "description": "Existing feedback and share authorization is unchanged."},
+    "tenant": {"changed": false, "description": "No resource access changes."},
+    "approval": {"changed": false, "description": "Feedback still requires explicit submission; starter selection only edits a draft."},
+    "credentials": {"changed": false, "description": "No credential changes."},
+    "egress": {"changed": false, "description": "Existing feedback payload and destination are unchanged."},
+    "cost": {"changed": false, "description": "No new inference or provider usage."},
+    "billing": {"changed": false, "description": "No billing changes."}
+  },
+  "tests": [
+    {"command": "node --test frontend/src/lib/feedbackAdminAccess.test.ts frontend/src/lib/workspaceMobileToolbar20261103.test.ts frontend/src/lib/workspaceComposerPolish20261021.test.ts", "scope": "Guard feedback submission and accessible names, toolbar labels and explicit starter activation.", "negative": true, "reference": "frontend/src/lib/workspaceComposerPolish20261021.test.ts"},
+    {"command": "GitHub Actions: chat-turn-rail browser workflow", "scope": "Check actual feedback button position, toolbar text at desktop/mobile widths and no detail on hover.", "negative": true, "reference": "frontend/e2e/composer-polish.spec.ts"}
+  ],
+  "rollout": "Build and test a branch Preview before considering production.",
+  "rollback": "Revert the UI changes or restore the previous frontend deployment. No data changes.",
+  "knownGaps": [],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": ["frontend/src/lib/feedbackAdminAccess.test.ts", "frontend/e2e/composer-polish.spec.ts"],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {"state": "BLOCKED", "blockers": ["Browser verification and production release checks are required before promotion."], "authenticatedE2e": "BLOCKED", "stagedSecurity": "NOT_APPLICABLE", "liveUrl": null, "deployedSha": null}
+}

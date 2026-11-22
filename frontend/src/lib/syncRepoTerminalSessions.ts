@@ -1,6 +1,6 @@
 /**
  * Keep Repositories sidebar in sync with the selected GitHub repo + live terminal.
- * Ensures first chat under a repo immediately becomes "#1 terminal" in local + cloud storage.
+ * Preserves the conversation title while the repo keeps its own numbered index.
  * Sessions stay sticky under their original repo — selecting another repo never relocates them.
  */
 
@@ -16,11 +16,11 @@ import { messagesForStorage, safeStorageSet } from '@/lib/storageSafe';
 import { saveTerminalSessionToIndexedDB } from '@/lib/terminalSessionStorage';
 import {
   allocateTerminalNumber,
-  cloudTerminalLabel,
   flushTerminalSessionToCloud,
   pushTerminalSessionToCloud,
 } from '@/lib/cloudTerminalSessions';
 import type { ChatMessage } from '@/context/TerminalChatContext';
+import { isPlaceholderConversationTitle, stableConversationTitle } from './conversationTitle';
 
 const HISTORY_KEY = 'xroga_terminal_history';
 
@@ -38,13 +38,13 @@ function stampRepoOnEntry(
   repo: string,
   branch: string
 ): TerminalHistoryEntry {
-  const n = allocateTerminalNumber(e.id, repo);
+  allocateTerminalNumber(e.id, repo);
   return {
     ...e,
     githubRepoName: repo,
     githubBranch: e.githubBranch || branch,
     githubRepoUrl: e.githubRepoUrl || `https://github.com/${repo}`,
-    title: cloudTerminalLabel(n),
+    title: stableConversationTitle(e.title, e.messages, e.prompt),
     updatedAt: new Date().toISOString(),
   };
 }
@@ -87,10 +87,10 @@ export function ensureLiveTerminalUnderSelectedRepo(opts?: {
 
   let entry = loadTerminalHistory().find((e) => e.id === sessionId) ?? null;
   if (!entry) {
-    const n = allocateTerminalNumber(sessionId, bindRepo);
+    allocateTerminalNumber(sessionId, bindRepo);
     entry = {
       id: sessionId,
-      title: cloudTerminalLabel(n),
+      title: stableConversationTitle(undefined, messages, prompt),
       preview: prompt.slice(0, 200),
       prompt,
       messages,
@@ -105,12 +105,12 @@ export function ensureLiveTerminalUnderSelectedRepo(opts?: {
     };
   }
 
-  // Heal missing # title under the session's own repo — do not change repos.
+  // Heal legacy placeholder titles without replacing a meaningful title.
   if (!entry.githubRepoName?.includes('/')) {
     entry = stampRepoOnEntry(entry, bindRepo, bindBranch);
     const rest = loadTerminalHistory().filter((e) => e.id !== entry!.id);
     persistHistory([entry, ...rest]);
-  } else if (!entry.title.startsWith('#')) {
+  } else if (isPlaceholderConversationTitle(entry.title) && !isPlaceholderConversationTitle(stableConversationTitle(entry.title, entry.messages, entry.prompt))) {
     entry = stampRepoOnEntry(entry, entry.githubRepoName, entry.githubBranch || bindBranch);
     const rest = loadTerminalHistory().filter((e) => e.id !== entry!.id);
     persistHistory([entry, ...rest]);
@@ -119,10 +119,9 @@ export function ensureLiveTerminalUnderSelectedRepo(opts?: {
   void saveTerminalSessionToIndexedDB(entry);
 
   const repoForIndex = entry.githubRepoName!.includes('/') ? entry.githubRepoName! : bindRepo;
-  const n = allocateTerminalNumber(entry.id, repoForIndex);
+  allocateTerminalNumber(entry.id, repoForIndex);
   const labeled = {
     ...entry,
-    title: cloudTerminalLabel(n),
     githubRepoName: repoForIndex,
   };
   registerRepoSession({
@@ -170,7 +169,8 @@ export function syncRepoTerminalSessions(): TerminalHistoryEntry[] {
     if (
       isLive &&
       e.githubRepoName === repo &&
-      !e.title.startsWith('#')
+      isPlaceholderConversationTitle(e.title) &&
+      !isPlaceholderConversationTitle(stableConversationTitle(e.title, e.messages, e.prompt))
     ) {
       changed = true;
       return stampRepoOnEntry(e, repo, branch);
@@ -183,11 +183,11 @@ export function syncRepoTerminalSessions(): TerminalHistoryEntry[] {
     for (const e of next) {
       if (e.githubRepoName === repo && e.messageCount > 0) {
         void saveTerminalSessionToIndexedDB(e);
-        const n = allocateTerminalNumber(e.id, repo);
+        allocateTerminalNumber(e.id, repo);
         registerRepoSession({
           githubRepoName: repo,
           githubBranch: e.githubBranch || branch,
-          title: cloudTerminalLabel(n),
+          title: stableConversationTitle(e.title, e.messages, e.prompt),
           sessionId: e.id,
           cloudProjectId: e.cloudProjectId,
           status: e.status,
@@ -207,7 +207,7 @@ export function syncRepoTerminalSessions(): TerminalHistoryEntry[] {
       fromHistory.push({
         ...hist,
         githubRepoName: hist.githubRepoName || idx.githubRepoName,
-        title: idx.title.startsWith('#') ? idx.title : hist.title,
+        title: stableConversationTitle(hist.title, hist.messages, hist.prompt),
       });
       have.add(idx.sessionId);
     }

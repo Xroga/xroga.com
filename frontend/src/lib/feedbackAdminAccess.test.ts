@@ -9,13 +9,19 @@ const storage = read('./feedbackStorage.ts');
 const adminPage = read('../app/admin/feedback/page.tsx');
 const migration = read('../../../supabase/migrations/20261018211950_product_feedback_admin.sql');
 
-test('scheduled feedback uses the requested neutral experience card', () => {
+test('scheduled feedback has accessible colored faces and an inline icon-only send action', () => {
   assert.match(prompt, /How was your experience today\?/);
   for (const label of ['Good', 'Excellent', 'Fair', 'Poor']) {
     assert.match(prompt, new RegExp(`label: '${label}'`));
   }
   assert.match(prompt, /What worked well\?/);
   assert.match(prompt, /What should we improve\?/);
+  assert.match(prompt, /aria-label=\{label\} title=\{label\} data-tone=\{tone\}/);
+  assert.match(prompt, /aria-pressed=\{rating === value\}/);
+  assert.match(prompt, /<Face size=\{20\} aria-hidden="true"/);
+  assert.match(prompt, /aria-label=\{submitting \? 'Sending feedback' : 'Send feedback'\}/);
+  assert.match(promptStyles, /width: min\(304px,/);
+  assert.match(promptStyles, /\.submitButton \{ position: absolute; inset-block-start:/);
   assert.match(prompt, /await addFeedback/);
   assert.match(promptStyles, /background: #f9fafb/);
   assert.equal((prompt.match(/<textarea/g) ?? []).length, 1);

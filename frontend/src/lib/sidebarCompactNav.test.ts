@@ -24,6 +24,17 @@ test('primary navigation retains the requested order and does not duplicate old 
   assert.doesNotMatch(table, /label: 'Workspace'|label: 'Projects'/);
   assert.match(NAV, /<SidebarProjectHistory expanded=\{navExpanded\}/);
 });
+test('More has one heading and only the five remaining destinations in order', () => {
+  const more = NAV.slice(NAV.indexOf("id: 'more',"), NAV.indexOf('interface SidebarProps'));
+  assert.deepEqual([...more.matchAll(/href: '([^']+)', label: '([^']+)'/g)].map(match => match.slice(1)), [
+    ['/settings', 'Settings'], ['/features', 'Explore'], ['/showcase', 'Showcase'],
+    ['/community', 'Community'], ['/community?compose=feedback', 'Share Feedback'],
+  ]);
+  const flyout = NAV.slice(NAV.indexOf("entry.id === 'more' ? ("), NAV.indexOf(') : isGroup(entry) ? ('));
+  assert.deepEqual([...flyout.matchAll(/className="xv-sidebar-hover-menu__eyebrow">([^<]+)</g)].map(match => match[1]), ['More']);
+  assert.doesNotMatch(flyout, /xv-sidebar-menu-divider|OPERATIONS|DISCOVER/);
+});
+
 test('planned capabilities stay clickable as informative sections', () => {
   assert.doesNotMatch(NAV, /aria-disabled="true"/);
   assert.doesNotMatch(NAV, /href: '#'/);
