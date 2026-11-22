@@ -2,10 +2,10 @@
   "version": "1.0",
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
-    "branch": "codex/workspace-universal-closeout-20261122",
-    "sha": "a92ce585854573c7e1e4627dea4a63f82b59bb77",
-    "sourceTimestampUtc": "2026-11-22T16:50:10+05:00",
-    "auditStartedUtc": "2026-11-22T11:50:54.925Z",
+    "branch": "codex/workspace-serving-reconcile-ad4aa255",
+    "sha": "9b1898eeb617c5666cf9b0668b90ed702011010f",
+    "sourceTimestampUtc": "2026-11-22T17:49:44+05:00",
+    "auditStartedUtc": "2026-11-22T12:51:52.403Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -71265,7 +71265,7 @@
       "id": "surface:6ce17d2762e1020b6c38",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "sha256": "769ac7c78bd7c9b624bd0e69fa4b2eaa4df3bb13b943baf7d5019873915b29c7",
+      "sha256": "572b6dc269c1fbd00cf0d97167d09bf34105352470092a06ca3645b1a76060e6",
       "symbols": [
         "AUTOMATIONS",
         "AutomaticIntro",
@@ -71293,7 +71293,9 @@
         "media",
         "menuRef",
         "next",
+        "previous",
         "reducedMotion",
+        "returnToCategories",
         "timer",
         "useRotation"
       ],
@@ -72255,7 +72257,7 @@
       "id": "surface:1f0795de463a461679ba",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/feedback/ScheduledFeedbackPrompt.tsx",
-      "sha256": "63496614e340428599de7a22d2ddf7794a33e894f24e3a3bcd61edce13afa8f8",
+      "sha256": "a42b4f8a9b1c9bf87656b712f230950f864831abcd203c6d7557739e402ca16a",
       "symbols": [
         "RATING_OPTIONS",
         "ScheduledFeedbackPrompt",
@@ -72265,6 +72267,7 @@
         "interactedRef",
         "interval",
         "keepOpen",
+        "messageId",
         "timer"
       ],
       "imports": [
@@ -79366,7 +79369,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/WorkspaceStarterIdeas.tsx:13",
-        "frontend/src/components/layout/Sidebar.tsx:88"
+        "frontend/src/components/layout/Sidebar.tsx:86"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -79470,7 +79473,7 @@
         "frontend/src/components/icons/GitHubIcon.tsx:4",
         "frontend/src/components/layout/MobileNav.tsx:7",
         "frontend/src/components/layout/PageFullscreenFrame.tsx:5",
-        "frontend/src/components/layout/Sidebar.tsx:78",
+        "frontend/src/components/layout/Sidebar.tsx:76",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:25",
         "frontend/src/components/layout/ThemeToggle.tsx:5",
         "frontend/src/components/projects/GitHubProjectCard.tsx:5",
@@ -79860,8 +79863,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/MobileNav.tsx:14",
-        "frontend/src/components/layout/Sidebar.tsx:91"
+        "frontend/src/components/layout/MobileNav.tsx:14"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80069,7 +80071,7 @@
       ],
       "callers": [
         "frontend/src/components/layout/MobileNav.tsx:15",
-        "frontend/src/components/layout/Sidebar.tsx:84",
+        "frontend/src/components/layout/Sidebar.tsx:82",
         "frontend/src/components/ui/ProfileQuickMenu.tsx:10"
       ],
       "reachable": true,
@@ -80127,7 +80129,7 @@
       ],
       "callers": [
         "frontend/src/components/layout/MobileNav.tsx:11",
-        "frontend/src/components/layout/Sidebar.tsx:86",
+        "frontend/src/components/layout/Sidebar.tsx:84",
         "frontend/src/components/settings/SettingsView.tsx:24"
       ],
       "reachable": true,
@@ -80851,7 +80853,7 @@
       "callers": [
         "frontend/src/app/(shell)/dashboard/projects/page.tsx:16",
         "frontend/src/components/layout/MobileNav.tsx:10",
-        "frontend/src/components/layout/Sidebar.tsx:87"
+        "frontend/src/components/layout/Sidebar.tsx:85"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -81094,8 +81096,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/MobileNav.tsx:13",
-        "frontend/src/components/layout/Sidebar.tsx:92"
+        "frontend/src/components/layout/MobileNav.tsx:13"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -81211,7 +81212,7 @@
       "callers": [
         "frontend/src/components/dashboard/WorkspaceShowcaseStarts.tsx:21",
         "frontend/src/components/layout/MobileNav.tsx:9",
-        "frontend/src/components/layout/Sidebar.tsx:83"
+        "frontend/src/components/layout/Sidebar.tsx:81"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -81324,7 +81325,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:81"
+        "frontend/src/components/layout/Sidebar.tsx:79"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -81627,7 +81628,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:80"
+        "frontend/src/components/layout/Sidebar.tsx:78"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -81751,7 +81752,7 @@
       ],
       "callers": [
         "frontend/src/components/layout/MobileNav.tsx:12",
-        "frontend/src/components/layout/Sidebar.tsx:82"
+        "frontend/src/components/layout/Sidebar.tsx:80"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82020,7 +82021,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:90",
+        "frontend/src/components/layout/Sidebar.tsx:88",
         "frontend/src/components/ui/ProfileQuickMenu.tsx:13"
       ],
       "reachable": true,
@@ -82124,7 +82125,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:85"
+        "frontend/src/components/layout/Sidebar.tsx:83"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82182,7 +82183,7 @@
       "callers": [
         "frontend/src/app/(shell)/dashboard/projects/page.tsx:17",
         "frontend/src/components/layout/MobileNav.tsx:8",
-        "frontend/src/components/layout/Sidebar.tsx:79"
+        "frontend/src/components/layout/Sidebar.tsx:77"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82568,7 +82569,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/WorkspaceShowcaseStarts.tsx:23",
-        "frontend/src/components/layout/Sidebar.tsx:89",
+        "frontend/src/components/layout/Sidebar.tsx:87",
         "frontend/src/components/terminal/WorkspacePeopleControls.tsx:14",
         "frontend/src/components/ui/ProfileQuickMenu.tsx:12"
       ],
@@ -82751,7 +82752,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:44"
+        "frontend/src/components/layout/Sidebar.tsx:42"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82802,7 +82803,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:51"
+        "frontend/src/components/layout/Sidebar.tsx:49"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82853,7 +82854,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:43"
+        "frontend/src/components/layout/Sidebar.tsx:41"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82908,7 +82909,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:42"
+        "frontend/src/components/layout/Sidebar.tsx:40"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82959,7 +82960,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:49"
+        "frontend/src/components/layout/Sidebar.tsx:47"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -83011,7 +83012,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:48"
+        "frontend/src/components/layout/Sidebar.tsx:46"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -83064,7 +83065,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:47"
+        "frontend/src/components/layout/Sidebar.tsx:45"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -83116,7 +83117,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:52"
+        "frontend/src/components/layout/Sidebar.tsx:50"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -83173,7 +83174,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:46"
+        "frontend/src/components/layout/Sidebar.tsx:44"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -83225,7 +83226,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:50"
+        "frontend/src/components/layout/Sidebar.tsx:48"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -83278,7 +83279,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:41"
+        "frontend/src/components/layout/Sidebar.tsx:39"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -83440,7 +83441,7 @@
       "callers": [
         "frontend/src/components/dashboard/IncognitoDashboard.tsx:4",
         "frontend/src/components/layout/IncognitoModeButton.tsx:10",
-        "frontend/src/components/layout/Sidebar.tsx:76",
+        "frontend/src/components/layout/Sidebar.tsx:74",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:36"
       ],
       "reachable": true,
@@ -84719,7 +84720,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:77"
+        "frontend/src/components/layout/Sidebar.tsx:75"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -85068,7 +85069,7 @@
         "frontend/src/components/homepage/HomepageWorkspaceTour.tsx:26",
         "frontend/src/components/image/ImageLandingPage.tsx:14",
         "frontend/src/components/layout/MarketingFooter.tsx:4",
-        "frontend/src/components/layout/Sidebar.tsx:53",
+        "frontend/src/components/layout/Sidebar.tsx:51",
         "frontend/src/components/marketing/AiAppBuilderLanding.tsx:15",
         "frontend/src/components/marketing/AiCodingAgentLanding.tsx:25",
         "frontend/src/components/marketing/CapabilityPage.tsx:2",
@@ -85678,7 +85679,7 @@
       "id": "surface:7da6f201c8b9c4811bef",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
-      "sha256": "39efbd0c786649998ec6d6af5102887326ad1592f5005ba3a5eca40a99124bdb",
+      "sha256": "92a6ed8fe6cbd5acdf5864084e6b9984327273f2135ea7ff1969e016fde1fc42",
       "symbols": [
         "EDGE_DRAG_THRESHOLD_PX",
         "HOVER_OPEN_DELAY_MS",
@@ -85777,11 +85778,9 @@
         "./ThemeToggle",
         "@/components/icons/animated/AirplayIcon",
         "@/components/icons/animated/AnimatedIcon",
-        "@/components/icons/animated/ChartColumnIncreasingIcon",
         "@/components/icons/animated/CogIcon",
         "@/components/icons/animated/ConnectIcon",
         "@/components/icons/animated/FolderOpenIcon",
-        "@/components/icons/animated/HeartPulseIcon",
         "@/components/icons/animated/LayoutGridIcon",
         "@/components/icons/animated/LocateFixedIcon",
         "@/components/icons/animated/NewTerminalIcon",
@@ -85834,11 +85833,9 @@
       "runtimeImports": [
         "frontend/src/components/icons/animated/AirplayIcon.tsx",
         "frontend/src/components/icons/animated/AnimatedIcon.tsx",
-        "frontend/src/components/icons/animated/ChartColumnIncreasingIcon.tsx",
         "frontend/src/components/icons/animated/CogIcon.tsx",
         "frontend/src/components/icons/animated/ConnectIcon.tsx",
         "frontend/src/components/icons/animated/FolderOpenIcon.tsx",
-        "frontend/src/components/icons/animated/HeartPulseIcon.tsx",
         "frontend/src/components/icons/animated/LayoutGridIcon.tsx",
         "frontend/src/components/icons/animated/LocateFixedIcon.tsx",
         "frontend/src/components/icons/animated/NewTerminalIcon.tsx",
@@ -85996,7 +85993,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:56"
+        "frontend/src/components/layout/Sidebar.tsx:54"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -86093,7 +86090,7 @@
       ],
       "callers": [
         "frontend/src/components/layout/AppShell.tsx:5",
-        "frontend/src/components/layout/Sidebar.tsx:93"
+        "frontend/src/components/layout/Sidebar.tsx:89"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -86351,7 +86348,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:55"
+        "frontend/src/components/layout/Sidebar.tsx:53"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -86400,45 +86397,69 @@
       "id": "surface:ee601ddd5d022ca25ab4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/layout/SidebarSearchModal.tsx",
-      "sha256": "073a1836872c54348e5892943e3172f2f0c38f72809d2fb44b036f96a4436c46",
+      "sha256": "2a3188d273abd1613e4c99ed9821ab7ed7ffe7adb58728a3681a4d71258723d7",
       "symbols": [
+        "Icon",
+        "Props",
+        "ResultState",
+        "SearchPanel",
         "SidebarSearchModal",
-        "SidebarSearchModalProps",
-        "filtered",
-        "onKey",
-        "previouslyFocused",
-        "q",
-        "searchInputRef"
+        "active",
+        "canSearch",
+        "current",
+        "dialog",
+        "first",
+        "focusable",
+        "handleKeys",
+        "helperId",
+        "icons",
+        "input",
+        "items",
+        "key",
+        "labels",
+        "last",
+        "links",
+        "next",
+        "normalized",
+        "owner",
+        "returnFocus",
+        "stop",
+        "timer"
       ],
       "imports": [
-        "@/lib/api",
-        "@/lib/utils",
+        "./SidebarSearchModal.module.css",
+        "./WorkspaceIdentityContext",
+        "@/lib/workspaceSearch",
+        "@/lib/workspaceSearchIndex",
+        "@/lib/workspaceSearchQuery",
         "lucide-react",
-        "next/link",
         "react",
         "react-dom"
       ],
       "runtimeImports": [
-        "frontend/src/lib/api.ts",
-        "frontend/src/lib/utils.ts"
+        "frontend/src/components/layout/SidebarSearchModal.module.css",
+        "frontend/src/components/layout/WorkspaceIdentityContext.tsx",
+        "frontend/src/lib/workspaceSearch.ts",
+        "frontend/src/lib/workspaceSearchQuery.ts"
       ],
       "entryPoints": [
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:54",
+        "frontend/src/components/layout/Sidebar.tsx:52",
         "frontend/src/components/terminal/WorkspaceSearchButton.tsx:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "lucide-react",
-        "next/link",
         "react",
         "react-dom"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "frontend/src/components/layout/SidebarSearchModal.tsx#useWorkspaceIdentity"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -86564,7 +86585,7 @@
       ],
       "callers": [
         "frontend/src/components/homepage/HomepageWorkspaceTour.tsx:27",
-        "frontend/src/components/layout/Sidebar.tsx:94"
+        "frontend/src/components/layout/Sidebar.tsx:90"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -86619,8 +86640,9 @@
         "frontend/src/components/dashboard/DashboardHomeView.tsx:22",
         "frontend/src/components/integrations/PluginMarketplace.tsx:57",
         "frontend/src/components/layout/AppShell.tsx:19",
-        "frontend/src/components/layout/Sidebar.tsx:98",
+        "frontend/src/components/layout/Sidebar.tsx:94",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:61",
+        "frontend/src/components/layout/SidebarSearchModal.tsx:6",
         "frontend/src/components/library/LibraryWorkspace.tsx:10",
         "frontend/src/components/notifications/NotificationExperience.tsx:8",
         "frontend/src/components/providers/AppProviders.tsx:8",
@@ -91048,7 +91070,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:101"
+        "frontend/src/components/layout/Sidebar.tsx:97"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -92028,7 +92050,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:69",
+        "frontend/src/components/layout/Sidebar.tsx:67",
         "frontend/src/components/settings/GeneralSettingsPanel.tsx:11"
       ],
       "reachable": true,
@@ -92076,7 +92098,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:70",
+        "frontend/src/components/layout/Sidebar.tsx:68",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:37"
       ],
       "reachable": true,
@@ -101459,7 +101481,7 @@
       "id": "surface:88ebed7bde87871a3e54",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/TerminalSkinPicker.tsx",
-      "sha256": "f4127b31f0c7b2c1b03675f29a56a54213e4e910000a911dabf711036ce8451e",
+      "sha256": "f5a62d44cea1dc5be69f2b257d681e375c728226b28908747b0d8c721d163077",
       "symbols": [
         "TerminalSkinPicker",
         "active",
@@ -102263,7 +102285,7 @@
       "id": "surface:301bb246215ac84afb3b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
-      "sha256": "4e98e8014cbcbf55f78cede9343c2b2383fefd44c8002a6ed3c7365ddf873419",
+      "sha256": "212ac8d6e011ee23f446f12ced2afc5a48cee62f11cb185fee75266d4c4bbbbf",
       "symbols": [
         "WorkspacePeopleControls",
         "activeProject",
@@ -104407,7 +104429,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:57"
+        "frontend/src/components/layout/Sidebar.tsx:55"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -104831,7 +104853,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:59"
+        "frontend/src/components/layout/Sidebar.tsx:57"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -105154,7 +105176,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:58"
+        "frontend/src/components/layout/Sidebar.tsx:56"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -105492,7 +105514,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:60",
+        "frontend/src/components/layout/Sidebar.tsx:58",
         "frontend/src/components/ui/ProfileQuickMenu.tsx:19"
       ],
       "reachable": true,
@@ -105675,7 +105697,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:45"
+        "frontend/src/components/layout/Sidebar.tsx:43"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -105844,7 +105866,7 @@
       "callers": [
         "frontend/src/components/integrations/PluginMarketplace.tsx:58",
         "frontend/src/components/layout/AppShell.tsx:20",
-        "frontend/src/components/layout/Sidebar.tsx:99",
+        "frontend/src/components/layout/Sidebar.tsx:95",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:62",
         "frontend/src/components/terminal/TerminalChatBar.tsx:31",
         "frontend/src/components/terminal/WorkspacePeopleControls.tsx:8",
@@ -106381,7 +106403,7 @@
         "frontend/src/components/dashboard/WorkspaceStarterIdeas.tsx:8",
         "frontend/src/components/layout/AppShell.tsx:8",
         "frontend/src/components/layout/IncognitoModeButton.tsx:8",
-        "frontend/src/components/layout/Sidebar.tsx:73",
+        "frontend/src/components/layout/Sidebar.tsx:71",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:29",
         "frontend/src/components/showcase/ShowcaseResumeBridge.tsx:14",
         "frontend/src/components/terminal/ChatbarQueueOutside.tsx:4",
@@ -106521,7 +106543,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:71",
+        "frontend/src/components/layout/Sidebar.tsx:69",
         "frontend/src/components/settings/GeneralSettingsPanel.tsx:9",
         "frontend/src/components/terminal/ImageStudioCard.tsx:20"
       ],
@@ -106746,7 +106768,7 @@
         "frontend/src/components/layout/AnimatedNavIcon.tsx:8",
         "frontend/src/components/layout/AppShell.tsx:14",
         "frontend/src/components/layout/IncognitoModeButton.tsx:7",
-        "frontend/src/components/layout/Sidebar.tsx:75",
+        "frontend/src/components/layout/Sidebar.tsx:73",
         "frontend/src/components/library/LibraryWorkspace.tsx:9",
         "frontend/src/components/terminal/DevWorkspacePanel.tsx:33",
         "frontend/src/components/terminal/ProjectWorkspaceRail.tsx:6",
@@ -106795,7 +106817,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:72"
+        "frontend/src/components/layout/Sidebar.tsx:70"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -107372,7 +107394,6 @@
         "frontend/src/components/integrations/PluginMarketplace.tsx:33",
         "frontend/src/components/integrations/SupabaseConnectPanel.tsx:5",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:22",
-        "frontend/src/components/layout/SidebarSearchModal.tsx:7",
         "frontend/src/components/library/LibraryWorkspace.tsx:6",
         "frontend/src/components/native-openui/Evaluation.tsx:5",
         "frontend/src/components/notifications/NotificationBell.tsx:6",
@@ -111255,7 +111276,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:100",
+        "frontend/src/components/layout/Sidebar.tsx:96",
         "frontend/src/components/workspace/WorkspaceAuthGate.tsx:31",
         "frontend/src/lib/runGuestLaneChat.ts:3",
         "frontend/src/lib/userScopedCache.test.ts:11",
@@ -115308,7 +115329,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:97",
+        "frontend/src/components/layout/Sidebar.tsx:93",
         "frontend/src/store/useProjectWorkspaceStore.ts:24"
       ],
       "reachable": true,
@@ -118118,7 +118139,8 @@
         "frontend/src/components/terminal/WorkspaceConversationMenu.tsx:12",
         "frontend/src/lib/sidebarOrganization.test.ts:6",
         "frontend/src/lib/terminalHistory.ts:253",
-        "frontend/src/lib/terminalHistory.ts:256"
+        "frontend/src/lib/terminalHistory.ts:256",
+        "frontend/src/lib/workspaceSearch.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -119118,7 +119140,7 @@
         "frontend/src/components/homepage-next/s01/CapabilityFocus.tsx:20",
         "frontend/src/components/homepage/HomepageClient.tsx:11",
         "frontend/src/components/layout/PublicMarketingHeader.tsx:20",
-        "frontend/src/components/layout/Sidebar.tsx:68",
+        "frontend/src/components/layout/Sidebar.tsx:66",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:23",
         "frontend/src/components/pricing/PricingPageClient.tsx:37",
         "frontend/src/components/settings/DataAiSettingsPanel.tsx:6",
@@ -119136,7 +119158,8 @@
         "frontend/src/lib/projectDeliveryApi.ts:8",
         "frontend/src/lib/projectRuntimeApi.ts:3",
         "frontend/src/lib/runLightLaneChat.ts:1",
-        "frontend/src/lib/sidebarOrganization.ts:2"
+        "frontend/src/lib/sidebarOrganization.ts:2",
+        "frontend/src/lib/workspaceSearch.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -121376,7 +121399,7 @@
       ],
       "callers": [
         "frontend/src/components/bootstrap/UserCacheScopeBootstrap.tsx:1",
-        "frontend/src/components/layout/Sidebar.tsx:67",
+        "frontend/src/components/layout/Sidebar.tsx:65",
         "frontend/src/components/settings/SecuritySettingsPanel.tsx:10",
         "frontend/src/lib/userScopedCache.test.ts:5"
       ],
@@ -121583,10 +121606,9 @@
         "frontend/src/components/layout/MobileNav.tsx:6",
         "frontend/src/components/layout/PageFullscreenFrame.tsx:4",
         "frontend/src/components/layout/ProcessingLogo.tsx:5",
-        "frontend/src/components/layout/Sidebar.tsx:40",
+        "frontend/src/components/layout/Sidebar.tsx:38",
         "frontend/src/components/layout/SidebarNavScroller.tsx:4",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:58",
-        "frontend/src/components/layout/SidebarSearchModal.tsx:8",
         "frontend/src/components/layout/ThemeToggle.tsx:9",
         "frontend/src/components/magicui/globe.tsx:7",
         "frontend/src/components/marketing/ScrollReveal.tsx:4",
@@ -122446,6 +122468,185 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:d23ab6644e4b3e4f4026",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/workspaceSearch.ts",
+      "sha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d",
+      "symbols": [
+        "Chat",
+        "LIMIT",
+        "Label",
+        "Project",
+        "Section",
+        "candidates",
+        "chatFields",
+        "chatIds",
+        "clean",
+        "db",
+        "labels",
+        "match",
+        "position",
+        "primaryChats",
+        "projectFields",
+        "projectIds",
+        "projects",
+        "repoChats",
+        "row",
+        "searchOwnedWorkspace",
+        "sections",
+        "snippet",
+        "start",
+        "storedId",
+        "titleById",
+        "titles",
+        "uuid"
+      ],
+      "imports": [
+        "./workspaceSearchIndex",
+        "./workspaceSearchQuery",
+        "@/lib/sidebarOrganization",
+        "@/lib/supabase/client"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/sidebarOrganization.ts",
+        "frontend/src/lib/supabase/client.ts",
+        "frontend/src/lib/workspaceSearchIndex.ts",
+        "frontend/src/lib/workspaceSearchQuery.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/layout/SidebarSearchModal.tsx:46"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [
+        "projects",
+        "terminal_sessions",
+        "xroga_sidebar_chats",
+        "xroga_sidebar_items",
+        "xroga_sidebar_sections"
+      ],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [
+        "frontend/src/lib/workspaceSearch.ts:32 (user_id)",
+        "frontend/src/lib/workspaceSearch.ts:33 (user_id)",
+        "frontend/src/lib/workspaceSearch.ts:34 (user_id)",
+        "frontend/src/lib/workspaceSearch.ts:35 (user_id)",
+        "frontend/src/lib/workspaceSearch.ts:36 (user_id)",
+        "frontend/src/lib/workspaceSearch.ts:54 (user_id)",
+        "frontend/src/lib/workspaceSearch.ts:55 (user_id)",
+        "frontend/src/lib/workspaceSearch.ts:56 (user_id)"
+      ],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:6db17ff2d9e97525296c",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/workspaceSearchIndex.ts",
+      "sha256": "00f0d1879fd7a6f9f8a355ccbe413a67693b04ce765ae07022febacc61e4c65d",
+      "symbols": [
+        "WorkspaceSearchCandidate",
+        "WorkspaceSearchResult",
+        "index",
+        "keyed",
+        "normalized",
+        "phrase",
+        "rankWorkspaceSearch",
+        "ranked",
+        "scores",
+        "titlePriority"
+      ],
+      "imports": [
+        "./workspaceSearchQuery",
+        "minisearch"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/workspaceSearchQuery.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx"
+      ],
+      "callers": [
+        "frontend/src/lib/workspaceSearch.ts:5",
+        "frontend/src/lib/workspaceSearchIndex.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "minisearch"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/workspaceSearchIndex.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:58106e6e2b22145e75fb",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/workspaceSearchQuery.ts",
+      "sha256": "1f77332ec1a4134a6a21e340547c52b1bce9c714c37c06fafc13a5f938f9ddf8",
+      "symbols": [
+        "SearchField",
+        "clauses",
+        "searchFields",
+        "searchWords",
+        "workspaceSearchFilter",
+        "workspaceSearchTerms"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/layout/SidebarSearchModal.tsx:8",
+        "frontend/src/lib/workspaceSearch.ts:6",
+        "frontend/src/lib/workspaceSearchIndex.test.ts:4",
+        "frontend/src/lib/workspaceSearchIndex.ts:2"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/workspaceSearchIndex.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -124016,7 +124217,7 @@
         "frontend/src/components/integrations/PluginDetail.tsx:52",
         "frontend/src/components/layout/HeaderActionMeter.tsx:5",
         "frontend/src/components/layout/MiniActionMeter.tsx:4",
-        "frontend/src/components/layout/Sidebar.tsx:66",
+        "frontend/src/components/layout/Sidebar.tsx:64",
         "frontend/src/components/notifications/NotificationBell.tsx:7",
         "frontend/src/components/notifications/NotificationExperience.tsx:7",
         "frontend/src/components/notifications/SidebarNotificationCenter.tsx:11",
@@ -124420,7 +124621,7 @@
         "frontend/src/components/incognito/IncognitoFullscreenBackground.tsx:6",
         "frontend/src/components/layout/AppShell.tsx:13",
         "frontend/src/components/layout/IncognitoModeButton.tsx:6",
-        "frontend/src/components/layout/Sidebar.tsx:74",
+        "frontend/src/components/layout/Sidebar.tsx:72",
         "frontend/src/components/providers/AppProviders.tsx:6",
         "frontend/src/components/settings/PrivacySettingsPanel.tsx:5",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:39",
@@ -124519,7 +124720,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/DashboardView.tsx:15",
-        "frontend/src/components/layout/Sidebar.tsx:96",
+        "frontend/src/components/layout/Sidebar.tsx:92",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:9",
         "frontend/src/components/terminal/DevWorkspacePanel.tsx:22",
         "frontend/src/components/terminal/ProjectDeliveryPanel.tsx:33",
@@ -124651,7 +124852,7 @@
         "frontend/src/components/icons/animated/VercelIcon.tsx:11",
         "frontend/src/components/layout/AnimatedNavIcon.tsx:7",
         "frontend/src/components/layout/AppShell.tsx:10",
-        "frontend/src/components/layout/Sidebar.tsx:61",
+        "frontend/src/components/layout/Sidebar.tsx:59",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:10",
         "frontend/src/components/layout/ThemeToggle.tsx:7",
         "frontend/src/components/providers/ThemeProvider.tsx:5",
@@ -146651,9 +146852,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:d34dd0db91b2e221526c",
+      "id": "finding:eeb344c3ef82cd9fe85e",
       "sourcePath": "frontend/src/components/feedback/ScheduledFeedbackPrompt.tsx",
-      "line": 118,
+      "line": 113,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -147051,7 +147252,27 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:3c2506356f16a3108da1",
+      "id": "finding:d4a951493760e168a069",
+      "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
+      "line": 176,
+      "kind": "COMING_SOON",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:6e98f7013a6f3b5fd07f",
+      "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
+      "line": 177,
+      "kind": "COMING_SOON",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:abddd91de097b61978cb",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
       "line": 180,
       "kind": "COMING_SOON",
@@ -147061,29 +147282,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:13ebb9e7fdd1f725be92",
+      "id": "finding:15509ceef94f7b7a33e6",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
-      "line": 181,
-      "kind": "COMING_SOON",
-      "reachable": true,
-      "state": "PARTIAL",
-      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
-      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
-    },
-    {
-      "id": "finding:da8910eec46b603117d5",
-      "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
-      "line": 184,
-      "kind": "COMING_SOON",
-      "reachable": true,
-      "state": "PARTIAL",
-      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
-      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
-    },
-    {
-      "id": "finding:3e99212b7d1a11100dd6",
-      "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
-      "line": 536,
+      "line": 530,
       "kind": "SIMULATED",
       "reachable": true,
       "state": "PARTIAL",
@@ -147091,9 +147292,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:c1cdf14e48529bbf1b70",
+      "id": "finding:8875ba2b3ba5c0f12469",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
-      "line": 850,
+      "line": 839,
       "kind": "COMING_SOON",
       "reachable": true,
       "state": "PARTIAL",
@@ -147141,19 +147342,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:55e740e78da0959dd796",
+      "id": "finding:f01bc6e8acecf08f91dd",
       "sourcePath": "frontend/src/components/layout/SidebarSearchModal.tsx",
-      "line": 67,
-      "kind": "PLACEHOLDER",
-      "reachable": true,
-      "state": "PARTIAL",
-      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
-      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
-    },
-    {
-      "id": "finding:6d77db62eb777db80d8a",
-      "sourcePath": "frontend/src/components/layout/SidebarSearchModal.tsx",
-      "line": 68,
+      "line": 89,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -149550,86 +149741,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:9ab78cc06f90bbd7b701",
+      "id": "frontend-call:854f7a78a6ac2aa9f134",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 994,
+      "line": 1033,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:0f5beadc7f64b95158b8",
+      "id": "frontend-call:27c8dab9dda1a1bdf434",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 997,
+      "line": 1036,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:da4daab96f34d4387153",
+      "id": "frontend-call:ad2c7f79a2a8d73f9a03",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1768,
+      "line": 1807,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:34f8c8e9a99fab17dd4c",
+      "id": "frontend-call:0013c4c4bcc9a0b1e3a6",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1769,
+      "line": 1808,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:0d1970321abcf312420c",
+      "id": "frontend-call:2e0b8c5659fad0c59b43",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1774,
+      "line": 1813,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:af1c786ffcadd6028f52",
+      "id": "frontend-call:65546afd9ac6e44e8015",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1775,
+      "line": 1814,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:c695119619ae0c4a8859",
+      "id": "frontend-call:9ef8aef8e1d39f964e03",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1781,
+      "line": 1820,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:7c236224c64b0b770fcf",
+      "id": "frontend-call:93ec451bdd17a25d3c20",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1786,
+      "line": 1825,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:ad5baa9eede23e93820f",
+      "id": "frontend-call:55da58d4723e71f8e9c1",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1843,
+      "line": 1882,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:daee216e5e49ba6db045",
+      "id": "frontend-call:4d88778aeab41aa3eedf",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1844,
+      "line": 1883,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:171792fa42af085fec4e",
+      "id": "frontend-call:72a5c923d77e2f2c7351",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1851,
+      "line": 1890,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:bd411894124dacc79605",
+      "id": "frontend-call:991fc0ceb08c169fa253",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1865,
+      "line": 1904,
       "callee": "fetch",
       "reachable": false
     },
@@ -150961,34 +151152,6 @@
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
       "line": 1119,
       "callee": "api.terminalSessions.delete",
-      "reachable": true
-    },
-    {
-      "id": "frontend-call:a5693ee2c431571dcaa3",
-      "sourcePath": "frontend/src/components/layout/SidebarSearchModal.tsx",
-      "line": 24,
-      "callee": "api.projects.list().then().catch().finally",
-      "reachable": true
-    },
-    {
-      "id": "frontend-call:e779eec981e0750d195e",
-      "sourcePath": "frontend/src/components/layout/SidebarSearchModal.tsx",
-      "line": 24,
-      "callee": "api.projects.list().then().catch",
-      "reachable": true
-    },
-    {
-      "id": "frontend-call:74dfbb933f387a5d785c",
-      "sourcePath": "frontend/src/components/layout/SidebarSearchModal.tsx",
-      "line": 24,
-      "callee": "api.projects.list().then",
-      "reachable": true
-    },
-    {
-      "id": "frontend-call:4ff40e1913402944372e",
-      "sourcePath": "frontend/src/components/layout/SidebarSearchModal.tsx",
-      "line": 24,
-      "callee": "api.projects.list",
       "reachable": true
     },
     {
@@ -158267,7 +158430,7 @@
     {
       "id": "test-suite:967afee80eba90847db7",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "declaredTests": 5,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -158295,7 +158458,7 @@
     {
       "id": "test-suite:54038800c2d8eb8020a7",
       "sourcePath": "frontend/e2e/composer-polish.spec.ts",
-      "declaredTests": 6,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -158577,7 +158740,7 @@
     {
       "id": "test-suite:e5ae140af2290ed8b909",
       "sourcePath": "frontend/src/components/layout/mobileChrome.test.ts",
-      "declaredTests": 20,
+      "declaredTests": 21,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -159655,7 +159818,7 @@
     {
       "id": "test-suite:474a5f49385e5310152e",
       "sourcePath": "frontend/src/lib/sidebarCompactNav.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -160188,6 +160351,13 @@
       "id": "test-suite:972de61dc38f0404bbba",
       "sourcePath": "frontend/src/lib/workspaceRouteIsolation20261021.test.ts",
       "declaredTests": 6,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:8e37fd348ef9f2288627",
+      "sourcePath": "frontend/src/lib/workspaceSearchIndex.test.ts",
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
