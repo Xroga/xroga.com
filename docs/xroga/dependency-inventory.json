@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "9b1898eeb617c5666cf9b0668b90ed702011010f",
+  "source_sha": "342e9b8041e22b9310120dd1478243cdc0abe1da",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17330,7 +17330,7 @@
     },
     {
       "path": "backend/src/ai/prompts.ts",
-      "sha256": "151eb258f82a88ad7520041f961aa5d8dde2f65d24a1ccfd393d3683f79ddf81"
+      "sha256": "636617757e63a8ca17ab68254024017aa12924d8a17127e0766dcb5e1e6f69f1"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -17382,7 +17382,11 @@
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "sha256": "02ae787e5ca15e0af45cebc4973bc929525fe4e3219148320b8cf0d128b6e465"
+      "sha256": "862853b9c537fe3f83a3996bfc7af39e583640e945ccdb22ba9c9662acaf117d"
+    },
+    {
+      "path": "backend/src/ai/researchRankingEvidence.ts",
+      "sha256": "add42144df64b4418c4a3aa743de6909d12f530ec210f4535f76e602cc11bd66"
     },
     {
       "path": "backend/src/ai/researchSearchProvider.ts",
@@ -34033,21 +34037,42 @@
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "line": 84,
+      "line": 85,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "line": 116,
+      "line": 126,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "line": 117,
+      "line": 127,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/researchRankingEvidence.ts",
+      "line": 47,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/researchRankingEvidence.ts",
+      "line": 48,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/researchRankingEvidence.ts",
+      "line": 49,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

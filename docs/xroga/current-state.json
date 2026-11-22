@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/workspace-serving-reconcile-ad4aa255",
-    "sha": "9b1898eeb617c5666cf9b0668b90ed702011010f",
-    "sourceTimestampUtc": "2026-11-22T17:49:44+05:00",
-    "auditStartedUtc": "2026-11-22T12:51:52.403Z",
+    "sha": "342e9b8041e22b9310120dd1478243cdc0abe1da",
+    "sourceTimestampUtc": "2026-11-22T18:27:25+05:00",
+    "auditStartedUtc": "2026-11-22T13:27:58.584Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -5413,6 +5413,8 @@
         "backend/src/ai/nativeOpenUiEditorial.ts:1",
         "backend/src/ai/nativeOpenUiValues.ts:4",
         "backend/src/ai/nativeOpenUiWorkspace.ts:9",
+        "backend/src/ai/researchAnswer.test.ts:5",
+        "backend/src/ai/researchRankingEvidence.ts:1",
         "backend/src/ai/researchWebsiteEvidence.ts:2",
         "frontend/src/components/native-openui/upstream/components/markdown.tsx:10",
         "frontend/src/lib/xrogaFileExports.ts:4"
@@ -5425,7 +5427,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/ai/researchAnswer.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -8347,8 +8351,8 @@
         "backend/src/ai/projectName.test.ts:3",
         "backend/src/ai/repositoryHydrationAuthority.test.ts:3",
         "backend/src/ai/repositoryReadFailure.test.ts:3",
-        "backend/src/ai/researchAnswer.test.ts:5",
-        "backend/src/ai/researchAnswer.ts:170",
+        "backend/src/ai/researchAnswer.test.ts:47",
+        "backend/src/ai/researchAnswer.ts:180",
         "backend/src/ai/tenantModelDispatch.test.ts:8",
         "backend/src/ai/universal/resumeProjectContext.test.ts:54",
         "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts:5",
@@ -8703,7 +8707,7 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "151eb258f82a88ad7520041f961aa5d8dde2f65d24a1ccfd393d3683f79ddf81",
+      "sha256": "636617757e63a8ca17ab68254024017aa12924d8a17127e0766dcb5e1e6f69f1",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
@@ -10032,7 +10036,7 @@
       "id": "surface:794bcc5ea45ebaad109e",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/researchAnswer.ts",
-      "sha256": "02ae787e5ca15e0af45cebc4973bc929525fe4e3219148320b8cf0d128b6e465",
+      "sha256": "862853b9c537fe3f83a3996bfc7af39e583640e945ccdb22ba9c9662acaf117d",
       "symbols": [
         "RESEARCH_ANSWER_MAXIMUM_MICRO_USD",
         "ResearchAnswerRequest",
@@ -10053,6 +10057,7 @@
         "directUrls",
         "error",
         "evidence",
+        "evidenceOnlyAnswer",
         "filtered",
         "goal",
         "inlineCodeSpans",
@@ -10074,6 +10079,7 @@
         "presentPublicResearchAnswer",
         "presentation",
         "publicWorkspaceResearchAnswer",
+        "rankingWithheld",
         "ref",
         "refs",
         "requested",
@@ -10098,6 +10104,7 @@
         "./black-hole/researchRouter.js",
         "./completionDiagnostics.js",
         "./pipeline.js",
+        "./researchRankingEvidence.js",
         "./researchSearchProvider.js",
         "./researchWebsiteEvidence.js",
         "./tenantModelDispatch.js",
@@ -10108,6 +10115,7 @@
       "runtimeImports": [
         "backend/src/ai/black-hole/researchRouter.ts",
         "backend/src/ai/pipeline.ts",
+        "backend/src/ai/researchRankingEvidence.ts",
         "backend/src/ai/researchSearchProvider.ts",
         "backend/src/ai/researchWebsiteEvidence.ts",
         "backend/src/ai/universal/goalContract.ts",
@@ -10138,12 +10146,89 @@
       "costBoundary": [],
       "evidenceBoundary": [
         "backend/src/ai/researchAnswer.ts#evidence",
+        "backend/src/ai/researchAnswer.ts#evidenceOnlyAnswer",
         "backend/src/ai/researchAnswer.ts#formatResearchAsEvidence",
         "backend/src/ai/researchAnswer.ts#unverified"
       ],
       "testCoverage": [
         "backend/src/ai/researchAnswer.test.ts"
       ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:876c8b638e8bad089aed",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/researchRankingEvidence.ts",
+      "sha256": "add42144df64b4418c4a3aa743de6909d12f530ec210f4535f76e602cc11bd66",
+      "symbols": [
+        "actualMeasure",
+        "affectedRoots",
+        "closedBasis",
+        "conflictingValue",
+        "escapePipe",
+        "fence",
+        "financing",
+        "header",
+        "headers",
+        "heading",
+        "headings",
+        "incompatible",
+        "index",
+        "label",
+        "line",
+        "lines",
+        "markdownRow",
+        "marked",
+        "marker",
+        "measure",
+        "measures",
+        "note",
+        "omitRank",
+        "ordinalClaim",
+        "output",
+        "postMoney",
+        "preMoney",
+        "projectedValue",
+        "provisionalBasis",
+        "provisionalDeal",
+        "qualifiers",
+        "rank",
+        "ranking",
+        "rankingHeading",
+        "rejected",
+        "replacements",
+        "rootHeading",
+        "rootLevel",
+        "statusColumn",
+        "withholdIncomparableResearchRanking"
+      ],
+      "imports": [
+        "./nativeMarkdown.js"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/nativeMarkdown.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/ai/researchAnswer.ts:10"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -14281,7 +14366,7 @@
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.test.ts:6",
         "backend/src/ai/pipeline.ts:171",
-        "backend/src/ai/researchAnswer.test.ts:6",
+        "backend/src/ai/researchAnswer.test.ts:48",
         "backend/src/ai/researchAnswer.ts:2",
         "backend/src/ai/responseCoverage.test.ts:4",
         "backend/src/ai/tenantModelDispatch.test.ts:9",
@@ -15487,7 +15572,7 @@
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.ts:19",
         "backend/src/ai/parallelApproval.ts:23",
-        "backend/src/ai/researchAnswer.test.ts:14",
+        "backend/src/ai/researchAnswer.test.ts:56",
         "backend/src/ai/researchAnswer.ts:8"
       ],
       "reachable": true,
@@ -37129,7 +37214,7 @@
         "backend/src/ai/quota.ts:2",
         "backend/src/ai/repoSummarize.security.test.ts:6",
         "backend/src/ai/repoSummarize.ts:19",
-        "backend/src/ai/researchAnswer.test.ts:10",
+        "backend/src/ai/researchAnswer.test.ts:52",
         "backend/src/ai/resourceLedger.test.ts:5",
         "backend/src/ai/resourceLedger.ts:10",
         "backend/src/ai/resourceMeter.ts:17",
@@ -38316,7 +38401,7 @@
       "callers": [
         "backend/src/ai/parallelApproval.ts:13",
         "backend/src/ai/parallelWeb.security.test.ts:16",
-        "backend/src/ai/researchAnswer.test.ts:13",
+        "backend/src/ai/researchAnswer.test.ts:55",
         "backend/src/ai/sonnetApproval.test.ts:9",
         "backend/src/ai/sonnetApproval.ts:10",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:11",
@@ -38487,7 +38572,7 @@
       "callers": [
         "backend/src/ai/parallelApproval.ts:12",
         "backend/src/ai/parallelWeb.security.test.ts:18",
-        "backend/src/ai/researchAnswer.test.ts:7",
+        "backend/src/ai/researchAnswer.test.ts:49",
         "backend/src/ai/sonnetApproval.test.ts:5",
         "backend/src/ai/sonnetApproval.ts:9",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:4",
@@ -42338,7 +42423,7 @@
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.ts:20",
         "backend/src/ai/parallelApproval.ts:21",
-        "backend/src/ai/researchAnswer.test.ts:8",
+        "backend/src/ai/researchAnswer.test.ts:50",
         "backend/src/ai/researchAnswer.ts:4",
         "backend/src/routes/phase1.ts:1",
         "backend/src/services/integrations/businessActionConfirmations.ts:1",
@@ -43963,7 +44048,7 @@
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.test.ts:8",
         "backend/src/ai/parallelWeb.security.test.ts:17",
-        "backend/src/ai/researchAnswer.test.ts:11",
+        "backend/src/ai/researchAnswer.test.ts:53",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:3",
         "backend/src/services/integrations/businessModelEgress.test.ts:5",
         "backend/src/services/integrations/composioAccountSelection.security.test.ts:4",
@@ -48588,7 +48673,7 @@
       ],
       "callers": [
         "backend/src/ai/parallelWeb.security.test.ts:13",
-        "backend/src/ai/researchAnswer.test.ts:9",
+        "backend/src/ai/researchAnswer.test.ts:51",
         "backend/src/ai/sonnetApproval.test.ts:7",
         "backend/src/index.ts:60",
         "backend/src/routes/browserRuns.ts:20",
@@ -49018,7 +49103,7 @@
       "entryPoints": [],
       "callers": [
         "backend/src/ai/parallelWeb.security.test.ts:12",
-        "backend/src/ai/researchAnswer.test.ts:12",
+        "backend/src/ai/researchAnswer.test.ts:54",
         "backend/src/routes/browserRunInternal.test.ts:6",
         "backend/src/routes/browserRuns.test.ts:11",
         "backend/src/routes/drive.test.ts:7",
@@ -153763,7 +153848,7 @@
     {
       "id": "test-suite:d2498a6171b68795395c",
       "sourcePath": "backend/src/ai/researchAnswer.test.ts",
-      "declaredTests": 12,
+      "declaredTests": 14,
       "skipLocations": [],
       "focusLocations": []
     },
