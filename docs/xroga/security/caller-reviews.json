@@ -1112,9 +1112,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "70ae7c28be531fc8ff76d13bf2818ec214bf75f6642c0bb07cf677799ca02371",
+      "sourceSha256": "8421acd5e8233fe3207a59285288db1366c2d3f266eb76966302d2488d3546b4",
       "callIds": [
-        "6781907bf45fd19a626b"
+        "d55a2bc1d31f353c8c21"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2692,19 +2692,19 @@
         ]
       },
       "workspaceResearchPrivacy": {
-        "baseline": "077ea3640075b80eaa3bfebca28a2be5e58dc9a9",
-        "previousSha256": "7b4139a59362b8a99a699dd6800ae12ac46fa7c3c1bf3b2b380568d0138326d4",
-        "scope": "Public-answer proposals with only public research capabilities may use the existing metered read. Build and tenant persistence are unchanged.",
+        "baseline": "9b027634cbdd98f7c5f1c22721ca0f2fb7574584",
+        "previousSha256": "c3e731c80a6846a44e39e51eb906cfc390b12386a06315302043fe7760c4c730",
+        "scope": "Require referenced source content for a prior-answer export. Authority, provider and tenant calls are unchanged.",
         "previousCallIds": [
-          "9cd71e5a7fa3d7df5bee"
+          "ad5b1cc2693f3e5e2715"
         ]
       }
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "70ae7c28be531fc8ff76d13bf2818ec214bf75f6642c0bb07cf677799ca02371",
+      "sourceSha256": "8421acd5e8233fe3207a59285288db1366c2d3f266eb76966302d2488d3546b4",
       "callIds": [
-        "10dbab43eaaf4866b75f"
+        "8f870c04c0ddab6c11f2"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -4282,11 +4282,11 @@
         ]
       },
       "workspaceResearchPrivacy": {
-        "baseline": "077ea3640075b80eaa3bfebca28a2be5e58dc9a9",
-        "previousSha256": "7b4139a59362b8a99a699dd6800ae12ac46fa7c3c1bf3b2b380568d0138326d4",
-        "scope": "Public-answer proposals with only public research capabilities may use the existing metered read. Build and tenant persistence are unchanged.",
+        "baseline": "9b027634cbdd98f7c5f1c22721ca0f2fb7574584",
+        "previousSha256": "c3e731c80a6846a44e39e51eb906cfc390b12386a06315302043fe7760c4c730",
+        "scope": "Require referenced source content for a prior-answer export. Authority, provider and tenant calls are unchanged.",
         "previousCallIds": [
-          "139e888ae2690919a1ea"
+          "a9b5076f06cdc7252343"
         ]
       }
     },

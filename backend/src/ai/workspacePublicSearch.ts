@@ -33,7 +33,7 @@ const softwareReleaseSubject = /\b(?:releases?|versions?|changelogs?|documentati
 const currencyPeriod = /(\p{Sc}\d{1,6}(?:\.\d{1,2})?)\/(day|week|month|year)\b/giu;
 const freshnessFocus = /\b(?:current|latest|live|newest|verified)\s+(?:prices?|pricing|releases?|versions?|fares?|exchange rates?|opening hours|schedules?)\b/iu;
 const officialSourceRequest = /\bofficial(?:\s+[\p{L}\p{N}-]+){0,3}\s+(?:sources?|docs?|documentation|sites?)\b/iu;
-const officialLinkRequest = /\bofficial (?:websites?|(?:web |support |documentation |docs )?links?|(?:[\p{L}\p{N}-]+\s+){0,2}(?:pages?|sites?|urls?))\b|\bprimary sources? (?:for each|each)\b/iu;
+const officialLinkRequest = /\bofficial (?:websites?|(?:web |support |documentation |docs )?links?|(?:[\p{L}\p{N}-]+\s+){0,2}(?:pages?|sites?|urls?))\b|\bprimary sources? (?:for each|each)\b|(?:المواقع|الروابط) الرسمية|网站官网|官方网站|sitios? (?:web )?oficial(?:es)?|sites? (?:web )?officiels?/iu;
 const exclusiveOfficialSource = /\b(?:only|exclusively)\b[^.!?]{0,40}\bofficial\b|\bofficial\b[^.!?]{0,40}\b(?:only|exclusively)\b/iu;
 const unavailableDomain = /(?:\.(?:example|onion|lan|home|corp)$|(?:^|\.)(?:intranet|staging|private|vpn)(?:\.|$))/iu;
 const explicitWebLookup = /^(?:please\s+)?(?:search|browse)\s+(?:the\s+)?(?:public\s+)?(?:web|internet)\s+(?:(?:for|to)\s+)?/iu;
@@ -79,7 +79,7 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
   // Instructions about how to explain a result carry no retrieval terms.
   // Keep each qualifier and subsequent clause subject to the privacy checks.
   const request = message.replace(citationFooter, '').replace(presentationInstruction, '')
-    .replace(linkFooter, '').replace(currencyPeriod, '$1 per $2').trimEnd();
+    .replace(linkFooter, '').replace(currencyPeriod, '$1 per $2').replace(/\s*;\s*/g, ', ').trimEnd();
   const publicOffice = publicOfficeTopic(request) !== undefined;
   const officialLookup = requestsOfficialLinkCoverage(request) || publicSourceLookup.test(request);
   const discovery = discoveryIntent.test(request) && (discoverySubject.test(request)

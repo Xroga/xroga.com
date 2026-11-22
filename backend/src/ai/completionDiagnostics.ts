@@ -53,7 +53,7 @@ export function requirePublicCompletion(
 /** Public completion state, without provider identity or private reasoning. */
 export type PublicCompletionState =
   | { status: 'complete' }
-  | { status: 'partial'; reason: 'output_limit' | 'unconfirmed_stop' | 'authorization_review' | 'factual_review' | 'presentation_contract' | 'data_review' | 'source_attribution' };
+  | { status: 'partial'; reason: 'output_limit' | 'unconfirmed_stop' | 'authorization_review' | 'factual_review' | 'presentation_contract' | 'data_review' | 'source_attribution' | 'source_coverage' };
 
 export function publicCompletionState(finishReason: string | null | undefined, answer = ''): PublicCompletionState {
   // This is a narrow negative check, not a certificate that other facts are true.

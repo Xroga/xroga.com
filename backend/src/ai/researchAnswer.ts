@@ -5,6 +5,8 @@ import {presentResearchResult} from '../services/integrations/researchResult.js'
 import type {TenantModelScope} from './tenantModelDispatch.js';
 import {AuthorityError} from '../security/authority/enforce.js';
 import { officialResearchDomains } from './researchSearchProvider.js';
+import { requestsOfficialLinkCoverage } from './workspacePublicSearch.js';
+import type { PublicCompletionState } from './completionDiagnostics.js';
 import type { ChatPipelineResult } from './pipeline.js';
 
 export const RESEARCH_ANSWER_MAXIMUM_MICRO_USD=5_000;
@@ -39,6 +41,29 @@ export function publicWorkspaceResearchAnswer(result: Pick<ChatPipelineResult,
 
 const inlineCodeSpans=/(?<!\x60)(\x60+)(?!\x60)[\s\S]*?(?<!\x60)\1(?!\x60)/g;
 const inlineMarkdownLinks=/\[([^\]\r\n]+)\]\([ \t]*(?:<([^<>\r\n]+)>|((?:[^\s()<>]|\([^()\r\n]*\))+))(?:[ \t]+(?:"[^"\r\n]*"|'[^'\r\n]*'|\([^()\r\n]*\)))?[ \t]*\)/g;
+const directUrls = /<?https?:\/\/[^\s<>"')\]]+>?/giu;
+const missingOfficialLinks = /\bofficial (?:site|link|website|url) (?:not verified|unverified|not found)\b/iu;
+
+function sourceUrl(value: string): string {
+  try {
+    const url = new URL(value);
+    if (url.protocol !== 'https:' || url.username || url.password) return '';
+    url.hash = '';
+    return url.href;
+  } catch { return ''; }
+}
+
+function mapResearchProse(response: string, transform: (prose: string) => string) {
+  return response.split(/(```[\s\S]*?```|~~~[\s\S]*?~~~)/g).map((part, index) => {
+    if (index % 2) return part;
+    let cursor = 0, output = '';
+    for (const code of part.matchAll(inlineCodeSpans)) {
+      output += transform(part.slice(cursor, code.index)) + code[0];
+      cursor = code.index + code[0].length;
+    }
+    return output + transform(part.slice(cursor));
+  }).join('');
+}
 
 /** Structural attribution only, never a certificate that a source entails a
  * claim. Keep original text and mark unresolved attribution partial. */
@@ -70,15 +95,59 @@ export function bindCitationLinks(response:string,sources:ReadonlyArray<{url:str
   const destination=/[()]/.test(source.url)?`<${source.url}>`:source.url;
   return `[${number}](${destination})`;
  });
- return response.split(/(```[\s\S]*?```)/g).map((part,index)=>{
-  if(index%2)return part;
-  let cursor=0,bound='';
-  for(const code of part.matchAll(inlineCodeSpans)){
-   bound+=bindProse(part.slice(cursor,code.index))+code[0];
-   cursor=code.index+code[0].length;
+ return mapResearchProse(response, bindProse);
+}
+
+/** Structural coverage of an explicit link deliverable. A retrieved URL alone
+ * cannot certify ownership or that the cited page supports a particular claim. */
+export function presentPublicResearchAnswer(response: string, completion: PublicCompletionState,
+  sources: ReadonlyArray<{ url: string }>, prompt: string) {
+  let text = bindCitationLinks(response, sources);
+  const attributionIncomplete = researchCitationIssues(text, sources).length > 0;
+  if (!requestsOfficialLinkCoverage(prompt)) return { response: text, completion:
+    attributionIncomplete && completion.status === 'complete' ? { status: 'partial', reason: 'source_attribution' } as const : completion };
+
+  const count = /\b(?:top|rank|list|name|compare|find)\s+(?:the\s+)?(\d{1,3}|two|three|four|five|six|seven|eight|nine|ten)\b/iu.exec(prompt)?.[1];
+  const numberWords = ['two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+  const requested = count ? (Number(count) || numberWords.indexOf(count.toLowerCase()) + 2) : 1;
+  const allowed = new Set(sources.map(source => sourceUrl(source.url)).filter(Boolean));
+  const linked = new Set<string>();
+  let unverified = false;
+  const accept = (value: string, counts: boolean) => {
+    const url = sourceUrl(value);
+    if (!allowed.has(url)) {
+      unverified = true;
+      return false;
+    }
+    if (counts) linked.add(url);
+    return true;
+  };
+  const bindBareUrls = (prose: string) => prose.replace(directUrls, (url: string) => {
+    const value = url.replace(/^</, '').replace(/>$/, '').replace(/[.,;!?]+$/, '');
+    return accept(value, true) ? url : 'Official link not verified' + (url.match(/[.,;!?]+$/)?.[0] ?? '');
+  });
+  text = mapResearchProse(text, prose => {
+    if (missingOfficialLinks.test(prose)) unverified = true;
+    let position = 0;
+    let output = '';
+    for (const match of prose.matchAll(inlineMarkdownLinks)) {
+      const [, label, angle, bare] = match;
+      output += bindBareUrls(prose.slice(position, match.index));
+      output += accept(angle ?? bare, requested === 1 || !/^\d+$/u.test(label))
+        ? match[0] : label + ' (link not verified)';
+      position = match.index + match[0].length;
+    }
+    return output + bindBareUrls(prose.slice(position));
+  });
+  if (unverified || linked.size < requested) {
+    return {
+      response: text + '\n\nI couldn’t verify every requested official link from the retrieved sources.',
+      completion: completion.status === 'complete' ? { status: 'partial', reason: 'source_coverage' } as const : completion,
+      requiresReadableFallback: true,
+    };
   }
-  return bound+bindProse(part.slice(cursor));
- }).join('');
+  return { response: text, completion:
+    attributionIncomplete && completion.status === 'complete' ? { status: 'partial', reason: 'source_attribution' } as const : completion };
 }
 
 /** Runs inside the already claimed, exact research confirmation. This is the

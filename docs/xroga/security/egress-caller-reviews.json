@@ -3115,7 +3115,7 @@
     {
       "id": "c09bb8607fa4d00f23b7",
       "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224",
-      "sourceFileSha256": "79b0840fcd922111c1fad9b216fdef661f22efcf858faf3b6244d271eb1b92eb",
+      "sourceFileSha256": "2f0253f05f525018f5ac5a44305fefd3aff7377e6c552c4eafdb8839e493fb81",
       "disposition": "VERIFIED_GUARD",
       "trust": "CONFIGURED_FIRST_PARTY_API_ORIGIN_ONLY_NO_REDIRECT_OR_CREDENTIAL_BODY_FORWARDING",
       "tenantAuthority": "EXISTING_BROWSER_SESSION_TOKEN_OR_GUEST_SESSION_ONLY_BACKEND_MUST_ENFORCE_ORIGINAL_ISSUED_ACTOR_OWNER_AND_ACTION_AUTHORITY_NO_UPSTREAM_PROMOTION",
@@ -3294,9 +3294,9 @@
         "scope": "Exact existing transport expression only"
       },
       "workspaceResearchPrivacy": {
-        "baseline": "077ea3640075b80eaa3bfebca28a2be5e58dc9a9",
-        "previousSha256": "c258e8605447027cf9c9cb386395cdf8ffbba9cd68384f7f9029858bc3560313",
-        "scope": "Restrict consumer research serialization to answer, source, status and explicit consent fields. Stored authority and scoped caller behaviors are unchanged."
+        "baseline": "8b46b6fa46eccdd5c780788e7d63a24705f91079",
+        "previousSha256": "79b0840fcd922111c1fad9b216fdef661f22efcf858faf3b6244d271eb1b92eb",
+        "scope": "Update public research presentation or type contract. Prior reviewed data access and egress calls are unchanged."
       }
     },
     {

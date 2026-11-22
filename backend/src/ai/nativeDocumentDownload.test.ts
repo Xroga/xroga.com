@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { compactNativeDocumentProse, nativeDocumentDelivery, nativeDocumentPrompt, nativeDocumentRequiresAttachment, requestedNativeDocumentFormat } from './nativeDocumentDownload.js';
+import { compactNativeDocumentProse, nativeDocumentDelivery, nativeDocumentPrompt, nativeDocumentRequiresAttachment, nativeDocumentRequiresPriorAnswer, requestedNativeDocumentFormat } from './nativeDocumentDownload.js';
 import { buildNativeOpenUiShare, readNativeOpenUiShare } from './nativeOpenUiShare.js';
 import { completeNativeWorkspaceAnswer } from './nativeOpenUiWorkspace.js';
 
@@ -47,6 +47,17 @@ test('recognizes a downloadable format requested after the document content', ()
   assert.equal(requestedNativeDocumentFormat(memo), 'docx');
   assert.equal(requestedNativeDocumentFormat('Prepare a client report about launch readiness.\nPlease attach it as a downloadable PDF.'), 'pdf');
   assert.equal(requestedNativeDocumentFormat('Draft a short project brief. Export the brief as DOCX.'), 'docx');
+});
+
+test('requires the referenced prior answer for a contextual export', () => {
+  const prompt = 'Put the above into an editable .docx.';
+  assert.equal(requestedNativeDocumentFormat(prompt), 'docx');
+  assert.equal(nativeDocumentRequiresPriorAnswer(prompt), true);
+  assert.equal(requestedNativeDocumentFormat('Turn your last report into a printable PDF.'), 'pdf');
+  assert.equal(requestedNativeDocumentFormat('Put the previous answer into a DOCX, but do not create a file.'), undefined);
+  assert.equal(nativeDocumentRequiresPriorAnswer('Make a DOCX report about earlier project decisions.'), false);
+  assert.deepEqual(nativeDocumentDelivery('docx', true, prompt, 'Paste the content to export.', { status: 'complete' }),
+    { completion: { status: 'partial', reason: 'presentation_contract' } });
 });
 
 test('concise file deliverables keep their format without an opening verb', () => {
@@ -103,7 +114,8 @@ test('withholds incomplete artifacts and preserves a validated local download in
     { completion: { status: 'partial', reason: 'presentation_contract' } }, unsafe);
   assert.deepEqual(nativeDocumentDelivery('pptx', false, '', 'The requested deck is ready.', complete),
     { completion: { status: 'partial', reason: 'presentation_contract' } });
-  assert.deepEqual(nativeDocumentDelivery('pptx', true, '', pptx, complete), { completion: complete });
+  assert.deepEqual(nativeDocumentDelivery('pptx', true, '', pptx, complete),
+    { completion: { status: 'partial', reason: 'presentation_contract' } });
   const shared = buildNativeOpenUiShare(pptx, '', [], 'pptx');
   assert.ok(shared);
   assert.equal(readNativeOpenUiShare(shared)?.documentDownload, 'pptx');

@@ -2762,7 +2762,7 @@
       "relatedSourceBindings": [
         {
           "path": "backend/src/ai/pipeline.ts",
-          "sha256": "70ae7c28be531fc8ff76d13bf2818ec214bf75f6642c0bb07cf677799ca02371",
+          "sha256": "8421acd5e8233fe3207a59285288db1366c2d3f266eb76966302d2488d3546b4",
           "plainReasoningSourceBinding": {
             "previousSha256": "5c37c7d2bbc96fc8c4ddf1f294c9b1f2bde5385048847400a5bcbd69a3582e06",
             "finding": "Verified the full runBuildPipeline function and subsequent source are byte-identical. The chat change retains default model reasoning and uses the existing native output reservation. Worker admission evidence and acceptance state are unchanged."
@@ -2850,9 +2850,9 @@
             "scope": "Only source positions moved for the reviewed, unchanged build conversions. Automatic public Search synthesis reserves through the existing account ledger while separate private research retains its signed bound."
           },
           "workspaceResearchPrivacy": {
-            "baseline": "077ea3640075b80eaa3bfebca28a2be5e58dc9a9",
-            "previousSha256": "7b4139a59362b8a99a699dd6800ae12ac46fa7c3c1bf3b2b380568d0138326d4",
-            "scope": "Public-answer proposals with only public research capabilities may use the existing metered read. Build and tenant persistence are unchanged."
+            "baseline": "9b027634cbdd98f7c5f1c22721ca0f2fb7574584",
+            "previousSha256": "c3e731c80a6846a44e39e51eb906cfc390b12386a06315302043fe7760c4c730",
+            "scope": "Require referenced source content for a prior-answer export. Authority, provider and tenant calls are unchanged."
           }
         },
         {

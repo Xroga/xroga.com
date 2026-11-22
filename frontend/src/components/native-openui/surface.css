@@ -108,7 +108,7 @@
 .xroga-native-openui .iui-card > .iui-text { font-size: .9375rem; }
 .xroga-native-openui .iui-table-scroll { border-color: var(--native-line); }
 .xroga-native-openui .iui-table :is(td,th) {
-  padding: .7rem .85rem;
+  padding: .55rem .7rem;
   font-size: .875rem;
   line-height: 1.5;
   /* Keep ordinary words in table intrinsic widths. The table's own

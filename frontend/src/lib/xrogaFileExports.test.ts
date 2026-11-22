@@ -99,6 +99,22 @@ test('XLSX export retains typed cells without executing model-supplied formulas'
   assert.equal(sheet?.getCell('B2').type, ExcelJS.ValueType.Number);
 });
 
+test('native XLSX keeps decimal amounts numeric and long or zero-padded IDs literal', async () => {
+  const file = await exportAnswerFile([
+    '# Fees', '', '| ID | Fee |', '| --- | --- |', '| 0012 | 10.00 |', '| 1234567890123456 | -2.50 |',
+    '| Total | |', '', '## Formulas', '- B4: =SUM(B2:B3)',
+  ].join('\n'), 'xlsx', new Set());
+  const workbook = new ExcelJS.Workbook();
+  const bytes = Buffer.from(await file.blob.arrayBuffer()) as unknown as Parameters<typeof workbook.xlsx.load>[0];
+  await workbook.xlsx.load(bytes);
+  const sheet = workbook.worksheets[0];
+  assert.equal(sheet.getCell('A2').value, '0012');
+  assert.equal(sheet.getCell('A3').value, '1234567890123456');
+  assert.equal(sheet.getCell('B2').value, 10);
+  assert.equal(sheet.getCell('B3').value, -2.5);
+  assert.deepEqual(sheet.getCell('B4').value, { formula: 'SUM(B2:B3)', result: 7.5 });
+});
+
 test('PPTX export contains every requested slide and visible slide text', async () => {
   const block = { schemaVersion: 1, id: 'deck-1', type: 'presentation', slides: [
     { id: 's1', title: 'Introduction', body: 'Project goals' },
