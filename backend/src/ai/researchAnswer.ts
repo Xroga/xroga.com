@@ -7,6 +7,7 @@ import {AuthorityError} from '../security/authority/enforce.js';
 import { officialResearchDomains } from './researchSearchProvider.js';
 import { requestsOfficialLinkCoverage } from './workspacePublicSearch.js';
 import { bindListedWebsiteRows } from './researchWebsiteEvidence.js';
+import { withholdIncomparableResearchRanking } from './researchRankingEvidence.js';
 import type { PublicCompletionState } from './completionDiagnostics.js';
 import type { ChatPipelineResult } from './pipeline.js';
 
@@ -104,9 +105,18 @@ export function bindCitationLinks(response:string,sources:ReadonlyArray<{url:str
 export function presentPublicResearchAnswer(response: string, completion: PublicCompletionState,
   sources: ReadonlyArray<{ url: string; snippet?: string }>, prompt: string) {
   let text = bindCitationLinks(response, sources);
+  const evidenceOnlyAnswer = withholdIncomparableResearchRanking(text);
+  const rankingWithheld = evidenceOnlyAnswer !== undefined;
+  if (rankingWithheld) {
+    text = evidenceOnlyAnswer;
+    if (completion.status === 'complete' || completion.reason === 'source_coverage') {
+      completion = { status: 'partial', reason: 'factual_review' };
+    }
+  }
   const attributionIncomplete = researchCitationIssues(text, sources).length > 0;
   if (!requestsOfficialLinkCoverage(prompt)) return { response: text, completion:
-    attributionIncomplete && completion.status === 'complete' ? { status: 'partial', reason: 'source_attribution' } as const : completion };
+    attributionIncomplete && completion.status === 'complete' ? { status: 'partial', reason: 'source_attribution' } as const : completion,
+    ...(rankingWithheld ? { requiresReadableFallback: true } : {}) };
 
   const count = /\b(?:top|rank|list|name|compare|find)\s+(?:the\s+)?(\d{1,3}|two|three|four|five|six|seven|eight|nine|ten)\b/iu.exec(prompt)?.[1];
   const numberWords = ['two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];

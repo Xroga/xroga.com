@@ -2,6 +2,48 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {researchAnswerRequestSchema,RESEARCH_ANSWER_MAXIMUM_MICRO_USD,researchCitationIssues,bindCitationLinks,publicWorkspaceResearchAnswer,presentPublicResearchAnswer} from './researchAnswer.js';
+import {nativeMarkdownTables} from './nativeMarkdown.js';
+
+test('public research withholds positions based on incompatible financing figures', () => {
+  const sources = [{ url: 'https://finance.example/rounds' }];
+  const prose = [
+    '# Top 3 materials labs', '', '## The ranking', '',
+    '| # | Lab | Latest post-money valuation | Round status |', '| --- | --- | --- | --- |',
+    '| 1 | Ames | $400M | Closed [1] |',
+    '| 2 | Brant | $200M (pre-money) | Reported [1] |',
+    '| 3 | Crest | $170M | In talks [1] |', '',
+    'Rank 2 is the clear runner-up.', '', 'The reporting dates differ [1].', '',
+    '# Separate example', '', 'Position 1 refers to the initial simulation slot.', '',
+    '```text', 'Rank 2 is source text in this code example.', '```',
+  ].join('\n');
+  const answer = presentPublicResearchAnswer(prose, { status: 'complete' }, sources, 'Rank the three labs.');
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'factual_review' });
+  assert.equal(answer.requiresReadableFallback, true);
+  assert.match(answer.response, /couldn’t verify a comparable ranking/);
+  assert.deepEqual(nativeMarkdownTables(answer.response).map(({head, rows}) => ({head, rows})), [{
+    head: ['Lab', 'Reported valuation', 'Round status'],
+    rows: [['Ames', '$400M', 'Closed [1]'], ['Brant', '$200M (pre-money)', 'Reported [1]'], ['Crest', '$170M', 'In talks [1]']],
+  }]);
+  assert.doesNotMatch(answer.response, /clear runner-up/);
+  assert.match(answer.response, /The reporting dates differ \[1\]/);
+  assert.match(answer.response, /Position 1 refers to the initial simulation slot/);
+  assert.match(answer.response, /Rank 2 is source text in this code example/);
+});
+
+test('public research keeps a disclosed forecast comparison and rejects an estimate ranked as an actual measure', () => {
+  const sources = [{ url: 'https://energy.example/output' }];
+  const makeAnswer = (measure: string) => [
+    '| Position | Project | ' + measure + ' |', '| --- | --- | --- |',
+    '| 1 | North | 1.4 GWh [1] |', '| 2 | Bay | 1.2 GWh (projected) [1] |',
+  ].join('\n');
+  const forecast = makeAnswer('Forecast annual output');
+  assert.equal(presentPublicResearchAnswer(forecast, {status: 'complete'}, sources, 'Compare output.').response, forecast);
+  const actual = presentPublicResearchAnswer(makeAnswer('Actual annual output'), {status: 'complete'}, sources, 'Rank actual output.');
+  assert.deepEqual(actual.completion, {status: 'partial', reason: 'factual_review'});
+  assert.match(actual.response, /Reported annual output/);
+  assert.match(actual.response, /1\.2 GWh \(projected\)/);
+  assert.doesNotMatch(actual.response, /\| Position \|/);
+});
 import {runChatPipeline} from './pipeline.js';
 import {goalContractSchema} from './universal/goalContract.js';
 import {confirmBusinessAction,getBusinessActionConfirmation} from '../services/integrations/businessActionConfirmations.js';
