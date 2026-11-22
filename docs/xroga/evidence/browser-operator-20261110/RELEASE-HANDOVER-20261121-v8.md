@@ -179,3 +179,7 @@ Build commit `96a8f9deb`, ZIP `C:\xr-review-builds\xroga-browser-operator-stagin
 
 ## Build addendum 13 (round 12)
 Build commit `e80ea41bd`, ZIP `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-e80ea41bd.zip`, SHA-256 `84CC1468D00E7FFB99B1ADED9D6134668587C8B3952D21346F19BB5528AD0824`, manifest `ARTIFACT-MANIFEST-e80ea41bd.json`. Unit suite 1514 passed; Chromium scenarios 312 of 312 PASS (`scenarios-full-20261122j.json`); upgrade from `96a8f9deb` keeps id, storage, service worker and side panel. Backend unchanged. Production not live with any of this.
+
+## Build addendum 14 (round 13)
+Build commit `aa9c38990` (working tree clean), ZIP `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-aa9c38990.zip`, SHA-256 `FBE3046667BAEFC5B17724B5E3E3949A1F27D6B9F60394814CCCFF00B19D3EEF`, manifest `ARTIFACT-MANIFEST-aa9c38990.json`. Changes since addendum 13: field values count for text checks (wait and milestone checks), `fill_form` typeahead pick (explicit, and automatic for comboboxes), plan milestone `basis` (asked, inferred, user; a `user` step cannot be marked done). Unit suite 1515 passed; Chromium scenarios all PASS (`scenarios-full-20261122m.json`). Upgrade smoke (real Chromium) from the older unpacked build `0ff582593-before-a72abe` to this build: same id, storage kept, service worker alive, side panel loads. Backend unchanged (tag `browser-op-1110` on `effort-hm9`; rollback `00146-wod`). Staging only; production not live with any of this. CI of PR #976 for this head was still running when this was written.
+
