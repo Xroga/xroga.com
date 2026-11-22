@@ -4,6 +4,7 @@ import type {
 
 import {
   classifyTaskRequest,
+  explicitlyDisablesResearch,
   type TaskClassification,
 } from '../lib/taskClassifier.js';
 import type { GoalContract } from './universal/goalContract.js';
@@ -39,9 +40,10 @@ export function routeReadOnlyConversation(
   goal?: Pick<GoalContract, 'requiredCapabilities' | 'freshnessRequirement'>,
 ): RouteDecision {
   const inferred = routePrompt(prompt);
-  if (!goal) return inferred;
-  const research = goal.requiredCapabilities.includes('research.public-web')
-    || goal.requiredCapabilities.includes('research.x') || goal.freshnessRequirement !== 'NONE';
+  if (!goal && (!inferred.useResearch || !explicitlyDisablesResearch(prompt))) return inferred;
+  const research = !explicitlyDisablesResearch(prompt) && Boolean(goal
+    && (goal.requiredCapabilities.includes('research.public-web')
+      || goal.requiredCapabilities.includes('research.x') || goal.freshnessRequirement !== 'NONE'));
   return { ...inferred, kind: research ? 'research' : 'chat', builder: 'deepseek_v4_1_flash_1017',
     useResearch: research, reason: 'The validated semantic goal contract selected this read-only execution path.' };
 }

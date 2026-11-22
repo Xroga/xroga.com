@@ -98,9 +98,8 @@ function unique<T>(values: T[]): T[] {
 
 /** Explicit user constraints take precedence over keyword-based research routing. */
 export function explicitlyDisablesResearch(input: string): boolean {
-  return /\b(?:do\s+not|don't|dont|skip|avoid|without)\b[^.\n]{0,60}\b(?:research|search|browse|web\s*search|x\s*search|look\s*up)\b/i.test(
-    input,
-  );
+  return /\b(?:do\s+not|don['’]?t|skip|avoid|without)\b[^.\n]{0,60}\b(?:research(?:ing)?|search(?:ing)?|brows(?:e|ing)|look(?:ing)?\s+up)\b/i.test(input)
+    || /\b(?:no web(?: search)?|offline only|sin (?:buscar|búsqueda) en (?:la web|internet)|sans recherche web)\b|بدون بحث|لا تبحث|बिना वेब खोज|वेब पर खोज न|不要搜索|不要联网/iu.test(input);
 }
 
 export function classifyTaskRequest(

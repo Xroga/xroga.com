@@ -131,7 +131,8 @@ test('output budget scales with the planned sections and never exceeds the exist
   const budget = presentedAnswerMaxTokens(saas);
   assert.ok(budget > 4096 && budget <= 8192, String(budget));
   assert.equal(budget % 512, 0);
-  assert.equal(presentedAnswerMaxTokens(Array.from({ length: 8 }, (_, i) => section('graph', i))), 8192);
+  const densePlan = Array.from({ length: 8 }, (_, i) => section('graph', i));
+  assert.equal(presentedAnswerMaxTokens(densePlan), 11_264);
 });
 
 test('a table, diagram or step list with no extra text is a complete section; only prose needs words', () => {

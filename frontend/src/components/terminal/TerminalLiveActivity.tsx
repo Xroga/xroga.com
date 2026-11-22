@@ -7,7 +7,7 @@ import {
   coalesceActivity,
   type XrogaActivityPresentation,
 } from '@/lib/terminal/activityPresentation';
-import { buildActivityTimeline, formatElapsed, pendingWorkLabel } from '@/lib/terminal/activityTimeline';
+import { buildActivityTimeline, formatElapsed, pendingWorkLabel, type PendingReplyKind } from '@/lib/terminal/activityTimeline';
 import type { TerminalRunState } from '@/lib/terminal/terminalEvent';
 
 /** Nothing new for this long is worth saying out loud, and only as a measured fact. */
@@ -17,6 +17,7 @@ interface TerminalLiveActivityProps {
   run?: TerminalRunState;
   activity?: readonly XrogaActivityPresentation[];
   pending?: boolean;
+  pendingReply?: PendingReplyKind;
 }
 
 /**
@@ -28,6 +29,7 @@ export function TerminalLiveActivity({
   run,
   activity,
   pending = false,
+  pendingReply,
 }: TerminalLiveActivityProps) {
   const [now, setNow] = useState(() => Date.now());
   const [mountedAt] = useState(() => Date.now());
@@ -65,7 +67,7 @@ export function TerminalLiveActivity({
 
   if (rows.length === 0 && !active && !run?.outcome) return null;
 
-  const label = pendingWorkLabel(run?.events ?? [], rows.length > 0);
+  const label = pendingWorkLabel(run?.events ?? [], rows.length > 0, pendingReply);
   const shell = rows.length === 0 && active;
   return (
     <div

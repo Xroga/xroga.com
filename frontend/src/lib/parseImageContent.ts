@@ -81,10 +81,3 @@ export function parseProviderFromContent(content: string): string | undefined {
 export function isPlaceholderImage(url: string): boolean {
   return /placehold\.co|placeholder|via\.placeholder/i.test(url);
 }
-
-export function isFailedImageContent(content: string): boolean {
-  if (isPlaceholderImage(content)) return true;
-  return /IMAGE_GEN_FAILED|No image API keys configured|All image providers failed|Image generation failed/i.test(
-    content
-  );
-}

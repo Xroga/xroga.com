@@ -2,6 +2,9 @@
 export const stagingProject = 'project-c40d4821-e647-4fa2-92d';
 export const hostedWorkspaceManifestVersion = 3;
 export const stagingRegion = 'us-east4';
+// Allow the canonical five-minute answer attempt, retrieval when confirmed,
+// and identity/settlement overhead. Caller cancellation still wins immediately.
+export const stagingRequestTimeoutMs = 420_000;
 export const stagingAuthRef = 'dqxnatoessviphudbhei';
 export const stagingAuthOrigin = `https://${stagingAuthRef}.supabase.co`;
 export const stagingApiService = 'xroga-api-openui-acceptance';

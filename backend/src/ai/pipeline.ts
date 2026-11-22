@@ -1,5 +1,6 @@
 import {AuthorityError} from '../security/authority/enforce.js';
 import {EgressDenied} from '../security/egress/egressPolicy.js';
+import { containsCredentialSecretText } from '../security/egress/dataClassification.js';
 import { randomUUID } from 'crypto';
 import {requireTenantContext,requireResourceOwner,type TenantContext} from '../security/tenantContext.js';
 import {requireOptionalOwnedDatabaseProject} from '../security/ownership.js';
@@ -23,15 +24,18 @@ import { assessBlackHoleComplexity } from './black-hole/complexity.js';
 import { MODELS, type ModelId } from './models.js';
 import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT } from './nativeOpenUi.js';
+import { nativeDocumentDelivery, nativeDocumentPrompt, nativeDocumentRequiresAttachment, nativeDocumentRequiresPriorAnswer, requestedNativeDocumentFormat, type NativeDocumentFormat } from './nativeDocumentDownload.js';
 import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
+import { presentPublicResearchAnswer } from './researchAnswer.js';
 import { nativeOpenUiPlainPrompt, workspaceNativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
-import { assessPresentationCoverage, createPresentationProjection, presentationRequestInstructions, presentationResponseFormat, presentedAnswerMaxTokens, type PresentationResponseFormat } from './responsePresentation.js';
+import { assessPresentationCoverage, createPresentationProjection, nativePresentedAnswerMaxTokens, NATIVE_WORKSPACE_REASONING_RESERVE_TOKENS, presentationRequestInstructions, presentationResponseFormat, presentedAnswerMaxTokens, type PresentationResponseFormat } from './responsePresentation.js';
 import { prepareAnswerCoverage, requiredNativeFormats } from './answerCoverage.js';
 import {prepareSonnetConversation,requestedSonnetReason} from './sonnetApproval.js';
 import {
   buildVisionUserContent,
   chatCompletion,
   chatCompletionStream,
+  completionResponseMode,
   estimateMessageTokens,
   type ChatMessage,
   type ChatResult,
@@ -55,9 +59,11 @@ import {
 import {
   BUILDER_SYSTEM,
   chatPresentationSystem,
+  DIRECT_RESEARCH_SYSTEM,
   DOC_SYSTEM,
   VISION_SYSTEM,
   incrementalUpdateContext,
+  isDirectCurrentFactLookup,
   researchAnswerMaxTokens,
   researchSynthesisPrompt,
 } from './prompts.js';
@@ -391,11 +397,13 @@ export interface BuildClientMeta {
 
 export interface ChatPipelineResult {
   completion?: ReturnType<typeof publicCompletionState>;
-  responseSource?: { format: 'xroga-response-json-v1' | typeof NATIVE_UI_FORMAT; text: string; contract?: ReturnType<typeof prepareAnswerCoverage> };
+  responseSource?: { format: 'xroga-response-json-v1'; text: string; contract?: ReturnType<typeof prepareAnswerCoverage>; downloadFormat?: never }
+    | { format: typeof NATIVE_UI_FORMAT; text: string; contract?: never; downloadFormat?: NativeDocumentFormat };
   response: string;
   intent: string;
   usage: ReturnType<typeof usageToTokenUsage>;
   webSources?: ResearchBundle['sources'];
+  publicWebRetrieved?: true;
   modelId: ModelId;
   route: RouteDecision;
 }
@@ -717,6 +725,7 @@ export async function callBuilderStream(
     modelRepository?:string|null;
     modelConnectedAccountId?:string;
     modelMaximumCostMicroUsd?:number;
+    conservativeInputReservation?:true;
     modelRevalidateBeforeDispatch?:()=>Promise<void>;
     signal?: AbortSignal;
     onModelFallback?: (from: ModelId, to: ModelId) => void;
@@ -773,11 +782,9 @@ export async function callBuilderStream(
       }
       const provider = MODELS[modelId].provider;
       const execute = async (dispatch:BoundModelDispatch) => {
-        // Every attempt runs under a first-token and generation deadline. Without
-        // them a provider that accepts the connection and then goes silent held the
-        // whole run open until the socket timeout, once per model in the fallback
-        // order — which is how a run could stay active for many minutes and still
-        // deliver nothing.
+        // Streaming attempts have a silence deadline. Buffered, receipt-verified
+        // responses have no observable activity until completion, so only their
+        // total generation deadline applies. Cancellation and output bounds remain.
         const attempt = await runBuilderAttempt(
           async ({ signal, onActivity }) => {
             const completion = await chatCompletionStream(modelId, dispatch.payload.messages as ChatMessage[], {
@@ -796,14 +803,14 @@ export async function callBuilderStream(
             });
             return completion;
           },
-          { budget: opts.budget, signal: opts.signal },
+          { budget: opts.budget, signal: opts.signal, responseMode: completionResponseMode(modelId) },
         );
         return attempt.value;
       };
       const runAttempt = () =>
         withTenantModelReservation({scope:{context,userId:context.userId,projectId:opts.databaseProjectId,runAttempt:opts.modelRunAttempt,repository:opts.modelRepository,
               connectedAccountId:opts.modelConnectedAccountId??(opts.credentialOverrides?(opts.credentialOverrides[modelId]?`apikey_${provider}`:'platform'):undefined),maximumCostMicroUsd:opts.modelMaximumCostMicroUsd,revalidateBeforeDispatch:opts.modelRevalidateBeforeDispatch},
-              modelId,payload:{messages,...(opts.responseFormat?{responseFormat:process.env.ZURELAY_JSON_SCHEMA_VERIFIED==='1'?opts.responseFormat:{type:'json_object'}}:{})},estimatedInputTokens:opts.modelMaximumCostMicroUsd!==undefined
+              modelId,payload:{messages,...(opts.responseFormat?{responseFormat:process.env.ZURELAY_JSON_SCHEMA_VERIFIED==='1'?opts.responseFormat:{type:'json_object'}}:{})},estimatedInputTokens:opts.conservativeInputReservation||opts.modelMaximumCostMicroUsd!==undefined
                 ?Buffer.byteLength(JSON.stringify({messages,responseFormat:opts.responseFormat}),'utf8'):estimateMessageTokens(messages)
                 + (opts.responseFormat ? estimateMessageTokens([{ role: 'system', content: JSON.stringify(opts.responseFormat) }]) : 0),
               maximumOutputTokens:opts.maxTokens??8192,execute,validateResponse:opts.validateResponse});
@@ -966,14 +973,31 @@ export async function runChatPipeline(opts: {
   onDelta?: DeltaFn;
   goalContract?: GoalContract;
   projectEvidence?: string;
+  /** Set only by the authenticated ordinary chat route for the original turn. */
+  autoPublicSearch?: true;
+  autoPublicSearchSignal?: AbortSignal;
   /** Private server continuation, populated only by the exact native research adapter. */
   approvedResearch?:{bundle:ResearchBundle;evidence:string};
 }): Promise<ChatPipelineResult> {
   requireResourceOwner(requireTenantContext(opts.tenantContext),opts.userId);
-  const initialUsage = await assertHasQuota(opts.userId);
+  // Text-only answers use the fresh quota check at model dispatch. Check
+  // earlier when the pipeline can fetch data or prepare an approved action.
+  let preflightUsage: ReturnType<typeof assertHasQuota> | undefined;
+  const checkQuotaBeforePreparation = () => preflightUsage ??= assertHasQuota(opts.userId);
+  if (opts.attachments?.length) await checkQuotaBeforePreparation();
 
   const prepared = await prepareAttachments(opts.attachments);
   const hasAttachments = prepared.hasImages || prepared.hasDocuments;
+  const requestedDownload = opts.approvedResearch ? undefined : requestedNativeDocumentFormat(opts.prompt);
+  const missingDownloadAttachment = Boolean(requestedDownload && nativeDocumentRequiresAttachment(opts.prompt) &&
+    ((!prepared.images.length && !prepared.documents.length) || !prepared.documents.every(document =>
+      document.chars > 0 && document.text.trim() && !document.text.startsWith('[DOCX received'))));
+  const missingDownloadHistory = Boolean(requestedDownload && nativeDocumentRequiresPriorAnswer(opts.prompt)
+    && !opts.history?.some(message => message.content.trim()));
+  const missingDownloadSource = missingDownloadAttachment || missingDownloadHistory;
+  const downloadInstruction = !requestedDownload ? '' : missingDownloadHistory
+    ? '\n\nThe referenced earlier content is unavailable in this conversation. Ask the user to paste it here. Do not draft a substitute or claim a file was created.'
+    : nativeDocumentPrompt(requestedDownload, missingDownloadAttachment, opts.prompt);
 
   // Attachment analyze path — never force a website build
   if (hasAttachments) {
@@ -983,7 +1007,8 @@ export async function runChatPipeline(opts: {
     const attachmentSystem = prepared.hasImages ? VISION_SYSTEM : DOC_SYSTEM;
     const attachmentPlan = native ? prepareAnswerCoverage(opts.prompt, opts.goalContract?.presentation, opts.goalContract?.answerObligations).plan : [];
     const formats = native ? requiredNativeFormats(opts.prompt) : [];
-    const system = native ? attachmentSystem + '\n\n' + workspaceNativeOpenUiPrompt([...attachmentPlan.map(section => section.kind), ...formats], false) : attachmentSystem;
+    const system = native ? attachmentSystem + '\n\n' + workspaceNativeOpenUiPrompt([...attachmentPlan.map(section => section.kind), ...formats], false)
+      + downloadInstruction : attachmentSystem;
 
     let userText = prompt;
     if (prepared.documentBlock) {
@@ -1010,7 +1035,7 @@ export async function runChatPipeline(opts: {
       [{ role: 'system', content: system }, ...historyMsgs, userMessage],
       {
         userId: opts.userId,
-        maxTokens: 6144,
+        maxTokens: native ? nativePresentedAnswerMaxTokens(attachmentPlan) : 6144,
         tenantContext:opts.tenantContext,
         databaseProjectId:opts.modelScope?.projectId,modelRunAttempt:opts.modelScope?.runAttempt,modelRepository:opts.modelScope?.repository,
         temperature: 0.35,
@@ -1023,11 +1048,16 @@ export async function runChatPipeline(opts: {
 
     const usage = await getUsage(opts.userId);
 
-    const answer = native ? completeNativeWorkspaceAnswer(result.text, result.finishReason, undefined, undefined, diagnostic =>
-      console.warn('[native-openui-validation]', diagnostic), formats) : { response: result.text };
-    if (native) opts.onDelta?.(answer.response);
+    const answer = native ? completeNativeWorkspaceAnswer(result.text, result.finishReason, undefined, opts.prompt, diagnostic =>
+      console.warn('[native-openui-validation]', diagnostic), formats) : undefined;
+    const response = answer?.response ?? result.text;
+    const delivery = answer && nativeDocumentDelivery(requestedDownload, missingDownloadSource, opts.prompt, response, answer.completion);
+    if (native) opts.onDelta?.(response);
     return {
       ...answer,
+      response,
+      ...(delivery && answer ? { completion: delivery.completion,
+        responseSource: { ...answer.responseSource, ...(delivery.downloadFormat ? { downloadFormat: delivery.downloadFormat } : {}) } } : {}),
       intent: pick.kind === 'document' ? 'file_analysis' : 'vision_analysis',
       usage: usageToTokenUsage(usage),
       modelId: result.modelId,
@@ -1044,23 +1074,40 @@ export async function runChatPipeline(opts: {
 
   const route = routeReadOnlyConversation(opts.prompt, opts.goalContract);
   if(requestedSonnetReason(opts.prompt)){
+    const usage = await checkQuotaBeforePreparation();
     if(hasAttachments||route.kind==='research')throw new RuntimeFailure('CAPABILITY_UNSUPPORTED','The approved complex-model response supports text engineering work only. No alternate model or research request was made.');
     const response=await prepareSonnetConversation(opts.modelScope??{context:requireTenantContext(opts.tenantContext),userId:opts.userId},opts.prompt,opts.history);
     return {response,
-      intent:'model_approval',usage:usageToTokenUsage(initialUsage),webSources:[],modelId:route.builder,route};
+      intent:'model_approval',usage:usageToTokenUsage(usage),webSources:[],modelId:route.builder,route};
   }
 
   if (!opts.goalContract && isBuildPrompt(opts.prompt) && route.kind.startsWith('build')) {
+    await checkQuotaBeforePreparation();
     const err = new Error('USE_BUILD_PIPELINE');
     (err as Error & { code?: string }).code = 'USE_BUILD_PIPELINE';
     throw err;
   }
 
+  if (route.useResearch || route.kind === 'research' || opts.approvedResearch || opts.projectEvidence) {
+    await checkQuotaBeforePreparation();
+  }
+
   let research: ResearchBundle | null = opts.approvedResearch?.bundle??null;
   let researchBlock = opts.approvedResearch?.evidence??'';
   let researchProviderFailed = false;
+  let publicQueryUnverified = false;
+  let publicWebRetrieved: true | undefined;
 
   if (!opts.approvedResearch&&route.useResearch && !explicitlyDisablesResearch(opts.prompt)) {
+    const goal = opts.goalContract;
+    // A selected project can be ambient metadata on an ordinary chat turn.
+    // Forward only the independently admitted public query. Actual project
+    // evidence, attachments and project/worker model scopes still require review.
+    const autoPublicSearch = opts.autoPublicSearch && goal
+      && !opts.attachments?.length && !opts.projectEvidence && !opts.modelScope
+      && (goal.semanticIntent === 'ANSWER' || goal.semanticIntent === 'INVESTIGATE' || goal.semanticIntent === 'PROPOSE')
+      && (goal.requiredCapabilities.includes('research.public-web') || goal.freshnessRequirement !== 'NONE')
+      && goal.requiredCapabilities.every(capability => capability === 'research.public-web' || capability === 'conversation.respond');
     try {
       const web = await runWebIntelligence({
         userId: opts.userId,
@@ -1068,6 +1115,7 @@ export async function runChatPipeline(opts: {
           researchAnswer:{prompt:opts.prompt,...(opts.history?{history:opts.history.slice(-12).map(h=>({role:h.role,content:h.content.slice(0,8000)}))}:{}),
             ...(opts.goalContract?{goalContract:opts.goalContract}:{}),...(opts.projectEvidence?{projectEvidence:opts.projectEvidence}:{} )}},
         prompt: opts.prompt,
+        ...(autoPublicSearch ? { autoPublicSearch: true, autoPublicSearchSignal: opts.autoPublicSearchSignal } : {}),
         ...(opts.goalContract
           ? { decision: webDecisionFromGoalContract(opts.goalContract) ?? undefined }
           : {}),
@@ -1075,9 +1123,11 @@ export async function runChatPipeline(opts: {
 
       research = web.bundle;
       researchBlock = web.evidence;
+      publicQueryUnverified = web.reason === 'PUBLIC_QUERY_UNVERIFIED';
+      publicWebRetrieved = web.publicWebRetrieved;
       if(web.needsConfirmation)return{
-        response:`Review the exact research request before it is sent: [Review action](${web.reviewUrl}). No live evidence has been retrieved.`,
-        intent:'confirmation_required',usage:usageToTokenUsage(initialUsage),webSources:[],modelId:route.builder,route,
+        response:`Review the request before Xroga searches the web: [Review action](${web.reviewUrl})`,
+        intent:'confirmation_required',usage:usageToTokenUsage(await checkQuotaBeforePreparation()),webSources:[],modelId:route.builder,route,
       };
     } catch (error) {
       if(isTerminalModelFailure(error))throw error;
@@ -1098,19 +1148,21 @@ export async function runChatPipeline(opts: {
       research?.sources.length ?? 0,
     )
   ) {
+    const unavailableMessage = publicQueryUnverified
+      ? 'I couldn’t identify a self-contained public search query. Give me the public topic or a verified official domain to search.'
+      : researchProviderFailed
+        ? 'Current public-web evidence is temporarily unavailable. No unsourced current answer was generated.'
+        : 'No qualifying current sources were returned. No unsourced current answer was generated.';
     if (opts.goalContract?.freshnessRequirement === 'CURRENT_REQUIRED') {
       throw new RuntimeFailure(
         researchProviderFailed ? 'PROVIDER_UNAVAILABLE' : 'TOOL_UNAVAILABLE',
-        researchProviderFailed
-          ? 'Current public-web evidence is temporarily unavailable. No unsourced current answer was generated.'
-          : 'No qualifying current sources were returned. No unsourced current answer was generated.',
+        unavailableMessage,
       );
     }
     return {
-      response:
-        'I couldn\'t complete the requested live-web research just now. No current-source answer was generated, so please try again shortly.',
+      response: unavailableMessage,
       intent: 'research_unavailable',
-      usage: usageToTokenUsage(initialUsage),
+      usage: usageToTokenUsage(await checkQuotaBeforePreparation()),
       webSources: [],
       modelId: route.builder,
       route,
@@ -1119,14 +1171,25 @@ export async function runChatPipeline(opts: {
 
   const historyMsgs: ChatMessage[] = (opts.history ?? [])
     .slice(-12)
+    .filter(message => !publicWebRetrieved || !containsCredentialSecretText(message.content))
     .map((h) => ({ role: h.role, content: h.content.slice(0, 8000) }));
 
   const promptWithProjectEvidence = opts.projectEvidence
     ? `${opts.prompt}\n\nAuthorized read-only repository evidence:\n${opts.projectEvidence}`
     : opts.prompt;
+  const answerContract = prepareAnswerCoverage(opts.prompt, opts.goalContract?.presentation, opts.goalContract?.answerObligations);
+  const native = usesNativeWorkspacePresentation(route.builder);
+  const formats = native ? requiredNativeFormats(opts.prompt) : [];
+  // An already authorized, single-fact public lookup needs only citation-ready
+  // prose. Keep the same model and its default reasoning mode.
+  const directPublicLookup = native && publicWebRetrieved === true
+    && opts.goalContract?.freshnessRequirement === 'CURRENT_REQUIRED'
+    && !opts.goalContract.deliverables.length && !formats.length
+    && !answerContract.requirements.some(item => item.origin === 'requested' && item.formats.some(format => format !== 'prose'))
+    && isDirectCurrentFactLookup(opts.prompt);
   const userContent =
     route.kind === 'research' && researchBlock
-      ? researchSynthesisPrompt(promptWithProjectEvidence, researchBlock)
+      ? researchSynthesisPrompt(promptWithProjectEvidence, researchBlock, directPublicLookup)
       : researchBlock
         ? `${promptWithProjectEvidence}\n\n${researchBlock}`
         : promptWithProjectEvidence;
@@ -1134,9 +1197,6 @@ export async function runChatPipeline(opts: {
   const truthAuthorities = new Set<string>(['model:execute', 'sandbox:execute']);
   if (opts.projectEvidence) truthAuthorities.add('repository:read');
   if (research?.sources.length) truthAuthorities.add('network:public-read');
-  const answerContract = prepareAnswerCoverage(opts.prompt, opts.goalContract?.presentation, opts.goalContract?.answerObligations);
-  const native = usesNativeWorkspacePresentation(route.builder);
-  const formats = native ? requiredNativeFormats(opts.prompt) : [];
   const sources = research?.sources ?? [];
   const evidenceIds = new Set(sources.map((_, index) => 'source-' + (index + 1)));
   const sourceManifest = sources.length
@@ -1146,54 +1206,102 @@ export async function runChatPipeline(opts: {
   const presentation = native ? undefined : answerContract.plan;
   const projection = presentation?.length ? createPresentationProjection(presentation) : undefined;
   const format = presentation?.length ? presentationResponseFormat(presentation) : undefined;
-  // A confident prose-only answer does not need the full registry. Evidence,
-  // requested visual formats, or an uncertain plan keep the rich path available.
+  // Only brief turns without an outline or a specific deliverable can skip the
+  // registry. A prose obligation can still describe an artifact with controls.
   const plainNative = native && route.kind !== 'research' && !researchBlock && !opts.projectEvidence
     && !formats.length
     && opts.goalContract?.semanticIntent === 'ANSWER' && opts.goalContract.contextComplexity === 'low'
     && opts.goalContract.confidence >= 0.8 && !opts.goalContract.presentationIssue && answerContract.coverage.complete
-    && answerContract.plan.every(section => section.kind === 'prose')
-    && answerContract.requirements.every(item => item.formats.length > 0 && item.formats.every(kind => kind === 'prose'));
-  const instructions = native
+    && answerContract.plan.length === 0 && answerContract.requirements.length === 0;
+  const instructions = directPublicLookup ? DIRECT_RESEARCH_SYSTEM : native
     ? plainNative ? nativeOpenUiPlainPrompt : workspaceNativeOpenUiPrompt([...answerContract.plan.map(section => section.kind), ...formats], Boolean(evidenceIds.size)) + sourceManifest
     : chatPresentationSystem(opts.prompt) + (presentation?.length ? '\n\n' + presentationRequestInstructions(presentation) : '');
-  const system = currentPublicProductTruth(truthAuthorities) + '\n\n' + instructions;
+  const system = currentPublicProductTruth(truthAuthorities) + '\n\n' + instructions
+    + (native ? downloadInstruction : '');
+  const nativeAnswerBudget = plainNative || directPublicLookup
+    ? Math.max(NATIVE_WORKSPACE_REASONING_RESERVE_TOKENS, presentedAnswerMaxTokens(answerContract.plan))
+    : nativePresentedAnswerMaxTokens(answerContract.plan);
   const result = await callBuilderStream(
     route.builder,
     [{ role: 'system', content: system }, ...historyMsgs, { role: 'user', content: userContent }],
     {
       userId: opts.userId,
-      maxTokens: opts.approvedResearch?4096:route.kind === 'research' ? researchAnswerMaxTokens(opts.prompt) : presentedAnswerMaxTokens(presentation),
-      reasoningMode: 'none',
+      // Detailed Workspace answers need room for both reasoning and finished content.
+      maxTokens: native ? nativeAnswerBudget
+        : opts.approvedResearch ? 4096 : route.kind === 'research'
+        ? researchAnswerMaxTokens(opts.prompt)
+        : presentedAnswerMaxTokens(answerContract.plan),
+      reasoningMode: native ? 'default' : 'none',
       responseFormat: format,
       tenantContext:opts.tenantContext,
       databaseProjectId:opts.modelScope?.projectId,modelRunAttempt:opts.modelScope?.runAttempt,modelRepository:opts.modelScope?.repository,
-      modelConnectedAccountId:opts.modelScope?.connectedAccountId,modelMaximumCostMicroUsd:opts.modelScope?.maximumCostMicroUsd,
+      modelConnectedAccountId:publicWebRetrieved ? 'platform' : opts.modelScope?.connectedAccountId,
+      // Automatic public research uses the same canonical entitlement as chat.
+      // The separately approved workflow carries its own signed spend cap.
+      modelMaximumCostMicroUsd:opts.modelScope?.maximumCostMicroUsd,
+      conservativeInputReservation:publicWebRetrieved,
       modelRevalidateBeforeDispatch:opts.modelScope?.revalidateBeforeDispatch,
+      signal: publicWebRetrieved ? opts.autoPublicSearchSignal : undefined,
       temperature: 0.5,
       // The provider adapter publishes only after canonical usage settlement.
-      onDelta: native ? undefined
+      onDelta: native || publicWebRetrieved ? undefined
         : projection ? delta => { const visible = projection.append(delta); if (visible) opts.onDelta?.(visible); } : opts.onDelta,
     },
-  );
+  ).catch(error => {
+    if (!publicWebRetrieved || isTerminalModelFailure(error)) throw error;
+    console.warn('[pipeline] public research answer unavailable:', normalizeProviderError(error).safeMessage);
+    return null;
+  });
 
   const usage = await getUsage(opts.userId);
+  if (!result || (publicWebRetrieved && (!result.text.trim()
+    || /^(?:web\s+)?(?:search|research|retrieval)\s+(?:is\s+)?(?:complete[d]?|finished|done)[.!]?$/iu.test(result.text.trim())))) {
+    // Retain real evidence if synthesis fails or returns only a tool status.
+    // Neither provider is called a second time and the answer stays partial.
+    const response = 'I found public sources, but couldn’t finish the answer. You can open the sources below or resend your question.';
+    opts.onDelta?.(response);
+    return {
+      response,
+      completion: { status: 'partial', reason: 'unconfirmed_stop' },
+      intent: route.kind,
+      usage: usageToTokenUsage(usage),
+      webSources: sources,
+      publicWebRetrieved: true,
+      modelId: result?.modelId ?? route.builder,
+      route,
+    };
+  }
 
   if (native) {
     const answer = completeNativeWorkspaceAnswer(result.text, result.finishReason, evidenceIds,
       route.kind !== 'research' && !researchBlock && !opts.projectEvidence ? opts.prompt : undefined,
       diagnostic => console.warn('[native-openui-validation]', diagnostic), formats);
-    opts.onDelta?.(answer.response);
+    const researchPresentation = publicWebRetrieved
+      ? presentPublicResearchAnswer(answer.response, answer.completion, sources, opts.prompt) : undefined;
+    const { response, completion } = researchPresentation ?? answer;
+    opts.onDelta?.(response);
+    const delivery = nativeDocumentDelivery(requestedDownload, missingDownloadSource, opts.prompt, response, completion);
     return {
       ...answer,
+      response, completion: delivery.completion,
+      // The original program can contain prose bound before link verification.
+      // Keep the corrected, readable answer as the single source on recovery.
+      ...(researchPresentation?.requiresReadableFallback
+        ? { responseSource: { format: NATIVE_UI_FORMAT, text: '' } } : {}),
+      ...(delivery.downloadFormat ? { responseSource: { ...answer.responseSource, downloadFormat: delivery.downloadFormat } } : {}),
       intent: route.kind, usage: usageToTokenUsage(usage), webSources: research?.sources,
+      ...(publicWebRetrieved ? { publicWebRetrieved } : {}),
       modelId: result.modelId, route,
     };
   }
 
   const document = projection?.finish(result.text);
-  const response = document ? document.response || "Xroga couldn't finish the requested structured answer." : result.text;
-  const completion = publicCompletionState(result.finishReason, document?.reviewText ?? response);
+  const prose = document ? document.response || "Xroga couldn't finish the requested structured answer." : result.text;
+  const reportedCompletion = publicCompletionState(result.finishReason, document?.reviewText ?? prose);
+  const researchPresentation = publicWebRetrieved
+    ? presentPublicResearchAnswer(prose, reportedCompletion, sources, opts.prompt) : undefined;
+  const { response, completion } = researchPresentation ?? { response: prose, completion: reportedCompletion };
+  if (publicWebRetrieved) opts.onDelta?.(response);
   // A valid semantic decision with invalid display metadata, or an incomplete
   // document, is preserved as partial. Never repair it with another model call.
   const presentationIncomplete = (document && !document.ok) || opts.goalContract?.presentationIssue === 'invalid'
@@ -1203,10 +1311,12 @@ export async function runChatPipeline(opts: {
     response,
     completion: presentationIncomplete && result.finishReason === 'stop' && completion.status === 'complete'
       ? { status: 'partial', reason: 'presentation_contract' } : completion,
-    ...(document ? { responseSource: { format: 'xroga-response-json-v1' as const, text: document.original, contract: answerContract } } : {}),
+    ...(document && !researchPresentation?.requiresReadableFallback
+      ? { responseSource: { format: 'xroga-response-json-v1' as const, text: document.original, contract: answerContract } } : {}),
     intent: route.kind,
     usage: usageToTokenUsage(usage),
     webSources: research?.sources,
+    ...(publicWebRetrieved ? { publicWebRetrieved } : {}),
     modelId: result.modelId,
     route,
   };

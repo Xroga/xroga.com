@@ -6,18 +6,464 @@ import { buildNativeOpenUiShare, readNativeOpenUiShare } from './nativeOpenUiSha
 import { readNativeOpenUiRun } from './nativeOpenUiRun.js';
 import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
 import { requiredNativeFormats } from './answerCoverage.js';
+import { bindNativeAnswerText, nativeReadableTextKey, removeRepeatedCalculatorFormulas, supplementNativeProse } from './nativeOpenUi.js';
+
+test('native Markdown references the complete readable answer without generating a second explanation', () => {
+  const prose = '## Answer\n\nUse **Basic** for one seat.\n\n1. Read the terms.\n2. Compare the total.\n\nLiteral example: `_xroga_answer = "example"`.';
+  const program = 'root = Col([Markdown(_xroga_answer), Table(["Plan", "Seats"], [["Basic", 1], ["Team", 5]])])';
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop');
+  assert.equal(answer.completion.status, 'complete');
+  assert.ok(answer.response.startsWith(prose));
+  assert.match(answer.responseSource.text, /_xroga_answer = /);
+  assert.equal(validateNativeOpenUi(answer.responseSource.text).ok, true);
+  assert.equal(bindNativeAnswerText('root = Col([Text("_xroga_answer")])', prose), 'root = Col([Text("_xroga_answer")])');
+  assert.equal(bindNativeAnswerText(program + '\n_xroga_answer = "Existing saved content"', prose), program + '\n_xroga_answer = "Existing saved content"');
+  const invalid = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + 'root = Unknown(_xroga_answer)', 'stop');
+  assert.ok(invalid.response.includes(prose), 'Invalid visuals retain every readable paragraph');
+});
+
+test('long bound Markdown survives validation and Share without expanding other widget strings', () => {
+  const prose = Array.from({ length: 58 }, (_, index) =>
+    '## Section ' + (index + 1) + '\n\n'
+    + 'Describe the handoff, document decisions, record unresolved questions and identify the next owner. '
+    + 'This explanation is saved with the answer so it stays readable when the conversation is reopened.').join('\n\n');
+  assert.ok(prose.length > 8000);
+  const program = 'root = Col([Markdown(_xroga_answer), Text("Keep the handoff note.")])';
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop');
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  assert.ok(answer.response.startsWith(prose + '\n\n'));
+  const share = buildNativeOpenUiShare(answer.response, answer.responseSource.text);
+  assert.ok(share);
+  assert.equal(readNativeOpenUiShare(share)?.text, answer.response);
+  assert.equal(readNativeOpenUiShare(share)?.program, answer.responseSource.text);
+  assert.deepEqual(validateNativeOpenUi(answer.responseSource.text), { ok: true });
+
+  for (const longerWidget of [
+    'root = Col([Text(_xroga_answer)])',
+    'root = Col([Markdown(alias)])\nalias = _xroga_answer',
+    'root = Col([Markdown(' + JSON.stringify(prose) + ')])',
+  ]) {
+    assert.deepEqual(validateNativeOpenUi(bindNativeAnswerText(longerWidget, prose)),
+      { ok: false, reason: 'authority' });
+  }
+  const unsafe = bindNativeAnswerText(program + '\nunreachable = Fetch("https://example.invalid")', prose);
+  assert.deepEqual(validateNativeOpenUi(unsafe), { ok: false, reason: 'authority' });
+  assert.deepEqual(validateNativeOpenUi(bindNativeAnswerText(program, prose.repeat(2))),
+    { ok: false, reason: 'budget' });
+});
+
+test('readable snapshots do not repeat native text because emphasis differs', () => {
+  const prose = '**Basic** costs $10/month.\n\nKey points:\n- **One person:** Basic includes one seat.\n- Keep this distinct caveat.\n\nPrice is $10 [1].';
+  const program = 'root = Col([Text("Basic costs $10/month."), Text("One person: Basic includes one seat."), Text("Price is $10."), Text("Native-only detail stays readable.")])';
+  const answer = completeNativeWorkspaceAnswer(prose + '\n' + NATIVE_UI_MARKER + '\n' + program, 'stop');
+  assert.equal(answer.completion.status, 'complete');
+  assert.equal((answer.response.match(/costs \$10\/month/g) ?? []).length, 1);
+  assert.equal((answer.response.match(/Basic includes one seat/g) ?? []).length, 1);
+  assert.match(answer.response, /Keep this distinct caveat/);
+  assert.match(answer.response, /Native-only detail stays readable/);
+  assert.match(answer.response, /Price is \$10 \[1\]/);
+  assert.notEqual(nativeReadableTextKey('`a_b`'), nativeReadableTextKey('a_b'));
+  assert.notEqual(nativeReadableTextKey('~~allowed~~'), nativeReadableTextKey('allowed'));
+  assert.notEqual(nativeReadableTextKey('[Docs](https://a.test)'), nativeReadableTextKey('[Docs](https://b.test)'));
+  assert.equal(nativeReadableTextKey('user_id and tenant_id'), 'user_id and tenant_id');
+});
+
+test('upstream entry selection and identifiers preserve complete readable content', () => {
+  const name = '_privateComparisonDetailsWithAnIdentifierLongerThanFortyCharacters';
+  for (const program of [
+    `root = Col([${name}])\n${name} = Text("All comparison details remain readable.")`,
+    'root = answer\nanswer = Col([Text("All comparison details remain readable.")])',
+  ]) {
+    const diagnostics: NativeUiDiagnostic[] = [];
+    assert.deepEqual(validateNativeWorkspaceProgram(program, undefined, '', event => diagnostics.push(event)), { ok: true }, JSON.stringify(diagnostics));
+    const result = completeNativeWorkspaceAnswer(NATIVE_UI_MARKER + program, 'stop');
+    assert.equal(result.completion.status, 'complete');
+    assert.match(result.response, /All comparison details remain readable/);
+    assert.equal(result.responseSource.text, program);
+  }
+});
+
+test('an upstream fallback entry becomes explicit without losing any answer content', () => {
+  const program = 'answer = Col([details])\ndetails = Text("All comparison details remain readable.")';
+  const result = completeNativeWorkspaceAnswer(NATIVE_UI_MARKER + program, 'stop');
+  assert.equal(result.completion.status, 'complete');
+  assert.equal(result.responseSource.text, 'root = answer\n' + program);
+  assert.match(result.response, /All comparison details remain readable/);
+});
+
+test('statement diagnostics identify ambiguity without exposing private names or values', () => {
+  const cases = [
+    ['root = Col([privateCustomerName])\nprivateCustomerName = Text("confidential")\nprivateCustomerName = Text("different")', 'duplicate', 3],
+    ['root = Col([Text("confidential")])\nconstructor = 1', 'unsafe_name', 2],
+    ['root = Col([Text("confidential")])\n$__proto__ = 1', 'unsafe_name', 2],
+    ['privateCustomerName = Text("confidential")', 'missing_root', undefined],
+    ['root = 2', 'invalid_root', undefined],
+  ] as const;
+  for (const [program, issue, statement] of cases) {
+    const diagnostics: NativeUiDiagnostic[] = [];
+    assert.deepEqual(validateNativeWorkspaceProgram(program, undefined, '', event => diagnostics.push(event)), { ok: false, reason: 'syntax' });
+    assert.equal(diagnostics[0]?.declarationIssue, issue);
+    assert.equal(diagnostics[0]?.statement, statement);
+    assert.doesNotMatch(JSON.stringify(diagnostics), /privateCustomerName|confidential|different|constructor|__proto__/);
+  }
+});
+
+test('shared calculator forecasts retain the bound on each expanded declaration', () => {
+  const points = Array.from({length: 31}, (_, year) => `{year:${year},balance:$principal * Pow(1 + periodicRate, periods * ${year})}`);
+  const rows = Array.from({length: 31}, (_, year) => `[${year},$principal * Pow(1 + periodicRate, periods * ${year})]`);
+  const program = [
+    'root = Col([shell, values])',
+    '$principal = 10000', '$rate = 5', 'periods = 12', 'periodicRate = $rate / 100 / periods',
+    'shell = Box([panel])', 'panel = Card([frame])', 'frame = Col([forecast])',
+    'forecast = Section("Forecast", [chart])',
+    'chart = Chart("line", points, "year", ["balance"], "currency", "USD")',
+    'values = Table(["Year", "Balance"], rows)',
+    'points = [' + points.join(',') + ']', 'rows = [' + rows.join(',') + ']',
+  ].join('\n');
+  const diagnostics: NativeUiDiagnostic[] = [];
+  assert.deepEqual(validateNativeWorkspaceProgram(program, undefined, '', event => diagnostics.push(event)), {ok:true}, JSON.stringify(diagnostics));
+
+  // An individually excessive expansion is still rejected. This also checks
+  // declarations outside the rendered root, rather than bypassing their audit.
+  const unsafe = ['root = Col([Text("Readable")])', 'a0 = [1,2,3,4]',
+    ...Array.from({length: 7}, (_, i) => `a${i + 1} = [a${i},a${i},a${i},a${i}]`)].join('\n');
+  const rejected: NativeUiDiagnostic[] = [];
+  assert.deepEqual(validateNativeOpenUi(unsafe, undefined, '', event => rejected.push(event)), {ok:false,reason:'budget'});
+  assert.equal(rejected[0]?.workLimit, 'statement_nodes');
+  assert.ok(rejected[0]?.failingShape);
+  assert.doesNotMatch(JSON.stringify(rejected), /Readable|a[0-7]/);
+  assert.deepEqual(validateNativeOpenUi('root = Col([Text("Safe")])\ncycle = cycle'), {ok:false,reason:'reference'});
+});
+
+test('a missing calculator is clearly identified without erasing its readable calculation', () => {
+  const prose = 'Starting with $100 at 5% annually, the balance after one year is $105.\n\nThe calculator below uses these initial values.';
+  const result = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + 'root = Unknown()', 'stop', undefined, undefined, undefined, ['calculator']);
+  assert.equal(result.completion.status, 'partial');
+  assert.ok(result.response.startsWith("The interactive controls couldn't be displayed."));
+  assert.ok(result.response.endsWith(prose));
+  assert.equal(result.responseSource.text, '');
+  const shared = buildNativeOpenUiShare(result.response, result.responseSource.text);
+  assert.equal(shared, undefined);
+});
+
+test('shared calculation references remain usable inside a native layout without bypassing expanded-work checks', () => {
+  const calculator = (references: number, tail = '') => [
+    'root = Col([controls, Metric("Final balance", @Format(value' + (references - 1) + ', "currency", 2, "USD"))])',
+    '$principal = 10000', '$rate = 7', '$years = 10',
+    'controls = Col([Slider($principal, 0, 100000, 100, "Principal", "USD"), Slider($rate, 0, 20, 0.1, "Annual rate", "%"), Slider($years, 0, 30, 1, "Years", "years")])',
+    'value0 = $principal * Pow(1 + $rate / 100 / 12, 12 * $years)',
+    ...Array.from({ length: references - 1 }, (_, index) => `value${index + 1} = value${index} + 0`),
+    tail,
+  ].filter(Boolean).join('\n');
+  const program = calculator(30);
+  const prose = 'The starting balance is $20,096.61 at $10,000 principal, 7% nominal annual interest compounded monthly for 10 years.';
+  const diagnostics: NativeUiDiagnostic[] = [];
+  assert.deepEqual(validateNativeWorkspaceProgram(program, undefined, prose, event => diagnostics.push(event)), { ok: true }, JSON.stringify(diagnostics));
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop', undefined,
+    'Build an interactive compound-interest calculator.', undefined, ['calculator']);
+  assert.equal(answer.completion.status, 'complete');
+  assert.equal(answer.responseSource.text, program);
+  assert.ok(answer.response.startsWith(prose));
+  assert.equal(readNativeOpenUiShare(buildNativeOpenUiShare(answer.response, program)!)?.program, program);
+
+  const rejected: NativeUiDiagnostic[] = [];
+  assert.deepEqual(validateNativeWorkspaceProgram(calculator(50), undefined, '', event => rejected.push(event)), { ok: false, reason: 'budget' });
+  assert.equal(rejected[0]?.workLimit, 'expression_depth');
+  assert.ok((rejected[0]?.expandedDepth ?? 0) > 96);
+  assert.doesNotMatch(JSON.stringify(rejected), /principal|value\d|10000|20096/);
+  assert.deepEqual(validateNativeWorkspaceProgram(calculator(30, 'unreachable = Fetch("https://private.example")'), undefined, ''), { ok: false, reason: 'authority' });
+  assert.deepEqual(validateNativeWorkspaceProgram(calculator(30, 'unreachable = Source("unverified")'), undefined, ''), { ok: false, reason: 'authority' });
+  assert.deepEqual(validateNativeWorkspaceProgram(calculator(30, 'cycle = cycle'), undefined, ''), { ok: false, reason: 'reference' });
+});
 
 test('the model gets instructions from the native registry and may answer in text', () => {
   for (const prompt of [nativeOpenUiPlainPrompt, nativeOpenUiPrompt]) {
+    assert.match(prompt, /requested length and format before any default presentation guidance/);
+    assert.match(prompt, /Simple questions need just the answer and any essential context/);
+    assert.match(prompt, /For complex or detailed requests, preserve each distinct requirement/);
+    assert.match(prompt, /If the user declines visuals or a specific component, honor that choice/);
     assert.match(prompt, /Verify the value, unit, and reference point, baseline, or denominator together/);
+    assert.match(prompt, /NEXT_PUBLIC_ is for values exposed to the browser/);
+    assert.match(prompt, /Carry precautions into every step/);
+    assert.match(prompt, /Put required reassembly, guards, and safety checks before each powered test/);
+    assert.match(prompt, /If a prerequisite fails or there is an unresolved hazard, stop and refer it to a qualified person/);
+    assert.match(prompt, /Apply the same stop or referral outcome to that condition in every example/);
+    assert.match(prompt, /steps, examples, diagrams, and checklists all follow the same safe order/);
+    assert.ok(prompt.indexOf('For safety-sensitive procedures') < prompt.indexOf('In a roving tabindex pattern'));
+    assert.match(prompt, /Required units must cover the whole requested quantity/);
+    assert.match(prompt, /React supports Date values and Server Functions/);
   }
   for (const name of ['Col(', 'Chart(', 'Slider(', 'Svg(', 'Diagram(', 'Section(', 'Table(', 'Payment(', 'Source(']) assert.ok(nativeOpenUiPrompt.includes(name), name);
+  assert.match(nativeOpenUiPrompt, /The OpenUI program is the primary rich answer/);
+  assert.match(nativeOpenUiPrompt, /first give the complete readable answer in Markdown/);
+  assert.match(nativeOpenUiPrompt, /readable answer must stand on its own if a visual fails/);
+  assert.match(nativeOpenUiPrompt, /formulas, initial inputs and initial results/);
+  assert.match(nativeOpenUiPrompt, /do not copy or paraphrase the explanation/);
+  assert.match(nativeOpenUiPrompt, /Use Markdown\(_xroga_answer\) once in your visible layout/);
+  assert.match(nativeOpenUiPrompt, /native Section with exactly the same title/);
+  assert.match(nativeOpenUiPrompt, /Keep a complete Markdown decision or comparison table in its original section/);
+  const exampleRoots = nativeOpenUiPrompt.match(/^root = Col\(\[.*$/gm) ?? [];
+  assert.equal(exampleRoots.length, 5);
+  for (const example of exampleRoots) {
+    assert.equal(example.match(/Markdown\(_xroga_answer\)/g)?.length, 1, example);
+  }
+  assert.ok(exampleRoots.some(example => example.includes('Section("Plan comparison", [Table(')));
+  assert.ok(exampleRoots.some(example => example.includes('Section("Request path", [flow])')));
+  assert.match(nativeOpenUiPrompt, /do not present a bundle-based break-even point or recommendation as fact/);
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.'), { text: 'Paris.', program: '' });
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.\n<<<XROGA_OP', true), { text: 'Paris.', program: '' });
   assert.deepEqual(splitNativeOpenUiAnswer('<<<XROGA_OP', true), { text: '', program: '' });
   const program = 'root = Col([Text("Paris.")])';
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.' + NATIVE_UI_MARKER + program), { text: 'Paris.', program });
   assert.deepEqual(validateNativeOpenUi(program), { ok: true });
+});
+
+test('long workflow guidance distinguishes reading order, handoffs, responsibilities and semantic icons', () => {
+  const prompt = workspaceNativeOpenUiPrompt(['prose', 'steps', 'graph'], false);
+  assert.match(nativeOpenUiPlainPrompt, /Answer simple questions directly/);
+  assert.match(nativeOpenUiPlainPrompt, /clearly labeled worked example/);
+  assert.match(prompt, /responsibility table can show what is automated and what needs human review/);
+  assert.match(prompt, /diagram shows where the work goes next/);
+  assert.match(prompt, /steps, examples, diagrams, and checklists all follow the same safe order/);
+  assert.match(prompt, /Lucide icon on a section or diagram node when it helps distinguish roles/);
+
+  const prose = [
+    'A coordinator reviews new work before delivery starts.',
+    '## Example',
+    'A new brief goes to the coordinator. An incomplete brief returns to intake for clarification.',
+    ['| Stage | Automated | Human review |', '| --- | --- | --- |', '| Intake | Record the brief | Confirm the scope |'].join('\n'),
+  ].join('\n\n');
+  const program = [
+    'root = Col([Markdown(_xroga_answer), ownership, flow])',
+    'ownership = Table(["Stage", "Automated", "Human review"], [["Intake", "Record the brief", "Confirm the scope"]])',
+    'flow = Diagram("Review handoff", [{id: "intake", label: "Intake", level: 0, icon: "inbox"}, {id: "review", label: "Review", level: 1, icon: "shield-check"}], [{from: "intake", to: "review", label: "Brief received"}], "The coordinator reviews the brief before delivery.")',
+  ].join('\n');
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop');
+  assert.equal(answer.completion.status, 'complete');
+  assert.equal(validateNativeOpenUi(answer.responseSource.text).ok, true);
+  assert.equal((answer.response.match(/Record the brief/g) ?? []).length, 1);
+  assert.match(answer.response, /incomplete brief returns to intake/);
+});
+
+test('format guidance puts the requested artifact first and keeps extra analysis conditional', () => {
+  const prompt = workspaceNativeOpenUiPrompt(['table'], false);
+  assert.match(prompt, /make it the main answer/);
+  assert.match(prompt, /sortable table, provide the data, units and working sort/);
+  assert.match(prompt, /omit charts and aggregate metrics unless the request calls for analysis/);
+  assert.match(prompt, /Chart\(/, 'explicit analysis still has access to chart components');
+});
+
+test('stray trailing presentation markers are removed before the program is validated or stored', () => {
+  const program = 'root = Col([Text("The comparison is ready.")])';
+  for (const close of ['</XROGA_OPENUI_V1>>>', '</<XROGA_OPENUI_V1>>>', NATIVE_UI_MARKER.trim()]) {
+    const payload = 'Here are the results.' + NATIVE_UI_MARKER + program + '\n</Col>\n' + close;
+    assert.equal(completeNativeWorkspaceAnswer(payload, 'stop').responseSource.text, program);
+    const quoted = 'root = Col([Code("' + close + '", "text")])';
+    assert.equal(splitNativeOpenUiAnswer('Example syntax.' + NATIVE_UI_MARKER + quoted).program, quoted);
+  }
+});
+
+test('incorrect Next.js deployment guidance cannot be published as a complete answer', () => {
+  const inaccurate = [
+    'In the Next.js App Router, Server Actions run on the server.',
+    'Server Actions must be called from client or form.',
+    'Treat env vars as exposed unless prefixed for server only.',
+  ].join('\n');
+  const result = completeNativeWorkspaceAnswer(inaccurate, 'stop');
+  assert.deepEqual(result.completion, { status: 'partial', reason: 'factual_review' });
+  assert.match(result.response, /environment variables are server-only by default/);
+  assert.match(result.response, /can be called from server code/);
+  const correct = 'Next.js environment variables are server-only by default. Use NEXT_PUBLIC_ only for public values. A client or form can invoke an exposed Server Action, and server code can call the function on the server.';
+  for (const text of [correct, "Next.js docs: Don't treat env vars as exposed unless prefixed for server only. The default is private.", 'In this custom bundler, treat env vars as exposed unless prefixed for server only.']) {
+    assert.deepEqual(completeNativeWorkspaceAnswer(text, 'stop').completion, { status: 'complete' });
+  }
+});
+
+test('Next.js context survives removal of an invalid native claim', () => {
+  const program = [
+    'root = Col([title, note, warning, Table(["Boundary"], [["Authorize actions"]])])',
+    'title = Title("Next.js")',
+    'note = Text("Server Functions execute on the server.")',
+    'warning = Text("Treat env vars as exposed unless prefixed for server only.")',
+  ].join('\n');
+  const result = completeNativeWorkspaceAnswer('Check the caller before applying changes.' + NATIVE_UI_MARKER + program, 'stop');
+  assert.deepEqual(result.completion, { status: 'partial', reason: 'factual_review' });
+  assert.match(result.responseSource.text, /Table\(/);
+  assert.doesNotMatch(result.responseSource.text, /exposed unless/);
+  assert.match(result.response, /environment variables are server-only by default/);
+});
+
+test('a chart cannot silently choose one of two inputs the answer leaves unresolved', () => {
+  const prose = 'The table reports $1,000 and the chart reports $1,200. I have not presented a chart yet because the source values conflict.';
+  const chart = 'Chart("bar", [{month:"January", revenue:1000}], "month", ["revenue"])';
+  const program = 'root = Col([Text("Table: $1,000. Chart: $1,200."), ' + chart + '])';
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop');
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'factual_review' });
+  assert.match(answer.response, /chart is withheld/);
+  assert.match(answer.responseSource.text, /Table: \$1,000/);
+  assert.doesNotMatch(answer.responseSource.text, /Chart\(/);
+  const accepted = completeNativeWorkspaceAnswer('The confirmed January revenue is $1,000.' + NATIVE_UI_MARKER + program, 'stop');
+  assert.equal(accepted.completion.status, 'complete');
+});
+
+test('a deferred chart leaves independent information and drops its preselected controls', () => {
+  const prose = 'The sources conflict. I have not presented a final chart yet. The panel below lets you pick which number to plot.';
+  const program = [
+    'root = Col([Text("Compare both values."), chart, stateControls, Text("Check the source."), Checkbox($reconciled, "Source checked")])',
+    'chart = Chart("bar", [{month:"Jan", revenue:amount}], "month", ["revenue"])',
+    'amount = $authoritative == "1200" ? 1200 : 1000',
+    'stateControls = Controls([RadioGroup($authoritative, ["1000", "1200"], "Select value")], "Plot one value")',
+    '$authoritative = "1000"',
+    '$reconciled = false',
+  ].join('\n');
+  const result = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop');
+  assert.deepEqual(result.completion, { status: 'partial', reason: 'factual_review' });
+  assert.match(result.responseSource.text, /Compare both values/);
+  assert.match(result.responseSource.text, /Checkbox/);
+  assert.doesNotMatch(result.responseSource.text, /authoritative|RadioGroup|Chart\(/);
+  assert.doesNotMatch(result.response, /panel below lets/);
+});
+
+test('closed numeric series recovers a signed chart after a failed native program', () => {
+  const prompt = 'Show actual monthly net cash flows in dollars: -800, 0, 500.';
+  const prose = 'Cash flows are −800, 0 and 500 dollars.';
+  const invalid = 'root = Col([Text("First")])\nroot = Col([Text("Second")])';
+  const formats = requiredNativeFormats(prompt);
+  const result = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + invalid, 'stop', undefined, prompt, undefined, formats);
+  assert.deepEqual(formats, ['chart']);
+  assert.deepEqual(result.completion, { status: 'complete' });
+  assert.match(result.responseSource.text, /"Month 1","value":-800\}.*"Month 2","value":0\}.*"Month 3","value":500\}/);
+  assert.doesNotMatch(result.responseSource.text, /First|Second/);
+  assert.deepEqual(requiredNativeFormats('What were last month’s actual cash flows?'), []);
+  const foreignSource = 'root = Col([Source("source-9")])';
+  const denied = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + foreignSource, 'stop', undefined, prompt, undefined, formats);
+  assert.deepEqual(denied.completion, { status: 'partial', reason: 'presentation_contract' });
+  assert.equal(denied.responseSource.text, '');
+  const truncated = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + invalid, 'length', undefined, prompt, undefined, formats);
+  assert.deepEqual(truncated.completion, { status: 'partial', reason: 'output_limit' });
+});
+
+test('a requested editable checklist recovers local controls from a complete prose answer', () => {
+  const prompt = 'Make a pre-launch checklist with editable local checkboxes.';
+  const sections = Array.from({length: 5}, (_, index) => '**Group ' + index + '**\n' +
+    Array.from({length: 8}, (_, item) => '- [ ] Review item ' + index + '.' + item).join('\n'));
+  const prose = ['Check before publishing.', ...sections, '~~~md\n- Copy this sample code as written\n~~~'].join('\n\n');
+  const invalid = ['root = Col([Text("Checklist")])', ...Array.from({length: 97}, (_, index) => '$label' + index + ' = false')].join('\n');
+  const formats = requiredNativeFormats(prompt);
+  const result = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + invalid, 'stop', undefined, prompt, undefined, formats);
+  assert.deepEqual(formats, ['checklist']);
+  assert.deepEqual(result.completion, { status: 'complete' });
+  assert.equal((result.responseSource.text.match(/Checkbox\(/g) ?? []).length, 40);
+  assert.match(result.response, /Copy this sample code as written/);
+  assert.doesNotMatch(result.responseSource.text, /Copy this sample code/);
+  assert.deepEqual(missingNativeFormats(result.responseSource.text, formats), []);
+  assert.deepEqual(requiredNativeFormats('Make a checklist without editable checkboxes.'), []);
+  const cited = completeNativeWorkspaceAnswer('- Find the evidence [1].', 'stop', new Set(['source-1']), prompt, undefined, formats);
+  assert.deepEqual(cited.completion, { status: 'partial', reason: 'presentation_contract' });
+  assert.match(cited.response, /evidence \[1\]/);
+});
+
+test('supplemental checkbox labels do not repeat exact readable tasks with the same initial state', () => {
+  const prose = [
+    '## Handoff', '', '- [ ] **File** the report.',
+    '- [x] Assign an owner.', '- [ ] Notify the team.',
+    '- [ ] Check the guidance [1].', '',
+    '~~~markdown', '- [ ] Sample only.', '~~~',
+  ].join('\n');
+  const program = [
+    'root = Col([Markdown(_xroga_answer), Controls([Checkbox($pending, "File the report."), Checkbox($done, "Assign an owner."), Checkbox($done, "Notify the team."), Checkbox($pending, "Check the guidance."), Checkbox($pending, "Sample only.")], "Handoff")])',
+    '$pending = false',
+    '$done = true',
+  ].join('\n');
+  const complete = supplementNativeProse(prose, bindNativeAnswerText(program, prose), true);
+  assert.ok(complete.startsWith(prose));
+  assert.equal(complete.slice(prose.length), '\n\n- Notify the team.\n\n- Check the guidance.\n\n- Sample only.');
+});
+
+test('a native checklist does not duplicate the exact numbered steps in its own section', () => {
+  const prose = [
+    '## Closing checklist', '', '1. **Check** the tag.', '2. Record the handoff.', '',
+    '~~~markdown', '1. Example only.', '~~~', '', '## Opening checklist', '', '1. Notify the team.',
+  ].join('\n');
+  const program = [
+    'root = Col([Markdown(_xroga_answer), Section("Closing checklist", [Checkbox($todo, "Check the tag."), Checkbox($todo, "Record the handoff."), Checkbox($todo, "Example only."), Checkbox($todo, "Notify the team.")])])',
+    '$todo = false',
+  ].join('\n');
+  const complete = supplementNativeProse(prose, bindNativeAnswerText(program, prose), true);
+  assert.equal(complete, prose + '\n\n- Example only.\n\n- Notify the team.');
+  assert.equal(supplementNativeProse(complete, bindNativeAnswerText(program, prose), true), complete);
+});
+
+test('the authoritative response preserves one matching scoped table with code, escapes and exact citations', () => {
+  const head = ['Example', 'Meaning'];
+  const rows = [
+    ['`left|right`', 'Alpha | Beta'],
+    ['[Guide](https://example.com/guide) [1]', '10'],
+  ];
+  const prose = [
+    '# Technical note', '', '## **Observed values**', '',
+    '| Example | Meaning |', '| :--- | ---: |',
+    '| `left|right` | Alpha \\| Beta |', '| [Guide](https://example.com/guide) [1] | 10 |',
+  ].join('\n');
+  const programFor = (entries: string[][]) => bindNativeAnswerText(
+    'root = Col([Markdown(_xroga_answer), Section("Observed values", [Table(' +
+      JSON.stringify(head) + ', ' + JSON.stringify(entries) + ')])])', prose,
+  );
+  assert.equal(supplementNativeProse(prose, programFor(rows), true), prose);
+  for (const entries of [
+    [rows[0], [rows[1][0], '11']],
+    [rows[0], ['[Guide](https://example.com/other) [1]', '10']],
+    [rows[0], ['[Guide](https://example.com/guide) [2]', '10']],
+    [rows[1], rows[0]],
+  ]) {
+    const exported = supplementNativeProse(prose, programFor(entries), true);
+    assert.ok(exported.startsWith(prose + '\n\n'));
+    assert.equal(exported.match(/^\| Example \| Meaning \|$/gm)?.length, 2);
+    assert.match(exported.slice(prose.length), /\x60left\|right\x60/);
+  }
+});
+
+test('a fenced table example cannot replace a real or separately titled native table', () => {
+  const table = '| Stage | Owner |\n| --- | --- |\n| Intake | Coordinator |';
+  const native = 'Table(["Stage","Owner"],[["Intake","Coordinator"]])';
+  const example = 'Example syntax:\n\n~~~markdown\n' + table + '\n~~~';
+  assert.equal(
+    supplementNativeProse(example, 'root = Col([' + native + '])', true),
+    example + '\n\n' + table,
+  );
+
+  const prose = '## Desktop\n\n### Handoff\n\n' + table;
+  const program = 'root = Col([Section("Mobile",[Section("Handoff",[' + native + '])])])';
+  const answer = supplementNativeProse(prose, program, true);
+  assert.equal(answer, prose + '\n\n## Mobile\n\n### Handoff\n\n' + table);
+  assert.equal(supplementNativeProse(answer, program, true), answer);
+  assert.equal(
+    completeNativeWorkspaceAnswer(NATIVE_UI_MARKER + program, 'stop').response,
+    '## Mobile\n\n### Handoff\n\n' + table,
+  );
+});
+
+test('one scoped table survives decimal and grouped digit formatting across the saved answer and OpenUI', () => {
+  const prose = '## Results\n\n| Company | Score | Team |\n| --- | --- | --- |\n| North | 1000.0 | 8,931 |\n| East | 763.9 | 1,000 |';
+  const program = 'root = Col([Markdown(_xroga_answer), Section("Results", [Table(["Company","Score","Team"], [["North",1000,8931],["East",763.9,1000]])])])';
+  assert.equal(supplementNativeProse(prose, bindNativeAnswerText(program, prose), true), prose);
+  for (const different of ['8932', '"08931"', '"8,931 [1]"', '"$8,931"']) {
+    const changed = bindNativeAnswerText(program.replace('8931', different), prose);
+    assert.equal(supplementNativeProse(prose, changed, true).match(/^\| Company \| Score \| Team \|$/gm)?.length, 2);
+  }
+});
+
+test('a single-series chart reuses exact readable values from the same section', () => {
+  const prose = '## Ranking\n\n| Rank | Company | Composite score |\n| --- | --- | --- |\n| 1 | North | 1000.0 |\n| 2 | East | 763.9 |';
+  const program = 'root = Col([Section("Ranking", [Chart("bar", [{name:"North",score:1000},{name:"East",score:763.9}], "name", ["score"], "number", null, false, 320, {title:"Momentum", xLabel:"Company", yLabel:"Score (0–1000)", note:"Scores measure momentum."})])])';
+  const readable = supplementNativeProse(prose, program, true);
+  assert.ok(readable.startsWith(prose));
+  assert.match(readable, /Momentum\n\nScore \(0–1000\)\n\nScores measure momentum\./);
+  assert.equal(readable.match(/North/g)?.length, 1);
+  assert.equal(supplementNativeProse(readable, program, true), readable);
+  const different = supplementNativeProse(prose, program.replace('score:763.9', 'score:763.8'), true);
+  assert.match(different, /\| East \| 763\.8 \|/);
+  assert.equal(supplementNativeProse(prose, program.replace('"Ranking"', '"Another ranking"'), true).match(/North/g)?.length, 2);
 });
 
 test('native layout, data and reactive arithmetic are accepted without a V2 translation', () => {
@@ -32,12 +478,14 @@ test('native layout, data and reactive arithmetic are accepted without a V2 tran
   for (const program of programs) assert.deepEqual(validateNativeOpenUi(program), { ok: true }, program);
 });
 
-test('architecture instructions use registry signatures without unrelated controls or unsupplied evidence', () => {
+test('a mixed request can use components outside its initial plan without unsupplied evidence', () => {
   const prompt = workspaceNativeOpenUiPrompt(['prose', 'graph', 'table'], false);
-  for (const name of ['Diagram(', 'Table(', 'Code(']) assert.ok(prompt.includes(name), name);
-  for (const name of ['Slider(', 'Histogram(', 'Source(', 'DatePicker(']) assert.ok(!prompt.includes(name), name);
-  assert.ok(prompt.length < nativeOpenUiPrompt.length * 0.7);
+  for (const name of ['Diagram(', 'Table(', 'Code(', 'Slider(', 'Histogram(', 'DatePicker(']) assert.ok(prompt.includes(name), name);
+  assert.ok(!prompt.includes('Source('));
   assert.ok(workspaceNativeOpenUiPrompt(['chart', 'calculator'], true).includes('Source('));
+  for (const name of ['RadioGroup(', 'DatePicker(', 'Checkbox(', 'ChoicePicker(', 'Form(']) {
+    assert.ok(workspaceNativeOpenUiPrompt(['calculator'], false).includes(name), name);
+  }
 });
 
 test('independent schema failure keeps authorized sections, prose and an explicit partial status', () => {
@@ -124,6 +572,98 @@ test('an unsupported diagram color does not remove verified nodes, edges, or the
   assert.deepEqual(missingNativeFormats(answer.responseSource.text, ['graph', 'table']), []);
   const share = readNativeOpenUiShare(buildNativeOpenUiShare(answer.response, answer.responseSource.text)!);
   assert.equal(share?.program, answer.responseSource.text);
+});
+
+test('table caption recovery preserves data, readable copy and Share without another model call', () => {
+  for (const caption of ['"Prices per month"', 'note']) {
+    const program = 'root = Col([Section("Comparison", [plans])])\n'
+      + 'plans = Table(["Plan", "Price"], [["Basic", 10], ["Team", 25]], ' + caption + ')\n'
+      + 'note = "Prices per month"';
+    const diagnostics: unknown[] = [];
+    const answer = completeNativeWorkspaceAnswer('Plan comparison.' + NATIVE_UI_MARKER + program,
+      'stop', undefined, undefined, event => diagnostics.push(event), ['table']);
+    assert.match(JSON.stringify(diagnostics), /excess-args/);
+    assert.deepEqual(answer.completion, { status: 'complete' });
+    assert.equal(validateNativeWorkspaceProgram(answer.responseSource.text, undefined, '').ok, true);
+    assert.deepEqual(missingNativeFormats(answer.responseSource.text, ['table']), []);
+    assert.match(answer.response, /Basic.*10/);
+    assert.match(answer.response, /Team.*25/);
+    assert.match(answer.response, /Prices per month/);
+    assert.match(answer.responseSource.text, /Caption\(/);
+    const share = readNativeOpenUiShare(buildNativeOpenUiShare(answer.response, answer.responseSource.text)!);
+    assert.equal(share?.program, answer.responseSource.text);
+  }
+});
+
+test('a readable decision table satisfies an ordinary table request beside native components', () => {
+  const prompt = 'Show a decision table and diagram for delivery intake.';
+  const prose = [
+    '## Decision table',
+    '| Seal condition | Decision |',
+    '| --- | :--- |',
+    '| Broken | Refer to the registrar |',
+    '| Intact | Accept for intake |',
+  ].join('\n');
+  const diagram = 'Diagram("Delivery intake", [{id:"seal",label:"Inspect seal",level:0},{id:"check",label:"Record status",level:1}], [{from:"seal",to:"check",label:"inspection"}], "Record the inspected seal condition.")';
+  const program = 'root = Col([Markdown(_xroga_answer), ' + diagram + '])';
+  const diagnostics: unknown[] = [];
+  const formats = requiredNativeFormats(prompt);
+  assert.deepEqual([...formats].sort(), ['graph', 'table']);
+  const result = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop', undefined, prompt,
+    event => diagnostics.push(event), formats);
+  assert.deepEqual(result.completion, { status: 'complete' });
+  assert.deepEqual(diagnostics, []);
+  assert.match(result.response, /Broken \| Refer to the registrar/);
+  assert.match(result.responseSource.text, /Markdown\(_xroga_answer\)/);
+  assert.match(result.responseSource.text, /Diagram\(/);
+  const share = readNativeOpenUiShare(buildNativeOpenUiShare(result.response, result.responseSource.text)!);
+  assert.equal(share?.program, result.responseSource.text);
+});
+
+test('a static or invalid Markdown table never claims missing interactive table controls', () => {
+  const table = 'Item | Value\n--- | ---\n`A|B` | 42';
+  const tableOnly = (prose: string, prompt: string) => completeNativeWorkspaceAnswer(
+    prose, 'stop', undefined, prompt, undefined, ['table'],
+  );
+  assert.deepEqual(tableOnly(table, 'Present a comparison table.').completion, { status: 'complete' });
+  assert.deepEqual(tableOnly(table, 'Show an interactive calculator and a table.').completion, { status: 'complete' });
+  assert.deepEqual(tableOnly(table, 'Provide the table. Do not add an interactive table.').completion, { status: 'complete' });
+  assert.deepEqual(tableOnly(table, 'Provide a comparison table without sorting controls.').completion, { status: 'complete' });
+  for (const prompt of [
+    'Present a sortable table.', 'Show an interactive data table.', 'Show a filterable table.',
+    'Present a table with row edit controls.', 'Show a table. Let me sort by amount.',
+    'Show a table readers can filter by type.',
+    'Do not add a filterable table, but include a sortable table.',
+  ]) {
+    assert.deepEqual(tableOnly(table, prompt).completion, { status: 'partial', reason: 'presentation_contract' });
+  }
+  const brokenNative = 'root = Col([Markdown(_xroga_answer), Table(["Item", "Value"], [["Missing value"]])])';
+  assert.deepEqual(tableOnly(table + NATIVE_UI_MARKER + brokenNative, 'Present a sortable table.').completion,
+    { status: 'partial', reason: 'presentation_contract' });
+  for (const invalid of [
+    '```markdown\n' + table + '\n```', table.split('\n').map(line => '> ' + line).join('\n'),
+    table.split('\n').map(line => '    ' + line).join('\n'), 'Item | Value\n--- | ---',
+    'Item | Value\n--- | --- | ---\nBook | 42', 'Item | Value\n--- | ---\nBook | 42 | Overflow',
+    'Summary directly above\n' + table,
+  ]) {
+    assert.deepEqual(tableOnly(invalid, 'Present a comparison table.').completion,
+      { status: 'partial', reason: 'presentation_contract' });
+  }
+});
+
+test('table recovery does not discard unknown arguments or admit invalid data and evidence', () => {
+  for (const table of [
+    'Table(["Plan"], [["Basic"]], {hidden: "data"})',
+    'Table(["Plan"], [["Basic"]], "Caption", "Extra data")',
+    'Table(["Plan", "Price"], [["Basic"]], "Caption")',
+    'Table(["Plan"], [[Source("unverified")]], "Caption")',
+  ]) {
+    const answer = completeNativeWorkspaceAnswer('Available explanation.' + NATIVE_UI_MARKER
+      + 'root = Col([Text("Available explanation."), ' + table + '])',
+    'stop', new Set(), undefined, undefined, ['table']);
+    assert.equal(answer.completion.status, 'partial');
+    assert.match(answer.response, /Available explanation/);
+  }
 });
 
 test('unrenderable diagram relationships cannot satisfy graph coverage', () => {
@@ -275,6 +815,36 @@ test('a validated native-only response recovers readable code and table data wit
   assert.equal(readNativeOpenUiShare(buildNativeOpenUiShare(answer.response, program)!)?.text, answer.response);
 });
 
+test('saved readable comparison tables do not repeat solely because Markdown padding differs', () => {
+  const prose = 'Compare the published packages.\n\n| Plan | Price per month | Seats included | Cost per seat per month |\n|---|---|---|---|\n| Basic | $10 | 1 | $10.00 |\n| Team | $25 | 5 | $5.00 |';
+  const program = 'root = Col([Table(["Plan", "Price per month", "Seats included", "Cost per seat per month"], [["Basic", "$10", 1, "$10.00"], ["Team", "$25", 5, "$5.00"]])])';
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop');
+  assert.equal(answer.response, prose);
+  assert.equal(answer.responseSource.text, program);
+  const changed = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program.replace('"$25"', '"$30"'), 'stop');
+  assert.match(changed.response, /\$25/);
+  assert.match(changed.response, /\$30/);
+});
+
+test('a rejected visual preserves the complete readable answer without leaking UI syntax', () => {
+  const prose = [
+    'Team costs $25 per month for five seats, or $5 per included seat.',
+    '| Plan | USD/month | Seats | USD/seat |',
+    '| --- | --- | --- | --- |',
+    '| Basic | 10 | 1 | 10 |',
+    '| Team | 25 | 5 | 5 |',
+    'Formula: monthly price divided by included seats. Basic has the lower total monthly price.',
+    'Requested Python example:',
+    '```python\nper_seat = 25 / 5\n```',
+    'Assumption: the supplied prices exclude tax. Unused seats still count toward the subscription price.',
+  ].join('\n\n');
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + 'root = Col([', 'stop');
+  assert.ok(answer.response.includes(prose));
+  assert.equal(answer.responseSource.text, '');
+  assert.doesNotMatch(answer.response, /root =|XROGA_OPENUI/);
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'presentation_contract' });
+});
+
 test('an invalid program without readable prose explicitly asks the user to retry', () => {
   const seen: unknown[] = [];
   const answer = completeNativeWorkspaceAnswer(NATIVE_UI_MARKER + 'root = Col([Text("unreviewed")', 'stop', undefined, undefined, value => seen.push(value));
@@ -298,7 +868,8 @@ test('Workspace strips only the trailing provider transport envelope from a nati
   const program = 'root = Col([Text("A quoted </｜DSML｜ parameter> example stays intact."), List([ListItem("Verify the signature")], "timeline")])';
   const wire = prose + NATIVE_UI_MARKER + program + '</｜DSML｜ parameter>\r\n</｜DSML｜ invoke>\r\n</｜DSML｜ calls>\n';
   assert.deepEqual(completeNativeWorkspaceAnswer(wire, 'stop'), {
-    response: prose, completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: program },
+    response: prose + '\n\nA quoted </｜DSML｜ parameter> example stays intact.\n\n- Verify the signature',
+    completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: program },
   });
   assert.equal(splitNativeOpenUiAnswer(prose + NATIVE_UI_MARKER + program).program, program);
 });
@@ -340,12 +911,15 @@ test('required visuals must render and cannot be satisfied by unused declaration
   const prompt = 'Build an interactive calculator with a slider. Chart and tabulate the attendance scenarios.';
   const formats = requiredNativeFormats(prompt);
   assert.deepEqual([...formats].sort(), ['calculator', 'chart', 'table']);
+  assert.deepEqual(requiredNativeFormats('Present these measurements as a sortable table: red 9.2, green 1.15, blue 12.8. Values are seconds.'), ['table']);
+  assert.deepEqual(requiredNativeFormats('Present the summary without a chart.'), []);
   assert.deepEqual(requiredNativeFormats('Explain what a chart is.'), []);
   assert.deepEqual(requiredNativeFormats('Explain the total without a chart.'), []);
   const checked: unknown[] = [];
   const prose = 'The fixed ticket price is $25.';
   const reply = completeNativeWorkspaceAnswer(prose, 'stop', undefined, undefined, event => checked.push(event), formats);
-  assert.equal(reply.response, prose);
+  assert.ok(reply.response.startsWith("The interactive controls couldn't be displayed."));
+  assert.ok(reply.response.endsWith(prose));
   assert.deepEqual(reply.completion, { status: 'partial', reason: 'presentation_contract' });
   assert.deepEqual(checked, [{ stage: 'assembly', reason: 'missing_formats', formats }]);
   const table = 'Table(["Attendance", "Revenue"], [[40, 1000]])';
@@ -364,12 +938,187 @@ test('required visuals must render and cannot be satisfied by unused declaration
   assert.equal(completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + reactiveControl, 'stop', undefined, undefined, undefined, ['calculator']).completion.status, 'complete');
 });
 
-test('a provider output limit preserves readable prose and keeps the answer partial', () => {
+test('a rejected calculator keeps the worked example and removes the promise of invisible controls', () => {
+  const example = 'With 100 units at 5% for one year, the result is 105 units.';
+  const prose = example + '\n\n- The controls above let you change the inputs.';
+  const program = 'root = Col([UnknownControl()])';
+  const diagnostics: unknown[] = [];
+  const reply = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop', undefined, undefined,
+    event => diagnostics.push(event));
+
+  assert.deepEqual(reply.completion, { status: 'partial', reason: 'presentation_contract' });
+  assert.equal(reply.responseSource.text, '');
+  assert.equal(reply.response, "The interactive controls couldn't be displayed. Treat the calculation below as a worked example.\n\n" + example);
+  assert.match(JSON.stringify(diagnostics), /"authorityIssue":"unknown_capability"/);
+  assert.doesNotMatch(JSON.stringify(diagnostics), /UnknownControl/);
+});
+
+test('a live calculator fallback removes directions to unavailable inputs without losing the calculation', () => {
+  const example = 'Interest: 10,000 × 0.05 × 3 = $1,500.00.';
+  const instruction = 'Change the rate and duration in the controls and the interest, total, and principal/interest split update immediately.';
+  const independent = 'Interest is calculated on the principal.';
+  const fenced = ['~~~text', instruction, '~~~'].join('\n');
+  const prose = [example, instruction, instruction + ' ' + independent, fenced].join('\n\n');
+  const raw = prose + NATIVE_UI_MARKER + 'root = Col([UnknownControl()])';
+  const result = completeNativeWorkspaceAnswer(raw, 'stop', undefined, undefined, undefined, ['calculator']);
+
+  assert.equal(result.completion.status, 'partial');
+  assert.equal(result.responseSource.text, '');
+  assert.ok(result.response.includes(example));
+  assert.ok(result.response.includes(independent));
+  assert.ok(result.response.includes(fenced));
+  assert.equal(result.response.split(instruction).length - 1, 1, 'only the fenced example remains');
+});
+
+test('a rejected decorative branch can be omitted while verified calculator controls survive', () => {
+  const program = [
+    'root = Col([estimate, UnknownDecoration()])',
+    '$units = 4',
+    'estimate = Card([Slider($units, 1, 10, 1, "Units"), Metric("Total", @Format($units * 8, "number", 0))])',
+  ].join('\n');
+  const prose = 'Four units at 8 each cost 32.';
+  const complete = (source: string) => completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + source,
+    'stop', undefined, undefined, undefined, ['calculator']);
+  const answer = complete(program);
+  assert.equal(answer.completion.status, 'partial');
+  assert.deepEqual(validateNativeWorkspaceProgram(answer.responseSource.text, undefined, prose), { ok: true });
+  assert.match(answer.responseSource.text, /Slider\(/);
+  assert.doesNotMatch(answer.responseSource.text, /UnknownDecoration/);
+
+  const withUnverifiedSource = program.replace('UnknownDecoration()', 'UnknownDecoration(), Source("unverified")');
+  assert.equal(complete(withUnverifiedSource).responseSource.text, '');
+});
+
+test('calculator recovery keeps working inputs, reset and the original formula after an unsupported visual detail', () => {
+  const prose = 'Net proceeds equal the ticket price times attendance minus USD 60. At USD 18 and 24 attendees, net proceeds are USD 372.00.';
+  const program = [
+    'root = Col([controls, net, Markdown(_xroga_answer)])',
+    '$tickets = 24',
+    '$price = 18',
+    'controls = Controls([Input($price, "Ticket price (USD)", "number"), Input($tickets, "Paid attendance", "number"), UnsupportedAdornment(), Button("Reset inputs", @Reset($price, $tickets))], "Event inputs")',
+    'netValue = $price * $tickets - 60',
+    'net = Metric("Net proceeds", @Format(netValue, "currency", 2, "USD"), @UnsupportedLabel($tickets), "success")',
+  ].join('\n');
+  const diagnostics: Array<Pick<NativeUiDiagnostic, 'statement' | 'unregisteredCallKind'>> = [];
+  const complete = (source: string) => completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + source,
+    'stop', undefined, undefined, event => { if (event.stage === 'authority') diagnostics.push(event); }, ['calculator']);
+  const result = complete(program);
+  assert.deepEqual(result.completion, { status: 'partial', reason: 'presentation_contract' });
+  const recovered = result.responseSource.text;
+  assert.deepEqual(validateNativeWorkspaceProgram(recovered, undefined, prose), { ok: true });
+  assert.deepEqual(missingNativeFormats(recovered, ['calculator']), []);
+  assert.match(recovered, /Controls\(\[Input\(\$price[\s\S]*Input\(\$tickets/);
+  assert.match(recovered, /@Reset\(\$price, \$tickets\)/);
+  assert.match(recovered, /netValue = \$price \* \$tickets - 60/);
+  assert.doesNotMatch(recovered, /Unsupported/);
+  assert.ok(result.response.includes(prose));
+  const share = buildNativeOpenUiShare(result.response, recovered);
+  assert.ok(share);
+  assert.equal(readNativeOpenUiShare(share)?.text, result.response);
+  assert.equal(readNativeOpenUiShare(share)?.program, recovered);
+  assert.equal(diagnostics[0].statement, 4);
+  assert.equal(diagnostics[0].unregisteredCallKind, 'component');
+
+  const noteOnly = complete(program.replace('UnsupportedAdornment(), ', ''));
+  assert.equal(noteOnly.completion.status, 'complete');
+  assert.doesNotMatch(noteOnly.responseSource.text, /UnsupportedLabel/);
+  assert.equal(diagnostics.at(-1)?.statement, 6);
+  assert.equal(diagnostics.at(-1)?.unregisteredCallKind, 'function');
+
+  const missingCalculation = program.replace('@Format(netValue, "currency", 2, "USD")', '@UnsupportedCalculation(netValue)');
+  assert.equal(complete(missingCalculation).responseSource.text, '');
+  const badAction = program.replace('@Reset($price, $tickets)', '@Reset("price")');
+  assert.equal(complete(badAction).responseSource.text, '');
+});
+
+test('a provider output limit keeps verified visuals shareable and rejects unfinished syntax', () => {
   const program = 'root = Col([Table(["Plan", "Price"], [["Team", 25]])])';
   const answer = completeNativeWorkspaceAnswer('Team is $25.' + NATIVE_UI_MARKER + program, 'length');
   assert.deepEqual(answer.completion, { status: 'partial', reason: 'output_limit' });
-  assert.equal(answer.responseSource.text, '');
+  assert.equal(answer.responseSource.text, program);
+  assert.match(answer.response, /reached the provider output limit/);
   assert.match(answer.response, /Team is \$25\./);
+  const snapshot = buildNativeOpenUiShare(answer.response, answer.responseSource.text);
+  assert.ok(snapshot);
+  assert.equal(readNativeOpenUiShare(snapshot)?.program, program);
+  assert.match(readNativeOpenUiShare(snapshot)?.text ?? '', /reached the provider output limit/);
+
+  const cutProgram = completeNativeWorkspaceAnswer('Team is $25.' + NATIVE_UI_MARKER + program.slice(0, -8), 'length');
+  assert.deepEqual(cutProgram.completion, { status: 'partial', reason: 'output_limit' });
+  assert.equal(cutProgram.responseSource.text, '');
+  assert.doesNotMatch(cutProgram.response, /root =|Col\(/);
+});
+
+test('a truncated final declaration keeps earlier validated components and original prose', () => {
+  const prose = 'Team costs $25. Only the confirmed amount is available.';
+  const table = 'plans = Table(["Plan", "Price"], [["Team", 25]])';
+  const wire = prose + NATIVE_UI_MARKER + ['root = Col([plans, followup])', table, 'followup = Text("Unfinished'].join('\n');
+  const answer = completeNativeWorkspaceAnswer(wire, 'length');
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'output_limit' });
+  assert.equal(answer.responseSource.text, 'root = Col([plans])\n' + table);
+  assert.match(answer.response, /Team costs \$25/);
+  assert.doesNotMatch(answer.response, /Unfinished|root\s*=/);
+  assert.equal(completeNativeWorkspaceAnswer(wire, 'stop').responseSource.text, '');
+  assert.equal(completeNativeWorkspaceAnswer(wire.replace('root = Col([plans, followup])',
+    'root = Col([plans, Source("source-9"), followup])'), 'length').responseSource.text, '');
+  assert.equal(completeNativeWorkspaceAnswer(wire.replace('followup = Text(', 'plans = Text('), 'length').responseSource.text, '');
+});
+
+test('a truncated inline root keeps only children completed before the cutoff', () => {
+  const prose = 'The confirmed count is five.';
+  const table = 'Table(["Confirmed"], [[5]])';
+  const wire = prose + NATIVE_UI_MARKER + 'root = Col([' + table + ', Text("Unfinished';
+  const result = completeNativeWorkspaceAnswer(wire, 'length');
+  assert.deepEqual(result.completion, { status: 'partial', reason: 'output_limit' });
+  assert.equal(result.responseSource.text, 'root = Col([' + table + '])');
+  assert.match(result.response, /confirmed count is five/);
+  assert.doesNotMatch(result.response, /Unfinished|root\s*=/);
+  assert.equal(completeNativeWorkspaceAnswer(wire, 'stop').responseSource.text, '');
+  assert.equal(completeNativeWorkspaceAnswer(wire.replace(table, 'Source("source-9")'), 'length').responseSource.text, '');
+  const closedChildren = prose + NATIVE_UI_MARKER + 'root = Col([' + table + '], ["Unfinished';
+  assert.equal(completeNativeWorkspaceAnswer(closedChildren, 'length').responseSource.text, result.responseSource.text);
+});
+
+test('a truncated answer preserves completed tabs and list items in the saved text', () => {
+  const prose = 'Two supported approaches are available.\n\nChoose according to your team size.';
+  const tabs = 'choices = Tabs("Approaches", [{title: "Small team", content: [List(["Assign an owner", "Agree on a handoff"])]}, {title: "Large team", content: [Text("Define an escalation path.")]}])';
+  const program = ['root = Col([choices, unfinished])', tabs, 'unfinished = Text("Incomplete'].join('\n');
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'length');
+
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'output_limit' });
+  assert.equal(answer.responseSource.text, 'root = Col([choices])\n' + tabs);
+  assert.ok(answer.response.includes(prose));
+  assert.match(answer.response, /Small team[\s\S]*Assign an owner[\s\S]*Agree on a handoff/);
+  assert.match(answer.response, /Large team[\s\S]*Define an escalation path\./);
+  assert.doesNotMatch(answer.response, /Incomplete|root\s*=/);
+});
+
+test('saved chart data evaluates the initial values from the same calculator bindings as the chart', () => {
+  const prose = 'Annual compounding from one deposit.\n\nThe calculator uses the supplied terms.';
+  const program = [
+    'root = Col([Chart("bar", data, "label", ["value"], "currency", "USD", false, 260, {xLabel:"Component", yLabel:"USD"})])',
+    '$principal = 8000',
+    '$rate = 5',
+    '$years = 4',
+    'interest = $principal * @Pow(1 + $rate / 100, $years) - $principal',
+    'data = [{label:"Principal", value:$principal}, {label:"Interest earned", value:interest}]',
+  ].join('\n');
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop');
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  assert.ok(answer.response.startsWith(prose));
+  assert.match(answer.response, /\| Component \| USD \|[\s\S]*\| Principal \| \$8,000\.00 \|\n\| Interest earned \| \$1,724\.05 \|/);
+  const share = buildNativeOpenUiShare(answer.response, answer.responseSource.text);
+  assert.ok(share);
+  assert.equal(readNativeOpenUiShare(share)?.text, answer.response);
+
+  const zero = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program.replace('$rate = 5', '$rate = 0'), 'stop');
+  assert.match(zero.response, /\| Interest earned \| \$0\.00 \|/);
+  for (const badRow of ['{label:"Interest earned"}', '{label:"Interest earned", value:"1724.05"}']) {
+    const invalid = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER +
+      program.replace('{label:"Interest earned", value:interest}', badRow), 'stop');
+    assert.ok(invalid.response.startsWith(prose));
+    assert.doesNotMatch(invalid.response, /\| Component \| USD \|/);
+  }
 });
 
 test('the saved prose and clipboard fallback retain the substantive native body after an unfinished heading', () => {
@@ -402,6 +1151,18 @@ test('a one-paragraph overview retains later code and diagram details for saved 
   assert.equal(readNativeOpenUiShare(buildNativeOpenUiShare(answer.response, program)!)?.text, answer.response);
 });
 
+test('readable diagram fallback keeps unique relationships in one list', () => {
+  const prose = '## Decision diagram\n\nReview an intake before releasing it.';
+  const program = 'root = Col([Diagram("Decision diagram", [{id:"intake",label:"Intake",level:0},'
+    + '{id:"review",label:"Review",level:1},{id:"release",label:"Release",level:2}],'
+    + '[{from:"intake",to:"review",label:"Screen required"},{from:"review",to:"release",label:"When cleared"}],'
+    + '"A reviewer clears the completed intake.")])';
+  const readable = supplementNativeProse(prose, program, true);
+  assert.ok(readable.startsWith(prose));
+  assert.match(readable, /- Intake → Review: Screen required\n- Review → Release: When cleared/);
+  assert.equal(supplementNativeProse(readable, program, true), readable);
+});
+
 test('native chat is a deploy-time DeepSeek flag independent of founder evaluation', () => {
   const flag = { XROGA_NATIVE_OPENUI_WORKSPACE: '1' };
   const deepSeek = 'deepseek_v4_1_flash_1017';
@@ -418,13 +1179,14 @@ test('a settled document answer retains prose when presentation or evidence is i
   const program = 'root = Col([Text("The uploaded agreement expires in 30 days."), Source("source-1")])';
   const raw = prose + NATIVE_UI_MARKER + program;
   assert.deepEqual(completeNativeWorkspaceAnswer(raw, 'stop', new Set(['source-1'])), {
-    response: prose, completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: program },
+    response: prose + '\n\n[1]', completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: program },
   });
   assert.deepEqual(completeNativeWorkspaceAnswer(raw, 'stop'), {
     response: prose, completion: { status: 'partial', reason: 'presentation_contract' },
     responseSource: { format: 'xroga-openui-v1', text: '' },
   });
-  assert.equal(completeNativeWorkspaceAnswer(raw, 'length', new Set(['source-1'])).responseSource.text, '');
+  assert.equal(completeNativeWorkspaceAnswer(raw, 'length', new Set(['source-1'])).responseSource.text, program);
+  assert.equal(completeNativeWorkspaceAnswer(raw, 'length').responseSource.text, '');
 });
 
 test('untrusted UI cannot confer authority, invent evidence, or exhaust parser recursion', () => {
@@ -480,21 +1242,36 @@ test('an unbounded Stripe retry claim gets a readable factual-review fallback', 
   const inaccurate = 'A non-2xx makes Stripe retry forever.';
   const program = 'root = Col([Text(' + JSON.stringify(inaccurate) + ')])';
   assert.deepEqual(validateNativeOpenUi(program), { ok: false, reason: 'factual_review' });
-  const answer = completeNativeWorkspaceAnswer(inaccurate, 'stop');
+  const independent = 'Record delivery attempts in your application logs.';
+  const answer = completeNativeWorkspaceAnswer(inaccurate + '\n\n' + independent, 'stop');
   assert.deepEqual(answer.completion, { status: 'partial', reason: 'factual_review' });
   assert.match(answer.response, /finite delivery window/);
-  assert.ok(answer.response.endsWith(inaccurate));
+  assert.ok(answer.response.endsWith(independent));
+  assert.ok(!answer.response.includes(inaccurate));
   assert.equal(answer.responseSource.text, '');
   assert.deepEqual(validateNativeOpenUi('root = Col([Text("Stripe does not retry forever.")])'), { ok: true });
 });
 
-test('the captured seasons error is flagged in prose and native content', () => {
-  const inaccurate = 'Earth has seasons because its axis is tilted about 23.5° relative to its orbital plane, so as it orbits the Sun each hemisphere alternately receives more direct sunlight and longer days, then less direct sunlight and shorter days.';
+test('correct a captured plain answer in place without exposing the rejected draft', () => {
+  const inaccurate = 'Earth’s seasons occur because its axis is tilted about 23.5 degrees relative to its orbital plane, so as it orbits the Sun each hemisphere alternately receives more direct sunlight and longer days, then less direct sunlight and shorter days.';
   const result = completeNativeWorkspaceAnswer(inaccurate, 'stop');
-  assert.deepEqual(result.completion, { status: 'partial', reason: 'factual_review' });
-  assert.match(result.response, /23\.4° from the perpendicular to its orbital plane/);
-  assert.ok(result.response.endsWith(inaccurate));
+  assert.deepEqual(result.completion, { status: 'complete' });
+  assert.equal(result.response, inaccurate.replace('relative to its orbital plane', 'from the perpendicular to its orbital plane'));
   assert.equal(result.responseSource.text, '');
+
+  // Source-bound, structured and truncated answers still require review.
+  for (const guarded of [
+    completeNativeWorkspaceAnswer(inaccurate, 'length'),
+    completeNativeWorkspaceAnswer(inaccurate, 'stop', new Set(['source-1'])),
+    completeNativeWorkspaceAnswer(inaccurate, 'stop', undefined, undefined, undefined, ['chart']),
+    completeNativeWorkspaceAnswer(inaccurate + '\n\nThe date varies by hemisphere.', 'stop'),
+  ]) {
+    assert.deepEqual(guarded.completion, { status: 'partial', reason: 'factual_review' });
+  }
+});
+
+test('the incorrect reference angle remains detectable in rich content', () => {
+  const inaccurate = 'Earth’s axis is tilted 23.5° relative to its orbital plane.';
   const program = (text: string) => 'root = Col([Text(' + JSON.stringify(text) + ')])';
   const diagnostics: NativeUiDiagnostic[] = [];
   assert.deepEqual(validateNativeWorkspaceProgram(program(inaccurate), undefined, '', event => diagnostics.push(event)),
@@ -510,6 +1287,51 @@ test('the captured seasons error is flagged in prose and native content', () => 
     assert.deepEqual(completeNativeWorkspaceAnswer(accurate, 'stop').completion, { status: 'complete' });
     assert.deepEqual(validateNativeWorkspaceProgram(program(accurate), undefined, ''), { ok: true });
   }
+});
+
+test('calculator formulas already shown in Markdown do not repeat in Section introductions', () => {
+  const prompt = 'Show an interactive calculator for an adjustable number of seats and price per seat. Explain the formula once.';
+  const equation = 'total fee = number of seats × price per seat';
+  const prose = 'The calculation is: **' + equation + '**. The starting values are 2 seats at USD 10 per seat.';
+  const program = [
+    'root = Col([Markdown(_xroga_answer), calculator])',
+    '$seats = 2',
+    '$price = 10',
+    'calculator = Section("Fee calculator", [Controls([Input($seats, "Seats", "number"), Input($price, "Price", "number"), Button("Reset", @Reset($seats, $price))], "Seat inputs"), Metric("Total fee", @Format($seats * $price, "currency", 0, "USD"))], ' +
+      JSON.stringify('Formula: ' + equation + '. Reset returns both inputs to their starting values.') + ')',
+  ].join('\n');
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop',
+    undefined, prompt, undefined, requiredNativeFormats(prompt));
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  assert.equal(answer.response.split(equation).length - 1, 1);
+  assert.equal(answer.responseSource.text.split(equation).length - 1, 1);
+  assert.match(answer.responseSource.text, /Reset returns both inputs to their starting values/);
+  assert.match(answer.responseSource.text, /@Reset\(\$seats, \$price\)/);
+});
+
+test('calculator metric captions keep distinct context and omit the equation already shown in Markdown', () => {
+  const prose = '**Net proceeds = ticket price × paid attendance − room cost**\n\nThe room cost stays at USD 60.';
+  const caption = 'Ticket price × paid attendance − USD 60 room cost';
+  const program = [
+    'root = Col([Markdown(_xroga_answer), Metric("Net proceeds", @Format(netProceeds, "currency", 2, "USD"), ' + JSON.stringify(caption) + ')])',
+    '$ticketPrice = 18',
+    '$paidAttendance = 24',
+    'roomCost = 60',
+    'netProceeds = $ticketPrice * $paidAttendance - roomCost',
+  ].join('\n');
+  const bound = bindNativeAnswerText(program, prose);
+  const clean = removeRepeatedCalculatorFormulas(bound, prose);
+  assert.ok(!clean.includes(caption));
+  assert.ok(clean.includes('The room cost stays at USD 60.'));
+  assert.equal(validateNativeWorkspaceProgram(clean, undefined, prose).ok, true);
+  for (const variant of [
+    bound.replace('roomCost = 60', 'roomCost = 50'),
+    bound.replace(caption, `${caption} before taxes`),
+    bound.replace('Metric("Net proceeds"', 'Metric("Gross proceeds"'),
+  ]) assert.equal(removeRepeatedCalculatorFormulas(variant, prose), variant);
+  const differentAmount = prose.replace('USD 60.', 'USD 600.');
+  const distinctCaption = bindNativeAnswerText(program, differentAmount);
+  assert.equal(removeRepeatedCalculatorFormulas(distinctCaption, differentAmount), distinctCaption);
 });
 
 test('membership checks are not treated as an immutable tenant key', () => {
@@ -569,6 +1391,32 @@ test('Stripe reconciliation advice that rejects timestamp ordering keeps the nat
   assert.deepEqual(validateNativeOpenUi(program, undefined, unsafe), { ok: false, reason: 'factual_review' });
 });
 
+test('a Stripe visual can distinguish logging metadata from state ordering', () => {
+  const prose = 'Reconcile Stripe webhooks against the current subscription state.';
+  const layout = (sentence: string) => `root = Col([Text(${JSON.stringify(sentence)}), Table(["Step", "Action"], [["1", "Verify the signature"]])])`;
+  const advice = [
+    'Reconcile against Stripe state, not event timestamps, before updating the stored state.',
+    'Use current Stripe state, not `event.created`, to reconcile the stored state.',
+    'Use event timestamps only for logging, not for ordering.',
+    'Use `event.created` for auditing only, not to determine delivery order.',
+  ];
+  for (const sentence of advice) {
+    const program = layout(sentence);
+    const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop');
+    assert.deepEqual(answer.completion, { status: 'complete' }, sentence);
+    assert.equal(answer.responseSource.text, program);
+  }
+  for (const sentence of [
+    advice[1] + ' But compare event timestamps against stored state to ignore stale deliveries.',
+    advice[2].slice(0, -1) + ', but sort by event timestamps before updating stored state.',
+    'Use event timestamps for logging and for ordering.',
+    'Compare event timestamps and use the newest event as stored state.',
+  ]) {
+    assert.deepEqual(validateNativeWorkspaceProgram(layout(sentence), undefined, prose),
+      { ok: false, reason: 'factual_review' }, sentence);
+  }
+});
+
 test('factual layout recovery does not hide contradictory chart prose from a removed block', () => {
   const program = 'root = Col([Text("Stripe will retry indefinitely. March rose."), Chart("bar", [{month:"Jan",value:12},{month:"Feb",value:15},{month:"Mar",value:14}], "month", ["value"])])';
   const answer = completeNativeWorkspaceAnswer('Review the monthly chart.' + NATIVE_UI_MARKER + program, 'stop');
@@ -578,7 +1426,7 @@ test('factual layout recovery does not hide contradictory chart prose from a rem
   assert.equal(answer.responseSource.text, '');
 });
 
-test('hosted authorization and billing contradictions get corrections before the saved draft', () => {
+test('hosted authorization and billing contradictions do not reappear in saved answer text', () => {
   const cookie = 'A server-only client that owns an HTTP-only session or uses the service role bypasses RLS.';
   const roles = 'Role checks for privileged operations, including deletion, require owner or admin.';
   const policy = 'create policy projects_delete on projects\n  for delete using (is_tenant_member(tenant_id));';
@@ -589,7 +1437,10 @@ test('hosted authorization and billing contradictions get corrections before the
   assert.deepEqual(answer.completion, { status: 'partial', reason: 'authorization_review' });
   assert.equal(answer.responseSource.text, '');
   assert.match(answer.response, /^## Technical corrections[\s\S]*user access token[\s\S]*membership-only predicate[\s\S]*timestamps can tie/);
-  assert.ok(answer.response.endsWith(draft));
+  for (const rejected of [cookie, policy, ordering]) assert.ok(!answer.response.includes(rejected));
+  const unsafeOnly = completeNativeWorkspaceAnswer('The success page grants paid access.', 'stop');
+  assert.deepEqual(unsafeOnly.completion, { status: 'partial', reason: 'authorization_review' });
+  assert.doesNotMatch(unsafeOnly.response, /grants paid access/);
   assert.deepEqual(validateNativeOpenUi(program, undefined, ordering), { ok: false, reason: 'factual_review' });
   const codeOnly = 'root = Col([Text(' + JSON.stringify(roles) + '), Code(' + JSON.stringify(policy) + ', "sql")])';
   assert.deepEqual(validateNativeOpenUi(codeOnly), { ok: false, reason: 'authorization_review' });
@@ -618,6 +1469,19 @@ test('an explicit monthly direction that conflicts with the displayed data is fl
   assert.doesNotMatch(result.responseSource.text, /ease back/);
   assert.deepEqual(result.completion, { status: 'partial', reason: 'data_review' });
   assert.deepEqual(validateNativeOpenUi(make('March increased from January.')), { ok: true });
+});
+
+test('the signed month-to-month summary cannot contradict the displayed series', () => {
+  const program = 'root = Col([Chart("line", [{month:"Jan", deliveries:20},{month:"Feb", deliveries:24},{month:"Mar", deliveries:22}], "month", ["deliveries"])])';
+  const contradictory = 'March is up 2 (+8.3%) on February.';
+  const checked = completeNativeWorkspaceAnswer(contradictory + NATIVE_UI_MARKER + program, 'stop');
+  assert.deepEqual(checked.completion, { status: 'partial', reason: 'data_review' });
+  assert.doesNotMatch(checked.response, /up 2/);
+  assert.match(checked.response, /\| March \| 22 \| -2 \|/);
+  assert.match(checked.responseSource.text, /Chart\("line"/);
+  for (const accurate of ['March is down 2 deliveries (-8.3%) on February.', 'March is up 2 from January.', 'March is up 2 on February last year.']) {
+    assert.deepEqual(validateNativeOpenUi(program, undefined, accurate), { ok: true }, accurate);
+  }
 });
 
 test('a monthly bar chart catches incorrect gain rankings and does not publish the contradictory prose', () => {
@@ -690,7 +1554,9 @@ test('an explicit monthly data comparison uses the supplied points and determini
   assert.doesNotMatch(contradiction.response, /June adds/);
   const truncated = completeNativeWorkspaceAnswer(wire(program), 'length', undefined, prompt);
   assert.deepEqual(truncated.completion, { status: 'partial', reason: 'output_limit' });
-  assert.equal(truncated.responseSource.text, '');
+  assert.match(truncated.response, /Largest month-over-month gain: \+\$4,500 \(April\)/);
+  assert.match(truncated.responseSource.text, /Chart\("line".*Table\(/);
+  assert.doesNotMatch(truncated.response + truncated.responseSource.text, /outpaced|unbeatable/);
 });
 
 test('the hosted revenue wording verifies every user-supplied value and both gain measures', () => {

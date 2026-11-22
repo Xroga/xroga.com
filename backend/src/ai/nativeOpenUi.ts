@@ -1,27 +1,62 @@
 import { createParser, evaluate, parseExpression, split, tokenize, walkAST, type ASTNode, type LibraryJSONSchema } from '@openuidev/lang-core';
-import { contradictsMonthlyChart, monthlyChartDataFallback, reviewNativeAnswer, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
+import { claimsChartIsDeferred, contradictsMonthlyChart, monthlyChartDataFallback, nativeTechnicalReviewContext, reviewNativeAnswer, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import { DIAGRAM_NODE_TONES, hasRenderableDiagramTopology } from './nativeDiagramTopology.js';
+import { nativeMarkdownOutline, nativeMarkdownTables, nativeTableDecimalKey, type NativeMarkdownTable } from './nativeMarkdown.js';
+import { reviewEditorialVisuals } from './nativeOpenUiEditorial.js';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
+import { formatInitialNativeCurrency, initialNativeReadouts, initialNativeValueReader, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
 
 export const NATIVE_UI_FORMAT = 'xroga-openui-v1' as const;
 export const NATIVE_UI_LIBRARY = 'xroga-native-v1' as const;
 export const NATIVE_UI_MARKER = '\n<<<XROGA_OPENUI_V1>>>\n';
 export const PARTIAL_NATIVE_PRESENTATION_NOTE = 'Some visuals could not be validated. The available explanation and verified visuals are shown below.';
 export const MAX_PROGRAM_CHARS = 24000;
+// Expanded depth includes both layout nesting and shared formula references.
+// Keep it bounded for evaluation, without rejecting ordinary composed calculators
+// at the former 28-level limit. Node work, source size and cycles stay independent.
+const MAX_EXPANDED_EXPRESSION_DEPTH = 96;
 const parseProgram = createParser(catalog.schema as LibraryJSONSchema, 'Col');
 const components = new Set(Object.keys(catalog.spec.components));
 const pureFunctions = new Set(Object.keys(catalog.spec.functions));
 const localActions = new Set(['Set', 'Reset']);
+const registeredNativeCall = (name: string) => components.has(name) || pureFunctions.has(name) || localActions.has(name);
 const operators = new Set(['+', '-', '*', '/', '%', '==', '!=', '<', '>', '<=', '>=', '&&', '||']);
 const safeKey = (key: string) => !['__proto__', 'prototype', 'constructor'].includes(key);
 // The Zurelay DeepSeek compatibility path can append the closing tool-call
 // envelope to an otherwise valid native answer. Keep transport syntax out of
 // the persisted program. A quoted example or an embedded tag is not a suffix.
 const deepSeekToolClosingSuffix = /[ \t]*<\/｜DSML｜ parameter>[ \t]*\n[ \t]*<\/｜DSML｜ invoke>[ \t]*\n[ \t]*<\/｜DSML｜ calls>[ \t]*$/u;
-const strayRootClosingLine = /\n[ \t]*<\/Col>[ \t]*$/u;
+const strayPresentationClosingLines = /(?:\n[ \t]*(?:<\/(?:Col>|<?XROGA_OPENUI_V1>>>)|<<<XROGA_OPENUI_V1>>>)[ \t]*)+$/u;
 
 export function splitNativeOpenUiAnswer(raw: string, streaming = false) {
   return scanNativeOpenUiAnswer(raw, streaming, true);
+}
+
+/** Bind the existing Markdown component to the same complete readable answer.
+ * The saved program stays self-contained. No model call or client-only state. */
+export function bindNativeAnswerText(program: string, prose: string): string {
+  if (!prose || program.length > MAX_PROGRAM_CHARS) return program;
+  try {
+    const tokens = tokenize(program);
+    if (tokens.length > 4800) return program;
+    let depth = 0;
+    for (const token of tokens) {
+      if ([1, 3, 5].includes(token.t)) depth++;
+      if ([2, 4, 6].includes(token.t)) depth--;
+      if (depth < 0 || depth > 18) return program;
+    }
+    if (depth) return program;
+    const statements = split(tokens);
+    if (statements.length > 96 || statements.some(statement => statement.tokens.length > 1200)) return program;
+    if (statements.some(statement => statement.id === '_xroga_answer')) return program;
+    let referenced = false;
+    for (const statement of statements) walkAST(parseExpression(statement.tokens), node => {
+      if (node.k === 'Ref' && node.n === '_xroga_answer') referenced = true;
+    });
+    return referenced ? program + '\n_xroga_answer = ' + JSON.stringify(prose) : program;
+  } catch {
+    return program; // Existing validation and readable recovery remain authoritative.
+  }
 }
 
 function scanNativeOpenUiAnswer(raw: string, streaming: boolean, allowJsonEnvelope: boolean): { text: string; program: string } {
@@ -32,7 +67,7 @@ function scanNativeOpenUiAnswer(raw: string, streaming: boolean, allowJsonEnvelo
   let fence: string | undefined;
   let fencedProgram: string | undefined;
   const envelope = (text: string, source: string) => {
-    let program = source.trim().replace(deepSeekToolClosingSuffix, '').trimEnd().replace(strayRootClosingLine, '').trim();
+    let program = source.trim().replace(deepSeekToolClosingSuffix, '').trimEnd().replace(strayPresentationClosingLines, '').trim();
     const wrapper = /^(\x60{3,}|~{3,})[ \t]*(?:openui(?:lang|-lang)?|xroga-openui-v1)?[ \t]*\n/i.exec(program);
     if (wrapper) {
       program = program.slice(wrapper[0].length);
@@ -89,7 +124,7 @@ function scanNativeOpenUiAnswer(raw: string, streaming: boolean, allowJsonEnvelo
   return envelope(prose.join('\n'), fencedProgram ?? '');
 }
 
-export type RequiredNativeFormat = 'table' | 'chart' | 'graph' | 'calculator';
+export type RequiredNativeFormat = 'table' | 'chart' | 'graph' | 'calculator' | 'checklist';
 
 function hasReactiveCalculator(program: string) {
   const symbols = new Map(split(tokenize(program)).map(statement => [statement.id, parseExpression(statement.tokens)]));
@@ -147,20 +182,74 @@ export function missingNativeFormats(program: string, formats: readonly Required
   const available: Record<RequiredNativeFormat, boolean> = {
     table: names.has('Table'), chart: names.has('Chart'), graph: names.has('Diagram') || names.has('Svg'),
     calculator: Boolean(program && formats.includes('calculator') && hasReactiveCalculator(program)),
+    checklist: names.has('Checkbox'),
   };
   return [...new Set(formats)].filter(format => !available[format]);
+}
+
+/** Compare the same readable content despite Markdown emphasis. */
+export function nativeReadableTextKey(text: string): string {
+  // Ignore emphasis only. Keep code, links, citations, strike-through and
+  // identifier punctuation, which can change the meaning of an answer.
+  return text.split(/(`[^`\n]+`|\[[^\]\n]+\]\([^)\s]+\))/g).map((part, index) => index % 2 ? part : part
+    .replace(/\*\*([^*\n]+)\*\*/g, '$1')
+    .replace(/(?<![\p{L}\p{N}_])__([^_\n]+)__(?![\p{L}\p{N}_])/gu, '$1')
+    .replace(/(?<!\*)\*([^*\s][^*\n]*?)\*(?!\*)/g, '$1')
+    .replace(/(?<![\p{L}\p{N}_])_([^_\s][^_\n]*?)_(?![\p{L}\p{N}_])/gu, '$1'))
+    .join('').replace(/\s+/g, ' ').trim();
+}
+
+function readableTaskKeys(prose: string): Set<string> {
+  const tasks = new Set<string>();
+  let fence: string | undefined;
+  for (const line of prose.split(/\r?\n/)) {
+    const marker = /^ {0,3}(\x60{3,}|~{3,})(.*)$/.exec(line);
+    if (fence) {
+      if (marker && marker[1][0] === fence[0] && marker[1].length >= fence.length && !marker[2].trim()) fence = undefined;
+      continue;
+    }
+    if (marker) {
+      fence = marker[1];
+      continue;
+    }
+    const task = /^ {0,3}[-*+][ \t]+\[([ xX])\][ \t]+(.+)$/.exec(line);
+    if (task) tasks.add(JSON.stringify([task[1] !== ' ', nativeReadableTextKey(task[2])]));
+  }
+  return tasks;
 }
 
 /** Recover readable details from an already validated program when the model
  * omitted its prose, returned an overview or left a heading without its body. */
 export function supplementNativeProse(prose: string, program: string, includeAll = false): string {
   const unfinishedHeading = /(?:^|\n)#{1,6}[^\S\n]+[^\n]+$/.test(prose.trimEnd());
-  if (!includeAll && !unfinishedHeading && (prose.length > 600 || prose.includes('\n'))) return prose;
+  const { root, stateDeclarations } = parseProgram.parse(program);
+  if (!includeAll && !unfinishedHeading && (prose.length > 600 || prose.includes('\n'))) {
+    // A generated local checklist can contain a deliverable missing from the
+    // prose. Preserve those labels for Copy, Share and readable recovery too.
+    const labels: string[] = [];
+    const normalize = (text: string) => text.replace(/[*_`]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
+    const existing = normalize(prose);
+    let remaining = 6000;
+    const visit = (value: unknown): void => {
+      if (--remaining < 0 || !value || typeof value !== 'object') return;
+      if (Array.isArray(value)) { value.forEach(visit); return; }
+      const item = value as Record<string, unknown>;
+      const props = item.props as Record<string, unknown> | undefined;
+      if (item.type === 'element' && item.typeName === 'Checkbox' && typeof props?.label === 'string') {
+        const label = props.label;
+        if (!existing.includes(normalize(label)) && !labels.includes(label)) labels.push(label);
+      }
+      Object.values(item).forEach(visit);
+    };
+    visit(root);
+    return labels.length ? prose + '\n\n' + labels.map(label => '- ' + label).join('\n') : prose;
+  }
   const record = (value: unknown): Record<string, unknown> =>
     value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {};
   const array = (value: unknown) => Array.isArray(value) ? value as unknown[] : [];
   const scalar = (value: unknown): string => typeof value === 'string' || typeof value === 'number' ? String(value) : '';
-  const { root, stateDeclarations } = parseProgram.parse(program);
+  const readouts = initialNativeReadouts(program);
+  const initialValue = initialNativeValueReader(program);
   const children = array(root?.props.children);
   const firstBlock = includeAll || !prose ? 0 : children.findIndex(child => (
     unfinishedHeading ? !['Title', 'Text', 'Badge'].includes(scalar(record(child).typeName))
@@ -169,23 +258,115 @@ export function supplementNativeProse(prose: string, program: string, includeAll
   if (firstBlock < 0) return prose;
   const lines: string[] = [];
   const seen = new Set<string>();
+  // Compare parsed, complete tables instead of raw delimiter padding. Keep
+  // links, citations and code literal. Compare numeric formatting without changing the authored cells.
+  const tableKey = ({ head, rows }: NativeMarkdownTable) =>
+    JSON.stringify([head, rows.map(row => row.map(nativeTableDecimalKey))]);
+  const scopeLabel = (value: string) => /\x60|\]\(/.test(value) ? value.trim() : nativeReadableTextKey(value);
+  const outline = nativeMarkdownOutline(prose);
+  const authoredHeadings = new Map<string, string[]>();
+  for (const heading of outline.headings) {
+    const path = heading.map(scopeLabel);
+    authoredHeadings.set(JSON.stringify(path), path);
+  }
+  const authoredTables = new Map<string, Map<string, string[]>>();
+  const authoredOrderedItems = new Map<string, Map<string, string[]>>();
+  for (const item of outline.orderedItems) {
+    const key = nativeReadableTextKey(item.text);
+    const scopes = authoredOrderedItems.get(key) ?? new Map<string, string[]>();
+    const path = item.headings.map(scopeLabel);
+    scopes.set(JSON.stringify(path), path);
+    authoredOrderedItems.set(key, scopes);
+  }
+  for (const table of outline.tables) {
+    const key = tableKey(table);
+    const scopes = authoredTables.get(key) ?? new Map<string, string[]>();
+    const path = table.headings.map(scopeLabel);
+    scopes.set(JSON.stringify(path), path);
+    authoredTables.set(key, scopes);
+  }
+  const isSingleScope = (paths: Iterable<readonly string[]>, scope: readonly string[]) => {
+    let matched = false;
+    for (const path of paths) {
+      if (path.length < scope.length || !scope.every((heading, i) => path[path.length - scope.length + i] === heading)) continue;
+      if (matched) return false;
+      matched = true;
+    }
+    return matched;
+  };
+  const chartHasReadableData = (head: string[], rows: string[][], scope: readonly string[]) => {
+    if (!scope.length || !rows.length) return false;
+    const scoped = outline.tables.filter(table =>
+      isSingleScope([table.headings.map(scopeLabel)], scope) && table.rows.length === rows.length);
+    return scoped.some(table => {
+      // Associate by the category heading and exact ordered values. Each
+      // plotted column must be independently readable in the same table.
+      const columns = head.map((heading, column) =>
+        table.head.flatMap((label, index) => {
+          if (column === 0 && label.toLowerCase() !== heading.toLowerCase()) return [];
+          return table.rows.every((row, i) =>
+            nativeTableDecimalKey(row[index]) === nativeTableDecimalKey(rows[i][column])) ? [index] : [];
+        }));
+      return columns.every(matches => matches.length === 1) && new Set(columns.flat()).size === head.length;
+    });
+  };
+  const seenHeadings = new Set<string>();
+  const seenTables = new Set<string>();
+  const existingText = new Set(prose.split(/\n\s*\n|\n(?=\s*[-*+]\s)/).map(value =>
+    nativeReadableTextKey(value.replace(/^\s*(?:#{1,6}\s+|[-*+]\s+)/, ''))));
+  const existingTasks = readableTaskKeys(prose);
   let remaining = 24_000;
-  const add = (value: string) => {
-    if (!value || value.length > remaining || seen.has(value) || prose.includes(value)) return;
+  const append = (value: string) => {
     lines.push(value);
-    seen.add(value);
     remaining -= value.length;
   };
-  const addTable = (headings: string[], rows: string[][]) => {
-    if (!headings.length || !rows.length) return;
-    const row = (cells: string[]) => '| ' + cells.map(cell =>
-      cell.replace(/\\/g, '\\\\').replace(/\|/g, '\\|').replace(/[\r\n]+/g, ' ')).join(' | ') + ' |';
-    add([row(headings), row(headings.map(() => '---')), ...rows.map(row)].join('\n'));
+  const addHeading = (title: string, scope: readonly string[], minimum = 2): readonly string[] => {
+    if (!title) return scope;
+    const level = Math.max(minimum, Math.min(4, scope.length + 2));
+    const path = [...scope.slice(0, level - 2), scopeLabel(title)];
+    const key = JSON.stringify(path);
+    const value = '#'.repeat(level) + ' ' + title;
+    if (value.length <= remaining && !seenHeadings.has(key) && !isSingleScope(authoredHeadings.values(), path)) {
+      append(value);
+    }
+    seenHeadings.add(key);
+    return path;
   };
-  function project(value: unknown): void {
+  const add = (value: string, scope: readonly string[] = [], projectedTable?: NativeMarkdownTable) => {
+    if (!value || value.length > remaining) return;
+    let table = projectedTable;
+    if (!table && value.includes('|') && value.includes('\n')) {
+      const trimmed = value.trim();
+      const [block] = nativeMarkdownTables(trimmed);
+      if (block?.start === 0 && block.end === trimmed.split(/\r\n?|\n/).length) table = block;
+    }
+    if (table) {
+      const key = tableKey(table);
+      const scopes = authoredTables.get(key);
+      const identity = JSON.stringify([scope, key]);
+      const authoredInScope = scopes && (!scope.length || isSingleScope(scopes.values(), scope));
+      if (seenTables.has(identity) || authoredInScope) return;
+      seenTables.add(identity);
+    } else {
+      const key = nativeReadableTextKey(value.replace(/^\s*(?:#{1,6}\s+|[-*+]\s+)/, ''));
+      if (seen.has(key) || existingText.has(key) || prose.includes(value)) return;
+      seen.add(key);
+    }
+    append(value);
+  };
+  const addTable = (headings: string[], rows: string[][], scope: readonly string[]) => {
+    if (!headings.length || !rows.length) return;
+    const cell = (value: string) => value.replace(/[\r\n]+/g, ' ').trim();
+    const head = headings.map(cell);
+    const data = rows.map(cells => cells.map(cell));
+    const row = (cells: string[]) => '| ' + cells.map(value => value.split(/(\x60[^\x60\n]+\x60)/g)
+      .map((part, index) => index % 2 ? part : part.replace(/\\/g, '\\\\').replace(/\|/g, '\\|')).join('')).join(' | ') + ' |';
+    add([row(head), row(head.map(() => '---')), ...data.map(row)].join('\n'), scope, { head, rows: data });
+  };
+  function project(value: unknown, scope: readonly string[] = []): void {
     if (remaining <= 0) return;
-    if (Array.isArray(value)) { value.forEach(project); return; }
-    if (typeof value === 'string' || typeof value === 'number') { add(String(value)); return; }
+    if (Array.isArray(value)) { value.forEach(item => project(item, scope)); return; }
+    if (typeof value === 'string' || typeof value === 'number') { add(String(value), scope); return; }
     const node = record(value);
     if (node.type !== 'element') {
       if (node.title || node.description) add('- ' + [scalar(node.title), scalar(node.description)].filter(Boolean).join(': '));
@@ -194,10 +375,37 @@ export function supplementNativeProse(prose: string, program: string, includeAll
     const props = record(node.props);
     if (node.typeName === 'ListItem') {
       add('- ' + [scalar(props.title), scalar(props.description)].filter(Boolean).join(': '));
+    } else if (node.typeName === 'Checkbox') {
+      const label = scalar(props.label);
+      const checked = initialValue(props.checked);
+      const key = nativeReadableTextKey(label);
+      const orderedScopes = authoredOrderedItems.get(key);
+      const alreadyOrdered = checked === false && orderedScopes && scope.length > 0
+        && isSingleScope(orderedScopes.values(), scope);
+      if (label && !alreadyOrdered && !existingTasks.has(JSON.stringify([checked, key]))) add('- ' + label);
     } else if (node.typeName === 'Section') {
-      const title = scalar(props.title);
-      if (title) add('## ' + title);
+      const path = addHeading(scalar(props.title), scope);
       add(scalar(props.introduction));
+      project(props.children, path);
+      return;
+    } else if (node.typeName === 'Tabs') {
+      add(scalar(props.label));
+      for (const tab of array(props.tabs)) {
+        const item = record(tab);
+        const path = addHeading(scalar(item.title), scope, 3);
+        project(item.content, path);
+      }
+    } else if (node.typeName === 'Popover') {
+      project(props.trigger, scope);
+      project(props.content, scope);
+    } else if (node.typeName === 'Flashcard') {
+      project(props.front, scope);
+      project(props.back, scope);
+    } else if (node.typeName === 'Math') {
+      add(scalar(props.tex));
+    } else if (node.typeName === 'Quote') {
+      add(scalar(props.text));
+      add(scalar(props.cite));
     } else if (node.typeName === 'Code') {
       const code = scalar(props.code);
       if (code && !prose.includes(code)) {
@@ -206,17 +414,51 @@ export function supplementNativeProse(prose: string, program: string, includeAll
         const language = scalar(props.language);
         add(fence + (/^[a-z0-9+#-]{1,30}$/i.test(language) ? language : '') + '\n' + code + '\n' + fence);
       }
+    } else if (node.typeName === 'Metric') {
+      const label = scalar(props.label);
+      const initial = readouts.find(row => row.label === label);
+      if (initial) add(initial.label + ': ' + initial.value);
+      add(scalar(props.note));
     } else if (node.typeName === 'Table') {
-      addTable(array(props.columns).map(scalar), array(props.rows).map(cells => array(cells).map(scalar)));
+      const headings = initialValue(props.columns);
+      const resolved = initialValue(props.rows);
+      // Keep the complete initial table or omit it as unavailable. Never turn an
+      // unresolved expression into an invented blank, zero or partial row.
+      if (Array.isArray(headings) && headings.every(heading => typeof heading === 'string') &&
+          Array.isArray(resolved) && resolved.every(row => Array.isArray(row) && row.every(cell =>
+        cell === null || ['string', 'number', 'boolean'].includes(typeof cell)))) {
+        addTable(headings, resolved.map(row => row.map((cell: unknown) => cell === null ? '' : String(cell))), scope);
+      }
     } else if (node.typeName === 'Chart' && Array.isArray(props.data)) {
       const presentation = record(props.presentation);
-      const columns = [scalar(props.x), ...array(props.series).map(scalar)].filter(Boolean);
+      const x = scalar(initialValue(props.x));
+      const series = array(initialValue(props.series)).map(scalar).filter(Boolean);
       add(scalar(presentation.title));
-      if (columns.length > 1) {
-        const series = columns.slice(1);
+      if (x && series.length) {
+        const rows: string[][] = [];
+        const currency = initialValue(props.currency);
+        const isCurrency = props.format === 'currency';
+        for (const value of props.data) {
+          const row = record(value);
+          const label = initialValue(Object.hasOwn(row, x) ? row[x] : undefined);
+          const amounts = series.map(key => initialValue(Object.hasOwn(row, key) ? row[key] : undefined));
+          if ((typeof label !== 'number' && (typeof label !== 'string' || props.type === 'scatter')) ||
+              !amounts.every((amount): amount is number => typeof amount === 'number' && Math.abs(amount) <= 1e15)) {
+            // A visual requires a finite value for every series. Keep the
+            // explanation, and don't project fabricated blanks or partial rows.
+            rows.length = 0;
+            break;
+          }
+          rows.push([String(label), ...amounts.map(amount => isCurrency
+            ? formatInitialNativeCurrency(amount, currency) : String(amount))]);
+        }
         const yLabel = scalar(presentation.yLabel);
-        addTable([scalar(presentation.xLabel) || columns[0], ...(series.length === 1 && yLabel ? [yLabel] : series)],
-          props.data.map(row => columns.map(key => scalar(record(row)[key]))));
+        const headings = [scalar(presentation.xLabel) || x, ...(series.length === 1 && yLabel ? [yLabel] : series)];
+        if (series.length === 1 && chartHasReadableData(headings, rows, scope)) {
+          if (yLabel) add(yLabel, scope);
+        } else {
+          addTable(headings, rows, scope);
+        }
       }
       add(scalar(presentation.note));
     } else if (node.typeName === 'Diagram') {
@@ -226,11 +468,15 @@ export function supplementNativeProse(prose: string, program: string, includeAll
         const node = record(item);
         return [scalar(node.id), scalar(node.label)];
       }));
+      const firstRelationship = lines.length;
       array(props.links).forEach(item => {
         const link = record(item);
         const from = names.get(scalar(link.from)), to = names.get(scalar(link.to));
         if (from && to) add('- ' + from + ' → ' + to + (link.label ? ': ' + scalar(link.label) : ''));
       });
+      if (lines.length > firstRelationship + 1) {
+        lines.push(lines.splice(firstRelationship).join('\n'));
+      }
     } else if (node.typeName === 'Text' && node.hasDynamicProps && record(props.text).k) {
       // Use the initial local state for the readable snapshot. Projection has no
       // function or action dispatch and cannot mutate the saved controls.
@@ -250,25 +496,36 @@ export function supplementNativeProse(prose: string, program: string, includeAll
       const index = /^source-(\d+)$/.exec(scalar(props.id))?.[1];
       if (index) add('[' + index + ']');
     } else {
-      for (const key of ['title', 'introduction', 'text', 'description', 'role', 'items'] as const) project(props[key]);
+      for (const key of ['title', 'introduction', 'text', 'description', 'role', 'items'] as const) project(props[key], scope);
     }
-    project(props.children);
+    project(props.children, scope);
   }
   project(children.slice(firstBlock));
   return [prose, ...lines].filter(Boolean).join('\n\n');
 }
 
-export type NativeUiValidation = { ok: true } | { ok: false; reason: 'budget' | 'syntax' | 'authority' | 'reference' | 'schema' | 'authorization_review' | 'factual_review' | 'data_review' };
-const reject = (reason: Extract<NativeUiValidation, { ok: false }>['reason']): NativeUiValidation => ({ ok: false, reason });
+export type NativeUiValidation = { ok: true } | {
+  ok: false;
+  reason: 'budget' | 'syntax' | 'authority' | 'reference' | 'schema' | 'authorization_review' | 'factual_review' | 'data_review';
+  fallbackProse?: string;
+};
+const reject = (reason: Extract<NativeUiValidation, { ok: false }>['reason']) => ({ ok: false as const, reason });
 type ValidationStage = 'limits' | 'lexer' | 'statements' | 'authority' | 'schema' | 'accuracy';
 export type NativeUiDiagnostic = {
   stage: ValidationStage;
   reason: Extract<NativeUiValidation, { ok: false }>['reason'];
   statement?: number;
+  workLimit?: 'statement_nodes' | 'expression_depth';
+  expandedDepth?: number;
+  failingShape?: { tokens: number; skeleton: string };
   programLength: number;
   shape: Array<{ tokens: number; skeleton: string }>;
   factualRule?: NonNullable<ReturnType<typeof reviewNativeAnswer>>['rule'];
+  editorialIssue?: 'prose_conflict' | NonNullable<ReturnType<typeof reviewEditorialVisuals>>['issue'];
   referenceIssue?: 'missing' | 'cycle';
+  authorityIssue?: 'unknown_capability' | 'invalid_action_binding' | 'unverified_source' | 'unsafe_expression' | 'non_scalar_state' | 'external_statement';
+  unregisteredCallKind?: 'component' | 'function';
+  declarationIssue?: 'invalid_name' | 'unsafe_name' | 'duplicate' | 'missing_root' | 'invalid_root' | 'expression';
   diagramTopology?: 'invalid';
   schemaState?: { hasRoot: boolean; incomplete: boolean; unresolved: number; errors: number };
   schema?: Array<{ code: string; statement?: number; component?: string; pathDepth: number; diagramField?: string }>;
@@ -284,28 +541,43 @@ export function recoverNativeMonthlyChart(program: string, supplied?: NonNullabl
 /** Audit all statements, including unreachable ones, before letting the upstream
  * parser resolve references or evaluate expressions. Limit expanded work as well
  * as input size, so repeated references cannot multiply the runtime budget. */
-export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<string> = new Set(), prose = '', diagnose?: (value: NativeUiDiagnostic) => void, workspaceContract = false): NativeUiValidation {
+type EditorialContext = { request?: string; prose?: string };
+
+export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<string> = new Set(), prose = '', diagnose?: (value: NativeUiDiagnostic) => void, workspaceContract = false, editorial?: EditorialContext): NativeUiValidation {
   let stage: ValidationStage = 'limits';
   let statement: number | undefined;
   let statements: ReturnType<typeof split> = [];
   let schemaState: NativeUiDiagnostic['schemaState'];
   let factualRule: NativeUiDiagnostic['factualRule'];
+  let editorialIssue: NativeUiDiagnostic['editorialIssue'];
   let referenceIssue: NativeUiDiagnostic['referenceIssue'];
+  let authorityIssue: NativeUiDiagnostic['authorityIssue'];
+  let unregisteredCallKind: NativeUiDiagnostic['unregisteredCallKind'];
+  let declarationIssue: NativeUiDiagnostic['declarationIssue'];
   let diagramTopology: NativeUiDiagnostic['diagramTopology'];
+  let workLimit: NativeUiDiagnostic['workLimit'];
+  let expandedDepth = 0;
+  const statementShape = ({ tokens }: ReturnType<typeof split>[number]) => ({
+    tokens: tokens.length,
+    skeleton: tokens.slice(0, 100).map((token, index) => {
+      const name = token.v;
+      return token.t !== 14 && tokens[index + 1]?.t === 1 && typeof name === 'string'
+        && registeredNativeCall(name) ? name : String(token.t);
+    }).join(' '),
+  });
   const fail = (reason: NativeUiDiagnostic['reason'], errors?: ReturnType<typeof parseProgram.parse>['meta']['errors']) => {
     if (diagnose) diagnose({
       stage, reason, statement, programLength: program.length,
-      shape: statements.slice(0, 12).map(({ tokens }) => ({
-        tokens: tokens.length,
-        skeleton: tokens.slice(0, 100).map((token, index) => {
-          const name = token.v;
-          return token.t !== 14 && tokens[index + 1]?.t === 1 && typeof name === 'string'
-            && (components.has(name) || pureFunctions.has(name) || localActions.has(name)) ? name : String(token.t);
-        }).join(' '),
-      })),
+      shape: statements.slice(0, 12).map(statementShape),
+      ...(workLimit ? { workLimit, expandedDepth } : {}),
+      ...(statement && statements[statement - 1] ? { failingShape: statementShape(statements[statement - 1]) } : {}),
       ...(schemaState ? { schemaState } : {}),
       ...(factualRule ? { factualRule } : {}),
+      ...(editorialIssue ? { editorialIssue } : {}),
       ...(referenceIssue ? { referenceIssue } : {}),
+      ...(authorityIssue ? { authorityIssue } : {}),
+      ...(unregisteredCallKind ? { unregisteredCallKind } : {}),
+      ...(declarationIssue ? { declarationIssue } : {}),
       ...(diagramTopology ? { diagramTopology } : {}),
       ...(errors?.length ? { schema: errors.slice(0, 8).map(error => {
         const index = statements.findIndex(item => item.id === error.statementId);
@@ -339,25 +611,57 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
     statements = split(tokens);
     if (!statements.length || statements.length > 96) return fail('budget');
     const symbols = new Map<string, ASTNode>();
-    for (const statement of statements) {
-      if (!/^\$?[a-zA-Z][a-zA-Z0-9_]{0,39}$/.test(statement.id) || !safeKey(statement.id) || symbols.has(statement.id)) return fail('syntax');
-      if (statement.tokens.length > 1200) return fail('budget');
-      symbols.set(statement.id, parseExpression(statement.tokens));
+    for (const [index, declaration] of statements.entries()) {
+      statement = index + 1;
+      // Match the installed OpenUI lexer. The whole-program budget already
+      // bounds identifier size, so a separate 40-character limit loses valid UI.
+      if (!/^\$?[a-zA-Z_][a-zA-Z0-9_]*$/.test(declaration.id)) declarationIssue = 'invalid_name';
+      else if (!safeKey(declaration.id.replace(/^\$/, ''))) declarationIssue = 'unsafe_name';
+      else if (symbols.has(declaration.id)) declarationIssue = 'duplicate';
+      if (declarationIssue) return fail('syntax');
+      if (declaration.tokens.length > 1200) return fail('budget');
+      try { symbols.set(declaration.id, parseExpression(declaration.tokens)); }
+      catch { declarationIssue = 'expression'; return fail('syntax'); }
     }
-    if (symbols.get('root')?.k !== 'Comp') return fail('syntax');
+    statement = undefined;
+    // Upstream selects `root`, or the first Col declaration when root is absent.
+    // It also follows ordinary references to the entry component.
+    const entry = symbols.has('root') ? symbols.get('root')
+      : [...symbols.values()].find(node => node.k === 'Comp' && node.name === 'Col');
+    if (!entry) { declarationIssue = 'missing_root'; return fail('syntax'); }
+    const resolvedEntry = resolveRecoveryReference(entry, symbols);
+    if (resolvedEntry && resolvedEntry.k !== 'Comp') { declarationIssue = 'invalid_root'; return fail('syntax'); }
     stage = 'authority';
     let budget = 6000;
     const reviewStrings = new Set<string>();
+    const boundAnswer = symbols.get('_xroga_answer');
     let reason: Extract<NativeUiValidation, { ok: false }>['reason'] = 'authority';
-    function visit(node: ASTNode, active: Set<string>, depth = 0): boolean {
-      if (--budget < 0 || depth > 28) { reason = 'budget'; return false; }
+    function visit(node: ASTNode, active: Set<string>, depth = 0, allowBoundAnswer = false): boolean {
+      expandedDepth = Math.max(expandedDepth, depth);
+      if (--budget < 0 || depth > MAX_EXPANDED_EXPRESSION_DEPTH) {
+        workLimit = depth > MAX_EXPANDED_EXPRESSION_DEPTH ? 'expression_depth' : 'statement_nodes';
+        reason = 'budget'; return false;
+      }
       const next = (value: ASTNode) => visit(value, active, depth + 1);
       switch (node.k) {
         case 'Comp':
-          if (localActions.has(node.name) && node.args[0]?.k !== 'StateRef') return false;
-          if (node.name === 'Source' && (node.args[0]?.k !== 'Str' || !evidenceIds.has(node.args[0].v))) return false;
-          if (!components.has(node.name) && !pureFunctions.has(node.name) && !localActions.has(node.name)) return false;
-          return node.args.every(next);
+          if (localActions.has(node.name) && node.args[0]?.k !== 'StateRef') {
+            authorityIssue = 'invalid_action_binding';
+            return false;
+          }
+          if (node.name === 'Source' && (node.args[0]?.k !== 'Str' || !evidenceIds.has(node.args[0].v))) {
+            authorityIssue = 'unverified_source';
+            return false;
+          }
+          if (!registeredNativeCall(node.name)) {
+            authorityIssue = 'unknown_capability';
+            unregisteredCallKind = node.fn ? 'function' : 'component';
+            const declaration = statements.findIndex(item => item.id === [...active].at(-1));
+            if (declaration >= 0) statement = declaration + 1;
+            return false;
+          }
+          return node.args.every((arg, index) =>
+            visit(arg, active, depth + 1, node.name === 'Markdown' && index === 0));
         case 'Ref':
         case 'StateRef': {
           const target = symbols.get(node.n);
@@ -366,7 +670,8 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
             referenceIssue = target ? 'cycle' : 'missing';
             return false;
           }
-          return visit(target, new Set([...active, node.n]), depth + 1);
+          return visit(target, new Set([...active, node.n]), depth + 1,
+            allowBoundAnswer && node.k === 'Ref' && target === boundAnswer);
         }
         case 'Obj': return node.entries.length <= 120 && node.entries.every(([key, value]) => safeKey(key) && next(value));
         case 'Arr': return node.els.length <= 160 && node.els.every(next);
@@ -378,15 +683,28 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
         case 'Num': return Number.isFinite(node.v) && Math.abs(node.v) <= 1e15;
         case 'Str':
           reviewStrings.add(node.v);
-          return node.v.length <= 8000;
+          // The full Markdown answer is already bounded by the program size.
+          // Other widget strings and alternate uses keep the smaller limit.
+          return node.v.length <= 8000 || allowBoundAnswer && node === boundAnswer;
         case 'Bool': case 'Null': return true;
         default: return false;
       }
     }
     for (const [key, node] of symbols) {
       statement = (statement ?? 0) + 1;
-      if (key.startsWith('$') && !['Num', 'Str', 'Bool', 'Null'].includes(node.k)) return fail('authority');
-      if (!visit(node, new Set([key]))) return fail(reason);
+      // Each declaration can be evaluated independently. Keep the same bound
+      // on every expanded expression, including root and unreachable entries.
+      // Re-auditing a shared dependency must not consume another declaration's
+      // allowance. The statement count still bounds the total audit work.
+      budget = 6000;
+      if (key.startsWith('$') && !['Num', 'Str', 'Bool', 'Null'].includes(node.k)) {
+        authorityIssue = 'non_scalar_state';
+        return fail('authority');
+      }
+      if (!visit(node, new Set([key]), 0, node === boundAnswer)) {
+        if (reason === 'authority') authorityIssue ??= 'unsafe_expression';
+        return fail(reason);
+      }
     }
     statement = undefined;
     stage = 'accuracy';
@@ -398,15 +716,31 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
     }
     stage = 'schema';
     const result = parseProgram.parse(program);
-    if (result.queryStatements.length || result.mutationStatements.length) return fail('authority');
+    if (result.queryStatements.length || result.mutationStatements.length) {
+      authorityIssue = 'external_statement';
+      return fail('authority');
+    }
     schemaState = {
       hasRoot: Boolean(result.root), incomplete: result.meta.incomplete,
       unresolved: result.meta.unresolved.length, errors: result.meta.errors.length,
     };
     if (!result.root || result.root.typeName !== 'Col' || result.meta.incomplete || result.meta.unresolved.length || result.meta.errors.length) return fail('schema', result.meta.errors);
     if (!Array.isArray(result.root.props.children) || !result.root.props.children.length) return fail('schema');
+    const renderedElements = workspaceContract ? [...nativeElements(result.root)] : [];
     if (workspaceContract) {
-      for (const { typeName, props } of nativeElements(result.root)) {
+      const review = reviewEditorialVisuals(editorial?.prose ?? prose, renderedElements
+        .map(({ typeName, props }) => ({ typeName, props: props ?? {} })), editorial?.request);
+      if (review) {
+        stage = 'accuracy';
+        editorialIssue = review.issue;
+        return { ...fail('factual_review'), ...(review.fallbackProse !== undefined ? { fallbackProse: review.fallbackProse } : {}) };
+      }
+      const deferChart = claimsChartIsDeferred(prose);
+      for (const { typeName, props } of renderedElements) {
+        if (deferChart && typeName === 'Chart') {
+          factualRule = 'unconfirmed_conflicting_input';
+          return fail('factual_review');
+        }
         if (typeName === 'Diagram' && !hasRenderableDiagramTopology(props?.nodes, props?.links)) {
           diagramTopology = 'invalid';
           return fail('schema');
@@ -440,8 +774,8 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
   } catch { return fail('syntax'); }
 }
 
-export function validateNativeWorkspaceProgram(program: string, evidenceIds: ReadonlySet<string> | undefined, prose: string, diagnose?: (value: NativeUiDiagnostic) => void) {
-  return validateNativeOpenUi(program, evidenceIds, prose, diagnose, true);
+export function validateNativeWorkspaceProgram(program: string, evidenceIds: ReadonlySet<string> | undefined, prose: string, diagnose?: (value: NativeUiDiagnostic) => void, editorial?: EditorialContext) {
+  return validateNativeOpenUi(program, evidenceIds, prose, diagnose, true, editorial);
 }
 
 // Only reprint changed expressions. Keeping untouched declarations verbatim preserves
@@ -462,6 +796,98 @@ function printRecoveryExpression(node: ASTNode): string {
     case 'Null': return 'null';
     default: throw new Error('Unsupported OpenUI recovery expression');
   }
+}
+
+/** Keep formulas in the authoritative Markdown when a calculator also
+ * includes a copy in its introduction or metric caption. */
+export function removeRepeatedCalculatorFormulas(program: string, prose: string): string {
+  if (!prose.includes('=') || /^(?: {0,3})(?:```|~~~)/m.test(prose)) return program;
+  const sentences = /(?<=[.!?])\s+|\n+/;
+  const formulaKey = (sentence: string) => {
+    if (!sentence.includes('=')) return '';
+    return nativeReadableTextKey(sentence).replace(/^[^:\n]{1,64}:\s*/, '').replace(/[.!?]$/, '').trim();
+  };
+  const formulas = new Set(prose.split(sentences).map(formulaKey).filter(Boolean));
+  if (!formulas.size) return program;
+  const statements = split(tokenize(program)).map(statement => ({
+    id: statement.id, expression: parseExpression(statement.tokens),
+  }));
+  const root = statements.find(statement => statement.id === 'root')?.expression;
+  const children = root?.k === 'Comp' ? root.args[0] : undefined;
+  const showsProse = children?.k === 'Arr' && children.els.some(child =>
+    child.k === 'Comp' && child.name === 'Markdown' && child.args[0]?.k === 'Ref' && child.args[0].n === '_xroga_answer');
+  if (!showsProse) return program;
+  const key = (value: string) => nativeReadableTextKey(value).replace(/[.!?]$/, '').trim().toLowerCase();
+  const equations = new Map<string, Set<string>>();
+  for (const formula of formulas) {
+    const equation = /^([\p{L}][\p{L}\p{N}\s]{0,79}) = ([^=]+)$/u.exec(formula);
+    if (!equation || !/[×*÷/−+^]|\s-\s/u.test(equation[2])) continue;
+    const label = key(equation[1]);
+    const bodies = equations.get(label) ?? new Set<string>();
+    bodies.add(key(equation[2]));
+    equations.set(label, bodies);
+  }
+  const constants = new Map(statements.flatMap(({ id, expression }) => expression.k === 'Num' && !id.startsWith('$')
+    ? [[id.replace(/([a-z0-9])([A-Z])/g, '$1 $2').replace(/_/g, ' ').toLowerCase(), expression.v] as const] : []));
+  const visibleAmounts = new Set(prose.match(/\b[A-Z]{3} \d+(?:\.\d+)?(?![\p{L}\p{N}_]|[.,]\d)/gu) ?? []);
+  const matchingMetricFormula = (label: string, caption: string) => {
+    const bodies = equations.get(key(label));
+    if (!bodies?.size) return false;
+    const visibleCaption = nativeReadableTextKey(caption);
+    const restatedCaption = visibleCaption.replace(/\b([A-Z]{3} \d+(?:\.\d+)?)\s+(?=\p{L})/gu,
+      (match, amount: string, offset: number) => {
+        const operand = visibleCaption.slice(offset + match.length).split(/[×*÷/−+^]|\s-\s/u)[0];
+        // A caption may spell out a fixed operand. Keep it unless the program
+        // declares that exact amount and the visible prose already states it.
+        return constants.get(key(operand)) === Number(amount.slice(4)) && visibleAmounts.has(amount) ? '' : match;
+      });
+    return bodies.has(key(restatedCaption)) || formulas.has(formulaKey(visibleCaption));
+  };
+  let changed = false;
+  for (const { expression } of statements) walkAST(expression, node => {
+    if (node.k !== 'Comp' || node.args[2]?.k !== 'Str') return;
+    const introduction = node.args[2];
+    if (node.name === 'Metric' && node.args[0]?.k === 'Str' && matchingMetricFormula(node.args[0].v, introduction.v)) {
+      introduction.v = '';
+      changed = true;
+      return;
+    }
+    if (node.name !== 'Section') return;
+    const parts = introduction.v.split(sentences);
+    const retained = parts.filter(sentence => !formulas.has(formulaKey(sentence)));
+    if (retained.length === parts.length) return;
+    introduction.v = retained.join(' ');
+    changed = true;
+  });
+  return changed ? statements.map(({ id, expression }) => id + ' = ' + printRecoveryExpression(expression)).join('\n') : program;
+}
+
+/** Remove conflicting static explanatory paragraphs from the visual itself,
+ * before deriving saved prose. Calculations, inputs and unrelated text stay intact. */
+export function recoverNativeReadoutExplanations(program: string): string {
+  const readouts = initialNativeReadouts(program);
+  const multiples = nativePrincipalMultipleReview(program);
+  const initial = initialNativeValueReader(program);
+  const statements = split(tokenize(program)).map(statement=>({id:statement.id,expression:parseExpression(statement.tokens)}));
+  const symbols = new Map(statements.map(statement=>[statement.id,statement.expression]));
+  let changed = false;
+  for (const {expression} of statements) {
+    walkAST(expression, node => {
+      if(node.k==='Comp' && node.name==='Metric' && multiples?.conflictingNotes.has(String(initial(node.args[0])))){
+        node.args[2]={k:'Str',v:''};changed=true;
+      }
+      if (node.k !== 'Comp' || !['Text', 'Caption', 'Markdown'].includes(node.name)) return;
+      const body = resolveRecoveryReference(node.args[0],symbols);
+      if (body?.k !== 'Str') return;
+      const corrected = recoverNativeReadoutProse(body.v, readouts, multiples);
+      if (corrected !== body.v) {
+        body.v = corrected;
+        changed = true;
+      }
+    });
+  }
+  const repaired = statements.map(({id,expression})=>id + ' = ' + printRecoveryExpression(expression)).join('\n');
+  return changed ? repaired : program;
 }
 
 function resolveRecoveryReference(node: ASTNode | undefined, symbols: ReadonlyMap<string, ASTNode>) {
@@ -496,16 +922,37 @@ function normalizeDiagramRows(node: ASTNode, symbols: ReadonlyMap<string, ASTNod
   return els.some((row, index) => row !== rows.els[index]) ? { ...rows, els } : node;
 }
 
-function normalizeWorkspaceComponents(node: ASTNode, symbols: ReadonlyMap<string, ASTNode>): ASTNode {
+function normalizeWorkspaceComponents(node: ASTNode, symbols: ReadonlyMap<string, ASTNode>, omitUnsupportedNotes = false): ASTNode {
+  const normalize = (child: ASTNode) => normalizeWorkspaceComponents(child, symbols, omitUnsupportedNotes);
   const original = node.k === 'Comp' && node.name === 'List' ? node.args[0] : undefined;
   const items = resolveRecoveryReference(original, symbols);
   if (node.k === 'Comp') {
     const args = node.args.map((arg, index) => node.name === 'Diagram' && (index === 1 || index === 2)
-      ? normalizeDiagramRows(arg, symbols, index === 1) : normalizeWorkspaceComponents(arg, symbols));
+      ? normalizeDiagramRows(arg, symbols, index === 1) : normalize(arg));
+    // A Metric note is a display-only annotation. Retain the label, original
+    // result expression and controls when a model invents a formatting helper
+    // in that annotation. Never substitute a value in the calculation itself.
+    const note = node.name === 'Metric' && omitUnsupportedNotes ? resolveRecoveryReference(args[2], symbols) : undefined;
+    if (note) {
+      let unsupported = false;
+      walkAST(note, part => {
+        if (part.k === 'Comp' && part.fn && !registeredNativeCall(part.name)) unsupported = true;
+      });
+      if (unsupported) args[2] = { k: 'Str', v: '' };
+    }
+    // Preserve a model-supplied table caption without widening Table's schema or
+    // discarding the requested data. The complete candidate is validated below.
+    if (node.name === 'Table' && args.length === 3
+        && resolveRecoveryReference(args[2], symbols)?.k === 'Str') {
+      return { k: 'Comp', name: 'Col', args: [{ k: 'Arr', els: [
+        { k: 'Comp', name: 'Table', args: args.slice(0, 2) },
+        { k: 'Comp', name: 'Caption', args: [args[2]] },
+      ] }] };
+    }
     if (items?.k === 'Arr') {
       const els = items.els.map(item => {
         const value = resolveRecoveryReference(item, symbols);
-        if (value?.k !== 'Obj') return normalizeWorkspaceComponents(item, symbols);
+        if (value?.k !== 'Obj') return normalize(item);
         const fields = new Map(value.entries);
         const keys = ['title', 'description', 'marker', 'children'];
         const values = keys.map(key => fields.get(key));
@@ -513,23 +960,72 @@ function normalizeWorkspaceComponents(node: ASTNode, symbols: ReadonlyMap<string
         let last = values.length - 1;
         while (values[last] === undefined) last -= 1;
         return { k: 'Comp', name: 'ListItem', args: values.slice(0, last + 1).map(value =>
-          value ? normalizeWorkspaceComponents(value, symbols) : { k: 'Str', v: '' }) } satisfies ASTNode;
+          value ? normalize(value) : { k: 'Str', v: '' }) } satisfies ASTNode;
       });
       if (els.some((item, index) => item !== items.els[index])) args[0] = { ...items, els };
     }
     if (args.some((arg, index) => arg !== node.args[index])) return { ...node, args };
   } else if (node.k === 'Arr') {
-    const els = node.els.map(item => normalizeWorkspaceComponents(item, symbols));
+    const els = node.els.map(normalize);
     if (els.some((item, index) => item !== node.els[index])) return { ...node, els };
   }
   return node;
 }
 
-const layoutChildren = new Map([['Col', 0], ['Row', 0], ['Grid', 0], ['Card', 0], ['Box', 0], ['Section', 1]]);
+/** Retain closed declarations and root children before a provider-truncated tail. */
+type RecoveryValidator = (program: string, prose: string, diagnose?: (value: NativeUiDiagnostic) => void) => NativeUiValidation;
+const defaultRecoveryValidator = (evidenceIds: ReadonlySet<string> | undefined): RecoveryValidator =>
+  (program, prose, diagnose) => validateNativeWorkspaceProgram(program, evidenceIds, prose, diagnose);
+
+export function recoverTruncatedNativeWorkspaceProgram(program: string, evidenceIds: ReadonlySet<string> | undefined, prose: string,
+  check = defaultRecoveryValidator(evidenceIds)) {
+  if (program.length > MAX_PROGRAM_CHARS) return;
+  try {
+    const tokens = tokenize(program);
+    if (tokens.length > 4800) return;
+    const statements = split(tokens);
+    const tail = statements.at(-1);
+    if (tail?.start === undefined || tail.end !== program.length || statements.slice(0, -1).some(item => item.id === tail.id)) return;
+
+    // These delimiter token numbers are the same pinned lexer contract used by validation.
+    const closes: number[] = [];
+    let rootChildBoundary = 0;
+    const [component, paren, list] = tail.tokens;
+    let rootListOpen = tail.id === 'root' && component?.t === 17 && component.v === 'Col' && paren?.t === 1 && list?.t === 3;
+    for (const [index, token] of tail.tokens.entries()) {
+      if ([1, 3, 5].includes(token.t)) closes.push(token.t + 1);
+      if ([2, 4, 6].includes(token.t) && closes.pop() !== token.t) return;
+      if (rootListOpen && token.t === 7 && closes.length === 2) rootChildBoundary = index;
+      if (rootListOpen && token.t === 4 && closes.length === 1) {
+        rootChildBoundary = index;
+        rootListOpen = false;
+      }
+    }
+    if (!closes.length) return;
+
+    let prefix = program.slice(0, tail.start).trimEnd();
+    if (tail.id === 'root') {
+      if (rootChildBoundary <= 3) return;
+      // Retain only children terminated by a root-list comma or bracket.
+      const expression = parseExpression([...tail.tokens.slice(0, rootChildBoundary), { t: 4 }, { t: 2 }]);
+      const printed = printRecoveryExpression(expression);
+      if (JSON.stringify(parseExpression(tokenize(printed))) !== JSON.stringify(expression)) return;
+      prefix = [prefix, 'root = ' + printed].filter(Boolean).join('\n');
+    }
+    const validation = check(prefix, prose);
+    if (validation.ok) return { program: prefix, validation, partial: true };
+    if (validation.reason === 'reference') return recoverNativeWorkspaceProgram(prefix, evidenceIds, prose, 'reference', check);
+  } catch {
+    // A damaged token stream must not suppress the readable answer.
+  }
+}
+
+const layoutChildren = new Map([['Col', 0], ['Row', 0], ['Grid', 0], ['Card', 0], ['Box', 0], ['Controls', 0], ['Section', 1]]);
 
 /** Every recovered candidate passes the full authority, schema and data checks.
  * Reachable branches with unresolved references may be omitted from the view. */
-export function recoverNativeWorkspaceProgram(program: string, evidenceIds: ReadonlySet<string> | undefined, prose: string, failure: 'schema' | 'factual_review' | 'reference' = 'schema') {
+export function recoverNativeWorkspaceProgram(program: string, evidenceIds: ReadonlySet<string> | undefined, prose: string,
+  failure: 'schema' | 'factual_review' | 'reference' | 'authority' = 'schema', check = defaultRecoveryValidator(evidenceIds)) {
   try {
     const statements = split(tokenize(program));
     const declarations = new Map(statements.map(item => [item.id, item]));
@@ -540,9 +1036,34 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
     });
     const narrative = [...reviewStrings].join('\n');
     if (failure === 'reference' && reviewNativeAnswer(narrative)) return;
-    const symbols = new Map([...originals].map(([id, node]) => [id, normalizeWorkspaceComponents(node, originals)]));
-    const root = symbols.get('root');
+    if (failure === 'authority') {
+      let unsafeBinding = false;
+      for (const [id, expression] of originals) {
+        if (id.startsWith('$') && !['Num', 'Str', 'Bool', 'Null'].includes(expression.k)) return;
+        walkAST(expression, node => {
+          if (node.k !== 'Comp') return;
+          if (localActions.has(node.name) && node.args[0]?.k !== 'StateRef') unsafeBinding = true;
+          if (node.name === 'Source' && (node.args[0]?.k !== 'Str' || !evidenceIds?.has(node.args[0].v))) unsafeBinding = true;
+        });
+      }
+      if (unsafeBinding) return;
+    }
+    const symbols = new Map([...originals].map(([id, node]) => [
+      id, normalizeWorkspaceComponents(node, originals, failure === 'authority'),
+    ]));
+    const root = resolveRecoveryReference(symbols.has('root') ? symbols.get('root')
+      : [...symbols.values()].find(node => node.k === 'Comp' && node.name === 'Col'), symbols);
     if (root?.k !== 'Comp' || root.name !== 'Col') return;
+    if (failure === 'schema' && !symbols.has('root')) {
+      // Make upstream's selected fallback entry explicit. Preserve every original
+      // declaration and require a fresh full validation before publishing it.
+      const entry = [...originals].find(([, node]) => node.k === 'Comp' && node.name === 'Col');
+      if (entry) {
+        const explicit = 'root = ' + entry[0] + '\n' + program;
+        const validation = check(explicit, prose);
+        if (validation.ok) return { program: explicit, validation, partial: false };
+      }
+    }
     const sourceFor = (id: string, node: ASTNode) => {
       const item = declarations.get(id);
       if (item && originals.get(id) === node && item.start !== undefined && item.end !== undefined) {
@@ -555,10 +1076,10 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
       }
       return id + ' = ' + printed;
     };
-    const normalized = failure === 'schema' && [...symbols].some(([id, node]) => originals.get(id) !== node);
-    if (normalized) {
+    const normalized = [...symbols].some(([id, node]) => originals.get(id) !== node);
+    if (failure === 'schema' && normalized) {
       const full = [...symbols].map(([id, node]) => sourceFor(id, node)).join('\n');
-      const validation = validateNativeWorkspaceProgram(full, evidenceIds, narrative);
+      const validation = check(full, narrative);
       if (validation.ok || validation.reason === 'data_review') return { program: full, validation, partial: false };
       if (validation.reason !== 'schema') return;
     }
@@ -579,18 +1100,69 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
         .map(([id, node]) => sourceFor(id, node))].join('\n');
     }
 
+    if (failure === 'authority' && normalized) {
+      const full = render(root);
+      const validation = check(full, narrative);
+      if (validation.ok || validation.reason === 'data_review') return { program: full, validation, partial: false };
+    }
+
+    if (failure === 'factual_review' && claimsChartIsDeferred(prose)) {
+      const children = resolveRecoveryReference(root.args[0], symbols);
+      if (children?.k !== 'Arr') return;
+      const chartState = new Set<string>();
+      function componentFacts(node: ASTNode, visit: (part: ASTNode) => void, seen = new Set<string>()) {
+        walkAST(node, part => {
+          visit(part);
+          if (part.k !== 'Ref' || seen.has(part.n)) return;
+          seen.add(part.n);
+          const target = symbols.get(part.n);
+          if (target) componentFacts(target, visit, seen);
+        });
+      }
+      const branches = children.els.map(child => {
+        let hasChart = false;
+        const reads = new Set<string>();
+        componentFacts(child, part => {
+          if (part.k === 'StateRef') reads.add(part.n);
+          if (part.k !== 'Comp' || part.name !== 'Chart') return;
+          hasChart = true;
+          componentFacts(part, value => { if (value.k === 'StateRef') chartState.add(value.n); });
+        });
+        return { child, hasChart, reads };
+      });
+      const kept = branches.filter(branch => !branch.hasChart && ![...branch.reads].some(state => chartState.has(state)));
+      if (!kept.length) return;
+      const recovered = render({ ...root, args: [{ k: 'Arr', els: kept.map(({ child }) => child) }, ...root.args.slice(1)] });
+      const validation = check(recovered, prose);
+      if (validation.ok && !contradictsMonthlyChart(parseProgram.parse(recovered).root, narrative)) {
+        return { program: recovered, validation, partial: true };
+      }
+      return;
+    }
+
     // Cap repeated parser calls independently of the provider output limits.
     let probes = 48;
-    // The existing factual rules are Stripe-specific. Retain that context even
-    // if the only component naming Stripe is withheld during recovery.
-    const reviewContext = failure === 'factual_review' ? prose + '\nStripe' : prose;
-    const validate = (candidate: ASTNode) => probes-- > 0
-      ? validateNativeWorkspaceProgram(render(candidate), evidenceIds, reviewContext) : undefined;
+    let blockedAuthority = false;
+    // Keep the named platform in scope when its only mention was in a withheld component.
+    const reviewContext = failure === 'factual_review' ? prose + '\n' + nativeTechnicalReviewContext(narrative) : prose;
+    const validate = (candidate: ASTNode) => {
+      if (blockedAuthority || probes-- <= 0) return;
+      let authorityIssue: NativeUiDiagnostic['authorityIssue'];
+      const validation = check(render(candidate), reviewContext,
+        event => { authorityIssue = event.authorityIssue; });
+      // Only an unregistered capability can be discarded as a visual branch.
+      // An invalid action, source or expression still rejects the projection.
+      if (validation.ok === false && validation.reason === 'authority' && authorityIssue !== 'unknown_capability') {
+        blockedAuthority = true;
+        return;
+      }
+      return validation;
+    };
     if (failure === 'reference') {
       // The displayed root may already be intact. Drop only unreachable
       // declarations in that case and retain the complete layout.
       const reachable = render(root);
-      const validation = validateNativeWorkspaceProgram(reachable, evidenceIds, narrative);
+      const validation = check(reachable, narrative);
       if (validation.ok || validation.reason === 'data_review') return { program: reachable, validation, partial: false };
     }
     const group = (els: ASTNode[]): Extract<ASTNode, { k: 'Comp' }> => ({ k: 'Comp', name: 'Col', args: [{ k: 'Arr', els }] });
@@ -623,9 +1195,9 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
     }
     const layout = salvageLayout(root, 0);
     const recovered = layout && (usable(validate(layout.container)) ? layout.container : group(layout.children));
-    if (!recovered) return;
+    if (!recovered || blockedAuthority) return;
     const restored = render(recovered);
-    const validation = validateNativeWorkspaceProgram(restored, evidenceIds, failure === 'factual_review' ? reviewContext : narrative);
+    const validation = check(restored, failure === 'factual_review' ? reviewContext : narrative);
     if (failure === 'factual_review') {
       // Omitted components must not hide a contradiction with any surviving chart.
       if (!validation.ok || contradictsMonthlyChart(parseProgram.parse(restored).root, narrative)) return;

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { compactConnectedAppConfirmationMarkdown, previewConnectedAppResult } from './connectedAppResult.js';
+import { compactConnectedAppConfirmationMarkdown, previewConnectedAppResult, readableActionResult, readableActionSpend, workspaceReviewId } from './connectedAppResult.js';
 
 test('shows returned item names without exposing provider metadata in the compact card', () => {
   const response = 'The provider reported completion. Receipt test.\n\nConnected app result (untrusted data):\n\n```\n' +
@@ -34,4 +34,25 @@ test('removes redundant write preamble around the action card', () => {
 test('preserves an answer with text after a review link', () => {
   const answer = 'Nothing has been changed yet.\n\n[Review action](/dashboard/actions/confirm/9d2d8830-8daa-4d5e-9b52-6ba547a118b8)\n\nKeep this explanation.';
   assert.equal(compactConnectedAppConfirmationMarkdown(answer), answer);
+});
+
+test('public Search history has a compact review without replaying the old pending status', () => {
+  const review = '[Review action](/dashboard/actions/confirm/9d2d8830-8daa-4d5e-9b52-6ba547a118b8)';
+  assert.equal(compactConnectedAppConfirmationMarkdown(`Review the request before Xroga searches the web: ${review}`), review);
+  assert.equal(compactConnectedAppConfirmationMarkdown(`Review the exact external research request: ${review}. No live evidence has been retrieved.`), review);
+  const foreign = review.replace('(/dashboard/', '(https://docs.example/dashboard/');
+  assert.equal(compactConnectedAppConfirmationMarkdown(`Review the request before Xroga searches the web: ${foreign}`), `Review the request before Xroga searches the web: ${foreign}`);
+});
+
+test('compact action details show precise user units and omit the provider receipt', () => {
+  assert.equal(readableActionSpend('5750', 'USD'), '$0.00575');
+  assert.equal(readableActionSpend('12000000', 'USD'), '$12.00');
+  assert.equal(readableActionSpend('undefined', 'USD'), null);
+  const id = '9d2d8830-8daa-4d5e-9b52-6ba547a118b8';
+  assert.equal(workspaceReviewId('/dashboard/actions/confirm/' + id), id);
+  for (const href of ['https://docs.example/dashboard/actions/confirm/' + id, '/dashboard/actions/confirm/' + id + '?redirect=/']) {
+    assert.equal(workspaceReviewId(href), null);
+  }
+  assert.equal(readableActionResult(`The provider reported completion: Saved the record. Receipt ${id}.\n\nNext step summary.`),
+    'The provider reported completion: Saved the record.\n\nNext step summary.');
 });

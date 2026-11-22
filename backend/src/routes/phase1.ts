@@ -1,4 +1,5 @@
-import { readResearchResult } from '../services/integrations/researchResult.js';
+import { readResearchResult, workspaceResearchConfirmationView } from '../services/integrations/researchResult.js';
+import { publicWorkspaceResearchAnswer } from '../ai/researchAnswer.js';
 import {readModelResult} from '../services/integrations/modelResult.js';
 import {isTerminalModelFailure} from '../ai/providerRuntime.js';
 import { requireTenantContext } from '../security/tenantContext.js';
@@ -1554,6 +1555,14 @@ router.post(
             )
           : message.trim();
 
+      const automaticSearch = !businessEvidence && !businessToolkit && !projectEvidence
+        ? new AbortController()
+        : undefined;
+      const onClientClose = () => automaticSearch?.abort();
+      if (automaticSearch) {
+        if (res.destroyed) onClientClose();
+        else res.once('close', onClientClose);
+      }
       const result =
         await runChatPipeline(
           {
@@ -1576,8 +1585,11 @@ router.post(
                   projectEvidence,
                 }
               : {}),
+            ...(automaticSearch ? { autoPublicSearch: true, autoPublicSearchSignal: automaticSearch.signal } : {}),
           },
-        );
+        ).finally(() => res.off('close', onClientClose));
+
+      if (result.publicWebRetrieved) return res.json(publicWorkspaceResearchAnswer(result));
 
       return res.json(
         {
@@ -1925,7 +1937,7 @@ router.get(
 
       return res.json(
         {
-          confirmation,
+          confirmation: workspaceResearchConfirmationView(confirmation),
           researchResult,
           researchResultUnavailable,
           modelResult,
@@ -2002,17 +2014,20 @@ router.post(
         continuationNeedsAttention = true;
       }
 
+      const confirmation = workspaceResearchConfirmationView(result.confirmation);
       return res.json(
         {
           ok:
             true,
 
           confirmation:
-            result.confirmation,
+            confirmation,
 
           response:
-            `The provider reported completion: ${result.confirmation.summary}. Receipt ${result.confirmation.id}.` +
-            (result.confirmation.risk === 'read' && !continuation
+            (confirmation.toolkit === 'xroga-native-research'
+              ? 'Open the saved research result.'
+              : `The provider reported completion: ${confirmation.summary}. Receipt ${confirmation.id}.`) +
+            (confirmation.toolkit !== 'xroga-native-research' && confirmation.risk === 'read' && !continuation
               ? confirmedReadResultMarkdown(result.execution.resultText)
               : '') +
             (continuation ? `\n\n${businessWorkflowProgressMarkdown(continuation)}` : '') +
@@ -2102,7 +2117,7 @@ router.post(
             confirmation.status ===
             'cancelled',
 
-          confirmation,
+          confirmation: workspaceResearchConfirmationView(confirmation),
           workflowCancelNeedsAttention,
         },
       );

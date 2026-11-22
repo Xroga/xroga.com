@@ -18,6 +18,7 @@ export interface MessageSuggestions {
 }
 
 export function generateMessageSuggestions(userText: string, aiText: string): MessageSuggestions {
+  if (!aiText.trim()) return { followUps: [], refine: [], deploy: [], creationType: 'chat', creationLabel: 'Chat' };
   const analysis = analyzeCreation(userText, aiText);
   const trivial = isTrivialConversation(userText, aiText);
   const type = trivial ? 'chat' : analysis.creationType;

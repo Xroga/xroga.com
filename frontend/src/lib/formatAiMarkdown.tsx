@@ -6,6 +6,7 @@ import React, {
   useState,
 } from 'react';
 import { Search } from 'lucide-react';
+import { CodePanel } from '@/components/native-openui/upstream/components/code-panel';
 import { SourceCitation } from '@/components/terminal/SourceCitation';
 import { PluginBrandLogo } from '@/components/integrations/PluginBrandLogo';
 import { PluginPermissionControl } from '@/components/integrations/PluginPermissionControl';
@@ -16,7 +17,7 @@ import ReactMarkdown, {
 } from 'react-markdown';
 
 import remarkGfm from 'remark-gfm';
-import { numberedCitation, remarkSourceCitations, safeSourceUrl, type CitationSource } from './xrogaCitations';
+import { citationLabelNumber, numberedCitation, remarkSourceCitations, safeSourceUrl, type CitationSource } from './xrogaCitations';
 
 import {
   ApiError,
@@ -30,7 +31,7 @@ import {
 } from './oauthPopupResult';
 
 import { xrogaConnect } from './xrogaConnect';
-import { compactConnectedAppConfirmationMarkdown, previewConnectedAppResult } from './connectedAppResult';
+import { compactConnectedAppConfirmationMarkdown, readableActionResult, readableActionSpend, workspaceReviewId } from './connectedAppResult';
 import { RESEARCH_RECEIPT_AVAILABLE } from './researchHandoff';
 
 function joinClasses(
@@ -111,38 +112,6 @@ export const safeMarkdownUrl:
     }
   };
 
-const CONFIRMATION_PATH =
-  /^\/dashboard\/actions\/confirm\/([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})\/?$/i;
-
-function confirmationIdFromHref(
-  href:
-    string |
-    undefined,
-): string | null {
-  if (
-    !href
-  ) {
-    return null;
-  }
-
-  try {
-    const parsed =
-      new URL(
-        href,
-        'https://xroga.local',
-      );
-
-    return (
-      parsed.pathname.match(
-        CONFIRMATION_PATH,
-      )?.[1] ??
-      null
-    );
-  } catch {
-    return null;
-  }
-}
-
 type ConfirmationStatus =
   | 'pending'
   | 'executing'
@@ -169,8 +138,8 @@ interface SafeConfirmation {
     string;
   expiresAt:
     string;
-  approval?: { accountReference: string; operation: string; actionDigest: string; destination: unknown;
-    criticalParameters: unknown; spendMaximumMicroUsd: string | null; currency: string | null };
+  approval?: { spendMaximumMicroUsd: string | null; currency: string | null };
+  researchReview?: Array<{ label: string; value: string }>;
 }
 
 function toolkitLabel(
@@ -242,8 +211,8 @@ export function BusinessActionConfirmationInline({
     useState(
       false,
     );
-  const [detailsOpen, setDetailsOpen] = useState(true);
-  const [resultOpen, setResultOpen] = useState(false);
+
+  const [researchReviewOpen, setResearchReviewOpen] = useState(false);
 
   useEffect(
     () => {
@@ -305,7 +274,9 @@ export function BusinessActionConfirmationInline({
           busy ||
           confirmation
             ?.status !==
-            'pending'
+            'pending' ||
+          (confirmation.toolkit === 'xroga-native-research' &&
+            (!researchReviewOpen || !confirmation.researchReview?.length))
         ) {
           return;
         }
@@ -347,7 +318,7 @@ export function BusinessActionConfirmationInline({
           );
 
           setNotice(
-            result.response,
+            result.toolkit === 'xroga-native-research' ? null : readableActionResult(result.response),
           );
           if (result.ok && result.toolkit === 'xroga-native-research' &&
               result.confirmation.status === 'consumed' && result.confirmation.id === confirmationId) {
@@ -380,9 +351,9 @@ export function BusinessActionConfirmationInline({
       },
       [
         busy,
-        confirmation
-          ?.status,
+        confirmation,
         confirmationId,
+        researchReviewOpen,
       ],
     );
 
@@ -467,40 +438,59 @@ export function BusinessActionConfirmationInline({
   const status =
     confirmation
       ?.status;
-  const resultPreview = notice && !failed && status === 'consumed'
-    ? previewConnectedAppResult(notice)
-    : null;
+  const approval = confirmation?.approval;
+  const savedSearch = confirmation?.toolkit === 'xroga-native-research';
+  const privateRead = confirmation?.risk === 'read' || savedSearch;
+  const maximumSpend = !savedSearch && approval && readableActionSpend(approval.spendMaximumMicroUsd, approval.currency);
+  const reviewHref = `/dashboard/actions/confirm/${encodeURIComponent(confirmationId)}`;
+  const statusMessage = {
+    executing: savedSearch ? 'Searching the web…' : 'Action in progress…',
+    consumed: savedSearch ? 'Loading the saved research answer…' : 'The provider reported completion.',
+    cancelled: 'Cancelled.',
+    failed: 'The request could not be completed.',
+    expired: 'This request expired.',
+  };
 
   return (
-    <span className="my-2 flex w-full max-w-xl flex-col gap-2 rounded-xl border border-[var(--card-border)]/70 bg-[var(--foreground)]/[0.025] p-3 align-top">
+    <span aria-busy={Boolean(busy)} className="my-2 flex w-full max-w-xl flex-col gap-2 rounded-xl border border-[var(--card-border)]/70 bg-[var(--foreground)]/[0.025] p-3 align-top">
       <span className="flex min-w-0 flex-wrap items-start gap-2">
-        {confirmation ? (
+        {confirmation && !savedSearch ? (
           <PluginBrandLogo id={confirmation.toolkit} name={toolkitLabel(confirmation.toolkit)} toolkit={confirmation.toolkit} size="micro" />
         ) : null}
         <span className="min-w-0 flex-1 text-[13px] leading-relaxed text-[var(--foreground)]">
-          {confirmation ? (confirmation.request || confirmation.summary) : !failed ? 'Loading action…' : null}
+          {confirmation ? (savedSearch ? 'Share a web research request' : confirmation.summary) : !failed ? 'Loading action…' : null}
         </span>
         {status === 'pending' && confirmation && !confirmation.toolkit.startsWith('xroga-') ? (
           <PluginPermissionControl toolkit={confirmation.toolkit} pluginName={toolkitLabel(confirmation.toolkit)} buttonOnly compact />
         ) : null}
       </span>
 
-      {status === 'pending' && confirmation?.approval ? (
-        <span role="region" aria-label="Exact action approval" className="text-[11px] text-[var(--foreground)]/70">
-          <button type="button" aria-expanded={detailsOpen} onClick={() => setDetailsOpen((open) => !open)} className="font-medium underline-offset-2 hover:underline">
-            Review exact action
+      {status === 'pending' && savedSearch && confirmation?.researchReview?.length ? (
+        <>
+          <button type="button" aria-expanded={researchReviewOpen}
+            className="self-start text-[12px] font-medium underline underline-offset-2"
+            onClick={() => setResearchReviewOpen(open => !open)}>
+            Review information to share
           </button>
-          {detailsOpen ? (
-            <span className="mt-2 flex flex-col gap-1 rounded-lg border border-[var(--card-border)]/60 p-2">
-              <span>{confirmation.summary}</span>
-              <span>Account: {confirmation.approval.accountReference}</span>
-              <span>Operation: {confirmation.approval.operation}</span>
-              <span>Destination: {JSON.stringify(confirmation.approval.destination)}</span>
-              <span>Spend ceiling: {confirmation.approval.spendMaximumMicroUsd === null ? 'No spending authority included' : (confirmation.approval.spendMaximumMicroUsd + ' micro-USD, ' + confirmation.approval.currency)}</span>
-              <code className="block max-h-48 overflow-auto whitespace-pre-wrap break-all">{JSON.stringify(confirmation.approval.criticalParameters, null, 2)}</code>
-              <span className="break-all text-[10px]">Prepared digest: {confirmation.approval.actionDigest}</span>
+          {researchReviewOpen && (
+            <span role="region" aria-label="Information to send" className="flex min-w-0 flex-col gap-3">
+              {confirmation.researchReview.map(({ label, value }, index) => (
+                <span key={index} className="flex min-w-0 flex-col gap-1 text-[12px]">
+                  <strong className="font-medium">{label}</strong>
+                  <span className="whitespace-pre-wrap break-words">{value}</span>
+                </span>
+              ))}
+              <button type="button" disabled={Boolean(busy)} onClick={confirm}
+                className="self-start rounded-lg bg-[var(--accent)] px-3 py-1.5 text-[12px] font-semibold text-white disabled:opacity-50">
+                {busy === 'confirm' ? 'Confirming…' : 'Approve information sharing'}
+              </button>
             </span>
-          ) : null}
+          )}
+        </>
+      ) : status === 'pending' && !savedSearch && approval ? (
+        <span className="flex flex-wrap items-center gap-2 text-[12px] text-[var(--foreground)]/70">
+          <a href={reviewHref} className="font-medium underline underline-offset-2">{privateRead ? 'Review and confirm' : 'Review details'}</a>
+          {maximumSpend ? <span>Up to {maximumSpend}</span> : null}
         </span>
       ) : status === 'pending' ? (
         <span className="text-[12px] text-[var(--foreground)]/70">This older action needs to be prepared again.</span>
@@ -509,7 +499,7 @@ export function BusinessActionConfirmationInline({
       {status ===
       'pending' ? (
         <span className="flex flex-wrap items-center gap-2 pt-1">
-          <button
+          {!privateRead && <button
             type="button"
             onClick={
               confirm
@@ -519,11 +509,8 @@ export function BusinessActionConfirmationInline({
             }
             className="rounded-lg bg-[var(--accent)] px-3 py-1.5 text-[12px] font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {busy ===
-            'confirm'
-              ? 'Confirming…'
-              : 'Confirm action'}
-          </button>
+            {busy === 'confirm' ? 'Confirming…' : 'Confirm action'}
+          </button>}
 
           <button
             type="button"
@@ -550,33 +537,14 @@ export function BusinessActionConfirmationInline({
       status !==
         'pending' &&
       !notice ? (
-        <span className="text-[12px] font-medium text-[var(--foreground)]/70">
-          Action status: {status}
+        <span role="status" className="text-[12px] font-medium text-[var(--foreground)]/70">
+          {statusMessage[status]}
         </span>
       ) : null}
 
       {notice ? (
-        <span className="flex min-w-0 flex-col gap-1">
-          <span className={joinClasses('text-[12px] font-medium', failed ? 'text-red-500' : 'text-[var(--foreground)]/75')}>
-            {resultPreview?.summary ?? notice}
-          </span>
-          {resultPreview?.details ? (
-            <>
-              <button
-                type="button"
-                aria-expanded={resultOpen}
-                onClick={() => setResultOpen((open) => !open)}
-                className="self-start text-[11px] text-[var(--foreground)]/65 underline-offset-2 hover:underline"
-              >
-                {resultOpen ? 'Hide provider result' : 'View provider result'}
-              </button>
-              {resultOpen ? (
-                <code className="block max-h-48 overflow-auto whitespace-pre-wrap break-all text-[10px] text-[var(--foreground)]/70">
-                  {resultPreview.details}
-                </code>
-              ) : null}
-            </>
-          ) : null}
+        <span role={failed ? 'alert' : 'status'} className={joinClasses('text-[12px] font-medium', failed ? 'text-red-500' : 'text-[var(--foreground)]/75')}>
+          {notice}
         </span>
       ) : null}
     </span>
@@ -678,10 +646,7 @@ function toolUiFromHref(
         window.location.origin,
       );
 
-    if (
-      parsed.pathname !==
-      '/xroga/tool-ui'
-    ) {
+    if (parsed.origin !== window.location.origin || parsed.pathname !== '/xroga/tool-ui') {
       return null;
     }
 
@@ -1516,7 +1481,7 @@ const components:
       }
 
       const confirmationId =
-        confirmationIdFromHref(
+        workspaceReviewId(
           href,
         );
 
@@ -1626,13 +1591,15 @@ const components:
       );
     },
 
-    pre: ({
-      children,
-    }) => (
-      <pre className="overflow-x-auto rounded-xl border border-[var(--card-border)]/60 bg-[var(--foreground)]/[0.035]">
-        {children}
-      </pre>
-    ),
+    pre: ({ node, children }) => {
+      const code = node?.children.length === 1 ? node.children[0] : undefined;
+      if (code?.type === 'element' && code.tagName === 'code' && code.children.length === 1 && code.children[0].type === 'text') {
+        const classes = code.properties.className;
+        const language = Array.isArray(classes) ? classes.find(value => typeof value === 'string' && value.startsWith('language-')) : undefined;
+        return <CodePanel code={code.children[0].value.replace(/\n$/, '')} language={typeof language === 'string' ? language.slice(9) : undefined} />;
+      }
+      return <pre tabIndex={0} role="group" aria-label="Code block" className="overflow-x-auto rounded-xl border border-[var(--card-border)]/60 bg-[var(--foreground)]/[0.035] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]">{children}</pre>;
+    },
 
     table: ({
       children,
@@ -1669,31 +1636,6 @@ const components:
     ),
   };
 
-/** Add breathing room to legacy wall-of-text answers without rewriting their wording. */
-export function structureLongProse(markdown: string): string {
-  const formatBlock = (block: string) => {
-    const prose = block.trim();
-    if (prose.length < 440 || prose.includes('\n') || /^(?:[#>*+`~|-]|\d+[.)]\s|!\[|<)/.test(prose)) return block;
-    const sentences = prose.split(/(?<=[.!?])\s+(?=(?:\*\*)?[A-Z(])/);
-    if (sentences.length < 3) return block;
-    const paragraphs: string[] = [];
-    let current = '';
-    for (const sentence of sentences) {
-      if (current.length >= 260 && current.length + sentence.length > 370) {
-        paragraphs.push(current);
-        current = sentence;
-      } else {
-        current += `${current ? ' ' : ''}${sentence}`;
-      }
-    }
-    if (current) paragraphs.push(current);
-    return paragraphs.join('\n\n');
-  };
-  return markdown.split(/(```[\s\S]*?```|~~~[\s\S]*?~~~)/g).map((segment, index) => index % 2
-    ? segment
-    : segment.split(/(\n\s*\n)/).map(formatBlock).join('')).join('');
-}
-
 export function FormattedAiMarkdown({
   content,
   className,
@@ -1711,13 +1653,13 @@ export function FormattedAiMarkdown({
   afterIntro?: React.ReactNode;
 }) {
   const prepared = content.replace(/\r\n/g, '\n');
-  const normalized = streaming ? prepared : structureLongProse(compactConnectedAppConfirmationMarkdown(prepared));
-  const opening = normalized.match(/^([^\n]+(?:\n(?!\n)[^\n]+)*)\n\s*\n/);
-  const lead = !streaming && (normalized.length > 500 || afterIntro) && opening && opening[1].length >= 25 && opening[1].length <= 500 && !/^\s*(?:[#>*`\-|\d+\.]|!\[)/.test(opening[1]) ? opening[1] : null;
-  const introParts = afterIntro && !lead && !streaming ? normalized.split(/\n\s*\n/) : [];
+  // Preserve the model's paragraph boundaries, including a requested single
+  // paragraph. Only split blocks when placing an existing action after the intro.
+  const normalized = streaming ? prepared : compactConnectedAppConfirmationMarkdown(prepared);
+  const introParts = afterIntro && !streaming ? normalized.split(/\n\s*\n/) : [];
   const introCount = introParts.length > 1 && /^#{1,2}\s/.test(introParts[0]) && !/^(?:[#>*`\-|\d+\.]|!\[)/.test(introParts[1]) ? 2 : introParts.length > 1 && !/^(?:[#>*`\-|\d+\.]|!\[)/.test(introParts[0]) ? 1 : 0;
   const introMarkdown = introCount ? introParts.slice(0, introCount).join('\n\n') : null;
-  const remaining = lead ? normalized.slice(opening![0].length) : introMarkdown ? introParts.slice(introCount).join('\n\n') : normalized;
+  const remaining = introMarkdown ? introParts.slice(introCount).join('\n\n') : normalized;
   const availableSources = sources ?? [];
   const sourceComponents: Components = {
     ...components,
@@ -1725,6 +1667,8 @@ export function FormattedAiMarkdown({
       const label = Array.isArray(children) ? children.join('') : children;
       const citation = typeof label === 'string' && href ? numberedCitation(label, href, availableSources) : undefined;
       if (citation) return <SourceCitation number={citation.number} source={citation.source} referral />;
+      const number = typeof label === 'string' && availableSources.length ? citationLabelNumber(label) : undefined;
+      if (number !== undefined) return <>[{number}]</>;
       const external = href ? safeSourceUrl(href) : null;
       if (external) {
         const knownIndex = availableSources.findIndex((item) => safeSourceUrl(item.url) === external);
@@ -1741,10 +1685,8 @@ export function FormattedAiMarkdown({
         className,
       )}
     >
-      {lead ? <div className="xv-answer-lead"><span className="xv-answer-lead__label">The short answer</span><ReactMarkdown remarkPlugins={[remarkGfm, ...(sources?.length ? [remarkSourceCitations(sources)] : [])]} skipHtml urlTransform={safeMarkdownUrl} components={sourceComponents}>{lead}</ReactMarkdown></div> : null}
       {introMarkdown ? <ReactMarkdown remarkPlugins={[remarkGfm, ...(sources?.length ? [remarkSourceCitations(sources)] : [])]} skipHtml urlTransform={safeMarkdownUrl} components={sourceComponents}>{introMarkdown}</ReactMarkdown> : null}
-      {afterIntro && lead ? afterIntro : null}
-      {afterIntro && !lead ? <div className="xv-answer-intro-card">{afterIntro}</div> : null}
+      {afterIntro ? <div className="xv-answer-intro-card">{afterIntro}</div> : null}
       <ReactMarkdown
         remarkPlugins={[
           remarkGfm,

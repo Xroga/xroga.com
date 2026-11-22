@@ -1,0 +1,167 @@
+{
+  "scope": "EXACT_SOURCE_AUTOMATIC_PUBLIC_READ_LOCAL_CONTROLLED_EVIDENCE",
+  "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
+  "reviewedApplicationSource": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+  "sourceBindings": [
+    {
+      "path": "backend/src/routes/phase1.ts",
+      "sha256": "8e116ae5296634e5a493aea0cee9434255186deaced4ce27754f92d05e760f43"
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "sha256": "fe09c5a83e52bc3c1659d7146f40a6bafa6a4d399d6f581d30039bb161642579"
+    },
+    {
+      "path": "backend/src/ai/black-hole/webIntelligence.ts",
+      "sha256": "bacebb92d3c69637716c4fb8c9af2e96f3e154ae8d717be9a19d02a267db7bdf"
+    },
+    {
+      "path": "backend/src/ai/workspacePublicSearch.ts",
+      "sha256": "0e41860a67864dc50758c927acf518a8773d9568c617ac2d828973d4aebecbaf"
+    },
+    {
+      "path": "backend/src/ai/parallelApproval.ts",
+      "sha256": "7a203849ef6dc442e817eff7ebced5772c349b4f4151daa3d4dfe9de517d6aa6"
+    },
+    {
+      "path": "backend/src/ai/parallelDispatch.ts",
+      "sha256": "0a7da4cf31ee271f34d2380b8d7d557be006afb19283fe1cc529539dc210c54e"
+    },
+    {
+      "path": "backend/src/ai/researchSearchProvider.ts",
+      "sha256": "aa68f0a3824a5e5ff17abee739fa65e720e2e7e35fe4323823189945c18015cf"
+    },
+    {
+      "path": "backend/src/security/egress/egressPolicy.ts",
+      "sha256": "599dc837cd2b3fdefc0e3abc189c7d5e3ee9f38763f1f3ee2964ac18b49e8125"
+    },
+    {
+      "path": "backend/src/services/integrations/researchResult.ts",
+      "sha256": "27ecd374b1e6229921f15159f1e8e6278925ac52958cd29af6b40717699a7a39"
+    }
+  ],
+  "testEvidence": {
+    "kind": "LOCAL_SYNTHETIC",
+    "effectCalls": true,
+    "scope": "Mock provider, audit, budget and storage effects. No hosted provider request or live tenant certification.",
+    "tests": 26,
+    "passed": 26,
+    "failed": 0,
+    "skipped": 0,
+    "sources": [
+      {
+        "path": "backend/src/ai/researchAnswer.test.ts",
+        "sha256": "35a2d9d266622aca87116f20461ca433e8d29162848709730e28a66a506c760f"
+      },
+      {
+        "path": "backend/src/ai/parallelWeb.security.test.ts",
+        "sha256": "29e704826d0e504396a577427e0181d909331628d30f4ad2878e975f462290b9"
+      },
+      {
+        "path": "backend/src/ai/researchSearchProvider.test.ts",
+        "sha256": "597e313d20ce9549cf21191e52b60b0d02cd25b8ea383b752d402f5870e7a7df"
+      },
+      {
+        "path": "backend/src/services/integrations/researchResult.test.ts",
+        "sha256": "292a45d76527e76ea9b4bc4fa5fb0592e9d8d925e601c446b1ffa059327bf1c4"
+      }
+    ]
+  },
+  "changedAuthority": [
+    "The ordinary authenticated Workspace route explicitly admits a bounded public query from the current user turn.",
+    "The public branch issues a distinct tenant-bound READ/PUBLIC decision over the exact provider request. It requires recorded egress before canonical budget reservation and a single official provider POST.",
+    "Automatic public egress carries no private approval grant, prior context, connected account data, attachment, or model-supplied recipient. Existing approved private search and document retrieval retain exact authority and receipt recovery.",
+    "The public path checks private storage readiness before the provider POST. Settled sources pass through the normal owner-scoped conversation path. Retrieved material remains untrusted for synthesis, and model output cannot authorize another effect."
+  ],
+  "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+  "changedSourcePaths": [
+    "backend/src/ai/black-hole/webIntelligence.ts",
+    "backend/src/ai/completionDiagnostics.ts",
+    "backend/src/ai/parallelApproval.ts",
+    "backend/src/ai/pipeline.ts",
+    "backend/src/ai/researchAnswer.test.ts",
+    "backend/src/ai/researchAnswer.ts",
+    "backend/src/ai/workspacePublicSearch.ts",
+    "backend/src/routes/phase1.ts",
+    "frontend/src/app/share/[token]/page.tsx",
+    "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx",
+    "frontend/src/components/terminal/MessageBubbleActions.tsx",
+    "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
+    "frontend/src/context/TerminalChatContext.tsx",
+    "frontend/src/lib/api.ts",
+    "frontend/src/lib/assistantCopy.test.ts",
+    "frontend/src/lib/assistantCopy.ts",
+    "frontend/src/lib/connectedAppResult.test.ts",
+    "frontend/src/lib/connectedAppResult.ts",
+    "frontend/src/lib/formatAiMarkdown.test.ts",
+    "frontend/src/lib/formatAiMarkdown.tsx",
+    "frontend/src/lib/publicAnswerText.ts",
+    "frontend/src/lib/researchHandoff.test.ts",
+    "frontend/src/lib/researchHandoff.ts",
+    "frontend/src/lib/runLightLaneChat.ts",
+    "frontend/src/lib/sanitizeChatMessages.ts"
+  ],
+  "persistenceReviewRemaps": [
+    {
+      "path": "backend/src/ai/parallelApproval.ts",
+      "beforeId": "18bd459313ae6dbebaab",
+      "afterId": "5aa7f94412fbfc5da325",
+      "unchangedChainSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10"
+    },
+    {
+      "path": "backend/src/ai/parallelApproval.ts",
+      "beforeId": "14acbd3141fc7fc1aedc",
+      "afterId": "7292ab3be3261281c42f",
+      "unchangedChainSha256": "0223d04b0ddd5a466bbf339e24c8c68109fef01b708159e60714dd905977f294"
+    },
+    {
+      "path": "backend/src/ai/parallelApproval.ts",
+      "beforeId": "6b064445c855504350b1",
+      "afterId": "05bf100f6c7e0c6065a1",
+      "unchangedChainSha256": "7424740b071ea4e9d8500991e0a8e22deadde5b31371d4d98fcb2d132b5e8375"
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "beforeId": "eb8532242b9c169bae0b",
+      "afterId": "d18db79a25a63281ef6b",
+      "unchangedChainSha256": "361eaf2b8f804da3e7642f69e118157000f0678f948a6c99e9a7280d14caf329"
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "beforeId": "9372bc4c2d95f5c088d0",
+      "afterId": "7e65fb922445e4589ef3",
+      "unchangedChainSha256": "361eaf2b8f804da3e7642f69e118157000f0678f948a6c99e9a7280d14caf329"
+    },
+    {
+      "path": "backend/src/routes/phase1.ts",
+      "beforeId": "006420f2256a9d86cc5a",
+      "afterId": "006420f2256a9d86cc5a",
+      "unchangedChainSha256": "5414b2cb951a00c96ced718ee659be4ade3930bed364fb91f46dde4ee0fd6348"
+    },
+    {
+      "path": "frontend/src/lib/formatAiMarkdown.tsx",
+      "beforeId": "e75c4ea163671f8df19f",
+      "afterId": "19924dd44f4d9f67f004",
+      "unchangedChainSha256": "42b000f1247414285464d37f970a4abfcbe21262a6ac5625d23f907be58e0002"
+    },
+    {
+      "path": "backend/src/ai/parallelApproval.ts",
+      "beforeId": "2560cf2908b41e1b590f",
+      "afterId": "379d330fc0e972f494da",
+      "unchangedChainSha256": "561b8be7bf953fe591842c3277aa7db68ffabd98d448a1516da1831187d0a981"
+    }
+  ],
+  "credentialReviewShifts": [
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "count": 7,
+      "beforeSha256": "3eb2040d95ed469292f430d5e7b47f5a7d8bf1be2bf1a7b7fc617817141d1b56",
+      "currentSha256": "fe09c5a83e52bc3c1659d7146f40a6bafa6a4d399d6f581d30039bb161642579"
+    }
+  ],
+  "legacyDocumentReadId": "90c62dd04b83e45e1c68",
+  "sharedDeepSeekTransportId": "5baa649b7c2c9b6b6f30",
+  "hostedAcceptance": false,
+  "productionChanges": false,
+  "providerSpend": 0
+}

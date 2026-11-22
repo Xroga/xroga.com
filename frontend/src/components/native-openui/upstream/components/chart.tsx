@@ -1,8 +1,11 @@
 "use client";
 
 import { defineComponent } from "@openuidev/react-lang";
-import { useId, useLayoutEffect, useRef, useState, type PointerEvent } from "react";
+import React, { useContext, useId, useLayoutEffect, useState, type PointerEvent } from "react";
 import { z } from "zod/v4";
+import { Format as NumberFormat } from "../functions/text";
+import { NativeVisualContent } from "./markdown";
+import { nativeReadableTextKey } from "../../../../../../backend/src/ai/nativeOpenUi";
 
 type Row = Record<string, unknown>;
 type Format = (value: number, compact?: boolean) => string;
@@ -14,6 +17,7 @@ type Spec = {
   stacked: boolean;
   height: number;
   format: Format;
+  currency?: string;
   presentation?: { title?: string; xLabel?: string; yLabel?: string; note?: string };
 };
 
@@ -41,17 +45,18 @@ function niceStep(span: number) {
 }
 
 function useWidth() {
-  const ref = useRef<HTMLDivElement>(null);
+  // Forward bindings can become valid after the first render. Observe the
+  // frame when it mounts, including after an initially unavailable chart.
+  const [element, ref] = useState<HTMLDivElement | null>(null);
   const [width, setWidth] = useState(0);
   useLayoutEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const measure = () => setWidth(el.clientWidth);
+    if (!element) return;
+    const measure = () => setWidth(element.clientWidth);
     measure();
     const observer = new ResizeObserver(measure);
-    observer.observe(el);
+    observer.observe(element);
     return () => observer.disconnect();
-  }, []);
+  }, [element]);
   return [ref, width] as const;
 }
 
@@ -74,11 +79,18 @@ function Cartesian({ spec, width }: { spec: Spec; width: number }) {
   const [hover, setHover] = useState<number | null>(null);
   const { rows, series, type, height, format, x } = spec;
   const stacked = spec.stacked && type !== "line";
-  const tops = rows.map((row) => {
-    let total = 0;
-    return series.map((s) => (total += Math.max(0, num(row[s]))));
-  });
-  const values = stacked ? tops.map((t) => t[t.length - 1] ?? 0) : rows.flatMap((row) => series.map((s) => num(row[s])));
+  const stacks = stacked ? rows.map((row) => {
+    let positive = 0, negative = 0;
+    return series.map(key => {
+      const value = num(row[key]);
+      const base = value >= 0 ? positive : negative;
+      const end = base + value;
+      if (value >= 0) positive = end;
+      else negative = end;
+      return { base, end };
+    });
+  }) : [];
+  const values = stacked ? stacks.flatMap(row => row.map(segment => segment.end)) : rows.flatMap((row) => series.map((s) => num(row[s])));
   const step = niceStep((Math.max(0, ...values) - Math.min(0, ...values)) / 5);
   const lo = Math.floor(Math.min(0, ...values) / step) * step;
   const hi = Math.max(lo + step, Math.ceil(Math.max(0, ...values) / step) * step);
@@ -132,9 +144,8 @@ function Cartesian({ spec, width }: { spec: Spec; width: number }) {
             const inner = Math.min(band * 0.7, 72 * Math.max(1, stacked ? 1 : series.length));
             if (stacked)
               return series.map((s, si) => {
-                const top = y(tops[i][si]);
-                const base = y(tops[i][si - 1] ?? 0);
-                return <rect key={`${i}-${s}`} x={xAt(i) - inner / 2} y={top} width={inner} height={Math.max(0, base - top)} fill={seriesColor(si)} rx={si === series.length - 1 ? 4 : 0} />;
+                const segment = stacks[i][si];
+                return <rect key={`${i}-${s}`} x={xAt(i) - inner / 2} y={Math.min(y(segment.base), y(segment.end))} width={inner} height={Math.abs(y(segment.end) - y(segment.base))} fill={seriesColor(si)} />;
               });
             const each = inner / series.length;
             return series.map((s, si) => {
@@ -144,8 +155,8 @@ function Cartesian({ spec, width }: { spec: Spec; width: number }) {
           })}
         {(type === "line" || type === "area") &&
           series.map((s, si) => {
-            const top = (i: number) => (stacked ? tops[i][si] : num(rows[i][s]));
-            const base = (i: number) => (stacked ? (tops[i][si - 1] ?? 0) : 0);
+            const top = (i: number) => (stacked ? stacks[i][si].end : num(rows[i][s]));
+            const base = (i: number) => (stacked ? stacks[i][si].base : 0);
             const points = rows.map((_, i) => `${xAt(i).toFixed(1)},${y(top(i)).toFixed(1)}`);
             const under = rows.map((_, i) => `${xAt(i).toFixed(1)},${y(base(i)).toFixed(1)}`).reverse();
             return (
@@ -304,7 +315,7 @@ function toSpec(props: z.infer<typeof chartProps>): Spec | null {
     series.some(key => !Object.hasOwn(row, key) || !validNumber(row[key])))) return null;
   if ((type === "pie" || type === "donut") && (series.length !== 1 || rows.length > 12 ||
     rows.some(row => Number(row[series[0]]) < 0) || rows.every(row => Number(row[series[0]]) === 0))) return null;
-  if (props.stacked && rows.some(row => series.some(key => Number(row[key]) < 0))) return null;
+  if (props.stacked && type === "area" && rows.some(row => series.some(key => Number(row[key]) < 0))) return null;
   return {
     type,
     rows,
@@ -313,8 +324,26 @@ function toSpec(props: z.infer<typeof chartProps>): Spec | null {
     stacked: !!props.stacked,
     height: Math.min(480, Math.max(140, props.height ?? 240)),
     format: makeFormat(props.format, props.currency),
+    currency: props.format === 'currency' ? props.currency ?? 'USD' : undefined,
     presentation: props.presentation,
   };
+}
+
+function chartTable(spec: Spec, display = false) {
+  const { x, series, rows, presentation } = spec;
+  return {
+    headings: [presentation?.xLabel ?? x, ...(series.length === 1 && presentation?.yLabel ? [presentation.yLabel] : series)],
+    rows: rows.map(row => [String(row[x]), ...series.map(key => display && spec.currency
+      ? NumberFormat.fn({value: num(row[key]), kind:'currency', currency:spec.currency}) : String(row[key]))]),
+  };
+}
+
+export function staticChartTable(props: unknown) {
+  if (!props || typeof props !== "object") return;
+  // OpenUI uses null for omitted positional arguments.
+  const parsed = chartProps.safeParse(Object.fromEntries(Object.entries(props).filter(([, value]) => value !== null)));
+  const spec = parsed.success && toSpec(parsed.data);
+  return spec ? { ...chartTable(spec), title: spec.presentation?.title, note: spec.presentation?.note } : undefined;
 }
 
 export const Chart = defineComponent({
@@ -323,15 +352,22 @@ export const Chart = defineComponent({
   description: 'Chart from exact numeric rows. Set x, series, and presentation labels with units. Scatter x is numeric. Percent values are like 45; use a currency code like "USD".',
   component: function ChartView({ props }) {
     const [ref, width] = useWidth();
-    const spec = toSpec(props);
-    if (!spec) return <p>Chart data is incomplete or unsuitable for this chart.</p>;
+    const visible = useContext(NativeVisualContent);
+    const original = toSpec(props);
+    if (!original) return <p>Chart data is incomplete or unsuitable for this chart.</p>;
+    // Size the actual plot to its pane, including a narrow split view or zoom.
+    const spec = width && width < 440
+      ? { ...original, height: Math.min(original.height, Math.max(180, Math.round(width * .72))) }
+      : original;
     const pie = spec.type === "pie" || spec.type === "donut";
     const labels = spec.presentation;
-    const columns = [spec.x, ...spec.series];
+    const captionTitle = labels?.title && !visible?.titles.has(nativeReadableTextKey(labels.title)) ? labels.title : undefined;
+    const captionUnit = labels?.yLabel?.trim().toLowerCase() === labels?.title?.trim().toLowerCase() ? undefined : labels?.yLabel;
+    const table = chartTable(spec, true);
     return (
       <figure className="iui-chart">
-        {(labels?.title || labels?.yLabel) && <figcaption className="native-chart-caption">
-          {labels.title && <strong>{labels.title}</strong>}{labels.yLabel && <span>{labels.yLabel}</span>}
+        {(captionTitle || captionUnit) && <figcaption className="native-chart-caption">
+          {captionTitle && <strong>{captionTitle}</strong>}{captionUnit && <span>{captionUnit}</span>}
         </figcaption>}
         <div className="native-chart-frame" ref={ref}>
           {width > 0 ? pie ? <Pie spec={spec} width={width} /> : spec.type === "scatter" ? <Scatter spec={spec} width={width} /> : <Cartesian spec={spec} width={width} /> : <div style={{ height: spec.height }} />}
@@ -339,9 +375,9 @@ export const Chart = defineComponent({
         {labels?.xLabel && <p className="native-chart-x-label">{labels.xLabel}</p>}
         {!pie && (spec.series.length > 1 || !labels?.yLabel) && <Legend series={spec.series} />}
         {labels?.note && <p className="native-chart-note">{labels.note}</p>}
-        <div className="native-chart-data"><div className="iui-table-scroll" tabIndex={0} role="region" aria-label="Chart data table">
-          <table className="iui-table"><caption>Chart data</caption><thead><tr>{columns.map((key, index) => <th scope="col" key={key}>{index === 0 ? labels?.xLabel ?? key : spec.series.length === 1 ? labels?.yLabel ?? key : key}</th>)}</tr></thead>
-          <tbody>{spec.rows.map((row, index) => <tr key={index}>{columns.map(key => <td key={key}>{String(row[key])}</td>)}</tr>)}</tbody></table>
+        <div className="native-chart-data"><div className={table.rows.length > 10 ? "iui-table-scroll iui-table-bounded" : "iui-table-scroll"} tabIndex={0} role="region" aria-label="Chart data table">
+          <table className="iui-table"><caption>Chart data</caption><thead><tr>{table.headings.map((heading, index) => <th scope="col" key={index}>{heading}</th>)}</tr></thead>
+          <tbody>{table.rows.map((row, index) => <tr key={index}>{row.map((cell, column) => <td key={column}>{cell}</td>)}</tr>)}</tbody></table>
         </div></div>
       </figure>
     );

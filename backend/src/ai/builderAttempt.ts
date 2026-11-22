@@ -198,6 +198,8 @@ export async function runBuilderAttempt<T>(
   }) => Promise<T>,
   opts: {
     budget?: Partial<BuilderAttemptBudget>;
+    /** Buffered responses have no observable first token before completion. */
+    responseMode?: 'stream' | 'buffered';
     /** The caller's signal — cancellation must propagate through, not be swallowed. */
     signal?: AbortSignal;
   } = {},
@@ -232,7 +234,7 @@ export async function runBuilderAttempt<T>(
     else opts.signal.addEventListener('abort', onUpstreamAbort, { once: true });
   }
 
-  const firstTokenTimer = setTimeout(() => {
+  const firstTokenTimer = opts.responseMode === 'buffered' ? undefined : setTimeout(() => {
     abortWith(
       timeoutError(
         'BUILDER_FIRST_TOKEN_TIMEOUT',

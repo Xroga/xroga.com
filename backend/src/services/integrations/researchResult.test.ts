@@ -5,7 +5,7 @@ import { harness } from '../../storage/testing/harness.js';
 import { setStorageServiceForTests } from '../../storage/runtime.js';
 import { createTenantContext } from '../../security/tenantContext.js';
 import { preparedActionDigest } from '../../security/authority/digest.js';
-import { presentResearchResult, readResearchResult, saveResearchResult } from './researchResult.js';
+import { presentResearchResult, readResearchResult, saveResearchResult, workspaceResearchConfirmationView } from './researchResult.js';
 import type { SafeBusinessActionConfirmation } from './businessActionConfirmations.js';
 
 afterEach(() => setStorageServiceForTests(undefined));
@@ -15,6 +15,48 @@ const raw = { ok: true, operation: 'search', result: { results: [
   { title: 'Page B', url: 'https://example.com/b', excerpts: ['Retrieved excerpt B'] },
   { title: 'Unsafe', url: 'http://127.0.0.1/', excerpts: ['Never render'] },
 ] } };
+
+test('a research review exposes consent context without internal authority or accounting', () => {
+  const id = randomUUID();
+  const confirmation: SafeBusinessActionConfirmation = {
+    id, status: 'pending', summary: 'Up to $0.00575', toolkit: 'xroga-native-research', risk: 'write',
+    createdAt: '2026-11-20T00:00:00.000Z', expiresAt: '2026-11-20T00:15:00.000Z',
+    approval: {
+      preparedActionId: id, actionDigest: 'a'.repeat(64), accountReference: 'deepseek-search:platform',
+      operation: 'XROGA_RESEARCH_SEARCH', actionClass: 'SENSITIVE_DATA_EXPORT', destination: 'internal operation',
+      spendMaximumMicroUsd: '5750', currency: 'USD',
+      criticalParameters: {
+        maximumMicroUsd: 5750,
+        body: { objective: 'Compare project specifications', search_queries: ['public benchmark'] },
+        answerRequest: {
+          prompt: 'Use the project notes to compare these products',
+          projectEvidence: 'The required operating temperature is 15°C.',
+          history: [{ role: 'user', content: 'Stay within the quoted dimensions.' }],
+        },
+      },
+    },
+    receipt: {
+      id, outcome: 'provider_reported_success', recordedAt: '2026-11-20T00:02:00.000Z',
+      resultDigest: 'b'.repeat(64),
+    },
+  };
+  assert.deepEqual(workspaceResearchConfirmationView(confirmation), {
+    id, status: 'pending', toolkit: 'xroga-native-research', risk: 'write',
+    createdAt: confirmation.createdAt, expiresAt: confirmation.expiresAt,
+    summary: 'Review the information to send with this research request.',
+    researchReview: [
+      { label: 'Research objective', value: 'Compare project specifications' },
+      { label: 'Search terms', value: 'public benchmark' },
+      { label: 'Your question', value: 'Use the project notes to compare these products' },
+      { label: 'Earlier user message', value: 'Stay within the quoted dimensions.' },
+      { label: 'Project context for synthesis', value: 'The required operating temperature is 15°C.' },
+    ],
+    receipt: { id, outcome: 'provider_reported_success', recordedAt: confirmation.receipt!.recordedAt },
+  });
+  const otherConfirmation = { ...confirmation, toolkit: 'connected-app' };
+  assert.equal(workspaceResearchConfirmationView(otherConfirmation), otherConfirmation);
+  assert.equal(confirmation.approval?.spendMaximumMicroUsd, '5750');
+});
 
 test('research normalization deduplicates pages, keeps distinct pages, rejects unsafe URLs', () => {
   const result = presentResearchResult(raw);

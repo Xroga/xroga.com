@@ -270,6 +270,21 @@ test('a native OpenUI program is stored alongside readable answer text', () => {
   assert.equal(enhanced.content, 'A readable answer.');
 });
 
+test('native answers persist independently of legacy table conversion', () => {
+  const source = '| | Server | Client |\n|---|---|---|\n| Runs | Server | Browser |';
+  const program = 'root = Col([Table(["Dimension", "Server", "Client"], [["Runs", "Server", "Browser"]])])';
+  const enhanced = enhanceAiResponse(source, 'native-empty-heading', { status: 'complete' },
+    { format: 'xroga-openui-v1', text: program });
+  const saved = parseXrogaOutput(JSON.parse(JSON.stringify(enhanced.output)));
+  assert.ok(saved, 'A valid native answer must not be rejected by legacy table schemas');
+  assert.equal(saved.sourceText, source);
+  assert.equal(saved.responseSource?.text, program);
+  assert.deepEqual(saved.blocks.map(block => block.type), ['narrative']);
+  const historical = { ...enhanced.output, blocks: [{ type: 'table', columns: [{ key: 'corner', label: '' }] }] };
+  assert.equal(parseXrogaOutput(historical)?.responseSource?.text, program);
+  assert.equal(parseXrogaOutput({ ...historical, responseSource: { format: 'xroga-openui-v1', text: 'x'.repeat(24_001) } }), null);
+});
+
 test('a factual-review warning and original answer survive the saved document round trip', () => {
   const source = 'The retry behavior needs review.\n\n| Mode | State |\n| --- | --- |\n| Live | Pending |';
   const enhanced = enhanceAiResponse(source, 'native-review', { status: 'partial', reason: 'factual_review' },
@@ -278,4 +293,19 @@ test('a factual-review warning and original answer survive the saved document ro
   assert.equal(saved?.status, 'partial');
   assert.equal(saved?.sourceText, source);
   assert.match(saved?.blocks[0]?.type === 'notice' ? saved.blocks[0].text : '', /technical claim that needs review/);
+});
+
+test('a settled document keeps its requested format separately from presentation and ignores malformed metadata', () => {
+  const source = '# Proposal\n\nThe workshop plan.';
+  const received = { format: 'xroga-openui-v1', text: '', downloadFormat: 'docx' };
+  const persisted = enhanceAiResponse(source, 'requested-document', { status: 'complete' }, received).output;
+  const reopened = parseXrogaOutput(JSON.parse(JSON.stringify(persisted)));
+  assert.equal(reopened?.documentDownload, 'docx');
+  assert.deepEqual(reopened?.responseSource, { format: 'xroga-openui-v1', text: '' });
+  assert.equal(reopened?.sourceText, source);
+  const malformed = parseXrogaOutput({ ...persisted, documentDownload: { url: 'https://unverified.example/file' } });
+  assert.equal(malformed?.documentDownload, undefined);
+  assert.equal(malformed?.sourceText, source);
+  const partial = enhanceAiResponse(source, 'partial-document', { status: 'partial', reason: 'output_limit' }, received).output;
+  assert.equal(partial?.documentDownload, undefined);
 });

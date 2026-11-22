@@ -33,17 +33,23 @@ export function citationMetadata(source: Pick<CitationSource, 'title' | 'siteNam
   const knownName = domain === 'support.google.com' && destination.pathname.startsWith('/google-ads/')
     ? 'Google Ads Help' : domain === 'ads.google.com' ? 'Google Ads'
       : domain === 'postgresql.org' || domain === 'git.postgresql.org' ? 'PostgreSQL' : domain;
-  const site = providedName && !generic.test(providedName) ? providedName : knownName;
-  const providedTitle = source.title.trim();
+  const linkedinPost = (domain === 'linkedin.com' || domain.endsWith('.linkedin.com')) &&
+    /^\/(?:posts\/|feed\/update\/|pulse\/)/i.test(destination.pathname);
+  const site = linkedinPost ? 'LinkedIn' : providedName && !generic.test(providedName) ? providedName : knownName;
+  const providedTitle = source.title.trim().replace(/^[-–—|:]+\s*/, '');
   const path = destination.pathname === '/' ? '' : destination.pathname;
   const title = providedTitle && !generic.test(providedTitle) ? providedTitle : site === domain ? domain + path : site;
   return { domain, site, title };
 }
 
-export function numberedCitation(label: string, href: string, sources: readonly CitationSource[]) {
+export function citationLabelNumber(label: string): number | undefined {
   const match = /^(?:\[(\d{1,3})\]|(\d{1,3}))$/.exec(label.trim());
-  if (!match) return undefined;
-  const number = Number(match[1] ?? match[2]);
+  return match ? Number(match[1] ?? match[2]) : undefined;
+}
+
+export function numberedCitation(label: string, href: string, sources: readonly CitationSource[]) {
+  const number = citationLabelNumber(label);
+  if (number === undefined) return undefined;
   const source = sources[number - 1];
   const url = safeSourceUrl(href);
   return source && url && safeSourceUrl(source.url) === url ? { number, source } : undefined;
@@ -69,7 +75,10 @@ export function sourceClickUrl(value: string): string | null {
 export function appendCitationReferences(text: string, sources?: ReadonlyArray<Pick<CitationSource, 'title' | 'url'>>): string {
   const refs = sources?.flatMap(({ title, url }, index) => {
     const safe = safeSourceUrl(url);
-    return safe ? [`[${index + 1}] ${title.replace(/\s+/g, ' ').trim()} (${safe})`] : [];
+    if (!safe) return [];
+    const name = title.replace(/\s+/g, ' ').trim() || new URL(safe).hostname;
+    const label = name.replace(/[\\\[\]`*_~]/g, '\\$&');
+    return [`[${index + 1}] [${label}](<${safe}>)`];
   });
   return refs?.length ? `${text}\n\nSources\n${refs.join('\n')}` : text;
 }

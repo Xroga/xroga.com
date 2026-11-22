@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "88c19206bcfd8c3c4f1c46edefbc439161720c13f264a4000c4cdbac0c6a71f7",
+  "sourceTreeDigest": "b1c384008458967897a069899261ae42e7207644e3b2df53e14188080f7f4572",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -38,7 +38,7 @@
     {
       "id": "038ced12b0f74e8d5e0f",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 234,
+      "line": 239,
       "entryPoint": "createModelProviderClient",
       "transport": "fetch",
       "callee": "globalThis.fetch",
@@ -61,7 +61,7 @@
         {
           "path": "backend/src/ai/openaiCompat.egress.test.ts",
           "marker": "real SDK completion and streaming use only the approved endpoint and refuse redirects",
-          "sha256": "8a686f065bbd6b45bd94a332466dcd77799ed7d125947b9ec1b23296ceeb6c35",
+          "sha256": "34bd84f5aacee796d3dfa2ff83cfd227a24c41d19fc50c4c51abf88fd6e80a46",
           "reboundOnBranch": {
             "previousSha256": "0622d56b1885aad11d4f284da5aa055690e20d3661533aa59d0c9dd1c78cd499",
             "note": "Re-bound 2026-11-05: the file gained single-response transport regression tests and a streaming-verified guard in the existing redirect test; the reviewed redirect-refusal assertions are unchanged."
@@ -85,7 +85,7 @@
     {
       "id": "31380a8d5b9454a98a98",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 335,
+      "line": 340,
       "entryPoint": "chatCompletion",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -141,7 +141,7 @@
     {
       "id": "9c345e07b723c086440e",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 430,
+      "line": 435,
       "entryPoint": "chatCompletionStream",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -197,7 +197,7 @@
     {
       "id": "90c62dd04b83e45e1c68",
       "file": "backend/src/ai/parallelApproval.ts",
-      "line": 108,
+      "line": 153,
       "entryPoint": "executeParallelNativeAction",
       "transport": "boundedPublicGet",
       "callee": "boundedPublicGet",
@@ -231,10 +231,10 @@
       "entryPoint": "executeParallelRequest",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "8a4cf1df25bdb5d59e6f01020cc5be67cec679c8815a93cc5b5b594cc7a7fe28",
+      "callSha256": "dc508cf35a15a3c1b19ad126bcf268c86991a31771cef42b2ae134b2e6c9b00d",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "FIXED_PARALLEL_API_WITH_PRODUCER_ATTESTED_EXACT_PRIVATE_EGRESS_APPROVAL",
-      "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
+      "trust": "FIXED_OFFICIAL_DEEPSEEK_SEARCH_WITH_BOUND_PUBLIC_READ_OR_EXACT_PRIVATE_SEARCH_APPROVAL",
+      "tenantAuthority": "TENANT_ACTOR_AND_ONE_USE_REQUEST_ADMISSION_PUBLIC_READ_RECEIPT_OR_LEGACY_EXACT_AUTHORITY_CANONICAL_BUDGET_SETTLEMENT",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
       "disposition": "VERIFIED_GUARD",
@@ -251,6 +251,11 @@
           "reboundOnBranch": {
             "previousSha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
           }
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/WORKSPACE-AUTOMATIC-PUBLIC-SEARCH-20261119.json",
+          "marker": "EXACT_SOURCE_AUTOMATIC_PUBLIC_READ_LOCAL_CONTROLLED_EVIDENCE",
+          "sha256": "db737bc630e4b76dc80e212fcf0b92d4ac1f089c687c19395e84f1391b2be939"
         }
       ]
     },
@@ -4856,7 +4861,7 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
+          "sha256": "1805f6c26e4f49612784dcd5fc3521d059109dd5afb3afc6cb024a0934f0e854"
         }
       ]
     },
@@ -4878,7 +4883,7 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
+          "sha256": "1805f6c26e4f49612784dcd5fc3521d059109dd5afb3afc6cb024a0934f0e854"
         }
       ]
     },
@@ -4900,7 +4905,7 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "hosted confirmation admits only the exact owner-visible DeepSeek research action",
-          "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
+          "sha256": "1805f6c26e4f49612784dcd5fc3521d059109dd5afb3afc6cb024a0934f0e854"
         }
       ]
     },
@@ -4922,12 +4927,12 @@
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "Google IAM and original user token stay separate",
-          "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
+          "sha256": "1805f6c26e4f49612784dcd5fc3521d059109dd5afb3afc6cb024a0934f0e854"
         },
         {
           "path": "scripts/security/hosted-workspace-staging.test.mjs",
           "marker": "the staging bridge forwards an empty Share revoke and rejects nonempty revoke bodies",
-          "sha256": "6a46d891ea391c0d299f350e5a87f3b964b34b8e67147448ec61c0a039728042"
+          "sha256": "1805f6c26e4f49612784dcd5fc3521d059109dd5afb3afc6cb024a0934f0e854"
         }
       ]
     },
@@ -4960,6 +4965,28 @@
           "path": "frontend/src/app/api/image-fetch/route.ts",
           "marker": "boundedPublicGet",
           "sha256": "51467588b07c73bb6b06bd1434fe2d126388635b053cecc681587a3c11588be1"
+        }
+      ]
+    },
+    {
+      "id": "e079c51ab00e88b88aa7",
+      "file": "frontend/src/lib/publicConnectCatalog.ts",
+      "line": 21,
+      "entryPoint": "publicConnectCatalogPage",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "12ce03fb625377d4806972e2c62595cdfe78d3bf27b8cdd5da645d9ce5663494",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "PUBLIC_READ_ONLY_PLATFORM_CATALOG_METADATA_AT_EXISTING_DEPLOYMENT_ORIGIN_NO_PROVIDER_DESTINATION",
+      "tenantAuthority": "PUBLIC_SHARED_METADATA_ONLY_GET_CREDENTIALS_OMIT_NO_BEARER_COOKIE_BODY_OR_ACCOUNT_SCOPE_CURSOR_ENCODED_AS_QUERY_VALUE_12_SECOND_TIMEOUT_NO_RETRY",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/publicConnectCatalog.test.ts",
+          "marker": "public catalog reads use only the configured platform origin without account credentials",
+          "sha256": "1c5f1783b1005263c9ac7ba2be7e59d994a3c6d3efb76ba9740e9f2bf656dbb3"
         }
       ]
     },
@@ -5206,6 +5233,7 @@
         "a609adccda5421076aa0",
         "e88275f663bb87ce2556",
         "3b970c32a8efb294a7fd",
+        "e079c51ab00e88b88aa7",
         "20618341b2f95ca0ba5e",
         "805931ff0dc022677403",
         "195e486260bf940789dd",
@@ -5354,8 +5382,8 @@
     }
   ],
   "counts": {
-    "total": 159,
-    "reviewed": 159,
+    "total": 160,
+    "reviewed": 160,
     "pending": 0,
     "unresolvedHighRiskBypasses": 0
   }

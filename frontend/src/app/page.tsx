@@ -1,20 +1,44 @@
+
 import type { Metadata } from 'next';
 import { HomepageClient } from '@/components/homepage/HomepageClient';
-import { buildMetadata, buildWebPageJsonLd, PRODUCT_ONE_LINER } from '@/lib/seo';
+import { buildMetadata, buildWebPageJsonLd } from '@/lib/seo';
 
+// Xroga AI — Homepage SEO
+const HOMEPAGE_TITLE =
+  'Xroga AI | Superintelligence Workspace for Everything';
+
+const HOMEPAGE_DESCRIPTION =
+  'Use an AI assistant and coding agent to research, build apps, create websites, analyze data, and automate connected workflows in one workspace. Start free.';
+
+const HOMEPAGE_KEYWORDS = [
+  'Xroga AI',
+  'AI assistant',
+  'AI workspace',
+  'AI agents',
+  'AI coding agent',
+  'AI app builder',
+  'AI website builder',
+  'AI automation',
+  'AI research',
+  'superintelligence',
+];
+
+// Google SEO + Open Graph + Twitter + Canonical
 export const metadata: Metadata = buildMetadata({
-  title: 'AI App Builder & Coding Agent for Real Software | Xroga',
-  description: 'Build real software from a prompt or an existing repository. Xroga implements, verifies, and helps you ship code you own. Start building free.',
+  title: HOMEPAGE_TITLE,
+  description: HOMEPAGE_DESCRIPTION,
   path: '/',
-  keywords: ['AI app builder', 'AI coding agent', 'production-ready AI software', 'existing repository AI', 'prompt to software'],
+  keywords: HOMEPAGE_KEYWORDS,
 });
 
+// Homepage structured data
 const homepageJsonLd = buildWebPageJsonLd({
   path: '/',
-  name: 'AI App Builder & Coding Agent for Real Software | Xroga',
-  description: PRODUCT_ONE_LINER,
+  name: HOMEPAGE_TITLE,
+  description: HOMEPAGE_DESCRIPTION,
 });
 
+// Preserve existing homepage scroll behavior
 const homepageScrollBootstrap = `
   if (!window.location.hash) {
     window.history.scrollRestoration = 'manual';
@@ -26,8 +50,20 @@ const homepageScrollBootstrap = `
 export default function HomePage() {
   return (
     <>
-      <script dangerouslySetInnerHTML={{ __html: homepageScrollBootstrap }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(homepageJsonLd).replace(/</g, '\\u003c') }} />
+      <script
+        dangerouslySetInnerHTML={{
+          __html: homepageScrollBootstrap,
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(homepageJsonLd).replace(
+            /</g,
+            '\\u003c'
+          ),
+        }}
+      />
       <HomepageClient />
     </>
   );

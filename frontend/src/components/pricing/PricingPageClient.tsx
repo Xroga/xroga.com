@@ -1,24 +1,37 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   ArrowRight,
+  ScanSearch,
+  CircleHelp,
   Check,
-  CircleGauge,
   Code2,
+  Compass,
+  CreditCard,
+  FileStack,
   GitBranch,
   Info,
-  Monitor,
-  Rocket,
+  LockKeyhole,
   Search,
   ShieldCheck,
-  Sparkles,
+  MessageCircle,
+  Gauge,
+  Globe,
+  MousePointer2,
+  Orbit,
+  Workflow,
+  BrainCircuit,
+  Rocket,
+  Layers3,
   Zap,
+  X,
+  ChevronDown,
 } from 'lucide-react';
 
-import { CheckoutButton } from '@/components/billing/CheckoutButton';
+import { PricingCheckoutButton as CheckoutButton } from './PricingCheckoutButton';
 import { api } from '@/lib/api';
 import { GALACTIC_PLANS } from '@/lib/plans';
 import { createClient } from '@/lib/supabase/client';
@@ -29,100 +42,193 @@ type BillingStatus = Awaited<ReturnType<typeof api.billing.status>>;
 
 const PLAN_FEATURES = {
   free: [
-    'AI app builder + coding agent',
-    'New or existing GitHub repositories',
-    'Repository-aware edits and debugging',
-    'Browser preview + verification',
-    'Live web research, files and documents',
+    'Chat, research, and work with files',
+    'Build websites, apps, and tools with AI',
+    'Edit and debug code, including GitHub projects',
+    'Connected apps and Chrome-extension browser workflows',
     'Included monthly AI capacity',
   ],
   spark: [
     'Everything in Free',
     'Higher monthly AI capacity',
-    'Full Access pacing',
-    'Longer end-to-end builds and multi-file changes',
-    'More build → test → repair cycles',
-    'Production-focused GitHub, Vercel and Supabase workflows',
+    'More room for longer, multi-step tasks',
+    'More build, test, and repair iterations',
+    'Full Access — earlier capacity availability',
   ],
 } as const;
 
-const OUTCOMES = [
+const COMPARISON_GROUPS = [
   {
+    title: 'AI chat & research',
+    icon: MessageCircle,
+    rows: [
+      { name: 'AI chat workspace', free: 'Included', pro: 'Included' },
+      { name: 'Plain-language requests and follow-up work', free: 'Included', pro: 'Included' },
+      { name: 'Web search and source-based research', free: 'Included', pro: 'Included', detail: 'Subject to supported search tools and available usage.' },
+      { name: 'Analyze documents, files and screenshots', free: 'Included', pro: 'Included', detail: 'Supported input formats and processing limits apply.' },
+      { name: 'Work with project context', free: 'Included', pro: 'Included' },
+      { name: 'AI capacity per billing cycle', free: 'Included', pro: 'Higher' },
+      { name: 'Full Access capacity pacing', free: '—', pro: 'Included', detail: 'Makes remaining capacity available sooner; does not increase the cycle allowance.' },
+    ],
+  },
+  {
+    title: 'Software & app building',
     icon: Code2,
-    title: 'Build',
-    body: 'Websites, SaaS, dashboards, portals and product interfaces from a plain-language brief.',
+    rows: [
+      { name: 'AI website and web-app builder', free: 'Included', pro: 'Included' },
+      { name: 'SaaS, dashboards and client portals', free: 'Included', pro: 'Included', detail: 'Scope depends on the task, tools and available capacity.' },
+      { name: 'APIs, extensions and custom tools', free: 'Included', pro: 'Included' },
+      { name: 'Game and Web3 project code workflows', free: 'Included', pro: 'Included', detail: 'Supported development workflows, not guaranteed app-store or chain publication.' },
+      { name: 'UI and responsive interface implementation', free: 'Included', pro: 'Included' },
+      { name: 'Multi-file implementations and iterations', free: 'Capacity-limited', pro: 'More room' },
+      { name: 'Work from an existing codebase', free: 'Included', pro: 'Included' },
+    ],
   },
   {
+    title: 'Coding & verification',
     icon: GitBranch,
-    title: 'Code',
-    body: 'Start fresh or work inside a real repository with reviewable edits, fixes and refactors.',
+    rows: [
+      { name: 'Repository inspection and code understanding', free: 'Included', pro: 'Included' },
+      { name: 'Code edits, fixes and refactoring', free: 'Included', pro: 'Included' },
+      { name: 'Build, test and error diagnosis', free: 'Included', pro: 'Included' },
+      { name: 'Preview and browser-based checks', free: 'When supported', pro: 'When supported' },
+      { name: 'Repair and re-test cycles', free: 'Capacity-limited', pro: 'More room' },
+      { name: 'GitHub branches, commits and pull requests', free: 'With connection', pro: 'With connection' },
+      { name: 'Reviewable results and verification evidence', free: 'Included', pro: 'Included' },
+    ],
   },
   {
-    icon: Monitor,
-    title: 'Verify',
-    body: 'Run builds, inspect the product in a browser and feed observed failures back into repair.',
+    title: 'Connected apps & delivery',
+    icon: Workflow,
+    rows: [
+      { name: 'Connect supported external services', free: 'Included', pro: 'Included', detail: 'Availability depends on each connector and account authorization.' },
+      { name: 'Chrome-extension browser workflows', free: 'When set up', pro: 'When set up', detail: 'Requires installing and authorizing a compatible Xroga Chrome extension. Browser actions depend on workflow support, permissions and available usage.' },
+      { name: 'GitHub integration', free: 'With connection', pro: 'With connection' },
+      { name: 'Vercel deployment workflows', free: 'With connection', pro: 'With connection', detail: 'Deployment requires provider access and passing build checks.' },
+      { name: 'Supabase-backed application workflows', free: 'Supported', pro: 'Supported' },
+      { name: 'Connected business-app tasks', free: 'Where enabled', pro: 'Where enabled', detail: 'Only supported operations with the permissions you grant.' },
+      { name: 'Prepare production-ready project changes', free: 'Capacity-limited', pro: 'More room' },
+      { name: 'Use your own code and provider accounts', free: 'Yes', pro: 'Yes' },
+    ],
   },
   {
-    icon: Rocket,
-    title: 'Ship',
-    body: 'Move through GitHub and supported provider workflows while keeping your accounts and code.',
+    title: 'Files, output & control',
+    icon: FileStack,
+    rows: [
+      { name: 'Create code and project files', free: 'Included', pro: 'Included' },
+      { name: 'Work with supported documents and assets', free: 'Included', pro: 'Included' },
+      { name: 'Conversation and project continuity', free: 'Included', pro: 'Included', detail: 'Subject to retention, access and workspace limits.' },
+      { name: 'User-authorized external actions', free: 'Included', pro: 'Included' },
+      { name: 'Confirmation for sensitive operations', free: 'Required', pro: 'Required' },
+      { name: 'Account access and permission controls', free: 'Included', pro: 'Included' },
+    ],
+  },
+  {
+    title: 'Subscription & usage',
+    icon: CreditCard,
+    rows: [
+      { name: 'Subscription price', free: '$0', pro: '$25/month' },
+      { name: 'Credit card to get started', free: 'Not required', pro: 'Required to subscribe' },
+      { name: 'Monthly AI capacity', free: 'Included', pro: 'Higher capacity' },
+      { name: 'Cycle and capacity status in workspace', free: 'Included', pro: 'Included' },
+      { name: 'Monthly Pro subscription', free: '—', pro: 'Cancel anytime' },
+    ],
   },
 ] as const;
 
-const COMPARISON = [
-  ['Price', '$0', '$25/month'],
-  ['Card required', 'No', 'Yes, to subscribe'],
-  ['Core AI building workspace', 'Included', 'Included'],
-  ['Existing GitHub repositories', 'Included', 'Included'],
-  ['Browser preview + verification', 'Included', 'Included'],
-  ['Monthly AI capacity', 'Included', 'Higher'],
-  ['Full Access pacing', '—', 'Included'],
-  ['Production-focused workflows', 'Supported', 'More room for sustained work'],
+const FAQ_SECTIONS = [
+  { id: 'plans', label: 'Plans and usage' },
+  { id: 'billing', label: 'Billing and payments' },
+  { id: 'managing', label: 'Managing your plan' },
 ] as const;
 
 const FAQS = [
   {
+    category: 'billing',
     question: 'Does Free require a credit card?',
     answer:
       'No. Free is $0 and does not require a card. It includes the core Xroga building workflow with included monthly AI capacity.',
   },
   {
+    category: 'plans',
     question: 'What changes when I upgrade to Xroga Pro?',
     answer:
       'The core workflow stays familiar. Pro adds higher monthly AI capacity, Full Access pacing and more room for long research, coding, verification, repair and production workflows.',
   },
   {
+    category: 'plans',
     question: 'What is Full Access pacing?',
     answer:
       'Full Access is a Pro pacing option that can make remaining working capacity for the current billing cycle available earlier instead of waiting for later progressive unlocks. It changes timing, not the total monthly capacity.',
   },
   {
+    category: 'plans',
+    question: 'Does Xroga reset my usage every day?',
+    answer:
+      'AI capacity is tracked over your plan cycle. Working capacity may unlock progressively, but Xroga does not promise a fixed daily task count or a full daily reset. Check your workspace for your actual remaining allowance and next reset.',
+  },
+  {
+    category: 'plans',
     question: 'What happens when my currently available capacity is used?',
     answer:
       'Your project state and completed work remain preserved. New AI work can continue when more capacity unlocks or when the next billing cycle begins.',
   },
   {
+    category: 'managing',
     question: 'Can I use an existing GitHub repository?',
     answer:
       'Yes. Xroga supports workflows that start from new projects or repositories you already own, subject to the repository access you authorize.',
   },
   {
+    category: 'managing',
     question: 'Does Xroga own my code?',
     answer:
       'Xroga is designed around repositories and provider accounts you authorize, so your source and deployment workflow are not trapped inside a closed generated preview.',
   },
+  {
+    category: 'billing',
+    question: 'How are Pro payments handled?',
+    answer:
+      'After you select Pro, Xroga requests confirmation of the selected plan and then sends you to Whop for secure payment. Pro access depends on verified payment confirmation.',
+  },
+  {
+    category: 'billing',
+    question: 'Can I cancel my Pro subscription?',
+    answer:
+      'Xroga Pro is a monthly subscription advertised as cancel anytime. Review your account billing settings for available subscription-management options.',
+  },
 ] as const;
 
-function CtaParticles() {
+/* Rotate the Pro mark on a timer, never on hover. Decorative-only and reduced-motion safe. */
+const PRO_SHOWCASE_ICONS = [Orbit, BrainCircuit, Workflow, Rocket, Zap] as const;
+const PRO_FEATURE_ICONS = [Layers3, Gauge, Workflow, Code2, Zap] as const;
+
+function PlanShowcase({ paid }: { paid: boolean }) {
+  const [iconIndex, setIconIndex] = useState(0);
+  useEffect(() => {
+    if (!paid || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const timer = window.setInterval(() => setIconIndex(index => (index + 1) % PRO_SHOWCASE_ICONS.length), 3400);
+    return () => window.clearInterval(timer);
+  }, [paid]);
+  const Icon = paid ? PRO_SHOWCASE_ICONS[iconIndex] : Compass;
   return (
-    <>
-      <span className={styles.fold} aria-hidden="true" />
-      <span className={styles.pointsWrapper} aria-hidden="true">
-        {Array.from({ length: 10 }, (_, index) => (
-          <i key={index} className={styles.point} />
-        ))}
-      </span>
-    </>
+    <span className={paid ? styles.proShowcase : styles.freeShowcase} aria-hidden="true">
+      <Icon className={styles.showcaseSymbol} strokeWidth={1.7} />
+    </span>
+  );
+}
+
+/* Payment hover icons adapted from user-supplied Uiverse.io by fthisilak.
+   These decorative icons never indicate completed payment. */
+function PaymentIconSequence() {
+  return (
+    <span className={styles.paymentIconContainer} aria-hidden="true">
+      <svg viewBox="0 0 24 24" className={[styles.paymentIcon, styles.cardIcon].join(' ')}><path d="M20,8H4V6H20M20,18H4V12H20M20,4H4C2.89,4 2,4.89 2,6V18C2,19.11 2.89,20 4,20H20C21.11,20 22,19.11 22,18V6C22,4.89 21.11,4 20,4Z" fill="currentColor" /></svg>
+      <svg viewBox="0 0 24 24" className={[styles.paymentIcon, styles.receiptIcon].join(' ')}><path d="M2,17H22V21H2V17M6.25,7H9V6H6V3H18V6H15V7H17.75L19,17H5L6.25,7M9,10H15V8H9V10M9,13H15V11H9V13Z" fill="currentColor" /></svg>
+      <svg viewBox="0 0 24 24" className={[styles.paymentIcon, styles.dollarIcon].join(' ')}><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z" fill="currentColor" /></svg>
+      <svg viewBox="0 0 24 24" className={[styles.paymentIcon, styles.checkIcon].join(' ')}><path d="M9,16.17L4.83,12L3.41,13.41L9,19L21,7L19.59,5.59L9,16.17Z" fill="currentColor" /></svg>
+      <svg viewBox="0 0 24 24" className={[styles.paymentIcon, styles.walletIcon].join(' ')}><path d="M21,18V19A2,2 0 0,1 19,21H5C3.89,21 3,20.1 3,19V5A2,2 0 0,1 5,3H19A2,2 0 0,1 21,5V6H12C10.89,6 10,6.9 10,8V16A2,2 0 0,0 12,18M12,16H22V8H12M16,13.5A1.5,1.5 0 0,1 14.5,12A1.5,1.5 0 0,1 16,10.5A1.5,1.5 0 0,1 17.5,12A1.5,1.5 0 0,1 16,13.5Z" fill="currentColor" /></svg>
+    </span>
   );
 }
 
@@ -146,8 +252,12 @@ function FullAccessInfo() {
 
 export function PricingPageClient() {
   const router = useRouter();
+  const finalCtaRef = useRef<HTMLElement>(null);
   const [loggedIn, setLoggedIn] = useState(false);
   const [status, setStatus] = useState<BillingStatus | null>(null);
+  const [featureQuery, setFeatureQuery] = useState('');
+  const [collapsedGroups, setCollapsedGroups] = useState<string[]>([]);
+  const [faqCategory, setFaqCategory] = useState<(typeof FAQ_SECTIONS)[number]['id']>('plans');
 
   useEffect(() => {
     void (async () => {
@@ -165,8 +275,39 @@ export function PricingPageClient() {
     })();
   }, []);
 
+  // Scroll reveal is progressively enhanced: with JS disabled, no observer,
+  // or reduced-motion preference, the CTA stays visible.
+  useEffect(() => {
+    const card = finalCtaRef.current;
+    if (!card || typeof IntersectionObserver === 'undefined'
+        || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (card.getBoundingClientRect().top <= window.innerHeight * .9) return;
+
+    card.classList.add(styles.finalCtaPending);
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry?.isIntersecting) return;
+      card.classList.remove(styles.finalCtaPending);
+      observer.disconnect();
+    }, { threshold: .12, rootMargin: '0px 0px -6% 0px' });
+    observer.observe(card);
+    return () => {
+      observer.disconnect();
+      card.classList.remove(styles.finalCtaPending);
+    };
+  }, []);
+
   const freeCurrent = status?.plan === 'free';
   const proCurrent = status?.plan === 'spark';
+  const normalizedQuery = featureQuery.trim().toLowerCase();
+  const visibleGroups = COMPARISON_GROUPS.map((group) => ({
+    ...group,
+    rows: group.rows.filter((row) =>
+      [group.title, row.name, row.free, row.pro, 'detail' in row ? row.detail : '']
+        .some((value) => String(value ?? '').toLowerCase().includes(normalizedQuery)),
+    ),
+  })).filter((group) => group.rows.length > 0);
+  const totalFeatureCount = COMPARISON_GROUPS.reduce((count, group) => count + group.rows.length, 0);
+  const visibleFeatureCount = visibleGroups.reduce((count, group) => count + group.rows.length, 0);
 
   function openFree() {
     if (freeCurrent) return;
@@ -177,58 +318,16 @@ export function PricingPageClient() {
     <main className={styles.root}>
       <section className={styles.hero} aria-labelledby="pricing-title">
         <div className={styles.gridGlow} aria-hidden="true" />
-        <div className={styles.starField} aria-hidden="true">
-          <span />
-          <span />
-          <span />
-        </div>
-
-        <div className={styles.heroKicker}>
-  XROGA PRICING
-</div>
-
+        <div className={styles.heroInner}>
           <h1 id="pricing-title" className={styles.heroTitle}>
-            Start free.
-            <span> Build further with Pro.</span>
+            Simple plans. <span>Serious work.</span>
           </h1>
-
-          <p className={styles.heroCopy}>
-            One product workflow for research, code, verification and shipping.
-            Free lets you start for $0. Pro is $25/month when you need more capacity.
-          </p>
-
-          <div className={styles.heroFacts} aria-label="Pricing highlights">
-            <span>
-              <strong>$0</strong>
-              no card
-            </span>
-            <i aria-hidden="true" />
-            <span>
-              <strong>$25</strong>
-              monthly Pro
-            </span>
-            <i aria-hidden="true" />
-            <span>
-              <strong>Cancel</strong>
-              anytime
-            </span>
-          </div>
+          <p className={styles.heroCopy}>Start free. Build with your own tools and projects. Upgrade when you need more AI capacity.</p>
+        </div>
       </section>
 
       <div className={styles.shell}>
-        <section className={styles.plansSection} aria-labelledby="plans-title">
-          <div className={styles.sectionHead}>
-            <span className={styles.eyebrow}>TWO PLANS. ONE WORKFLOW.</span>
-            <h2 id="plans-title">
-              Pick the capacity you need,
-              <em> not a different product.</em>
-            </h2>
-            <p>
-              Both plans start with Xroga&apos;s core building workflow. Pro is the
-              upgrade for longer, more demanding product work.
-            </p>
-          </div>
-
+        <section className={styles.plansSection} aria-label="Xroga Free and Pro pricing plans">
           <div className={styles.planGrid}>
             {GALACTIC_PLANS.map((plan) => {
               const isFree = plan.tier === 'free';
@@ -238,6 +337,7 @@ export function PricingPageClient() {
               return (
                 <article
                   key={plan.tier}
+                  id={isFree ? 'free-plan-card' : 'pro-plan-card'}
                   className={`${styles.planCard} ${
                     isFree ? styles.freeCard : styles.proCard
                   }`}
@@ -245,17 +345,19 @@ export function PricingPageClient() {
                   {!isFree && <div className={styles.proHalo} aria-hidden="true" />}
 
                   <div className={styles.planTop}>
-                    <div>
-                      <span className={styles.planName}>{plan.name}</span>
-                      <p className={styles.planTagline}>{plan.tagline}</p>
+                    <div className={styles.planIdentity}>
+                      <PlanShowcase paid={!isFree} />
+                      <div className={styles.planIdentityText}>
+                        <h2 className={styles.planName}>{plan.name}</h2>
+                        <p className={styles.planTagline}>{plan.tagline}</p>
+                      </div>
                     </div>
 
                     {isCurrent ? (
                       <span className={styles.currentBadge}>Current plan</span>
                     ) : !isFree ? (
                       <span className={styles.popularBadge}>
-                        <Zap aria-hidden="true" />
-                        BUILDER PICK
+                        MORE CAPACITY
                       </span>
                     ) : null}
                   </div>
@@ -264,28 +366,31 @@ export function PricingPageClient() {
                     <strong className={styles.price}>{plan.priceLabel}</strong>
                     <span className={styles.priceMeta}>
                       <b>per month</b>
-                      <small>{isFree ? 'no card required' : 'billed monthly'}</small>
+                      <small>{isFree ? 'no credit card required' : 'billed monthly'}</small>
                     </span>
                   </div>
 
                   <p className={styles.planLead}>
                     {isFree
-                      ? 'Explore the real Xroga workflow, work on real code and finish a smaller build with included capacity.'
-                      : 'For active builders who need more room for sustained research, implementation, verification and shipping.'}
+                      ? 'Explore what Xroga can do with included monthly AI capacity.'
+                      : 'More room for bigger, sustained work.'}
                   </p>
 
                   <ul className={styles.featureList}>
-                    {features.map((feature) => (
-                      <li key={feature}>
-                        <span className={styles.check}>
-                          <Check aria-hidden="true" />
-                        </span>
-                        <span>
-                          {feature}
-                          {feature === 'Full Access pacing' ? <FullAccessInfo /> : null}
-                        </span>
-                      </li>
-                    ))}
+                    {features.map((feature, index) => {
+                      const FeatureIcon = isFree ? Check : PRO_FEATURE_ICONS[index] ?? Check;
+                      return (
+                        <li key={feature}>
+                          <span className={isFree ? styles.check : styles.proFeatureMark}>
+                            <FeatureIcon aria-hidden="true" />
+                          </span>
+                          <span>
+                            {feature}
+                            {feature.startsWith('Full Access') ? <FullAccessInfo /> : null}
+                          </span>
+                        </li>
+                      );
+                    })}
                   </ul>
 
                   <div className={styles.planCta}>
@@ -309,8 +414,7 @@ export function PricingPageClient() {
                       </button>
                     ) : loggedIn ? (
                       <div className={styles.proCtaWrap}>
-                        <CheckoutButton planTier="spark" label="Get Xroga Pro — $25/month" className={`${styles.ctaButton} ${styles.proCta}`} />
-                        <CtaParticles />
+                        <CheckoutButton planTier="spark" label="Try Xroga Pro" trailingContent={<PaymentIconSequence />} className={`${styles.ctaButton} ${styles.proCta}`} />
                       </div>
                     ) : (
                       <div className={styles.proCtaWrap}>
@@ -319,10 +423,9 @@ export function PricingPageClient() {
                           className={`${styles.ctaButton} ${styles.proCta}`}
                           onClick={() => router.push('/auth/signup')}
                         >
-                          Get Xroga Pro — $25/month
-                          <ArrowRight aria-hidden="true" />
+                          <span>Try Xroga Pro</span>
+                          <PaymentIconSequence />
                         </button>
-                        <CtaParticles />
                       </div>
                     )}
                   </div>
@@ -337,148 +440,257 @@ export function PricingPageClient() {
             })}
           </div>
         </section>
+        <p className={styles.sharedPlanNote}>
+          Both plans offer access to Xroga&apos;s core tools. Free has a smaller monthly work allowance; Pro provides more capacity and Full Access pacing.
+          <span> Browser workflows require an installed, authorized Chrome extension and compatible setup.</span>
+        </p>
 
-        <section className={styles.outcomesSection} aria-labelledby="outcomes-title">
-          <div className={styles.sectionHeadCompact}>
-            <span className={styles.eyebrow}>WHAT XROGA HELPS YOU DO</span>
-            <h2 id="outcomes-title">
-              From brief to <em>working software.</em>
-            </h2>
+        <div className={styles.usageBrowserLayout}>
+        <section className={styles.usageSection} aria-labelledby="usage-heading">
+          <div className={styles.usageHeader}>
+            <Gauge className={styles.usageTopIcon} aria-hidden="true" />
+            <h2 id="usage-heading">How usage works.</h2>
+            <p>Your available capacity depends on your plan and the work you run. Here&apos;s what to expect.</p>
           </div>
-
-          <div className={styles.outcomeGrid}>
-            {OUTCOMES.map((outcome) => {
-              const Icon = outcome.icon;
-              return (
-                <article key={outcome.title} className={styles.outcomeCard}>
-                  <span className={styles.outcomeIcon}>
-                    <Icon aria-hidden="true" />
-                  </span>
-                  <h3>{outcome.title}</h3>
-                  <p>{outcome.body}</p>
-                </article>
-              );
-            })}
+          <div className={styles.usageAccordion}>
+            <details className={styles.usageDisclosure}>
+              <summary>
+                <span className={styles.usageNumber}>01 / FREE</span>
+                <span className={styles.usageQuestion}>Start with included capacity</span>
+                <span className={styles.usagePlus} aria-hidden="true">+</span>
+              </summary>
+              <p>Free includes access to Xroga&apos;s core tools with a smaller monthly AI allowance to explore real tasks, research, automation and building.</p>
+            </details>
+            <details className={styles.usageDisclosure}>
+              <summary>
+                <span className={styles.usageNumber}>02 / PRO</span>
+                <span className={styles.usageQuestion}>More room for bigger work</span>
+                <span className={styles.usagePlus} aria-hidden="true">+</span>
+              </summary>
+              <p>Pro includes the core Xroga tools with a higher monthly allowance for longer projects and Full Access pacing.</p>
+            </details>
+            <details className={styles.usageDisclosure}>
+              <summary>
+                <span className={styles.usageNumber}>03 / DURING THE DAY</span>
+                <span className={styles.usageQuestion}>Capacity can become available</span>
+                <span className={styles.usagePlus} aria-hidden="true">+</span>
+              </summary>
+              <p>Working capacity may unlock in stages. Daily availability isn&apos;t a guaranteed fixed number of tasks or a full daily reset.</p>
+            </details>
+            <details className={styles.usageDisclosure}>
+              <summary>
+                <span className={styles.usageNumber}>04 / CYCLE RESET</span>
+                <span className={styles.usageQuestion}>Your allowance renews</span>
+                <span className={styles.usagePlus} aria-hidden="true">+</span>
+              </summary>
+              <p>Your monthly allowance renews with your plan cycle. Check your signed-in workspace for remaining usage and reset timing.</p>
+            </details>
           </div>
+          <p className={styles.usageNote}>
+            <Info aria-hidden="true" />
+            Usage depends on task complexity. Full Access changes when remaining capacity is available, not the plan&apos;s total monthly allowance.
+          </p>
+        </section>
 
-          <div className={styles.capabilityLinks}>
-            <Link href="/features">
-              Explore all features <ArrowRight aria-hidden="true" />
+          <aside className={styles.browserPromo} aria-labelledby="browser-promo-title">
+            <div className={styles.browserPromoTop}>
+              <span className={styles.browserPromoSymbol} aria-hidden="true"><Globe /></span>
+              <span className={styles.browserPromoLabel}>CHROME EXTENSION · BROWSER AUTOMATION</span>
+            </div>
+            <h2 id="browser-promo-title">Your Chrome.<br /><em>Ready to work.</em></h2>
+            <p className={styles.browserPromoLead}>
+              Run supported browser workflows directly in your Chrome session with Xroga’s authorized extension.
+            </p>
+            <div className={styles.browserPreview} aria-hidden="true">
+              <div className={styles.browserPreviewBar}>
+                <span className={styles.browserDots}><i /><i /><i /></span>
+                <span className={styles.browserAddress}><LockKeyhole /> your-workspace.com</span>
+                <Globe className={styles.browserMiniIcon} />
+              </div>
+              <div className={styles.browserPreviewContent}>
+                <MousePointer2 className={styles.browserCursor} />
+                <span>Open pages</span>
+                <ArrowRight />
+                <span>Work with content</span>
+                <Check className={styles.browserWorkflowCheck} />
+              </div>
+            </div>
+            <div className={styles.browserPromoBenefits}>
+              <span><Check aria-hidden="true" /> No extra app connections needed for supported in-browser actions</span>
+              <span><Check aria-hidden="true" /> Navigate, interact and complete supported multi-step work in Chrome</span>
+            </div>
+            <Link href="/dashboard/automations" className={styles.browserPromoLink}>
+              Explore browser workflows <ArrowRight aria-hidden="true" />
             </Link>
-            <Link href="/ai-app-builder">AI App Builder</Link>
-            <Link href="/ai-coding-agent">AI Coding Agent</Link>
-            <Link href="/docs">Docs</Link>
-          </div>
-        </section>
-
-        <section className={styles.capacitySection} aria-labelledby="capacity-title">
-          <div className={styles.capacityCopy}>
-            <span className={`${styles.eyebrow} ${styles.shimmerText}`}>
-              CAPACITY, WITHOUT TOKEN MATH
-            </span>
-            <h2 id="capacity-title">
-              Same workflow.
-              <em> More room with Pro.</em>
-            </h2>
-            <p>
-              Xroga shows understandable capacity and cycle status instead of
-              turning pricing into internal model accounting.
+            <p className={styles.browserPromoNote}>
+              Install and authorize the extension first. Availability depends on your plan, compatible websites and browser session; unlimited hours or completion speed are not guaranteed.
             </p>
-          </div>
-
-          <div className={styles.capacityPanel}>
-            <div className={styles.capacityRow}>
-              <div>
-                <span>Free</span>
-                <strong>Included monthly AI capacity</strong>
-              </div>
-              <div className={styles.progressTrack} aria-hidden="true">
-                <span className={`${styles.progressBar} ${styles.freeProgress}`} />
-              </div>
-            </div>
-
-            <div className={styles.capacityRow}>
-              <div>
-                <span>Xroga Pro</span>
-                <strong>Higher capacity + Full Access pacing</strong>
-              </div>
-              <div className={styles.progressTrack} aria-hidden="true">
-                <span className={`${styles.progressBar} ${styles.proProgress}`} />
-                <span className={styles.progressSpark} />
-              </div>
-            </div>
-
-            <p className={styles.capacityNote}>
-              Visual comparison only — your live capacity and unlock timing are
-              shown inside Xroga.
-            </p>
-          </div>
-        </section>
+          </aside>
+        </div>
 
         <section className={styles.compareSection} aria-labelledby="compare-title">
-          <div className={styles.sectionHeadCompact}>
-            <span className={styles.eyebrow}>FREE VS PRO</span>
-            <h2 id="compare-title">
-              The difference, <em>in eight rows.</em>
-            </h2>
+          <div className={styles.compareHeading}>
+            <ScanSearch className={styles.compareOrnament} aria-hidden="true" />
+            <h2 id="compare-title">Compare features across plans</h2>
+            <p>A clear side-by-side look at what is included in each plan.</p>
           </div>
-
-          <div className={styles.compareTable} role="table" aria-label="Free and Pro plan comparison">
-            <div className={styles.compareHeader} role="row">
-              <span role="columnheader">Capability</span>
-              <span role="columnheader">Free</span>
-              <span role="columnheader">Xroga Pro</span>
-            </div>
-
-            {COMPARISON.map(([label, free, pro]) => (
-              <div className={styles.compareRow} role="row" key={label}>
-                <strong className={styles.compareLabel} role="rowheader">
-                  {label}
-                </strong>
-                <span role="cell">
-                  <Check aria-hidden="true" />
-                  {free}
-                </span>
-                <span role="cell" className={styles.proCell}>
-                  <Sparkles aria-hidden="true" />
-                  {pro}
-                </span>
+          <div className={styles.compareScroll} tabIndex={0} role="region" aria-label="Free and Pro feature comparison; scroll horizontally on narrow screens">
+            <table className={styles.comparisonTable}>
+              <caption className={styles.visuallyHidden}>
+                Compare Xroga Free and Pro feature availability across six categories.
+              </caption>
+              <colgroup>
+                <col className={styles.featureColumn} />
+                <col className={styles.freeColumn} />
+                <col className={styles.proColumn} />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th scope="col">
+                    <div className={styles.featureSearch}>
+                      <Search aria-hidden="true" />
+                      <label htmlFor="pricing-feature-search" className={styles.visuallyHidden}>Search Xroga plan features</label>
+                      <input
+                        id="pricing-feature-search"
+                        type="search"
+                        value={featureQuery}
+                        onChange={(event) => setFeatureQuery(event.target.value)}
+                        placeholder="Search features..."
+                      />
+                      {featureQuery && (
+                        <button type="button" aria-label="Clear feature search" onClick={() => setFeatureQuery('')}>
+                          <X aria-hidden="true" />
+                        </button>
+                      )}
+                    </div>
+                  </th>
+                  <th scope="col">
+                    <div className={styles.comparePlanHeading}>
+                      <span>Free</span>
+                      <small>$0/month</small>
+                      <a href="#free-plan-card">Try Free</a>
+                    </div>
+                  </th>
+                  <th scope="col">
+                    <div className={styles.comparePlanHeading}>
+                      <span>Pro</span>
+                      <small>$25/month</small>
+                      <a href="#pro-plan-card">Try Xroga Pro</a>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              {visibleGroups.map((group) => {
+                const GroupIcon = group.icon;
+                const isCollapsed = !normalizedQuery && collapsedGroups.includes(group.title);
+                return (
+                  <tbody key={group.title}>
+                    <tr className={styles.groupRow}>
+                      <th scope="rowgroup" colSpan={3}>
+                        <button
+                          type="button"
+                          className={styles.groupToggle}
+                          aria-expanded={!isCollapsed}
+                          onClick={() => setCollapsedGroups(current =>
+                            current.includes(group.title) ? current.filter(title => title !== group.title) : [...current, group.title]
+                          )}
+                        >
+                          <span><GroupIcon aria-hidden="true" /> {group.title}</span>
+                          <ChevronDown className={isCollapsed ? undefined : styles.groupExpanded} aria-hidden="true" />
+                        </button>
+                      </th>
+                    </tr>
+                    {!isCollapsed && group.rows.map((row) => (
+                      <tr key={row.name}>
+                        <th scope="row" className={styles.featureName}>
+                          <span>{row.name}</span>
+                          {'detail' in row && <small>{row.detail}</small>}
+                        </th>
+                        <td className={styles.valueCell}>
+                          <span className={styles.cellValueInline}>
+                            {row.free === '—' ? <X className={styles.unavailableIcon} aria-label="Not included" /> : <Check className={styles.includedIcon} aria-hidden="true" />}
+                            <span className={styles.cellValueText}>{row.free}</span>
+                          </span>
+                        </td>
+                        <td className={`${styles.valueCell} ${styles.proCell}`}>
+                          <span className={styles.cellValueInline}>
+                            {String(row.pro) === '—' ? <X className={styles.unavailableIcon} aria-label="Not included" /> : <Check className={styles.includedIcon} aria-hidden="true" />}
+                            <span className={styles.cellValueText}>{row.pro}</span>
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                );
+              })}
+            </table>
+            {visibleGroups.length === 0 && (
+              <div className={styles.emptySearch}>
+                <Search aria-hidden="true" />
+                <p>No matching features. Try a different search.</p>
+                <button type="button" onClick={() => setFeatureQuery('')}>Show all features</button>
               </div>
-            ))}
+            )}
           </div>
+          <div className={styles.compareMeta}>
+            <span>{visibleFeatureCount} of {totalFeatureCount} features</span>
+            <span><LockKeyhole aria-hidden="true" /> Connected actions require your authorization</span>
+          </div>
+          <p className={styles.compareFootnote}>
+            Both plans include core Xroga features with different work capacity. Connected apps and browser workflows require compatible setup and authorization.
+            Publishing and external actions are not automatic.
+          </p>
         </section>
 
         <section className={styles.faqSection} aria-labelledby="faq-title">
           <div className={styles.faqIntro}>
-            <span className={styles.eyebrow}>PRICING FAQ</span>
-            <h2 id="faq-title">
-              Clear enough to decide <em>in one read.</em>
-            </h2>
-            <p>
-              Need implementation details instead? The docs go deeper without
-              turning the pricing page into a manual.
-            </p>
-            <Link className={styles.textLink} href="/docs">
-              Open docs <ArrowRight aria-hidden="true" />
-            </Link>
+            <CircleHelp className={styles.faqTopIcon} aria-hidden="true" />
+            <h2 id="faq-title">FAQ</h2>
           </div>
-
-          <div className={styles.faqList}>
-            {FAQS.map((faq) => (
-              <details key={faq.question} className={styles.faqItem}>
-                <summary>
-                  <span>{faq.question}</span>
-                  <span className={styles.plus} aria-hidden="true">
-                    +
-                  </span>
-                </summary>
-                <p>{faq.answer}</p>
-              </details>
+          <div className={styles.faqTabs} role="tablist" aria-label="FAQ categories">
+            {FAQ_SECTIONS.map((section) => (
+              <button
+                key={section.id}
+                id={'faq-tab-'+section.id}
+                type="button"
+                role="tab"
+                aria-controls="faq-panel"
+                aria-selected={faqCategory === section.id}
+                className={faqCategory === section.id ? styles.faqTabActive : undefined}
+                onClick={() => setFaqCategory(section.id)}
+              >
+                {section.label}
+              </button>
             ))}
+          </div>
+          <div
+            id="faq-panel"
+            className={styles.faqBody}
+            role="tabpanel"
+            aria-labelledby={'faq-tab-'+faqCategory}
+            tabIndex={0}
+          >
+            <h3 className={styles.faqCategoryTitle}>
+              {FAQ_SECTIONS.find((section) => section.id === faqCategory)?.label}
+            </h3>
+            <div className={styles.faqList} key={faqCategory}>
+              {FAQS.filter((faq) => faq.category === faqCategory).map((faq) => (
+                <details key={faq.question} className={styles.faqItem}>
+                  <summary>
+                    <span>{faq.question}</span>
+                    <span className={styles.plus} aria-hidden="true">+</span>
+                  </summary>
+                  <p>{faq.answer}</p>
+                </details>
+              ))}
+            </div>
+            <Link className={styles.faqDocsLink} href="/docs">
+              Explore documentation <ArrowRight aria-hidden="true" />
+            </Link>
           </div>
         </section>
 
-        <section className={styles.finalCta} aria-labelledby="final-title">
+        <section ref={finalCtaRef} className={styles.finalCta} aria-labelledby="final-title">
           <div className={styles.orbitDot} aria-hidden="true" />
           <div className={styles.finalGlow} aria-hidden="true" />
 
@@ -504,7 +716,7 @@ export function PricingPageClient() {
 
             <div className={styles.trustLine}>
               <ShieldCheck aria-hidden="true" />
-              No card on Free
+              No credit card required
             </div>
           </div>
         </section>

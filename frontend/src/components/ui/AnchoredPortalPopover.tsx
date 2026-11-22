@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
 
-export type AnchoredPlacement = 'bottom-start' | 'bottom-end' | 'top-start' | 'top-end';
+export type AnchoredPlacement = 'bottom-start' | 'bottom-end' | 'top-start' | 'top-end' | 'right-start';
 export interface ViewportPoint { left: number; top: number }
 
 export function clampAnchoredPosition(
@@ -14,6 +14,11 @@ export function clampAnchoredPosition(
   gap = 8,
   margin = 12,
 ): ViewportPoint {
+  const maxLeft = Math.max(margin, viewport.width - Math.min(popover.width, viewport.width - 2 * margin) - margin);
+  if (placement === 'right-start') return {
+    left: Math.max(margin, Math.min(anchor.right + gap, maxLeft)),
+    top: Math.max(margin, Math.min(anchor.top, viewport.height - Math.min(popover.height, viewport.height - 2 * margin) - margin)),
+  };
   const start = placement.endsWith('start');
   const below = placement.startsWith('bottom');
   const wantedLeft = start ? anchor.left : anchor.right - popover.width;
@@ -22,7 +27,6 @@ export function clampAnchoredPosition(
   const shouldBelow = below ? availableBelow >= Math.min(popover.height, 200) || availableBelow >= availableAbove
     : availableAbove < Math.min(popover.height, 200) && availableBelow > availableAbove;
   const wantedTop = shouldBelow ? anchor.bottom + gap : anchor.top - popover.height - gap;
-  const maxLeft = Math.max(margin, viewport.width - Math.min(popover.width, viewport.width - 2 * margin) - margin);
   return {
     left: Math.max(margin, Math.min(wantedLeft, maxLeft)),
     top: Math.max(margin, Math.min(wantedTop, viewport.height - Math.min(popover.height, viewport.height - 2 * margin) - margin)),

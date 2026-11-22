@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { createClient } from '@supabase/supabase-js';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
+import AxeBuilder from '@axe-core/playwright';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -246,11 +247,19 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const reply = 'The workshop earns $25 per attendee. At 40 attendees, revenue is $1,000.';
   const detail = 'The estimate excludes venue costs and payment processing fees.';
   const fullReply = reply + '\n\n' + detail;
-  const followUp = 'What was the ticket price again?';
-  const followUpReply = 'The ticket price was $25.';
+  const followUp = 'What was the ticket price again? Draft an email and RSVP form with the venue left blank.';
+  const followUpIntro = 'The ticket price was $25. Replace each placeholder before sending.';
+  const followUpReply = [
+    followUpIntro,
+    '## Email draft\n\n**Subject:** [Workshop title]',
+    '| Item | Detail |\n| --- | --- |\n| Venue | [Venue name] |',
+    '## RSVP form\n\n- Accessibility needs: __________',
+  ].join('\n\n');
   const cancellation = 'Stop this pending fixture reply.';
   const malformed = 'Show the invalid-program fallback.';
-  const fallback = 'This readable answer remains available.';
+  // Genuine captured DeepSeek prose from the private acceptance run. Replay it
+  // without inference to cover the complete paragraph and its visible footer.
+  const fallback = 'Pre-print or stamp a small label on each packet with common name, variety, year harvested, and a short batch code (e.g., "TOM-CHK-24-03"), then keep a three-ring binder as the ledger with one row per transaction: date, borrower name and phone or email, batch code, number of packets taken, and a checkbox for any seed returned later. Have borrowers write their own rows (or staff write them and borrowers initial) so the handwriting matches the person, and note the growing-season return expectation at the top of each page. Number the pages, keep a second binder copy as backup, and do a monthly spot-count of a few batches against the ledger to catch drift.';
   const recovery = 'Show a partially recovered estimate.';
   const recoveryNote = 'Some visuals could not be validated. The available explanation and verified visuals are shown below.';
   const recoveryProse = 'The estimate covers the print charge.';
@@ -261,28 +270,51 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const reviewedReply = 'Partial answer. The written summary disagreed with the plotted data, so it was withheld.';
   const reviewedProgram = 'root = Col([Markdown(' + JSON.stringify(reviewedReply) + '), Chart("bar", [{Month:"January", Value:12000}, {Month:"February", Value:15500}], "Month", ["Value"], "currency", "USD")])';
   const architecture = 'Show the request architecture, component roles and example code.';
+  const docxPrompt = 'Create a DOCX proposal with editable sections.';
+  const pdfPrompt = 'Create a PDF executive report from this attached dataset.';
+  const xlsxPrompt = 'Create an XLSX workshop budget with formulas.';
+  const pptxPrompt = 'Create a PPTX slide deck about workshop logistics.';
+  const docxResponse = '# Workshop Proposal\n\n## Scope\n\nDiscuss the workshop training plan.';
+  const pdfResponse = '# Workshop Executive Report\n\nRevenue from 40 attendees at $25 was $1,000.';
+  const xlsxResponse = '# Workshop Budget\n\n| Item | Cost |\n| --- | --- |\n| Hosting | 25 |\n| Total | |\n\n## Formulas\n- B3: =SUM(B2:B2)';
+  const pptxResponse = '# Workshop Logistics\n\n## Location\nLeave the location open.\n\n## Duration\nAllow 90 minutes.';
+  const officeFixtures = new Map([
+    [docxPrompt, { downloadFormat: 'docx', response: docxResponse }],
+    [pdfPrompt, { downloadFormat: 'pdf', response: pdfResponse }],
+    [xlsxPrompt, { downloadFormat: 'xlsx', response: xlsxResponse }],
+    [pptxPrompt, { downloadFormat: 'pptx', response: pptxResponse }],
+  ]);
+  const documentDataset = 'ticket,attendees\n25,40';
+  const architectureCaption = 'The app queries rows with the user access token.';
   const architectureReply = [
     '## Request architecture', 'The application checks tenant membership before reading rows.',
-    '| Component | Role |\n| --- | --- |\n| Next.js | Application |\n| PostgreSQL | Data isolation |',
+    architectureCaption,
+    '| | Role |\n| --- | --- |\n| Next.js | Application |\n| PostgreSQL | Data isolation |',
     '```typescript\nconst boundary = "tenant_id";\n```',
   ].join('\n\n');
   const architectureProgram = [
     'root = Col([Section("Request architecture", [diagram]), roles, sample])',
     'diagram = Diagram("Request path", [{id: "app", label: "Next.js", level: 0}, {id: "database", label: "PostgreSQL", level: 1}], [{from: "app", to: "database", label: "User access token"}], "The app queries rows with the user access token.")',
     'roles = Section("Component roles", [table], "What each component does")',
-    'table = Table(["Component", "Role"], [["Next.js", "Application"], ["PostgreSQL", "Data isolation"]])',
+    'table = Table(["", "Role"], [["Next.js", "Application"], ["PostgreSQL", "Data isolation"]])',
     'sample = Code("const boundary = \\"tenant_id\\";", "typescript")',
   ].join('\n');
-  const research = 'Research the official evidence and cite it.';
+  const research = 'Research the official evidence using my private workshop details and cite it.';
   const confirmationId = '221fe7f9-f0dd-4b12-b03a-bcb57a13f655';
   const researchReply = 'The retrieved source describes the official policy [1].';
   const researchSource = { title: 'Official policy fixture', siteName: 'Example publisher', url: 'https://example.com/policy', snippet: 'Documented policy.', source: 'web' };
-  const confirmation = { id: confirmationId, status: 'pending', summary: 'Retrieve one set of public results.', toolkit: 'xroga-native-research', risk: 'read',
-    approval: { accountReference: 'controlled fixture', operation: 'Search', actionDigest: 'a'.repeat(64), destination: 'official search', criticalParameters: {}, spendMaximumMicroUsd: '750', currency: 'USD' } };
+  const publicLookup = 'price of btc currently';
+  const publicLookupProse = 'The test quote includes a timestamp and a price in USD.';
+  const publicLookupSource = { title: 'Timestamped market quote fixture', siteName: 'Example Market', url: 'https://example.com/market-quote', snippet: 'Synthetic market data for this test.', source: 'web' };
+  const publicLookupReply = publicLookupProse + ' [1]';
+  const publicLookupProgram = 'root = Col([Text([' + JSON.stringify(publicLookupProse + ' ') + ', Source("source-1")])])';
+  const confirmation = { id: confirmationId, status: 'pending', summary: 'Review the information to send with this research request.',
+    toolkit: 'xroga-native-research', risk: 'write', createdAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 900_000).toISOString(),
+    researchReview: [{ label: 'Research objective', value: 'Compare the workshop notes with official evidence.' }] };
   const source = { title: 'Workshop source fixture', url: 'https://example.com/workshop', snippet: 'USD 25 per attendee.', source: 'fixture' };
   const program = [
     '$attendees = 40',
-    `root = Col([Text(${JSON.stringify(reply)}), Metric("Gross revenue", @Format($attendees * 25, "currency", 0, "USD")), Controls([Slider($attendees, 10, 80, 1, "Attendees"), Button("Reset", @Set($attendees, 40))], "Attendance"), Source("source-1")])`,
+    `root = Col([Text(${JSON.stringify(reply)}), Metric("Gross revenue", @Format($attendees * 25, "currency", 0, "USD")), Controls([Slider($attendees, 10, 80, 1, "Attendees"), Button("Reset", @Set($attendees, 40))], "Attendance"), Caption("Ticket price basis [1]."), Button("Draft only")])`,
   ].join('\n');
   const goalContract = {
     version: '1.0', goal: 'Answer a question', desiredOutcome: 'An answer based on the supplied material',
@@ -294,6 +326,8 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   let chatCalls = 0;
   let releaseCancelled: () => void = () => {};
   const held = new Promise<void>(resolve => { releaseCancelled = resolve; });
+  let releasePublicLookup: () => void = () => {};
+  const heldPublicLookup = new Promise<void>(resolve => { releasePublicLookup = resolve; });
   const cors = {
     'access-control-allow-origin': workspaceOrigin,
     'access-control-allow-methods': 'POST, OPTIONS',
@@ -303,11 +337,15 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     const request = route.request();
     if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors });
     expect(request.method()).toBe('POST');
+    const body = request.postDataJSON();
     if (new URL(request.url()).pathname.endsWith('/plan')) {
-      return route.fulfill({ headers: cors, json: { goalContract, dispatch: 'chat', capabilityIds: ['conversation.respond'], rationale: 'no-cost fixture', blockers: [] } });
+      const contract = body.message === publicLookup
+        ? { ...goalContract, semanticIntent: 'INVESTIGATE', freshnessRequirement: 'CURRENT_REQUIRED',
+          requiredCapabilities: ['research.public-web', 'conversation.respond'], requiredAuthorities: ['network:public-read'] }
+        : goalContract;
+      return route.fulfill({ headers: cors, json: { goalContract: contract, dispatch: 'chat', capabilityIds: contract.requiredCapabilities, rationale: 'no-cost fixture', blockers: [] } });
     }
     chatCalls += 1;
-    const body = request.postDataJSON();
     if (body.message === prompt) {
       expect(body.attachments).toEqual([{
         url: `data:text/plain;base64,${Buffer.from('Ticket: $25. Attendees: 40.').toString('base64')}`,
@@ -336,8 +374,24 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     if (body.message === architecture) {
       return route.fulfill({ headers: cors, json: { response: architectureReply, completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: architectureProgram } } });
     }
+    const officeFixture = officeFixtures.get(body.message);
+    if (officeFixture) {
+      if (body.message === pdfPrompt) expect(body.attachments).toEqual([{
+        url: `data:text/csv;base64,${Buffer.from(documentDataset).toString('base64')}`,
+        name: 'workspace-report.csv', mimeType: 'text/csv',
+      }]);
+      const { downloadFormat, response } = officeFixture;
+      return route.fulfill({ headers: cors, json: { response, completion: { status: 'complete' },
+        responseSource: { format: 'xroga-openui-v1', text: '', downloadFormat } } });
+    }
     if (body.message === research) {
-      return route.fulfill({ headers: cors, json: { response: 'Research requires approval. [Review](/dashboard/actions/confirm/' + confirmationId + ')' } });
+      return route.fulfill({ headers: cors, json: { response: 'Review the exact research request before it is sent: [Review action](/dashboard/actions/confirm/' + confirmationId + '). No live evidence has been retrieved.' } });
+    }
+    if (body.message === publicLookup) {
+      await heldPublicLookup;
+      return route.fulfill({ headers: cors, json: { response: publicLookupReply, completion: { status: 'complete' },
+        responseSource: { format: 'xroga-openui-v1', text: publicLookupProgram },
+        webSources: [publicLookupSource], publicWebRetrieved: true, intent: 'research' } });
     }
     expect(body.message).toBe(malformed);
     return route.fulfill({ headers: cors, json: { response: fallback, completion: { status: 'partial', reason: 'presentation_contract' }, responseSource: { format: 'xroga-openui-v1', text: '' } } });
@@ -354,6 +408,8 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const answer = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: reply });
   await expect(answer).toBeVisible({ timeout: 30_000 });
   await expect(answer.getByRole('link', { name: /Workshop source fixture/ })).toHaveAttribute('href', source.url);
+  await expect(answer.getByText('Draft only', { exact: true })).toBeVisible();
+  await expect(answer.getByRole('button', { name: 'Draft only', exact: true })).toHaveCount(0);
   await expect(answer.getByText(detail, { exact: true })).toBeVisible();
   await expect(answer.getByText(reply, { exact: true })).toHaveCount(1);
   await expect(answer.getByRole('button', { name: 'Read full text', exact: true })).toHaveCount(0);
@@ -385,14 +441,26 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   expect(savedTitle).toContain(prompt);
 
   await mkdir('test-results/native-workspace', { recursive: true });
-  for (const [width, theme] of [[1440, 'black'], [390, 'gray']] as const) {
-    await page.setViewportSize({ width, height: 900 });
-    await page.locator('html').evaluate((root, value) => root.setAttribute('data-theme', value), theme);
-    await expect(answer).toBeVisible();
-    expect(await answer.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
-    expect(await answer.evaluate(el => getComputedStyle(el).colorScheme)).toBe('dark');
-    await answer.screenshot({ path: `test-results/native-workspace/composer-${width}-${theme}.png` });
-    await page.screenshot({ path: `test-results/native-workspace/workspace-${width}-${theme}.png` });
+  for (const theme of ['black', 'white'] as const) {
+    // Use the actual control so React shell state, persistence and DOM tokens
+    // change together. Direct DOM attributes do not exercise the product.
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.getByRole('button', { name: 'Change theme', exact: true }).first().click();
+    await page.getByRole('menuitemradio', { name: new RegExp('^' + theme, 'i') }).click();
+    await expect(page.locator('body')).toHaveClass(new RegExp('theme-' + theme));
+    await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+    for (const width of [320, 390, 768, 1280, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      await expect(answer).toBeVisible();
+      expect(await answer.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
+      expect(await answer.evaluate(el => getComputedStyle(el).colorScheme)).toBe(theme === 'black' ? 'dark' : 'light');
+      const contrast = await new AxeBuilder({ page }).include('[data-turn-id]').withRules(['color-contrast']).analyze();
+      expect(contrast.violations.map(({ id, nodes }) => ({ id, targets: nodes.map(node => node.target) }))).toEqual([]);
+      await answer.screenshot({ path: `test-results/native-workspace/composer-${width}-${theme}.png` });
+      if (width === 390 || width === 1440) {
+        await page.screenshot({ path: `test-results/native-workspace/workspace-${width}-${theme}.png` });
+      }
+    }
   }
   await page.setViewportSize({ width: 1440, height: 900 });
 
@@ -465,10 +533,30 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await expect(answer.getByText('$1,000', { exact: true })).toBeVisible();
   await expect(answer.getByText(detail, { exact: true })).toBeVisible();
   await send(followUp);
-  await expect(page.getByRole('region', { name: 'Answer', exact: true }).getByText(followUpReply, { exact: true })).toBeVisible();
+  const followUpAnswer = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: followUpIntro });
+  const expectFormattedDraft = async () => {
+    await expect(followUpAnswer.getByRole('heading', { name: 'Email draft', exact: true })).toBeVisible();
+    await expect(followUpAnswer.locator('strong').getByText('Subject:', { exact: true })).toBeVisible();
+    await expect(followUpAnswer.getByRole('cell', { name: '[Venue name]', exact: true })).toBeVisible();
+    await expect(followUpAnswer.getByRole('heading', { name: 'RSVP form', exact: true })).toBeVisible();
+    await expect(followUpAnswer.getByText(/Accessibility needs:/)).toBeVisible();
+  };
+  await expectFormattedDraft();
+  await page.locator('[data-turn-id]').filter({ has: followUpAnswer }).getByRole('button', { name: 'Copy', exact: true }).click();
+  const followUpClipboard = [
+    followUpIntro,
+    'Email draft',
+    'Subject: [Workshop title]',
+    'Item\tDetail\nVenue\t[Venue name]',
+    'RSVP form',
+    '- Accessibility needs: __________',
+  ].join('\n\n');
+  await expect.poll(() => page.evaluate(async () => (await navigator.clipboard.readText()).replace(/\r\n/g, '\n'))).toBe(followUpClipboard);
   try {
     await send(cancellation);
     await expect.poll(() => chatCalls).toBe(3);
+    const waitingForReply = page.getByTestId('terminal-live-activity').getByRole('button', { name: /Black Hole is working.*Waiting for a reply/ });
+    await expect(waitingForReply).toBeVisible();
     const aborted = page.waitForEvent('requestfailed', {
       predicate: request => new URL(request.url()).pathname === '/api/phase1/chat' && request.postDataJSON()?.message === cancellation,
       timeout: 10_000,
@@ -476,12 +564,32 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     await page.getByRole('button', { name: 'Stop response', exact: true }).click();
     expect((await aborted).failure()?.errorText).toContain('ERR_ABORTED');
     await expect(page.getByRole('button', { name: 'Stop response', exact: true })).toHaveCount(0);
+    await expect(waitingForReply).toHaveCount(0);
   } finally {
     releaseCancelled();
   }
   await send(malformed);
   const fallbackTurn = page.locator('[data-turn-id]').filter({ hasText: fallback }).last();
   await expect(fallbackTurn.getByText(fallback, { exact: true })).toBeVisible();
+  await expect(fallbackTurn.locator('.xv-formatted-response > p')).toHaveCount(1);
+  await expect(fallbackTurn.locator('.xv-answer-lead')).toHaveCount(0);
+  for (const theme of ['black', 'white'] as const) {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.getByRole('button', { name: 'Change theme', exact: true }).first().click();
+    await page.getByRole('menuitemradio', { name: new RegExp('^' + theme, 'i') }).click();
+    await expect(page.locator('body')).toHaveClass(new RegExp('theme-' + theme));
+    for (const width of [320, 390, 768, 1280, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      await fallbackTurn.getByRole('link', { name: 'Report a bug', exact: true }).focus();
+      const timestamp = fallbackTurn.locator('.xv-response-meta time');
+      await timestamp.scrollIntoViewIfNeeded();
+      await expect(timestamp).toHaveCSS('opacity', '1');
+      const contrast = await new AxeBuilder({ page }).include('[data-turn-id]').withRules(['color-contrast']).analyze();
+      expect(contrast.violations.map(({ id, nodes }) => ({ id, targets: nodes.map(node => node.target) }))).toEqual([]);
+      await page.screenshot({ path: `test-results/native-workspace/plain-footer-${width}-${theme}.png` });
+    }
+  }
+  await page.setViewportSize({ width: 1440, height: 900 });
   await fallbackTurn.getByRole('button', { name: 'Copy', exact: true }).click();
   await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe(fallback);
   await fallbackTurn.getByRole('button', { name: 'Share', exact: true }).click();
@@ -507,6 +615,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await page.reload();
   await openPersistedConversation(page, { id: sessionId, title: savedTitle!, reply: fallback });
   await expect(fallbackTurn.getByText(fallback, { exact: true })).toBeVisible();
+  await expectFormattedDraft();
   await expect(page.getByText('Cancelled fixture must never appear.', { exact: true })).toHaveCount(0);
   await expect(page.getByText('should never render', { exact: true })).toHaveCount(0);
   await send(recovery);
@@ -551,13 +660,75 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
           responseSource: { format: 'xroga-openui-v1', text: 'root = Col([Text(["The retrieved source describes the official policy. ", Source("source-1")])])' } } } } });
   });
   await send(research);
-  await page.getByRole('button', { name: 'Confirm action', exact: true }).click();
+  const review = page.getByRole('button', { name: 'Review information to share', exact: true });
+  await expect(review).toBeVisible();
+  await expect(page.getByRole('button', { name: /Confirm action|Approve (research request|information sharing)/ })).toHaveCount(0);
+  await review.click();
+  await expect(page.getByRole('region', { name: 'Information to send' })).toContainText('Compare the workshop notes with official evidence.');
+  await expect(page.getByText(/Prepared action digest|micro-USD|Approved spend ceiling|Critical parameters|Prepared app operation/)).toHaveCount(0);
+  await page.getByRole('button', { name: 'Approve information sharing', exact: true }).click();
+  await expect(page).toHaveURL(/\/workspace$/);
   const researched = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: 'The retrieved source describes the official policy.' });
   await expect(researched.getByRole('link', { name: /Official policy fixture/ })).toHaveAttribute('href', researchSource.url);
   expect(confirmations).toBe(1);
   expect(receiptReads).toBeGreaterThanOrEqual(1);
   expect(receiptReads).toBeLessThanOrEqual(2);
   expect(chatCalls).toBe(7);
+  await expect.poll(async () => JSON.stringify((await readSaved())?.messages ?? []), { timeout: 15_000 }).toContain(researchReply);
+  await page.reload();
+  await openPersistedConversation(page, { id: sessionId, title: savedTitle!, reply });
+  await expect(researched.getByRole('link', { name: /Official policy fixture/ })).toHaveAttribute('href', researchSource.url);
+  expect(confirmations).toBe(1);
+  await send(publicLookup);
+  const pendingLookup = page.getByTestId('terminal-live-activity').getByRole('button', { name: /Black Hole is working.*Waiting for a source-backed reply/ });
+  try {
+    await expect(pendingLookup).toBeVisible();
+    const pendingTurn = page.locator('[data-turn-id]', { has: pendingLookup });
+    await expect(pendingTurn.getByText(/Web evidence/)).toHaveCount(0);
+  } finally {
+    releasePublicLookup();
+  }
+  const publicAnswer = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: publicLookupProse });
+  const publicTurn = page.locator('[data-turn-id]', { has: publicAnswer });
+  const checkPublicAnswer = async () => {
+    await expect(publicAnswer.getByRole('link', { name: /Timestamped market quote fixture/ })).toHaveAttribute('href', publicLookupSource.url);
+    await expect(publicAnswer).toHaveClass(/xroga-native-openui/);
+    await expect(publicAnswer.locator('[data-source-citation]')).toHaveCount(1);
+    await expect(publicTurn.getByText('Web evidence · 1 source retrieved', { exact: true })).toBeVisible();
+    await expect(publicTurn.getByRole('button', { name: /^(Confirm action|Approve research request)$/ })).toHaveCount(0);
+    await expect(publicTurn.getByText(/approval payload|prepared digest|micro-USD|no live evidence/i)).toHaveCount(0);
+  };
+  await checkPublicAnswer();
+  await expect(pendingLookup).toHaveCount(0);
+  await publicTurn.getByRole('button', { name: 'Copy', exact: true }).click();
+  await expect.poll(() => page.evaluate(async () => (await navigator.clipboard.readText()).replace(/\r\n/g, '\n')))
+    .toBe(`${publicLookupReply}\n\nSources\n[1] ${publicLookupSource.title} (${publicLookupSource.url})`);
+  await publicTurn.getByRole('button', { name: 'Share', exact: true }).click();
+  const publicShareCreated = page.waitForResponse(response => new URL(response.url()).pathname === '/api/message-shares'
+    && response.request().method() === 'POST');
+  await dialog.getByRole('button', { name: 'Create owner-only link' }).click();
+  const publicShare = await publicShareCreated;
+  expect(publicShare.status()).toBe(201);
+  const { share: publicSnapshot } = await publicShare.json();
+  expect(publicSnapshot.richResponse).toMatch(/^XROGA_OPENUI_SHARE_V1\n/);
+  expect(JSON.parse(publicSnapshot.richResponse.slice('XROGA_OPENUI_SHARE_V1\n'.length))).toMatchObject({
+    program: publicLookupProgram, sources: [expect.objectContaining({ url: publicLookupSource.url })],
+  });
+  expect(publicSnapshot.richResponse).not.toMatch(/\/dashboard\/actions\/confirm|micro-USD|approval payload/i);
+  const publicShareRevoked = page.waitForResponse(response => response.request().method() === 'DELETE'
+    && new URL(response.url()).pathname === '/api/message-shares/' + publicSnapshot.token);
+  await dialog.getByRole('button', { name: 'Revoke', exact: true }).click();
+  expect((await publicShareRevoked).ok()).toBe(true);
+  await dialog.getByRole('button', { name: 'Close share dialog', exact: true }).click();
+  await expect.poll(async () => ((await readSaved())?.messages as Array<{ content?: string; publicWebRetrieved?: true; researchReceiptId?: string }> | undefined)
+    ?.some(message => message.content?.includes(publicLookupProse) && message.publicWebRetrieved === true && !message.researchReceiptId),
+  { timeout: 20_000 }).toBe(true);
+  await page.reload();
+  await openPersistedConversation(page, { id: sessionId, title: savedTitle!, reply: fallback });
+  await checkPublicAnswer();
+  await publicTurn.screenshot({ path: 'test-results/native-workspace/public-search-without-approval.png' });
+  expect(confirmations).toBe(1);
+  expect(chatCalls).toBe(8);
   await page.getByRole('button', { name: 'New Work', exact: true }).click();
   await expect(composer).not.toHaveAttribute('data-draft-session', sessionId);
   await expect(composer).toHaveAttribute('data-draft-restoring', 'false');
@@ -568,8 +739,14 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await send(architecture);
   expect((await architectureHttp).ok()).toBe(true);
   const renderedArchitecture = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: 'Component roles' }).last();
-  await expect(renderedArchitecture.getByRole('region', { name: 'Answer table', exact: true })).toBeVisible({ timeout: 20_000 });
+  const architectureTable = renderedArchitecture.getByRole('region', { name: 'Answer table', exact: true });
+  await expect(architectureTable).toBeVisible({ timeout: 20_000 });
+  await expect(architectureTable.locator('thead td').first()).toBeEmpty();
+  await expect(architectureTable.getByRole('button')).toHaveCount(1);
+  await architectureTable.getByRole('button', { name: 'Role', exact: true }).press('Enter');
+  await expect(architectureTable.getByRole('columnheader', { name: 'Role' })).toHaveAttribute('aria-sort', 'ascending');
   await expect(renderedArchitecture.locator('.react-flow__edge')).toHaveCount(1);
+  await expect(renderedArchitecture.getByText(architectureCaption, { exact: true })).toHaveCount(1);
   await expect(renderedArchitecture.locator('pre code')).toHaveText('const boundary = "tenant_id";');
   await expect(renderedArchitecture).not.toContainText(/root\s*=\s*Col/);
   await expect.poll(async () => ((await readSaved(architectureSession))?.messages as Array<{ featureOutput?: { responseSource?: { text?: string } } }> | undefined)
@@ -592,6 +769,10 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     await expect(sharedArchitecture.getByRole('region', { name: 'Answer table', exact: true })).toBeVisible();
     const sharedDiagram = sharedArchitecture.getByRole('figure', { name: 'Request path', exact: true });
     await expect(sharedDiagram.getByText('Next.js → PostgreSQL · User access token')).toBeVisible();
+    await expect(sharedArchitecture.getByText(architectureCaption, { exact: true })).toHaveCount(1);
+    for (const name of ['Next.js', 'PostgreSQL']) {
+      await expect(sharedDiagram.locator('.native-diagram-node-title').getByText(name, { exact: true })).toBeVisible();
+    }
     await expect(sharedDiagram.locator('.react-flow__edge-path')).toHaveCount(1);
     expect(await sharedDiagram.locator('.react-flow__edge-path').evaluate((path: SVGPathElement) => path.getTotalLength())).toBeGreaterThan(0);
     await expect(sharedArchitecture.locator('pre code')).toHaveText('const boundary = "tenant_id";');
@@ -602,6 +783,18 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     await architectureSharePage.reload();
     await expect(architectureSharePage.getByRole('heading', { name: 'Page not found', exact: true })).toBeVisible();
     await expect(sharedArchitecture).toHaveCount(0);
+  } catch (error) {
+    // Capture the synthetic diagram before this secondary page is closed. The
+    // default failure screenshot otherwise records the unrelated primary page.
+    await mkdir('test-results/native-workspace', { recursive: true });
+    await architectureSharePage.screenshot({ path: 'test-results/native-workspace/share-diagram-failure.png', fullPage: true });
+    const geometry = await architectureSharePage.locator('.native-diagram-canvas, .react-flow__viewport, .react-flow__node').evaluateAll(elements => elements.map(element => {
+      const bounds = element.getBoundingClientRect(), style = getComputedStyle(element);
+      return { className: element.className, width: bounds.width, height: bounds.height,
+        display: style.display, visibility: style.visibility, transform: style.transform };
+    }));
+    await writeFile('test-results/native-workspace/share-diagram-failure.json', JSON.stringify({ geometry }, null, 2));
+    throw error;
   } finally {
     await architectureSharePage.close();
     await dialog.getByRole('button', { name: 'Close share dialog' }).click();
@@ -631,11 +824,47 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     expect(collapsed.y + collapsed.height).toBeLessThanOrEqual((await transcript.boundingBox())!.y + 1);
     await browserOperator.click();
   }
-  expect(chatCalls).toBe(8);
+  expect(chatCalls).toBe(9);
+  await page.goto('/workspace?conversation=' + architectureSession);
+  await expect(composer).toHaveAttribute('data-draft-restoring', 'false', { timeout: 20_000 });
+  await send(docxPrompt);
+  await expect(page.getByRole('button', { name: 'Download DOCX', exact: true })).toBeVisible({ timeout: 30_000 });
+  await page.locator('input[type=file][accept*="text/plain"]').setInputFiles({
+    name: 'workspace-report.csv', mimeType: 'text/csv', buffer: Buffer.from(documentDataset),
+  });
+  await send(pdfPrompt);
+  await expect(page.getByRole('button', { name: 'Download PDF', exact: true })).toBeVisible({ timeout: 30_000 });
+  await send(xlsxPrompt);
+  await expect(page.getByRole('button', { name: 'Download XLSX', exact: true })).toBeVisible({ timeout: 30_000 });
+  await send(pptxPrompt);
+  await expect(page.getByRole('button', { name: 'Download PPTX', exact: true })).toBeVisible({ timeout: 30_000 });
+  await expect.poll(async () => {
+    const saved = await readSaved(architectureSession);
+    const messages = saved?.messages as Array<{ featureOutput?: { documentDownload?: string; sourceText?: string } }> | undefined;
+    return messages?.filter(message => message.featureOutput?.documentDownload)
+      .map(message => [message.featureOutput?.documentDownload, message.featureOutput?.sourceText]);
+  }, { timeout: 20_000 }).toEqual([...officeFixtures.values()].map(({downloadFormat, response}) => [downloadFormat, response]));
+  await page.reload();
+  await expect(composer).toHaveAttribute('data-draft-session', architectureSession, { timeout: 20_000 });
+  for (const [format, filename, header] of [
+    ['DOCX', 'Workshop-Proposal.docx', '504b0304'],
+    ['PDF', 'Workshop-Executive-Report.pdf', '25504446'],
+    ['XLSX', 'Workshop-Budget.xlsx', '504b0304'],
+    ['PPTX', 'Workshop-Logistics.pptx', '504b0304'],
+  ]) {
+    const button = page.getByRole('button', { name: 'Download ' + format, exact: true });
+    await expect(button).toBeVisible({ timeout: 20_000 });
+    const pending = page.waitForEvent('download');
+    await button.press('Enter');
+    const download = await pending;
+    expect(download.suggestedFilename()).toBe(filename);
+    expect((await readFile((await download.path())!)).subarray(0, 4).toString('hex')).toBe(header);
+  }
+  expect(chatCalls).toBe(13);
   await writeFile('test-results/native-workspace/evidence.json', JSON.stringify({
     source: expectedRelease, route: '/workspace', auth: 'isolated Supabase ordinary accounts',
-    model: 'deterministic transport fixtures, zero provider calls', nativeActions: ['file handoff', 'citation link', 'keyboard calculator', 'copy readback', 'database save and reopen', 'private share owner/guest/other account', 'continuation', 'browser cancellation', 'client validation fallback', 'partial native recovery, copy and reopen', 'reviewed partial chart', 'inline research receipt without refocus or redispatch', 'connected diagram, nested table and code in one persisted answer'],
-    viewports: [1440, 390], themes: ['black', 'gray'], browserOperator: 'one in-flow panel, expanded and collapsed above the saved architecture answer',
+    model: 'deterministic transport fixtures, zero provider calls', nativeActions: ['file handoff', 'citation link', 'keyboard calculator', 'copy readback', 'database save and reopen', 'private share owner/guest/other account', 'continuation', 'browser cancellation', 'client validation fallback', 'partial native recovery, copy and reopen', 'reviewed partial chart', 'legacy research receipt without refocus or redispatch', 'automatic public lookup, citation and source count after Copy, Share and Reopen', 'connected diagram, nested table and code in one persisted answer'],
+    viewports: [320, 390, 768, 1280, 1440], themes: ['black', 'white'], browserOperator: 'one in-flow panel, expanded and collapsed above the saved architecture answer',
   }, null, 2));
 });
 

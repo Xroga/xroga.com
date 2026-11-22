@@ -1,102 +1,42 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { buildMetadata } from '@/lib/seo';
-import { INTEGRATION_CATEGORIES, INTEGRATIONS } from '@/lib/integrations';
 import { PageJsonLd } from '@/components/seo/PageJsonLd';
+import {
+  PUBLIC_INTEGRATION_CARDS,
+  PUBLIC_INTEGRATION_CATEGORIES,
+} from '@/lib/publicIntegrationsDirectory';
+import { IntegrationsMarketplace } from './IntegrationsMarketplace';
+import './integrations.css';
 
 export const metadata: Metadata = buildMetadata({
-  title: 'Integrations — GitHub, Vercel & Secure API Keys',
-  description:
-    'Connect GitHub and Vercel to Xroga AI coding agent. Push working code, deploy live, and sync your product API keys securely into Vercel env — for developers and non-developers.',
+  title: 'Xroga Integrations — Apps, AI Agents & MCP',
+  description: 'Discover available apps in Xroga Connect, explore real provider logos and integration details, and learn how Xroga can work with AI agents, your workspace and compatible MCP servers.',
   path: '/integrations',
   keywords: [
     'Xroga integrations',
-    'GitHub Vercel AI integration',
-    'sync API keys Vercel',
-    'AI coding agent integrations',
-    'connect API keys AI',
+    'Xroga Connect',
+    'Xroga AI apps',
+    'AI agent integrations',
+    'custom MCP server',
+    'GitHub Vercel Xroga connections',
   ],
 });
 
-export default function IntegrationsSeoPage() {
-  const topIntegrations = INTEGRATIONS.filter((i) =>
-    ['github', 'vercel', 'netlify', 'stripe', 'slack', 'openai', 'google', 'supabase', 'aws', 'notion'].some(
-      (k) => i.id.includes(k) || i.name.toLowerCase().includes(k)
-    )
-  ).slice(0, 24);
-
+export default function IntegrationsPage() {
   return (
-    <>
+    <main className="xi-main">
       <PageJsonLd
         path="/integrations"
-        name="XROGA AI integrations"
-        description="Connect GitHub, Vercel, and supported provider credentials to authorized XROGA AI workflows."
+        name="Xroga Connect — Apps, AI Agents and MCP"
+        description="Explore app integrations and technology examples, review provider details in your workspace, and learn GitHub-based handoffs with external AI agents."
         type="CollectionPage"
       />
-      <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
-        <header className="border-b border-[var(--card-border)] px-4 sm:px-8 py-6">
-          <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-4">
-            <Link href="/" className="text-sm font-bold text-[var(--accent)] hover:underline">
-              ← Xroga AI
-            </Link>
-            <Link
-              href="/auth/signup"
-              className="px-3 py-1 rounded-full bg-[var(--accent)] text-[var(--background)] font-semibold text-sm"
-            >
-              Sign Up Free
-            </Link>
-          </div>
-        </header>
-
-        <main className="max-w-5xl mx-auto px-4 sm:px-8 py-10">
-          <h1 className="text-3xl sm:text-4xl font-extrabold mb-3">
-            {INTEGRATIONS.length}+ technologies in Xroga&apos;s build catalog
-          </h1>
-          <p className="text-[var(--muted)] mb-8 leading-relaxed max-w-3xl">
-            Ask Xroga to build or update software using technologies across {INTEGRATION_CATEGORIES.length}{' '}
-            categories. Live account actions are available only for the connectors shown as authorized in your
-            workspace; every other entry is a code-integration option, not a pre-connected service.
-          </p>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-10">
-            {topIntegrations.map((i) => (
-              <div
-                key={i.id}
-                className="p-3 rounded-xl border border-[var(--card-border)] bg-[var(--card)]/40 text-sm"
-              >
-                <p className="font-semibold">{i.name}</p>
-                <p className="text-xs text-[var(--muted)]">{i.category}</p>
-              </div>
-            ))}
-          </div>
-
-          <p className="text-sm text-[var(--muted)] mb-6">
-            Browse and select the full technology catalog after sign-in. Featured categories:{' '}
-            {INTEGRATION_CATEGORIES.slice(0, 12).join(', ')}, and more.
-          </p>
-
-          <div className="flex flex-wrap gap-3">
-            <Link
-              href="/features/integrations"
-              className="px-5 py-2.5 rounded-xl border border-[var(--card-border)] font-semibold text-sm hover:border-[var(--accent)]"
-            >
-              Integrations Feature Page
-            </Link>
-            <Link
-              href="/features/github-auto-deploy"
-              className="px-5 py-2.5 rounded-xl border border-[var(--card-border)] font-semibold text-sm hover:border-[var(--accent)]"
-            >
-              GitHub Deploy
-            </Link>
-            <Link
-              href="/auth/signup"
-              className="px-5 py-2.5 rounded-xl bg-[var(--accent)] text-[var(--background)] font-bold text-sm"
-            >
-              Connect Integrations
-            </Link>
-          </div>
-        </main>
-      </div>
-    </>
+      {/* The existing PublicMarketingChrome renders the site header and footer.
+          Never insert another navigation bar on this marketing page. */}
+      <IntegrationsMarketplace
+        items={PUBLIC_INTEGRATION_CARDS}
+        categories={PUBLIC_INTEGRATION_CATEGORIES}
+      />
+    </main>
   );
 }

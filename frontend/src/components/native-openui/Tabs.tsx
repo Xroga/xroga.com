@@ -8,7 +8,7 @@ import { children } from './upstream/components/style';
 
 export const Tabs = defineComponent({
   name: 'Tabs',
-  description: 'Keyboard-accessible optional views or scenarios. Put all essential conclusions in visible content outside the tabs.',
+  description: 'Named alternatives displayed as inline sections in reading order.',
   props: z.object({ label: z.string().min(1).max(80), tabs: z.array(z.object({ title: z.string().min(1).max(64), content: children })).min(2).max(6) }),
   component: function NativeTabs({ props, renderNode }) {
     const tabs = props.tabs ?? [];

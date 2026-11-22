@@ -16,6 +16,9 @@ export const DEEPSEEK_SEARCH_MICRO_USD = 750;
 /** DeepSeek accepts 1-128 characters for `query` and `ori_question`. */
 export const DEEPSEEK_QUERY_MAX = 128;
 export const DEEPSEEK_SEARCH_RESULTS = 10;
+/** Official-link coverage needs more discovery results. DeepSeek bills per
+ * successful request, independently of the requested result count. */
+export const DEEPSEEK_LINK_DISCOVERY_RESULTS = 25;
 
 export function officialResearchDomains(domains: readonly string[]): string[] {
   return [...new Set(domains.map(domain => domain.trim().toLowerCase().replace(/^www\./, '').replace(/\.$/, ''))
@@ -53,10 +56,10 @@ export function researchSearchMicroUsd(): number {
 }
 
 /** One bounded DeepSeek request built from the already validated Parallel-shaped body. */
-export function deepseekSearchBody(body: { objective: string; search_queries: string[] }): { query: string; count: number; ori_question?: string } {
+export function deepseekSearchBody(body: { objective: string; search_queries: string[] }, count = DEEPSEEK_SEARCH_RESULTS): { query: string; count: number; ori_question?: string } {
   const query = [...body.search_queries[0].trim()].slice(0, DEEPSEEK_QUERY_MAX).join('');
   const question = [...body.objective.trim()].slice(0, DEEPSEEK_QUERY_MAX).join('');
-  return { query, count: DEEPSEEK_SEARCH_RESULTS, ...(question ? { ori_question: question } : {}) };
+  return { query, count, ...(question ? { ori_question: question } : {}) };
 }
 
 interface DeepseekResult { url?: unknown; title?: unknown; summary?: unknown; snippet?: unknown; date?: unknown; site_name?: unknown; site_icon?: unknown }

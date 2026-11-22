@@ -1,13 +1,31 @@
 import { requiresAuthorizationReview } from './answerAuthorizationReview.js';
 
-type FactualRule = 'stripe_event_order' | 'stripe_retry_window' | 'tenant_key_immutability' | 'earth_axial_tilt_reference';
+type FactualRule = 'stripe_event_order' | 'stripe_retry_window' | 'tenant_key_immutability' | 'earth_axial_tilt_reference'
+  | 'nextjs_env_visibility' | 'nextjs_server_invocation' | 'unconfirmed_conflicting_input' | 'keyboard_focus_pattern';
 export const nativeFactualGuidance: Record<FactualRule, string> = {
   stripe_event_order: 'Stripe event timestamps can tie and do not establish delivery order. Verify the signature, deduplicate by event ID, and reconcile the current subscription state with Stripe before applying a durable update.',
   stripe_retry_window: 'Stripe automatic webhook retries have a finite delivery window. Reconcile missed events separately and make processing idempotent.',
   tenant_key_immutability: 'PostgreSQL WITH CHECK evaluates the proposed new row. Membership checks on the old and new rows can both pass for a user who belongs to both tenants. To keep tenant_id immutable, restrict UPDATE privileges to approved columns or reject tenant-key changes in a database trigger.',
   earth_axial_tilt_reference: 'Earth’s rotation axis is tilted about 23.4° from the perpendicular to its orbital plane. That tilt changes the angle of sunlight and the length of the day in each hemisphere as Earth orbits the Sun, causing the seasons.',
+  nextjs_env_visibility: 'Next.js environment variables are server-only by default. NEXT_PUBLIC_ makes a value eligible for inlining into the browser bundle. Never send secrets to the client through props, public environment variables or explicit bundler configuration.',
+  nextjs_server_invocation: 'Next.js Server Functions run on the server and can be called from server code. Client Components can invoke exposed Server Functions, including through form actions. Authenticate, authorize and validate every exposed invocation.',
+  unconfirmed_conflicting_input: 'The chart is withheld until the conflicting inputs are reconciled.',
+  keyboard_focus_pattern: 'Use one focus strategy. For roving tabindex, the container has no tab stop, exactly one item has tabindex="0", and arrow-key handling moves focus to that item. For aria-activedescendant, keep focus on the container, give items no tab stops, and update aria-activedescendant to the active item ID. Keep the equivalent data table visible.',
 };
+
+export function claimsChartIsDeferred(prose: string): boolean {
+  return /\b(?:conflict\w*|discrepanc\w*|inconsisten\w*)\b/i.test(prose) &&
+    /\b(?:not (?:presented|shown|provided) (?:a|the|any) (?:final )?(?:chart|visualization) yet|no (?:final )?(?:chart|visualization) (?:is |has been )?(?:shown|presented|provided) until)\b/i.test(prose);
+}
 type TechnicalCorrection = { reason: 'authorization_review' | 'factual_review'; guidance: string; rule?: FactualRule };
+const isNextJs = /\b(?:Next(?:\.js|js)|App Router|NEXT_PUBLIC_)\b/i;
+// The issue concerns the spin axis. The equatorial plane can correctly
+// be described as inclined by this angle relative to the orbital plane.
+const wrongAxialReference = /(\bEarth(?:['’]s)?\b[^.!?;\n]{0,64}\b(?:axis|axial tilt)\b[^.!?;\n]{0,30}\b23(?:[.,][45]\d*)?\s*(?:°|degrees?\b))\s*(?:relative to|with respect to|from|to)\s+(?:the\s+|its\s+|Earth['’]s\s+)?(?:orbital plane|plane of (?:its|Earth['’]s) orbit|ecliptic(?: plane)?)\b/i;
+
+export function nativeTechnicalReviewContext(text: string) {
+  return [/\bStripe\b/i.test(text) ? 'Stripe' : '', isNextJs.test(text) ? 'Next.js' : ''].filter(Boolean).join('\n');
+}
 
 /** Catch documented factual errors in explanatory text and examples. */
 export function nativeTechnicalCorrections(answer: string): TechnicalCorrection[] {
@@ -16,9 +34,27 @@ export function nativeTechnicalCorrections(answer: string): TechnicalCorrection[
   const statements = text.split(/(?<=[.!?;])\s+|\n+/);
   const warnsAgainst = (statement: string) =>
     /\b(?:never|do not|does not|cannot|must not|should not|don't|doesn't|can't|mustn't|shouldn't|still subject to|incorrect|unsafe|unreliable)\b/i.test(statement);
-  // This applies to the spin axis. The equatorial plane can correctly be
-  // described as inclined by this angle relative to the orbital plane.
-  const wrongAxialReference = /\bEarth(?:['’]s)?\b[^.!?;\n]{0,64}\b(?:axis|axial tilt)\b[^.!?;\n]{0,30}\b23(?:[.,][45]\d*)?\s*(?:°|degrees?\b)\s*(?:relative to|with respect to|from|to)\s+(?:the\s+|its\s+|Earth['’]s\s+)?(?:orbital plane|plane of (?:its|Earth['’]s) orbit|ecliptic(?: plane)?)\b/i;
+  if (/\b(?:single|one)\s+(?:focusable|tab stop)\b/i.test(text) && /\broving\s+tabindex\b/i.test(text)) {
+    const examples = [...answer.matchAll(/```(?:html|jsx)\s*\n([\s\S]*?)```/gi)];
+    if (examples.some(example => {
+      const introduction = answer.slice(0, example.index).trimEnd().split(/\n\s*\n/).at(-1) ?? '';
+      if (warnsAgainst(introduction) || /\b(?:broken|wrong|bad|anti-pattern)\b/i.test(introduction)) return false;
+      return /<(?:div|section)[^>]*\btabindex\s*=\s*["']0["'][^>]*>[\s\S]*?<(?:li|button|circle|rect)[^>]*\btabindex\s*=\s*["']0["']/i.test(example[1]);
+    })) {
+      corrections.push({ reason: 'factual_review', rule: 'keyboard_focus_pattern', guidance: nativeFactualGuidance.keyboard_focus_pattern });
+    }
+  }
+  if (isNextJs.test(answer)) {
+    const claims = statements.filter(statement => !warnsAgainst(statement) && !/\b(?:misconception|myth|false|wrong)\b/i.test(statement));
+    const wrongVisibility = /\b(?:env(?:ironment)?\s+(?:vars?|variables?))\s+(?:are\s+|as\s+)?(?:public|exposed)\s+unless\s+(?:explicitly\s+)?(?:prefixed|marked|configured)\s+(?:for\s+)?server[- ]only\b/i;
+    const clientOnlyInvocation = /\bmust\s+(?:only\s+)?be\s+(?:called|invoked)\s+from\s+(?:(?:a|the)\s+)?client(?:\s+components?)?\s+or\s+(?:(?:a|the)\s+)?forms?\b/i;
+    if (claims.some(statement => wrongVisibility.test(statement))) {
+      corrections.push({ reason: 'factual_review', rule: 'nextjs_env_visibility', guidance: nativeFactualGuidance.nextjs_env_visibility });
+    }
+    if (/\bserver\s+(?:actions?|functions?)\b/i.test(text) && claims.some(statement => clientOnlyInvocation.test(statement))) {
+      corrections.push({ reason: 'factual_review', rule: 'nextjs_server_invocation', guidance: nativeFactualGuidance.nextjs_server_invocation });
+    }
+  }
   if (statements.some(statement => !warnsAgainst(statement) && !/\b(?:not tilted|misconception|false|wrong|myth|erroneous)\b/i.test(statement) && wrongAxialReference.test(statement))) {
     corrections.push({ reason: 'factual_review', rule: 'earth_axial_tilt_reference', guidance: nativeFactualGuidance.earth_axial_tilt_reference });
   }
@@ -50,10 +86,16 @@ export function nativeTechnicalCorrections(answer: string): TechnicalCorrection[
       guidance: nativeFactualGuidance.tenant_key_immutability,
     });
   }
-  // Exclude only the timestamp-based ordering clause explicitly rejected by
-  // the answer. A separate recommendation in the same sentence still counts.
+  // Remove the explicitly rejected method and the permitted metadata-only use.
+  // Keep separate clauses so a warning cannot mask a later recommendation.
   const rejectedOrdering = /\brather than\s+(?:infer(?:ring)?|deriv(?:e|ing)|determin(?:e|ing))\s+(?:the\s+)?(?:delivery\s+)?order\s+from\s+(?:event\.created|event\s+timestamps?)\b/gi;
-  const orderingStatements = statements.map(statement => statement.replace(rejectedOrdering, ''));
+  const rejectedTimestamp = /[,—–]\s*not\s+(?:event\.created|event\s+timestamps?)\s*[,—–]|\bnot\s+from\s+(?:event\.created|event\s+timestamps?)\b/gi;
+  const metadataContrast = /\buse\s+(?:event\.created|event\s+timestamps?)\s+(?:only\s+for\s+(?:logging|auditing|telemetry|monitoring|diagnostics)|for\s+(?:logging|auditing|telemetry|monitoring|diagnostics)(?:\s+only)?)\s*[,—–]\s*not\s+(?:for\s+(?:ordering|sorting|reconciliation)|to\s+(?:determine|infer)\s+(?:the\s+)?(?:event\s+|delivery\s+)?order)\b/gi;
+  const orderingStatements = statements.flatMap(statement => statement
+    .replace(rejectedOrdering, '')
+    .replace(rejectedTimestamp, ' ')
+    .replace(metadataContrast, ' ')
+    .split(/,\s+(?:but|yet)\s+/i));
   if (/\bStripe\b/i.test(text) && orderingStatements.some(statement => !warnsAgainst(statement) &&
     /\b(?:compare|sort(?:\s+by)?|order(?:\s+by)?|rely\s+on|use)\b[^.!?;\n]{0,40}\b(?:event\s+timestamps?|event\.created)\b/i.test(statement) &&
     /\b(?:order(?:ed|ing)?|stored state|newer|older|stale|reconcil|sort)\w*\b/i.test(statement))) {
@@ -96,6 +138,30 @@ export function reviewNativeAnswer(answer: string): { reason: TechnicalCorrectio
 
 export function nativeAnswerReviewReason(answer: string) {
   return reviewNativeAnswer(answer)?.reason;
+}
+
+/** Preserve independent prose only when the existing checks can locate all
+ * rejected claims in complete paragraphs. Avoid separating claims from code. */
+export function retainReviewedTechnicalProse(answer: string, corrections: readonly TechnicalCorrection[]): string {
+  if (corrections.some(item => item.reason === 'authorization_review') || /^ {0,3}(?:`{3,}|~{3,})/m.test(answer)) return '';
+  const context = nativeTechnicalReviewContext(answer);
+  const removed = new Set<string>();
+  const retained = answer.split(/\n\s*\n/u).filter(block => {
+    const issues = nativeTechnicalCorrections(context + '\n' + block);
+    for (const issue of issues) removed.add(issue.guidance);
+    return !issues.length;
+  }).join('\n\n').trim();
+  return corrections.every(item => removed.has(item.guidance)) && !nativeAnswerReviewReason(retained) ? retained : '';
+}
+
+/** Apply a known local correction only when it leaves the rest of the
+ * completed plain answer intact and the corrected answer clears review. */
+export function repairNativePlainAnswer(answer: string): string | undefined {
+  if (!/^\p{L}/u.test(answer) || /[\r\n\x60*_<>|\[\]“”"]/.test(answer)) return;
+  const corrections = nativeTechnicalCorrections(answer);
+  if (corrections.length !== 1 || corrections[0].rule !== 'earth_axial_tilt_reference') return;
+  const corrected = answer.replace(wrongAxialReference, '$1 from the perpendicular to its orbital plane');
+  if (corrected !== answer && !nativeAnswerReviewReason(corrected)) return corrected;
 }
 
 const monthNames = [
@@ -171,6 +237,12 @@ export function contradictsMonthlyChart(root: unknown, prose: string): boolean {
   if (!series) return false;
   const changes = new Map(monthlyChanges(series).map(change => [change.month, change]));
   const plain = prose.replace(/[\x60*_]/g, '');
+  const extrema = new RegExp('\\b(' + monthPattern + ')\\s+(?:is|was)\\s+(?:the\\s+)?(lowest|highest)\\s+(?:month|value|point)\\b(?!\\s+(?:since|before|after|among|within|excluding)\\b)', 'gi');
+  for (const [, label, direction] of plain.matchAll(extrema)) {
+    const value = series.points.find(point => point.month === months.get(label.toLowerCase()))?.value;
+    const expected = (direction.toLowerCase() === 'lowest' ? Math.min : Math.max)(...series.points.map(point => point.value));
+    if (value !== undefined && value !== expected) return true;
+  }
   const rank = 'second[- ]largest|largest|biggest|strongest|highest';
   const unit = 'percentage|percent|dollar|absolute';
   const scope = 'since|from|versus|vs\\.?|compared|relative|after|before|until|among|within|excluding|year[- ]over[- ]year|yoy|at that point';
@@ -192,6 +264,19 @@ export function contradictsMonthlyChart(root: unknown, prose: string): boolean {
       const change = changes.get(month);
       if (change && Math.sign(change.amount) !== direction) return true;
     }
+  }
+
+  const explicitPrevious = new RegExp(
+    '\\b(' + monthPattern + ')\\s+(?:is|was)\\s+(up|down)\\s+' +
+    '(?:by\\s+)?[$€£]?[0-9]+(?:[.,][0-9]+)*(?:%|\\s+[a-z]+)?(?:\\s*\\([+−-]?[0-9]+(?:\\.[0-9]+)?%\\))?' +
+    '\\s+(?:on|from|versus|vs\\.?|compared (?:with|to))\\s+(' + monthPattern + ')\\b' +
+    '(?!\\s+(?:[12][0-9]{3}|last year|of last year|of the prior year|year[- ]over[- ]year|yoy)\\b)', 'gi');
+  for (const [, subject, direction, baseline] of plain.matchAll(explicitPrevious)) {
+    const month = months.get(subject.toLowerCase())!;
+    const previous = months.get(baseline.toLowerCase())!;
+    const change = changes.get(month);
+    if (change && (previous + 1) % 12 === month &&
+        Math.sign(change.amount) !== (direction.toLowerCase() === 'up' ? 1 : -1)) return true;
   }
 
   const rankClaim = new RegExp(
@@ -228,6 +313,16 @@ export function contradictsMonthlyChart(root: unknown, prose: string): boolean {
   const fraction = count + '\\s+of\\s+(?:the\\s+)?' + count + '\\s+months?\\b';
   const numeric = (value: string) => /^\d/.test(value) ? Number(value) : counts.indexOf(value.toLowerCase());
   const rises = [...changes.values()].filter(change => change.amount > 0).length;
+  const falls = [...changes.values()].filter(change => change.amount < 0).length;
+  // Universal direction claims must hold at every consecutive observation.
+  // Overall/net growth and scoped comparisons are different claims.
+  const everyPeriod = new RegExp('\\b(?:the\\s+)?series\\s+(' + higher + '|' + lower + ')\\s+(?:each|every)\\s+month\\b', 'gi');
+  for (const match of plain.matchAll(everyPeriod)) {
+    const prefix = precedingClause(match.index);
+    if (/\b(?:not|never|false|incorrect|if|suppose)\b/i.test(prefix)) continue;
+    const rising = new RegExp('^(?:' + higher + ')$', 'i').test(match[1]);
+    if ((rising ? rises : falls) !== changes.size) return true;
+  }
   for (const pattern of ['\\bthe series (?:rises|increases|grew) in\\s+' + fraction,
     '(?:^|[.!?;:\\n])\\s*' + fraction + '\\s+(?:rose|increased|grew)\\b(?!\\s+(?:from|versus|compared|since|year[- ]over[- ]year|yoy)\\b)']) {
     for (const [, numerator, denominator] of plain.matchAll(new RegExp(pattern, 'gi'))) {

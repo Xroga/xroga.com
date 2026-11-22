@@ -4,6 +4,7 @@ import test from 'node:test';
 import {
   CHAT_SYSTEM,
   incrementalUpdateContext,
+  isDirectCurrentFactLookup,
   researchAnswerMaxTokens,
   researchSynthesisPrompt,
 } from './prompts.js';
@@ -43,7 +44,7 @@ test('research synthesis preserves an explicit concise response contract', () =>
     'Official source evidence.',
   );
 
-  assert.match(prompt, /requested length, format, and number of items exactly/);
+  assert.match(prompt, /requested length, format, and number of items as far as the supplied evidence supports/);
   assert.match(prompt, /Omit generic report sections, tables, and takeaways/);
   assert.doesNotMatch(prompt, /comprehensive, well-structured report/);
   assert.equal(
@@ -67,4 +68,36 @@ test('research retains the full output budget when the user requests a report', 
     researchAnswerMaxTokens('Prepare a comprehensive multi-source research report.'),
     8192,
   );
+});
+
+test('unqualified research comparisons follow the scope of the question', () => {
+  const prompt = researchSynthesisPrompt('Compare two approaches using their official documentation.', 'Evidence excerpts.');
+  assert.match(prompt, /More retrieved material does not make the question broader/);
+  assert.match(prompt, /Let inline citations carry the source references/);
+  assert.match(prompt, /excerpt actually supports the claim/);
+  assert.match(prompt, /exact rate, range, or historical example only when it helps answer/);
+  assert.match(prompt, /source measures the same entity and criterion the user asked about/);
+  assert.match(prompt, /Do not promote a discovery-only post into a definitive ranking/);
+  assert.match(prompt, /Add both only when each answers a different part/);
+  assert.doesNotMatch(prompt, /write a comprehensive|End with practical takeaways/);
+});
+
+test('direct current lookup is compact without overriding a broader request or output format', () => {
+  for (const singleFact of ['price of btc currently', 'What is the exchange rate for GBP to EUR today?',
+    'What is the latest stable Next.js version?', 'What is the weather now in Lahore?']) {
+    assert.equal(isDirectCurrentFactLookup(singleFact), true, singleFact);
+  }
+  for (const largerRequest of ['Compare the latest prices of BTC and ETH', 'Price of BTC currently with a chart',
+    'Give the current exchange rate in two bullets', 'Price of BTC currently. Should I buy?',
+    'Explain why solar and lunar eclipses don’t happen every month', 'Current best practices for fast APIs']) {
+    assert.equal(isDirectCurrentFactLookup(largerRequest), false, largerRequest);
+  }
+  const prompt = researchSynthesisPrompt('price of btc currently', 'Retrieved search evidence.', true);
+  assert.match(prompt, /one or two short paragraphs/);
+  assert.match(prompt, /explicit observation time/);
+  assert.match(prompt, /Neither a retrieval time nor a publication date alone proves a value is current/);
+  assert.match(prompt, /Never average or combine stale, differently timed, or incomparable snapshots/);
+  assert.match(prompt, /If the sources cannot verify a current value, state that in one sentence/);
+  assert.match(prompt, /Omit the inventory of conflicting or discarded values unless the user asks to compare them/);
+  assert.doesNotMatch(prompt, /Choose a comparison table or diagram/);
 });

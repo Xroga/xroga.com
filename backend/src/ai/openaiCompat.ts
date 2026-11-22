@@ -17,11 +17,16 @@ import {requireModelSdkAdmission,modelAdmissionDenied,MODEL_REDIRECT_AFTER_DISPA
 import {acquireModelRequestLease,providerCooldownSeconds,releasePacingWithBody} from './providerPacing.js';
 import {DEFAULT_BUILDER_BUDGET} from './builderAttempt.js';
 import { CompletionDiagnostics, requirePublicCompletion } from './completionDiagnostics.js';
+import { PostCompletionAccountingError } from './postCompletionAccounting.js';
 import type { PresentationResponseFormat } from './responsePresentation.js';
 import { validateZurelayRequest, verifyZurelayResponse, zurelayStreamUsageVerified } from './zurelayWire.js';
 
 // No compatibility retry can replay a possibly charged request.
 const withProviderTemperature = <T>(temperature: number | undefined, execute: (value: number | undefined) => Promise<T>) => execute(temperature);
+
+// The canonical attempt owns the generation deadline. Neither SDK nor fetch
+// should cancel a buffered answer before that deadline has elapsed.
+export const MODEL_PROVIDER_TIMEOUT_MS = DEFAULT_BUILDER_BUDGET.generationMs + 10_000;
 
 export type ContentPart =
   | { type: 'text'; text: string }
@@ -193,7 +198,7 @@ export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispa
   return new OpenAI({
     apiKey: endpoint.apiKey,
     baseURL: endpoint.baseUrl,
-    timeout: 180_000,
+    timeout: MODEL_PROVIDER_TIMEOUT_MS,
     maxRetries: 0,
     defaultHeaders: { ...endpoint.defaultHeaders, 'x-zurelay-fallback': 'off' },
     fetch:async (input,init)=>{
@@ -230,7 +235,7 @@ export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispa
       headers.set('x-zurelay-fallback', 'off');
       let response:Response;
       try{
-        const signal=AbortSignal.any([...(init.signal?[init.signal as AbortSignal]:[]),AbortSignal.timeout(180_000)]);
+        const signal=AbortSignal.any([...(init.signal?[init.signal as AbortSignal]:[]),AbortSignal.timeout(MODEL_PROVIDER_TIMEOUT_MS)]);
         response=await globalThis.fetch(url,{method:'POST',body:init.body,headers,signal,redirect:'manual'});
       }catch(error){await release();throw error;}
       if(response.status===429){cooldown=providerCooldownSeconds(response.headers.get('retry-after'));await release();}
@@ -347,36 +352,36 @@ export async function chatCompletion(
     );
     const diagnostics = new CompletionDiagnostics();
     diagnostics.observe(completion, false);
-    const choice = completion.choices[0]?.message;
-
-    // Private reasoning is counted in the receipt, never published as an answer.
-    const answer = (choice?.content ?? '').trim();
-
-    const text = requirePublicCompletion(answer, modelId, diagnostics);
-    const inputTokens =
-      completion.usage?.prompt_tokens ??
-      messages.reduce((sum, m) => sum + contentTokenEstimate(m.content), 0);
-    const outputTokens = completion.usage?.completion_tokens ?? estimateTokens(text);
-    recordModelExecution(modelId, { ok: true, latencyMs: Date.now() - started });
+    const usage = completion.usage;
+    if (!usage) throw new PostCompletionAccountingError();
+    const text = (completion.choices[0]?.message?.content ?? '').trim();
     const result:ChatResult = {
       text,
       finishReason: completion.choices[0]?.finish_reason ?? null,
       modelId,
       apiModel: endpoint.apiModel,
       provider: endpoint.provider,
-      inputTokens,
-      outputTokens,
-      totalTokens: inputTokens + outputTokens,
-      cachedInputTokens: completion.usage?.prompt_tokens_details?.cached_tokens ?? 0,
-      reasoningTokens: completion.usage?.completion_tokens_details?.reasoning_tokens ?? 0,
+      inputTokens: usage.prompt_tokens,
+      outputTokens: usage.completion_tokens,
+      totalTokens: usage.prompt_tokens + usage.completion_tokens,
+      cachedInputTokens: usage.prompt_tokens_details?.cached_tokens ?? 0,
+      reasoningTokens: usage.completion_tokens_details?.reasoning_tokens ?? 0,
       providerRequestId: modelTransportReceipt(endpoint).requestId,
     };
+    // A verified receipt can carry reasoning usage without any publishable text.
+    requirePublicCompletion(text, modelId, diagnostics, error => admission.recordEmptyCompletion(result, error, checkCancellation));
     admission.complete(result,()=>opts.publishAfterVerification?.(text),checkCancellation);
+    recordModelExecution(modelId, { ok: true, latencyMs: Date.now() - started });
     return Object.freeze(result);
   } catch (error) {
     recordModelExecution(modelId, { ok: false, latencyMs: Date.now() - started, error });
     throw error;
   }
+}
+
+/** The deadline must reflect the same transport selected for the request. */
+export function completionResponseMode(modelId: ModelId): 'stream' | 'buffered' {
+  return MODELS[modelId].provider === 'zurelay' && !zurelayStreamUsageVerified() ? 'buffered' : 'stream';
 }
 
 export async function chatCompletionStream(
@@ -400,7 +405,7 @@ export async function chatCompletionStream(
 ): Promise<ChatResult> {
   // Zurelay streams are not verified to carry a usage receipt (live finding 2026-11-05). Until ZURELAY_STREAM_USAGE_VERIFIED=1 the
   // answer is requested as one verified response; callers keep this contract, text arrives once after verification.
-  if (MODELS[modelId].provider === 'zurelay' && !zurelayStreamUsageVerified()) return chatCompletionSingleResponse(modelId, messages, opts);
+  if (completionResponseMode(modelId) === 'buffered') return chatCompletionSingleResponse(modelId, messages, opts);
   const started = Date.now();
   opts={...opts,...(opts.responseFormat ? {responseFormat:structuredClone(opts.responseFormat)} : {})};
   try {
@@ -446,9 +451,7 @@ export async function chatCompletionStream(
     let text = '';
     const diagnostics = new CompletionDiagnostics();
     let finishReason: string | null = null;
-    let inputTokens = messages.reduce((sum, m) => sum + contentTokenEstimate(m.content), 0);
-    let outputTokens = 0;
-    let cachedInputTokens = 0, reasoningTokens = 0;
+    let usage: OpenAI.Chat.Completions.ChatCompletionChunk['usage'];
 
     try {
     for await (const chunk of stream) {
@@ -479,36 +482,31 @@ export async function chatCompletionStream(
         text += delta;
       }
 
-      if (chunk.usage) {
-        inputTokens = chunk.usage.prompt_tokens ?? inputTokens;
-        outputTokens = chunk.usage.completion_tokens ?? outputTokens;
-        cachedInputTokens = chunk.usage.prompt_tokens_details?.cached_tokens ?? 0;
-        reasoningTokens = chunk.usage.completion_tokens_details?.reasoning_tokens ?? 0;
-      }
+      if (chunk.usage) usage = chunk.usage;
     }
     } catch (error) {
       console.warn('[model-stream-interrupted]', { modelId, ...diagnostics.receipt(), aborted: opts.signal?.aborted === true });
       throw error;
     }
 
-    text = requirePublicCompletion(text, modelId, diagnostics);
-    if (!outputTokens) outputTokens = estimateTokens(text);
-
-    recordModelExecution(modelId, { ok: true, latencyMs: Date.now() - started });
+    if (!usage) throw new PostCompletionAccountingError();
+    text = text.trim();
     const result:ChatResult = {
       text,
       finishReason,
       modelId,
       apiModel: endpoint.apiModel,
       provider: endpoint.provider,
-      inputTokens,
-      outputTokens,
-      totalTokens: inputTokens + outputTokens,
-      cachedInputTokens,
-      reasoningTokens,
+      inputTokens: usage.prompt_tokens,
+      outputTokens: usage.completion_tokens,
+      totalTokens: usage.prompt_tokens + usage.completion_tokens,
+      cachedInputTokens: usage.prompt_tokens_details?.cached_tokens ?? 0,
+      reasoningTokens: usage.completion_tokens_details?.reasoning_tokens ?? 0,
       providerRequestId: modelTransportReceipt(endpoint).requestId,
     };
+    requirePublicCompletion(text, modelId, diagnostics, error => admission.recordEmptyCompletion(result, error, checkCancellation));
     admission.complete(result,()=>opts.onDelta?.(text),checkCancellation);
+    recordModelExecution(modelId, { ok: true, latencyMs: Date.now() - started });
     return Object.freeze(result);
   } catch (error) {
     recordModelExecution(modelId, { ok: false, latencyMs: Date.now() - started, error });
