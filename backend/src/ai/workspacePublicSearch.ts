@@ -44,8 +44,44 @@ const presentationInstruction = /(?:[,.;]\s*|\s+and\s+)(?:please\s+)?(?:give|exp
 const officialVerificationFooter = /(?:[,.;]\s*|\s+)(?:and\s+)?(?:which official source (?:confirms|verifies) (?:it|this)|cite (?:an?|the) official (?:source|reference))[?!.]*$/iu;
 const instructionStart = /^(?:please\s+)?(?:(?:search|browse)\s+(?:(?:the\s+)?(?:public\s+)?(?:web|internet)\s+)?(?:for\s+)?|look up\s+|research\s+|what\s+(?:is|are)\s+(?:the\s+)?)/iu;
 const sourcePreface = /^(?:using|from|with)\s+(?:only\s+)?official\s+[^.!?]+[.!?]\s*/iu;
+const namedSourceClause = /\b(?:(?:use|using|from|with|based on|consult)\s+(?:(?:only|exclusively)\s+)?|(?:only|exclusively)\s+)(?:the\s+)?official\s+([\p{L}\p{N} .,&-]{1,120}?)\s+(?:sources?|websites?|pages?|sites?|docs?|documentation|publications?)(?=\s*(?:[,:.!?]|$))/iu;
 const publicSourcePreface = /^(?:i\s+(?:need|want)|(?:please\s+)?(?:cite|include|use|provide))\s+(?:a\s+)?(?:dated\s+)?public sources?\s*[:：]\s*/iu;
 const linkFooter = /\s*;\s*link\s+(?:them|each|all)(?:\s+(?:of them|\d+|one|two|three|four|five|six|seven|eight|nine|ten))?[?!.]*$/iu;
+
+// Only explicit publisher names may select these public hosts. Unknown names
+// still need a user-supplied domain for an exclusive source restriction.
+const publicPublisherDomains = new Map([
+  ['nist', 'nist.gov'],
+  ['national institute of standards and technology', 'nist.gov'],
+  ['nasa', 'nasa.gov'],
+  ['national aeronautics and space administration', 'nasa.gov'],
+  ['usgs', 'usgs.gov'],
+  ['us geological survey', 'usgs.gov'],
+  ['united states geological survey', 'usgs.gov'],
+  ['fda', 'fda.gov'],
+  ['food and drug administration', 'fda.gov'],
+  ['cdc', 'cdc.gov'],
+  ['centers for disease control and prevention', 'cdc.gov'],
+  ['who', 'who.int'],
+  ['world health organization', 'who.int'],
+  ['ietf', 'ietf.org'],
+  ['internet engineering task force', 'ietf.org'],
+  ['w3c', 'w3.org'],
+  ['world wide web consortium', 'w3.org'],
+]);
+
+function namedPublisherDomains(publishers: string): string[] {
+  const names = publishers.toLowerCase().replace(/\./g, '').trim();
+  const publisher = publicPublisherDomains.get(names);
+  if (publisher) return [publisher];
+  const domains: string[] = [];
+  for (const name of names.split(/\s*,\s*(?:and\s+)?|\s+(?:and|&)\s+/u)) {
+    const domain = publicPublisherDomains.get(name.trim());
+    if (!domain) return [];
+    domains.push(domain);
+  }
+  return [...new Set(domains)];
+}
 
 function isPublicSourceHost(domain: string): boolean {
   if (unavailableDomain.test(domain)) return false;
@@ -84,9 +120,11 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
     .replace(linkFooter, '').replace(currencyPeriod, '$1 per $2').replace(/\s*;\s*/g, ', ').trimEnd();
   const publicOffice = publicOfficeTopic(request) !== undefined;
   const officialLookup = requestsOfficialLinkCoverage(request) || publicSourceLookup.test(request);
+  const namedSource = namedSourceClause.exec(request);
+  const publisherDomains = namedSource ? namedPublisherDomains(namedSource[1]) : [];
   const discovery = discoveryIntent.test(request) && (discoverySubject.test(request)
     || (request.toLowerCase().match(/\b[a-z]{7,}\b/g) ?? []).some(word => discoverySpellings.has(categorySpellingKey(word))));
-  if ((!publicLookup.test(request) && !discovery && !weatherLookup.test(request) && !publicOffice && !officialLookup)
+  if ((!publicLookup.test(request) && !discovery && !weatherLookup.test(request) && !publicOffice && !officialLookup && !publisherDomains.length)
     || explicitlyDisablesResearch(message)
     || workspaceSearchNeedsExactReview(message) || specificIdentityOrUrl.test(message)
     || !/^[\p{L}\p{M}\p{N}\p{Sc} ,.'’!?()&–،؟。？！、-]+$/u.test(request)) return;
@@ -95,13 +133,13 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
   // with an official-source restriction. Neither a model nor history adds hosts.
   const asksForOfficial = officialSourceRequest.test(request);
   const isSoftwareName = (host: string) => softwareReleaseSubject.test(request) && publicSoftwareNames.has(host.toLowerCase());
-  const officialDomains = [...new Set([...request.matchAll(bareDomain)].map(([host]) => host.toLowerCase()).filter(host => !isSoftwareName(host)))];
-  if (officialDomains.length && (!asksForOfficial || !officialDomains.every(isPublicSourceHost))) return;
+  const explicitDomains = [...new Set([...request.matchAll(bareDomain)].map(([host]) => host.toLowerCase()).filter(host => !isSoftwareName(host)))];
+  if (explicitDomains.length && (!asksForOfficial || !explicitDomains.every(isPublicSourceHost))) return;
+  if (publisherDomains.length && explicitDomains.some(host => !publisherDomains.some(domain => host === domain || host.endsWith('.' + domain)))) return;
+  const officialDomains = explicitDomains.length ? explicitDomains : publisherDomains;
   // A model's inferred source policy must never add hosts or turn a public
-  // comparison into a sensitive-data approval. An explicit official-source
-  // restriction still requires a literal, verifiable domain.
-  // A request to cite one official reference still permits discovering sources.
-  // An explicit restriction to official sources still needs a literal host.
+  // comparison into a sensitive-data approval. A request to cite one official
+  // reference still permits discovering sources.
   const requestsOfficialCitation = officialVerificationFooter.test(request);
   if (!officialDomains.length && (exclusiveOfficialSource.test(request)
     || officialOnly && asksForOfficial && !requestsOfficialCitation && !officialLookup)) return;
@@ -110,7 +148,10 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
   const publicFact = publicFactSubject.test(request) || publicPolicyPublisher.test(request);
   if (!officialDomains.length && !publicFact && !explicitExplanation && !discovery && !publicOffice && !officialLookup) return;
 
-  const topic = request.replace(bareDomain, host => isSoftwareName(host) ? host : '').replace(/\(\s*\)/g, '')
+  const scopedRequest = namedSource && publisherDomains.length
+    ? (request.slice(0, namedSource.index) + request.slice(namedSource.index + namedSource[0].length)).replace(/^[\s,.:]+/u, '').trim()
+    : request;
+  const topic = scopedRequest.replace(bareDomain, host => isSoftwareName(host) ? host : '').replace(/\(\s*\)/g, '')
     .replace(explicitWebLookup, '').replace(instructionStart, '').replace(sourcePreface, '')
     .replace(/[,.]?\s+(?:and\s+)?cite\s+[^.!?]+[.!?]*$/iu, '')
     .replace(/[?.!؟。？！]+$/u, '').trim();

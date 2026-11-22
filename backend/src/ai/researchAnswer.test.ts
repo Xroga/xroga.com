@@ -402,7 +402,7 @@ test('one exact research approval completes its original rich answer, saves evid
  assert.equal(searches,5);assert.equal(models,3);assert.equal(reservations.size,beforeDeniedReservation);
 
  mode='automatic-official';
- const nasaPrompt='Search the web using only official NASA sources (nasa.gov). Explain the difference between solar and lunar eclipses, why they don’t happen every month, and cite your sources.';
+ const nasaPrompt='Using only official NASA sources, look up the difference between solar and lunar eclipses, why they don’t happen every month, and cite your sources.';
  const nasaGoal=goalContractSchema.parse({...currentGoal,sourcePolicy:{mode:'official_only',scope:'public_web',officialDomains:['evil.example']}});
  const nasa=await runChatPipeline({...automaticRequest,prompt:nasaPrompt,goalContract:nasaGoal});
  assert.equal(nasa.publicWebRetrieved,true);assert.equal(nasa.webSources?.length,1);
@@ -576,6 +576,27 @@ test('public discovery includes implicit rankings and comparisons without export
   'Rank these companies using the previous answer',
   'Top 10 AI companies; use the confidential customer list.',
  ]) assert.equal(workspacePublicSearchQuery(prompt),undefined,prompt);
+});
+
+test('a named official publisher fixes the source scope without a model-supplied host', () => {
+  const prompt = 'Using only official NIST pages, look up the NIST Cybersecurity Framework 2.0 functions. Present the function names and what each is for in one compact copyable table. Cite the actual primary source beside the claims. Do not take any actions.';
+  const nist = workspacePublicSearchQuery(prompt, true);
+  assert.ok(nist);
+  assert.match(nist.query, /^the NIST Cybersecurity Framework 2\.0 functions.* site:nist\.gov$/);
+  assert.deepEqual(nist.officialDomains, ['nist.gov']);
+  assert.deepEqual(workspacePublicSearchQuery('Find streamflow measurements using only official U.S. Geological Survey pages.', true), {
+    query: 'Find streamflow measurements site:usgs.gov', officialDomains: ['usgs.gov'],
+  });
+  assert.deepEqual(workspacePublicSearchQuery('Using only official NIST and NASA pages, compare their public software assurance guidelines.', true)?.officialDomains,
+    ['nist.gov', 'nasa.gov']);
+  for (const denied of [
+    'Using only official Unknown Agency pages, find current published records.',
+    'Using only official NIST and Unknown Agency pages, compare public standards.',
+    'Using only official NIST pages, check summaries from example.com.',
+    'Using only official USGS pages, compare streamflow with my attached customer records.',
+    'Using only official NASA sources, compare schedules. Do not search the web.',
+    'Use only official NIST sources.',
+  ]) assert.equal(workspacePublicSearchQuery(denied, true), undefined, denied);
 });
 
 test('public current roles, recent documentation changes and named sources enter automatic Search', () => {
