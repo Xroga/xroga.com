@@ -63,6 +63,48 @@ test('explicit official-link coverage keeps retrieved destinations and marks unv
     { status: 'partial', reason: 'source_coverage' });
 });
 
+test('website rows use same-entity publisher evidence and remove a stale link-only recap', () => {
+  const sources = [
+    { url: 'https://example.org/research', snippet: [
+      'Rank | Company | Focus | Website',
+      '...',
+      '1 | Alder Labs | Research | alder.example.com',
+      '2 | Birch Works | Infrastructure | birch.example.com',
+      '3 | Cedar Systems | Infrastructure | 127.0.0.1',
+      '4 | Platform services | misleading.example.com',
+    ].join('\n') },
+    { url: 'https://example.net/other', snippet: [
+      'Company | Website',
+      'Birch Works | birch-alternative.example.com',
+    ].join('\n') },
+  ];
+  const original = [
+    'Three companies [1].', '',
+    '| Company | Official site | Reason |',
+    '| --- | --- | --- |',
+    '| **Alder Labs** | Official link not verified | Research [1] |',
+    '| Birch Works | Official link not verified | Infrastructure [2] |',
+    '| Cedar Systems | Official link not verified | Infrastructure [1] |',
+    '', '## What the links verify', '',
+    'All three official sites were verified.',
+    '', '## Method', '',
+    'Keep the criteria and dated evidence [1].',
+    '', '~~~text', '## Official link verification', 'Keep the literal heading inside the example.', '~~~',
+  ].join('\n');
+  const prompt = 'Compare three companies and link each official website.';
+  const answer = presentPublicResearchAnswer(original, { status: 'complete' }, sources, prompt);
+  assert.match(answer.response, /\| \*\*Alder Labs\*\* \| \[alder\.example\.com\]\(<https:\/\/alder\.example\.com\/>\) \[1\] \| Research \[1\] \|/);
+  assert.match(answer.response, /\| Birch Works \| Official link not verified \|/);
+  assert.match(answer.response, /\| Cedar Systems \| Official link not verified \|/);
+  assert.doesNotMatch(answer.response, /What the links verify|All three official sites|127\.0\.0\.1|misleading\.example\.com/);
+  assert.match(answer.response, /## Method\n\nKeep the criteria and dated evidence \[1\]/);
+  assert.match(answer.response, /~~~text\n## Official link verification\nKeep the literal heading/);
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'source_coverage' });
+  assert.equal(answer.requiresReadableFallback, true);
+  assert.equal(presentPublicResearchAnswer(answer.response, answer.completion, sources, prompt).response, answer.response,
+    'reopening the saved corrected answer does not add a second coverage note');
+});
+
 test('one exact research approval completes its original rich answer, saves evidence and cannot replay either provider',async t=>{
  const owner='11111111-1111-4111-8111-111111111111',foreign='22222222-2222-4222-8222-222222222222';
  const context=createTenantContext({userId:owner,via:'remote_getuser'});

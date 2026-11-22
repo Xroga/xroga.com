@@ -82,7 +82,7 @@ test('authored paragraph boundaries and code remain separate and complete', () =
 
 test('ordinary external links also get the compact resource-preview affordance', () => {
   const html = renderToStaticMarkup(createElement(FormattedAiMarkdown, { content: 'Read the [original guide](https://example.com/guide).' }));
-  assert.match(html, /data-source-citation/);
+  assert.doesNotMatch(html, /data-source-citation/);
   assert.match(html, /Open link: original guide/);
   assert.match(html, /href="https:\/\/example\.com\/guide\?utm_source=xroga\.com"/);
 });

@@ -56,6 +56,16 @@ test('the answer renderer shows an accessible source preview and exact source li
   assert.doesNotMatch(html, /More evidence/, 'unrelated source snippets must not flood the answer');
 });
 
+test('website links and supporting evidence keep distinct semantics in the same row', () => {
+  const html = renderToStaticMarkup(createElement(FormattedAiMarkdown, {
+    content: '| Entity | Website |\n| --- | --- |\n| Alder | [alder.example.com](https://alder.example.com/) [1] |',
+    sources,
+  }));
+  assert.match(html, /href="https:\/\/alder\.example\.com\//);
+  assert.equal((html.match(/data-source-citation/g) ?? []).length, 1);
+  assert.match(html, /data-source-citation[^>]+aria-label="Open source 1: Official report"/);
+});
+
 test('a social post uses the publisher identity even if metadata names an unrelated member', () => {
   const html = renderToStaticMarkup(createElement(FormattedAiMarkdown, {
     content: 'The original post reported this [1].',
@@ -195,6 +205,8 @@ test('native citation clusters keep publisher names, distinct sources and links 
 test('source clicks carry Xroga attribution without altering the underlying evidence URLs', () => {
   assert.equal(sourceClickUrl('https://example.com/report'), 'https://example.com/report?utm_source=xroga.com');
   assert.equal(sourceClickUrl('https://example.com/report?lang=en#chapter'), 'https://example.com/report?lang=en&utm_source=xroga.com#chapter');
+  assert.equal(sourceClickUrl('https://example.com/report?url=http%3a%2f%2fother.example%2fa%20b#chapter'),
+    'https://example.com/report?url=http%3a%2f%2fother.example%2fa%20b&utm_source=xroga.com#chapter');
   assert.equal(sourceClickUrl('https://example.com/report?utm_source=partner'), 'https://example.com/report?utm_source=partner');
   assert.equal(sourceClickUrl('https://example.com/download?X-Amz-Signature=xyz'), 'https://example.com/download?X-Amz-Signature=xyz');
   assert.equal(sourceClickUrl('https://xroga.com/blog/free-ai-app-builder'), 'https://xroga.com/blog/free-ai-app-builder');

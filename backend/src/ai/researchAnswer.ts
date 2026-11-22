@@ -6,6 +6,7 @@ import type {TenantModelScope} from './tenantModelDispatch.js';
 import {AuthorityError} from '../security/authority/enforce.js';
 import { officialResearchDomains } from './researchSearchProvider.js';
 import { requestsOfficialLinkCoverage } from './workspacePublicSearch.js';
+import { bindListedWebsiteRows } from './researchWebsiteEvidence.js';
 import type { PublicCompletionState } from './completionDiagnostics.js';
 import type { ChatPipelineResult } from './pipeline.js';
 
@@ -101,7 +102,7 @@ export function bindCitationLinks(response:string,sources:ReadonlyArray<{url:str
 /** Structural coverage of an explicit link deliverable. A retrieved URL alone
  * cannot certify ownership or that the cited page supports a particular claim. */
 export function presentPublicResearchAnswer(response: string, completion: PublicCompletionState,
-  sources: ReadonlyArray<{ url: string }>, prompt: string) {
+  sources: ReadonlyArray<{ url: string; snippet?: string }>, prompt: string) {
   let text = bindCitationLinks(response, sources);
   const attributionIncomplete = researchCitationIssues(text, sources).length > 0;
   if (!requestsOfficialLinkCoverage(prompt)) return { response: text, completion:
@@ -110,7 +111,9 @@ export function presentPublicResearchAnswer(response: string, completion: Public
   const count = /\b(?:top|rank|list|name|compare|find)\s+(?:the\s+)?(\d{1,3}|two|three|four|five|six|seven|eight|nine|ten)\b/iu.exec(prompt)?.[1];
   const numberWords = ['two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
   const requested = count ? (Number(count) || numberWords.indexOf(count.toLowerCase()) + 2) : 1;
-  const allowed = new Set(sources.map(source => sourceUrl(source.url)).filter(Boolean));
+  const siteRows = bindListedWebsiteRows(text, sources);
+  text = siteRows.response;
+  const allowed = new Set([...sources.map(source => sourceUrl(source.url)).filter(Boolean), ...siteRows.destinations]);
   const linked = new Set<string>();
   let unverified = false;
   const accept = (value: string, counts: boolean) => {
@@ -139,15 +142,17 @@ export function presentPublicResearchAnswer(response: string, completion: Public
     }
     return output + bindBareUrls(prose.slice(position));
   });
-  if (unverified || linked.size < requested) {
+  if (unverified || (siteRows.rows?.missing ?? 0) > 0 || (siteRows.rows?.linked ?? linked.size) < requested) {
+    const note = 'I couldn’t verify every requested official link from the retrieved sources.';
     return {
-      response: text + '\n\nI couldn’t verify every requested official link from the retrieved sources.',
+      response: text.trimEnd().endsWith(note) ? text : text + '\n\n' + note,
       completion: completion.status === 'complete' ? { status: 'partial', reason: 'source_coverage' } as const : completion,
       requiresReadableFallback: true,
     };
   }
   return { response: text, completion:
-    attributionIncomplete && completion.status === 'complete' ? { status: 'partial', reason: 'source_attribution' } as const : completion };
+    attributionIncomplete && completion.status === 'complete' ? { status: 'partial', reason: 'source_attribution' } as const : completion,
+    ...(text !== response ? { requiresReadableFallback: true } : {}) };
 }
 
 /** Runs inside the already claimed, exact research confirmation. This is the

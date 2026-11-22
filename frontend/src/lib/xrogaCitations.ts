@@ -67,7 +67,9 @@ export function sourceClickUrl(value: string): string | null {
   const host = url.hostname.toLowerCase();
   if (host === 'xroga.com' || host.endsWith('.xroga.com') || url.searchParams.has('utm_source')) return safe;
   if ([...url.searchParams.keys()].some((key) => /^(?:x-amz-|x-goog-|signature$|sig$|token$|access_token$|policy$|key-pair-id$|expires$|awsaccesskeyid$)/i.test(key))) return safe;
-  url.searchParams.set('utm_source', 'xroga.com');
+  // URLSearchParams serializes the whole query, changing escapes and spaces in
+  // the retrieved destination. Append attribution without rewriting its bytes.
+  url.search += (url.search ? '&' : '?') + 'utm_source=xroga.com';
   return url.href;
 }
 

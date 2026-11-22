@@ -24,13 +24,14 @@ function CitationIcon({ domain, size }: { domain: string; size: number }) {
     : <SourceLogo domain={domain} size={size} />;
 }
 
-export function SourceCitation({ source, number, label, showTitle = false, referral = false, compact = false }: {
+export function SourceCitation({ source, number, label, showTitle = false, referral = false, compact = false, evidence = true }: {
   source: CitationPage;
   number?: number;
   label?: ReactNode;
   showTitle?: boolean;
   referral?: boolean;
   compact?: boolean;
+  evidence?: boolean;
 }) {
   const id = useId();
   const link = useRef<HTMLAnchorElement>(null);
@@ -38,7 +39,7 @@ export function SourceCitation({ source, number, label, showTitle = false, refer
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [open, setOpen] = useState(false);
   const url = safeSourceUrl(source.url);
-  useInlineCitation(showTitle ? null : url);
+  useInlineCitation(showTitle || !evidence ? null : url);
   const keepOpen = () => { if (closeTimer.current) clearTimeout(closeTimer.current); };
   const dismiss = () => { keepOpen(); closeTimer.current = setTimeout(() => setOpen(false), 160); };
 
@@ -97,7 +98,7 @@ export function SourceCitation({ source, number, label, showTitle = false, refer
   const { domain, site, title } = citationMetadata(source, url);
   const compactChip = compact && number !== undefined;
   return <>
-    <a ref={link} data-source-citation className={`${styles.chip} ${label || showTitle ? styles.named : ''} ${compactChip ? styles.compact : ''}`}
+    <a ref={link} data-source-citation={evidence || undefined} className={`${styles.chip} ${label || showTitle ? styles.named : ''} ${compactChip ? styles.compact : ''}`}
       href={(referral ? sourceClickUrl(url) : url) ?? url} target="_blank" rel="noopener noreferrer"
       aria-label={number ? `Open source ${number}: ${title}` : `${label ? 'Open link' : 'Open source'}: ${title}`}
       aria-describedby={open ? id : undefined}

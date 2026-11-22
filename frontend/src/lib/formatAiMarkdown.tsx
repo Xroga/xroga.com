@@ -1673,7 +1673,7 @@ export function FormattedAiMarkdown({
       if (external) {
         const knownIndex = availableSources.findIndex((item) => safeSourceUrl(item.url) === external);
         const title = typeof label === 'string' && label.trim() ? label.trim() : new URL(external).hostname;
-        return <SourceCitation referral number={knownIndex >= 0 ? knownIndex + 1 : undefined} source={knownIndex >= 0 ? availableSources[knownIndex] : { title, url: external, snippet: '' }} label={children} />;
+        return <SourceCitation referral evidence={knownIndex >= 0} number={knownIndex >= 0 ? knownIndex + 1 : undefined} source={knownIndex >= 0 ? availableSources[knownIndex] : { title, url: external, snippet: '' }} label={children} />;
       }
       return React.createElement(components.a as React.ElementType, { href, ...props }, children);
     },
