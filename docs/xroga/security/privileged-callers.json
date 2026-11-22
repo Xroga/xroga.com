@@ -6576,11 +6576,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "98373a7c247f7fa6ca6a"
+        "id": "044500473a0fa5b1f775"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6e706c8eec5e23ebadad"
+        "id": "1f43d019e4642a62314a"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7476,11 +7476,11 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "98373a7c247f7fa6ca6a"
+        "id": "044500473a0fa5b1f775"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "6e706c8eec5e23ebadad"
+        "id": "1f43d019e4642a62314a"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -32132,26 +32132,26 @@
       }
     },
     {
-      "id": "98373a7c247f7fa6ca6a",
+      "id": "044500473a0fa5b1f775",
       "path": "frontend/src/components/native-openui/upstream/components/chart.tsx",
-      "line": 97,
+      "line": 100,
       "enclosing": "Cartesian",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "5b975490945d05c6e49843bcdd07234e09b675406c776aa0f7e7af8284f454c8"
+      "sourceSha256": "93880c8d8679ef5af22535f93fff05d6e19fb0d51e3080efc6f2dbbf702f3f04"
     },
     {
-      "id": "6e706c8eec5e23ebadad",
+      "id": "1f43d019e4642a62314a",
       "path": "frontend/src/components/native-openui/upstream/components/chart.tsx",
-      "line": 195,
+      "line": 198,
       "enclosing": "axis",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "5b975490945d05c6e49843bcdd07234e09b675406c776aa0f7e7af8284f454c8"
+      "sourceSha256": "93880c8d8679ef5af22535f93fff05d6e19fb0d51e3080efc6f2dbbf702f3f04"
     },
     {
       "id": "c1f57b8225d79c77eef9",
