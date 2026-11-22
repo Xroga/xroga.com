@@ -1,4 +1,5 @@
 // The read-only tools: snapshot, find, read, screenshot. Observation is read-only.
+import { paintedLine, readPaintedTexts } from '../painted-text';
 import { LayerError } from '../../protocol/errors';
 import type { FindArgs, ReadArgs, ScreenshotArgs, SnapshotArgs } from '../../protocol/schemas';
 import type { FindMatch, ScreenshotData, SnapshotData } from '../../protocol/results';
@@ -319,8 +320,12 @@ export async function screenshot(ctx: ToolContext, args: ScreenshotArgs): Promis
       ),
     );
   }
+  // What the page painted in this view, word for word: the model aims at a label instead of reading it off the picture.
+  let painted: string | undefined;
+  if (!args.ref && !args.fullPage) painted = paintedLine(await readPaintedTexts(cdp), args.region ?? [0, 0, 1, 1]);
   return {
     data: { mimeType: 'image/png', base64, width: shot.width, height: shot.height, scale, origin },
+    ...(painted ? { notices: [painted] } : {}),
     lines: [
       `screenshot · tab ${tab.tabId} · ${shot.width}×${shot.height} px · scale ${scale.toFixed(2)}${args.labels ? ` · ${labelled} labels` : ''}${args.marks ? ` · ${markCount} marks numbered (use canvas mark N)` : ''}${args.region ? ` · region [${args.region.map(n => n.toFixed(3)).join(', ')}] enlarged ${zoom.toFixed(1)}x, grid labelled in whole-page fractions` : args.grid ? ' · coordinate grid drawn (fractions 0 to 1 of the page)' : ''}`,
     ],

@@ -28,12 +28,13 @@ import { Guards } from './guards';
 import { contextThreshold, elisionChunk, hardLimit, planElision } from './elision';
 import { runCompaction, runShorten } from './compaction';
 import { attachmentBytes, attachmentParts, readAttachment } from './attachments';
-import { decodeImage, describeHits, FIND_COLOR_TOOL, scanColor } from './pixels';
+import { decodeImage, describeHits, diffPictures, FIND_COLOR_TOOL, scanColor, viewOfChange } from './pixels';
 import { learnFrom, turnEffort } from './run';
 import { PaintedInputDeliveryGuard } from './painted-input-delivery';
 import { ProgressTracker } from './progress-tracker';
 import { DeadSpots } from './dead-spots';
 import { RepeatDetector } from './repeat-detector';
+import type { PictureChange } from './pixels';
 import { skillsFor } from './skills';
 import { describeHit, renderSkill, searchSkills, skillById } from './skill-catalog';
 import { runMenuPath, validateMenuPath } from './menu-path';
@@ -772,6 +773,10 @@ ${ledger}` : ''),
       const why = this.#deadSpots.refusal(Number(args.at[0]), Number(args.at[1]));
       if (why) return { call, kind, isError: true, text: why };
     }
+    // The first pointer action on a painted page has no earlier picture to be compared with: one plain picture is taken now, so its result can say what changed.
+    if (call.toolName === 'canvas' && this.options.model.profile.vision && !this.#lastPlain && ['click', 'double_click', 'right_click', 'drag', 'hover'].includes(String(args.action))) {
+      this.#lastPlain = await this.#plainPicture(args.tabId ?? this.#activeTab);
+    }
     // The same text typed twice into a painted editor, or typed without replace after an error, is the splice failure: stop it in code.
     if (call.toolName === 'canvas' && args.action === 'type' && typeof args.text === 'string' && args.text.length > 40) {
       const tabId = typeof args.tabId === 'number' ? args.tabId : this.#boundTab ?? this.#activeTab;
@@ -940,7 +945,19 @@ ${ledger}` : ''),
           // A canvas reports no effect of its own, so the pictures are compared: a click after which not one pixel changed hit nothing that
           // reacts. Repeating such clicks near the same place is the loop to break, with a different way of finding the target.
           if (capture) {
-            const same = this.#lastCanvasPicture !== undefined && this.#lastCanvasPicture === capture.data;
+            // What changed is read from plain pictures (the overlays renumber their marks and would show as change): before this action and after it.
+            const after = await this.#plainPicture(tabId);
+            let change: PictureChange | null = null;
+            if (after && this.#lastPlain && this.#lastPlain.tabId === after.tabId) {
+              try {
+                const [before, now] = await Promise.all([decodeImage(this.#lastPlain.base64, this.#lastPlain.mime), decodeImage(after.base64, after.mime)]);
+                change = diffPictures(before, now);
+              } catch {
+                change = null;
+              }
+            }
+            if (after) this.#lastPlain = after;
+            const same = change ? change.box === null : this.#lastCanvasPicture !== undefined && this.#lastCanvasPicture === capture.data;
             this.#lastCanvasPicture = capture.data;
             this.#canvasNoChange = same ? this.#canvasNoChange + 1 : 0;
             if (paintedKey && !same) notes.push(note('The key changed the painted picture (the layer saw no change in the page structure, which is normal for a canvas). Judge the result from the attached picture, not from "effect: none".'));
@@ -954,6 +971,22 @@ ${ledger}` : ''),
               if (zoom?.ok) {
                 const zimg = this.#screenshotImage({ ...outcome, call: { ...outcome.call, toolName: 'screenshot' }, result: zoom });
                 if (zimg) { capture = await this.#withThumb(zimg); notes.push(note(`Nothing changed. The attached picture is an enlarged view around your click (red crosshair = where it landed), its grid labelled in whole-page fractions. Compare the crosshair with the label you meant and aim again from this picture.`)); }
+              }
+            }
+            // A small change (a menu opened, an item selected) is shown enlarged at once: the model reads the new thing instead of spending turns on zoomed screenshots to find it.
+            const view = !same && change?.box ? viewOfChange(change.box) : null;
+            if (view) {
+              const crop = await this.#time('tool.aftershot' as never, () => this.options.layer.call('screenshot', { ...(typeof tabId === 'number' ? { tabId } : {}), region: view, grid: true, marks: true }, this.options.signal)).catch(() => undefined);
+              if (crop?.ok) {
+                const cimg = this.#screenshotImage({ ...outcome, call: { ...outcome.call, toolName: 'screenshot' }, result: crop });
+                if (cimg) {
+                  capture = await this.#withThumb(cimg);
+                  const pct = Math.round(change!.fraction * 1000) / 10;
+                  // The words the page painted in that part (a menu's items), from its own drawing calls: exact, so the next action can name one.
+                  const words = /^painted text here.*$/m.exec(String(crop.text ?? ''))?.[0];
+                  if (words) notes.push(note(words));
+                  notes.push(note(`Only this part of the page changed: [${change!.box!.map(n => Math.round(n * 1000) / 1000).join(', ')}] (${pct}% of its pixels); everything else is exactly as before. The attached picture is that part enlarged, with its grid labelled in whole-page fractions and numbered marks: read what appeared there (a menu, a panel, a selection) and aim from it.`));
+                }
               }
             }
             if (same && this.#canvasNoChange >= 3) {
@@ -1543,7 +1576,7 @@ ${ledger}` : ''),
     if (!outcome.skipped && outcome.call.toolName !== 'done') this.#toolsUsed.add(outcome.call.toolName);
     const status: ToolRow['status'] = outcome.skipped ? 'skipped' : outcome.isError ? 'failed' : 'done';
     // A page load (an address opened, a reload, back or forward, a click that opened a new document) is what "it persisted" is measured against (plan ledger).
-    if (!outcome.isError && (outcome.call.toolName === 'navigate' || outcome.call.toolName === 'tabs' || outcome.result?.receipt?.navigation)) this.#loadSeq++;
+    if (!outcome.isError && (outcome.call.toolName === 'navigate' || outcome.call.toolName === 'tabs' || outcome.result?.receipt?.navigation)) { this.#loadSeq++; this.#lastPlain = undefined; }
     const planChanged = this.#plan.active && outcome.call.toolName !== 'plan' && outcome.call.toolName !== 'done' && !outcome.skipped && (outcome.isError ? this.#plan.markFailure() : this.#plan.markSuccess());
     this.options.emit(
       {
@@ -1644,6 +1677,15 @@ ${ledger}` : ''),
   #canvasIntents: Array<Set<string>> = [];
   #aimNoted = false;
   #lastCanvasPicture: string | undefined;
+  /** The last plain picture (no grid, no marks) of the page the run is working on, the baseline the next action's result is compared with. */
+  #lastPlain: { base64: string; mime: string; tabId: number | undefined } | undefined;
+
+  /** A plain picture of the tab, or undefined when it cannot be taken. */
+  async #plainPicture(tabId: unknown): Promise<{ base64: string; mime: string; tabId: number | undefined } | undefined> {
+    const shot = await this.options.layer.call('screenshot', { ...(typeof tabId === 'number' ? { tabId } : {}) }, this.options.signal).catch(() => undefined);
+    const data = shot?.ok ? (shot.data as { base64?: string; mimeType?: string } | undefined) : undefined;
+    return data?.base64 ? { base64: data.base64, mime: data.mimeType ?? 'image/png', tabId: typeof tabId === 'number' ? tabId : undefined } : undefined;
+  }
   #canvasNoChange = 0;
   /** Points that were clicked on an unchanged painted page and did nothing (dead-spots.ts). */
   readonly #deadSpots = new DeadSpots();

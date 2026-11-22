@@ -52,6 +52,8 @@ export async function runAgent(
   script: ScriptedReply[] | ((call: ScriptedCall, index: number) => ScriptedReply | Promise<ScriptedReply>),
   options: {
     task?: string;
+    /** A model that sees pictures: a pointer action on a painted page is then followed by the picture of what changed. */
+    vision?: boolean;
     session?: SessionConfig;
     loop?: Partial<LoopOptions>;
     /** Tools left out of the run, to test the check at dispatch. */
@@ -106,12 +108,12 @@ export async function runAgent(
       profile: resolveProfile({
         kind: 'openai-compatible',
         modelName: 'scripted',
-        overrides: { contextWindow: 128_000 },
+        overrides: { contextWindow: 128_000, ...(options.vision ? { vision: true } : {}) },
       }),
       reasoning: 'none',
     },
     system: agentSystemPrompt(),
-    tools: toolsForRun({ disabled: options.disabledTools ?? [], vision: false }),
+    tools: toolsForRun({ disabled: options.disabledTools ?? [], vision: !!options.vision, pointAt: !!options.vision }),
     layer: layerPort(session),
     host: new FakeHost(),
     signal: new AbortController().signal,

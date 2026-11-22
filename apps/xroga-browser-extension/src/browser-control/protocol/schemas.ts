@@ -166,6 +166,7 @@ export const CanvasArgsSchema = z.strictObject({
   to: placeOnPage.optional().describe('drag end'),
   mark: z.number().int().min(1).max(200).optional().describe('instead of at: the number of a mark in the last screenshot taken with marks true'),
   toMark: z.number().int().min(1).max(200).optional().describe('drag end as a mark number'),
+  label: z.string().min(1).max(80).optional().describe('instead of at: a text the canvas painted, exactly as a screenshot lists it (the label of a menu, a tool, a button)'),
   text: z.string().max(4000).optional().describe('type: text for a field the canvas paints'),
   key: z.string().max(40).optional().describe('key: Enter, Tab, Escape, Backspace, Control+A, F6'),
   replace: z.boolean().optional().describe('type: select all first'),

@@ -90,6 +90,70 @@ export function scanColor(data: Uint8ClampedArray, width: number, height: number
   return hits.sort((a, b) => b.pixels - a.pixels).slice(0, Math.max(1, Math.min(20, search.limit ?? 5)));
 }
 
+export interface PictureChange {
+  /** Share of the picture's pixels that differ (0 to 1). */
+  fraction: number;
+  /** The smallest box holding every changed pixel, as fractions [x0, y0, x1, y1] of the picture; null when nothing changed. */
+  box: [number, number, number, number] | null;
+}
+
+/**
+ * Where two pictures of the same page differ. A canvas reports no effect of its own, so what an action did is read from the pixels: nothing (a click that hit nothing that
+ * reacts), a small box (a menu opened, an item was selected) or most of the picture (a different view). Pictures of different sizes are not comparable and give null.
+ * Differences below `tolerance` (summed over the three colour channels) and isolated specks (fewer than `noise` pixels in all) are ignored, so antialiasing and a blinking
+ * caret do not count as a change.
+ */
+export function diffPictures(
+  a: { data: Uint8ClampedArray; width: number; height: number },
+  b: { data: Uint8ClampedArray; width: number; height: number },
+  options: { tolerance?: number; noise?: number } = {},
+): PictureChange | null {
+  if (a.width !== b.width || a.height !== b.height) return null;
+  const tolerance = options.tolerance ?? 36;
+  const noise = options.noise ?? 24;
+  const { width, height } = a;
+  let minX = width, minY = height, maxX = -1, maxY = -1, changed = 0;
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const i = (y * width + x) * 4;
+      const d = Math.abs(a.data[i]! - b.data[i]!) + Math.abs(a.data[i + 1]! - b.data[i + 1]!) + Math.abs(a.data[i + 2]! - b.data[i + 2]!);
+      if (d <= tolerance) continue;
+      changed++;
+      if (x < minX) minX = x;
+      if (x > maxX) maxX = x;
+      if (y < minY) minY = y;
+      if (y > maxY) maxY = y;
+    }
+  }
+  if (changed < noise) return { fraction: 0, box: null };
+  return { fraction: changed / (width * height), box: [minX / width, minY / height, (maxX + 1) / width, (maxY + 1) / height] };
+}
+
+/**
+ * The view to show after a change: the changed box with a margin, grown to a size a model can read (at least `minW` by `minH` of the page), kept inside the page. Null when
+ * the change fills too much of the page for a crop to be worth it (then the whole picture is the right view).
+ */
+export function viewOfChange(box: [number, number, number, number], options: { margin?: number; minW?: number; minH?: number; maxArea?: number } = {}): [number, number, number, number] | null {
+  const margin = options.margin ?? 0.03;
+  const minW = options.minW ?? 0.3;
+  const minH = options.minH ?? 0.2;
+  let [x0, y0, x1, y1] = [box[0] - margin, box[1] - margin, box[2] + margin, box[3] + margin];
+  const grow = (lo: number, hi: number, min: number): [number, number] => {
+    if (hi - lo >= min) return [lo, hi];
+    const mid = (lo + hi) / 2;
+    return [mid - min / 2, mid + min / 2];
+  };
+  [x0, x1] = grow(x0, x1, minW);
+  [y0, y1] = grow(y0, y1, minH);
+  const shift = (lo: number, hi: number): [number, number] => (lo < 0 ? [0, hi - lo] : hi > 1 ? [lo - (hi - 1), 1] : [lo, hi]);
+  [x0, x1] = shift(x0, x1);
+  [y0, y1] = shift(y0, y1);
+  x0 = Math.max(0, x0); y0 = Math.max(0, y0); x1 = Math.min(1, x1); y1 = Math.min(1, y1);
+  if ((x1 - x0) * (y1 - y0) > (options.maxArea ?? 0.5)) return null;
+  const r = (n: number) => Math.round(n * 1000) / 1000;
+  return [r(x0), r(y0), r(x1), r(y1)];
+}
+
 export class ImageDecodeError extends Error {
   constructor(readonly reason: 'no-offscreen-canvas' | 'invalid-image' | 'empty-image', message: string) {
     super(message);

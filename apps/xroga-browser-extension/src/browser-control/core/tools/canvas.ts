@@ -5,6 +5,7 @@
 //   - the model's stated intent is screened for consequential words, which need the user;
 //   - a dialog on the tab stops it, as for every other action.
 import { markCentre } from './marks';
+import { matchPainted, readPaintedTexts } from '../painted-text';
 import { LayerError } from '../../protocol/errors';
 import type { CanvasArgs } from '../../protocol/schemas';
 import type { ActionReceipt } from '../../protocol/results';
@@ -175,7 +176,19 @@ export async function canvas(ctx: ToolContext, args: CanvasArgs): Promise<ToolOu
     if ('reason' in found) throw new LayerError('INVALID_ARGUMENT', `Nothing was dispatched: ${found.reason}.`);
     args = { ...args, to: found.at };
   }
-  if (!args.at) throw new LayerError('INVALID_ARGUMENT', `canvas ${args.action} needs at or mark.`);
+  // A label stands for the centre of a text the page painted: exact words and position from the page's own drawing calls, not a guess from a picture.
+  if (args.label !== undefined && !args.at) {
+    const texts = await readPaintedTexts((await ctx.attach()).cdp);
+    const found = matchPainted(texts, args.label);
+    if (found.length === 1) args = { ...args, at: [found[0]!.fx, found[0]!.fy] };
+    else if (found.length > 1) {
+      throw new LayerError('AMBIGUOUS_TARGET', `${found.length} painted texts match ${quote(args.label, 40)}: ${found.slice(0, 8).map(t => `«${t.text}» [${t.fx.toFixed(3)}, ${t.fy.toFixed(3)}]`).join(', ')}. Nothing was dispatched: use at with the one you mean.`);
+    } else {
+      const near = texts.slice(0, 20).map(t => `«${t.text}» [${t.fx.toFixed(3)}, ${t.fy.toFixed(3)}]`);
+      throw new LayerError('NO_MATCH', `Nothing painted on this page reads ${quote(args.label, 40)}.${near.length ? ` The page painted: ${near.join(' · ')}${texts.length > 20 ? ` · … ${texts.length - 20} more` : ''}.` : ' No painted text was recorded here (text drawn by WebGL, or drawn before the page was opened, is not): take a screenshot with marks and aim from it.'} Nothing was dispatched.`);
+    }
+  }
+  if (!args.at) throw new LayerError('INVALID_ARGUMENT', `canvas ${args.action} needs at, mark or label.`);
   if (args.action === 'drag' && !args.to) throw new LayerError('INVALID_ARGUMENT', 'A drag needs `to`, the place where it ends.');
   const viewport = await viewportOf(ctx);
   const at = { x: args.at[0] * viewport.width, y: args.at[1] * viewport.height };
