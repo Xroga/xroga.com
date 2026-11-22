@@ -1,9 +1,17 @@
 /** Recognize an explicit request to connect an app before action-tool discovery. */
 export function connectionSearchTerms(message: string): string[] | null {
   const text = message.trim().toLowerCase();
-  // A requested URL/source "link" is a noun, not authorization to link an app.
-  const linkCommand = /(?:^|[;.!?]\s*|\b(?:please|can you|could you|would you|i want to|we want to|and|then)\s+)link\s+(?:(?:my|our|the|to|with|an?)\s+){0,4}[a-z]/.test(text);
-  if (!(/\b(?:connect|reconnect|authorize|authorise)\b/.test(text) || linkCommand)
+  // "Link" can request a URL in the answer. Reserve this preflight for an
+  // explicit account/app object or an explicit connection to Xroga.
+  const linkPositions = new Set<number>();
+  const linkOpeners = /(?:^|[;.!?\n]\s*|\b(?:please|can you|could you|would you|i want to|we want to|and|then)\s+)link\s+/g;
+  for (const opener of text.matchAll(linkOpeners)) {
+    const clause = text.slice(opener.index + opener[0].length).split(/[;,.!?\n]/, 1)[0]!;
+    const accountObject = /^(?:(?:my|our|the|an?)\s+)?(?:(?!(?:to|with|and|then|or|each|every|both|all)\b)[a-z][a-z0-9_.+-]*\s+){0,4}(?:accounts?|apps?|plugins?|integrations?)(?=$|\s+(?:to|with|so|for|before|now|please|and)\b)/.test(clause);
+    const xrogaDestination = /^(?:(?!(?:to|with|and|then|or)\b)[a-z][a-z0-9_.+-]*\s+){1,5}(?:to|with)\s+(?:(?:my|our|the)\s+)?xroga\b/.test(clause);
+    if (accountObject || xrogaDestination) linkPositions.add(opener.index + opener[0].lastIndexOf('link'));
+  }
+  if (!(/\b(?:connect|reconnect|authorize|authorise)\b/.test(text) || linkPositions.size)
     || /\b(?:do not|don't|without|never)\s+(?:want(?:ing)?\s+to\s+)?(?:connect|reconnect|link|authorize|authorise)\b/.test(text)) return null;
 
   const stop = new Set([
@@ -19,6 +27,7 @@ export function connectionSearchTerms(message: string): string[] | null {
 
   const anchored: string[] = [];
   for (const match of text.matchAll(/\b(?:connect|reconnect|link|authorize|authorise)\b\s+(?:(?:my|our|the|to|with|of|an?|app|account|plugin)\s+){0,4}([a-z][a-z0-9_.+-]*(?:\s+[a-z][a-z0-9_.+-]*)?)/g)) {
+    if (match[0].startsWith('link') && !linkPositions.has(match.index)) continue;
     const parts = match[1]!.split(/\s+/).filter((word) => !stop.has(word));
     if (parts.length === 2) anchored.push(parts.join(' '));
     if (parts[0]) anchored.push(parts[0]);
