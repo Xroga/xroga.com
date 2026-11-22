@@ -170,3 +170,6 @@ Build commit `9d57e0c71`, ZIP `C:\xr-review-builds\xroga-browser-operator-stagin
 
 ## Build addendum 10 (round 9)
 Build commit `50c8965b8`, ZIP `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-50c8965b8.zip`, SHA-256 `E7EF7706E2445E4F706EC447C263C9D2E1051B6DF27F2BFBCFB7A4C78BC2B02D`, manifest `ARTIFACT-MANIFEST-50c8965b8.json`. Unit suite 1493 passed; Chromium scenarios 308 of 308 PASS (`scenarios-full-20261122g.json`); upgrade from `9d57e0c71` keeps id, storage, service worker and side panel. Backend unchanged. Production not live with any of this.
+
+## Build addendum 11 (round 10)
+Build commit `d5e82a9b7`, ZIP `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-d5e82a9b7.zip`, SHA-256 `67553514BCE529FBDE7B66525329D1C4CD3A0B6E72C0614A3DE742471511939F`, manifest `ARTIFACT-MANIFEST-d5e82a9b7.json`. Unit suite 1497 passed; Chromium scenarios 310 of 310 PASS (`scenarios-full-20261122h.json`); upgrade from `50c8965b8` keeps id, storage, service worker and side panel. Backend unchanged. Production not live with any of this.
