@@ -132,6 +132,45 @@ test.afterAll(async () => {
   if (outsiderId) expect((await admin.auth.admin.deleteUser(outsiderId)).error).toBeNull();
 });
 
+test('sidebar search finds saved projects and chat previews without crossing accounts', async ({ page }) => {
+  const sectionTitle = `Roadmap collection ${run}`;
+  expect((await admin.from('xroga_sidebar_sections').insert({ user_id: ownerId, project_id: ownerProjectId, title: sectionTitle })).error).toBeNull();
+  await page.goto('/auth/login?next=%2Fworkspace');
+  const form = page.locator('form', { has: page.locator('#login-email') });
+  await form.locator('#login-email').fill(ownerEmail);
+  await form.locator('#login-password').fill(password);
+  await form.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await expect(page).toHaveURL(/\/workspace/, { timeout: AUTH_TRANSITION_TIMEOUT_MS });
+  expect(await browserSession(page)).toEqual({ status: 200, authenticated: true });
+
+  const trigger = page.getByRole('button', { name: 'Search workspace', exact: true }).filter({ visible: true }).first();
+  await trigger.click();
+  const dialog = page.getByRole('dialog', { name: 'Search workspace' });
+  const input = dialog.getByRole('searchbox');
+  await expect(input).toBeFocused();
+  await input.fill('command3 demo owner');
+  await expect(dialog.getByRole('link', { name: new RegExp(`command3-demo-owner-${run}`) }))
+    .toHaveAttribute('href', `/workspace?project=${ownerProjectId}`);
+  await input.fill('Roadmap collection');
+  await expect(dialog.getByRole('link', { name: new RegExp(sectionTitle) }))
+    .toHaveAttribute('href', `/workspace?project=${ownerProjectId}`);
+  await input.fill('Persisted outsider conversation');
+  await expect(dialog.getByRole('status')).toHaveText('No matching saved work.');
+  await input.press('Escape');
+  await expect(dialog).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+
+  await trigger.click();
+  await input.fill('Persisted owner first');
+  const result = dialog.getByRole('link', { name: new RegExp(conversations.first.title) });
+  await expect(result).toHaveAttribute('href', `/workspace?conversation=${conversations.first.id}`);
+  await input.press('ArrowDown');
+  await expect(result).toBeFocused();
+  await result.press('Enter');
+  await expect(page.locator('[data-terminal-composer]')).toHaveAttribute('data-draft-session', conversations.first.id);
+  await expect(page.getByText(conversations.first.reply, { exact: true })).toBeVisible();
+});
+
 test('setup remains retryable after a failed save and exits only after a durable skip', async ({ page }) => {
   const previous = { status: 'completed', current_step: 'complete', backfilled: true };
   const reset = await admin.from('profiles').update({ onboarding: { status: 'not_started' } }).eq('id', outsiderId);

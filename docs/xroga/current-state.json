@@ -85625,27 +85625,50 @@
       "id": "surface:ee601ddd5d022ca25ab4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/layout/SidebarSearchModal.tsx",
-      "sha256": "073a1836872c54348e5892943e3172f2f0c38f72809d2fb44b036f96a4436c46",
+      "sha256": "2a3188d273abd1613e4c99ed9821ab7ed7ffe7adb58728a3681a4d71258723d7",
       "symbols": [
+        "Icon",
+        "Props",
+        "ResultState",
+        "SearchPanel",
         "SidebarSearchModal",
-        "SidebarSearchModalProps",
-        "filtered",
-        "onKey",
-        "previouslyFocused",
-        "q",
-        "searchInputRef"
+        "active",
+        "canSearch",
+        "current",
+        "dialog",
+        "first",
+        "focusable",
+        "handleKeys",
+        "helperId",
+        "icons",
+        "input",
+        "items",
+        "key",
+        "labels",
+        "last",
+        "links",
+        "next",
+        "normalized",
+        "owner",
+        "returnFocus",
+        "stop",
+        "timer"
       ],
       "imports": [
-        "@/lib/api",
-        "@/lib/utils",
+        "./SidebarSearchModal.module.css",
+        "./WorkspaceIdentityContext",
+        "@/lib/workspaceSearch",
+        "@/lib/workspaceSearchIndex",
+        "@/lib/workspaceSearchQuery",
         "lucide-react",
-        "next/link",
         "react",
         "react-dom"
       ],
       "runtimeImports": [
-        "frontend/src/lib/api.ts",
-        "frontend/src/lib/utils.ts"
+        "frontend/src/components/layout/SidebarSearchModal.module.css",
+        "frontend/src/components/layout/WorkspaceIdentityContext.tsx",
+        "frontend/src/lib/workspaceSearch.ts",
+        "frontend/src/lib/workspaceSearchQuery.ts"
       ],
       "entryPoints": [
         "frontend/src/app/(shell)/layout.tsx",
@@ -85659,11 +85682,12 @@
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "lucide-react",
-        "next/link",
         "react",
         "react-dom"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "frontend/src/components/layout/SidebarSearchModal.tsx#useWorkspaceIdentity"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -85846,6 +85870,7 @@
         "frontend/src/components/layout/AppShell.tsx:19",
         "frontend/src/components/layout/Sidebar.tsx:98",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:61",
+        "frontend/src/components/layout/SidebarSearchModal.tsx:6",
         "frontend/src/components/library/LibraryWorkspace.tsx:10",
         "frontend/src/components/notifications/NotificationExperience.tsx:8",
         "frontend/src/components/providers/AppProviders.tsx:8",
@@ -106498,7 +106523,6 @@
         "frontend/src/components/integrations/PluginMarketplace.tsx:33",
         "frontend/src/components/integrations/SupabaseConnectPanel.tsx:5",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:22",
-        "frontend/src/components/layout/SidebarSearchModal.tsx:7",
         "frontend/src/components/library/LibraryWorkspace.tsx:6",
         "frontend/src/components/native-openui/Evaluation.tsx:5",
         "frontend/src/components/notifications/NotificationBell.tsx:6",
@@ -117240,7 +117264,8 @@
         "frontend/src/components/terminal/WorkspaceConversationMenu.tsx:12",
         "frontend/src/lib/sidebarOrganization.test.ts:6",
         "frontend/src/lib/terminalHistory.ts:253",
-        "frontend/src/lib/terminalHistory.ts:256"
+        "frontend/src/lib/terminalHistory.ts:256",
+        "frontend/src/lib/workspaceSearch.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -118258,7 +118283,8 @@
         "frontend/src/lib/projectDeliveryApi.ts:8",
         "frontend/src/lib/projectRuntimeApi.ts:3",
         "frontend/src/lib/runLightLaneChat.ts:1",
-        "frontend/src/lib/sidebarOrganization.ts:2"
+        "frontend/src/lib/sidebarOrganization.ts:2",
+        "frontend/src/lib/workspaceSearch.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -120708,7 +120734,6 @@
         "frontend/src/components/layout/Sidebar.tsx:40",
         "frontend/src/components/layout/SidebarNavScroller.tsx:4",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:58",
-        "frontend/src/components/layout/SidebarSearchModal.tsx:8",
         "frontend/src/components/layout/ThemeToggle.tsx:9",
         "frontend/src/components/magicui/globe.tsx:7",
         "frontend/src/components/marketing/ScrollReveal.tsx:4",
@@ -121568,6 +121593,185 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:d23ab6644e4b3e4f4026",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/workspaceSearch.ts",
+      "sha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d",
+      "symbols": [
+        "Chat",
+        "LIMIT",
+        "Label",
+        "Project",
+        "Section",
+        "candidates",
+        "chatFields",
+        "chatIds",
+        "clean",
+        "db",
+        "labels",
+        "match",
+        "position",
+        "primaryChats",
+        "projectFields",
+        "projectIds",
+        "projects",
+        "repoChats",
+        "row",
+        "searchOwnedWorkspace",
+        "sections",
+        "snippet",
+        "start",
+        "storedId",
+        "titleById",
+        "titles",
+        "uuid"
+      ],
+      "imports": [
+        "./workspaceSearchIndex",
+        "./workspaceSearchQuery",
+        "@/lib/sidebarOrganization",
+        "@/lib/supabase/client"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/sidebarOrganization.ts",
+        "frontend/src/lib/supabase/client.ts",
+        "frontend/src/lib/workspaceSearchIndex.ts",
+        "frontend/src/lib/workspaceSearchQuery.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/layout/SidebarSearchModal.tsx:46"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [
+        "projects",
+        "terminal_sessions",
+        "xroga_sidebar_chats",
+        "xroga_sidebar_items",
+        "xroga_sidebar_sections"
+      ],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [
+        "frontend/src/lib/workspaceSearch.ts:32 (user_id)",
+        "frontend/src/lib/workspaceSearch.ts:33 (user_id)",
+        "frontend/src/lib/workspaceSearch.ts:34 (user_id)",
+        "frontend/src/lib/workspaceSearch.ts:35 (user_id)",
+        "frontend/src/lib/workspaceSearch.ts:36 (user_id)",
+        "frontend/src/lib/workspaceSearch.ts:54 (user_id)",
+        "frontend/src/lib/workspaceSearch.ts:55 (user_id)",
+        "frontend/src/lib/workspaceSearch.ts:56 (user_id)"
+      ],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:6db17ff2d9e97525296c",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/workspaceSearchIndex.ts",
+      "sha256": "00f0d1879fd7a6f9f8a355ccbe413a67693b04ce765ae07022febacc61e4c65d",
+      "symbols": [
+        "WorkspaceSearchCandidate",
+        "WorkspaceSearchResult",
+        "index",
+        "keyed",
+        "normalized",
+        "phrase",
+        "rankWorkspaceSearch",
+        "ranked",
+        "scores",
+        "titlePriority"
+      ],
+      "imports": [
+        "./workspaceSearchQuery",
+        "minisearch"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/workspaceSearchQuery.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx"
+      ],
+      "callers": [
+        "frontend/src/lib/workspaceSearch.ts:5",
+        "frontend/src/lib/workspaceSearchIndex.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "minisearch"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/workspaceSearchIndex.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:58106e6e2b22145e75fb",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/workspaceSearchQuery.ts",
+      "sha256": "1f77332ec1a4134a6a21e340547c52b1bce9c714c37c06fafc13a5f938f9ddf8",
+      "symbols": [
+        "SearchField",
+        "clauses",
+        "searchFields",
+        "searchWords",
+        "workspaceSearchFilter",
+        "workspaceSearchTerms"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/layout/SidebarSearchModal.tsx:8",
+        "frontend/src/lib/workspaceSearch.ts:6",
+        "frontend/src/lib/workspaceSearchIndex.test.ts:4",
+        "frontend/src/lib/workspaceSearchIndex.ts:2"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/workspaceSearchIndex.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -146196,19 +146400,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:55e740e78da0959dd796",
+      "id": "finding:f01bc6e8acecf08f91dd",
       "sourcePath": "frontend/src/components/layout/SidebarSearchModal.tsx",
-      "line": 67,
-      "kind": "PLACEHOLDER",
-      "reachable": true,
-      "state": "PARTIAL",
-      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
-      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
-    },
-    {
-      "id": "finding:6d77db62eb777db80d8a",
-      "sourcePath": "frontend/src/components/layout/SidebarSearchModal.tsx",
-      "line": 68,
+      "line": 89,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -148605,86 +148799,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:b89dce44b480d5fe9a9d",
+      "id": "frontend-call:461b0b57b780967a6664",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 908,
+      "line": 947,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:382f0c391fada8678bc5",
+      "id": "frontend-call:0314527622d1728ef0da",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 911,
+      "line": 950,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:0a4e1f20d8fb36f24a22",
+      "id": "frontend-call:018b9cd347b6468e3313",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1682,
+      "line": 1721,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:28949c5d6b3408ea05ad",
+      "id": "frontend-call:3fee4b2d73393d591642",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1683,
+      "line": 1722,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:a9a968e45e6b449ddd0f",
+      "id": "frontend-call:30aea658f1765028d2bf",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1688,
+      "line": 1727,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:1b2ebef1732e72090173",
+      "id": "frontend-call:1737ac7257a29eba7e20",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1689,
+      "line": 1728,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:64ca3a3a991461287952",
+      "id": "frontend-call:66bb41bb3a910b07fe37",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1695,
+      "line": 1734,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:59a37e193f3b73051e47",
+      "id": "frontend-call:91cb34b65a176fcd83fb",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1700,
+      "line": 1739,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:6068852bea49ef2d8025",
+      "id": "frontend-call:30c22c413b7d42e4d3d6",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1757,
+      "line": 1796,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:8892e7733cad12ec7905",
+      "id": "frontend-call:d55951a82eea3acdaa9a",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1758,
+      "line": 1797,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:6935648dcab1279fa9bb",
+      "id": "frontend-call:15594a92613efc957652",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1765,
+      "line": 1804,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:03dc5adc57a60fac446f",
+      "id": "frontend-call:d0d2f0771c620bd65311",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1779,
+      "line": 1818,
       "callee": "fetch",
       "reachable": false
     },
@@ -150016,34 +150210,6 @@
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
       "line": 1119,
       "callee": "api.terminalSessions.delete",
-      "reachable": true
-    },
-    {
-      "id": "frontend-call:a5693ee2c431571dcaa3",
-      "sourcePath": "frontend/src/components/layout/SidebarSearchModal.tsx",
-      "line": 24,
-      "callee": "api.projects.list().then().catch().finally",
-      "reachable": true
-    },
-    {
-      "id": "frontend-call:e779eec981e0750d195e",
-      "sourcePath": "frontend/src/components/layout/SidebarSearchModal.tsx",
-      "line": 24,
-      "callee": "api.projects.list().then().catch",
-      "reachable": true
-    },
-    {
-      "id": "frontend-call:74dfbb933f387a5d785c",
-      "sourcePath": "frontend/src/components/layout/SidebarSearchModal.tsx",
-      "line": 24,
-      "callee": "api.projects.list().then",
-      "reachable": true
-    },
-    {
-      "id": "frontend-call:4ff40e1913402944372e",
-      "sourcePath": "frontend/src/components/layout/SidebarSearchModal.tsx",
-      "line": 24,
-      "callee": "api.projects.list",
       "reachable": true
     },
     {
@@ -157308,7 +157474,7 @@
     {
       "id": "test-suite:967afee80eba90847db7",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "declaredTests": 5,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -159222,6 +159388,13 @@
       "id": "test-suite:972de61dc38f0404bbba",
       "sourcePath": "frontend/src/lib/workspaceRouteIsolation20261021.test.ts",
       "declaredTests": 6,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:8e37fd348ef9f2288627",
+      "sourcePath": "frontend/src/lib/workspaceSearchIndex.test.ts",
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

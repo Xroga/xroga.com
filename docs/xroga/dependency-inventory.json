@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "e3c9389f587f4d412a08b98f22087a4d11019382",
+  "source_sha": "3e9017391baf33fc06fefbf4170d7e6a9232925b",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -22254,7 +22254,7 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarSearchModal.tsx",
-      "sha256": "073a1836872c54348e5892943e3172f2f0c38f72809d2fb44b036f96a4436c46"
+      "sha256": "2a3188d273abd1613e4c99ed9821ab7ed7ffe7adb58728a3681a4d71258723d7"
     },
     {
       "path": "frontend/src/components/layout/SlideshowToggle.tsx",
@@ -24543,6 +24543,18 @@
     {
       "path": "frontend/src/lib/workspacePreviewStorage.ts",
       "sha256": "ff0d547d80557a6f62b9408430b928e03ca92852bee5b7bb19bc2f75a99da0ac"
+    },
+    {
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "sha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d"
+    },
+    {
+      "path": "frontend/src/lib/workspaceSearchIndex.ts",
+      "sha256": "00f0d1879fd7a6f9f8a355ccbe413a67693b04ce765ae07022febacc61e4c65d"
+    },
+    {
+      "path": "frontend/src/lib/workspaceSearchQuery.ts",
+      "sha256": "1f77332ec1a4134a6a21e340547c52b1bce9c714c37c06fafc13a5f938f9ddf8"
     },
     {
       "path": "frontend/src/lib/workspaceSessionStorage.ts",
@@ -40638,6 +40650,34 @@
     {
       "path": "frontend/src/lib/voiceDictation.ts",
       "line": 32,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "line": 62,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/workspaceSearchIndex.ts",
+      "line": 15,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/workspaceSearchIndex.ts",
+      "line": 19,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/workspaceSearchQuery.ts",
+      "line": 5,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
