@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/workspace-factual-prose-20261121",
-    "sha": "8b46b6fa46eccdd5c780788e7d63a24705f91079",
-    "sourceTimestampUtc": "2026-11-22T04:32:09+05:00",
-    "auditStartedUtc": "2026-11-22T02:03:33.806Z",
+    "sha": "9b027634cbdd98f7c5f1c22721ca0f2fb7574584",
+    "sourceTimestampUtc": "2026-11-22T07:05:13+05:00",
+    "auditStartedUtc": "2026-11-22T02:11:41.971Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -5242,7 +5242,7 @@
       "id": "surface:e0ab1e1220bfa120c45b",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeDocumentDownload.ts",
-      "sha256": "5950e2953b8034601595901084e6b18c4ac06d0bd7e242c08da63655ca72afd9",
+      "sha256": "3afd341bb8edb264feedb4597f2dc1022899f334da01bd793295c300eadcf503",
       "symbols": [
         "NativeDocumentFormat",
         "afterFormat",
@@ -5278,7 +5278,10 @@
         "nativeDocumentFormats",
         "nativeDocumentPrompt",
         "nativeDocumentRequiresAttachment",
+        "nativeDocumentRequiresPriorAnswer",
         "optionalDescription",
+        "priorContent",
+        "priorExport",
         "raw",
         "request",
         "requestedNativeDocumentFormat",
@@ -5427,7 +5430,7 @@
       "id": "surface:5a4c7faa491e20eac75f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOfficeContent.ts",
-      "sha256": "e1adb1dc730036bd104d4dae1d04c83fc7e8cedb149f76df6e2cf2a758b82ced",
+      "sha256": "c5ed864029c1cf810c4e6358812f3d75790f93348f5d2f73812c2fc7d2170703",
       "symbols": [
         "MAX_CONTENT_CHARS",
         "NativeWorkbookFormula",
@@ -5446,6 +5449,7 @@
         "computed",
         "content",
         "coordinates",
+        "decimal",
         "dividerIndex",
         "dividers",
         "end",
@@ -5475,6 +5479,7 @@
         "result",
         "row",
         "rows",
+        "significant",
         "simple",
         "slides",
         "splitRow",
@@ -7725,7 +7730,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "c3e731c80a6846a44e39e51eb906cfc390b12386a06315302043fe7760c4c730",
+      "sha256": "8421acd5e8233fe3207a59285288db1366c2d3f266eb76966302d2488d3546b4",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -7922,6 +7927,8 @@
         "meta",
         "metaRaw",
         "missingDownloadAttachment",
+        "missingDownloadHistory",
+        "missingDownloadSource",
         "modelDeletes",
         "modelId",
         "modelScope",
@@ -42865,8 +42872,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:3992",
-        "backend/src/ai/pipeline.ts:3995",
+        "backend/src/ai/pipeline.ts:3997",
+        "backend/src/ai/pipeline.ts:4000",
         "backend/src/ai/projectMemory.ts:7",
         "backend/src/ai/sessionMemory.ts:7",
         "backend/src/builder/providerTransports.ts:10",
@@ -43139,7 +43146,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:133",
-        "backend/src/ai/pipeline.ts:3991",
+        "backend/src/ai/pipeline.ts:3996",
         "backend/src/ai/tenantModelDispatch.ts:6",
         "backend/src/config/supabaseTransport.security.test.ts:6",
         "backend/src/routes/integrations.ts:19",
@@ -153105,7 +153112,7 @@
     {
       "id": "test-suite:0ff3fc98dc7085435219",
       "sourcePath": "backend/src/ai/nativeDocumentDownload.test.ts",
-      "declaredTests": 7,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -160070,7 +160077,7 @@
     {
       "id": "test-suite:5500ae34c3d41d033590",
       "sourcePath": "frontend/src/lib/xrogaFileExports.test.ts",
-      "declaredTests": 7,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },

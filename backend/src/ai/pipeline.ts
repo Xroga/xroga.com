@@ -24,7 +24,7 @@ import { assessBlackHoleComplexity } from './black-hole/complexity.js';
 import { MODELS, type ModelId } from './models.js';
 import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT } from './nativeOpenUi.js';
-import { nativeDocumentDelivery, nativeDocumentPrompt, nativeDocumentRequiresAttachment, requestedNativeDocumentFormat, type NativeDocumentFormat } from './nativeDocumentDownload.js';
+import { nativeDocumentDelivery, nativeDocumentPrompt, nativeDocumentRequiresAttachment, nativeDocumentRequiresPriorAnswer, requestedNativeDocumentFormat, type NativeDocumentFormat } from './nativeDocumentDownload.js';
 import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
 import { presentPublicResearchAnswer } from './researchAnswer.js';
 import { nativeOpenUiPlainPrompt, workspaceNativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
@@ -992,7 +992,12 @@ export async function runChatPipeline(opts: {
   const missingDownloadAttachment = Boolean(requestedDownload && nativeDocumentRequiresAttachment(opts.prompt) &&
     ((!prepared.images.length && !prepared.documents.length) || !prepared.documents.every(document =>
       document.chars > 0 && document.text.trim() && !document.text.startsWith('[DOCX received'))));
-  const downloadInstruction = requestedDownload ? nativeDocumentPrompt(requestedDownload, missingDownloadAttachment, opts.prompt) : '';
+  const missingDownloadHistory = Boolean(requestedDownload && nativeDocumentRequiresPriorAnswer(opts.prompt)
+    && !opts.history?.some(message => message.content.trim()));
+  const missingDownloadSource = missingDownloadAttachment || missingDownloadHistory;
+  const downloadInstruction = !requestedDownload ? '' : missingDownloadHistory
+    ? '\n\nThe referenced earlier content is unavailable in this conversation. Ask the user to paste it here. Do not draft a substitute or claim a file was created.'
+    : nativeDocumentPrompt(requestedDownload, missingDownloadAttachment, opts.prompt);
 
   // Attachment analyze path — never force a website build
   if (hasAttachments) {
@@ -1046,7 +1051,7 @@ export async function runChatPipeline(opts: {
     const answer = native ? completeNativeWorkspaceAnswer(result.text, result.finishReason, undefined, opts.prompt, diagnostic =>
       console.warn('[native-openui-validation]', diagnostic), formats) : undefined;
     const response = answer?.response ?? result.text;
-    const delivery = answer && nativeDocumentDelivery(requestedDownload, missingDownloadAttachment, opts.prompt, response, answer.completion);
+    const delivery = answer && nativeDocumentDelivery(requestedDownload, missingDownloadSource, opts.prompt, response, answer.completion);
     if (native) opts.onDelta?.(response);
     return {
       ...answer,
@@ -1275,7 +1280,7 @@ export async function runChatPipeline(opts: {
       ? presentPublicResearchAnswer(answer.response, answer.completion, sources, opts.prompt) : undefined;
     const { response, completion } = researchPresentation ?? answer;
     opts.onDelta?.(response);
-    const delivery = nativeDocumentDelivery(requestedDownload, missingDownloadAttachment, opts.prompt, response, completion);
+    const delivery = nativeDocumentDelivery(requestedDownload, missingDownloadSource, opts.prompt, response, completion);
     return {
       ...answer,
       response, completion: delivery.completion,

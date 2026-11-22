@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "8b46b6fa46eccdd5c780788e7d63a24705f91079",
+  "source_sha": "9b027634cbdd98f7c5f1c22721ca0f2fb7574584",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17230,7 +17230,7 @@
     },
     {
       "path": "backend/src/ai/nativeDocumentDownload.ts",
-      "sha256": "5950e2953b8034601595901084e6b18c4ac06d0bd7e242c08da63655ca72afd9"
+      "sha256": "3afd341bb8edb264feedb4597f2dc1022899f334da01bd793295c300eadcf503"
     },
     {
       "path": "backend/src/ai/nativeMarkdown.ts",
@@ -17238,7 +17238,7 @@
     },
     {
       "path": "backend/src/ai/nativeOfficeContent.ts",
-      "sha256": "e1adb1dc730036bd104d4dae1d04c83fc7e8cedb149f76df6e2cf2a758b82ced"
+      "sha256": "c5ed864029c1cf810c4e6358812f3d75790f93348f5d2f73812c2fc7d2170703"
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
@@ -17310,7 +17310,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "c3e731c80a6846a44e39e51eb906cfc390b12386a06315302043fe7760c4c730"
+      "sha256": "8421acd5e8233fe3207a59285288db1366c2d3f266eb76966302d2488d3546b4"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -25879,7 +25879,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4215,
+      "line": 4220,
       "credentialsInUrl": false
     },
     {
@@ -33075,35 +33075,35 @@
     },
     {
       "path": "backend/src/ai/nativeDocumentDownload.ts",
-      "line": 100,
+      "line": 108,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeDocumentDownload.ts",
-      "line": 104,
+      "line": 112,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOfficeContent.ts",
-      "line": 87,
+      "line": 93,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOfficeContent.ts",
-      "line": 105,
+      "line": 111,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeOfficeContent.ts",
-      "line": 106,
+      "line": 112,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -33782,49 +33782,49 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1192,
+      "line": 1197,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1196,
+      "line": 1201,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1670,
+      "line": 1675,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2422,
+      "line": 2427,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3981,
+      "line": 3986,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4165,
+      "line": 4170,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4944,
+      "line": 4949,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

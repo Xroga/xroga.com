@@ -26,6 +26,10 @@ const afterFormat = new RegExp(beforePrefix + '(?:' + descriptionWord + '){0,5}'
   + '\\s+(?:as|in)\\s+(?:(?:a|an)\\s+)?' + fileFormat + '\\b', 'iu');
 const exportFormat = new RegExp('^(?:please\\s+)?(?:(?:can|could|would)\\s+you\\s+)?(?:export|save|download|convert)\\s+'
   + '(?:(?:this|that|it|the\\s+(?:answer|report|document)|your\\s+(?:answer|report))\\s+)?(?:as|to)\\s+(?:(?:a|an)\\s+)?' + fileFormat + '\\b', 'i');
+const priorContent = '(?:the (?:above|previous|earlier)(?:\\s+(?:answer|report|document|text))?|your last (?:answer|report))';
+const priorExport = new RegExp('^(?:please\\s+)?(?:(?:can|could|would)\\s+you\\s+)?'
+  + '(?:put|turn|export|save|convert|format)\\s+' + priorContent
+  + '\\s+(?:into|as|to|in)\\s+(?:(?:a|an|editable|downloadable|printable)\\s+){0,3}' + fileFormat + '\\b', 'iu');
 const documentDeliverable = new RegExp(beforePrefix
   + '(?:(?!(?:with|from|using|for|about|that|by|through|as|in|and|or)\\b)' + descriptionWord + '){0,5}' + document + '\\b', 'iu');
 const followupExport = new RegExp('(?:^|[.!?]\\s+|\\n+)\\s*(?:please\\s+)?(?:provide|attach|export|save|include)\\s+'
@@ -48,7 +52,7 @@ function conciseDeliverable(text: string): RegExpExecArray | null {
 export function requestedNativeDocumentFormat(prompt: string): NativeDocumentFormat | undefined {
   const text = prompt.trim();
   if (text.length > 32_000) return;
-  const direct = exportFormat.exec(text);
+  const direct = exportFormat.exec(text) ?? priorExport.exec(text);
   const body = direct ? text : text.replace(request, '');
   const inline = direct ?? (body !== text ? beforeFormat.exec(body) ?? beforeNamedFormat.exec(body) ?? afterFormat.exec(body) : conciseDeliverable(text));
   const followups = body !== text && documentDeliverable.test(body) ? [...body.matchAll(followupExport)] : [];
@@ -67,6 +71,10 @@ export function requestedNativeDocumentFormat(prompt: string): NativeDocumentFor
 
 export function nativeDocumentRequiresAttachment(prompt: string): boolean {
   return /\b(?:my|the|this|that|these|those)\s+(?:attached|uploaded|attachments?)\b|\b(?:from|using|with)\s+(?:attached|uploaded|attachments?)\b/i.test(prompt);
+}
+
+export function nativeDocumentRequiresPriorAnswer(prompt: string): boolean {
+  return priorExport.test(prompt.trim());
 }
 
 function wantsFormula(prompt: string) {
@@ -110,9 +118,10 @@ export function compactNativeDocumentProse(format: NativeDocumentFormat | undefi
     tableNames.has(key(names.split(','))) ? `${instruction}.` : line);
 }
 
-export function nativeDocumentDelivery(format: NativeDocumentFormat | undefined, missingAttachment: boolean, prompt: string,
+export function nativeDocumentDelivery(format: NativeDocumentFormat | undefined, missingSource: boolean, prompt: string,
   response: string, completion: PublicCompletionState): { completion: PublicCompletionState; downloadFormat?: NativeDocumentFormat } {
-  if (!format || missingAttachment || completion.status !== 'complete') return { completion };
+  if (!format || completion.status !== 'complete') return { completion };
+  if (missingSource) return { completion: { status: 'partial', reason: 'presentation_contract' } };
   if (!response.trim() || (format === 'xlsx' && !parseNativeWorkbook(response, wantsFormula(prompt))) ||
       (format === 'pptx' && !parseNativeSlideDeck(response))) return { completion: { status: 'partial', reason: 'presentation_contract' } };
   return { completion, downloadFormat: format };

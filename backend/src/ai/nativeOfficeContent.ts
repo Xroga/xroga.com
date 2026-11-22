@@ -2,7 +2,13 @@ export const nativeOfficeLimits = { columns: 50, rows: 250, formulas: 64, slides
 const MAX_CONTENT_CHARS = 200_000;
 const cellNumber = (text: string) => {
   const value = Number(text);
-  return text && Number.isFinite(value) && String(value) === text ? value : undefined;
+  if (!text || !Number.isFinite(value)) return;
+  const decimal = /^-?(?:0|[1-9]\d*)(?:\.\d+)?$/u.test(text);
+  if (!decimal && !(text.includes('e') && String(value) === text)) return;
+  const significant = text.split('e', 1)[0].replace(/[.-]/g, '').replace(/^0+|0+$/g, '');
+  // Excel stores at most 15 significant digits. Keep longer identifiers
+  // literal, as well as any number spelled with leading zeros.
+  return significant.length <= 15 ? value : undefined;
 };
 
 const splitRow = (line: string) => line.trim().replace(/^\||(?<!\\)\|$/g, '')
