@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "5787e0f537261753a88bc4190fab9dbb14139786",
+  "source_sha": "dd9874ce5102461d1976acf67774283588a88379",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17066,7 +17066,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "4a47a4d7205dc86f0624f0a78f477708a137adfa3fac5ed2f8dd2a6c7d9f48b9"
+      "sha256": "01c533bfe2127d849264b9fdd5c8528cbfac161994842a818f4a9cfa1cd6089b"
     },
     {
       "path": "backend/src/ai/buildImprovementMemory.ts",
@@ -17310,7 +17310,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "bb507f29d6a4d8bf10e42f83e38b9a72235b2447c8d49a1154fbfa3d294b222e"
+      "sha256": "0d72f9ebb7a4072e05fe675a956a4515ed5c2b52d37e2fefcde9f1a0830fc10c"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -17382,7 +17382,7 @@
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "sha256": "862853b9c537fe3f83a3996bfc7af39e583640e945ccdb22ba9c9662acaf117d"
+      "sha256": "d23b8a1652f1e14ff32e25dcd2879bf4b2a0ed3a6cad8e79827ace5dcd5468de"
     },
     {
       "path": "backend/src/ai/researchRankingEvidence.ts",
@@ -17682,7 +17682,7 @@
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "sha256": "69ed720b51b2ec3d8a957c00883a9682237bc3d668d2fbaeb5818f20981ee1e4"
+      "sha256": "6889674e711a2ebe95239aaa5d427cb220e5623399e489449e6e414657a1bf69"
     },
     {
       "path": "backend/src/ai/zurelayWire.ts",
@@ -18786,7 +18786,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sha256": "ecaa975be6c7ae1a0251c3673410eb361256a73d4e02bbe81ff26d487c1529d1"
+      "sha256": "6f3c8a5367b3c97fc86685492ba3fc7e0b1424f1b61bec8cfd7d453711c01bfe"
     },
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
@@ -25903,7 +25903,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4224,
+      "line": 4215,
       "credentialsInUrl": false
     },
     {
@@ -32707,7 +32707,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "line": 84,
+      "line": 89,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -33785,70 +33785,70 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 541,
+      "line": 542,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 571,
+      "line": 572,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 766,
+      "line": 767,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1201,
+      "line": 1192,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1205,
+      "line": 1196,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1679,
+      "line": 1670,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2431,
+      "line": 2422,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3990,
+      "line": 3981,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4174,
+      "line": 4165,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4953,
+      "line": 4944,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -34681,7 +34681,7 @@
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "line": 136,
+      "line": 135,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
