@@ -1,15 +1,15 @@
 {
   "version": "1.0",
   "identity": {
-    "repository": "https://github.com/Xroga/xroga.com",
-    "branch": "",
-    "sha": "5d432868330d6b48268c652e73bee30926435ee2",
-    "sourceTimestampUtc": "2026-11-22T22:33:38+05:00",
-    "auditStartedUtc": "2026-11-22T17:40:10.653Z",
+    "repository": "https://github.com/Xroga/xroga.com.git",
+    "branch": "codex/workspace-search-ranking-basis",
+    "sha": "bfe7dcfaeb621cdca22306359b2531ffe87694fe",
+    "sourceTimestampUtc": "2026-11-22T22:47:27+05:00",
+    "auditStartedUtc": "2026-11-22T17:49:11.821Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
-    "npm": "10.9.4",
+    "npm": "11.16.0",
     "lockfiles": [
       "backend/package-lock.json",
       "deploy/browser-worker/package-lock.json",
@@ -130812,7 +130812,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "1c1bf7a32a6580ca3ae105fada870a60ba12433b357a7e453cb9eb8d582f0f85",
+      "sha256": "c4a3f3cca2e3fccac986785aa2f7efd66fdb988ca8fc63fe3eec866831f896f2",
       "symbols": [
         "accessibility",
         "answer",
