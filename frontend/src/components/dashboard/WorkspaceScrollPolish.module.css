@@ -23,6 +23,7 @@
   width: 100%;
   max-inline-size: 100%;
   margin-top: 6px;
+  margin-bottom: 10px;
   padding-inline: 10px;
 }
 .browserControl > details { max-inline-size: 100%; }
@@ -51,7 +52,7 @@
   color: #16181d;
 }
 @media (max-width: 639px) {
-  .browserControl { margin-top: 4px; padding-inline: 10px; }
+  .browserControl { margin-top: 4px; margin-bottom: 10px; padding-inline: 10px; }
   .browserControl [data-xroga-extension-trigger] {
     min-height: 24px;
     padding: 3px 8px;
