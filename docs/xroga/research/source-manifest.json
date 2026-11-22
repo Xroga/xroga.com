@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "7e06b6c3bffc6bd93c3259411d1be38b7503918e",
+  "source_sha": "9aaabbcea0d3fef0ef8569cf6de811b7b9571e6f",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -6416,9 +6416,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "b4a9c080acde0b0a4f2210252b27347ad7facd62422d7ebe521e83df8ede0e0e",
-      "byte_size": 5863592,
-      "modified_timestamp": "2026-11-22T23:03:20.830Z",
+      "sha256": "225c16197b62711c7b0643b7751b57310cc64c40b7846d96a9261311de721d1a",
+      "byte_size": 5863612,
+      "modified_timestamp": "2026-11-22T23:07:30.317Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -31649,9 +31649,9 @@
       "source_id": "SRC-bd6af899f2dd9df9",
       "filename": "verify-native-openui-browser.mjs",
       "path_or_url": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "ed595f16daebe4054a6eca592fdf86a228879ef445cc4f4e0e3693cb26c178fb",
-      "byte_size": 78399,
-      "modified_timestamp": "2026-11-22T22:59:35.994Z",
+      "sha256": "f6946d7d4284952754d71a3c4f77b7cac93b7b5ef91ea32007d712696e66debe",
+      "byte_size": 78654,
+      "modified_timestamp": "2026-11-22T23:06:33.779Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",
