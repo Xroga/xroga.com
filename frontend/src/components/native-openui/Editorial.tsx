@@ -38,7 +38,7 @@ export const Metric = defineComponent({
   component: ({ props }) => (
     <dl className="native-answer-metric" data-tone={props.tone ?? 'neutral'}>
       <dt>{props.label}</dt>
-      <dd aria-live="polite">{props.value}</dd>
+      <dd aria-live="polite"><span className="native-answer-metric-value">{props.value}</span></dd>
       {props.note && <dd className="native-answer-metric-note">{props.note}</dd>}
     </dl>
   ),

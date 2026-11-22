@@ -386,10 +386,10 @@ try {
       }
       await open('metricGrid');
       if(viewport.width<=390)await page.locator('#root').evaluate((element,width)=>{element.style.width=width+'px';element.style.maxWidth='100%';},viewport.width-100);
-      const paintedNumbers=await page.locator('.native-answer-metric > dd:first-of-type').evaluateAll(elements=>elements.map(element=>{
+      const paintedNumbers=await page.locator('.native-answer-metric-value').evaluateAll(elements=>elements.map(element=>{
         const range=document.createRange();range.selectNodeContents(element);
         return {value:element.textContent,lines:new Set(Array.from(range.getClientRects(),rect=>Math.round(rect.top))).size,
-          width:Math.round(element.getBoundingClientRect().width),font:getComputedStyle(element).fontSize};
+          width:Math.round(element.parentElement.getBoundingClientRect().width),font:getComputedStyle(element).fontSize};
       }));
       assert.deepEqual(paintedNumbers.map(item=>item.value),['$405.53','$4,331.67','$24,331.67']);
       assert.ok(paintedNumbers.every(item=>item.lines===1), 'Metrics must adapt to their container without splitting decimal values: '
