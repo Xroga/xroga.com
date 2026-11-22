@@ -53,4 +53,24 @@ describe('TaskPlan', () => {
     expect(TaskPlan.restore({ revision: 1, milestones: [{ id: 'BAD ID', title: 'x', status: 'pending' }] }).active).toBe(false);
     expect(TaskPlan.restore(undefined).active).toBe(false);
   });
+
+  it('a milestone that needs the user can wait or be blocked but never be marked done by the agent; inferred ones are tagged', () => {
+    const plan = new TaskPlan();
+    expect(plan.set([
+      { id: 'create', title: 'Create the page', basis: 'asked' },
+      { id: 'tracking', title: 'Add the tracking tag the app offers', basis: 'inferred' },
+      { id: 'publish', title: 'Publish the ad', basis: 'user' },
+      { id: 'bogus', title: 'Unknown basis is ignored', basis: 'whatever' },
+    ])).toBeNull();
+    expect(plan.validateUpdate('publish', 'done')).toMatch(/needs the user/);
+    expect(plan.validateUpdate('publish', 'waiting')).toBeNull();
+    expect(plan.validateUpdate('publish', 'blocked')).toBeNull();
+    expect(plan.validateUpdate('create', 'done')).toBeNull();
+    expect(plan.get('bogus')?.basis).toBeUndefined();
+    const text = plan.render();
+    expect(text).toMatch(/tracking: .*inferred/);
+    expect(text).toMatch(/publish: .*needs you/);
+    expect(TaskPlan.restore(plan.snapshot()).get('publish')?.basis).toBe('user');
+  });
 });
+

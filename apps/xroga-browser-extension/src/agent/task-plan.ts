@@ -5,7 +5,9 @@
 
 export type MilestoneStatus = 'pending' | 'working' | 'verified' | 'reported' | 'recovering' | 'waiting' | 'blocked';
 export interface Check { text?: string; url?: string }
-export interface Milestone { id: string; title: string; status: MilestoneStatus; check?: Check; note?: string }
+/** Where a milestone comes from: the user asked for it, a professional step the user did not list, or something only the user can decide or do (publishing, sending, spending, a code, a fact the agent lacks). */
+export type Basis = 'asked' | 'inferred' | 'user';
+export interface Milestone { id: string; title: string; status: MilestoneStatus; check?: Check; note?: string; basis?: Basis }
 export type LedgerStatus = 'pending' | 'saved' | 'verified' | 'failed' | 'skipped';
 /** One item of a batch job (a draft, a row, a record). `savedAt` is the page-load count when it was marked saved: verified needs a later load. */
 export interface LedgerItem { key: string; status: LedgerStatus; note?: string; savedAt?: number }
@@ -18,7 +20,7 @@ export const MAX_MILESTONES = 12;
 const ID = /^[a-z0-9][a-z0-9_-]{0,23}$/;
 const SETTABLE = new Set(['pending', 'working', 'done', 'blocked', 'waiting']);
 
-export interface MilestoneInput { id?: unknown; title?: unknown; check?: unknown }
+export interface MilestoneInput { id?: unknown; title?: unknown; check?: unknown; basis?: unknown }
 
 function cleanCheck(raw: unknown): Check | undefined {
   if (!raw || typeof raw !== 'object') return undefined;
@@ -131,7 +133,8 @@ export class TaskPlan {
       if (seen.has(id)) return `milestone id ${id} is used twice`;
       seen.add(id);
       const old = this.#milestones.find(o => o.id === id);
-      next.push({ id, title, status: old && old.status === 'verified' ? 'verified' : 'pending', ...(cleanCheck(m.check) ? { check: cleanCheck(m.check) } : {}) });
+      const basis = m.basis === 'asked' || m.basis === 'inferred' || m.basis === 'user' ? m.basis : undefined;
+      next.push({ id, title, status: old && old.status === 'verified' ? 'verified' : 'pending', ...(cleanCheck(m.check) ? { check: cleanCheck(m.check) } : {}), ...(basis ? { basis } : {}) });
     }
     this.#milestones = next;
     if (!next.some(m => m.status === 'working')) { const first = next.find(m => m.status === 'pending'); if (first) first.status = 'working'; }
@@ -145,6 +148,8 @@ export class TaskPlan {
   validateUpdate(id: unknown, status: unknown): string | null {
     if (typeof id !== 'string' || !this.get(id)) return `no milestone has the id ${String(id)}`;
     if (typeof status !== 'string' || !SETTABLE.has(status)) return 'status is one of pending, working, done, blocked, waiting';
+    // A step only the user can decide or take is never finished by the agent: it waits, and the user is told.
+    if (status === 'done' && this.get(id)!.basis === 'user') return `milestone ${id} needs the user (a decision, an approval, a code or a fact only they have), so it cannot be marked done: set it to waiting and say in your answer exactly what you need from them.`;
     return null;
   }
 
@@ -189,7 +194,7 @@ export class TaskPlan {
 
   render(): string {
     const mark: Record<MilestoneStatus, string> = { pending: '[ ]', working: '[~]', verified: '[x]', reported: '[?]', recovering: '[!]', waiting: '[…]', blocked: '[#]' };
-    const lines = this.#milestones.map(m => `${mark[m.status]} ${m.id}: ${m.title} (${m.status}${m.check ? ', verifiable' : ''}${m.note ? `; ${m.note}` : ''})`);
+    const lines = this.#milestones.map(m => `${mark[m.status]} ${m.id}: ${m.title} (${m.status}${m.basis === 'inferred' ? ', inferred' : m.basis === 'user' ? ', needs you' : ''}${m.check ? ', verifiable' : ''}${m.note ? `; ${m.note}` : ''})`);
     if (this.#ledger.length) lines.push(this.ledgerSummary());
     return lines.join('\n');
   }
@@ -213,7 +218,7 @@ export const PLAN_TOOL = {
       check: { type: 'object', properties: { text: { type: 'string', maxLength: 200 } } },
       milestones: {
         type: 'array', maxItems: MAX_MILESTONES,
-        items: { type: 'object', properties: { id: { type: 'string', maxLength: 24 }, title: { type: 'string', maxLength: 120 }, check: { type: 'object', properties: { text: { type: 'string', maxLength: 200 }, url: { type: 'string', maxLength: 200 } } } }, required: ['id', 'title'] },
+        items: { type: 'object', properties: { id: { type: 'string', maxLength: 24 }, title: { type: 'string', maxLength: 120 }, basis: { type: 'string', enum: ['asked', 'inferred', 'user'] }, check: { type: 'object', properties: { text: { type: 'string', maxLength: 200 }, url: { type: 'string', maxLength: 200 } } } }, required: ['id', 'title'] },
       },
       id: { type: 'string', maxLength: 24 },
       status: { type: 'string', enum: ['pending', 'working', 'done', 'blocked', 'waiting', 'saved', 'verified', 'failed', 'skipped'] },
