@@ -4630,6 +4630,22 @@
         }
       ],
       "reviewedOnBranch": "2026-11-05: GET /api/site-icon connects only to the fixed https://cdn.deepseek.com/site-icons/ host with a hostname that must match a plain public-domain pattern (no IP literals, ports, paths or credentials), through the governed boundedPublicGet with no redirects, a 96 KiB cap and a 6 s timeout. It sends no cookies, user text or identifiers, accepts a reply only when its bytes are a PNG, JPEG, GIF, WebP or ICO (never SVG or HTML), and caches the public logo."
+    },
+    {
+      "id": "e079c51ab00e88b88aa7",
+      "callSha256": "12ce03fb625377d4806972e2c62595cdfe78d3bf27b8cdd5da645d9ce5663494",
+      "sourceFileSha256": "e3bc7e2a3acb9adba5bb5c8506d1c7fadb5be3e3329d00dad3050d1bd7411240",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "PUBLIC_READ_ONLY_PLATFORM_CATALOG_METADATA_AT_EXISTING_DEPLOYMENT_ORIGIN_NO_PROVIDER_DESTINATION",
+      "tenantAuthority": "PUBLIC_SHARED_METADATA_ONLY_GET_CREDENTIALS_OMIT_NO_BEARER_COOKIE_BODY_OR_ACCOUNT_SCOPE_CURSOR_ENCODED_AS_QUERY_VALUE_12_SECOND_TIMEOUT_NO_RETRY",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/publicConnectCatalog.test.ts",
+          "marker": "public catalog reads use only the configured platform origin without account credentials",
+          "sha256": "1c5f1783b1005263c9ac7ba2be7e59d994a3c6d3efb76ba9740e9f2bf656dbb3"
+        }
+      ],
+      "sourceReview": "Inherited without application changes from already-serving frontend 758bce0b420354b09fa5ec9f50252ded508df13c. API_URL resolves the configured platform origin through existing protocol validation. A missing public catalog endpoint remains an unavailable response handled by the existing honest featured-app fallback. No new backend endpoint, connection authority or tenant certification is introduced."
     }
   ]
 }

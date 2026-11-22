@@ -101997,6 +101997,7 @@
         "frontend/src/lib/projectDeliveryApi.ts:3",
         "frontend/src/lib/projectResume.ts:3",
         "frontend/src/lib/projectRuntimeApi.ts:7",
+        "frontend/src/lib/publicConnectCatalog.test.ts:3",
         "frontend/src/lib/publicConnectCatalog.ts:1",
         "frontend/src/lib/rehydratePersistedMessages.ts:2",
         "frontend/src/lib/repoWorkspaceGate.ts:12",
@@ -102040,6 +102041,7 @@
         "frontend/src/lib/legacyLandingRunRecovery.test.ts",
         "frontend/src/lib/notificationExperience.test.ts",
         "frontend/src/lib/projectResume.test.ts",
+        "frontend/src/lib/publicConnectCatalog.test.ts",
         "frontend/src/lib/semanticExecution.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -108963,7 +108965,8 @@
         "frontend/src/app/integrations/page.tsx"
       ],
       "callers": [
-        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:15"
+        "frontend/src/app/integrations/IntegrationsMarketplace.tsx:15",
+        "frontend/src/lib/publicConnectCatalog.test.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -108973,7 +108976,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "frontend/src/lib/publicConnectCatalog.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -151542,6 +151547,13 @@
     {
       "id": "test-suite:1bbc8798d3122bf9cc67",
       "sourcePath": "frontend/src/lib/projectWorkspaceStorage.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:99bc3c8bd7da35759fd7",
+      "sourcePath": "frontend/src/lib/publicConnectCatalog.test.ts",
       "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
