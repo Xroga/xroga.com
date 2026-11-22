@@ -33,8 +33,8 @@ const publicSoftwareNames = new Set(['node.js', 'next.js', 'nuxt.js', 'react.js'
 const softwareReleaseSubject = /\b(?:releases?|versions?|changelogs?|documentation|docs|migration guides?|upgrade risks?)\b/iu;
 const currencyPeriod = /(\p{Sc}\d{1,6}(?:\.\d{1,2})?)\/(day|week|month|year)\b/giu;
 const freshnessFocus = /\b(?:current|latest|live|newest|verified)\s+(?:prices?|pricing|releases?|versions?|fares?|exchange rates?|opening hours|schedules?)\b/iu;
-const officialSourceRequest = /\bofficial(?:\s+[\p{L}\p{N}-]+){0,3}\s+(?:sources?|docs?|documentation|sites?)\b/iu;
-const officialLinkRequest = /\bofficial (?:websites?|(?:web |support |documentation |docs )?links?|(?:[\p{L}\p{N}-]+\s+){0,2}(?:pages?|sites?|urls?))\b|\bprimary sources? (?:for each|each)\b|(?:المواقع|الروابط) الرسمية|网站官网|官方网站|sitios? (?:web )?oficial(?:es)?|sites? (?:web )?officiels?/iu;
+const officialSourceRequest = /\bofficial(?:\s+[\p{L}\p{N}-]+){0,3}\s+(?:sources?|docs?|documentation|websites?|pages?|sites?)\b/iu;
+const officialLinkRequest = /\bofficial (?:(?:web |support |documentation |docs )?links?|(?:[\p{L}\p{N}-]+\s+){0,2}(?:websites?|pages?|sites?|urls?))\b|\bprimary sources? (?:for each|each)\b|(?:المواقع|الروابط) الرسمية|网站官网|官方网站|sitios? (?:web )?oficial(?:es)?|sites? (?:web )?officiels?/iu;
 const exclusiveOfficialSource = /\b(?:only|exclusively)\b[^.!?]{0,40}\bofficial\b|\bofficial\b[^.!?]{0,40}\b(?:only|exclusively)\b/iu;
 const unavailableDomain = /(?:\.(?:example|onion|lan|home|corp)$|(?:^|\.)(?:intranet|staging|private|vpn)(?:\.|$))/iu;
 const explicitWebLookup = /^(?:please\s+)?(?:search|browse)\s+(?:the\s+)?(?:public\s+)?(?:web|internet)\s+(?:(?:for|to)\s+)?/iu;
@@ -43,8 +43,11 @@ const citationFooter = /(?:[,.]\s*|(?<!\s)\s+)(?:and\s+)?(?:cite\s+(?:(?:your|th
 const presentationInstruction = /(?:[,.;]\s*|\s+and\s+)(?:please\s+)?(?:give|explain|state|outline|show|describe|include)\s+your\s+(?:(?:ranking|comparison|selection|evaluation)\s+)?(?:criteria|reasoning|rationale|approach|method(?:ology)?|assumptions|recommendation)\b(?=$|\s*(?:[,.;?!]|\band\s+(?:cite|link|include|explain)\b))/giu;
 const officialVerificationFooter = /(?:[,.;]\s*|\s+)(?:and\s+)?(?:which official source (?:confirms|verifies) (?:it|this)|cite (?:an?|the) official (?:source|reference))[?!.]*$/iu;
 const instructionStart = /^(?:please\s+)?(?:(?:search|browse)\s+(?:(?:the\s+)?(?:public\s+)?(?:web|internet)\s+)?(?:for\s+)?|look up\s+|research\s+|what\s+(?:is|are)\s+(?:the\s+)?)/iu;
-const sourcePreface = /^(?:using|from|with)\s+(?:only\s+)?official\s+[^.!?]+[.!?]\s*/iu;
+const sourcePreface = /^(?:using|from|with)\s+(?:only\s+)?official\s+[^,.:!?]+[,.:!?]\s*/iu;
 const namedSourceClause = /\b(?:(?:use|using|from|with|based on|consult)\s+(?:(?:only|exclusively)\s+)?|(?:only|exclusively)\s+)(?:the\s+)?official\s+([\p{L}\p{N} .,&-]{1,120}?)\s+(?:sources?|websites?|pages?|sites?|docs?|documentation|publications?)(?=\s*(?:[,:.!?]|$))/iu;
+const sourceSelectionStart = /^(?:use|using|from|based on|consult)\b|^with\s+(?:only|exclusively)\b/iu;
+const genericSourceSelection = /\b(?:using|from|based on|consult)\s+(?:(?:only|exclusively)\s+)?(?:the\s+)?official\s+(?:sources?|websites?|pages?|sites?)(?=\s*(?:[,:.!?(]|$))/giu;
+const answerOnlySuffix = /(?:[.!?]\s+(?:(?:present|show|put)\s+the\s+(?:results|findings|comparison|[\p{L}-]+\s+names\s+and\s+what\s+each\s+is\s+for)\s+in\s+(?:(?:one|a|an|the|compact|copyable|short)\s+){1,4}(?:table|list)|cite\s+(?:the\s+)?(?:actual\s+)?(?:primary|official)\s+sources?(?:\s+beside\s+the\s+claims)?|(?:do\s+not|don['’]t)\s+take\s+any\s+actions?))+[.!?]?$/iu;
 const publicSourcePreface = /^(?:i\s+(?:need|want)|(?:please\s+)?(?:cite|include|use|provide))\s+(?:a\s+)?(?:dated\s+)?public sources?\s*[:：]\s*/iu;
 const linkFooter = /\s*;\s*link\s+(?:them|each|all)(?:\s+(?:of them|\d+|one|two|three|four|five|six|seven|eight|nine|ten))?[?!.]*$/iu;
 
@@ -90,7 +93,11 @@ function isPublicSourceHost(domain: string): boolean {
 }
 
 export function requestsOfficialLinkCoverage(prompt: string): boolean {
-  return officialLinkRequest.test(prompt);
+  // Selecting where evidence comes from does not request a separate
+  // verified destination for each item in the answer.
+  const deliverable = prompt.replace(namedSourceClause, (scope) => sourceSelectionStart.test(scope) ? '' : scope)
+    .replace(genericSourceSelection, '');
+  return officialLinkRequest.test(deliverable);
 }
 
 function publicOfficeTopic(prompt: string): string | undefined {
@@ -151,7 +158,8 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
     ? (request.slice(0, namedSource.index) + request.slice(namedSource.index + namedSource[0].length)).replace(/^[\s,.:]+/u, '').trim()
     : request;
   const topic = scopedRequest.replace(bareDomain, host => isSoftwareName(host) ? host : '').replace(/\(\s*\)/g, '')
-    .replace(explicitWebLookup, '').replace(instructionStart, '').replace(sourcePreface, '')
+    .replace(explicitWebLookup, '').replace(instructionStart, '').replace(sourcePreface, '').replace(instructionStart, '')
+    .replace(answerOnlySuffix, '')
     .replace(/[,.]?\s+(?:and\s+)?cite\s+[^.!?]+[.!?]*$/iu, '')
     .replace(/[?.!؟。？！]+$/u, '').trim();
   const sites = officialDomains.map(domain => 'site:' + domain).join(' OR ');

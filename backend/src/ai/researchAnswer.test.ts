@@ -74,7 +74,7 @@ import {createTenantContext} from '../security/tenantContext.js';
 import {nativeReleaseFixture} from '../services/publish/__tests__/nativeReleaseFixture.js';
 import {harness} from '../storage/testing/harness.js';
 import {actionPlanDigest} from '../services/integrations/businessAction.js';
-import {hasNonPublicSearchTerms,workspacePublicSearchQuery} from './workspacePublicSearch.js';
+import {hasNonPublicSearchTerms,requestsOfficialLinkCoverage,workspacePublicSearchQuery} from './workspacePublicSearch.js';
 
 test('public Workspace research omits private data, provider receipts and usage from its response payload', () => {
   const result = {
@@ -605,22 +605,52 @@ test('public discovery includes implicit rankings and comparisons without export
 test('a named official publisher fixes the source scope without a model-supplied host', () => {
   const prompt = 'Using only official NIST pages, look up the NIST Cybersecurity Framework 2.0 functions. Present the function names and what each is for in one compact copyable table. Cite the actual primary source beside the claims. Do not take any actions.';
   const nist = workspacePublicSearchQuery(prompt, true);
-  assert.ok(nist);
-  assert.match(nist.query, /^the NIST Cybersecurity Framework 2\.0 functions.* site:nist\.gov$/);
-  assert.deepEqual(nist.officialDomains, ['nist.gov']);
+  assert.deepEqual(nist, {
+    query: 'the NIST Cybersecurity Framework 2.0 functions site:nist.gov',
+    officialDomains: ['nist.gov'],
+  });
   assert.deepEqual(workspacePublicSearchQuery('Find streamflow measurements using only official U.S. Geological Survey pages.', true), {
     query: 'Find streamflow measurements site:usgs.gov', officialDomains: ['usgs.gov'],
   });
   assert.deepEqual(workspacePublicSearchQuery('Using only official NIST and NASA pages, compare their public software assurance guidelines.', true)?.officialDomains,
     ['nist.gov', 'nasa.gov']);
+  assert.deepEqual(workspacePublicSearchQuery('Using only official pages (nist.gov), look up the latest NIST digital identity guidance.', true)?.officialDomains,
+    ['nist.gov']);
   for (const denied of [
     'Using only official Unknown Agency pages, find current published records.',
     'Using only official NIST and Unknown Agency pages, compare public standards.',
     'Using only official NIST pages, check summaries from example.com.',
     'Using only official USGS pages, compare streamflow with my attached customer records.',
     'Using only official NASA sources, compare schedules. Do not search the web.',
+    'Using only official NASA pages, find upcoming mission dates. Present the results and my attached notes in a table.',
     'Use only official NIST sources.',
   ]) assert.equal(workspacePublicSearchQuery(denied, true), undefined, denied);
+});
+
+test('an official source restriction does not demand an official website for each answer item', () => {
+  const sources = [{ url: 'https://www.nist.gov/publications/nist-cybersecurity-framework-csf-20' }];
+  const response = 'The framework contains six functions [1].';
+  for (const prompt of [
+    'Using only official NIST pages, explain the functions and cite the original publication.',
+    'Summarize the functions using official NIST websites.',
+    'Using only official pages, explain the functions.',
+  ]) {
+    assert.equal(requestsOfficialLinkCoverage(prompt), false, prompt);
+    assert.deepEqual(presentPublicResearchAnswer(response, { status: 'complete' }, sources, prompt), {
+      response,
+      completion: { status: 'complete' },
+    });
+  }
+  for (const prompt of [
+    'Using only official NIST pages, list the initiatives and include their official websites.',
+    'Give me a table with official company websites.',
+    'Official support links for Microsoft, Apple and Google in one table.',
+  ]) assert.equal(requestsOfficialLinkCoverage(prompt), true, prompt);
+});
+
+test('query cleanup preserves factual follow-up clauses and dotted version numbers', () => {
+  const lookup = 'Research the latest PostgreSQL 18.1 release notes. Include release dates and security fixes.';
+  assert.match(workspacePublicSearchQuery(lookup)?.query ?? '', /18\.1.*release dates and security fixes/u);
 });
 
 test('public current roles, recent documentation changes and named sources enter automatic Search', () => {
