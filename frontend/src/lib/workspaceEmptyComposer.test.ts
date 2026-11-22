@@ -350,12 +350,13 @@ test('the top scroll fade stays inside the conversation pane, never on the toolb
   assert.match(POLISH, /\.transcriptFade\[data-scrolled='true'\]\s*\{ opacity: 1; \}/);
 });
 
-test('Chrome extension control overlays only its own corner and does not add a transcript row', () => {
+test('Chrome extension control stays inside the toolbar without covering answer text', () => {
   const POLISH = read('../components/dashboard/WorkspaceScrollPolish.module.css');
   const OPERATOR = read('../components/browser/WorkspaceBrowserOperator.tsx');
   assert.match(DASHBOARD, /<header[\s\S]*?className=\{scrollPolish\.browserControl\}>\{browserOperator\}[\s\S]*?<\/header>/);
   assert.doesNotMatch(DASHBOARD, /<\/header>\s*\{browserOperator\}/);
-  assert.match(POLISH, /\.browserControl\s*\{[^}]*position:\s*absolute/);
+  assert.match(POLISH, /\.headerChrome:has\(\.browserControl\)\s*\{[^}]*flex-wrap:\s*wrap/);
+  assert.match(POLISH, /\.browserControl\s*\{[^}]*position:\s*relative;[^}]*flex:\s*0 0 100%/);
   assert.match(OPERATOR, /Install Xroga Extension/);
   assert.match(OPERATOR, /supported local browser automation tasks/);
   assert.match(OPERATOR, /!showConnection[\s\S]*?Coming soon/);
