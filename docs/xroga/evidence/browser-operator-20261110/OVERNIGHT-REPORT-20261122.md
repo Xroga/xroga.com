@@ -1,0 +1,70 @@
+# Browser Operator: overnight report (2026-11-22)
+
+Scope: the Overnight Master Directive of 2026-11-22. Everything below was measured; "NOT RUN" means not run, "BLOCKED" means it needs something only the owner can provide. Xroga is not 100% complete and this report does not claim it.
+
+## 1. Source identity
+- Repository branch `claude/ops-integrated-20261112` (PR #976, draft), worktree `C:\xr-final`.
+- Commits added overnight on top of `a0103a278` (build addendum 6): `670a96c50`, `634b29f2a`, `41da08861` and the evidence/report commit that carries this file. The release ZIP is built from the final commit with a clean tree (section 8).
+- Model: DeepSeek v4.1 flash 1017 through Zurelay (`https://api.zurelay.com/v1`), effort `high` by default, `max` on a diagnosed stall.
+- Staging backend: Cloud Run `xroga-api-universal-staging`, tag `browser-op-1110` on revision `xroga-api-universal-staging-effort-hm9` (image `xroga-api-release:effort-35ca88789`, original allowlist). Production untouched.
+
+## 2. Implemented engineering (generic, no site procedure)
+| Change | Where | What it stops |
+|---|---|---|
+| Dead-spot refusal | `agent/dead-spots.ts`, `agent/loop.ts` | A third click at a canvas point that already did nothing twice on an unchanged page is refused before it is sent, with a reason and other ways in. |
+| After-picture for keys on painted pages | `agent/loop.ts` | A key press in a canvas app is compared picture-to-picture, so "nothing changed" is known instead of assumed. |
+| Server-refused stops are not challenged | `agent/loop.ts` | When a run ends because the server refused a write (4xx/5xx, row-level security, another tenant), the give-up challenge no longer pushes the model to retry it. |
+| Per-page still guard | `agent/guards.ts` (`STILL_NUDGE` 12, `STILL_STOP` 20) | Calls on one page that change nothing there (failed attempts included, focus-only changes not counted as progress, waits excluded) nudge at 12 and end the run at 20 with what was found. |
+| No-progress stop | `agent/progress-tracker.ts`, `agent/loop.ts` (`NO_PROGRESS_STALLS` 4) | Four diagnosed dead ends in a row with no change since the first end the run instead of escalating forever. |
+| `find` shows matching page text | `browser-control/core/tools/observe.ts` | "0 matches" for a heading or paragraph no longer reads as "not on the page": matching non-control lines are listed without refs. |
+| view-source refusal | `agent/loop.ts` | `view-source:` pages (which the extension cannot control) are refused with the reason, instead of a dead end. |
+| Skill text inside the untrusted boundary | `agent/well-known-skills.ts`, `agent/online-skills.ts` | A digest-valid but hostile site skill (or online skill) is wrapped with a fresh nonce boundary its text cannot close. |
+| Worker start failure cleanup | `extension/run-manager.ts` | A worker that fails to start removes its window and its half-made conversation (candidate cause of the earlier "26 windows for 20 jobs"). |
+| Harness | `checks/eval.ts`, `fixtures/autorun.mjs`, `live/eval-each.sh`, timeline fixture | Eval tab in front (background-tab screenshots took ~4 s), Windows build through a shell, stale timeline clip list fixed. |
+
+## 3. Before/after behaviour (real DeepSeek, real Chromium, graded by page or server state)
+- **Visual set, matched A/B** (same harness, same 8 tasks, effort `high`): new code 8/8, p50 26.0 s; previous code (`a0103a278`) 7/8, p50 30.7 s. canvas-menu: previous code failed at 20 turns, new code 6 turns. Files `live-model/visual-ab-new-670a96c50-20261122.jsonl`, `visual-ab-old-a0103a278-20261122.jsonl`.
+- **Impossible task** (`stall-heading`: "click the big heading until the hidden control appears" on example.com, which now has no heading at all): before, 2 of 2 runs used the whole 300 s (28 turns, 29-36 calls, view-source detour, no answer). After, one run answered honestly in 124 s (18 turns: "this page has no big heading"); the other ran into the harness's 300 s cap one call before the still guard would have ended it (a detour to the linked page restarted the per-page count). Files `stall-heading-before-guard-20261122.jsonl`, `stall-heading-after-guard-20261122.jsonl`. Not yet good enough: the model ignores the nudge, and the backstop costs about 3-5 minutes.
+- **Regression after the guard** (real DeepSeek, effort `high`, one run each): 12 of 12 passed, p50 36 s, p95 86 s; the still guard did not stop any legitimate task. File `live-model/regression-after-guard-20261122.jsonl`.
+
+## 4. DeepSeek proof (product chain, not a direct call)
+Real extension, enrolled device, staging backend revision with the effort policy, disposable user (deleted). In the stall runs the backend logged 52 turns at `high` and 9 at `max`, in the order `hhhhhhhhhhhhMMMMhhhh…hhhMMMMhhhhhhhMhh`: the extension escalates to `max` when the progress tracker diagnoses a stall and drops back to `high` after four turns; 15,163 reasoning tokens recorded. File `live-model/product-chain-stall-escalation-20261122.json` (Cloud Logging summary, no user content). Earlier: direct effort probes `max`/`high`/`none` each honoured (`product-chain-maxprobe-20261122.json`).
+
+## 5. Donor source reuse
+No new donor code was ported overnight; the work was Xroga's own guards. Donor status remains as in `FINAL-ENGINEERING-REPORT-20261122.md` (uiuing/browser-agent, FSB, opensidekick, Tencent/BrowserSkill ported under MIT; workflow-use AGPL rejected for code). The directive's "port 2-4 OSS modules" is NOT DONE in this session.
+
+## 6. Multitasking
+Window trace at the ceiling of 12 (earlier tonight): 20 jobs, 20 completed, at most 13 windows, one job per task, no leaks in 3 runs. The worker start-failure path now cleans up its window and conversation. A 1/2/4/8/12/20 benchmark series was not repeated overnight; the earlier table stands (concurrency works to 20, not reliably faster; ceiling 12).
+
+## 7. Tests
+| Test | Result |
+|---|---|
+| Extension unit suite (after the last change) | PASS 1474, skipped 4 |
+| Agent unit tests incl. still-guard, dead-spots, hostile-skill, progress tracker | PASS 540 |
+| Visual A/B (8 tasks each arm) | new 8/8 PASS, old 7/8 |
+| stall-heading after guard (2 runs) | 1 PASS, 1 FAIL (harness 300 s cap) |
+| Regression after guard (12 tasks: canvas-menu, timeline-split, three-pages, slow-list, add-rows, 7 replica workflows) | PASS 12/12, p50 36 s, p95 86 s; adv-docs-1 passed but used all 40 turns (206 s) |
+| Chaos: restore after accepted write | PASS 5/5 (earlier round) |
+| Two tenants on staging backend | PASS 40/40 cross requests refused (earlier round) |
+| Hostile digest-valid skill | PASS (unit, boundary cannot be closed by the skill text) |
+| Chromium scenario suite (full) | 304/305 PASS; FAIL `I-block-limit` in the full run (314 ms, empty snapshot), PASS when re-run alone; order-dependent flake, cause not analysed (`scenarios-full-20261122d.json`, `scenarios-iblocklimit-rerun-20261122.json`) |
+| Real Google Ads / Meta / Shopify / Drive accounts | BLOCKED (owner accounts) |
+| Real MV3 service-worker kill mid-turn | NOT RUN |
+| Two signed-in owners through real Chrome | NOT RUN (one extension instance per device) |
+
+## 8. Release artifact
+RELEASE_ARTIFACT
+
+## 9. Owner-required external steps
+1. Independent security review and PR #997 re-attestation (blob capture review is a self-review).
+2. Production authorisation and the production vision flag; nothing here is live in production.
+3. Real advertising, store and drive accounts (or sandbox accounts) for live, non-replica runs; spending, publishing and sending stay behind approval.
+4. A signed-in run in the owner's own Chrome profiles ("Evander Throne", "M. Muhammad Abdullah"); not used overnight.
+
+## 10. Remaining highest-severity defects
+1. The model keeps trying on impossible tasks and ignores the nudge; the hard stop ends it after about 20 still calls (3-5 minutes). A cheaper early conclusion (a forced "report what you found" turn after the nudge) is the next step.
+2. Per-page counts restart when the run detours to another page and back, so an impossible task can run longer than the guard intends.
+3. TraceDraw and painted-menu seed 4 were not re-run overnight; timeline-split passes in the matched A/B but has failed in earlier hard sets.
+4. No real third-party account was exercised; advanced workflows are proven on stateful replicas only.
+5. No new donor modules ported overnight.
+6. Excess turns on the document workflow: adv-docs-1 reached the correct server state but used all 40 turns (206 s); the cause was not analysed overnight.
