@@ -1,110 +1,116 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
 import { createPortal } from 'react-dom';
-import Link from 'next/link';
-import { Search, X, FolderOpen, MessageSquare } from 'lucide-react';
-import { api, type Project } from '@/lib/api';
-import { cn } from '@/lib/utils';
+import { FolderOpen, Layers, MessageSquare, Search, X } from 'lucide-react';
+import { useWorkspaceIdentity } from './WorkspaceIdentityContext';
+import type { WorkspaceSearchResult } from '@/lib/workspaceSearchIndex';
+import { workspaceSearchTerms } from '@/lib/workspaceSearchQuery';
+import styles from './SidebarSearchModal.module.css';
 
-interface SidebarSearchModalProps {
-  open: boolean;
-  onClose: () => void;
+const labels = { chat: 'Chat', project: 'Project', section: 'Project section' } as const;
+const icons = { chat: MessageSquare, project: FolderOpen, section: Layers } as const;
+type ResultState = { key: string; items: WorkspaceSearchResult[]; failed: boolean };
+type Props = { open: boolean; onClose: () => void };
+
+export function SidebarSearchModal({ open, onClose }: Props) {
+  const { status, userId } = useWorkspaceIdentity();
+  const owner = status === 'authenticated' && userId ? userId : null;
+  if (!open) return null;
+  return <SearchPanel key={owner ?? 'guest'} owner={owner} onClose={onClose} />;
 }
 
-export function SidebarSearchModal({ open, onClose }: SidebarSearchModalProps) {
+function SearchPanel({ owner, onClose }: { owner: string | null; onClose: () => void }) {
+  const input = useRef<HTMLInputElement>(null);
+  const dialog = useRef<HTMLElement>(null);
+  const helperId = useId();
   const [query, setQuery] = useState('');
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [retry, setRetry] = useState(0);
+  const [result, setResult] = useState<ResultState | null>(null);
+  const normalized = workspaceSearchTerms(query).join(' ');
+  const canSearch = !query.trim() || normalized.length >= 2;
+  const key = JSON.stringify([normalized, retry]);
+  const current = result?.key === key ? result : null;
 
   useEffect(() => {
-    if (!open) return;
-    setLoading(true);
-    api.projects
-      .list()
-      .then(setProjects)
-      .catch(() => setProjects([]))
-      .finally(() => setLoading(false));
-  }, [open]);
+    const returnFocus = document.activeElement;
+    input.current?.focus();
+    return () => { if (returnFocus instanceof HTMLElement) returnFocus.focus(); };
+  }, []);
 
   useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [open, onClose]);
+    if (!owner || !canSearch) return;
+    const stop = new AbortController();
+    const timer = window.setTimeout(async () => {
+      try {
+        const { searchOwnedWorkspace } = await import('@/lib/workspaceSearch');
+        if (stop.signal.aborted) return;
+        const items = await searchOwnedWorkspace(owner, normalized ? normalized.split(' ') : [], stop.signal);
+        if (!stop.signal.aborted) setResult({ key, items, failed: false });
+      } catch {
+        if (!stop.signal.aborted) setResult({ key, items: [], failed: true });
+      }
+    }, normalized ? 240 : 0);
+    return () => { window.clearTimeout(timer); stop.abort(); };
+  }, [owner, canSearch, normalized, key]);
 
-  useEffect(() => {
-    if (!open) return;
-    const previouslyFocused = document.activeElement as HTMLElement | null;
-    searchInputRef.current?.focus();
-    return () => previouslyFocused?.focus?.();
-  }, [open]);
-
-  if (!open) return null;
-
-  const q = query.toLowerCase();
-  const filtered = projects.filter((p) => p.name.toLowerCase().includes(q));
+  function handleKeys(event: KeyboardEvent<HTMLElement>) {
+    if (event.key === 'Escape') { event.preventDefault(); onClose(); return; }
+    const links = [...(dialog.current?.querySelectorAll<HTMLAnchorElement>('[data-workspace-search-result]') ?? [])];
+    if (event.key === 'Enter' && event.target === input.current && links.length) {
+      event.preventDefault();
+      links[0].click();
+      return;
+    }
+    if ((event.key === 'ArrowDown' || event.key === 'ArrowUp') && links.length) {
+      event.preventDefault();
+      const active = links.findIndex(link => link === document.activeElement);
+      if (event.key === 'ArrowUp' && active === 0) { input.current?.focus(); return; }
+      const next = active === -1 ? (event.key === 'ArrowDown' ? 0 : links.length - 1)
+        : (active + (event.key === 'ArrowDown' ? 1 : -1)) % links.length;
+      links[next]?.focus();
+      return;
+    }
+    if (event.key === 'Tab') {
+      const focusable = dialog.current?.querySelectorAll<HTMLElement>('input, button:not([disabled]), a[href]');
+      if (!focusable?.length) return;
+      const first = focusable[0], last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    }
+  }
 
   return createPortal(
-    <div className="fixed inset-0 z-[3000] flex items-start justify-center px-3 pt-[min(10vh,80px)] bg-black/80" onMouseDown={event => { if (event.target === event.currentTarget) onClose(); }}>
-      <section
-        role="dialog"
-        aria-modal="true"
-        aria-label="Search projects and chats"
-        className="relative w-full max-w-lg overflow-hidden rounded-2xl border border-[#484848] bg-[#191919] text-[#f5f5f5] shadow-[0_24px_72px_rgba(0,0,0,.72)]"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center gap-2 px-4 py-3 border-b border-[var(--card-border)]">
-          <Search className="w-4 h-4 text-[var(--muted)]" />
-          <input
-            ref={searchInputRef}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search projects and chats..."
-            className="min-w-0 flex-1 bg-transparent text-sm text-white placeholder:text-[#b4b4b4] focus:outline-none"
-          />
-          <button type="button" onClick={onClose} className="p-1 rounded hover:bg-white/10" aria-label="Close search">
-            <X className="w-4 h-4" />
-          </button>
+    <div className={styles.backdrop} onMouseDown={event => { if (event.target === event.currentTarget) onClose(); }}>
+      <section ref={dialog} role="dialog" aria-modal="true" aria-label="Search workspace" className={styles.dialog} onKeyDown={handleKeys}>
+        <div className={styles.bar}>
+          <Search size={17} aria-hidden="true" />
+          <input ref={input} type="search" aria-label="Search chats, projects and sections" aria-describedby={helperId}
+            value={query} onChange={event => setQuery(event.target.value)} placeholder="Search chats, projects and sections…" maxLength={120} />
+          <button type="button" onClick={onClose} aria-label="Close search"><X size={17} aria-hidden="true" /></button>
         </div>
-        <div className="max-h-80 overflow-y-auto p-2">
-          {loading ? (
-            <p className="text-sm text-[var(--muted)] text-center py-8">Loading...</p>
-          ) : filtered.length === 0 ? (
-            <p className="text-sm text-[var(--muted)] text-center py-8">No results</p>
-          ) : (
-            filtered.map((p) => (
-              <Link
-                key={p.id}
-                href={`/dashboard/projects/${p.id}`}
-                onClick={onClose}
-                className={cn(
-                  'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/5 transition-colors'
-                )}
-              >
-                <FolderOpen className="w-4 h-4 text-[var(--accent)] shrink-0" />
-                <div className="min-w-0">
-                  <p className="font-medium truncate">{p.name}</p>
-                  <p className="text-xs text-[var(--muted)] capitalize">{p.type}</p>
-                </div>
-              </Link>
-            ))
-          )}
-          <Link
-            href="/dashboard/chats"
-            onClick={onClose}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/5 mt-1 border-t border-[var(--card-border)] pt-3"
-          >
-            <MessageSquare className="w-4 h-4 text-[var(--accent)]" />
-            <span>View all chats</span>
-          </Link>
+        <div className={styles.results} aria-busy={Boolean(owner && canSearch && !current)}>
+          {!owner ? <p><a href="/auth/login?next=%2Fworkspace">Sign in</a> to search your saved work.</p>
+            : !canSearch ? <p role="status">Enter at least two letters or numbers.</p>
+            : !current ? <p role="status">Searching saved work…</p>
+            : current.failed ? <div role="alert"><p>Search is temporarily unavailable.</p><button type="button" onClick={() => setRetry(value => value + 1)}>Retry</button></div>
+            : !current.items.length ? <p role="status">{normalized ? 'No matching saved work.' : 'No saved work yet.'}</p>
+            : <>
+              <p className={styles.summary} role="status">{normalized ? `${current.items.length} results` : 'Recently saved'}</p>
+              <ul>{current.items.map(item => {
+                const Icon = icons[item.kind];
+                return <li key={`${item.kind}:${item.id}`}>
+                  <a className={styles.result} data-workspace-search-result href={item.href} onClick={onClose}>
+                    <Icon size={17} aria-hidden="true" />
+                    <span><strong>{item.title}</strong>{item.detail ? <small>{item.detail}</small> : null}</span>
+                    <span className={styles.kind}>{labels[item.kind]}</span>
+                  </a>
+                </li>;
+              })}</ul>
+            </>}
         </div>
+        <p id={helperId} className={styles.hint}>↑ ↓ to navigate <span>Enter to open · Esc to close</span></p>
       </section>
-    </div>,
-    document.body,
+    </div>, document.body,
   );
 }

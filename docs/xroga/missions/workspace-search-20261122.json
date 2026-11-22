@@ -1,0 +1,46 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-SEARCH-20261122",
+  "baseSha": "f9f2216c15647458bf5cf14878161dbbf37f3962",
+  "requirementIds": ["XR-MISSION-055", "XR-MISSION-056"],
+  "state": "CODE_COMPLETE",
+  "risk": "medium",
+  "scope": "Search signed-in users’ durable chats, projects, and project sections from the existing compact workspace search popup.",
+  "changedFiles": [
+    "docs/xroga/minisearch-attribution.md",
+    "frontend/e2e/command3-auth.spec.ts",
+    "frontend/package-lock.json",
+    "frontend/package.json",
+    "frontend/src/components/layout/SidebarSearchModal.module.css",
+    "frontend/src/components/layout/SidebarSearchModal.tsx",
+    "frontend/src/lib/workspaceSearch.ts",
+    "frontend/src/lib/workspaceSearchIndex.test.ts",
+    "frontend/src/lib/workspaceSearchIndex.ts",
+    "frontend/src/lib/workspaceSearchQuery.ts",
+    "package-lock.json"
+  ],
+  "decisions": {"keep": ["Existing workspace search trigger, saved records, and open-work links"], "extend": ["Owner-bound reads and keyboard navigation"], "replace": ["Local project-name filtering with actual saved workspace search"], "deprecate": []},
+  "architecture": {"change": "extends_canonical", "reason": "Use the existing authenticated browser client and RLS with a pinned in-memory ranker; no search service or durable duplicate index.", "rfc": null},
+  "schemaImpact": {"changed": false, "migrations": [], "rollout": "Uses current tables and owner policies.", "rollback": "No data or schema rollback."},
+  "securityImpact": {
+    "auth": {"changed": false, "description": "Uses the existing verified session identity; no new authentication flow."},
+    "tenant": {"changed": true, "description": "Additional bounded reads from existing user-owned RLS tables. Every read also filters on the authenticated account ID."},
+    "approval": {"changed": false, "description": "Search is read-only."},
+    "credentials": {"changed": false, "description": "Uses only the current authenticated browser client; no secrets added."},
+    "egress": {"changed": true, "description": "Search terms go to Xroga’s existing Supabase origin only. No external index or telemetry."},
+    "cost": {"changed": false, "description": "Uses bounded existing database reads and client-side ranking; no model or new search service."},
+    "billing": {"changed": false, "description": "No billing changes."}
+  },
+  "tests": [
+    {"command": "tsx --test frontend/src/lib/workspaceSearchIndex.test.ts", "scope": "Validate bounded terms, filter construction, ranking, deduplication and safe result shape.", "negative": true, "reference": "frontend/src/lib/workspaceSearchIndex.test.ts"},
+    {"command": "GitHub Actions: Isolated Supabase authenticated browser verification", "scope": "Discover a saved project and chat preview, verify another account’s candidate stays hidden, and reopen the actual chat using the keyboard.", "negative": true, "reference": "frontend/e2e/command3-auth.spec.ts"}
+  ],
+  "rollout": "Run the authenticated isolation tests and existing checks before preview or a separately authorized production release.",
+  "rollback": "Revert the scoped frontend changes or restore the previous verified deployment; no database changes.",
+  "knownGaps": ["Search covers saved titles, initial prompts, previews, project or repository names and project sections, not full message history or external file content.", "Section links open their parent project."],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": ["frontend/src/lib/workspaceSearchIndex.test.ts", "frontend/e2e/command3-auth.spec.ts", "docs/xroga/minisearch-attribution.md"],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {"state": "BLOCKED", "blockers": ["Exact-source isolated browser verification and release checks required."], "authenticatedE2e": "BLOCKED", "stagedSecurity": "BLOCKED", "liveUrl": null, "deployedSha": null}
+}
