@@ -8,16 +8,16 @@
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 229,
-    "persistenceCandidates": 1018,
-    "ownerPredicateCandidates": 267,
-    "reviewRequired": 161,
+    "persistenceCandidates": 1026,
+    "ownerPredicateCandidates": 275,
+    "reviewRequired": 169,
     "reviewedCandidates": 857,
-    "unresolvedSafetyCandidates": 211,
+    "unresolvedSafetyCandidates": 219,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 161,
+    "REVIEW_REQUIRED": 169,
     "SCOPED_BOUNDARY": 547,
     "NARROW_EXCEPTION": 52,
     "NOT_PERSISTENCE": 208,
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 79,
-    "unresolvedCandidateBoundaries": 939,
+    "unresolvedCandidateBoundaries": 947,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -6691,6 +6691,38 @@
         "id": "3a7aa1dbe9ba47ad2c75"
       },
       {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "15456514e184bf2ec9b1"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "ef91dadc671180de0753"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "78594aff6685b1775779"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "1bec00ffd4c81abae866"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "7731405329a3307fa1e7"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "4ba9b08128aed200300b"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "6efc8c7854afaf321175"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "2954a7eb5e4108bc34a7"
+      },
+      {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "eafd89a3d20bbe8c8038"
       },
@@ -7533,6 +7565,38 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "3a7aa1dbe9ba47ad2c75"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "15456514e184bf2ec9b1"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "ef91dadc671180de0753"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "78594aff6685b1775779"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "1bec00ffd4c81abae866"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "7731405329a3307fa1e7"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "4ba9b08128aed200300b"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "6efc8c7854afaf321175"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "2954a7eb5e4108bc34a7"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10449,10 +10513,10 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 1018,
+    "currentCallers": 1026,
     "structuredVerified": 79,
-    "structuredUnproven": 939,
-    "manualUnresolved": 211,
+    "structuredUnproven": 947,
+    "manualUnresolved": 219,
     "manualUnsupported": 728,
     "agreedVerified": 79,
     "proofAwaitingManualReconciliation": 0
@@ -33024,6 +33088,94 @@
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
       "sourceSha256": "c73176a55e776661d1374be102e9b46b42fbd160122407941203a059408f5b47"
+    },
+    {
+      "id": "15456514e184bf2ec9b1",
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "line": 32,
+      "enclosing": "searchOwnedWorkspace",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "xroga_sidebar_chats",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d"
+    },
+    {
+      "id": "ef91dadc671180de0753",
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "line": 33,
+      "enclosing": "searchOwnedWorkspace",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "terminal_sessions",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d"
+    },
+    {
+      "id": "78594aff6685b1775779",
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "line": 34,
+      "enclosing": "searchOwnedWorkspace",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "projects",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d"
+    },
+    {
+      "id": "1bec00ffd4c81abae866",
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "line": 35,
+      "enclosing": "searchOwnedWorkspace",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "xroga_sidebar_sections",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d"
+    },
+    {
+      "id": "7731405329a3307fa1e7",
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "line": 36,
+      "enclosing": "searchOwnedWorkspace",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "xroga_sidebar_items",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d"
+    },
+    {
+      "id": "4ba9b08128aed200300b",
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "line": 54,
+      "enclosing": "searchOwnedWorkspace",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "xroga_sidebar_chats",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d"
+    },
+    {
+      "id": "6efc8c7854afaf321175",
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "line": 55,
+      "enclosing": "searchOwnedWorkspace",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "terminal_sessions",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d"
+    },
+    {
+      "id": "2954a7eb5e4108bc34a7",
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "line": 56,
+      "enclosing": "searchOwnedWorkspace",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "projects",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d"
     },
     {
       "id": "53953a7522a9f4a6ec38",
