@@ -127,6 +127,6 @@ for (const width of [390, 1366]) {
     expect(after).toBeGreaterThan(0);
     expect(Math.abs(after - before)).toBeLessThan(48);
     await root.evaluate(element => element.scrollTo({ top: 0, behavior: 'instant' }));
-    await expect(page.getByRole('button', { name: 'Scroll to latest', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Scroll to last response', exact: true })).toBeVisible();
   });
 }

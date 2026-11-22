@@ -24,8 +24,9 @@ test('an actionable model selector and live voice remain after removing decorati
   assert.doesNotMatch(dock, /data-short-tip|data-tooltip/);
 });
 
-test('starter cards provide stable hover details, explicit Back, and detailed draft rather than executing', () => {
-  assert.match(starter, /onMouseEnter=\{\(\) => setSelectedFeature\(index\)\}/);
+test('starter details require activation and keep explicit Back and editable drafts', () => {
+  assert.match(starter, /onClick=\{\(\) => setSelectedFeature\(index\)\}/);
+  assert.doesNotMatch(starter, /on(?:MouseEnter|Focus)=\{\(\) => setSelectedFeature\(index\)\}/);
   assert.match(starter, /Back to categories/);
   assert.match(starter, /Use this in chat/);
   assert.match(starter, /Ask for approval before publishing/);

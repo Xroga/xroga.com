@@ -26,6 +26,7 @@
     "exceljs": "^4.4.0",
     "katex": "^0.17.0",
     "lucide-react": "^1.21.0",
+    "minisearch": "7.2.0",
     "motion": "^12.42.2",
     "next": "15.5.27",
     "ogl": "1.0.11",

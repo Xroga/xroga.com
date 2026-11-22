@@ -1,23 +1,23 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "6a42a2dcb325a4ebe85b72b1b1311cb9390a29f17d3bbea76c6e5000e778b4eb",
+  "reviewRegistrySha256": "7b3263342f79f2056e93dae030f6d01fced2a6346271383565457616212315cd",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 229,
-    "persistenceCandidates": 1018,
-    "ownerPredicateCandidates": 267,
-    "reviewRequired": 161,
+    "persistenceCandidates": 1026,
+    "ownerPredicateCandidates": 275,
+    "reviewRequired": 169,
     "reviewedCandidates": 857,
-    "unresolvedSafetyCandidates": 211,
+    "unresolvedSafetyCandidates": 219,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 161,
+    "REVIEW_REQUIRED": 169,
     "SCOPED_BOUNDARY": 547,
     "NARROW_EXCEPTION": 52,
     "NOT_PERSISTENCE": 208,
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 79,
-    "unresolvedCandidateBoundaries": 939,
+    "unresolvedCandidateBoundaries": 947,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -6532,7 +6532,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "37347768912b9e614cea"
+        "id": "98ee750706602eb67404"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6689,6 +6689,38 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "3a7aa1dbe9ba47ad2c75"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "15456514e184bf2ec9b1"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "ef91dadc671180de0753"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "78594aff6685b1775779"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "1bec00ffd4c81abae866"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "7731405329a3307fa1e7"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "4ba9b08128aed200300b"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "6efc8c7854afaf321175"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "2954a7eb5e4108bc34a7"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7533,6 +7565,38 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "3a7aa1dbe9ba47ad2c75"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "15456514e184bf2ec9b1"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "ef91dadc671180de0753"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "78594aff6685b1775779"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "1bec00ffd4c81abae866"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "7731405329a3307fa1e7"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "4ba9b08128aed200300b"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "6efc8c7854afaf321175"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "2954a7eb5e4108bc34a7"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10404,7 +10468,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "37347768912b9e614cea"
+        "id": "98ee750706602eb67404"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10449,10 +10513,10 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 1018,
+    "currentCallers": 1026,
     "structuredVerified": 79,
-    "structuredUnproven": 939,
-    "manualUnresolved": 211,
+    "structuredUnproven": 947,
+    "manualUnresolved": 219,
     "manualUnsupported": 728,
     "agreedVerified": 79,
     "proofAwaitingManualReconciliation": 0
@@ -31668,15 +31732,15 @@
       }
     },
     {
-      "id": "37347768912b9e614cea",
+      "id": "98ee750706602eb67404",
       "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "line": 203,
+      "line": 214,
       "enclosing": "FeatureCard",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "769ac7c78bd7c9b624bd0e69fa4b2eaa4df3bb13b943baf7d5019873915b29c7",
+      "sourceSha256": "572b6dc269c1fbd00cf0d97167d09bf34105352470092a06ca3645b1a76060e6",
       "semanticReview": {
         "authority": "Native Array.from materializes locally queried menu buttons for keyboard focus navigation. The subsequent index/focus operations touch the DOM only. No database, storage client, credential or provider write is involved.",
         "reason": "Exact current-source receiver and surrounding data flow were inspected. Only the native in-memory conversion is excluded. No adjacent authority, persistence or provider boundary is certified.",
@@ -33024,6 +33088,94 @@
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
       "sourceSha256": "c73176a55e776661d1374be102e9b46b42fbd160122407941203a059408f5b47"
+    },
+    {
+      "id": "15456514e184bf2ec9b1",
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "line": 32,
+      "enclosing": "searchOwnedWorkspace",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "xroga_sidebar_chats",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d"
+    },
+    {
+      "id": "ef91dadc671180de0753",
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "line": 33,
+      "enclosing": "searchOwnedWorkspace",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "terminal_sessions",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d"
+    },
+    {
+      "id": "78594aff6685b1775779",
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "line": 34,
+      "enclosing": "searchOwnedWorkspace",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "projects",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d"
+    },
+    {
+      "id": "1bec00ffd4c81abae866",
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "line": 35,
+      "enclosing": "searchOwnedWorkspace",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "xroga_sidebar_sections",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d"
+    },
+    {
+      "id": "7731405329a3307fa1e7",
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "line": 36,
+      "enclosing": "searchOwnedWorkspace",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "xroga_sidebar_items",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d"
+    },
+    {
+      "id": "4ba9b08128aed200300b",
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "line": 54,
+      "enclosing": "searchOwnedWorkspace",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "xroga_sidebar_chats",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d"
+    },
+    {
+      "id": "6efc8c7854afaf321175",
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "line": 55,
+      "enclosing": "searchOwnedWorkspace",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "terminal_sessions",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d"
+    },
+    {
+      "id": "2954a7eb5e4108bc34a7",
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "line": 56,
+      "enclosing": "searchOwnedWorkspace",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "projects",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d"
     },
     {
       "id": "53953a7522a9f4a6ec38",
