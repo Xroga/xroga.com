@@ -143,3 +143,4 @@ Evidence labels as above. Source: the video directive's section 4 (one synchroni
 
 **Still not built (so it is not claimed):** a typed `PageControlMap` with generation tiers and a scored capability manifest; a real MV3 service-worker kill after a server-accepted write in Chrome; 20-user mixed load; TraceDraw and every real third-party app.
 
+**Release after round 11.** Build commit `96a8f9deb` (working tree clean), ZIP `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-96a8f9deb.zip`, SHA-256 `DE4C1EC6E5F16383C7836B5E4A53C662D945E081B74FEB9ABCA08D1673A1735F`, manifest `ARTIFACT-MANIFEST-96a8f9deb.json`. Unit suite 1501 passed, 4 skipped; Chromium scenarios 310 of 310 PASS (`scenarios-full-20261122i.json`). Upgrade smoke from the `d5e82a9b7` ZIP in real Chromium: same id, storage kept, service worker alive, side panel loads. Backend unchanged (tag `browser-op-1110` on `effort-hm9`; rollback `00146-wod`). Staging only; production not live with any of this.
