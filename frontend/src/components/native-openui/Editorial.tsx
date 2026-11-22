@@ -26,6 +26,8 @@ export const Section = defineComponent({
   },
 });
 
+const shortNumericReadout = /^(?=.{1,12}$)[+\p{Pd}−]?\p{Sc}?\p{Nd}[\p{Nd}.,\u00a0\u202f]*[%\p{Sc}]?$/u;
+
 export const Metric = defineComponent({
   name: 'Metric',
   props: z.object({
@@ -38,7 +40,8 @@ export const Metric = defineComponent({
   component: ({ props }) => (
     <dl className="native-answer-metric" data-tone={props.tone ?? 'neutral'}>
       <dt>{props.label}</dt>
-      <dd aria-live="polite"><span className="native-answer-metric-value">{props.value}</span></dd>
+      <dd aria-live="polite"><span className="native-answer-metric-value"
+        data-unbroken={shortNumericReadout.test(String(props.value)) || undefined}>{props.value}</span></dd>
       {props.note && <dd className="native-answer-metric-note">{props.note}</dd>}
     </dl>
   ),

@@ -389,10 +389,11 @@ try {
       const paintedNumbers=await page.locator('.native-answer-metric-value').evaluateAll(elements=>elements.map(element=>{
         const range=document.createRange();range.selectNodeContents(element);
         return {value:element.textContent,lines:new Set(Array.from(range.getClientRects(),rect=>Math.round(rect.top))).size,
-          width:Math.round(element.parentElement.getBoundingClientRect().width),font:getComputedStyle(element).fontSize};
+          width:Math.round(element.parentElement.getBoundingClientRect().width),textWidth:Math.round(range.getBoundingClientRect().width),
+          font:getComputedStyle(element).fontSize};
       }));
       assert.deepEqual(paintedNumbers.map(item=>item.value),['$405.53','$4,331.67','$24,331.67']);
-      assert.ok(paintedNumbers.every(item=>item.lines===1), 'Metrics must adapt to their container without splitting decimal values: '
+      assert.ok(paintedNumbers.every(item=>item.lines===1 && item.textWidth<=item.width), 'Metrics must fit without splitting decimal values: '
         + JSON.stringify({ viewport: viewport.width, theme, paintedNumbers }));
       if([390,1440].includes(viewport.width))await page.screenshot({path:resolve(output,'metric-grid-'+viewport.width+'-'+theme+'.png'),fullPage:true});
       await open('chartHeading');
