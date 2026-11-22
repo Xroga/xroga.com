@@ -58,6 +58,7 @@ function seed() {
         { id: 'd8', title: 'Brand Guidelines', owner: 'marketing', modified: '2026-01-15', body: 'Use the primary logo on a white background.' },
       ],
     },
+    mail: { drafts: [], sent: 0, discarded: 0, saves: 0, log: [] },
     cal: {
       drafts: [], sent: 0, log: [],
       people: {
@@ -151,6 +152,25 @@ const API = {
       const d = { id: 'n' + (state.docs.created.length + 1), title, body };
       state.docs.created.push(d); return [200, { ok: true, doc: d }];
     },
+  },
+  // A webmail: saving squeezes paragraph breaks unless keepSpacing is set (a quirk of the app), and the same recipient and subject saved twice makes two drafts.
+  mail: {
+    list: () => [200, state.mail.drafts.map(d => ({ id: d.id, to: d.to, subject: d.subject, body: d.body }))],
+    get(b) { const d = state.mail.drafts.find(x => x.id === b.id); return d ? [200, d] : [404, { error: 'not found' }]; },
+    save(b) {
+      const to = String(b.to ?? '').trim(), subject = String(b.subject ?? '').trim();
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(to)) return [422, { error: 'a valid recipient is needed' }];
+      if (!subject) return [422, { error: 'a subject is needed' }];
+      let body = String(b.body ?? '');
+      if (!b.keepSpacing) body = body.replace(/\n{2,}/g, '\n');
+      let d = b.id ? state.mail.drafts.find(x => x.id === b.id) : null;
+      if (d) Object.assign(d, { to, subject, body });
+      else { d = { id: 'm' + (state.mail.saves + 1), to, subject, body }; state.mail.drafts.push(d); }
+      state.mail.saves++; state.mail.log.push({ id: d.id, to });
+      return [200, { ok: true, draft: d }];
+    },
+    send() { state.mail.sent++; return [200, { ok: true }]; },
+    discard(b) { const n = state.mail.drafts.length; state.mail.drafts = state.mail.drafts.filter(x => x.id !== b.id); state.mail.discarded += n - state.mail.drafts.length; return [200, { ok: true }]; },
   },
   cal: {
     people: () => [200, state.cal.people],

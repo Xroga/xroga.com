@@ -30,6 +30,8 @@ export interface Step {
   when?: Condition;
   unless?: Condition;
   repeat?: Repeat;
+  /** Return this step's own text in the result (a read, find or snapshot in the middle of a batch), not only the last step's. */
+  keep?: boolean;
   /** A group: these steps run as one unit under this step's when, unless and repeat. */
   steps?: Step[];
 }
@@ -70,6 +72,7 @@ interface Output {
   text: string;
   note?: string;
   runs?: number;
+  keep?: boolean;
 }
 
 export class BatchError extends Error {
@@ -89,6 +92,27 @@ export function isCondition(value: unknown): value is Condition {
 
 function describe(c: Condition): string {
   return 'value' in c ? `${c.for} ${JSON.stringify(c.value)}` : `${c.for} ${c.role}${c.name ? ` ${JSON.stringify(c.name)}` : ''}`;
+}
+
+const KEEP_EACH = 1500;
+const KEEP_TOTAL = 9000;
+
+/** The texts of the steps marked keep (other than the last, which is returned anyway), each cut to KEEP_EACH characters and all to KEEP_TOTAL. */
+export function keptSection(outputs: Output[], last: Output | undefined): string {
+  const kept = outputs.filter(o => o.keep && o.ok && !o.skipped && o !== last && o.text);
+  if (!kept.length) return '';
+  let budget = KEEP_TOTAL;
+  const lines: string[] = [];
+  for (const o of kept) {
+    const text = o.text.length > KEEP_EACH ? `${o.text.slice(0, KEEP_EACH)}…` : o.text;
+    if (text.length > budget) {
+      lines.push(`(${kept.length - lines.length} more kept results left out: too long together)`);
+      break;
+    }
+    budget -= text.length;
+    lines.push(`[step ${o.label} · ${o.tool}]\n${text}`);
+  }
+  return `kept results:\n${lines.join('\n\n')}\n\nlast step:\n`;
 }
 
 /** `✓ navigate → ✓ click ×4 → – click (skipped: ...) → ✗ wait: ...` */
@@ -175,7 +199,7 @@ export async function runPlan(steps: Step[], opts: PlanOptions): Promise<{ text:
         prev.text = result.text;
         prev.runs = iteration;
       } else {
-        outputs.push({ label, tool, ok: true, text: result.text, runs: iteration || 1 });
+        outputs.push({ label, tool, ok: true, text: result.text, runs: iteration || 1, ...(step.keep === true ? { keep: true } : {}) });
       }
       if (result.halt) {
         halted = result.halt;
@@ -252,7 +276,8 @@ export async function runPlan(steps: Step[], opts: PlanOptions): Promise<{ text:
   }
   const last = [...outputs].reverse().find(o => o.ok && !o.skipped) ?? outputs[outputs.length - 1];
   const stopped = halted ? `\n\nThe batch stopped here: ${halted}` : '';
-  return { text: `${trailOf(outputs)}\n\n${last?.text ?? ''}${stopped}`.trim(), ran: ops, ok: outputs.every(o => o.ok), ...(halted ? { halted } : {}) };
+  const kept = keptSection(outputs, last);
+  return { text: `${trailOf(outputs)}\n\n${kept}${last?.text ?? ''}${stopped}`.trim(), ran: ops, ok: outputs.every(o => o.ok), ...(halted ? { halted } : {}) };
 }
 
 /** The tools a batch step may name: the page tools of the layer. Everything else (agent tools, `upload`, `done`) runs as an ordinary call. */
@@ -269,7 +294,7 @@ export const BATCH_TOOL = {
     '(when/unless), click Next until it is gone (repeat with until). Each step is {tool, args} with the same arguments the tool takes alone, plus optional when / unless ' +
     '(a condition: {for:"text"|"text_gone"|"url", value} or {for:"visible"|"hidden", role, name}) and repeat (a number, or {until|while: condition, max}). ' +
     'steps inside a step make a group. Targets must be known: use refs or role and name from a snapshot you have. The batch stops at the first failure and ' +
-    'returns the trail of what ran plus the last result. Do a snapshot or read afterwards to check the page. Consequential steps still need their approvals. ' +
+    'returns the trail of what ran plus the last result; add keep:true to a read, find or snapshot step in the middle to get its text back too (check ten items in one call). Do a snapshot or read afterwards to check the page. Consequential steps still need their approvals. ' +
     'Do not put a batch inside a batch. Do not use it when a step needs what the previous one shows.',
   parameters: {
     type: 'object',
@@ -286,6 +311,7 @@ export const BATCH_TOOL = {
             when: { type: 'object' },
             unless: { type: 'object' },
             repeat: {},
+            keep: { type: 'boolean' },
             steps: { type: 'array', items: { type: 'object' } },
           },
           additionalProperties: false,

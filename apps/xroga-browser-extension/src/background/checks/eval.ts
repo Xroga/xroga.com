@@ -9,6 +9,7 @@ import { AgentLoop } from '@src/agent/loop';
 import type { LoopEnd } from '@src/agent/loop';
 import { agentSystemPrompt } from '@src/agent/prompt';
 import { PLAN_TOOL } from '@src/agent/task-plan';
+import { BATCH_TOOL } from '@src/agent/batch-plan';
 import { RunTimings } from '@src/agent/timing';
 import { toolsForRun } from '@src/agent/tools';
 import { FakeHost } from '@src/agent/testing/fake-layer';
@@ -30,6 +31,8 @@ interface EvalArgs {
   baseUrl?: string;
   contextWindow?: number;
   tools?: 'full' | 'short';
+  /** false leaves the batch tool out, as the earlier runs did; by default it is offered, as in the product. */
+  batch?: boolean;
   modes?: PermissionMode[];
   tasks?: string[];
   /** Leave out the public sites (no network). */
@@ -142,7 +145,7 @@ async function runOne(
         }
       : {},
   );
-  const tools = toolsForRun({ disabled: args.tools === 'short' ? SHORT_TOOLS_OFF : [], vision: profile.vision, pointAt: true, agentTools: [PLAN_TOOL] });
+  const tools = toolsForRun({ disabled: args.tools === 'short' ? SHORT_TOOLS_OFF : [], vision: profile.vision, pointAt: true, agentTools: args.batch === false ? [PLAN_TOOL] : [PLAN_TOOL, BATCH_TOOL] });
   const abort = new AbortController();
   const timer = setTimeout(() => abort.abort(), 5 * 60_000);
   const timings = new RunTimings();

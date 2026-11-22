@@ -7,7 +7,8 @@ import type { ScrollInfo } from '../../probe';
 import type { ToolContext, ToolOutcome } from '../controller';
 import { resolveTarget } from '../interaction/resolve';
 import type { ResolvedTarget } from '../interaction/resolve';
-import { waitForActionable } from '../interaction/actionability';
+import { revealedControlAt, waitForActionable } from '../interaction/actionability';
+import type { Actionable } from '../interaction/actionability';
 import { dispatchClick, dispatchDrag, dispatchHover, dispatchWheel } from '../interaction/pointer';
 import { withEvidence } from '../interaction/evidence';
 import { preflightNavigation } from '../interaction/preflight';
@@ -61,11 +62,70 @@ export function recordDialog(ctx: ToolContext, dialog: DialogInfo): string {
 
 const FRAME_TAGS = ['iframe', 'frame', 'object', 'embed'];
 
+/** Roles that often show their own action buttons (Delete, Archive, Mark read) once the pointer is over them: a list row, a card, a clickable block. */
+const REVEALS_CONTROLS = new Set(['row', 'listitem', 'article', 'gridcell', 'cell', 'generic', 'clickable', 'group', 'region', 'text']);
+/** Other points inside a target to try, away from the right-hand edge where hover actions usually appear. */
+const AWAY_FROM_CONTROLS: Array<[number, number]> = [[0.25, 0.5], [0.1, 0.5], [0.5, 0.2], [0.5, 0.8], [0.35, 0.5]];
+
+/** The points inside the target to try when a revealed control covers its centre: the first one where, with the pointer there, the target itself takes the click. */
+async function pointClearOf(ctx: ToolContext, target: ResolvedTarget): Promise<{ actionable: Actionable; at: [number, number] } | null> {
+  for (const [fx, fy] of AWAY_FROM_CONTROLS) {
+    let alt: Actionable;
+    try {
+      alt = await waitForActionable(ctx, target, { pointer: true, budgetMs: 1500, at: { fx, fy } });
+    } catch {
+      continue;
+    }
+    await dispatchHover(ctx, alt.point);
+    if (!(await revealedControlAt(ctx, target, alt.localPoint))) return { actionable: alt, at: [fx, fy] };
+  }
+  return null;
+}
+
+/**
+ * Hover first, then look again: a row that reveals a Delete button under the pointer would take the click on that button, which nothing checked before the
+ * hover. When a separate control now covers the click point, the click moves to another point inside the target that stays clear of it. Nothing is pressed here.
+ */
+async function clearOfRevealedControls(
+  ctx: ToolContext,
+  target: ResolvedTarget,
+  actionable: Actionable,
+): Promise<{ actionable: Actionable; moved?: { at: [number, number]; covering: string } }> {
+  if (!REVEALS_CONTROLS.has(target.record.print.role)) return { actionable };
+  try {
+    await dispatchHover(ctx, actionable.point);
+    const covering = await revealedControlAt(ctx, target, actionable.localPoint);
+    if (!covering) return { actionable };
+    const clear = await pointClearOf(ctx, target);
+    if (clear) return { actionable: clear.actionable, moved: { at: clear.at, covering } };
+  } catch {
+    // The look is an extra safety, never a reason to fail the click; the normal checks and press guards still apply.
+  }
+  return { actionable };
+}
+
 export async function click(ctx: ToolContext, args: ClickArgs): Promise<ToolOutcome> {
   assertNoModal(ctx);
+  let movedFrom: { at: [number, number]; covering: string } | undefined;
   return withTarget(ctx, args.target, async first => {
     const prepare = async (target: ResolvedTarget) => {
-      const actionable = await waitForActionable(ctx, target, { pointer: true, budgetMs: args.timeoutMs, at: args.at ? { fx: args.at[0], fy: args.at[1] } : undefined });
+      let actionable: Actionable;
+      try {
+        actionable = await waitForActionable(ctx, target, { pointer: true, budgetMs: args.timeoutMs, at: args.at ? { fx: args.at[0], fy: args.at[1] } : undefined });
+        if (!args.at) {
+          const cleared = await clearOfRevealedControls(ctx, target, actionable);
+          actionable = cleared.actionable;
+          if (cleared.moved) movedFrom = cleared.moved;
+        }
+      } catch (error) {
+        // The pointer already rests on the row and its own Delete button is showing at the centre: another point of the row is tried before the click is refused.
+        const covering = error instanceof LayerError && error.code === 'OBSCURED' && (error.details as { kind?: string } | undefined)?.kind === 'nested' ? String((error.details as { covering?: string }).covering ?? 'a control') : null;
+        if (args.at || !covering || !REVEALS_CONTROLS.has(target.record.print.role)) throw error;
+        const clear = await pointClearOf(ctx, target);
+        if (!clear) throw error;
+        actionable = clear.actionable;
+        movedFrom = { at: clear.at, covering };
+      }
       // A click on a frame element lands on whatever the frame shows at that point, which nobody classified.
       if (FRAME_TAGS.includes(actionable.state.tag)) {
         throw new LayerError(
@@ -134,7 +194,11 @@ export async function click(ctx: ToolContext, args: ClickArgs): Promise<ToolOutc
         ...(evidence.downloads ? { downloads: evidence.downloads } : {}),
         ...sensitivity(gate),
       };
-      return withPageState(ctx, args.observe, { receipt, data: { point: actionable.point } });
+      return withPageState(ctx, args.observe, {
+        receipt,
+        data: { point: actionable.point },
+        ...(movedFrom ? { notices: [`The centre of ${target.description} showed ${movedFrom.covering} on hover, so the click went to ${movedFrom.at[0]},${movedFrom.at[1]} of the element, clear of it.`] } : {}),
+      });
     } finally {
       if (target !== first) await releaseTarget(ctx, target);
     }

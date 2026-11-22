@@ -6,7 +6,13 @@
 export type MilestoneStatus = 'pending' | 'working' | 'verified' | 'reported' | 'recovering' | 'waiting' | 'blocked';
 export interface Check { text?: string; url?: string }
 export interface Milestone { id: string; title: string; status: MilestoneStatus; check?: Check; note?: string }
-export interface PlanSnapshot { revision: number; milestones: Milestone[] }
+export type LedgerStatus = 'pending' | 'saved' | 'verified' | 'failed' | 'skipped';
+/** One item of a batch job (a draft, a row, a record). `savedAt` is the page-load count when it was marked saved: verified needs a later load. */
+export interface LedgerItem { key: string; status: LedgerStatus; note?: string; savedAt?: number }
+export interface PlanSnapshot { revision: number; milestones: Milestone[]; ledger?: LedgerItem[] }
+
+export const MAX_LEDGER = 300;
+const LEDGER_SETTABLE = new Set<string>(['saved', 'verified', 'failed', 'skipped', 'pending']);
 
 export const MAX_MILESTONES = 12;
 const ID = /^[a-z0-9][a-z0-9_-]{0,23}$/;
@@ -26,6 +32,7 @@ function cleanCheck(raw: unknown): Check | undefined {
 export class TaskPlan {
   #revision = 0;
   #milestones: Milestone[] = [];
+  #ledger: LedgerItem[] = [];
 
   static restore(snapshot: PlanSnapshot | undefined): TaskPlan {
     const p = new TaskPlan();
@@ -33,11 +40,82 @@ export class TaskPlan {
       p.#revision = Number.isSafeInteger(snapshot.revision) ? snapshot.revision : 0;
       p.#milestones = snapshot.milestones.filter(m => m && ID.test(m.id) && typeof m.title === 'string').slice(0, MAX_MILESTONES).map(m => ({ ...m }));
     }
+    if (snapshot && Array.isArray(snapshot.ledger)) {
+      p.#ledger = snapshot.ledger.filter(i => i && typeof i.key === 'string' && LEDGER_SETTABLE.has(i.status)).slice(0, MAX_LEDGER).map(i => ({ ...i }));
+    }
     return p;
   }
 
   get active(): boolean { return this.#milestones.length > 0; }
-  snapshot(): PlanSnapshot { return { revision: this.#revision, milestones: this.#milestones.map(m => ({ ...m })) }; }
+  get hasLedger(): boolean { return this.#ledger.length > 0; }
+  snapshot(): PlanSnapshot {
+    return { revision: this.#revision, milestones: this.#milestones.map(m => ({ ...m })), ...(this.#ledger.length ? { ledger: this.#ledger.map(i => ({ ...i })) } : {}) };
+  }
+
+  /** Sets the batch job's items (a short, unique name each: a recipient, a record id). An item that keeps its key keeps its state. */
+  setItems(keys: unknown): string | null {
+    if (!Array.isArray(keys) || keys.length === 0) return 'keys is a non-empty list of short item names';
+    if (keys.length > MAX_LEDGER) return `at most ${MAX_LEDGER} items`;
+    const seen = new Set<string>();
+    const next: LedgerItem[] = [];
+    for (const k of keys) {
+      const key = typeof k === 'string' ? k.trim().slice(0, 80) : '';
+      if (!key) return 'every item name must be a non-empty string';
+      if (seen.has(key)) return `item "${key}" is listed twice (a duplicate is exactly what this list prevents)`;
+      seen.add(key);
+      next.push(this.#ledger.find(i => i.key === key) ?? { key, status: 'pending' });
+    }
+    this.#ledger = next;
+    this.#revision++;
+    return null;
+  }
+
+  /**
+   * Marks items. `saved` records the page-load count; `verified` is refused for an item that has not been saved, or that has not seen a page load since
+   * (a draft that is still only on the screen has not been shown to persist). Returns an error text or null.
+   */
+  markItems(keys: unknown, status: unknown, loads: number, note?: string, dryRun = false): string | null {
+    if (!this.#ledger.length) return 'there is no item list yet: call plan with action "items" first';
+    if (!Array.isArray(keys) || keys.length === 0) return 'keys is a non-empty list of item names';
+    if (typeof status !== 'string' || !LEDGER_SETTABLE.has(status)) return 'status is saved, verified, failed or skipped';
+    const items: LedgerItem[] = [];
+    const unknown: string[] = [];
+    for (const k of keys) {
+      const it = this.#ledger.find(i => i.key === (typeof k === 'string' ? k.trim() : ''));
+      if (it) items.push(it);
+      else unknown.push(String(k));
+    }
+    if (unknown.length) return `not in the list: ${unknown.slice(0, 5).join(', ')}`;
+    if (status === 'verified') {
+      const notSaved = items.filter(i => i.status !== 'saved' && i.status !== 'verified');
+      if (notSaved.length) return `cannot verify ${notSaved.slice(0, 5).map(i => i.key).join(', ')}: mark an item saved first (it is ${notSaved[0]!.status})`;
+      const sameLoad = items.filter(i => i.status === 'saved' && (i.savedAt === undefined || loads <= i.savedAt));
+      if (sameLoad.length) return `cannot verify ${sameLoad.slice(0, 5).map(i => i.key).join(', ')} yet: no page has loaded since it was saved. Reload or reopen it, check it is still there, then verify.`;
+    }
+    if (dryRun) return null;
+    for (const it of items) {
+      it.status = status as LedgerStatus;
+      if (status === 'saved') it.savedAt = loads;
+      if (note) it.note = note.slice(0, 120);
+      else delete it.note;
+    }
+    this.#revision++;
+    return null;
+  }
+
+  /** Items that are not done: pending, saved without a verification, or failed. */
+  ledgerOpen(): LedgerItem[] {
+    return this.#ledger.filter(i => i.status === 'pending' || i.status === 'saved' || i.status === 'failed');
+  }
+
+  ledgerSummary(): string {
+    if (!this.#ledger.length) return '';
+    const n = (s: LedgerStatus) => this.#ledger.filter(i => i.status === s).length;
+    const open = this.ledgerOpen();
+    return `list: ${n('verified')} of ${this.#ledger.length} verified` +
+      `${n('saved') ? `, ${n('saved')} saved but not yet verified after a reload` : ''}${n('failed') ? `, ${n('failed')} failed` : ''}${n('skipped') ? `, ${n('skipped')} skipped` : ''}${n('pending') ? `, ${n('pending')} not started` : ''}` +
+      `${open.length ? `. Not done: ${open.slice(0, 12).map(i => i.key).join(', ')}${open.length > 12 ? ` and ${open.length - 12} more` : ''}` : ''}`;
+  }
 
   /** Sets or revises the whole plan. A milestone that keeps its id keeps a verified state; everything else starts pending. */
   set(inputs: MilestoneInput[]): string | null {
@@ -111,7 +189,9 @@ export class TaskPlan {
 
   render(): string {
     const mark: Record<MilestoneStatus, string> = { pending: '[ ]', working: '[~]', verified: '[x]', reported: '[?]', recovering: '[!]', waiting: '[…]', blocked: '[#]' };
-    return this.#milestones.map(m => `${mark[m.status]} ${m.id}: ${m.title} (${m.status}${m.check ? ', verifiable' : ''}${m.note ? `; ${m.note}` : ''})`).join('\n');
+    const lines = this.#milestones.map(m => `${mark[m.status]} ${m.id}: ${m.title} (${m.status}${m.check ? ', verifiable' : ''}${m.note ? `; ${m.note}` : ''})`);
+    if (this.#ledger.length) lines.push(this.ledgerSummary());
+    return lines.join('\n');
   }
 }
 
@@ -122,17 +202,21 @@ export const PLAN_TOOL = {
   description:
     'Show the user a short plan for a substantial task (about four or more dependent steps, several applications, or a professional deliverable). Do NOT use it for a simple question or a few clicks. ' +
     'action "set": milestones is a list of {id, title, check?}: a title names a deliverable (not a click), check {text} or {url} is something observable on the page when the milestone is truly done. Call set again to revise the plan when you find a better method. ' +
-    'action "update": id and status working, done, blocked or waiting, plus an optional note. A milestone is shown as verified only when its check is seen on the page; without a check it shows as "reported". It never limits what you may do.',
+    'action "update": id and status working, done, blocked or waiting, plus an optional note. A milestone is shown as verified only when its check is seen on the page; without a check it shows as "reported". It never limits what you may do. ' +
+    'For a batch of many items (drafts, rows, records): action "items" with keys (a short unique name each, no duplicates) keeps the list and survives an interruption; action "mark" with keys and status saved, failed or skipped. ' +
+    '"verified" is accepted only for an item already marked saved, after a page load since (reload or reopen it), with check {text} visible on the page. Report only verified items as done.',
   parameters: {
     type: 'object',
     properties: {
-      action: { type: 'string', enum: ['set', 'update'] },
+      action: { type: 'string', enum: ['set', 'update', 'items', 'mark'] },
+      keys: { type: 'array', maxItems: MAX_LEDGER, items: { type: 'string', maxLength: 80 } },
+      check: { type: 'object', properties: { text: { type: 'string', maxLength: 200 } } },
       milestones: {
         type: 'array', maxItems: MAX_MILESTONES,
         items: { type: 'object', properties: { id: { type: 'string', maxLength: 24 }, title: { type: 'string', maxLength: 120 }, check: { type: 'object', properties: { text: { type: 'string', maxLength: 200 }, url: { type: 'string', maxLength: 200 } } } }, required: ['id', 'title'] },
       },
       id: { type: 'string', maxLength: 24 },
-      status: { type: 'string', enum: ['pending', 'working', 'done', 'blocked', 'waiting'] },
+      status: { type: 'string', enum: ['pending', 'working', 'done', 'blocked', 'waiting', 'saved', 'verified', 'failed', 'skipped'] },
       note: { type: 'string', maxLength: 200 },
     },
     required: ['action'],

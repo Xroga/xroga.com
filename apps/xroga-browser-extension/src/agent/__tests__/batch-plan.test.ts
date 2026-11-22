@@ -112,3 +112,32 @@ describe('a batch', () => {
     expect(p.calls).toHaveLength(0);
   });
 });
+
+describe('keep: texts of the middle steps come back', () => {
+  const reads = (n: number): Step[] => Array.from({ length: n }, (_, i) => ({ tool: 'read', args: { ref: `r${i}` }, keep: true }));
+
+  it('returns the text of every step marked keep, and the last step as before', async () => {
+    const run = async (tool: string, args: Record<string, unknown>) => ({ text: `${tool} text of ${String(args.ref ?? 'x')}` });
+    const r = await runPlan([...reads(3), { tool: 'click', args: { target: { role: 'button', name: 'Close' } } }], { run, test: async () => false });
+    expect(r.text).toContain('kept results:');
+    expect(r.text).toContain('read text of r0');
+    expect(r.text).toContain('read text of r2');
+    expect(r.text.trim().endsWith('click text of x')).toBe(true);
+  });
+
+  it('does not repeat the last step when it is kept, and says nothing when nothing is kept', async () => {
+    const run = async (tool: string) => ({ text: `${tool} text` });
+    const one = await runPlan([{ tool: 'read', keep: true }], { run, test: async () => false });
+    expect(one.text.match(/read text/g)).toHaveLength(1);
+    const none = await runPlan([{ tool: 'read' }, { tool: 'read' }], { run, test: async () => false });
+    expect(none.text).not.toContain('kept results');
+  });
+
+  it('cuts each kept text and the total', async () => {
+    const run = async (tool: string, args: Record<string, unknown>) => ({ text: `${String(args.ref)}:${'x'.repeat(4000)}` });
+    const r = await runPlan([...reads(8), { tool: 'wait', args: {} }], { run, test: async () => false });
+    expect(r.text).toContain('…');
+    expect(r.text).toContain('left out');
+    expect(r.text.length).toBeLessThan(14000);
+  });
+});

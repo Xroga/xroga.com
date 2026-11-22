@@ -162,6 +162,20 @@ async function checkOnce(ctx: ToolContext, target: ResolvedTarget, needs: Needs)
   return { point: top, localPoint: b, chain, quad: again!, state };
 }
 
+/**
+ * With the pointer already over `local` (so hover-revealed buttons are showing): the name of a separate control inside the target that would now take the
+ * click (a row's Delete or Archive button), or null when the target itself would. Never throws.
+ */
+export async function revealedControlAt(ctx: ToolContext, target: ResolvedTarget, local: Point): Promise<string | null> {
+  try {
+    await hitTest(ctx, target, local, [], false);
+    return null;
+  } catch (error) {
+    if (error instanceof LayerError && nestedHit(error)) return String((error.details as { covering?: string } | undefined)?.covering ?? 'a control');
+    return null;
+  }
+}
+
 /** The receives-events check: in the target's session, then at every process boundary up to the top. */
 async function hitTest(
   ctx: ToolContext,

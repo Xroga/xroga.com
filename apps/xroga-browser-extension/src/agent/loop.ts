@@ -33,6 +33,7 @@ import { learnFrom, turnEffort } from './run';
 import { PaintedInputDeliveryGuard } from './painted-input-delivery';
 import { ProgressTracker } from './progress-tracker';
 import { DeadSpots } from './dead-spots';
+import { RepeatDetector } from './repeat-detector';
 import { skillsFor } from './skills';
 import { describeHit, renderSkill, searchSkills, skillById } from './skill-catalog';
 import { runMenuPath, validateMenuPath } from './menu-path';
@@ -881,6 +882,11 @@ ${ledger}` : ''),
         outcome.isError,
       );
       if (verdict.nudge) notes.push(note(verdict.nudge));
+      // The same short sequence done three times for different items: say once that the rest can go in one batch call (repeat-detector.ts).
+      if (this.#toolNames.has('batch')) {
+        const again = this.#repeats.record(outcome.call.toolName, (outcome.call.input ?? {}) as Record<string, unknown>, outcome.text ?? '', outcome.isError);
+        if (again) notes.push(note(again));
+      }
       if (verdict.stop) this.#guardStop ??= { reason: verdict.stop, guard: verdict.guard ?? 'errors' };
       const args = (outcome.call.input ?? {}) as Record<string, unknown>;
       const tabId = outcome.result?.page?.tabId ?? args.tabId ?? this.#activeTab;
@@ -1122,6 +1128,17 @@ ${ledger}` : ''),
         return { call, kind, text: refusal(open), isError: true, done: { outcome: 'partial', summary } };
       }
       return { call, kind, text: refusal(open), isError: true };
+    }
+    // A batch job's list: success is refused while an item is not verified (twice; then the run ends as partial with the counts), so a count is never the model's word.
+    if (this.#plan.hasLedger) {
+      const notDone = this.#plan.ledgerOpen();
+      if (outcomeArg === 'success' && notDone.length) {
+        this.#ledgerRefusals++;
+        const text = `Not accepted as success: the list shows ${this.#plan.ledgerSummary()}. Finish and verify those items (reload or reopen each, then mark it verified), or call done with outcome partial and say exactly which are not done.`;
+        if (this.#ledgerRefusals >= 2) return { call, kind, text, isError: true, done: { outcome: 'partial', summary: `${summary}\n\n${this.#plan.ledgerSummary()}` } };
+        return { call, kind, text, isError: true };
+      }
+      summary = `${summary}\n\n${this.#plan.ledgerSummary()}`;
     }
     this.#doneRefusals = 0;
     // Giving up is checked once: stopping after one or two failed attempts, with other methods untried, is the usual way a capable run ends early.
@@ -1514,6 +1531,8 @@ ${ledger}` : ''),
     );
     if (!outcome.skipped && outcome.call.toolName !== 'done') this.#toolsUsed.add(outcome.call.toolName);
     const status: ToolRow['status'] = outcome.skipped ? 'skipped' : outcome.isError ? 'failed' : 'done';
+    // A page load (an address opened, a reload, back or forward, a click that opened a new document) is what "it persisted" is measured against (plan ledger).
+    if (!outcome.isError && (outcome.call.toolName === 'navigate' || outcome.call.toolName === 'tabs' || outcome.result?.receipt?.navigation)) this.#loadSeq++;
     const planChanged = this.#plan.active && outcome.call.toolName !== 'plan' && outcome.call.toolName !== 'done' && !outcome.skipped && (outcome.isError ? this.#plan.markFailure() : this.#plan.markSuccess());
     this.options.emit(
       {
@@ -1621,6 +1640,9 @@ ${ledger}` : ''),
   #toolsUsed = new Set<string>();
   #plan = new TaskPlan();
   #planSeq = 0;
+  /** Page loads seen in this run; an item of the plan's list is verified only after a load later than the one it was saved at. */
+  #loadSeq = 0;
+  #ledgerRefusals = 0;
 
   /** The plan shown to the user: restored from the last plan result stored in this conversation, so a restarted worker or a reopened panel continues the same list. */
   #restorePlan(branch: Array<{ type: string; message?: { role?: string; parts?: Array<{ type: string; toolName?: string; result?: unknown }> } }>): void {
@@ -1682,7 +1704,27 @@ ${ledger}` : ''),
       this.#plan.apply(id, 'reported', note);
       return done('This milestone has no check, so it shows as reported, not verified. Prefer a check the page can confirm.');
     }
-    return fail('action is set or update');
+    if (args.action === 'items') {
+      const err = this.#plan.setItems(args.keys);
+      return err ? fail(err) : done('List kept. Mark each item saved when it is saved; after a reload or reopen that shows it is still there, mark it verified with check {text}.');
+    }
+    if (args.action === 'mark') {
+      const status = args.status;
+      const check = args.check && typeof args.check === 'object' ? (args.check as { text?: unknown }) : undefined;
+      const note = typeof args.note === 'string' ? args.note : undefined;
+      if (status === 'verified') {
+        // Verified needs more than the model's word: the text it names must be on the page now (the reopened draft, the row after a reload).
+        const text = typeof check?.text === 'string' ? check.text.trim() : '';
+        if (!text) return fail('verified needs check {text}: something visible on the page now that shows the item is there (its recipient, its title)');
+        const early = this.#plan.markItems(args.keys, status, this.#loadSeq, note, true);
+        if (early) return fail(early);
+        if (!(await this.#milestoneSeen({ text }))) return fail(`not verified: "${text}" is not on the page now. Open the item again (reload first if you have not) and read it.`);
+      }
+      const err = this.#plan.markItems(args.keys, status, this.#loadSeq, note);
+      if (err) return fail(err);
+      return done();
+    }
+    return fail('action is set, update, items or mark');
   }
 
   #reviewedAt = -1;
@@ -1691,6 +1733,7 @@ ${ledger}` : ''),
   #boundTab: number | null = null;
   #paintedInputDelivered = new PaintedInputDeliveryGuard();
   #progress = new ProgressTracker();
+  #repeats = new RepeatDetector();
   #consoleRuns = new RunLedger();
   #announcedSites = new Set<string>();
   #pendingStall: StallVerdict | null = null;

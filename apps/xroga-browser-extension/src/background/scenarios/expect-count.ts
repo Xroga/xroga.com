@@ -112,3 +112,26 @@ defineScenario({
   },
 });
 
+
+// Hover-revealed controls (seen in a competitor's webmail run: "opening the draft away from hover controls"): the row shows a Delete button over its middle once the pointer is on it.
+// A click at the centre would press that button; the click must open the row instead, and the receipt must say where it went.
+defineScenario({
+  id: 'S3-click-clear-of-hover-controls',
+  set: 'C',
+  title: 'click a list row whose Delete button appears over its middle on hover: the row opens, nothing is deleted',
+  covers: 'after the pointer is over the click point, a separate control that now covers it moves the click to another point inside the target',
+  async run(ctx) {
+    await ctx.open(`${FIXTURE_ORIGIN}/c-hover-actions.html`);
+    const snap = await ctx.call('snapshot');
+    const ref = /\[(\w+)\][^\n]*ana@example\.test/.exec(String((snap as { text?: string }).text ?? ''))?.[1] ?? 'none';
+    const r = await ctx.call('click', { target: { ref } });
+    const status = await ctx.call('find', { role: 'status' });
+    const text = `${r.text ?? ''} ${(status as { text?: string }).text ?? ''}`;
+    const pageText = JSON.stringify(await ctx.call('read', {}));
+    return outcome(
+      'the row opened (Opened Ana) and the Delete button was not pressed (no Deleted Ana); the result names the move',
+      `${text.slice(0, 300)} | ${/Opened Ana/.test(pageText) ? 'opened' : 'not opened'} | ${/Deleted Ana/.test(pageText) ? 'DELETED' : 'not deleted'}`,
+      /Opened Ana/.test(pageText) && !/Deleted Ana/.test(pageText),
+    );
+  },
+});

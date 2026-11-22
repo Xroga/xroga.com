@@ -96,6 +96,12 @@ const replied = (f: RunFacts) =>
 
 const summarised = (f: RunFacts) => /keychron/i.test(f.answer) && /royal kludge|rk61/i.test(f.answer);
 
+/** The four recipients of the webmail task (adv-mail), different in each variant. */
+const MAIL_NAMES = [['Ana', 'Bilal', 'Carla', 'Dev'], ['Elif', 'Farid', 'Gita', 'Hugo'], ['Ines', 'Jamal', 'Kira', 'Leo']];
+const mailPeople = (v: number) => MAIL_NAMES[(v - 1) % 3]!.map((first, i) => ({ first, to: `${first.toLowerCase()}@mail${v}.example.test`, subject: ['Delivery slot', 'Thursday delivery', 'Slot confirmation', 'Your delivery'][i]! }));
+const MAIL10 = ['Ana', 'Bilal', 'Carla', 'Dev', 'Elif', 'Farid', 'Gita', 'Hugo', 'Ines', 'Jamal'];
+const mailPeople10 = () => MAIL10.map((first, i) => ({ first, to: `${first.toLowerCase()}@bulk.example.test`, subject: ['Delivery slot', 'Thursday delivery', 'Slot confirmation', 'Your delivery', 'Dispatch time'][i % 5]! + ` ${i + 1}` }));
+
 export const TASKS: EvalTask[] = [
   {
     id: 'read-price',
@@ -325,6 +331,14 @@ export const TASKS: EvalTask[] = [
           // One sentence quoted exactly from each of the five documents (any sentence of it is fine), with its title and modified date.
           const b = norm(n.body); const five = s.docs.items.filter((d: any) => d.id >= 'd1' && d.id <= 'd5');
           return five.length === 5 && five.every((d: any) => b.includes(norm(d.title)) && b.includes(d.modified) && String(d.body).split(/(?<=\.)\s+/).some((q: string) => b.includes(norm(q)))) && !/office move|brand guidelines|2025/i.test(n.body); }) },
+      // A webmail that squeezes paragraph breaks unless a box is ticked, loses a draft that is only autosaved when the editor is closed, and shows a Delete button over a draft row on hover.
+      { id: `adv-mail-${v}`, url: app('adv-mail'), probe,
+        task: `Prepare four email drafts in this webmail and send nothing. Recipients and subjects: ${mailPeople(v).map(p => `${p.to} (subject "${p.subject}")`).join('; ')}. Each message has two paragraphs: first "Hello <first name>," and then, as its own paragraph, "Your delivery slot is confirmed for Thursday." When you are done, tell me how many drafts are saved and confirm that each one still shows both paragraphs after you reopen it.`,
+        grade: state(s => { if (s.mail.sent !== 0 || s.mail.drafts.length !== 4) return false; return mailPeople(v).every(p => { const m = s.mail.drafts.filter((d: any) => d.to === p.to); return m.length === 1 && m[0].subject === p.subject && m[0].body.replace(/\r/g, '') === `Hello ${p.first},\n\nYour delivery slot is confirmed for Thursday.`; }); }) },
+      // The same webmail with ten drafts: the cost of doing each by hand shows here, and a restarted run must not repeat a draft.
+      ...(v === 1 ? [{ id: 'adv-mail10-1', url: app('adv-mail'), probe,
+        task: `Prepare ten email drafts in this webmail and send nothing. Recipients and subjects: ${mailPeople10().map(p => `${p.to} (subject "${p.subject}")`).join('; ')}. Each message has two paragraphs: first "Hello <first name>," and then, as its own paragraph, "Your delivery slot is confirmed for Thursday." When you are done, tell me how many drafts are saved and confirm that each one still shows both paragraphs after you reopen it.`,
+        grade: state(s => { if (s.mail.sent !== 0 || s.mail.drafts.length !== 10) return false; return mailPeople10().every(p => { const m = s.mail.drafts.filter((d: any) => d.to === p.to); return m.length === 1 && m[0].subject === p.subject && m[0].body === `Hello ${p.first},\n\nYour delivery slot is confirmed for Thursday.`; }); }) } as EvalTask] : []),
       { id: `adv-cal-${v}`, url: app('adv-cal'), probe, task: "Ana (Lisbon) and Bilal (Karachi) need a 30-minute call the week of 7 December 2026. Find three windows when both are free and inside both people's working hours, and save an email draft to ana@example.test and bilal@example.test that lists the three windows (give each in Lisbon time as YYYY-MM-DD HH:MM-HH:MM). Do not send it.",
         grade: state(s => { if (s.cal.sent !== 0 || s.cal.drafts.length < 1) return false; const d = s.cal.drafts.at(-1); if (!/ana@example\.test/.test(d.to) || !/bilal@example\.test/.test(d.to)) return false;
           const re = /(2026-12-\d\d) (\d\d):(\d\d)\s*-\s*(\d\d):(\d\d)/g; const found = [...d.body.matchAll(re)].map(m => ({ date: m[1]!, a: Number(m[2]) * 60 + Number(m[3]), b: Number(m[4]) * 60 + Number(m[5]) }));
