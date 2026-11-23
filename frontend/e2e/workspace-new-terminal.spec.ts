@@ -629,6 +629,7 @@ test(`extension trigger clears the heading and keeps capability cards reachable 
   }
 
   await page.screenshot({ path: testInfo.outputPath(`workspace-${viewport.width}-top.png`) });
+  await page.getByRole('button', { name: 'Show Work Packs', exact: true }).click();
   const workPacks = page.locator('[data-capability="work-packs"]');
   await workPacks.scrollIntoViewIfNeeded();
   await expect(workPacks).toBeVisible();

@@ -6,7 +6,7 @@
     "XR-MISSION-055",
     "XR-MISSION-056"
   ],
-  "state": "CODE_COMPLETE",
+  "state": "LIVE_VERIFIED",
   "risk": "low",
   "scope": "Keep the compact mobile extension trigger below workspace icons and above Super Intelligence; display native-language guidance on one line and reduce capability description typography without removing content.",
   "changedFiles": [
@@ -70,10 +70,40 @@
   },
   "tests": [
     {
-      "command": "playwright test e2e/workspace-new-terminal.spec.ts --grep 'extension trigger clears'",
-      "scope": "320/360/390/768/1440px: no heading overlap, one guidance line without clipping, smaller complete descriptions, last card reachable and no page overflow.",
+      "command": "npm run test:frontend",
+      "scope": "1,631 frontend tests passed at the changed workspace source.",
       "negative": true,
-      "reference": "frontend/e2e/workspace-new-terminal.spec.ts"
+      "reference": "frontend/src/lib/workspaceEmptyComposer.test.ts"
+    },
+    {
+      "command": "node scripts/xroga/mission-check.mjs && node --test tests/mission-policy/mission-policy.test.mjs",
+      "scope": "Structured policy and all 11 positive/negative mission fixtures passed.",
+      "negative": true,
+      "reference": "tests/mission-policy/mission-policy.test.mjs"
+    },
+    {
+      "command": "npm run lint --workspace=frontend",
+      "scope": "Passed with existing repository warnings.",
+      "negative": false,
+      "reference": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx"
+    },
+    {
+      "command": "Vercel production build for ca6ef0ac5ca7c3b9e24a9e026bd95e355766ba2e",
+      "scope": "6-minute production build, lint and type checks passed; staged without switching live domains.",
+      "negative": false,
+      "reference": "docs/xroga/evidence/workspace-mobile-spacing-20261123.md"
+    },
+    {
+      "command": "node .local-task-storage/audit-deployment.cjs",
+      "scope": "Read-only Playwright browser audit of exact source in preview and staged production passed all five viewports, one guidance line, complete compact descriptions, no overlap or overflow and last-card reachability.",
+      "negative": true,
+      "reference": "docs/xroga/evidence/workspace-mobile-spacing-20261123/staged-audit.json"
+    },
+    {
+      "command": "node .local-task-storage/audit-deployment.cjs (public https://xroga.com)",
+      "scope": "Public-domain release identity and all five responsive browser checks passed after promotion. No error/fatal runtime logs in the new deployment's post-release window.",
+      "negative": true,
+      "reference": "docs/xroga/evidence/workspace-mobile-spacing-20261123/live-audit.json"
     }
   ],
   "rollout": "Stage the source matching the currently live tree plus these changes, verify the browser layout, then promote that tested deployment under the user's explicit xroga.com release request. Leave automatic main deployment hold in place.",
@@ -81,18 +111,19 @@
   "knownGaps": [],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [
-    "docs/xroga/evidence/workspace-mobile-spacing-20261123.md"
+    "docs/xroga/evidence/workspace-mobile-spacing-20261123.md",
+    "docs/xroga/evidence/workspace-mobile-spacing-20261123/preview-audit.json",
+    "docs/xroga/evidence/workspace-mobile-spacing-20261123/staged-audit.json",
+    "docs/xroga/evidence/workspace-mobile-spacing-20261123/live-audit.json"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
   "release": {
-    "state": "BLOCKED",
-    "blockers": [
-      "Run scoped tests, lint and build, then verify the staged and live browser layout."
-    ],
+    "state": "LIVE_VERIFIED",
+    "blockers": [],
     "authenticatedE2e": "NOT_APPLICABLE",
     "stagedSecurity": "NOT_APPLICABLE",
-    "liveUrl": null,
-    "deployedSha": null
+    "liveUrl": "https://xroga.com",
+    "deployedSha": "ca6ef0ac5ca7c3b9e24a9e026bd95e355766ba2e"
   }
 }
