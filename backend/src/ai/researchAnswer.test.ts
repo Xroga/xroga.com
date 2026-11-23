@@ -707,6 +707,9 @@ test('a guide about a named publication cannot substitute for the requested orig
   const missing = presentPublicResearchAnswer(text, { status: 'complete' }, [guide], prompt);
   assert.deepEqual(missing.completion, { status: 'partial', reason: 'source_coverage' });
   assert.match(missing.response, /couldn’t verify the requested original publication/u);
+  const slides = { title: 'NIST Cybersecurity Framework 2.0', url: 'https://csrc.nist.gov/csrc/media/Presentations/2024/csf-panel.pdf' };
+  assert.deepEqual(presentPublicResearchAnswer(text, { status: 'complete' }, [slides], prompt).completion,
+    { status: 'partial', reason: 'source_coverage' });
   assert.deepEqual(presentPublicResearchAnswer(text, { status: 'complete' }, [original], prompt).completion, { status: 'complete' });
   const officialRecord = {
     title: 'CSWP 29, The NIST Cybersecurity Framework (CSF) 2.0 | CSRC',

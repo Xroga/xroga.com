@@ -19,7 +19,8 @@ import {redactSecrets} from '../lib/truthfulExecution.js';
 import {createRequire} from 'node:module';
 import {researchAnswerRequestSchema,completeApprovedResearchAnswer,RESEARCH_ANSWER_MAXIMUM_MICRO_USD} from './researchAnswer.js';
 import {requireResearchResultStorage,saveResearchResult} from '../services/integrations/researchResult.js';
-import {deepseekSearchBody,researchSearchMicroUsd,DEEPSEEK_DISCOVERY_RESULTS,DEEPSEEK_PRIMARY_PAGE_RESULTS,DEEPSEEK_SEARCH_URL} from './researchSearchProvider.js';
+import {deepseekSearchBody,researchSearchMicroUsd,DEEPSEEK_DISCOVERY_RESULTS,DEEPSEEK_PRIMARY_PAGE_RESULTS,DEEPSEEK_SEARCH_URL,type normaliseDeepseekSearch} from './researchSearchProvider.js';
+import { followOfficialPublication, requestedPublication } from './researchPublicationEvidence.js';
 import {requestsOfficialLinkCoverage,workspacePublicSearchQuery} from './workspacePublicSearch.js';
 
 const pdfParse=createRequire(import.meta.url)('pdf-parse/lib/pdf-parse.js') as (data:Uint8Array,options:{max:number})=>Promise<{text:string}>;
@@ -102,7 +103,30 @@ export async function executeWorkspacePublicSearch(
  try{
   const {executeParallelRequest}=await import('./parallelDispatch.js');
   const response=await executeParallelRequest({scope:state.scope,userId:context.userId,operation:'search',body,signal,admission});
-  const result:unknown=await response.json();
+  const result=await response.json() as ReturnType<typeof normaliseDeepseekSearch>;
+  const work = readPrimaryPage ? requestedPublication(prompt) : undefined;
+  if (work) {
+    const publication = await followOfficialPublication(work, result.results, async url => {
+      const target = { url };
+      const targetDigest = digest(target);
+      const readBinding = { userId: context.userId, provider: 'public-web', connectedAccountId: 'public-web:credential-free',
+        operation: 'extract', targetDigest, planDigest: digest({ correlationId: context.correlationId, targetDigest }) };
+      try {
+        return await boundedPublicGet(url, { maxBytes: 2 * 1024 * 1024, timeoutMs: 5000, maxRedirects: 0, signal,
+          beforeRequest: async () => {
+            await check();
+            await enforceEgress({ context, actionClass: 'READ', destination: url, recipient: readBinding.connectedAccountId,
+              purpose: 'workspace-publisher-publication-verification', payload: target, declaredClass: 'PUBLIC',
+              toolTrust: 'SERVER_REGISTERED', binding: readBinding }, receipt => persistSecurityDecision(context, receipt));
+            await check();
+          } });
+      } catch { return undefined; }
+    }, async bytes => {
+      try { return (await pdfParse(new Uint8Array(bytes), { max: 12 })).text; }
+      catch { return ''; }
+    });
+    if (publication) result.results.unshift(publication);
+  }
   const evidence={ok:true,operation:'search',result,trust:'UNTRUSTED_DATA'};
   // Link private evidence to the request's READ audit after verified provider
   // settlement. A failed write never enters synthesis or replays retrieval.

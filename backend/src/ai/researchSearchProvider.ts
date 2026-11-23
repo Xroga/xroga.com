@@ -68,10 +68,13 @@ export function deepseekSearchBody(body: { objective: string; search_queries: st
 }
 
 interface DeepseekResult { url?: unknown; title?: unknown; summary?: unknown; snippet?: unknown; content?: unknown; date?: unknown; site_name?: unknown; site_icon?: unknown }
-interface SearchResult { url: string; title?: string; publish_date: string | null; excerpts: string[]; site_name?: string; site_icon_domain?: string }
+export interface SearchResult {
+  url: string; title?: string; publish_date: string | null; excerpts: string[]; site_name?: string; site_icon_domain?: string;
+  publisherEvidence?: { linkedFrom: string; documentUrl: string };
+}
 const retrievalWords = /^(?:find|original|primary|final|source|publication|standard|dataset|paper|report|rule|official)$/iu;
 
-function matchingPageParagraphs(content: string, question: string): string {
+export function matchingPageParagraphs(content: string, question: string): string {
   const words = (text: string) => (text.toLowerCase().match(/[\p{L}\p{N}]{4,}/gu) ?? [])
     .map(word => word.length > 4 ? word.replace(/s$/u, '') : word);
   const terms = [...new Set(words(question).filter(word => !retrievalWords.test(word)))];
