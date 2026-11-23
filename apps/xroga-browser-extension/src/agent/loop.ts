@@ -1874,7 +1874,11 @@ ${ledger}` : ''),
    */
   async #runBatchTool(call: ToolCallRequest, kind: ToolKind, args: Record<string, unknown>): Promise<CallOutcome> {
     const { emit, signal, layer } = this.options;
-    const steps = args.steps as Step[] | undefined;
+    let steps = args.steps as Step[] | undefined;
+    // `foreach` written beside `steps` (a key of the batch call, not of a step) means the whole list of steps runs once per item.
+    if (Array.isArray(steps) && Array.isArray((args as { foreach?: unknown }).foreach)) {
+      steps = [{ foreach: (args as { foreach: Step['foreach'] }).foreach, ...((args as { continueOnError?: boolean }).continueOnError ? { continueOnError: true } : {}), steps }];
+    }
     const test = async (c: Condition): Promise<boolean> => {
       if (c.for === 'hidden') return !(await test({ for: 'visible', role: c.role, name: c.name }));
       const input: Record<string, unknown> = { timeoutMs: 1 };

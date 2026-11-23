@@ -186,5 +186,13 @@ describe('foreach', () => {
     await expect(runPlan([{ foreach: Array.from({ length: 101 }, (_, i) => String(i)), tool: 'click', args: { x: '${item}' } }], { run: async () => ({ text: '' }), test: async () => false })).rejects.toThrow(/at most 100/);
     expect(worstCase([{ foreach: ['a', 'b', 'c'], steps: [{ tool: 'click' }, { tool: 'click' }] }])).toBe(6);
   });
+
+  it('refuses a placeholder that no foreach fills, instead of typing it into the page', async () => {
+    let ran = 0;
+    await expect(runPlan([{ tool: 'type', args: { text: '${item.email}' } }], { run: async () => { ran++; return { text: 'ok' }; }, test: async () => false })).rejects.toThrow(/no foreach applies/);
+    expect(ran).toBe(0);
+    // a foreach on the group covers the steps inside it
+    await expect(runPlan([{ foreach: [{ email: 'a@x.test' }], steps: [{ tool: 'type', args: { text: '${item.email}' } }] }], { run: async () => ({ text: 'ok' }), test: async () => false })).resolves.toBeTruthy();
+  });
 });
 

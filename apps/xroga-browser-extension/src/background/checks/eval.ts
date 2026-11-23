@@ -41,6 +41,8 @@ interface EvalArgs {
   /** Leave out the public sites (no network). */
   offline?: boolean;
   turnCap?: number;
+  /** Minutes before a run is aborted (default 5; the 100-item bulk tasks need more). */
+  runMinutes?: number;
   /**
    * The reasoning effort of the runs. Without it nothing is sent about reasoning, so the model runs at its provider's
    * default.
@@ -152,7 +154,7 @@ async function runOne(
   );
   const tools = toolsForRun({ disabled: args.tools === 'short' ? SHORT_TOOLS_OFF : [], vision: profile.vision, pointAt: true, agentTools: args.batch === false ? [PLAN_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL] : [PLAN_TOOL, BATCH_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL] });
   const abort = new AbortController();
-  const timer = setTimeout(() => abort.abort(), 5 * 60_000);
+  const timer = setTimeout(() => abort.abort(), (args.runMinutes ?? 5) * 60_000);
   const timings = new RunTimings();
   const loop = new MeasuredLoop({
     timings,

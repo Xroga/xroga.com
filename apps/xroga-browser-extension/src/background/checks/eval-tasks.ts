@@ -100,6 +100,8 @@ const summarised = (f: RunFacts) => /keychron/i.test(f.answer) && /royal kludge|
 const MAIL_NAMES = [['Ana', 'Bilal', 'Carla', 'Dev'], ['Elif', 'Farid', 'Gita', 'Hugo'], ['Ines', 'Jamal', 'Kira', 'Leo']];
 const mailPeople = (v: number) => MAIL_NAMES[(v - 1) % 3]!.map((first, i) => ({ first, to: `${first.toLowerCase()}@mail${v}.example.test`, subject: ['Delivery slot', 'Thursday delivery', 'Slot confirmation', 'Your delivery'][i]! }));
 const MAIL10 = ['Ana', 'Bilal', 'Carla', 'Dev', 'Elif', 'Farid', 'Gita', 'Hugo', 'Ines', 'Jamal'];
+/** n distinct recipients for the bulk-draft tasks (50 and 100): generated names, stable subjects. */
+const mailPeopleN = (n: number) => Array.from({ length: n }, (_, i) => { const first = MAIL10[i % 10]!; return { first, to: `${first.toLowerCase()}${Math.floor(i / 10) + 1}@bulk.example.test`, subject: ['Delivery slot', 'Thursday delivery', 'Slot confirmation', 'Your delivery', 'Dispatch time'][i % 5]! + ` ${i + 1}` }; });
 const mailPeople10 = () => MAIL10.map((first, i) => ({ first, to: `${first.toLowerCase()}@bulk.example.test`, subject: ['Delivery slot', 'Thursday delivery', 'Slot confirmation', 'Your delivery', 'Dispatch time'][i % 5]! + ` ${i + 1}` }));
 
 export const TASKS: EvalTask[] = [
@@ -339,6 +341,10 @@ export const TASKS: EvalTask[] = [
       ...(v === 1 ? [{ id: 'adv-mail10-1', url: app('adv-mail'), probe,
         task: `Prepare ten email drafts in this webmail and send nothing. Recipients and subjects: ${mailPeople10().map(p => `${p.to} (subject "${p.subject}")`).join('; ')}. Each message has two paragraphs: first "Hello <first name>," and then, as its own paragraph, "Your delivery slot is confirmed for Thursday." When you are done, tell me how many drafts are saved and confirm that each one still shows both paragraphs after you reopen it.`,
         grade: state(s => { if (s.mail.sent !== 0 || s.mail.drafts.length !== 10) return false; return mailPeople10().every(p => { const m = s.mail.drafts.filter((d: any) => d.to === p.to); return m.length === 1 && m[0].subject === p.subject && m[0].body === `Hello ${p.first},\n\nYour delivery slot is confirmed for Thursday.`; }); }) } as EvalTask] : []),
+      // Bulk scale (mandate Phase D): the same webmail with 50 and 100 drafts. Exactly n drafts, each once, both paragraphs, nothing sent.
+      ...(v === 1 ? [50, 100].map((n): EvalTask => ({ id: `adv-mail${n}-1`, url: app('adv-mail'), probe,
+        task: `Prepare ${n} email drafts in this webmail and send nothing. Recipients (first name, subject): ${mailPeopleN(n).map(p => `${p.to} (${p.first}, subject "${p.subject}")`).join('; ')}. Each message has two paragraphs: first "Hello <first name>," and then, as its own paragraph, "Your delivery slot is confirmed for Thursday." When you are done, tell me how many drafts are saved and confirm that each one still shows both paragraphs after you reopen it.`,
+        grade: state(s => { if (s.mail.sent !== 0 || s.mail.drafts.length !== n) return false; return mailPeopleN(n).every(p => { const m = s.mail.drafts.filter((d: any) => d.to === p.to); return m.length === 1 && m[0].subject === p.subject && m[0].body.replace(/\r/g, '') === `Hello ${p.first},\n\nYour delivery slot is confirmed for Thursday.`; }); }) })) : []),
       // A business-page builder (the shape of the Page setup in the Codex recording of 2026-11-22): a camel-case name is refused with a suggestion, the category must be picked from a typeahead
       // list, contact details are a second step, the auto-reply needs its own switch and Save, and saving About offers a post that would publish (not asked for).
       { id: `adv-page-${v}`, url: app('adv-page'), probe,

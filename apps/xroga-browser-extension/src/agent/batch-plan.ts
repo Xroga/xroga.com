@@ -300,10 +300,15 @@ export async function runPlan(steps: Step[], opts: PlanOptions): Promise<{ text:
   }
 
   // The whole plan is checked before anything runs: a bad step late in the list must not leave the earlier ones done.
-  const precheck = (items: Step[], depth: number, path: string): void => {
+  const precheck = (items: Step[], depth: number, path: string, filled = false): void => {
     for (const [i, step] of items.entries()) {
       const label = path ? `${path}.${i + 1}` : String(i + 1);
       validate(step, label, depth);
+      // A placeholder that no foreach fills would be typed into a page as it is: refused before anything runs.
+      const inForeach = filled || Array.isArray(step.foreach);
+      if (!inForeach && /\$\{(?:item(?:\.[A-Za-z0-9_]+)?|index)\}/.test(JSON.stringify(step.args ?? {}))) {
+        throw new Error(`step ${label}: its arguments contain a placeholder such as \${item.field} but no foreach applies to it. Put foreach (a list of items) on this step or on the group that holds it, as a key of the step, not of the batch call.`);
+      }
       if (step.when !== undefined && !isCondition(step.when)) throw new Error(`step ${label}: when needs a condition such as {for:"text", value:"Next"}`);
       if (step.unless !== undefined && !isCondition(step.unless)) throw new Error(`step ${label}: unless needs a condition such as {for:"text", value:"Next"}`);
       normaliseRepeat(step.repeat);
@@ -313,7 +318,7 @@ export async function runPlan(steps: Step[], opts: PlanOptions): Promise<{ text:
         // Every item is filled in once before anything runs, so a missing field is found now, not after nine drafts.
         step.foreach.forEach((item, k) => { try { fill(step, item, k + 1); } catch (e) { throw new Error(`step ${label}: ${e instanceof Error ? e.message : String(e)}`); } });
       }
-      if (Array.isArray(step.steps)) precheck(step.steps, depth + 1, label);
+      if (Array.isArray(step.steps)) precheck(step.steps, depth + 1, label, inForeach);
     }
   };
   precheck(steps, 0, '');
@@ -349,6 +354,8 @@ export const BATCH_TOOL = {
   parameters: {
     type: 'object',
     properties: {
+      foreach: { type: 'array', maxItems: 100 },
+      continueOnError: { type: 'boolean' },
       steps: {
         type: 'array',
         minItems: 1,

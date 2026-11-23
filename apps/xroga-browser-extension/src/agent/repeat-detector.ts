@@ -56,7 +56,7 @@ export class RepeatDetector {
       const key = [...block].sort().join('|');
       if (this.#told.has(key)) return undefined;
       this.#told.add(key);
-      return `You have now done this same sequence ${REPEATS} times in a row: ${block.join(' → ')}. If more items remain, do not carry on one call at a time: put ALL the remaining repetitions in ONE batch call: the steps once, with foreach set to the list of items ({field: value} objects) and \${item.field} and \${index} in the arguments, targets by role and name because a ref only lasts until the page changes; then check the result with a snapshot or read. batch stops at the first failure (continueOnError records it and goes on) and returns the trail. Skip this if each item needs something you must read first.`;
+      return `You have now done this same sequence ${REPEATS} times in a row: ${block.join(' → ')}. If more items remain, do not carry on one call at a time: put ALL the remaining repetitions in ONE batch call: the steps once, with foreach set to the list of items ({field: value} objects) and \${item.field} and \${index} in the arguments, targets by role and name because a ref only lasts until the page changes. Repeat EXACTLY the steps the first item needed, including every checkbox and option you set by hand; then reopen every item (foreach with keep:true) and check it, not only the first. batch stops at the first failure (continueOnError records it and goes on) and returns the trail. Skip this if each item needs something you must read first.`;
     }
     return undefined;
   }
