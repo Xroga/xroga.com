@@ -606,7 +606,7 @@ test('a named official publisher fixes the source scope without a model-supplied
   const prompt = 'Using only official NIST pages, look up the NIST Cybersecurity Framework 2.0 functions. Present the function names and what each is for in one compact copyable table. Cite the actual primary source beside the claims. Do not take any actions.';
   const nist = workspacePublicSearchQuery(prompt, true);
   assert.deepEqual(nist, {
-    query: 'the NIST Cybersecurity Framework 2.0 functions publication site:nist.gov',
+    query: '"NIST Cybersecurity Framework" 2.0 publication site:nist.gov',
     officialDomains: ['nist.gov'],
     originalSourceQuestion: 'Find the original publication for NIST Cybersecurity Framework 2.0 functions.',
   });
@@ -639,7 +639,7 @@ test('primary source lookup preserves the requested type without exporting other
     originalSourceQuestion: 'Find the original dataset for recent streamflow measurements.',
   });
   assert.deepEqual(workspacePublicSearchQuery('Using only official W3C pages, find the WCAG 2.2 criteria and cite the final standard.', true), {
-    query: 'find the WCAG 2.2 criteria standard site:w3.org',
+    query: '"WCAG" 2.2 standard site:w3.org',
     officialDomains: ['w3.org'],
     originalSourceQuestion: 'Find the final standard for WCAG 2.2 criteria.',
   });

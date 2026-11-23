@@ -50,6 +50,7 @@ const genericSourceSelection = /\b(?:using|from|based on|consult)\s+(?:(?:only|e
 const answerOnlySuffix = /(?:[.!?]\s+(?:(?:present|show|put)\s+the\s+(?:results|findings|comparison|[\p{L}-]+\s+names\s+and\s+what\s+each\s+is\s+for)\s+in\s+(?:(?:one|a|an|the|compact|copyable|short)\s+){1,4}(?:table|list)|cite\s+(?:the\s+)?(?:actual\s+)?(?:primary|official)\s+sources?(?:\s+beside\s+the\s+claims)?|(?:do\s+not|don['’]t)\s+take\s+any\s+(?:external\s+)?actions?))+[.!?]?$/iu;
 const originalSourceRequest = /\b(?:cite|link(?:\s+to)?|use|find|include|verify\s+against)\s+(?:(?:the|a|an|actual|only)\s+)*(original|primary|final)\s+(source|publication|dataset|standard|paper|report|rule)s?\b/iu;
 const publishedWorkTopic = /\b(?:frameworks?|standards?|guidelines?|specifications?|regulations?|reports?|papers?)\b/iu;
+const versionedWorkDetail = /\b(v?\d+(?:\.\d+)+)\s+(?:functions?|criteria|requirements?|definitions?|principles?|provisions?|sections?|clauses|rules|controls)(?:\s*[,.:].*)?$/iu;
 const publicSourcePreface = /^(?:i\s+(?:need|want)|(?:please\s+)?(?:cite|include|use|provide))\s+(?:a\s+)?(?:dated\s+)?public sources?\s*[:：]\s*/iu;
 const linkFooter = /\s*;\s*link\s+(?:them|each|all)(?:\s+(?:of them|\d+|one|two|three|four|five|six|seven|eight|nine|ten))?[?!.]*$/iu;
 
@@ -188,10 +189,19 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
   const source = requestedSource === 'source' && publishedWorkTopic.test(terms) ? 'publication' : requestedSource;
   const qualifier = originalSource[1].toLowerCase() === 'final' ? 'final' : 'original';
   const subject = terms.replace(/^(?:(?:find|compare)\s+)?(?:the\s+)?/iu, '');
-  const publicationTerm = source !== 'source' && !terms.toLowerCase().includes(source)
-    && [...terms].length + source.length + 1 <= topicLimit ? ' ' + source : '';
+  // A named, versioned work is a stronger retrieval target than its subtopic.
+  // Keep the latter in the provider's question so its excerpts can address it.
+  const versionedWork = officialDomains.length && source !== 'dataset' && (source !== 'source' || publishedWorkTopic.test(subject))
+    ? versionedWorkDetail.exec(subject)
+    : undefined;
+  const publicationQuery = versionedWork && versionedWork.index > 0
+    ? `"${subject.slice(0, versionedWork.index).trim()}" ${versionedWork[1]}`
+    : terms;
+  const searchTerms = [...publicationQuery].length <= topicLimit ? publicationQuery : terms;
+  const publicationTerm = source !== 'source' && !searchTerms.toLowerCase().includes(source)
+    && [...searchTerms].length + source.length + 1 <= topicLimit ? ' ' + source : '';
   return {
-    query: [terms + publicationTerm, sites].filter(Boolean).join(' '),
+    query: [searchTerms + publicationTerm, sites].filter(Boolean).join(' '),
     officialDomains,
     originalSourceQuestion: `Find the ${qualifier} ${source} for ${subject}.`,
   };

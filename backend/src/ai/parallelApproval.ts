@@ -19,7 +19,7 @@ import {redactSecrets} from '../lib/truthfulExecution.js';
 import {createRequire} from 'node:module';
 import {researchAnswerRequestSchema,completeApprovedResearchAnswer,RESEARCH_ANSWER_MAXIMUM_MICRO_USD} from './researchAnswer.js';
 import {requireResearchResultStorage,saveResearchResult} from '../services/integrations/researchResult.js';
-import {deepseekSearchBody,researchSearchMicroUsd,DEEPSEEK_DISCOVERY_RESULTS,DEEPSEEK_SEARCH_URL} from './researchSearchProvider.js';
+import {deepseekSearchBody,researchSearchMicroUsd,DEEPSEEK_DISCOVERY_RESULTS,DEEPSEEK_PRIMARY_PAGE_RESULTS,DEEPSEEK_SEARCH_URL} from './researchSearchProvider.js';
 import {requestsOfficialLinkCoverage,workspacePublicSearchQuery} from './workspacePublicSearch.js';
 
 const pdfParse=createRequire(import.meta.url)('pdf-parse/lib/pdf-parse.js') as (data:Uint8Array,options:{max:number})=>Promise<{text:string}>;
@@ -71,7 +71,7 @@ export function requireParallelAdmission(value:ParallelAdmission|undefined,scope
  * private research, backed by a distinct READ/PUBLIC audit decision. */
 export async function executeWorkspacePublicSearch(
  scope:TenantModelScope, prompt:string, officialOnly:boolean, signal?:AbortSignal,
-):Promise<{result:unknown;officialDomains:string[];officialLinkCoverage:boolean}|undefined>{
+):Promise<{result:unknown;officialDomains:string[];officialLinkCoverage:boolean;primaryPageContentRequested:boolean}|undefined>{
  const context=requireTenantContext(scope.context);requireResourceOwner(context,scope.userId);
  if(scope.projectId!==undefined||scope.repository!==undefined||scope.runAttempt||scope.authority
   ||scope.researchAnswer||scope.connectedAccountId!=='platform')throw denied();
@@ -79,7 +79,9 @@ export async function executeWorkspacePublicSearch(
  if(!request)return;
  const body={mode:'turbo',objective:request.originalSourceQuestion??'',search_queries:[request.query]};
  const officialLinkCoverage=requestsOfficialLinkCoverage(prompt);
- const payload=Object.freeze(deepseekSearchBody(body,officialLinkCoverage||request.originalSourceQuestion?DEEPSEEK_DISCOVERY_RESULTS:undefined));
+ const readPrimaryPage=!!request.originalSourceQuestion&&request.officialDomains.length>0;
+ const resultCount=readPrimaryPage?DEEPSEEK_PRIMARY_PAGE_RESULTS:officialLinkCoverage||request.originalSourceQuestion?DEEPSEEK_DISCOVERY_RESULTS:undefined;
+ const payload=Object.freeze(deepseekSearchBody(body,resultCount,readPrimaryPage));
  const targetDigest=digest(payload);
  const binding={userId:context.userId,provider:'deepseek-search',connectedAccountId:'deepseek-search:platform',
   operation:'search',targetDigest,planDigest:digest({correlationId:context.correlationId,targetDigest})};
@@ -106,7 +108,7 @@ export async function executeWorkspacePublicSearch(
   // settlement. A failed write never enters synthesis or replays retrieval.
   await saveResearchResult(context,context.correlationId,JSON.stringify(evidence),digest(evidence));
   await check();
-  return {result,officialDomains:request.officialDomains,officialLinkCoverage};
+  return {result,officialDomains:request.officialDomains,officialLinkCoverage,primaryPageContentRequested:readPrimaryPage};
  }finally{state.active=false;admitted.delete(admission);}
 }
 

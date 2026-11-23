@@ -106,7 +106,8 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
     finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}
     const received=Buffer.concat(chunks).toString('utf8');
     // DeepSeek results are normalised into the existing result shape; its receipt identity is the x-ds-trace-id header.
-    const data=normaliseDeepseekSearch(JSON.parse(received),response.headers.get('x-ds-trace-id'));
+    const primaryQuestion=admission.publicSearchPayload?.need_content ? admission.publicSearchPayload.ori_question : undefined;
+    const data=normaliseDeepseekSearch(JSON.parse(received),response.headers.get('x-ds-trace-id'),primaryQuestion);
     const text=JSON.stringify(data),requestId=data.search_id;
     if(operation==='search'&&(!Array.isArray(data.results)||data.results.some((r:unknown)=>!r||typeof r!=='object'||typeof (r as {url?:unknown}).url!=='string'
       ||(r as {title?:unknown}).title!==undefined&&typeof (r as {title?:unknown}).title!=='string'

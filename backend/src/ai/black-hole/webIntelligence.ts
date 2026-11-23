@@ -14,7 +14,7 @@ import {
 
 import {withTenantModelReservation,type TenantModelScope} from '../tenantModelDispatch.js';
 import {isTerminalModelFailure} from '../providerRuntime.js';
-import { scopeOfficialSearchQuery } from '../researchSearchProvider.js';
+import { DEEPSEEK_PRIMARY_PAGE_EXCERPT, scopeOfficialSearchQuery } from '../researchSearchProvider.js';
 import { executeWorkspacePublicSearch } from '../parallelApproval.js';
 import { presentResearchResult } from '../../services/integrations/researchResult.js';
 
@@ -471,7 +471,7 @@ function toUiSources(
     (source) => ({
       title: source.title,
       url: source.url,
-      snippet: source.snippet,
+      snippet: source.snippet.slice(0, 1_200),
 
       source:
         source.sourceType ===
@@ -529,6 +529,7 @@ export async function runWebIntelligence(
   let publicSources: ResearchSource[] | undefined;
   let automaticOfficialDomains: string[] | undefined;
   let preferDistinctHosts = false;
+  let evidenceExcerptLimit: number | undefined;
 
   if (input.workspaceSearch) {
     const { prompt, signal } = input.workspaceSearch;
@@ -545,6 +546,7 @@ export async function runWebIntelligence(
     provider = 'parallel';
     automaticOfficialDomains = automatic.officialDomains.length ? automatic.officialDomains : undefined;
     preferDistinctHosts = automatic.officialLinkCoverage && !automaticOfficialDomains;
+    if (automatic.primaryPageContentRequested) evidenceExcerptLimit = DEEPSEEK_PRIMARY_PAGE_EXCERPT;
     publicSources = presentResearchResult({
       ok: true, operation: 'search', result: automatic.result,
     }, automaticOfficialDomains).sources;
@@ -624,6 +626,7 @@ export async function runWebIntelligence(
           : decision.officialDomains.length ? decision.officialDomains : input.officialDomains,
         maxSources: 12,
         preferDistinctHosts,
+        evidenceExcerptLimit,
       },
     ), publicSources ? automaticOfficialDomains ? 'official_only' : 'any' : decision.sourcePolicy);
 

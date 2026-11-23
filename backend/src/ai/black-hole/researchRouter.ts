@@ -167,6 +167,7 @@ export interface NormalizeOptions {
   readonly now?: () => Date;
   readonly maxSources?: number;
   readonly preferDistinctHosts?: boolean;
+  readonly evidenceExcerptLimit?: number;
 }
 
 /**
@@ -196,7 +197,7 @@ export function normalizeResearch(
     if (seen.has(key)) continue;
     seen.add(key);
 
-    const snippet = (result.snippet ?? '').slice(0, 1_200);
+    const snippet = (result.snippet ?? '').slice(0, options.evidenceExcerptLimit ?? 1_200);
     const suspect = detectInjection(`${result.title ?? ''}\n${snippet}`);
     if (suspect) injectionAttempts += 1;
 

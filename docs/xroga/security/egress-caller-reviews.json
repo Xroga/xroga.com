@@ -4308,7 +4308,7 @@
     {
       "id": "5baa649b7c2c9b6b6f30",
       "callSha256": "dc508cf35a15a3c1b19ad126bcf268c86991a31771cef42b2ae134b2e6c9b00d",
-      "sourceFileSha256": "1e50c88700ee7b4b2bcb21efe55a93463976c6e86cac9868b0b298c8dc254c5a",
+      "sourceFileSha256": "b8f18665d5204ed728e9d137b963aa427389312ad542e389c18de2e428d659dc",
       "disposition": "VERIFIED_GUARD",
       "trust": "FIXED_OFFICIAL_DEEPSEEK_SEARCH_WITH_BOUND_PUBLIC_READ_OR_EXACT_PRIVATE_SEARCH_APPROVAL",
       "tenantAuthority": "TENANT_ACTOR_AND_ONE_USE_REQUEST_ADMISSION_PUBLIC_READ_RECEIPT_OR_LEGACY_EXACT_AUTHORITY_CANONICAL_BUDGET_SETTLEMENT",
@@ -4354,12 +4354,17 @@
         "previousSha256": "0a7da4cf31ee271f34d2380b8d7d557be006afb19283fe1cc529539dc210c54e",
         "previousCallSha256": "8a4cf1df25bdb5d59e6f01020cc5be67cec679c8815a93cc5b5b594cc7a7fe28",
         "scope": "The audited public read sends the same frozen body that was validated for its decision. The private body, destination, credential, single-use admission and amount remain fixed."
+      },
+      "workspacePrimaryPageEvidence": {
+        "baseline": "a60c06ff62f54998a8d00b008a7e56e302bfa4b4",
+        "previousSourceFileSha256": "1e50c88700ee7b4b2bcb21efe55a93463976c6e86cac9868b0b298c8dc254c5a",
+        "scope": "Same reviewed transport call and fixed destination. Only the explicit validated primary-page request selects the documented content option; independent public READ admission, single-use dispatch and canonical settlement remain in the same path."
       }
     },
     {
       "id": "90c62dd04b83e45e1c68",
       "callSha256": "f2de81a8a454b092ec31470bbf964af50c74badbf8644e61fba47ff760f8013b",
-      "sourceFileSha256": "2d33942d981ee2308be8cd3c8e7a36c2274350bfd4a5a7ba19cd10360c20da00",
+      "sourceFileSha256": "091ac6f660ce1671ddaef33ef402467955b0bb506945e3c730865cdda79f7c4c",
       "disposition": "VERIFIED_GUARD",
       "trust": "EXACT_APPROVED_CREDENTIAL_FREE_DNS_PINNED_DOCUMENT_READ_NO_DELEGATED_FETCH",
       "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
@@ -4400,6 +4405,11 @@
         "previousSha256": "d6b4d7dc04f841eab5243b792bfc0556133a21e0340de033f8a826c1b07d9f3b",
         "previousCallSha256": "f2de81a8a454b092ec31470bbf964af50c74badbf8644e61fba47ff760f8013b",
         "scope": "The audited public read sends the same frozen body that was validated for its decision. The private body, destination, credential, single-use admission and amount remain fixed."
+      },
+      "workspacePrimaryPageEvidence": {
+        "baseline": "a60c06ff62f54998a8d00b008a7e56e302bfa4b4",
+        "previousSourceFileSha256": "2d33942d981ee2308be8cd3c8e7a36c2274350bfd4a5a7ba19cd10360c20da00",
+        "scope": "Same reviewed transport call and fixed destination. Only the explicit validated primary-page request selects the documented content option; independent public READ admission, single-use dispatch and canonical settlement remain in the same path."
       }
     },
     {

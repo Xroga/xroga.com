@@ -55,3 +55,29 @@ test('malformed results or a missing receipt are refused rather than guessed', (
   assert.throws(() => normaliseDeepseekSearch({ results: [] }, null), /request identity/);
   assert.throws(() => normaliseDeepseekSearch({ results: [] }, 'bad id with spaces'), /request identity/);
 });
+
+test('a scoped primary lookup requests page content in the same Search call', () => {
+  const body = { objective: 'Find the original standard for the connector safety steps.', search_queries: ['connector standard site:example.org'] };
+  assert.deepEqual(deepseekSearchBody(body, 12, true), {
+    query: body.search_queries[0], count: 12, ori_question: body.objective, need_content: true,
+  });
+  assert.equal(deepseekSearchBody(body).need_content, undefined);
+});
+
+test('primary evidence uses relevant text from the retrieved page and preserves its source', () => {
+  const summary = 'Find the connector specification on the publisher site.';
+  const result = { title: 'Connector Specification', url: 'https://example.org/standards/connector',
+    summary, content: 'Connector Specification. ' + 'Publisher website navigation and press announcements. '.repeat(110)
+      + 'Connector safety steps. These steps are mandatory. Step 1: disconnect power. Step 2: inspect the enclosure.' };
+  const trace = 'ef4ad084bbd155ace992b62bcef1f796';
+  const question = 'Find the original standard for connector safety steps.';
+  const ordinary = normaliseDeepseekSearch({ results: [result] }, trace);
+  const original = normaliseDeepseekSearch({ results: [result] }, trace, question);
+  assert.equal(original.search_id, trace);
+  assert.equal(original.results[0]?.url, result.url);
+  assert.deepEqual(ordinary.results[0]?.excerpts, [summary]);
+  assert.match(original.results[0]?.excerpts[0] ?? '', /disconnect power.*inspect the enclosure/);
+  assert.ok((original.results[0]?.excerpts[0]?.length ?? 0) < result.content.length);
+  const empty = normaliseDeepseekSearch({ results: [{ ...result, content: '' }] }, trace, question);
+  assert.deepEqual(empty.results[0]?.excerpts, [summary]);
+});

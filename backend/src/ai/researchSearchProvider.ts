@@ -19,6 +19,10 @@ export const DEEPSEEK_SEARCH_RESULTS = 10;
 /** Primary-source and official-link discovery need broader results. DeepSeek bills per
  * successful request, independently of the requested result count. */
 export const DEEPSEEK_DISCOVERY_RESULTS = 25;
+// Only explicit, scoped primary-source lookups request page bodies. Their
+// smaller result set avoids pulling full text from incidental results.
+export const DEEPSEEK_PRIMARY_PAGE_RESULTS = 12;
+export const DEEPSEEK_PRIMARY_PAGE_EXCERPT = 3_200;
 
 export function officialResearchDomains(domains: readonly string[]): string[] {
   return [...new Set(domains.map(domain => domain.trim().toLowerCase().replace(/^www\./, '').replace(/\.$/, ''))
@@ -56,14 +60,41 @@ export function researchSearchMicroUsd(): number {
 }
 
 /** One bounded DeepSeek request built from the already validated Parallel-shaped body. */
-export function deepseekSearchBody(body: { objective: string; search_queries: string[] }, count = DEEPSEEK_SEARCH_RESULTS): { query: string; count: number; ori_question?: string } {
+export function deepseekSearchBody(body: { objective: string; search_queries: string[] }, count = DEEPSEEK_SEARCH_RESULTS,
+  includePageContent = false): { query: string; count: number; ori_question?: string; need_content?: true } {
   const query = [...body.search_queries[0].trim()].slice(0, DEEPSEEK_QUERY_MAX).join('');
   const question = [...body.objective.trim()].slice(0, DEEPSEEK_QUERY_MAX).join('');
-  return { query, count, ...(question ? { ori_question: question } : {}) };
+  return { query, count, ...(question ? { ori_question: question } : {}), ...(includePageContent ? { need_content: true } : {}) };
 }
 
-interface DeepseekResult { url?: unknown; title?: unknown; summary?: unknown; snippet?: unknown; date?: unknown; site_name?: unknown; site_icon?: unknown }
+interface DeepseekResult { url?: unknown; title?: unknown; summary?: unknown; snippet?: unknown; content?: unknown; date?: unknown; site_name?: unknown; site_icon?: unknown }
 interface SearchResult { url: string; title?: string; publish_date: string | null; excerpts: string[]; site_name?: string; site_icon_domain?: string }
+const retrievalWords = /^(?:find|original|primary|final|source|publication|standard|dataset|paper|report|rule|official)$/iu;
+
+function matchingPageParagraphs(content: string, question: string): string {
+  const words = (text: string) => (text.toLowerCase().match(/[\p{L}\p{N}]{4,}/gu) ?? [])
+    .map(word => word.length > 4 ? word.replace(/s$/u, '') : word);
+  const terms = [...new Set(words(question).filter(word => !retrievalWords.test(word)))];
+  const focus = terms.at(-1);
+  if (!focus) return '';
+  let best = '', score = 0;
+  const text = content.trim().replace(/\s+/gu, ' ');
+  for (let start = 0; start < text.length; start += 800) {
+    const end = start + DEEPSEEK_PRIMARY_PAGE_EXCERPT;
+    const passage = text.slice(start, end)
+      .replace(start ? /^\S*\s+/u : /^$/u, '').replace(end < text.length ? /\s+\S*$/u : /^$/u, '');
+    const passageWords = words(passage);
+    const matches = new Set(passageWords);
+    const focusMatches = passageWords.filter(word => word === focus).length;
+    if (!focusMatches) continue;
+    const relevant = terms.filter(word => matches.has(word)).length + Math.min(8, focusMatches);
+    if (relevant > score) {
+      score = relevant;
+      best = passage;
+    }
+  }
+  return best;
+}
 
 function iconDomain(value: unknown, source: string): string | undefined {
   if (typeof value !== 'string') return;
@@ -78,18 +109,20 @@ function iconDomain(value: unknown, source: string): string | undefined {
  * persistence downstream stay unchanged. Retrieved text is untrusted data: it is carried as an excerpt, never as
  * instructions. Anything malformed is rejected rather than guessed.
  */
-export function normaliseDeepseekSearch(raw: unknown, traceId: string | null): { search_id: string; provider: 'deepseek'; results: SearchResult[] } {
+export function normaliseDeepseekSearch(raw: unknown, traceId: string | null, primaryQuestion?: string): { search_id: string; provider: 'deepseek'; results: SearchResult[] } {
   if (!raw || typeof raw !== 'object' || !Array.isArray((raw as { results?: unknown }).results)) throw new Error('Malformed provider result');
   const results = ((raw as { results: unknown[] }).results).map(item => {
     if (!item || typeof item !== 'object') throw new Error('Malformed provider result');
     const r = item as DeepseekResult;
     if (typeof r.url !== 'string' || (r.title !== undefined && typeof r.title !== 'string')) throw new Error('Malformed provider result');
-    const excerpt = typeof r.summary === 'string' && r.summary.trim() ? r.summary : typeof r.snippet === 'string' ? r.snippet : '';
+    const primaryText = primaryQuestion && typeof r.content === 'string' ? matchingPageParagraphs(r.content, primaryQuestion) : '';
+    const summary = typeof r.summary === 'string' && r.summary.trim() ? r.summary : typeof r.snippet === 'string' ? r.snippet : '';
+    const excerpt = primaryText || summary.slice(0, 2_000);
     const date = typeof r.date === 'string' && !Number.isNaN(Date.parse(r.date)) ? r.date : null;
     const siteName = typeof r.site_name === 'string' ? r.site_name.replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, 120) : '';
     const domain = iconDomain(r.site_icon, r.url);
     return { url: r.url, ...(typeof r.title === 'string' ? { title: r.title } : {}),
-      publish_date: date, excerpts: excerpt ? [excerpt.slice(0, 2_000)] : [],
+      publish_date: date, excerpts: excerpt ? [excerpt] : [],
       ...(siteName ? { site_name: siteName } : {}), ...(domain ? { site_icon_domain: domain } : {}) };
   });
   if (typeof traceId !== 'string' || !/^[A-Za-z0-9-]{8,200}$/.test(traceId)) throw new Error('Missing or unsafe provider request identity');
