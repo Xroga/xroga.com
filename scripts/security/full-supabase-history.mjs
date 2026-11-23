@@ -116,7 +116,8 @@ try {
   assert.deepEqual(catalog.tables.filter(t=>t.schema==='public'&&!t.rls_enabled).map(t=>t.table_name),[],'Every installed public table must have an explicit RLS boundary');
   // Main's durable workflow checkpoints remain server-only. Inventorying the
   // exact migration is not permission to expose its stored requests/results.
-  for(const name of ['business_automation_events','business_automation_rules','business_workflow_runs','notification_push_subscriptions']){
+  const serverOnlyTeamTables=['teams','team_members','team_invitations','team_link_redemptions','team_audit'];
+  for(const name of ['business_automation_events','business_automation_rules','business_workflow_runs','notification_push_subscriptions',...serverOnlyTeamTables]){
     const table=catalog.tables.find(t=>t.schema==='public'&&t.table_name===name);
     assert.ok(table?.rls_enabled,name+' requires RLS');
     assert.deepEqual(table.grants.filter(g=>['anon','authenticated','PUBLIC'].includes(g.role)),[],'No browser grant on '+name);
@@ -134,6 +135,14 @@ try {
   }
   evidence.workflowCheckpointRoleChecks='PASS_BROWSER_DENIED_SERVICE_ALLOWED';
   evidence.notificationPushRoleChecks='PASS_BROWSER_DENIED_SERVICE_ALLOWED';
+  const teamFunctions=await db.query("select p.proname, has_function_privilege('anon',p.oid,'EXECUTE') as anon_access, has_function_privilege('authenticated',p.oid,'EXECUTE') as user_access, has_function_privilege('service_role',p.oid,'EXECUTE') as service_access from pg_proc p where p.pronamespace='public'::regnamespace and left(p.proname,5)='team_' and p.proname<>'team_member_limit'");
+  assert.equal(teamFunctions.rowCount,16,'Require the complete service-only Team function set');
+  for(const fn of teamFunctions.rows) {
+    assert.equal(fn.anon_access,false,fn.proname);
+    assert.equal(fn.user_access,false,fn.proname);
+    assert.equal(fn.service_access,true,fn.proname);
+  }
+  evidence.teamRoleChecks='PASS_BROWSER_TABLE_AND_FUNCTION_DENIED_SERVICE_ALLOWED';
 
   const delivery=catalog.tables.find(t=>t.schema==='public'&&t.table_name==='google_canonical_deliveries');
   assert.ok(delivery?.rls_enabled,'Google deliveries require RLS');

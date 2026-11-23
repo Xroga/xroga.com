@@ -116438,7 +116438,7 @@
       "id": "surface:4a1f5385bc6d8ba1e88e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/publicUrlInventory.ts",
-      "sha256": "47d0b3845a5b7bb06b89cf94bd91f0572dcfa9da2b909c664f2036f611adf483",
+      "sha256": "729ac18dc0040b95a3962ac58a14e53c597772e0eda8f2cbb67a241cf474bbcf",
       "symbols": [
         "INDEXABLE_PUBLIC_URLS",
         "PUBLIC_URL_INVENTORY",
@@ -129756,7 +129756,7 @@
       "id": "surface:b5fb9b6d0970672ddebe",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/full-supabase-history.mjs",
-      "sha256": "ebb89d978025ba86e2562ee93f9995be39530c8c6e7de708a696a3277a291831",
+      "sha256": "cfd9d484734202fa39e511281ab7778df9115f3e956002eab0fa869aed258a2d",
       "symbols": [
         "actual",
         "additions",
@@ -129774,6 +129774,7 @@
         "fileEpochs",
         "files",
         "filesBefore",
+        "fn",
         "foreign",
         "foreignSeries",
         "functions",
@@ -129795,6 +129796,7 @@
         "save",
         "series",
         "seriesBefore",
+        "serverOnlyTeamTables",
         "shareBefore",
         "shareSql",
         "shareToken",
@@ -129802,6 +129804,7 @@
         "supplement",
         "table",
         "target",
+        "teamFunctions",
         "upgradeFiles",
         "url",
         "verifyFresh",
@@ -130201,7 +130204,7 @@
       "id": "surface:a741178549139c6d7626",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/schema-catalog.mjs",
-      "sha256": "62addad0c6d0a9171678afa953b8dec99b25412f24f6ae779c0ae021a3cda817",
+      "sha256": "a38302314d544ac31adf0a631edf22f85da203aedaeafce3c4d795d1175b1bea",
       "symbols": [
         "assertDisposableSource",
         "collectSchemaCatalog",
@@ -130211,6 +130214,7 @@
         "r",
         "reviewed",
         "sidebar",
+        "teams",
         "validateCurrentMigrationAdditions"
       ],
       "imports": [
