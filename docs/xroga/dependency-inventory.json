@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "e20cedec979b4d5870f9e0c5e3d14120de70d977",
+  "source_sha": "457ff8c7045b2a4c214f1f225ece5093dcb6650f",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -21274,7 +21274,7 @@
     },
     {
       "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "sha256": "572b6dc269c1fbd00cf0d97167d09bf34105352470092a06ca3645b1a76060e6"
+      "sha256": "c03aad0aa73d2ebceb4617ef0ff923a2184dd8fd3e91f1c3aeeeb039385a16c1"
     },
     {
       "path": "frontend/src/components/dashboard/WorkspaceResumeList.tsx",

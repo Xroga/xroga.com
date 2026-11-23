@@ -71435,7 +71435,7 @@
       "id": "surface:6ce17d2762e1020b6c38",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "sha256": "572b6dc269c1fbd00cf0d97167d09bf34105352470092a06ca3645b1a76060e6",
+      "sha256": "c03aad0aa73d2ebceb4617ef0ff923a2184dd8fd3e91f1c3aeeeb039385a16c1",
       "symbols": [
         "AUTOMATIONS",
         "AutomaticIntro",
@@ -158839,7 +158839,7 @@
     {
       "id": "test-suite:fe480b4d0f729d8b130d",
       "sourcePath": "frontend/e2e/workspace-new-terminal.spec.ts",
-      "declaredTests": 25,
+      "declaredTests": 26,
       "skipLocations": [],
       "focusLocations": []
     },

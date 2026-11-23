@@ -656,7 +656,7 @@ test('automatic intro reveals its second line after delay without a model picker
   await page.clock.pauseAt(new Date(Date.now() + 1000));
   await page.goto('/workspace');
   const first = page.locator('[data-visible]').filter({ hasText: 'No models or tools to choose.' });
-  const detail = page.locator('[data-visible]').filter({ hasText: 'Type or speak your goal. Xroga chooses the right tools and handles the work.' });
+  const detail = page.locator('[data-visible]').filter({ hasText: 'Type or speak in your native language, and the right tools handle the work automatically.' });
   await expect(first).toHaveAttribute('data-visible', 'true');
   await expect(first).toHaveAttribute('aria-hidden', 'false');
   await expect(detail).toHaveAttribute('data-visible', 'false');
