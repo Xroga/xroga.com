@@ -35,6 +35,20 @@ export function pageRegions(roots: ONode[]): Region[] {
   return out.sort((a, b) => ORDER.indexOf(a.role) - ORDER.indexOf(b.role) || b.controls - a.controls);
 }
 
+/** How many form fields (inputs, selects, checkboxes, switches...) the outline holds. */
+export function fieldCount(roots: ONode[]): number {
+  return roots.reduce((n, r) => n + count(r).fields, 0);
+}
+
+export const FORM_FIELDS = 6;
+
+/** A page with many fields: one read lists them all with required flags, choices and errors, and one fill_form sets them (the model otherwise inspects field by field). */
+export function formNote(fields: number): string[] {
+  return fields >= FORM_FIELDS
+    ? [`This page holds ${fields} form fields: form_model reads them all (current value, required, choices, errors) in one call, and one fill_form sets the ones to change.`]
+    : [];
+}
+
 /** The lines to add to a dense page's snapshot, or an empty array. */
 export function regionsNote(roots: ONode[], refCount: number): string[] {
   if (refCount < DENSE_REFS) return [];

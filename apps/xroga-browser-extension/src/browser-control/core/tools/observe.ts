@@ -7,7 +7,7 @@ import type { ToolContext, ToolOutcome } from '../controller';
 import { lookupRef } from '../refs';
 import type { Shown } from '../refs';
 import { findContainer, isRef } from '../interaction/resolve';
-import { regionsNote } from '../perception/regions';
+import { fieldCount, formNote, regionsNote } from '../perception/regions';
 import { captureTier1 } from '../perception/capture';
 import { buildObservation } from '../perception/observe';
 import type { Observation } from '../perception/observe';
@@ -68,6 +68,8 @@ export async function observeTab(
   return observation;
 }
 
+const formNoted = new WeakMap<object, string>();
+
 /** The last full observation if it may be reused, else a new one. */
 export async function recentObservation(ctx: ToolContext): Promise<Observation> {
   const tab = ctx.tab();
@@ -105,6 +107,11 @@ export async function snapshot(
   const notices = [...observation.notices];
   // A dense page gets a map of its regions so the next call can be scoped to one of them (see perception/regions.ts).
   if (!scope) notices.push(...regionsNote(observation.tree, observation.refs.length));
+  // Said once per address: a page with many fields is read with form_model and filled with one fill_form.
+  if (!scope && formNoted.get(tab) !== observation.url) {
+    const note = formNote(fieldCount(observation.tree));
+    if (note.length) { notices.push(...note); formNoted.set(tab, observation.url); }
+  }
   const snapshotText = `${observation.header}\n${observation.body}`;
   const lines = snapshotText.split('\n');
   const data: SnapshotData = {

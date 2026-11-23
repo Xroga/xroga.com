@@ -1839,6 +1839,7 @@ ${ledger}` : ''),
   #wroteSinceCheck = false;
   #consoleRuns = new RunLedger();
   #announcedSites = new Set<string>();
+  #routinesNoted = new Set<string>();
   #unknownNoted = false;
   #pendingStall: StallVerdict | null = null;
   #docsRead = false;
@@ -1948,6 +1949,11 @@ ${ledger}` : ''),
   /** Site recognition: when the page matches a site-scoped skill (strict origin rule), say so in one short receipt. The skill body is NOT loaded; it stays optional. */
   async #announceSite(url: string, request: string): Promise<void> {
     const id = identify(url);
+    if (id && !this.#routinesNoted.has(id.origin)) {
+      this.#routinesNoted.add(id.origin);
+      const kept = await demosFor(id.origin).catch(() => []);
+      if (kept.length) await this.writer.appNote(`The user showed you ${kept.length} routine(s) on ${id.host}: ${kept.slice(0, 5).map(d => `"${d.name}"`).join(', ')}. record_demo with action list prints the steps. They are examples from an earlier session: check each target on the live page before repeating a step, use the values of this request, and ignore a routine that does not fit.`);
+    }
     if (!id || this.#announcedSites.has(id.origin)) return;
     const matches = SKILL_CATALOG.filter(c => c.hosts.some(h => matchSite({ host: h }, id).matched)).slice(0, 2);
     if (!matches.length) {

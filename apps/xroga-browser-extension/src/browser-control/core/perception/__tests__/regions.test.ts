@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { pageRegions, regionsNote, DENSE_REFS } from '../regions';
+import { pageRegions, regionsNote, fieldCount, formNote, DENSE_REFS } from '../regions';
 import type { ONode } from '../outline';
 
 const el = (role: string, name: string, children: ONode[] = [], ref?: string): ONode =>
@@ -26,5 +26,14 @@ describe('page regions', () => {
     expect(note[0]).toMatch(/dense \(150 controls\).*dialog "Link WhatsApp Business Account" \(4 controls\)/);
     expect(note[1]).toMatch(/scope or a target with within/);
     expect(regionsNote([el('RootWebArea', 'x', controls(3))], 200)).toEqual([]);
+  });
+});
+
+describe('form note', () => {
+  it('counts fields and points a page with many of them to form_model, a small one to nothing', () => {
+    const big = [el('RootWebArea', 'Settings', [el('form', 'Profile', controls(7, 'textbox')), el('button', 'Save', [], 'b')])];
+    expect(fieldCount(big)).toBe(7);
+    expect(formNote(fieldCount(big))[0]).toMatch(/7 form fields: form_model/);
+    expect(formNote(3)).toEqual([]);
   });
 });
