@@ -189,7 +189,7 @@ export function ChatBarActionsMenu({
       </button>
 
       {open && typeof document !== 'undefined' ? createPortal(
-        <div ref={menuRef} className={cn('xv-cba-menu', controls.actions)} role="dialog" aria-label="Composer actions" data-chatbar-popover="true" style={{ position: 'fixed', left: menuStyle.left, top: menuStyle.top, width: menuStyle.width, maxHeight: menuStyle.maxHeight, overflowY: 'auto', overscrollBehavior: 'contain', zIndex: 10000, '--xv-actions-width': `${menuStyle.width}px` } as React.CSSProperties}>
+        <div ref={menuRef} className={cn('xv-cba-menu', controls.actions)} role="dialog" aria-label="Composer actions" data-chatbar-popover="true" style={{ position: 'fixed', left: menuStyle.left, top: menuStyle.top, bottom: 'auto', right: 'auto', width: menuStyle.width, maxHeight: menuStyle.maxHeight, overflowY: 'auto', overscrollBehavior: 'contain', zIndex: 10000, '--xv-actions-width': `${menuStyle.width}px` } as React.CSSProperties}>
           {panel === 'menu' && (
             <div className="xv-cba-grid">
               {recentTerminal && (
