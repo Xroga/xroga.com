@@ -9,12 +9,15 @@ test.beforeEach(async ({ page, baseURL }) => {
   await page.route('https://*.supabase.co/**', route => route.abort());
 });
 
-test('Workspace keeps only the Project edits label in the header on desktop and mobile', async ({ page }) => {
+test('Workspace keeps its compact, accessible header controls on desktop and mobile', async ({ page }) => {
   await page.goto('/workspace');
   const toolbar = page.locator('.xv-workspace-header-tools');
   for (const width of [1280, 390]) {
     await page.setViewportSize({ width, height: 800 });
-    await expect(toolbar.getByText('Project edits', { exact: true })).toBeVisible();
+    const projectEdits = toolbar.getByRole('button', { name: 'Open project edits', exact: true });
+    await expect(projectEdits).toBeVisible();
+    await expect(projectEdits.locator('svg')).toBeVisible();
+    await expect(projectEdits).toHaveText('');
     await expect(toolbar.getByRole('button', { name: 'Share conversation' })).toBeVisible();
     await expect(toolbar.getByRole('button', { name: 'Team', exact: true })).toBeVisible();
     await expect(toolbar.getByRole('button', { name: /^Terminal skin:/ })).toBeVisible();
