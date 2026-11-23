@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "9aaabbcea0d3fef0ef8569cf6de811b7b9571e6f",
+  "source_sha": "e655096e1a73929f2c8413af23f85a31362dea64",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17286,7 +17286,7 @@
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
-      "sha256": "2bc9b76675b93d766942801f0e86582047286ff1a0396eb1dfc1511d21313800"
+      "sha256": "2d33942d981ee2308be8cd3c8e7a36c2274350bfd4a5a7ba19cd10360c20da00"
     },
     {
       "path": "backend/src/ai/parallelDispatch.ts",
@@ -17390,7 +17390,7 @@
     },
     {
       "path": "backend/src/ai/researchSearchProvider.ts",
-      "sha256": "6f1b66a88773710c56eccf3f0d66638731b1ede49a90cbfc049d37ae3df50c28"
+      "sha256": "4cc0cf849fe0ac1e10af4a13d579e4dd6d74f8ef83f61b817b66c287605641a8"
     },
     {
       "path": "backend/src/ai/researchWebsiteEvidence.ts",
@@ -17682,7 +17682,7 @@
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "sha256": "2307bcb8eb142c026166d3123a6febb63d813a5de9576cc4c6cde2bf99c0c324"
+      "sha256": "d9e0aab9b965bc56ce44514a1cf79ab9ae9458050c0ca511d8c39dba9c8f75a3"
     },
     {
       "path": "backend/src/ai/zurelayWire.ts",
@@ -34667,21 +34667,21 @@
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "line": 56,
+      "line": 58,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "line": 86,
+      "line": 88,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "line": 142,
+      "line": 144,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
