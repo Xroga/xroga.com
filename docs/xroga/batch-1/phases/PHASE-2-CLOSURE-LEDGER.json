@@ -6892,7 +6892,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "loadSessionHistory(opts.userId",
-          "sourceSha256": "0d72f9ebb7a4072e05fe675a956a4515ed5c2b52d37e2fefcde9f1a0830fc10c",
+          "sourceSha256": "763efe2a954b3e1b38ec511b40f4eff24a862208aedb54ac0795e05d7d895cc3",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -7019,7 +7019,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "const saved = await setProjectMemoryDurable({",
-          "sourceSha256": "0d72f9ebb7a4072e05fe675a956a4515ed5c2b52d37e2fefcde9f1a0830fc10c",
+          "sourceSha256": "763efe2a954b3e1b38ec511b40f4eff24a862208aedb54ac0795e05d7d895cc3",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -8555,7 +8555,7 @@
         "relatedSourceBindings": [
           {
             "path": "backend/src/ai/pipeline.ts",
-            "sha256": "0d72f9ebb7a4072e05fe675a956a4515ed5c2b52d37e2fefcde9f1a0830fc10c",
+            "sha256": "763efe2a954b3e1b38ec511b40f4eff24a862208aedb54ac0795e05d7d895cc3",
             "plainReasoningSourceBinding": {
               "previousSha256": "5c37c7d2bbc96fc8c4ddf1f294c9b1f2bde5385048847400a5bcbd69a3582e06",
               "finding": "Verified the full runBuildPipeline function and subsequent source are byte-identical. The chat change retains default model reasoning and uses the existing native output reservation. Worker admission evidence and acceptance state are unchanged."
@@ -8646,6 +8646,12 @@
               "baseline": "8530c904c54b32dba220dc013cfdc7bc0c6ca76e",
               "previousSha256": "8421acd5e8233fe3207a59285288db1366c2d3f266eb76966302d2488d3546b4",
               "scope": "Recognize source-quoted, model-planned local downloads. Verified authority, model dispatch, storage and tenant call shapes are unchanged."
+            },
+            "workspaceExplicitSearchRoutingReview": {
+              "previousSha256": "0d72f9ebb7a4072e05fe675a956a4515ed5c2b52d37e2fefcde9f1a0830fc10c",
+              "baseline": "6bd4fdec53bbacb9896df101c5986a4390ee06ba",
+              "scope": "Explicit public Search changes chat routing only. The full runBuildPipeline function and following source are byte-identical. Prior worker admission evidence and current acceptance are unchanged.",
+              "liveAcceptance": false
             }
           },
           {
