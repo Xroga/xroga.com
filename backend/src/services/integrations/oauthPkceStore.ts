@@ -261,10 +261,7 @@ export async function loadProviderToken(
           ...(currentRefreshLease ? { refresh_lease_marker: currentRefreshLease } : {}) },
         credential_revision: data.credential_revision };
     }
-    // A permission preference (xroga_plugin_permission_policy) is a plain value, not a credential, and is never sealed; only real
-    // credentials need the legacy migration window. Without this exception every saved permission choice failed to load and the
-    // system fell back to "always ask" whatever the owner had chosen.
-    if (!isPolicyProvider(provider)) requireLegacyCredentialMigrationWindow();
+    requireLegacyCredentialMigrationWindow();
     return {
       access_token: data.access_token.trim(),
       refresh_token: data.refresh_token,
