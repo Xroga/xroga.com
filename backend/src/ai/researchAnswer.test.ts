@@ -567,6 +567,7 @@ test('public topics work across subjects without screening out individual words'
   ['Find the official documentation for internal links in Hugo.', 'official documentation internal links Hugo'],
   ['Search the web for public cryptography guidance about secret sharing schemes.', 'public cryptography secret sharing schemes'],
   ['Find public UK guidance on reporting spam phone numbers.', 'UK guidance reporting spam phone numbers'],
+  ['Find official guidance on athlete anti-doping whereabouts rules.', 'athlete anti-doping whereabouts rules'],
   ['मेरी टोक्यो यात्रा की योजना के लिए सार्वजनिक रेल किराया खोजें।', 'टोक्यो सार्वजनिक रेल किराया'],
  ]) {
   assert.equal(hasNonPublicSearchTerms(prompt), false, prompt);
@@ -582,6 +583,7 @@ test('a planner query cannot export context or override an explicit source const
  for (const [request, topic] of [
   ['Search my inbox for hotel prices in Dubai.', 'hotel prices Dubai'],
   ['Compare this booking reference YZQTSP with historical rates.', 'historical rates'],
+  ['Search the web for Jane Doe’s whereabouts.', 'Jane Doe’s whereabouts'],
   ['Compare the attached client records for inflation estimates.', 'inflation estimates'],
   ['Research public airline fares. Do not browse.', 'airline fares'],
  ]) assert.equal(workspacePublicSearchQuery(request,false,topic),undefined,request);

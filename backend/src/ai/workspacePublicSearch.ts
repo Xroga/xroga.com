@@ -35,7 +35,7 @@ const exclusiveOfficialSource = /\b(?:only|exclusively)\b[^.!?]{0,40}\bofficial\
 const unavailableDomain = /(?:\.(?:example|onion|lan|home|corp)$|(?:^|\.)(?:intranet|staging|private|vpn)(?:\.|$))/iu;
 const explicitWebLookup = /^(?:please\s+)?(?:(?:can|could|would|will)\s+you\s+(?:please\s+)?)?(?:(?:search|browse)\s+(?:the\s+)?(?:public\s+)?(?:web|internet)|(?:search|research|look\s+up)\s+online|(?:do|run|perform|use)\s+(?:(?:a|the)\s+)?(?:web|internet)\s+search(?:es)?|(?:web|internet)\s+search(?=\s+(?:for|about|to)\b))(?=\s|\p{P}|$)(?:\s+(?:for|about|to)(?=\s|$))?\s*/iu;
 const contextDependentTopic = /^(?:this|that|these|those|it|them|the same|the previous|the earlier)\b|\b(?:we (?:talked|spoke) about|what (?:i|we) (?:said|shared)|the (?:previous|earlier) (?:topic|result|item|one))\b|\b(?:about|for|on|regarding)\s+(?:this|that|these|those|it|them)$/iu;
-const privateTopicLookup = /\b(?:birthdates?|whereabouts|real name|social profiles?|contact details?|personal (?:phone|email|address))\b/iu;
+const identityDetailLookup = /(?:\b(?:birthdates?|whereabouts|real name|social profiles?|contact details?) (?:of|for)|(?:'s|’s) (?:birthdates?|whereabouts|real name|social profiles?|contact details?))\b/iu;
 const personLocationLookup = /^(?:\p{L}+\s+){1,2}\p{L}+\s+(?:in|at|near|from)\s+\p{L}+(?:\s+\p{Lu}\p{Ll}+){0,3}$/u;
 const barePersonName = /^(?:\p{Lu}\p{Ll}+[\s-]+){1,3}\p{Lu}\p{Ll}+$/u;
 const topicLead = /^(?:(?:an?\s+)?(?:explanation|overview|guide|introduction)\s+(?:of|to|about)|explain|describe|define)\s+/iu;
@@ -148,7 +148,7 @@ export function hasNonPublicSearchTerms(prompt: string): boolean {
   const remaining = office ? request.slice(office.length).trim() : request;
   const followupIdentity = office && /^who (?:is|was)\s+(.+?)[?!.]*$/i.exec(remaining);
   return containsCredentialSecretText(prompt) || privateSourceReferences.some(reference => reference.test(request))
-    || privateTopicLookup.test(request) || personalLookup.test(remaining)
+    || identityDetailLookup.test(request) || personalLookup.test(remaining)
     || Boolean(followupIdentity && isAmbiguousPersonalLookup(followupIdentity[1]));
 }
 

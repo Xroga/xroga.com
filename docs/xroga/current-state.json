@@ -15651,7 +15651,7 @@
       "id": "surface:82ff96c046038933cdb9",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/workspacePublicSearch.ts",
-      "sha256": "4aa7041db4d3bda34cfa5e88e041dc1d6501c59ea73ed5b0607172fc8f1524a7",
+      "sha256": "22c7dacbe122809e27991846053be5ec9b363281776ba48c670930aaf8f25df2",
       "symbols": [
         "answerOnlySuffix",
         "asksForOfficial",
@@ -15675,6 +15675,7 @@
         "freshnessFocus",
         "genericSourceSelection",
         "hasNonPublicSearchTerms",
+        "identityDetailLookup",
         "instructionStart",
         "isAmbiguousPersonalLookup",
         "isPublicSourceHost",
@@ -15701,7 +15702,6 @@
         "presentationAfterTopic",
         "presentationInstruction",
         "privateSourceReferences",
-        "privateTopicLookup",
         "projectedPublicTopic",
         "publicInstitutionLeadership",
         "publicOffice",
@@ -15780,6 +15780,7 @@
       "externalProviderDependencies": [],
       "authBoundary": [
         "backend/src/ai/workspacePublicSearch.ts#followupIdentity",
+        "backend/src/ai/workspacePublicSearch.ts#identityDetailLookup",
         "backend/src/ai/workspacePublicSearch.ts#specificIdentityOrUrl"
       ],
       "tenantBoundary": [],
