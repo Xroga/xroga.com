@@ -2,6 +2,7 @@
 // hooks. The worker owns the run; Chrome is reached through the ports.
 import { runCalculate } from './calculate';
 import { runDataOpsTool } from './data-ops';
+import { searchUrlToQuery } from './search-redirect';
 import { countRun, deleteMacro, describeMacro, expandVars, macrosFor, placeholdersOf, refusalFor, saveMacro } from './macro-tool';
 import { tableToObjects } from '@src/browser-control/core/tools/extract-rows';
 import type { ExtractedTable } from '@src/browser-control/probe/source';
@@ -1888,6 +1889,8 @@ ${ledger}` : ''),
   #routinesNoted = new Set<string>();
   #unknownNoted = false;
   #poolNoted = false;
+  /** Search-results addresses already answered with their results: the same address again opens the page. */
+  #searchServed = new Set<string>();
   /** The tables of the last extract_rows, as rows of text keyed by column, and the rows data_ops last produced: the working set of list work. */
   #extracted: Array<Array<Record<string, string | number | boolean | null>>> = [];
   #workingRows: Array<Record<string, string | number | boolean | null>> | undefined;
@@ -2302,6 +2305,15 @@ ${renderSkill(top)}`);
       } catch (error) {
         outcome = { call, kind, isError: true, text: `error: ${error instanceof Error ? error.message : String(error)}` };
       }
+    } else if (call.toolName === 'navigate' && typeof args.url === 'string' && !this.#searchServed.has(args.url) && searchUrlToQuery(args.url)) {
+      // A results page of a search engine: the results are read for the model (one call, a background tab that is closed again), once per address.
+      const found = searchUrlToQuery(args.url)!;
+      this.#searchServed.add(args.url);
+      const result = await this.#time('tool.layer', () => this.options.layer.call('web_search', { query: found.query, engine: found.engine, intent: `Search for ${found.query}` }, signal));
+      outcome = {
+        call, kind: 'read', isError: !result.ok, result,
+        text: `${result.text}\nThe results page was read for you in a background tab that was closed again, so no tab of the task changed. Open a result with navigate. To look at the search page itself, navigate to the same address once more.`,
+      };
     } else if (call.toolName === 'macro') {
       outcome = await this.#macroTool(call, kind, args);
     } else if (call.toolName === 'record_demo') {

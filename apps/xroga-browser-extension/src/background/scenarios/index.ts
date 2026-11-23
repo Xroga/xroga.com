@@ -46,3 +46,4 @@ import './marks-look';
 import './clickable-zoo';
 import './form-model';
 import './extract-rows';
+import './web-search';

@@ -8,6 +8,8 @@
 import { CALCULATE_TOOL } from '@src/agent/calculate';
 import { DATA_OPS_TOOL } from '@src/agent/data-ops';
 import { MACRO_TOOL } from '@src/agent/macro-tool';
+import { engineOverride } from '@src/browser-control/core/tools/web-search';
+import { FIXTURE_ORIGIN } from '../fixtures-config';
 import { FREE_TIMES_TOOL } from '@src/agent/free-times';
 import { EffortControl } from '@src/xroga/effort';
 import { AgentLoop } from '@src/agent/loop';
@@ -88,6 +90,16 @@ async function runOne(
   });
   // The task's page is the tab in front, as a person's tab is while the agent works on it: a background tab makes every screenshot several seconds slower,
   // which is not what the product does and made visual tasks time out in the evaluation only.
+  if (task.searchFixture) {
+    const page = (name: string) => (q: string) => `${FIXTURE_ORIGIN}/${name}?q=${encodeURIComponent(q)}`;
+    engineOverride.duckduckgo = page('c-search-ddg.html');
+    engineOverride.bing = page('c-search-seo-bing.html');
+    engineOverride.google = page('c-search-seo-google.html');
+  } else {
+    delete engineOverride.duckduckgo;
+    delete engineOverride.bing;
+    delete engineOverride.google;
+  }
   const tab = await chrome.tabs.create({ url: task.url, active: true });
   await waitForLoad(tab.id!);
   session.shareTab(tab.id!);

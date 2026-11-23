@@ -47,6 +47,12 @@ export interface ExtractedTable {
   merged?: number;
 }
 
+export interface SearchHit {
+  title: string;
+  url: string;
+  snippet: string;
+}
+
 export interface FormField {
   role: string;
   name: string;
@@ -205,6 +211,8 @@ export interface ProbeApi {
   hasText(text: string, fields?: boolean): boolean;
   /** Every visible field of the page or of the named form, dialog or group: what a form tool needs to fill it in one call. */
   formModel(scope?: string): FormField[];
+  /** The organic results of a search engine's results page (title, address, snippet), or the reason the engine asked for a human check. */
+  searchResults(engine: string, limit?: number): { hits: SearchHit[]; blocked?: string };
   /** The tables, grids and repeated lists of the page (or of the named region), as rows of text: structured extraction without the model reading cells. */
   extractRows(scope?: string, maxRows?: number): ExtractedTable[];
   startDemo(): boolean;
@@ -525,6 +533,63 @@ export function probeMain(): void {
 
   const api = {
     version: 1,
+
+    searchResults(engine: string, limit?: number) {
+      const cap = Math.max(1, Math.min(limit ?? 10, 30));
+      const clip = (t: string, n: number) => t.replace(/\s+/g, ' ').trim().slice(0, n);
+      const text = document.body?.innerText ?? '';
+      if (/\/sorry\/|\/captcha|challenge/i.test(location.href) || /unusual traffic|not a robot|verify (?:that )?you(?:'re| are) (?:a )?human|captcha|before you continue to/i.test(text.slice(0, 1500)) && document.querySelectorAll('a h3, .result, .b_algo').length === 0) {
+        return { hits: [], blocked: clip(text, 120) || 'a check page' };
+      }
+      const decode = (href: string): string => {
+        try {
+          const u = new URL(href, location.href);
+          const wrapped = u.searchParams.get('uddg');
+          if (wrapped) return decodeURIComponent(wrapped);
+          const b = u.hostname.endsWith('bing.com') && u.pathname.startsWith('/ck/') ? u.searchParams.get('u') : null;
+          if (b && /^a1/.test(b)) { const raw = atob(b.slice(2).replace(/-/g, '+').replace(/_/g, '/')); if (/^https?:/.test(raw)) return raw; }
+          return u.href;
+        } catch { return ''; }
+      };
+      const own = new Set([location.hostname, 'duckduckgo.com', 'www.google.com', 'www.bing.com', 'google.com', 'bing.com']);
+      const hits: SearchHit[] = [];
+      const add = (title: string, href: string, snippet: string) => {
+        const url = decode(href);
+        if (!title || !/^https?:/.test(url)) return;
+        let host = '';
+        try { host = new URL(url).hostname; } catch { return; }
+        if (own.has(host) || hits.some(h => h.url === url)) return;
+        hits.push({ title: clip(title, 160), url: url.slice(0, 400), snippet: clip(snippet, 400) });
+      };
+      if (engine === 'duckduckgo') {
+        for (const r of document.querySelectorAll('.result, .web-result')) {
+          if (r.classList.contains('result--ad')) continue;
+          const a = r.querySelector('a.result__a') as HTMLAnchorElement | null;
+          if (a) add(a.textContent ?? '', a.href, r.querySelector('.result__snippet')?.textContent ?? '');
+        }
+      } else if (engine === 'bing') {
+        for (const r of document.querySelectorAll('li.b_algo')) {
+          const a = r.querySelector('h2 a') as HTMLAnchorElement | null;
+          if (a) add(a.textContent ?? '', a.href, r.querySelector('.b_caption p, .b_lineclamp2, p')?.textContent ?? '');
+        }
+      } else {
+        for (const h of document.querySelectorAll('a h3')) {
+          const a = h.closest('a') as HTMLAnchorElement | null;
+          if (!a) continue;
+          const card = a.closest('[data-hveid], .g, .MjjYud') ?? a.parentElement?.parentElement;
+          const snip = card?.querySelector('.VwiC3b, [data-sncf], .lEBKkf, span.aCOpRe')?.textContent ?? '';
+          add(h.textContent ?? '', a.href, snip);
+        }
+      }
+      if (!hits.length) {
+        // Any engine or layout: a link with a heading inside it and an address that leaves the engine.
+        for (const a of document.querySelectorAll('a[href]')) {
+          const h = a.querySelector('h1,h2,h3,h4');
+          if (h) add(h.textContent ?? '', (a as HTMLAnchorElement).href, '');
+        }
+      }
+      return { hits: hits.slice(0, cap) };
+    },
 
     extractRows(scope?: string, maxRows?: number) {
       const cap = Math.max(1, Math.min(maxRows ?? 5000, 50000));

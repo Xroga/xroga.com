@@ -31,6 +31,8 @@ export interface EvalTask {
   attack?: Attack;
   /** A public site: read-only, needs the network. */
   public?: boolean;
+  /** Every search engine points at the local fixture results page (a search task needs no network and no engine that may ask for a human check). */
+  searchFixture?: boolean;
   /** A page expression evaluated when the run ends; its JSON is appended to pageText as `[probe] ...` for state a canvas never draws as text. */
   probe?: string;
 }
@@ -117,6 +119,14 @@ export const TASKS: EvalTask[] = [
     url: `${FIXTURE_ORIGIN}/c-leads.html`,
     task: 'This is my list of collected leads. The same company can appear twice with its website or email written differently. How many distinct companies are there, and which three have the highest score (use the highest score a company has in the list)?',
     grade: f => /\b12\b/.test(f.answer) && /cobalt gym/i.test(f.answer) && /vega tools/i.test(f.answer) && /pine cafe/i.test(f.answer),
+  },
+  {
+    // Client research starts with a search: one web_search call returns title, address and snippet, instead of driving a results page by clicks.
+    id: 'search-leads',
+    url: `${FIXTURE_ORIGIN}/c-effects.html`,
+    searchFixture: true,
+    task: 'Search the web for SEO agencies in Leeds and tell me the website addresses of two of them. Do not list an advert.',
+    grade: f => /example\.org\/seo-agency|example\.net\/clients/.test(f.answer) && !/ad\.example/.test(f.answer) && f.calls.some(c => c.name === 'web_search'),
   },
   {
     id: 'add-rows',

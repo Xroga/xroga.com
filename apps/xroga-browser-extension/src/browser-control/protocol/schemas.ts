@@ -223,6 +223,13 @@ export const ExtractRowsArgsSchema = z.strictObject({
   maxRows: z.number().int().min(1).max(50_000).optional(),
 });
 
+export const WebSearchArgsSchema = z.strictObject({
+  ...readCommon,
+  query: z.string().trim().min(2).max(300).describe('Words to search for'),
+  engine: z.enum(['duckduckgo', 'bing', 'google']).optional().describe('Default duckduckgo; try another if one asks for a human check'),
+  limit: z.number().int().min(1).max(30).optional().describe('Results to return, default 10'),
+});
+
 export const FormModelArgsSchema = z.strictObject({
   ...readCommon,
   scope: z.string().max(120).optional().describe('Only the form, dialog or group with this name (a substring of its accessible name or legend); default: the whole page'),
@@ -306,6 +313,7 @@ export type WaitArgs = z.infer<typeof WaitArgsSchema>;
 export type NavigateArgs = z.infer<typeof NavigateArgsSchema>;
 export type DiagnosticsArgs = z.infer<typeof DiagnosticsArgsSchema>;
 export type FormModelArgs = z.infer<typeof FormModelArgsSchema>;
+export type WebSearchArgs = z.infer<typeof WebSearchArgsSchema>;
 export type ExtractRowsArgs = z.infer<typeof ExtractRowsArgsSchema>;
 export type DemoArgs = z.infer<typeof DemoArgsSchema>;
 export type TabsArgs = z.infer<typeof TabsArgsSchema>;
