@@ -36,6 +36,24 @@
 .named.named { max-inline-size: calc(100% - var(--citation-gap)); }
 .named .label { overflow-wrap: anywhere; white-space: normal; }
 
+@media (max-width: 540px) {
+  :global(td) .chip.chip[data-citation-domain] {
+    --citation-gap: 0rem;
+    inline-size: 4rem;
+    max-inline-size: 100%;
+    gap: .25rem;
+    padding-inline: .28rem;
+  }
+  :global(td) .chip[data-citation-domain] .label { display: none; }
+  :global(td) .chip[data-citation-domain]::after {
+    content: attr(data-citation-domain);
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
 .preview {
   position: fixed;
   z-index: 10000;

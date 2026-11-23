@@ -143,6 +143,10 @@ const cases = {
   flow: { text: 'The API checks membership before reading tenant rows.', program: 'root = Col([Title("Tenant request path"), Text("The API checks membership before reading tenant rows."), Svg([Rect(2, 14, 95, 32, "surface", "muted", 0.8, 1, 6), SvgText("Verify membership", 49.5, 33, 9, "ink", "middle"), Line(103, 30, 145, 30, "muted", 1.2), Polygon("145,27 150,30 145,33", "muted"), Rect(155, 14, 93, 32, "surface", "muted", 0.8, 1, 6), SvgText("Read tenant rows", 201.5, 33, 9, "ink", "middle")], "0 0 250 60", "100%", null, "Verify membership before reading tenant rows"), List([ListItem("Check authenticated membership"), ListItem("Read rows under RLS")], "number")])' },
   evidence: { text: 'PostgreSQL documents row-level security.', program: 'root = Col([Text(["PostgreSQL documents row-level security. ", Source("source-1")])])' },
   numericEvidence: { text: 'Official policy and documentation.', program: 'root = Col([Text("Official policy [3]."), Markdown("See documentation [2].")])' },
+  tableCitations: {
+    text: 'Compare the requirements using the official documentation.',
+    program: 'root = Col([Markdown("| Rule | What it is for | Source |\\n| --- | --- | --- |\\n| Identify | Assess the risks to the people, systems and data that need protection. | [3] |\\n| Protect | Select measures that reduce the risks. | [3] |")])',
+  },
   fallbackCitations: { text: 'Check the documentation [2](https://www.w3.org/TR/). The mismatched link [2](https://untrusted.example/) is not a citation. Unknown [99] and code `[2]` are plain text.' },
   code: { text: 'TypeScript function returns the supplied constant.', program: 'root = Col([Code("const total: number = 42;", "typescript")])' },
   actionLabels: {
@@ -788,6 +792,30 @@ try {
       await page.keyboard.press('Escape');
       await tooltip.waitFor({ state: 'hidden' });
       assert.equal(await page.getByRole('region', { name: 'Answer', exact: true }).getByRole('link', { name: 'Open source 2: W3C Documentation' }).count(), 1);
+      await open('tableCitations');
+      const researchTable = page.getByRole('table');
+      const tableCitation = researchTable.getByRole('link', { name: 'Open source 3: About keyword matching options' }).first();
+      assert.equal(await tableCitation.getAttribute('href'), 'https://support.google.com/google-ads/answer/7478529');
+      if (viewport.width <= 540) {
+        if (viewport.width === 390) {
+          await researchTable.evaluate(table => { table.parentElement.style.width = '256px'; });
+        }
+        assert.equal(await tableCitation.evaluate(node => getComputedStyle(node, '::after').content), '"support.google.com"');
+        assert.ok(await researchTable.evaluate(table => {
+          const frame = table.parentElement.getBoundingClientRect();
+          return Array.from(table.querySelectorAll('[data-source-citation]'), chip => chip.getBoundingClientRect())
+            .every(chip => chip.left >= frame.left && chip.right <= frame.right + 1);
+        }), 'Routine three-column table keeps all citations within the phone view');
+      } else {
+        assert.equal(await tableCitation.innerText(), 'Google Ads Help');
+      }
+      await tableCitation.focus();
+      await tooltip.getByText('Google Ads Help', { exact: true }).waitFor();
+      await page.keyboard.press('Escape');
+      await tooltip.waitFor({ state: 'hidden' });
+      if ((viewport.width === 1440 || viewport.width === 390) && theme === 'dark') {
+        await page.screenshot({ path: resolve(output, channel + '-table-citations-' + viewport.width + '.png') });
+      }
       await open('choice');
       const choice = page.getByRole('group', { name: 'Pricing scenario' });
       await choice.getByRole('searchbox').fill('Grow');

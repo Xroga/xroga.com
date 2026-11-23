@@ -114,6 +114,7 @@ export function SourceCitation({ source, number, label, showTitle = false, refer
   const compactChip = compact && number !== undefined;
   return <>
     <a ref={link} data-source-citation={evidence || undefined} className={`${styles.chip} ${label || showTitle ? styles.named : ''} ${compactChip ? styles.compact : ''}`}
+      data-citation-domain={evidence && !label && !showTitle ? domain : undefined}
       href={(referral ? sourceClickUrl(url) : url) ?? url} target="_blank" rel="noopener noreferrer"
       aria-label={number ? `Open source ${number}: ${title}` : `${label ? 'Open link' : 'Open source'}: ${title}`}
       aria-describedby={open ? id : undefined}

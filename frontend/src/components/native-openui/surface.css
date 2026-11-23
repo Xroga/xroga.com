@@ -274,6 +274,7 @@
 .native-diagram-relationships ul { margin: .35rem 0 0; padding-inline-start: 1.2rem; color: var(--iui-muted); font-size: .875rem; }
 @media (max-width: 540px) {
   .xroga-native-openui .iui-table :is(td,th) { padding: .5rem .625rem; }
+  .xroga-native-openui .iui-table:has(> thead > tr > :nth-child(3):last-child) :is(td,th) { padding-inline: .4rem; }
   .xroga-native-openui .iui-markdown > .iui-table-scroll > .iui-table:not(:has(> thead > tr > :nth-child(4))) th {
     white-space: normal;
   }
