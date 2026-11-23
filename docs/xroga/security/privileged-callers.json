@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "1b1b75a3f1662c5fc05377e678932892b880e0ed30fe4f0d5d1b782b83fb90ea",
+  "reviewRegistrySha256": "aba902c7ca276db73dd3556977275037a5f8b0ecfe8aaf56b6f23d1c353b6582",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -3936,11 +3936,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "9e04b3a2c9e71ccbcd4f"
+        "id": "32fd40362e4fc50f52f8"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ab4e501256fc00026210"
+        "id": "b326850bc4ccc5d6c128"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7736,11 +7736,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "9e04b3a2c9e71ccbcd4f"
+        "id": "32fd40362e4fc50f52f8"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "ab4e501256fc00026210"
+        "id": "b326850bc4ccc5d6c128"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -11485,15 +11485,15 @@
       }
     },
     {
-      "id": "9e04b3a2c9e71ccbcd4f",
+      "id": "32fd40362e4fc50f52f8",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3983,
+      "line": 3989,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0d72f9ebb7a4072e05fe675a956a4515ed5c2b52d37e2fefcde9f1a0830fc10c",
+      "sourceSha256": "763efe2a954b3e1b38ec511b40f4eff24a862208aedb54ac0795e05d7d895cc3",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Native reasoning alignment changes only answer options and their canonical output reservation. These two in-memory conversion expressions remain byte-identical. No new persistence call, authority or security certification is inferred. The tenant dispatch test verifies reservation and wire maxima match.",
@@ -11506,15 +11506,15 @@
       }
     },
     {
-      "id": "ab4e501256fc00026210",
+      "id": "b326850bc4ccc5d6c128",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4167,
+      "line": 4173,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0d72f9ebb7a4072e05fe675a956a4515ed5c2b52d37e2fefcde9f1a0830fc10c",
+      "sourceSha256": "763efe2a954b3e1b38ec511b40f4eff24a862208aedb54ac0795e05d7d895cc3",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Native reasoning alignment changes only answer options and their canonical output reservation. These two in-memory conversion expressions remain byte-identical. No new persistence call, authority or security certification is inferred. The tenant dispatch test verifies reservation and wire maxima match.",
