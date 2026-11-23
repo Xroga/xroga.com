@@ -694,7 +694,8 @@ try {
         assert.deepEqual(run.result, {
           status: "completed",
           result: answer,
-          actions: ["snapshot", "click", "read", "screenshot"],
+          // The agent captures the page once before the first turn and counts it as work done (ef262b72d), so the scripted model's own first snapshot is the second.
+          actions: ["snapshot", "snapshot", "click", "read", "screenshot"],
         });
       }
     }
