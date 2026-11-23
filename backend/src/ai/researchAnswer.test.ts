@@ -656,6 +656,24 @@ test('a named official publisher fixes the source scope without a model-supplied
   ]) assert.equal(workspacePublicSearchQuery(denied, true), undefined, denied);
 });
 
+test('combined research and presentation preserve publisher scope and precise retrieval terms', () => {
+  const criteria = 'Search the public web using W3C sources for WCAG 2.2 criteria 2.4.11, 2.5.8, and 3.3.8. For a fictional mobile checkout, present one compact table with the criterion, its actual requirement, and one practical QA test. Cite the relevant W3C page beside each row. Finish with a three-step QA checklist. Keep exceptions separate from the main rule.';
+  assert.deepEqual(workspacePublicSearchQuery(criteria, true), {
+    query: 'WCAG 2.2 criteria 2.4.11, 2.5.8, and 3.3.8 site:w3.org',
+    officialDomains: ['w3.org'],
+  });
+  const lithium = 'Find the USGS Mineral Commodity Summaries 2026 figures for estimated 2025 lithium mine production in Australia, China, Chile, and Argentina. Make a labeled horizontal bar chart and a compact exact-value table in metric tons of lithium content. Cite the primary USGS table, then calculate the four countries’ combined share of the reported world total and label it approximate. Distinguish production from reserves and use only USGS sources.';
+  assert.deepEqual(workspacePublicSearchQuery(lithium, true)?.officialDomains, ['usgs.gov']);
+  assert.match(workspacePublicSearchQuery(lithium, true)?.query ?? '', /Mineral Commodity Summaries 2026.*lithium mine production.*site:usgs\.gov/u);
+  assert.match(workspacePublicSearchQuery(lithium, true)?.originalSourceQuestion ?? '', /original table.*2025 lithium mine production/u);
+  const artemis = 'Using current official NASA sources, compare Artemis II and Artemis III. Show mission purpose, most recent verified milestone, and the next published milestone in a compact table. Cite the NASA page beside each date. Add a short timeline that distinguishes completed events from forecasts, and flag any date that NASA has not confirmed.';
+  const nasa = workspacePublicSearchQuery(artemis, true);
+  assert.deepEqual(nasa?.officialDomains, ['nasa.gov']);
+  assert.match(nasa?.query ?? '', /^compare Artemis II and Artemis III.*site:nasa\.gov$/u);
+  assert.equal(workspacePublicSearchQuery(criteria + ' Use the attached internal audit as well.', true), undefined);
+  assert.equal(workspacePublicSearchQuery('Find published streamflow data. Use only Fictional Laboratory sources.', true), undefined);
+});
+
 test('primary source lookup preserves the requested type without exporting other instructions', () => {
   assert.deepEqual(workspacePublicSearchQuery('Using only official USGS pages, look up recent streamflow measurements. Cite the original dataset.'), {
     query: 'recent streamflow measurements dataset site:usgs.gov',

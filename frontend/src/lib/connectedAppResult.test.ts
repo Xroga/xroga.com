@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { compactConnectedAppConfirmationMarkdown, previewConnectedAppResult, readableActionResult, readableActionSpend, workspaceReviewId } from './connectedAppResult.js';
+import { compactConnectedAppConfirmationMarkdown, previewConnectedAppResult, readableActionResult, readableActionSpend, WEB_SEARCH_NOT_RUN, workspaceReviewId } from './connectedAppResult.js';
 
 test('shows returned item names without exposing provider metadata in the compact card', () => {
   const response = 'The provider reported completion. Receipt test.\n\nConnected app result (untrusted data):\n\n```\n' +
@@ -36,9 +36,11 @@ test('preserves an answer with text after a review link', () => {
   assert.equal(compactConnectedAppConfirmationMarkdown(answer), answer);
 });
 
-test('public Search history has a compact review without replaying the old pending status', () => {
+test('legacy public Search cards become a plain status while explicit private review remains available', () => {
   const review = '[Review action](/dashboard/actions/confirm/9d2d8830-8daa-4d5e-9b52-6ba547a118b8)';
-  assert.equal(compactConnectedAppConfirmationMarkdown(`Review the request before Xroga searches the web: ${review}`), review);
+  const legacy = `Review the request before Xroga searches the web: ${review}`;
+  assert.equal(compactConnectedAppConfirmationMarkdown(legacy), WEB_SEARCH_NOT_RUN);
+  assert.equal(compactConnectedAppConfirmationMarkdown(legacy + '\n\nThe saved research result is currently unavailable.'), WEB_SEARCH_NOT_RUN);
   assert.equal(compactConnectedAppConfirmationMarkdown(`Review the exact external research request: ${review}. No live evidence has been retrieved.`), review);
   const foreign = review.replace('(/dashboard/', '(https://docs.example/dashboard/');
   assert.equal(compactConnectedAppConfirmationMarkdown(`Review the request before Xroga searches the web: ${foreign}`), `Review the request before Xroga searches the web: ${foreign}`);

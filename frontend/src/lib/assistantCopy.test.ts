@@ -96,6 +96,8 @@ test('saved research exports omit the private action URL and keep the existing a
   assert.equal(publicAnswerExportText(`You:\nLook up the answer.\n\nXroga:\n${legacy}`),
     'You:\nLook up the answer.\n\nXroga:\nThis search was awaiting review in Workspace.');
   assert.equal(publicAnswerExportText(`Sensitive write requires review. ${link}`), 'Sensitive write requires review. Review in Workspace');
+  assert.equal(publicAnswerExportText(`Review the request before Xroga searches the web: ${link}\n\n${evidence}`),
+    `Web search didn’t run for this request. Try sending the prompt again.\n\n${evidence}`);
 });
 
 test('action export filtering preserves literal code and unrelated external sources', () => {

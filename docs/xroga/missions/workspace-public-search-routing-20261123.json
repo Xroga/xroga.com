@@ -8,13 +8,18 @@
   ],
   "state": "CODE_COMPLETE",
   "risk": "high",
-  "scope": "Route explicit self-contained public web research from ordinary signed-in Workspace chat to official DeepSeek Search and return a cited answer.",
+  "scope": "Route self-contained public web research from ordinary signed-in Workspace chat to official DeepSeek Search, preserve publisher constraints in mixed research and presentation requests, and render a plain status for stale public approval replies.",
   "changedFiles": [
     "backend/src/ai/pipeline.ts",
     "backend/src/ai/researchAnswer.test.ts",
     "backend/src/ai/router.ts",
     "backend/src/ai/universal/semanticRequestPlanner.ts",
-    "backend/src/ai/workspacePublicSearch.ts"
+    "backend/src/ai/workspacePublicSearch.ts",
+    "frontend/e2e/command3-auth.spec.ts",
+    "frontend/src/lib/assistantCopy.test.ts",
+    "frontend/src/lib/connectedAppResult.test.ts",
+    "frontend/src/lib/connectedAppResult.ts",
+    "frontend/src/lib/publicAnswerText.ts"
   ],
   "decisions": {
     "keep": [
@@ -23,6 +28,8 @@
     "extend": [
       "Respect an explicit public Search request from the typed turn when a chat-only plan omitted it.",
       "Admit unfamiliar self-contained topics from the explicit command after current-turn privacy and destination checks.",
+      "Keep named public publishers and retrieval terms when the user also requests a chart, table, timeline or checklist.",
+      "Render historical automatic Search review replies as a plain explanation in Workspace, Copy and shared answers. Existing private research and connected-action reviews retain their controls.",
       "Keep the separate approval boundary for consequential actions and validate source provenance before synthesis."
     ],
     "replace": [],
@@ -76,6 +83,12 @@
       "scope": "Verify connected-app operation and mixed task guards and the existing audited network and budget admission.",
       "negative": true,
       "reference": "backend/src/ai/universal/semanticRequestPlanner.test.ts"
+    },
+    {
+      "command": "playwright test e2e/command3-auth.spec.ts",
+      "scope": "Verify the legacy public reply cannot display a confirmation or price in a new or reopened signed-in conversation. This uses controlled provider responses.",
+      "negative": true,
+      "reference": "frontend/e2e/command3-auth.spec.ts"
     }
   ],
   "architecture": {

@@ -347,6 +347,9 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const publicLookupSource = { title: 'Timestamped market quote fixture', siteName: 'Example Market', url: 'https://example.com/market-quote', snippet: 'Synthetic market data for this test.', source: 'web' };
   const publicLookupReply = publicLookupProse + ' [1]';
   const publicLookupProgram = 'root = Col([Text([' + JSON.stringify(publicLookupProse + ' ') + ', Source("source-1")])])';
+  const legacyPublicLookup = 'Search public sources for accessibility requirements and present a comparison table.';
+  const legacyPublicId = '22b77cb3-d903-45e2-b94d-48eb34c195fd';
+  const legacyPublicReply = 'Review the request before Xroga searches the web: [Review action](/dashboard/actions/confirm/' + legacyPublicId + ')';
   const confirmation = { id: confirmationId, status: 'pending', summary: 'Review the information to send with this research request.',
     toolkit: 'xroga-native-research', risk: 'write', createdAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 900_000).toISOString(),
     researchReview: [{ label: 'Research objective', value: 'Compare the workshop notes with official evidence.' }] };
@@ -378,7 +381,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     expect(request.method()).toBe('POST');
     const body = request.postDataJSON();
     if (new URL(request.url()).pathname.endsWith('/plan')) {
-      const contract = body.message === publicLookup
+      const contract = body.message === publicLookup || body.message === legacyPublicLookup
         ? { ...goalContract, semanticIntent: 'INVESTIGATE', freshnessRequirement: 'CURRENT_REQUIRED',
           requiredCapabilities: ['research.public-web', 'conversation.respond'], requiredAuthorities: ['network:public-read'] }
         : goalContract;
@@ -431,6 +434,9 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
       return route.fulfill({ headers: cors, json: { response: publicLookupReply, completion: { status: 'complete' },
         responseSource: { format: 'xroga-openui-v1', text: publicLookupProgram },
         webSources: [publicLookupSource], publicWebRetrieved: true, intent: 'research' } });
+    }
+    if (body.message === legacyPublicLookup) {
+      return route.fulfill({ headers: cors, json: { response: legacyPublicReply, intent: 'confirmation_required', webSources: [] } });
     }
     expect(body.message).toBe(malformed);
     return route.fulfill({ headers: cors, json: { response: fallback, completion: { status: 'partial', reason: 'presentation_contract' }, responseSource: { format: 'xroga-openui-v1', text: '' } } });
@@ -952,6 +958,29 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     expect((await readFile((await download.path())!)).subarray(0, 4).toString('hex')).toBe(header);
   }
   expect(chatCalls).toBe(13);
+  await page.route('**/api/phase1/business-actions/confirmations/' + legacyPublicId + '**', async route => {
+    expect(route.request().method()).toBe('GET');
+    await route.fulfill({ headers: cors, json: { confirmation: {
+      ...confirmation, id: legacyPublicId, summary: 'Search the public web', toolkit: 'legacy-web-search',
+      approval: { spendMaximumMicroUsd: '5750', currency: 'USD' }, researchReview: [],
+    } } });
+  });
+  await send(legacyPublicLookup);
+  const skippedSearch = page.getByText('Web search didn’t run for this request. Try sending the prompt again.', { exact: true }).last();
+  const legacyPublicTurn = page.locator('[data-turn-id]', { has: skippedSearch });
+  const checkSkippedSearch = async () => {
+    await expect(skippedSearch).toBeVisible({ timeout: 20_000 });
+    await expect(legacyPublicTurn.getByRole('button', { name: 'Confirm action' })).toHaveCount(0);
+    await expect(legacyPublicTurn.getByRole('link', { name: 'Review details' })).toHaveCount(0);
+    await expect(legacyPublicTurn).not.toContainText(/\$0\.00575|Web evidence/);
+  };
+  await checkSkippedSearch();
+  await expect.poll(async () => JSON.stringify((await readSaved(architectureSession))?.messages ?? [])).toContain(legacyPublicReply);
+  await page.reload();
+  await expect(composer).toHaveAttribute('data-draft-session', architectureSession, { timeout: 20_000 });
+  await checkSkippedSearch();
+  await legacyPublicTurn.screenshot({ path: 'test-results/native-workspace/legacy-public-search-status.png' });
+  expect(chatCalls).toBe(14);
   await writeFile('test-results/native-workspace/evidence.json', JSON.stringify({
     source: expectedRelease, route: '/workspace', auth: 'isolated Supabase ordinary accounts',
     model: 'deterministic transport fixtures, zero provider calls', nativeActions: ['file handoff', 'citation link', 'keyboard calculator', 'copy readback', 'database save and reopen', 'private share owner/guest/other account', 'continuation', 'browser cancellation', 'client validation fallback', 'partial native recovery, copy and reopen', 'reviewed partial chart', 'legacy research receipt without refocus or redispatch', 'automatic public lookup, citation and source count after Copy, Share and Reopen', 'connected diagram, nested table and code in one persisted answer'],

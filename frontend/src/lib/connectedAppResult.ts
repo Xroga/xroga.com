@@ -1,6 +1,8 @@
 const RESULT_MARKER = 'Connected app result (untrusted data):';
 const ACTION_REVIEW_PATH = /^\/dashboard\/actions\/confirm\/([\da-f]{8}-[\da-f]{4}-[1-5][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12})\/?$/i;
 const SAVED_SEARCH_REVIEW = /^(?:Review the request before Xroga searches the web|Review the exact (?:external )?research request(?: before it is sent)?):\s*(\[[^\]]+\]\(([^()\s]+)\))\.?\s*(?:No live evidence has been retrieved\.)?$/i;
+const LEGACY_PUBLIC_SEARCH_LEAD = /^Review the request before Xroga searches the web:/i;
+export const WEB_SEARCH_NOT_RUN = 'Web search didn’t run for this request. Try sending the prompt again.';
 
 export function workspaceReviewId(href?: string): string | null {
   return href?.match(ACTION_REVIEW_PATH)?.[1] ?? null;
@@ -63,6 +65,8 @@ export function previewConnectedAppResult(response: string): AppResultPreview {
 }
 
 export function compactConnectedAppConfirmationMarkdown(markdown: string): string {
+  const legacyPublicSearch = markdown.trim().replace(/\s*\n\nThe saved research result is currently unavailable\.$/, '');
+  if (isLegacyPublicSearchReview(legacyPublicSearch)) return WEB_SEARCH_NOT_RUN;
   const search = savedSearchReviewLink(markdown);
   if (search) return search;
   const writeReview = markdown.match(/\n\nNothing has been changed yet\.\n\n(\[Review action\]\(\/dashboard\/actions\/confirm\/[0-9a-f-]{36}\))$/i);
@@ -76,6 +80,10 @@ export function compactConnectedAppConfirmationMarkdown(markdown: string): strin
 export function savedSearchReviewLink(markdown: string): string | null {
   const search = markdown.trim().match(SAVED_SEARCH_REVIEW);
   return search && workspaceReviewId(search[2]) ? search[1] : null;
+}
+
+export function isLegacyPublicSearchReview(markdown: string): boolean {
+  return LEGACY_PUBLIC_SEARCH_LEAD.test(markdown.trim()) && Boolean(savedSearchReviewLink(markdown));
 }
 
 /** Keep the useful outcome while omitting the route's internal receipt identifier. */

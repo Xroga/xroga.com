@@ -2,7 +2,7 @@ import { NATIVE_UI_MARKER, splitNativeOpenUiAnswer } from '../../../backend/src/
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import type { Nodes } from 'mdast';
-import { savedSearchReviewLink, workspaceReviewId } from './connectedAppResult';
+import { isLegacyPublicSearchReview, savedSearchReviewLink, WEB_SEARCH_NOT_RUN, workspaceReviewId } from './connectedAppResult';
 
 const presentationSyntax = /<<<XROGA_OPENUI|(?:\x60{3,}|~{3,})[ \t]*(?:openui(?:lang|-lang)?|xroga-ui|xroga-openui-v1|xroga-response-json-v1)\b|^ {0,3}root[ \t]*=[ \t]*[A-Z][A-Za-z0-9]*[ \t]*\(|"format"\s*:\s*"xroga-openui-v1"/im;
 
@@ -29,8 +29,10 @@ export function publicAnswerExportText(text: string): string {
       if (node.type === 'paragraph') {
         const paragraph = prose.slice(start, end);
         const speaker = /^Xroga:[ \t]*\r?\n/.exec(paragraph)?.[0] ?? '';
-        if (savedSearchReviewLink(paragraph.slice(speaker.length))) {
-          replacements.push({ start, end, text: speaker + 'This search was awaiting review in Workspace.' });
+        const body = paragraph.slice(speaker.length);
+        if (savedSearchReviewLink(body)) {
+          const notice = isLegacyPublicSearchReview(body) ? WEB_SEARCH_NOT_RUN : 'This search was awaiting review in Workspace.';
+          replacements.push({ start, end, text: speaker + notice });
           return;
         }
       }

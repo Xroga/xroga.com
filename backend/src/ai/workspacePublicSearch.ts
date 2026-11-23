@@ -22,7 +22,7 @@ const discoverySpellings = new Set([
   'company', 'companies', 'providers', 'services', 'products', 'platforms', 'universities',
   'colleges', 'destinations', 'restaurants', 'airlines', 'libraries', 'frameworks', 'software',
 ].map(categorySpellingKey));
-const privateOrContextual = /\b(?:my|our|your|mine|ours|private|confidential|proprietary|internal|secret|password|token|credentials?|non[- ]?public|unpublished|unreleased|attached|upload(?:ed)?|above|screenshot|spreadsheet|inbox|mailbox|date of birth|home address|social security|passport|do not share|(?:this|current|selected|active)\s+(?:project|repository|repo|workspace)|(?:as|we) discussed|earlier (?:chat|message)|(?:customer|client|patient|employee|account|order|tracking) (?:data|records?|details|list|names?|notes|numbers?|ids?|addresses?))\b/iu;
+const privateOrContextual = /\b(?:my|our|your|mine(?!\s+(?:production|output)\b)|ours|private|confidential|proprietary|internal|secret|password|token|credentials?|non[- ]?public|unpublished|unreleased|attached|upload(?:ed)?|above|screenshot|spreadsheet|inbox|mailbox|date of birth|home address|social security|passport|do not share|(?:this|current|selected|active)\s+(?:project|repository|repo|workspace)|(?:as|we) discussed|earlier (?:chat|message)|(?:customer|client|patient|employee|account|order|tracking) (?:data|records?|details|list|names?|notes|numbers?|ids?|addresses?))\b/iu;
 const privateDiscoveryContext = /\b(?:crm|(?:these|those)\s+(?:compan(?:y|ies)|providers|vendors|customers)|(?:the\s+)?previous\s+(?:answer|message|conversation)|customer\s+(?:names?|information)|nuest(?:ro|ra|ros|ras)|confidencial|privad[oa]s?|intern[oa]s?|adjunt[oa]s?|notre|confidentiel\w*|privé\w*|internes?|unser\w*)\b|بياناتنا|الداخلية|سري(?:ة)?|ملفاتي|ملفنا|المرفق|حسابي|ہماری|میرے|خفیہ|اندرونی|हमार[ाेी]|मेरे|मेरी|गोपनीय|आंतरिक|संलग्न|我的|我们的|内部|机密|客户名单|附件/iu;
 const personalLookup = /\b(?:who (?:is|was)|contact (?:info(?:rmation)?|details)|phone numbers?|email addresses?|personal (?:info(?:rmation)?|details|records?)|background checks?|where (?:does|did) .+ (?:live|work))\b/iu;
 const specificIdentityOrUrl = /(?:\b[a-z][a-z\d+.-]*:\/\/|(?:\p{N}[ ().-]*){7,})/iu;
@@ -48,9 +48,11 @@ const officialVerificationFooter = /(?:[,.;]\s*|\s+)(?:and\s+)?(?:which official
 const instructionStart = /^(?:please\s+)?(?:(?:search|browse)\s+(?:(?:the\s+)?(?:public\s+)?(?:web|internet)\s+)?(?:for\s+)?|look up\s+|research\s+|what\s+(?:is|are)\s+(?:the\s+)?)/iu;
 const sourcePreface = /^(?:using|from|with)\s+(?:only\s+)?official\s+[^,.:!?]+[,.:!?]\s*/iu;
 const namedSourceClause = /\b(?:(?:use|using|from|with|based on|consult)\s+(?:(?:only|exclusively)\s+)?|(?:only|exclusively)\s+)(?:the\s+)?official\s+([\p{L}\p{N} .,&-]{1,120}?)\s+(?:sources?|websites?|pages?|sites?|docs?|documentation|publications?)(?:\s+\([a-z\d-]+(?:\.[a-z\d-]+)+\))?(?=\s*(?:[,:.!?]|$))/iu;
+const publisherSourceClause = /\b(?:use|using|consult)\s+(?:(?:only|exclusively)\s+)?(?:the\s+)?(?:(?:current|latest)\s+)?(?:official\s+)?([\p{L}\p{N} .,&-]{1,120}?)\s+(?:sources?|websites?|pages?|sites?|docs?|documentation|publications?)(?=\s*(?:[,:.!?]|for\b|$))/iu;
 const sourceSelectionStart = /^(?:use|using|from|based on|consult)\b|^with\s+(?:only|exclusively)\b/iu;
 const genericSourceSelection = /\b(?:using|from|based on|consult)\s+(?:(?:only|exclusively)\s+)?(?:the\s+)?official\s+(?:sources?|websites?|pages?|sites?)(?=\s*(?:[,:.!?(]|$))/giu;
 const answerOnlySuffix = /(?:[.!?]\s+(?:(?:present|show|put)\s+the\s+(?:results|findings|comparison|[\p{L}-]+\s+names\s+and\s+what\s+each\s+is\s+for)\s+in\s+(?:(?:one|a|an|the|compact|copyable|short)\s+){1,4}(?:table|list)|cite\s+(?:the\s+)?(?:actual\s+)?(?:primary|official)\s+sources?(?:\s+beside\s+the\s+claims)?|(?:do\s+not|don['’]t)\s+take\s+any\s+(?:external\s+)?actions?))+[.!?]?$/iu;
+const presentationAfterTopic = /[.!?]\s+(?:For (?:a|an) fictional [^.!?]+,\s*)?(?:make|create|draw|present|render)\s+(?:a|an|one)\s+(?:[\p{L}-]+\s+){0,5}(?:table|chart|diagram|timeline|checklist)\b[^]*$/iu;
 const originalSourceRequest = /\b(?:cite|link(?:\s+to)?|use|find|include|verify\s+against)\s+(?:(?:the|a|an|actual|only)\s+)*(original|primary|final)\s+(source|publication|dataset|standard|paper|report|rule)s?\b/iu;
 const publishedWorkTopic = /\b(?:frameworks?|standards?|guidelines?|specifications?|regulations?|reports?|papers?)\b/iu;
 const versionedWorkDetail = /\b(v?\d+(?:\.\d+)+)\s+(?:functions?|criteria|requirements?|definitions?|principles?|provisions?|sections?|clauses|rules|controls)(?:\s*[,.:].*)?$/iu;
@@ -102,6 +104,7 @@ export function requestsOfficialLinkCoverage(prompt: string): boolean {
   // Selecting where evidence comes from does not request a separate
   // verified destination for each item in the answer.
   const deliverable = prompt.replace(namedSourceClause, (scope) => sourceSelectionStart.test(scope) ? '' : scope)
+    .replace(publisherSourceClause, (scope, publisher: string) => namedPublisherDomains(publisher).length ? '' : scope)
     .replace(genericSourceSelection, '');
   return officialLinkRequest.test(deliverable);
 }
@@ -153,8 +156,9 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
   const publicOffice = publicOfficeTopic(request) !== undefined;
   const officialLookup = requestsOfficialLinkCoverage(request) || publicSourceLookup.test(request);
   const explicitLookup = explicitlyRequestsWorkspaceWebSearch(request);
-  const namedSource = namedSourceClause.exec(request);
+  const namedSource = namedSourceClause.exec(request) ?? publisherSourceClause.exec(request);
   const publisherDomains = namedSource ? namedPublisherDomains(namedSource[1]) : [];
+  if (namedSource && /\b(?:only|exclusively)\b/iu.test(namedSource[0]) && !publisherDomains.length && !namedSource[0].includes('(')) return;
   const discovery = discoveryIntent.test(request) && (discoverySubject.test(request)
     || (request.toLowerCase().match(/\b[a-z]{7,}\b/g) ?? []).some(word => discoverySpellings.has(categorySpellingKey(word))));
   if ((!explicitLookup && !publicLookup.test(request) && !discovery && !weatherLookup.test(request) && !publicOffice && !officialLookup && !publisherDomains.length)
@@ -184,7 +188,7 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
     : request;
   const topic = scopedRequest.replace(bareDomain, host => isSoftwareName(host) ? host : '').replace(/\(\s*\)/g, '')
     .replace(explicitWebLookup, '').replace(instructionStart, '').replace(sourcePreface, '').replace(instructionStart, '')
-    .replace(answerOnlySuffix, '')
+    .replace(presentationAfterTopic, '').replace(answerOnlySuffix, '')
     .replace(/[,.]?\s+(?:and\s+)?cite\s+[^.!?]+[.!?]*$/iu, '')
     .replace(/[?.!؟。？！]+$/u, '').trim();
   if (!officialDomains.length && !publicFact && !discovery && !publicOffice && !officialLookup
@@ -204,13 +208,15 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
   }
   if (focus && capacity < topicLimit) terms += ' ' + focus;
   const originalSource = originalSourceRequest.exec(message);
-  if (!originalSource) return { query: sites ? terms + ' ' + sites : terms, officialDomains };
+  const requestsPrimaryPublisherTable = officialDomains.length > 0 &&
+    /\b(?:cite|link(?:\s+to)?|use|find|include)\s+(?:the\s+)?(?:primary|original|final)\s+(?:[\p{L}.-]+\s+){0,4}table\b/iu.test(message);
+  if (!originalSource && !requestsPrimaryPublisherTable) return { query: sites ? terms + ' ' + sites : terms, officialDomains };
 
   // Keep the requested work searchable when dropping formatting and citation instructions.
   // Only the checked topic and a fixed source type go to the provider.
-  const requestedSource = originalSource[2].toLowerCase();
+  const requestedSource = originalSource?.[2].toLowerCase() ?? 'table';
   const source = requestedSource === 'source' && publishedWorkTopic.test(terms) ? 'publication' : requestedSource;
-  const qualifier = originalSource[1].toLowerCase() === 'final' ? 'final' : 'original';
+  const qualifier = originalSource?.[1].toLowerCase() === 'final' ? 'final' : 'original';
   const subject = terms.replace(/^(?:(?:find|compare)\s+)?(?:the\s+)?/iu, '');
   // A named, versioned work is a stronger retrieval target than its subtopic.
   // Keep the latter in the provider's question so its excerpts can address it.
