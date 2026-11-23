@@ -1,0 +1,90 @@
+{
+ "steps": {
+  "clearedDatabases": 2,
+  "signedIn": true,
+  "paired": true,
+  "itemsBeforeKill": [
+   "One",
+   "Two"
+  ],
+  "killedAt": "2026-11-23T18:38:15.079Z",
+  "workerBack": true,
+  "itemsRightAfterRestart": [
+   "One",
+   "Two",
+   "Three"
+  ],
+  "runsRightAfterRestart": [
+   {
+    "db": "nanobrowser",
+    "runs": [
+     {
+      "status": "interrupted",
+      "reason": "The extension restarted during this run.",
+      "hasFinish": false,
+      "run": "b6fe6c98"
+     }
+    ]
+   },
+   {
+    "db": "nanobrowser-signed-out",
+    "runs": []
+   }
+  ],
+  "runsFifteenSecondsLater": [
+   {
+    "db": "nanobrowser",
+    "runs": [
+     {
+      "status": "interrupted",
+      "reason": "The extension restarted during this run.",
+      "hasFinish": false,
+      "run": "b6fe6c98"
+     }
+    ]
+   },
+   {
+    "db": "nanobrowser-signed-out",
+    "runs": []
+   }
+  ],
+  "itemsFifteenSecondsLater": [
+   "One",
+   "Two",
+   "Three"
+  ],
+  "panelBodyAfterRestart": "Xroga On this page add 8 todo items named One, Two, Three, Four,\u2026 Staging Preview \u00b7 v0.3.0 Signed in to Xroga Sign out On this page add 8 todo items named One, Two, Three, Four, Five, Six, Seven, Eight, then tell me the list. now Worked for 22s now Interrupted The extension restarted during this run. Resume Stop Plugins Full access: unavailable",
+  "statusAfterRestart": "Signed in to Xroga",
+  "buttonsAfterRestart": [
+   "New chat",
+   "Send"
+  ],
+  "resumeOffered": true,
+  "pressedResume": true,
+  "itemsAfterResume": [
+   "One",
+   "Two",
+   "Three"
+  ],
+  "answerAfterResume": "est for this tab (or clear the interrupted state), I'll add Five, Six, Seven and Eight and re-verify the full list \u2014 and if \"Four\" turns out to exist by then, I'll keep the list duplicate-free and report exactly what's there. A browser action may have been delivered. Further changes were paused. now",
+  "pausedForUncertainWrite": true,
+  "followUpSent": true,
+  "itemsFinal": [
+   "One",
+   "Two",
+   "Three",
+   "Four",
+   "Five",
+   "Six",
+   "Seven",
+   "Eight"
+  ],
+  "answerTail": "3 items left!\" before, matching the three items from the interrupted run). All eight checkboxes are unchecked; the new-todo input is empty again. Added this run: Four, Five, Six, Seven, Eight. One, Two and Three were already there, so they were left as-is. now"
+ },
+ "ok": false,
+ "failures": [
+  "items changed during the restart (2 to 3)"
+ ],
+ "evidence_level": "real extension (staging build, real Chrome) + real model on the staging backend + public page (todomvc); signed-in staging test account; not a third-party service",
+ "reading": "ok:false is the first version of the check; it flagged items 2->3 across the kill, which is the one action already sent when the worker stopped. Resume was offered, the run paused for the uncertain write, the follow-up finished with exactly One..Eight, no duplicates. With the corrected check this run passes."
+}

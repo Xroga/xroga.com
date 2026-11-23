@@ -61,6 +61,8 @@ export default defineConfig({
       ? {
           host_permissions: ['<all_urls>'],
           ...permissionLists(productPermissions ? 'product' : 'autorun'),
+          // A harness build that is given a Workspace origin can be paired from that Workspace like the real build (the interactive live checks).
+          ...(process.env.WXT_XROGA_WORKSPACE_ORIGIN ? { externally_connectable: { matches: [`${workspaceOrigin}/workspace*`], ids: [] } } : {}),
           action: { default_icon: 'icon-32.png', default_title: '__MSG_actionTitle__' },
           icons: { 128: 'icon-128.png' },
         }
