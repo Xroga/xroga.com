@@ -1,0 +1,752 @@
+{
+  "scope": "Read-only actual deployed workspace; picker to persisted skin to visible surfaces and public menus. No account/provider writes.",
+  "release": {
+    "service": "xroga-web",
+    "release": "f641a99727c3c0d9bc086f8deb6da80d2c00739c",
+    "environment": "production"
+  },
+  "origin": "https://xroga.com",
+  "records": [
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "id": "dark",
+      "label": "Xroga Dark",
+      "surface": "#0b0d12",
+      "ink": "#e6edf3",
+      "background": "rgb(11, 13, 18)",
+      "expectedBackground": "rgb(11, 13, 18)",
+      "foreground": "rgb(230, 237, 243)",
+      "expectedInk": "rgb(230, 237, 243)",
+      "expectedRaised": "rgb(20, 23, 28)",
+      "expectedCard": "color(srgb 0.0862745 0.0990196 0.121569)",
+      "pattern": "none",
+      "header": "rgba(0, 0, 0, 0)",
+      "composer": "rgb(20, 23, 28)",
+      "card": "color(srgb 0.0862745 0.0990196 0.121569)",
+      "cardInk": "rgb(230, 237, 243)",
+      "composerSurface": "#14171c",
+      "cardSurface": "#14171c",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(20, 23, 28)",
+          "expected": "rgb(20, 23, 28)",
+          "shadow": "none"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(20, 23, 28)",
+          "expected": "rgb(20, 23, 28)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "id": "amoled",
+      "label": "True Black",
+      "surface": "#000000",
+      "ink": "#f5f5f5",
+      "background": "rgb(0, 0, 0)",
+      "expectedBackground": "rgb(0, 0, 0)",
+      "foreground": "rgb(245, 245, 245)",
+      "expectedInk": "rgb(245, 245, 245)",
+      "expectedRaised": "rgb(8, 8, 10)",
+      "expectedCard": "color(srgb 0.0411765 0.0411765 0.0509804)",
+      "pattern": "none",
+      "header": "rgba(0, 0, 0, 0)",
+      "composer": "rgb(8, 8, 10)",
+      "card": "color(srgb 0.0411765 0.0411765 0.0509804)",
+      "cardInk": "rgb(245, 245, 245)",
+      "composerSurface": "#08080a",
+      "cardSurface": "#08080a",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(8, 8, 10)",
+          "expected": "rgb(8, 8, 10)",
+          "shadow": "none"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(8, 8, 10)",
+          "expected": "rgb(8, 8, 10)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "id": "midnight",
+      "label": "Midnight",
+      "surface": "#10131f",
+      "ink": "#c8d3f5",
+      "background": "rgb(16, 19, 31)",
+      "expectedBackground": "rgb(16, 19, 31)",
+      "foreground": "rgb(200, 211, 245)",
+      "expectedInk": "rgb(200, 211, 245)",
+      "expectedRaised": "rgb(21, 26, 42)",
+      "expectedCard": "color(srgb 0.0892157 0.111765 0.178431)",
+      "pattern": "none",
+      "header": "rgba(0, 0, 0, 0)",
+      "composer": "rgb(21, 26, 42)",
+      "card": "color(srgb 0.0892157 0.111765 0.178431)",
+      "cardInk": "rgb(200, 211, 245)",
+      "composerSurface": "#151a2a",
+      "cardSurface": "#151a2a",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(21, 26, 42)",
+          "expected": "rgb(21, 26, 42)",
+          "shadow": "none"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(21, 26, 42)",
+          "expected": "rgb(21, 26, 42)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "id": "gray",
+      "label": "Graphite",
+      "surface": "#1c1e22",
+      "ink": "#f2f4f7",
+      "background": "rgb(28, 30, 34)",
+      "expectedBackground": "rgb(28, 30, 34)",
+      "foreground": "rgb(242, 244, 247)",
+      "expectedInk": "rgb(242, 244, 247)",
+      "expectedRaised": "rgb(38, 41, 47)",
+      "expectedCard": "color(srgb 0.158824 0.171569 0.197059)",
+      "pattern": "none",
+      "header": "rgba(0, 0, 0, 0)",
+      "composer": "rgb(38, 41, 47)",
+      "card": "color(srgb 0.158824 0.171569 0.197059)",
+      "cardInk": "rgb(242, 244, 247)",
+      "composerSurface": "#26292f",
+      "cardSurface": "#26292f",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(38, 41, 47)",
+          "expected": "rgb(38, 41, 47)",
+          "shadow": "none"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(38, 41, 47)",
+          "expected": "rgb(38, 41, 47)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "id": "forest",
+      "label": "Evergreen",
+      "surface": "#0d1a14",
+      "ink": "#d6e8dd",
+      "background": "rgb(13, 26, 20)",
+      "expectedBackground": "rgb(13, 26, 20)",
+      "foreground": "rgb(214, 232, 221)",
+      "expectedInk": "rgb(214, 232, 221)",
+      "expectedRaised": "rgb(17, 35, 26)",
+      "expectedCard": "color(srgb 0.0735294 0.15098 0.113725)",
+      "pattern": "none",
+      "header": "rgba(0, 0, 0, 0)",
+      "composer": "rgb(17, 35, 26)",
+      "card": "color(srgb 0.0735294 0.15098 0.113725)",
+      "cardInk": "rgb(214, 232, 221)",
+      "composerSurface": "#11231a",
+      "cardSurface": "#11231a",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(17, 35, 26)",
+          "expected": "rgb(17, 35, 26)",
+          "shadow": "none"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(17, 35, 26)",
+          "expected": "rgb(17, 35, 26)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "id": "matrix",
+      "label": "Phosphor",
+      "surface": "#000f04",
+      "ink": "#37ff8b",
+      "background": "rgb(0, 15, 4)",
+      "expectedBackground": "rgb(0, 15, 4)",
+      "foreground": "rgb(55, 255, 139)",
+      "expectedInk": "rgb(55, 255, 139)",
+      "expectedRaised": "rgb(0, 23, 7)",
+      "expectedCard": "color(srgb 0.00294118 0.102941 0.0323529)",
+      "pattern": "none",
+      "header": "rgba(0, 0, 0, 0)",
+      "composer": "rgb(0, 23, 7)",
+      "card": "color(srgb 0.00294118 0.102941 0.0323529)",
+      "cardInk": "rgb(55, 255, 139)",
+      "composerSurface": "#001707",
+      "cardSurface": "#001707",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(0, 23, 7)",
+          "expected": "rgb(0, 23, 7)",
+          "shadow": "none"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(0, 23, 7)",
+          "expected": "rgb(0, 23, 7)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "id": "amber",
+      "label": "Amber CRT",
+      "surface": "#17110a",
+      "ink": "#ffb861",
+      "background": "rgb(23, 17, 10)",
+      "expectedBackground": "rgb(23, 17, 10)",
+      "foreground": "rgb(255, 184, 97)",
+      "expectedInk": "rgb(255, 184, 97)",
+      "expectedRaised": "rgb(33, 23, 13)",
+      "expectedCard": "color(srgb 0.141176 0.0980392 0.054902)",
+      "pattern": "none",
+      "header": "rgba(0, 0, 0, 0)",
+      "composer": "rgb(33, 23, 13)",
+      "card": "color(srgb 0.141176 0.0980392 0.054902)",
+      "cardInk": "rgb(255, 184, 97)",
+      "composerSurface": "#21170d",
+      "cardSurface": "#21170d",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(33, 23, 13)",
+          "expected": "rgb(33, 23, 13)",
+          "shadow": "none"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(33, 23, 13)",
+          "expected": "rgb(33, 23, 13)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "id": "light",
+      "label": "Daylight",
+      "surface": "#ffffff",
+      "ink": "#14171f",
+      "background": "rgb(255, 255, 255)",
+      "expectedBackground": "rgb(255, 255, 255)",
+      "foreground": "rgb(20, 23, 31)",
+      "expectedInk": "rgb(20, 23, 31)",
+      "expectedRaised": "rgb(255, 255, 255)",
+      "expectedCard": "color(srgb 0.986274 0.988235 0.992157)",
+      "pattern": "none",
+      "header": "rgba(0, 0, 0, 0)",
+      "composer": "rgb(255, 255, 255)",
+      "card": "color(srgb 0.986274 0.988235 0.992157)",
+      "cardInk": "rgb(20, 23, 31)",
+      "composerSurface": "#ffffff",
+      "cardSurface": "#ffffff",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(255, 255, 255)",
+          "expected": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(255, 255, 255)",
+          "expected": "rgb(255, 255, 255)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "id": "light-grid",
+      "label": "Grid Paper",
+      "surface": "#fbfbfd",
+      "ink": "#14171f",
+      "background": "rgb(251, 251, 253)",
+      "expectedBackground": "rgb(251, 251, 253)",
+      "foreground": "rgb(20, 23, 31)",
+      "expectedInk": "rgb(20, 23, 31)",
+      "expectedRaised": "rgb(255, 255, 255)",
+      "expectedCard": "color(srgb 0.983333 0.987255 0.992157)",
+      "pattern": "linear-gradient(rgba(0, 0, 0, 0.04) 1px, rgba(0, 0, 0, 0) 0px), linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, rgba(0, 0, 0, 0) 0px)",
+      "header": "rgba(0, 0, 0, 0)",
+      "composer": "rgb(255, 255, 255)",
+      "card": "color(srgb 0.983333 0.987255 0.992157)",
+      "cardInk": "rgb(20, 23, 31)",
+      "composerSurface": "#ffffff",
+      "cardSurface": "#ffffff",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(255, 255, 255)",
+          "expected": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(255, 255, 255)",
+          "expected": "rgb(255, 255, 255)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "id": "solar",
+      "label": "Parchment",
+      "surface": "#fdf6e3",
+      "ink": "#3b4650",
+      "background": "rgb(253, 246, 227)",
+      "expectedBackground": "rgb(253, 246, 227)",
+      "foreground": "rgb(59, 70, 80)",
+      "expectedInk": "rgb(59, 70, 80)",
+      "expectedRaised": "rgb(248, 239, 217)",
+      "expectedCard": "color(srgb 0.962745 0.923529 0.830392)",
+      "pattern": "none",
+      "header": "rgba(0, 0, 0, 0)",
+      "composer": "rgb(248, 239, 217)",
+      "card": "color(srgb 0.962745 0.923529 0.830392)",
+      "cardInk": "rgb(59, 70, 80)",
+      "composerSurface": "#f8efd9",
+      "cardSurface": "#f8efd9",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(248, 239, 217)",
+          "expected": "rgb(248, 239, 217)",
+          "shadow": "none"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(248, 239, 217)",
+          "expected": "rgb(248, 239, 217)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "id": "dark",
+      "label": "Xroga Dark",
+      "surface": "#0b0d12",
+      "ink": "#e6edf3",
+      "background": "rgb(11, 13, 18)",
+      "expectedBackground": "rgb(11, 13, 18)",
+      "foreground": "rgb(230, 237, 243)",
+      "expectedInk": "rgb(230, 237, 243)",
+      "expectedRaised": "rgb(20, 23, 28)",
+      "expectedCard": "color(srgb 0.0862745 0.0990196 0.121569)",
+      "pattern": "none",
+      "header": "rgba(0, 0, 0, 0)",
+      "composer": "rgb(20, 23, 28)",
+      "card": "color(srgb 0.0862745 0.0990196 0.121569)",
+      "cardInk": "rgb(230, 237, 243)",
+      "composerSurface": "#14171c",
+      "cardSurface": "#14171c",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(20, 23, 28)",
+          "expected": "rgb(20, 23, 28)",
+          "shadow": "none"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(20, 23, 28)",
+          "expected": "rgb(20, 23, 28)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "id": "amoled",
+      "label": "True Black",
+      "surface": "#000000",
+      "ink": "#f5f5f5",
+      "background": "rgb(0, 0, 0)",
+      "expectedBackground": "rgb(0, 0, 0)",
+      "foreground": "rgb(245, 245, 245)",
+      "expectedInk": "rgb(245, 245, 245)",
+      "expectedRaised": "rgb(8, 8, 10)",
+      "expectedCard": "color(srgb 0.0411765 0.0411765 0.0509804)",
+      "pattern": "none",
+      "header": "rgba(0, 0, 0, 0)",
+      "composer": "rgb(8, 8, 10)",
+      "card": "color(srgb 0.0411765 0.0411765 0.0509804)",
+      "cardInk": "rgb(245, 245, 245)",
+      "composerSurface": "#08080a",
+      "cardSurface": "#08080a",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(8, 8, 10)",
+          "expected": "rgb(8, 8, 10)",
+          "shadow": "none"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(8, 8, 10)",
+          "expected": "rgb(8, 8, 10)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "id": "midnight",
+      "label": "Midnight",
+      "surface": "#10131f",
+      "ink": "#c8d3f5",
+      "background": "rgb(16, 19, 31)",
+      "expectedBackground": "rgb(16, 19, 31)",
+      "foreground": "rgb(200, 211, 245)",
+      "expectedInk": "rgb(200, 211, 245)",
+      "expectedRaised": "rgb(21, 26, 42)",
+      "expectedCard": "color(srgb 0.0892157 0.111765 0.178431)",
+      "pattern": "none",
+      "header": "rgba(0, 0, 0, 0)",
+      "composer": "rgb(21, 26, 42)",
+      "card": "color(srgb 0.0892157 0.111765 0.178431)",
+      "cardInk": "rgb(200, 211, 245)",
+      "composerSurface": "#151a2a",
+      "cardSurface": "#151a2a",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(21, 26, 42)",
+          "expected": "rgb(21, 26, 42)",
+          "shadow": "none"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(21, 26, 42)",
+          "expected": "rgb(21, 26, 42)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "id": "gray",
+      "label": "Graphite",
+      "surface": "#1c1e22",
+      "ink": "#f2f4f7",
+      "background": "rgb(28, 30, 34)",
+      "expectedBackground": "rgb(28, 30, 34)",
+      "foreground": "rgb(242, 244, 247)",
+      "expectedInk": "rgb(242, 244, 247)",
+      "expectedRaised": "rgb(38, 41, 47)",
+      "expectedCard": "color(srgb 0.158824 0.171569 0.197059)",
+      "pattern": "none",
+      "header": "rgba(0, 0, 0, 0)",
+      "composer": "rgb(38, 41, 47)",
+      "card": "color(srgb 0.158824 0.171569 0.197059)",
+      "cardInk": "rgb(242, 244, 247)",
+      "composerSurface": "#26292f",
+      "cardSurface": "#26292f",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(38, 41, 47)",
+          "expected": "rgb(38, 41, 47)",
+          "shadow": "none"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(38, 41, 47)",
+          "expected": "rgb(38, 41, 47)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "id": "forest",
+      "label": "Evergreen",
+      "surface": "#0d1a14",
+      "ink": "#d6e8dd",
+      "background": "rgb(13, 26, 20)",
+      "expectedBackground": "rgb(13, 26, 20)",
+      "foreground": "rgb(214, 232, 221)",
+      "expectedInk": "rgb(214, 232, 221)",
+      "expectedRaised": "rgb(17, 35, 26)",
+      "expectedCard": "color(srgb 0.0735294 0.15098 0.113725)",
+      "pattern": "none",
+      "header": "rgba(0, 0, 0, 0)",
+      "composer": "rgb(17, 35, 26)",
+      "card": "color(srgb 0.0735294 0.15098 0.113725)",
+      "cardInk": "rgb(214, 232, 221)",
+      "composerSurface": "#11231a",
+      "cardSurface": "#11231a",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(17, 35, 26)",
+          "expected": "rgb(17, 35, 26)",
+          "shadow": "none"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(17, 35, 26)",
+          "expected": "rgb(17, 35, 26)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "id": "matrix",
+      "label": "Phosphor",
+      "surface": "#000f04",
+      "ink": "#37ff8b",
+      "background": "rgb(0, 15, 4)",
+      "expectedBackground": "rgb(0, 15, 4)",
+      "foreground": "rgb(55, 255, 139)",
+      "expectedInk": "rgb(55, 255, 139)",
+      "expectedRaised": "rgb(0, 23, 7)",
+      "expectedCard": "color(srgb 0.00294118 0.102941 0.0323529)",
+      "pattern": "none",
+      "header": "rgba(0, 0, 0, 0)",
+      "composer": "rgb(0, 23, 7)",
+      "card": "color(srgb 0.00294118 0.102941 0.0323529)",
+      "cardInk": "rgb(55, 255, 139)",
+      "composerSurface": "#001707",
+      "cardSurface": "#001707",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(0, 23, 7)",
+          "expected": "rgb(0, 23, 7)",
+          "shadow": "none"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(0, 23, 7)",
+          "expected": "rgb(0, 23, 7)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "id": "amber",
+      "label": "Amber CRT",
+      "surface": "#17110a",
+      "ink": "#ffb861",
+      "background": "rgb(23, 17, 10)",
+      "expectedBackground": "rgb(23, 17, 10)",
+      "foreground": "rgb(255, 184, 97)",
+      "expectedInk": "rgb(255, 184, 97)",
+      "expectedRaised": "rgb(33, 23, 13)",
+      "expectedCard": "color(srgb 0.141176 0.0980392 0.054902)",
+      "pattern": "none",
+      "header": "rgba(0, 0, 0, 0)",
+      "composer": "rgb(33, 23, 13)",
+      "card": "color(srgb 0.141176 0.0980392 0.054902)",
+      "cardInk": "rgb(255, 184, 97)",
+      "composerSurface": "#21170d",
+      "cardSurface": "#21170d",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(33, 23, 13)",
+          "expected": "rgb(33, 23, 13)",
+          "shadow": "none"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(33, 23, 13)",
+          "expected": "rgb(33, 23, 13)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "id": "light",
+      "label": "Daylight",
+      "surface": "#ffffff",
+      "ink": "#14171f",
+      "background": "rgb(255, 255, 255)",
+      "expectedBackground": "rgb(255, 255, 255)",
+      "foreground": "rgb(20, 23, 31)",
+      "expectedInk": "rgb(20, 23, 31)",
+      "expectedRaised": "rgb(255, 255, 255)",
+      "expectedCard": "color(srgb 0.986274 0.988235 0.992157)",
+      "pattern": "none",
+      "header": "rgba(0, 0, 0, 0)",
+      "composer": "rgb(255, 255, 255)",
+      "card": "color(srgb 0.986274 0.988235 0.992157)",
+      "cardInk": "rgb(20, 23, 31)",
+      "composerSurface": "#ffffff",
+      "cardSurface": "#ffffff",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(255, 255, 255)",
+          "expected": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(255, 255, 255)",
+          "expected": "rgb(255, 255, 255)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "id": "light-grid",
+      "label": "Grid Paper",
+      "surface": "#fbfbfd",
+      "ink": "#14171f",
+      "background": "rgb(251, 251, 253)",
+      "expectedBackground": "rgb(251, 251, 253)",
+      "foreground": "rgb(20, 23, 31)",
+      "expectedInk": "rgb(20, 23, 31)",
+      "expectedRaised": "rgb(255, 255, 255)",
+      "expectedCard": "color(srgb 0.983333 0.987255 0.992157)",
+      "pattern": "linear-gradient(rgba(0, 0, 0, 0.04) 1px, rgba(0, 0, 0, 0) 0px), linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, rgba(0, 0, 0, 0) 0px)",
+      "header": "rgba(0, 0, 0, 0)",
+      "composer": "rgb(255, 255, 255)",
+      "card": "color(srgb 0.983333 0.987255 0.992157)",
+      "cardInk": "rgb(20, 23, 31)",
+      "composerSurface": "#ffffff",
+      "cardSurface": "#ffffff",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(255, 255, 255)",
+          "expected": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(255, 255, 255)",
+          "expected": "rgb(255, 255, 255)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "id": "solar",
+      "label": "Parchment",
+      "surface": "#fdf6e3",
+      "ink": "#3b4650",
+      "background": "rgb(253, 246, 227)",
+      "expectedBackground": "rgb(253, 246, 227)",
+      "foreground": "rgb(59, 70, 80)",
+      "expectedInk": "rgb(59, 70, 80)",
+      "expectedRaised": "rgb(248, 239, 217)",
+      "expectedCard": "color(srgb 0.962745 0.923529 0.830392)",
+      "pattern": "none",
+      "header": "rgba(0, 0, 0, 0)",
+      "composer": "rgb(248, 239, 217)",
+      "card": "color(srgb 0.962745 0.923529 0.830392)",
+      "cardInk": "rgb(59, 70, 80)",
+      "composerSurface": "#f8efd9",
+      "cardSurface": "#f8efd9",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(248, 239, 217)",
+          "expected": "rgb(248, 239, 217)",
+          "shadow": "none"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(248, 239, 217)",
+          "expected": "rgb(248, 239, 217)",
+          "shadow": "none"
+        }
+      ]
+    }
+  ],
+  "matchTheme": "PASS"
+}

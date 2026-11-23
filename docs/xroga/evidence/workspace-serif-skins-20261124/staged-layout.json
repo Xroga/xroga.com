@@ -1,0 +1,400 @@
+{
+  "scope": "Read-only actual deployed UI; authenticated project/app content verified separately in isolated component fixtures",
+  "origin": "https://xrogaai-4r7m9jizg-xrogas-projects.vercel.app",
+  "release": {
+    "service": "xroga-web",
+    "release": "f641a99727c3c0d9bc086f8deb6da80d2c00739c",
+    "environment": "production"
+  },
+  "records": [
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "guidance": {
+        "fontSize": 10.5,
+        "oneLine": true,
+        "fits": true
+      },
+      "headline": {
+        "prefixX": 59.109375,
+        "text": "One AI workspace for every kind of work.",
+        "gap": 2.109375,
+        "centerError": 0,
+        "filter": "none"
+      },
+      "headerBox": {
+        "x": 9,
+        "y": 53,
+        "width": 302,
+        "height": 48
+      },
+      "extensionBox": {
+        "x": 30.59375,
+        "y": 63,
+        "width": 71.15625,
+        "height": 28
+      },
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "box": {
+            "x": 58,
+            "y": 286.546875,
+            "width": 250,
+            "height": 240.53125
+          },
+          "bar": {
+            "x": 21,
+            "y": 180.546875,
+            "width": 278,
+            "height": 98
+          }
+        },
+        {
+          "label": "More composer actions",
+          "box": {
+            "x": 12,
+            "y": 286.546875,
+            "width": 296,
+            "height": 269.453125
+          },
+          "bar": {
+            "x": 21,
+            "y": 180.546875,
+            "width": 278,
+            "height": 98
+          }
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 640
+      },
+      "guidance": {
+        "fontSize": 10.5,
+        "oneLine": true,
+        "fits": true
+      },
+      "headline": {
+        "prefixX": 79.109375,
+        "text": "One AI workspace for every kind of work.",
+        "gap": 2.109375,
+        "centerError": 0,
+        "filter": "none"
+      },
+      "headerBox": {
+        "x": 9,
+        "y": 53,
+        "width": 342,
+        "height": 48
+      },
+      "extensionBox": {
+        "x": 52.640625,
+        "y": 63,
+        "width": 77.578125,
+        "height": 28
+      },
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "box": {
+            "x": 65,
+            "y": 286.546875,
+            "width": 250,
+            "height": 240.53125
+          },
+          "bar": {
+            "x": 21,
+            "y": 180.546875,
+            "width": 318,
+            "height": 98
+          }
+        },
+        {
+          "label": "More composer actions",
+          "box": {
+            "x": 12,
+            "y": 286.546875,
+            "width": 336,
+            "height": 320
+          },
+          "bar": {
+            "x": 21,
+            "y": 180.546875,
+            "width": 318,
+            "height": 98
+          }
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "guidance": {
+        "fontSize": 11,
+        "oneLine": true,
+        "fits": true
+      },
+      "headline": {
+        "prefixX": 80,
+        "text": "One AI workspace for every kind of work.",
+        "gap": 2.390625,
+        "centerError": 0.0078125,
+        "filter": "none"
+      },
+      "headerBox": {
+        "x": 9,
+        "y": 53,
+        "width": 372,
+        "height": 48
+      },
+      "extensionBox": {
+        "x": 82.640625,
+        "y": 63,
+        "width": 77.578125,
+        "height": 28
+      },
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "box": {
+            "x": 65,
+            "y": 370.4375,
+            "width": 250,
+            "height": 240.53125
+          },
+          "bar": {
+            "x": 21,
+            "y": 264.4375,
+            "width": 348,
+            "height": 98
+          }
+        },
+        {
+          "label": "More composer actions",
+          "box": {
+            "x": 29,
+            "y": 370.4375,
+            "width": 344,
+            "height": 422
+          },
+          "bar": {
+            "x": 21,
+            "y": 264.4375,
+            "width": 348,
+            "height": 98
+          }
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "guidance": {
+        "fontSize": 12,
+        "oneLine": true,
+        "fits": true
+      },
+      "headline": {
+        "prefixX": 213.84375,
+        "text": "One AI workspace for every kind of work.",
+        "gap": 3.5625,
+        "centerError": 0.0078125,
+        "filter": "none"
+      },
+      "headerBox": {
+        "x": 9,
+        "y": 53,
+        "width": 750,
+        "height": 48
+      },
+      "extensionBox": {
+        "x": 459.640625,
+        "y": 63,
+        "width": 78.578125,
+        "height": 28
+      },
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "box": {
+            "x": 85,
+            "y": 459.8125,
+            "width": 250,
+            "height": 240.53125
+          },
+          "bar": {
+            "x": 33,
+            "y": 345.8125,
+            "width": 702,
+            "height": 106
+          }
+        },
+        {
+          "label": "More composer actions",
+          "box": {
+            "x": 46,
+            "y": 459.8125,
+            "width": 344,
+            "height": 512
+          },
+          "bar": {
+            "x": 33,
+            "y": 345.8125,
+            "width": 702,
+            "height": 106
+          }
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "guidance": {
+        "fontSize": 12,
+        "oneLine": true,
+        "fits": true
+      },
+      "headline": {
+        "prefixX": 597.625,
+        "text": "One AI workspace for every kind of work.",
+        "gap": 4.765625,
+        "centerError": 0.0078125,
+        "filter": "none"
+      },
+      "headerBox": {
+        "x": 217,
+        "y": 8,
+        "width": 1215,
+        "height": 49.59375
+      },
+      "extensionBox": {
+        "x": 1136.640625,
+        "y": 18.796875,
+        "width": 78.578125,
+        "height": 28
+      },
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "box": {
+            "x": 506.5,
+            "y": 425.734375,
+            "width": 250,
+            "height": 240.53125
+          },
+          "bar": {
+            "x": 454.5,
+            "y": 311.734375,
+            "width": 740,
+            "height": 106
+          }
+        },
+        {
+          "label": "More composer actions",
+          "box": {
+            "x": 467.5,
+            "y": 425.734375,
+            "width": 344,
+            "height": 450
+          },
+          "bar": {
+            "x": 454.5,
+            "y": 311.734375,
+            "width": 740,
+            "height": 106
+          }
+        }
+      ]
+    }
+  ],
+  "endings": [
+    {
+      "prefixX": 80,
+      "text": "One AI workspace for every kind of work.",
+      "gap": 2.390625,
+      "centerError": 0.0078125,
+      "filter": "none"
+    },
+    {
+      "prefixX": 80,
+      "text": "One AI workspace for every kind of automation.",
+      "gap": 2.390625,
+      "centerError": 0.0078125,
+      "filter": "none"
+    },
+    {
+      "prefixX": 80,
+      "text": "One AI workspace for every kind of code.",
+      "gap": 2.390625,
+      "centerError": 0.0078125,
+      "filter": "none"
+    },
+    {
+      "prefixX": 80,
+      "text": "One AI workspace for every kind of apps.",
+      "gap": 2.390625,
+      "centerError": 0.0078125,
+      "filter": "none"
+    },
+    {
+      "prefixX": 80,
+      "text": "One AI workspace for every kind of websites.",
+      "gap": 2.390625,
+      "centerError": 0.0078125,
+      "filter": "none"
+    },
+    {
+      "prefixX": 80,
+      "text": "One AI workspace for every kind of tools.",
+      "gap": 2.390625,
+      "centerError": 0.0078125,
+      "filter": "none"
+    },
+    {
+      "prefixX": 80,
+      "text": "One AI workspace for every kind of extensions.",
+      "gap": 2.390625,
+      "centerError": 0.0078125,
+      "filter": "none"
+    },
+    {
+      "prefixX": 80,
+      "text": "One AI workspace for every kind of software.",
+      "gap": 2.390625,
+      "centerError": 0.0078125,
+      "filter": "none"
+    },
+    {
+      "prefixX": 80,
+      "text": "One AI workspace for every kind of research.",
+      "gap": 2.390625,
+      "centerError": 0.0078125,
+      "filter": "none"
+    },
+    {
+      "prefixX": 80,
+      "text": "One AI workspace for every kind of browser automation.",
+      "gap": 2.390625,
+      "centerError": 0.0078125,
+      "filter": "none"
+    },
+    {
+      "prefixX": 80,
+      "text": "One AI workspace for every kind of app automation.",
+      "gap": 2.390625,
+      "centerError": 0.0078125,
+      "filter": "none"
+    }
+  ]
+}

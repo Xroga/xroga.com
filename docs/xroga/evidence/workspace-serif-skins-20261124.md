@@ -1,7 +1,15 @@
 # Workspace serif styling and terminal palettes — 2026-11-24
 
-CODE_COMPLETE. Frontend presentation only. Actual deployed UI checks and isolated popup layout checks will be recorded separately; fixture evidence does not prove authentication or provider operations.
+LIVE_VERIFIED on https://xroga.com at 2026-11-23T20:19:23.712Z. Application source: [f641a99727c3c0d9bc086f8deb6da80d2c00739c](https://github.com/Xroga/xroga.com/commit/f641a99727c3c0d9bc086f8deb6da80d2c00739c); production deployment: dpl_FbZSTMGPQza5pdVGirNn5R4myNfU.
 
-Live baseline: b7fb663cb1c1ba4e8d973dfaa909ef04d9bef9d8, deployment dpl_J6MS6YH7tUf3JSTzkiuiAdTwLLpm.
+The original Georgia/Times serif starter heading, gradient treatment, card titles and section typography are restored. Mobile guidance reads “Type or speak your language. Xroga does the work automatically.” The original headline prefix stays stationary while all eleven endings animate, with normal spacing. Header order is Extension → Project edits → Share, with Project edits shown as an icon. Find reads “Answers, clients and opportunities. Research the web.” All ten terminal palettes paint their actual canvas, ink, composer, cards and popup surfaces; Grid Paper keeps its grid.
 
-All 1,634 frontend tests and 11 mission-policy tests passed. Lint passed with existing warnings. Local runner job: `5a47fde9-1fe6-472f-977b-82161d83e1ed`. React review checked stable hook dependencies, observer cleanup, accessible controls, preserved data boundaries and the removal of repeated word measurements. Browser acceptance and production build remain pending.
+Validation: all 1,634 frontend tests and 11 mission-policy tests passed, lint passed with existing warnings, and the source-pinned Vercel production build/type checks passed. Actual staged and live browser audits passed at 320, 360, 390, 768 and 1440px, including one-line mobile guidance, serif card/heading fonts, header order, normal word spacing and every rotating ending. The prefix x-position varies by no more than one pixel. Public Black Hole and Plus menus stay below the composer and inside the screen without shadows. Actual palette selection/reload checks passed for all ten skins at 390/1440px, including Match theme. The transparent header displays its workspace canvas; cards retain the original 75% raised / 25% inset surface blend, measured after transitions finish.
+
+Staged layout job: e78a13c2-3d52-4944-a969-6008119b7492. Staged palette job: 45056015-f2af-4655-9fe5-47dd8c0ff159. Live layout/palette job: e96af397-c04f-491d-ba9c-d169ffc38008. Isolated component fixture job: 63e8bcfa-87fe-4962-99b2-901956a2ef9d (40 viewport/mode/menu geometry cases and 80 colored popups). The authenticated Projects and Connect Apps content is fixture-only evidence; no account/provider execution is claimed. Runtime query returned zero error/fatal records in its recorded ten-minute window; see runtime-summary.json.
+
+This is a frontend presentation release. Authentication, tenant ownership, approvals, credentials, egress, cost, billing and schema are unchanged. No provider/account/customer writes were used for verification.
+
+Rollback: restore dpl_J6MS6YH7tUf3JSTzkiuiAdTwLLpm, prior verified source b7fb663cb1c1ba4e8d973dfaa909ef04d9bef9d8. No data migration is required.
+
+Owned temporary browser/build inputs were disposed of after their reports/screenshots/logs were preserved. Failed audit checks remain failed in the cleanup receipt; replacement passing evidence is separate. One runner step measured 720,932,864 bytes (688 MiB) more disk free space, including other workspace activity; this is not a cleanup-only recovery claim. Private share URLs and browser cookies are excluded from evidence and Git. Temporary Vercel share links expire automatically.

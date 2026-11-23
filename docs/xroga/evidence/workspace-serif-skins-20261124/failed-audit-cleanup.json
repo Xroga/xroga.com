@@ -1,0 +1,124 @@
+{
+  "scope": "Only this turn’s named failed UI audit jobs. Failed tests remain failed; replacement passes are separate.",
+  "receipts": [
+    {
+      "job": "7af767ea-fafc-484c-88a9-e38b75c6f573",
+      "failedChecksRemainFailed": true,
+      "unproducedReports": [
+        "popup-fixture/palette-audit.json"
+      ],
+      "captured": [
+        {
+          "path": "popup-fixture/audit.json",
+          "sha256": "dcf955c99cf75f258d999ecf52c2b10090e354eeafee0c9afb26b68f5d4f438c",
+          "bytes": 16110
+        }
+      ],
+      "logSha256": "36f94f07a2f4860cbca0253c38c32426a0f0d60e0e432e79e6af2bbdf1a6d0e9",
+      "reason": "The failed audit stopped before producing these reports. Preserve its generated evidence and failure log; passing replacement evidence is recorded separately. No source, credentials or recovery assets are eligible.",
+      "supersedingFixtureJob": "63e8bcfa-87fe-4962-99b2-901956a2ef9d"
+    },
+    {
+      "job": "d6ef174c-14bb-4b24-84ef-9258fce139dd",
+      "failedChecksRemainFailed": true,
+      "unproducedReports": [
+        "popup-fixture/audit.json",
+        "popup-fixture/palette-audit.json"
+      ],
+      "captured": [],
+      "logSha256": "d1b48efaff43de4728f5a07e398691a28b5795c63ff777ba07f992e87af9467c",
+      "reason": "The failed audit stopped before producing these reports. Preserve its generated evidence and failure log; passing replacement evidence is recorded separately. No source, credentials or recovery assets are eligible.",
+      "supersedingFixtureJob": "63e8bcfa-87fe-4962-99b2-901956a2ef9d"
+    },
+    {
+      "job": "8d573dc4-97e7-46e6-9a34-351364c5ccc5",
+      "failedChecksRemainFailed": true,
+      "unproducedReports": [
+        "popup-fixture/audit.json",
+        "popup-fixture/palette-audit.json"
+      ],
+      "captured": [],
+      "logSha256": "33dc9cb4110c359a1f689d42d11f6f0d3bad5c2f232bd966b218bbe0fd6a4820",
+      "reason": "The failed audit stopped before producing these reports. Preserve its generated evidence and failure log; passing replacement evidence is recorded separately. No source, credentials or recovery assets are eligible.",
+      "supersedingFixtureJob": "63e8bcfa-87fe-4962-99b2-901956a2ef9d"
+    },
+    {
+      "job": "f75378b3-82bb-4f42-adb6-748fcd35548c",
+      "failedChecksRemainFailed": true,
+      "unproducedReports": [
+        "popup-fixture/audit.json",
+        "popup-fixture/palette-audit.json"
+      ],
+      "captured": [],
+      "logSha256": "1728fb8475a72c73e1d10d76ebcb44044acdece69c7ef463e342e4babeedaa6d",
+      "reason": "The failed audit stopped before producing these reports. Preserve its generated evidence and failure log; passing replacement evidence is recorded separately. No source, credentials or recovery assets are eligible.",
+      "supersedingFixtureJob": "63e8bcfa-87fe-4962-99b2-901956a2ef9d"
+    },
+    {
+      "job": "eae8bb33-34c2-4afe-9067-6d36da0bd606",
+      "failedChecksRemainFailed": true,
+      "unproducedReports": [
+        "terminal-palettes/audit.json"
+      ],
+      "captured": [
+        {
+          "path": "workspace-ux/audit.json",
+          "sha256": "a87de52a5decdba640e596123a3d315f71e963e9de0b505009223fd2ecccc731",
+          "bytes": 8869
+        }
+      ],
+      "logSha256": "f5a7b5289ab1715176e42a2a7c77f4ff88a2bc8ab6a3de8874e8fbf09a76975f",
+      "reason": "The failed audit stopped before producing these reports. Preserve its generated evidence and failure log; passing replacement evidence is recorded separately. No source, credentials or recovery assets are eligible.",
+      "supersedingFixtureJob": "63e8bcfa-87fe-4962-99b2-901956a2ef9d"
+    },
+    {
+      "job": "763b395c-3c0e-4157-aff1-ae9b5a26f1ea",
+      "failedChecksRemainFailed": true,
+      "unproducedReports": [
+        "terminal-palettes/audit.json",
+        "terminal-palettes/forest-390.png",
+        "terminal-palettes/light-grid-390.png",
+        "terminal-palettes/solar-1440.png"
+      ],
+      "captured": [],
+      "logSha256": "e41af505e70de71cf27491b9384d041287a051c06749eadef139df42ce996526",
+      "reason": "The failed audit stopped before producing these reports. Preserve its generated evidence and failure log; passing replacement evidence is recorded separately. No source, credentials or recovery assets are eligible.",
+      "supersedingFixtureJob": "63e8bcfa-87fe-4962-99b2-901956a2ef9d"
+    },
+    {
+      "job": "be030be1-6d61-44e2-9705-5c4aeeea037e",
+      "failedChecksRemainFailed": true,
+      "unproducedReports": [
+        "workspace-ux/audit.json",
+        "terminal-palettes/audit.json",
+        "terminal-palettes/forest-390.png",
+        "terminal-palettes/light-grid-390.png",
+        "terminal-palettes/solar-1440.png"
+      ],
+      "captured": [],
+      "logSha256": "447cb60acce9372a4367f4704f413ac12b7c1e93ee5014cd858298672c4ae06c",
+      "reason": "The failed audit stopped before producing these reports. Preserve its generated evidence and failure log; passing replacement evidence is recorded separately. No source, credentials or recovery assets are eligible.",
+      "supersedingFixtureJob": "63e8bcfa-87fe-4962-99b2-901956a2ef9d"
+    },
+    {
+      "job": "e78a13c2-3d52-4944-a969-6008119b7492",
+      "failedChecksRemainFailed": true,
+      "unproducedReports": [
+        "terminal-palettes/audit.json",
+        "terminal-palettes/forest-390.png",
+        "terminal-palettes/light-grid-390.png",
+        "terminal-palettes/solar-1440.png"
+      ],
+      "captured": [
+        {
+          "path": "workspace-ux/audit.json",
+          "sha256": "cef62def56cf1aa66f97b4134b5d9fba3ed585b98fc734cb1306f5f9a2fe6383",
+          "bytes": 8872
+        }
+      ],
+      "logSha256": "95eca59fe1a7f5bc11e96609524718ba5a0f757517a5e49513512d5a93ae7101",
+      "reason": "The failed audit stopped before producing these reports. Preserve its generated evidence and failure log; passing replacement evidence is recorded separately. No source, credentials or recovery assets are eligible.",
+      "supersedingFixtureJob": "63e8bcfa-87fe-4962-99b2-901956a2ef9d"
+    }
+  ]
+}

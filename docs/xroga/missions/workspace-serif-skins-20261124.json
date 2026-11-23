@@ -6,7 +6,7 @@
     "XR-MISSION-055",
     "XR-MISSION-056"
   ],
-  "state": "CODE_COMPLETE",
+  "state": "LIVE_VERIFIED",
   "risk": "low",
   "scope": "Restore original serif starter/card/section headings, stationary rotating headline prefix, updated guidance and Find wording, Project edits beside Share, and all ten terminal palettes across workspace surfaces and body portals.",
   "changedFiles": [
@@ -81,13 +81,13 @@
   "tests": [
     {
       "command": "npm run test:frontend and npm run lint --workspace=frontend",
-      "scope": "All 1,634 frontend tests and 11 mission-policy tests passed; lint passed with existing warnings. Production build and browser acceptance remain pending.",
+      "scope": "All 1,634 frontend tests and 11 mission-policy tests passed; lint passed with existing warnings. The source-pinned production build/type checks and staged/live browser acceptance passed at f641a99727c3c0d9bc086f8deb6da80d2c00739c.",
       "negative": true,
       "reference": "frontend/src/lib/workspaceEmptyComposer.test.ts"
     },
     {
       "command": "Playwright actual-component and staged production UI audits",
-      "scope": "Pending headline stability and all ten palette selections, persistence, Match theme and popup viewport checks.",
+      "scope": "40 isolated popup geometry cases and 80 actual-component palette popups passed. Actual live production source f641a99727c3c0d9bc086f8deb6da80d2c00739c passed five viewport layouts, all eleven rotating endings with stationary prefix, and 20 palette/viewport cases including persistence and Match theme. Fixtures do not prove account/provider operations.",
       "negative": true,
       "reference": "docs/xroga/evidence/workspace-serif-skins-20261124.md"
     }
@@ -97,18 +97,20 @@
   "knownGaps": [],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [
-    "docs/xroga/evidence/workspace-serif-skins-20261124.md"
+    "docs/xroga/evidence/workspace-serif-skins-20261124.md",
+    "docs/xroga/evidence/workspace-serif-skins-20261124/staged-layout.json",
+    "docs/xroga/evidence/workspace-serif-skins-20261124/staged-palettes.json",
+    "docs/xroga/evidence/workspace-serif-skins-20261124/live-layout.json",
+    "docs/xroga/evidence/workspace-serif-skins-20261124/live-palettes.json"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
   "release": {
-    "state": "BLOCKED",
-    "blockers": [
-      "Acceptance checks and production build pending"
-    ],
+    "state": "LIVE_VERIFIED",
+    "blockers": [],
     "authenticatedE2e": "NOT_APPLICABLE",
     "stagedSecurity": "NOT_APPLICABLE",
-    "liveUrl": null,
-    "deployedSha": null
+    "liveUrl": "https://xroga.com",
+    "deployedSha": "f641a99727c3c0d9bc086f8deb6da80d2c00739c"
   }
 }
