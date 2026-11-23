@@ -1,5 +1,6 @@
 // The RunManager: one run per active conversation, the panel commands, run records and statuses. The worker owns the
 // run; panels are views that can close and reopen.
+import { CALCULATE_TOOL } from '@src/agent/calculate';
 import { FREE_TIMES_TOOL } from '@src/agent/free-times';
 import { AgentLoop, REASONING_DROPPED, STOPPED_BY_USER, STOPPED_NOTE } from '@src/agent/loop';
 import type { LoopEnd } from '@src/agent/loop';
@@ -1768,8 +1769,8 @@ export class RunManager {
           pointAt,
           vision: model.profile.vision, localScreenshots: !!canonical,
           agentTools: isWorker
-            ? [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, PLAN_TOOL, RECORD_DEMO_TOOL, FREE_TIMES_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL] : [])]
-            : [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, PLAN_TOOL, RECORD_DEMO_TOOL, FREE_TIMES_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, REPO_RUN_TOOL, CHANGE_REPO_TOOL] : []), ...(canonical?.plugins ? [...PLUGIN_TOOLS, PLUGIN_CHAIN_TOOL, PLUGIN_CONNECT_TOOL] : []), ...PARALLEL_TOOLS],
+            ? [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, PLAN_TOOL, RECORD_DEMO_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL] : [])]
+            : [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, PLAN_TOOL, RECORD_DEMO_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, REPO_RUN_TOOL, CHANGE_REPO_TOOL] : []), ...(canonical?.plugins ? [...PLUGIN_TOOLS, PLUGIN_CHAIN_TOOL, PLUGIN_CONNECT_TOOL] : []), ...PARALLEL_TOOLS],
         });
         // A request that only reads starts with the small tool list; the model switches to the full one if it needs to act.
         const { tools, full: fullTools } = startingTools(

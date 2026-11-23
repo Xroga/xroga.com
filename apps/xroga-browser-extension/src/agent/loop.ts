@@ -1,5 +1,6 @@
 // The agent loop, shaped like pi's runLoop: turns of one model call and its tool batch, with all browser policy in six
 // hooks. The worker owns the run; Chrome is reached through the ports.
+import { runCalculate } from './calculate';
 import { findFreeTimes, type FreeTimesArgs } from './free-times';
 import type { RunTimings, Phase } from './timing';
 import { cutText, siteOf } from '@src/browser-control';
@@ -2203,6 +2204,9 @@ ${ledger}` : ''),
       outcome = await this.#skillTool(call, kind, args);
     } else if (call.toolName === 'site_action') {
       outcome = await this.#runSiteAction(call, kind, args);
+    } else if (call.toolName === 'calculate') {
+      const r = runCalculate(args as { expressions?: Array<{ name?: string; expr?: string }> });
+      outcome = { call, kind, isError: r.isError, text: r.text };
     } else if (call.toolName === 'find_free_times') {
       try {
         outcome = { call, kind, isError: false, text: findFreeTimes(args as unknown as FreeTimesArgs).text };

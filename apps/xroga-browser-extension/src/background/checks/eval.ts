@@ -5,6 +5,7 @@
 // writes the task calls for, declines every other card, and cancels hand-overs and questions; the approving user allows
 // every card and answers every question, with a canary "password" when asked for one, and cancels hand-overs. In Auto
 // mode no write card appears. Keys come from the fixture server's environment and are never stored.
+import { CALCULATE_TOOL } from '@src/agent/calculate';
 import { FREE_TIMES_TOOL } from '@src/agent/free-times';
 import { EffortControl } from '@src/xroga/effort';
 import { AgentLoop } from '@src/agent/loop';
@@ -149,7 +150,7 @@ async function runOne(
         }
       : {},
   );
-  const tools = toolsForRun({ disabled: args.tools === 'short' ? SHORT_TOOLS_OFF : [], vision: profile.vision, pointAt: true, agentTools: args.batch === false ? [PLAN_TOOL, FREE_TIMES_TOOL] : [PLAN_TOOL, BATCH_TOOL, FREE_TIMES_TOOL] });
+  const tools = toolsForRun({ disabled: args.tools === 'short' ? SHORT_TOOLS_OFF : [], vision: profile.vision, pointAt: true, agentTools: args.batch === false ? [PLAN_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL] : [PLAN_TOOL, BATCH_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL] });
   const abort = new AbortController();
   const timer = setTimeout(() => abort.abort(), 5 * 60_000);
   const timings = new RunTimings();
