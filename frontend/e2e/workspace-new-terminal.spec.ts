@@ -187,6 +187,9 @@ test('private empty workspace never exposes starter cards or starter plus', asyn
   await page.goto('/workspace');
   await expect(page.locator('[data-terminal-composer]')).toHaveCount(1);
   await expect(page.locator('[data-terminal-composer]')).toHaveAttribute('placeholder', 'Type a private message…');
+  const header = page.getByTestId('terminal-identity-header');
+  await expect(header.getByText('Private · not saved', { exact: true })).toBeVisible();
+  await expect(header.locator('[data-xroga-extension-trigger]')).toHaveText('Extension');
   await expect(page.getByTestId('workspace-start-header')).toHaveCount(0);
   await expect(page.getByTestId('workspace-start-cards')).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'More composer actions', exact: true })).toHaveCount(0);
@@ -612,7 +615,7 @@ test(`extension trigger clears the heading and keeps capability cards reachable 
   expect(headingBox).not.toBeNull();
   expect(extensionBox!.y + extensionBox!.height + 10).toBeLessThanOrEqual(headingBox!.y);
 
-  const guidance = page.getByText('Type or speak in your native language, and the right tools handle the work automatically.', { exact: true });
+  const guidance = page.getByText(viewport.width < 640 ? 'Type or speak your language. Xroga does the work.' : 'Type or speak in your native language, and the right tools handle the work automatically.', { exact: true });
   await expect(guidance).toBeVisible({ timeout: 4_000 });
   expect(await guidance.evaluate(element => {
     const range = document.createRange();
@@ -629,6 +632,7 @@ test(`extension trigger clears the heading and keeps capability cards reachable 
   }
 
   await page.screenshot({ path: testInfo.outputPath(`workspace-${viewport.width}-top.png`) });
+  await page.getByRole('button', { name: 'Show Work Packs', exact: true }).click();
   const workPacks = page.locator('[data-capability="work-packs"]');
   await workPacks.scrollIntoViewIfNeeded();
   await expect(workPacks).toBeVisible();

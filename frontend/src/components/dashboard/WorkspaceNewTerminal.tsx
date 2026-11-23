@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ChevronRight, ChevronLeft, Search, Code2, Rocket, Users, Layers, Bot, Globe2, Puzzle, Pause, Play, X } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -113,6 +113,17 @@ function CapabilityVisual({ id }: { id: Capability['id'] }) {
   </span>;
 }
 
+function RotatingWord({ word }: { word: string }) {
+  const textRef = useRef<HTMLSpanElement>(null);
+  const [width, setWidth] = useState<number>();
+  useLayoutEffect(() => {
+    if (textRef.current) setWidth(textRef.current.getBoundingClientRect().width);
+  }, [word]);
+  return <span className={styles.dynamicWordFrame} style={{ width }} aria-hidden="true">
+    <span ref={textRef} className={styles.dynamicWord} key={word} data-testid="workspace-rotating-word">{word}.</span>
+  </span>;
+}
+
 export function WorkspaceStartHeader() {
   const [index] = useRotation(ROTATING_WORDS.length, false, 3400);
   return (
@@ -120,7 +131,7 @@ export function WorkspaceStartHeader() {
       <h1 className={styles.superIntelligence}>Super Intelligence</h1>
       <div className={styles.taglineRow}>
         <p className={styles.tagline} aria-label="One AI workspace for every kind of work, from code and websites to research and automation.">
-          One AI workspace for every kind of <span className={styles.dynamicWord} key={ROTATING_WORDS[index]} aria-hidden="true">{ROTATING_WORDS[index]}.</span>
+          One AI workspace for every kind of <RotatingWord word={ROTATING_WORDS[index]} />
         </p>
       </div>
     </header>
@@ -139,9 +150,10 @@ function AutomaticIntro() {
     return () => window.clearTimeout(delay);
   }, [reducedMotion]);
   return <div className={styles.automatic} aria-label="Automatic intelligence by default. No models or tools to choose. Type or speak in your native language, and the right tools handle the work automatically.">
-    <span className={styles.automaticFirst} data-visible={!showDetail} aria-hidden={showDetail}><strong>Automatic intelligence by default.</strong> No models or tools to choose.</span>
+    <span className={styles.automaticFirst} data-visible={!showDetail} aria-hidden={showDetail}><strong>Automatic intelligence by default.</strong><span className={styles.guidanceDesktop}> No models or tools to choose.</span></span>
     <span className={styles.automaticDetail} data-visible={showDetail} aria-hidden={!showDetail}>
-      Type or speak in your native language, and the right tools handle the work automatically.
+      <span className={styles.guidanceDesktop}>Type or speak in your native language, and the right tools handle the work automatically.</span>
+      <span className={styles.guidanceMobile}>Type or speak your language. Xroga does the work.</span>
     </span>
   </div>;
 }

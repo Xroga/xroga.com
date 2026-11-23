@@ -1,6 +1,5 @@
 /* The toolbar anchors its controls; only the transcript paints a scroll fade. */
 .headerChrome { position: relative; z-index: 6; isolation: isolate; }
-.headerChrome:has(.browserControl) { flex-wrap: wrap; row-gap: 4px; }
 .transcriptFade {
   position: absolute;
   inset-block-start: 0;
@@ -16,16 +15,16 @@
 .browserControl {
   position: relative;
   display: flex;
-  flex: 0 0 100%;
-  min-inline-size: 0;
-  justify-content: flex-end;
-  z-index: 1;
+  align-items: center;
+  flex: none;
 }
 .browserControl > details > [role='status'] {
   position: static;
   white-space: normal;
 }
-/* Keep the extension trigger compact in its own toolbar row on phones. */
+.browserControl [data-xroga-extension-trigger] { height: 28px; gap: 5px; padding: 4px 7px; font-size: 10px; line-height: 1; box-shadow: none; }
+.browserControl [data-xroga-extension-trigger] svg { width: 14px; height: 14px; }
+/* The extension belongs to the same header row as project editing controls. */
 @media (max-width: 639px) {
   .browserControl [data-xroga-extension-trigger] {
     gap: 5px;
@@ -50,7 +49,7 @@
   color: #16181d;
 }
 /* R5Program/Uiverse button, scaled to 28px with a stronger circular outline and clicked fill.
-   Keep the pair horizontal on wider screens and beside the transcript on phones. */
+   A single horizontal pair sits quietly above the composer, never over it. */
 .navigation {
   position: absolute;
   z-index: 28;
@@ -59,7 +58,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 17px;
+  gap: 8px;
   opacity: 0;
   pointer-events: none;
   transform: translateY(3px);
@@ -91,7 +90,7 @@
 .navButton::before {
   content: '';
   position: absolute;
-  inset: -11px;
+  inset: -7px;
   border-radius: 50%;
 }
 .navButton::after {
@@ -140,12 +139,8 @@
 .navButton:active { transform: translateY(2px); }
 .navButton:focus-visible { outline: 2px solid var(--accent, #3b82f6); outline-offset: 3px; }
 @media (max-width: 639px) {
-  .transcript[data-conversation='true'] :global(.xv-terminal-body--flush) {
-    padding-right: max(40px, 6vw);
-  }
-  .navigation { right: 7px; bottom: calc(100% + 9px); gap: 19px; flex-direction: column; }
+  .navigation { right: 3px; bottom: calc(100% + 9px); gap: 8px; }
   .navButton { height: 26px; width: 26px; flex-basis: 26px; padding: 3px; }
-  .navButton::before { inset: -12px; }
   .arrow, .downArrow { width: 15px; height: 15px; }
 }
 @media (hover: none) {

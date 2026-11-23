@@ -176,7 +176,7 @@ export function IntegrationsModal({ open, onClose, anchorRef, onSelect }: {
 
   if (!open) return null;
   return <AnchoredPortalPopover open={open} onClose={onClose} anchorRef={anchorRef}
-    placement="top-start" width={350} className={styles.menu} ariaLabel="Connect Apps">
+    placement="bottom-start" belowChatbar width={350} className={styles.menu} ariaLabel="Connect Apps">
     <section className={styles.panel} role="dialog" aria-label="Connect Apps" onKeyDown={handleKeyDown}>
       <header className={styles.header}>
         <span>{view === 'connected' ? <button type="button" className={styles.iconButton} onClick={() => setView('explore')} aria-label="Back to app directory"><ArrowLeft size={16}/></button> : null}<strong>{view === 'connected' ? 'Connected Apps' : 'Connect Apps'}</strong></span>

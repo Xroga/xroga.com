@@ -350,14 +350,15 @@ test('the top scroll fade stays inside the conversation pane, never on the toolb
   assert.match(POLISH, /\.transcriptFade\[data-scrolled='true'\]\s*\{ opacity: 1; \}/);
 });
 
-test('Chrome extension control stays inside the toolbar without covering answer text', () => {
+test('Chrome extension control sits inline in the workspace header and does not add a transcript row', () => {
   const POLISH = read('../components/dashboard/WorkspaceScrollPolish.module.css');
   const OPERATOR = read('../components/browser/WorkspaceBrowserOperator.tsx');
   assert.match(DASHBOARD, /<header[\s\S]*?className=\{scrollPolish\.browserControl\}>\{browserOperator\}[\s\S]*?<\/header>/);
   assert.doesNotMatch(DASHBOARD, /<\/header>\s*\{browserOperator\}/);
-  assert.match(POLISH, /\.headerChrome:has\(\.browserControl\)\s*\{[^}]*flex-wrap:\s*wrap/);
-  assert.match(POLISH, /\.browserControl\s*\{[^}]*position:\s*relative;[^}]*flex:\s*0 0 100%/);
-  assert.match(OPERATOR, /Install Xroga Extension/);
+  assert.match(DASHBOARD, /Private · not saved<\/span>\s*\{browserOperator \? <div className=\{scrollPolish\.browserControl\}>/);
+  assert.match(POLISH, /\.browserControl\s*\{[^}]*position:\s*relative/);
+  assert.match(POLISH, /\.browserControl > details > \[role='status'\]\s*\{[^}]*position:\s*static/);
+  assert.match(OPERATOR, /<span>Extension<\/span>/);
   assert.match(OPERATOR, /supported local browser automation tasks/);
   assert.match(OPERATOR, /!showConnection[\s\S]*?Coming soon/);
   assert.doesNotMatch(OPERATOR, /chromewebstore\.google\.com|Connect from the Xroga side panel in Chrome\./);
@@ -365,7 +366,7 @@ test('Chrome extension control stays inside the toolbar without covering answer 
   assert.match(POLISH, /terminal-skin-dark[^\n]*\[data-xroga-extension-trigger\][\s\S]*?background: #fff/);
 });
 
-test('workspace scroll navigation keeps compact buttons and reserves reading room on mobile', () => {
+test('workspace scroll navigation stays compact and horizontal with Uiverse motion', () => {
   const POLISH = read('../components/dashboard/WorkspaceScrollPolish.module.css');
   assert.match(POLISH, /\.navigation\s*\{[^}]*flex-direction:\s*row;/s);
   assert.match(POLISH, /\.navButton\s*\{[^}]*width:\s*28px;[^}]*height:\s*28px;/s);
@@ -373,11 +374,7 @@ test('workspace scroll navigation keeps compact buttons and reserves reading roo
   assert.match(POLISH, /\.navButton:hover\s*\{[^}]*translateY\(-3px\)[^}]*background-color:\s*#0c0c0c;/s);
   assert.match(POLISH, /\.navButton:hover \.arrow[^}]*scale\(1\.2\)/s);
   assert.match(POLISH, /\.navButton:active\s*\{[^}]*translateY\(2px\)/s);
-  const mobile = POLISH.slice(POLISH.indexOf('@media (max-width: 639px)'), POLISH.indexOf('@media (hover: none)'));
-  assert.match(mobile, /\.navigation\s*\{[^}]*flex-direction:\s*column;/s);
-  assert.match(mobile, /\.navButton\s*\{[^}]*width:\s*26px;/s);
-  assert.match(mobile, /padding-right:\s*max\(40px, 6vw\)/);
-  assert.match(mobile, /\.navButton::before\s*\{\s*inset:\s*-12px;/);
+  assert.match(POLISH, /@media \(max-width: 639px\)[^{]*\{[^}]*\}[^}]*\.navButton\s*\{[^}]*width:\s*26px;/s);
   assert.match(POLISH, /border:\s*2\.5px solid/);
   assert.match(POLISH, /\.navButton\[data-clicked='true'\]/);
   const NAV = read('../components/terminal/WorkspaceScrollNavigation.tsx');
@@ -751,7 +748,8 @@ test('new terminal renders theme-aware readable cards without black-hole artwork
   assert.match(START, /<CapabilityVisual id=\{card.id\}/);
   assert.doesNotMatch(START, /cardImage|1536/);
   assert.doesNotMatch(DASHBOARD, /BetaExpectationBanner/);
-  assert.match(START_CSS, /background-clip: text/);
+  assert.doesNotMatch(START_CSS, /background-clip: text/);
+  assert.match(START_CSS, /\.superIntelligence[^}]*color: var\(--foreground\)/);
   assert.deepEqual([...START.matchAll(/id: '([^']+)'/g)].map(match => match[1]),
     ['create', 'find', 'build', 'ship', 'workflows', 'scheduled-tasks', 'employees', 'work-packs', 'browser-automation', 'apps-mcp']);
   assert.match(START_CSS, /background: var\(--terminal-ui-surface\) !important/);

@@ -844,8 +844,9 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     await architectureSharePage.close();
     await dialog.getByRole('button', { name: 'Close share dialog' }).click();
   }
-  const installDisclosure = page.locator('summary').filter({ hasText: /^Install Xroga Extension$/ });
+  const installDisclosure = page.locator('summary[data-xroga-extension-trigger]');
   await expect(installDisclosure).toBeVisible();
+  await expect(installDisclosure).toHaveText('Extension');
   const installNotice = installDisclosure.locator('..').getByText('Coming soon', { exact: true });
   const workspaceUrl = page.url();
   await expect(installNotice).toBeHidden();
@@ -865,7 +866,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   pairingWorkspace.searchParams.set('browserExtension', 'abcdefghijklmnopabcdefghijklmnop');
   pairingWorkspace.searchParams.set('browserPair', '11111111-1111-4111-8111-111111111111');
   await page.goto(pairingWorkspace.href);
-  const browserOperator = page.locator('summary').filter({ hasText: /^Install Xroga Extension$/ });
+  const browserOperator = page.locator('summary[data-xroga-extension-trigger]');
   await expect(browserOperator).toBeVisible();
   await expect(renderedArchitecture.locator('.react-flow__edge')).toHaveCount(1, { timeout: 20_000 });
   await page.mouse.move(0, 0);

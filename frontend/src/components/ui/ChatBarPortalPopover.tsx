@@ -2,7 +2,7 @@
 
 import { AnchoredPortalPopover } from '@/components/ui/AnchoredPortalPopover';
 
-/** Renders children in a portal above the chatbar dock (z 220). */
+/** Keep chatbar controls below the composer in a bounded body portal. */
 export function ChatBarPortalPopover({
   open,
   onClose,
@@ -19,7 +19,7 @@ export function ChatBarPortalPopover({
   width?: number;
 }) {
   return (
-    <AnchoredPortalPopover open={open} onClose={onClose} anchorRef={anchorRef} className={className} width={width} placement="top-start">
+    <AnchoredPortalPopover open={open} onClose={onClose} anchorRef={anchorRef} className={className} width={width} placement="bottom-start" belowChatbar>
       {children}
     </AnchoredPortalPopover>
   );

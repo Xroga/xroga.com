@@ -263,10 +263,14 @@ export function DashboardView({ browserOperator }: { browserOperator?: ReactNode
           {showNewTerminal ? <div className={startStyles.repoStatus}><RepoContextBar compact /></div> : null}
 
           {incognito ? (
-            <span className="xv-term-badge">Private · not saved</span>
+            <div className="xv-workspace-header-tools">
+              <span className="xv-term-badge">Private · not saved</span>
+              {browserOperator ? <div className={scrollPolish.browserControl}>{browserOperator}</div> : null}
+            </div>
           ) : (
             <div className="xv-workspace-header-tools">
               <WorkspaceLauncher control="project" />
+              {browserOperator ? <div className={scrollPolish.browserControl}>{browserOperator}</div> : null}
               <WorkspacePeopleControls />
               <WorkspaceLauncher control="visibility" />
               <TerminalSkinPicker />
@@ -284,9 +288,6 @@ export function DashboardView({ browserOperator }: { browserOperator?: ReactNode
                 )}
               </button>
             </div>
-          )}
-          {browserOperator && (
-            <div className={scrollPolish.browserControl}>{browserOperator}</div>
           )}
         </header>
 

@@ -140,7 +140,7 @@ export function ProjectsQuickPopover({ open, onClose, anchorRef }: {
   if (!open) return null;
 
   return <AnchoredPortalPopover open={open} onClose={onClose} anchorRef={anchorRef}
-    placement="top-start" width={330} className={styles.menu} ariaLabel="Your projects">
+    placement="bottom-start" belowChatbar width={330} className={styles.menu} ariaLabel="Your projects">
     <section className={styles.panel} role="dialog" aria-label={view === 'create'?'Create a project':'Your projects'}>
       <header className={styles.header}>
         <span>{view === 'create' ? <button type="button" aria-label="Back to projects" onClick={() => {setView('list');setError('');}}><ArrowLeft size={16}/></button> : <FolderOpen size={16} aria-hidden="true"/>}
