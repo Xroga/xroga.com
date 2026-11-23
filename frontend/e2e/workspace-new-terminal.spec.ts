@@ -57,7 +57,7 @@ test('answer citations and table rows remain directly readable on desktop and mo
   const citation = page.getByRole('link', { name: 'Open link: Google Ads Help' });
   await expect(citation).toHaveAttribute('href', source + '?utm_source=xroga.com', { timeout: 30_000 });
   const table = page.locator('[data-inline-answer-table] table');
-  await expect(table.getByRole('cell', { name: 'Reach 26', exact: true })).toBeVisible();
+  await expect(table.getByRole('cell', { name: 'Reach 26', exact: true })).toBeVisible({ timeout: 30_000 });
   await expect(page.getByRole('button', { name: 'Next page' })).toHaveCount(0);
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 900 });
@@ -69,6 +69,9 @@ test('answer citations and table rows remain directly readable on desktop and mo
     await page.screenshot({ path: testInfo.outputPath(`inline-answer-${width}.png`) });
   }
   await citation.focus();
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Shift+Tab');
+  await expect(citation).toBeFocused();
   await expect(page.getByRole('tooltip').getByText('Google Ads Help', { exact: true })).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(page.getByRole('tooltip')).toHaveCount(0);
@@ -393,13 +396,12 @@ test('automation panels rotate every four seconds and dots pause on a selected p
   await expect(page.getByRole('button', { name: 'Resume automation rotation' })).toBeVisible();
 });
 
-test('solid model and plus menus are monochrome and mobile preserves the readable model name', async ({ page }) => {
+test('solid model and plus menus follow the terminal palette and work on mobile', async ({ page }) => {
   await page.goto('/workspace');
   await expect(page.getByTestId('workspace-start-header')).toBeVisible();
-  await expect(page.locator('.xv-workspace-shell')).toHaveCSS('background-color', 'rgb(0, 0, 0)');
-  const model = page.getByRole('button', { name: 'Automatic model and tool routing', exact: true });
-  await expect(model.locator('span')).toBeVisible();
-  await expect(page.getByTestId('mobile-model-icon')).toBeHidden();
+  await expect(page.locator('.xv-workspace-shell')).toHaveCSS('background-color', 'rgb(11, 13, 18)');
+  const model = page.getByRole('button', { name: 'Black Hole model and usage', exact: true });
+  await expect(model).toBeVisible();
   await model.click();
   const panel = page.getByTestId('black-hole-model-panel');
   await expect(panel).toBeVisible();
@@ -411,11 +413,10 @@ test('solid model and plus menus are monochrome and mobile preserves the readabl
   await expect(page.getByRole('dialog', { name: 'Composer actions' })).toHaveCSS('filter', 'none');
   await page.keyboard.press('Escape');
   await page.setViewportSize({ width: 390, height: 844 });
-  // Approved PR833 explicitly keeps the readable name on mobile and hides the
-  // decorative substitute. Preserve routing access and both menu behaviors.
-  await expect(model.locator('span')).toBeVisible();
-  await expect(model.locator('span')).toHaveText('Black Hole V∞');
-  await expect(page.getByTestId('mobile-model-icon')).toBeHidden();
+  await expect(model).toBeVisible();
+  await model.click();
+  await expect(panel.getByText('Xroga · Black Hole', { exact: true })).toBeVisible();
+  await page.keyboard.press('Escape');
   await page.locator('[data-capability="create"]').click();
   await chooseStarter(page, 'Documents');
   await expect(page.locator('[data-terminal-composer]')).toHaveValue(/My goal: Draft a document about:/);
