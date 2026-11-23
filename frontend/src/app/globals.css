@@ -10033,6 +10033,19 @@ body.xv-workspace-expanded-active .xv-terminal-dock {
   margin-inline: auto;
 }
 
+@media (max-width: 639px) {
+  /* The transcript scroll area already has side padding on phones. */
+  .xv-terminal-body--flush {
+    --xv-flush-transcript-gutter: .375rem;
+    padding-inline: var(--xv-flush-transcript-gutter);
+  }
+  .xv-terminal-body--flush > .xv-terminal-turn { padding-inline-start: 0; }
+}
+
+@media (max-width: 359px) {
+  .xv-terminal-body--flush { --xv-flush-transcript-gutter: 0px; }
+}
+
 /* ---- the workspace pane --------------------------------------------------- */
 
 .xv-workspace-panel {
