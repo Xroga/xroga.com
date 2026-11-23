@@ -129,7 +129,7 @@ describe('semantic request dispatch', () => {
         usage: {} as never,
       }, 'Search the web for flight fares');
       assert.equal(corrected.dispatch, 'blocked');
-      assert.match(corrected.blockers.join(' '), /research.*provider.*not configured/i);
+      assert.deepEqual(corrected.blockers, ['Web search is temporarily unavailable.']);
     } finally {
       if (previousKey !== undefined) process.env.DEEPSEEK_WEBSEARCH_FETCH_API = previousKey;
     }
@@ -160,6 +160,36 @@ describe('semantic request dispatch', () => {
     const guarded = enforceExplicitPublicResearchControls(plan, 'Search the web for flights and email the results to Jane');
     assert.equal(guarded.dispatch, 'blocked');
     assert.match(guarded.blockers.join(' '), /no action was executed/i);
+    for (const prompt of [
+      'Search the web for flights and create a table in the connected spreadsheet.',
+      'Search the web for flights and create a table, then email the results to Jane.',
+    ]) assert.equal(enforceExplicitPublicResearchControls(plan, prompt).dispatch, 'blocked');
+  });
+
+  it('treats a requested inline chart or table as part of the public answer', () => {
+    const originalKey = process.env.DEEPSEEK_WEBSEARCH_FETCH_API;
+    process.env.DEEPSEEK_WEBSEARCH_FETCH_API = 'test-key';
+    try {
+      const plan = {
+        goalContract: goal(),
+        dispatch: 'chat' as const,
+        capabilityIds: ['conversation.respond'],
+        rationale: 'ordinary chat',
+        blockers: [],
+        usage: {} as never,
+      };
+      for (const prompt of [
+        'Search the web for seasonal migration and create a compact table.',
+        'Search the web for public trail data and create a chart in this answer.',
+      ]) {
+        const corrected = enforceExplicitPublicResearchControls(plan, prompt);
+        assert.equal(corrected.dispatch, 'chat');
+        assert.ok(corrected.capabilityIds.includes('research.public-web'));
+      }
+    } finally {
+      if (originalKey === undefined) delete process.env.DEEPSEEK_WEBSEARCH_FETCH_API;
+      else process.env.DEEPSEEK_WEBSEARCH_FETCH_API = originalKey;
+    }
   });
 
   it('keeps a normal answer and public research out of the build path', () => {

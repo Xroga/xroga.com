@@ -520,9 +520,9 @@ test('one exact research approval completes its original rich answer, saves evid
  assert.equal(confirmation.row,lastConfirmation);
 
  mode='automatic-parity';
- expectedPublicQuery=/^kintsugi repair techniques for chipped porcelain$/u;
+ expectedPublicQuery=/^narwhals$/u;
  const explicit = await runChatPipeline({
-  ...withPublicPrompt('Could you search the public web for kintsugi repair techniques for chipped porcelain?'),
+  ...withPublicPrompt('Could you search the public web for narwhals?'),
   goalContract:goalContractSchema.parse({...currentGoal,semanticIntent:'ANSWER',freshnessRequirement:'NONE'}),
  });
  assert.equal(explicit.intent,'research');
@@ -532,6 +532,15 @@ test('one exact research approval completes its original rich answer, saves evid
  assert.doesNotMatch(JSON.stringify(consumer),/Review action|Confirm action|approval|settled_micro_usd|provider_request_id/i);
  assert.equal(searches,14);assert.equal(models,11);
  assert.equal(confirmation.row,lastConfirmation,'Public Search may not create a sensitive-action approval');
+
+ expectedPublicQuery=/^Published findings on quipu knot patterns$/u;
+ const selected = await runChatPipeline(withPublicPrompt('Published findings on quipu knot patterns.'));
+ const published = publicWorkspaceResearchAnswer(selected);
+ assert.equal(selected.publicWebRetrieved,true);
+ assert.match(published.response,/https:\/\/example\.com\/docs/);
+ assert.doesNotMatch(JSON.stringify(published),/Review action|Confirm action|settled_micro_usd|provider_request_id/i);
+ assert.equal(searches,15);assert.equal(models,12);
+ assert.equal(confirmation.row,lastConfirmation);
 });
 
 test('automatic Search eligibility uses the literal public topic and declines ambiguous or private requests',()=>{
@@ -565,13 +574,14 @@ test('automatic Search eligibility uses the literal public topic and declines am
   ['Search the public web for an explanation of giant kelp ecosystems.','an explanation of giant kelp ecosystems'],
   ['Run a web search for acoustic illusions using repeated tones.','acoustic illusions using repeated tones'],
   ['Research online for a guide to adapting card weaving patterns.','a guide to adapting card weaving patterns'],
+  ['Search the web for CSS :has() selector examples','CSS :has() selector examples'],
  ]) assert.deepEqual(workspacePublicSearchQuery(prompt),{query,officialDomains:[]},prompt);
  for(const prompt of ['Current notes in my inbox','What is the latest private customer list',
   'Search the web for John Smith','Who is Jane Doe currently working for',
   'Search the public web for John Michael Smith','Search the public web for john smith in London',
   'Search the public web for an overview of John Smith','Search online for what we talked about before',
   'Could you search the public web for techniques using the attached customer names?',
-  'Run a web search for this person','What is web search?','Web search is how I find references. Explain how ranking works.',
+  'Run a web search for this person',
   'Search for name associated with 123-45-6789','Search the latest details on https://example.org/query',
   'Search the web using only official sources (edge.local). Explain the public topic.',
   'Search the web using only official sources (staging.example.com). Explain a public topic.',
@@ -588,7 +598,7 @@ test('automatic Search eligibility uses the literal public topic and declines am
   'Forecast for my daughter’s address',
   'Who is the CEO of our confidential acquisition target?',
   'Search the web for the lifespan in the attached notes','Official support links for our private vendors',
-  'Explain weather forecasts','Explain photosynthesis','Search the web for'])assert.equal(workspacePublicSearchQuery(prompt),undefined,prompt);
+  'Search the web for'])assert.equal(workspacePublicSearchQuery(prompt),undefined,prompt);
 });
 
 test('public discovery includes implicit rankings and comparisons without exporting private context',()=>{
@@ -605,6 +615,13 @@ test('public discovery includes implicit rankings and comparisons without export
   'أفضل شركات الذكاء الاصطناعي في 2026',
   '2026 की सबसे अच्छी एआई कंपनियाँ कौन सी हैं?',
   '2026 年最好的人工智能公司有哪些？',
+  '查找关于漆器修复的资料并引用来源',
+  'पक्षियों के प्रवास पर प्रकाशित अध्ययन ढूँढें',
+  'Find research on volcanic glass weathering',
+  'Compare acoustic effects of vaulted and flat ceilings',
+  'Search the web for narwhals',
+  'Search the web for CSS :has() selector examples',
+  'Find how C++23 ranges work.\nCreate a compact comparison table.',
   'Top 10 best AI companies in 2026; official sites, ranking criteria, and dated sources.',
  ]) {
   const result=workspacePublicSearchQuery(prompt);
@@ -620,9 +637,10 @@ test('public discovery includes implicit rankings and comparisons without export
   'Las mejores empresas según nuestro archivo privado',
   'أفضل شركات الذكاء الاصطناعي بناء على بياناتنا الداخلية',
   'Top AI companies, no web search',
-  'Explain why companies use AI',
   'Rank these companies using the previous answer',
   'Top 10 AI companies; use the confidential customer list.',
+  'Look up this result using site:intranet.example.',
+  'Search the web for client\naccount details.',
  ]) assert.equal(workspacePublicSearchQuery(prompt),undefined,prompt);
 });
 

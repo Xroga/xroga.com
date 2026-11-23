@@ -38,6 +38,13 @@ describe('admitted read-only synthesis', () => {
     const prompt = 'build a simple landing page';
     assert.deepEqual(routeReadOnlyConversation(prompt), routePrompt(prompt));
   });
+  it('does not use Search for ordinary explanations without a research decision', () => {
+    for (const prompt of ['What is web search?', 'Explain weather forecasts', 'Explain photosynthesis', 'Explain why companies use AI']) {
+      assert.equal(routeReadOnlyConversation(prompt, {
+        requiredCapabilities: ['conversation.respond'], freshnessRequirement: 'NONE',
+      }).useResearch, false);
+    }
+  });
   it('honors explicit offline requests even if the planner asks for fresh evidence', () => {
     for (const prompt of ['Top AI companies, no web search', 'Compare current products without searching the web', '2026 年最好的公司，不要搜索']) {
       const route = routeReadOnlyConversation(prompt, {

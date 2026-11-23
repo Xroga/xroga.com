@@ -242,8 +242,9 @@ export function enforceExplicitPublicResearchControls(
   message: string,
 ): SemanticRequestPlan {
   const explicitSearch = explicitlyRequestsWorkspaceWebSearch(message);
+  const actionText = message.replace(/\bcreate\s+(?:a|an|one)\s+(?:(?:short|compact|simple|interactive)\s+){0,2}(?:table|chart|diagram|timeline|checklist)(?:\s+(?:in|within)\s+(?:this|the)\s+(?:answer|chat|response))?(?=\s*(?:[,.!?;]|\b(?:and|then)\b|$))/giu, '');
   const followedByAppAction =
-    /\b(?:and|then|also)\s+(?:please\s+)?(?:send|email|message|create|schedule|book|update|edit|delete|remove|publish|post|upload|invite|refund|transfer|pay)\b/i.test(message);
+    /\b(?:and|then|also)\s+(?:please\s+)?(?:send|email|message|create|schedule|book|update|edit|delete|remove|publish|post|upload|invite|refund|transfer|pay)\b/i.test(actionText);
   // Preserve the existing mixed-workflow guard when the web instruction
   // follows the first clause of a compound request.
   const mixedResearch = explicitSearch || (!explicitlyDisablesResearch(message)
@@ -282,7 +283,7 @@ export function enforceExplicitPublicResearchControls(
     universalCapabilityRegistry.get('research.public-web')?.health() === 'available';
   const blockers = researchReady
     ? []
-    : ['Public web research is unavailable because its provider is not configured.'];
+    : ['Web search is temporarily unavailable.'];
 
   const goalContract = goalContractSchema.parse({
     ...plan.goalContract,
