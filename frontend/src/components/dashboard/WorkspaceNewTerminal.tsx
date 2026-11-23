@@ -138,10 +138,10 @@ function AutomaticIntro() {
     const delay = window.setTimeout(() => setShowDetail(true), 2200);
     return () => window.clearTimeout(delay);
   }, [reducedMotion]);
-  return <div className={styles.automatic} aria-label="Automatic intelligence by default. No models or tools to choose. Type or speak your goal. Xroga chooses the tools and handles the work.">
+  return <div className={styles.automatic} aria-label="Automatic intelligence by default. No models or tools to choose. Type or speak in your native language, and the right tools handle the work automatically.">
     <span className={styles.automaticFirst} data-visible={!showDetail} aria-hidden={showDetail}><strong>Automatic intelligence by default.</strong> No models or tools to choose.</span>
     <span className={styles.automaticDetail} data-visible={showDetail} aria-hidden={!showDetail}>
-      Type or speak your goal. Xroga chooses the right tools and handles the work.
+      Type or speak in your native language, and the right tools handle the work automatically.
     </span>
   </div>;
 }

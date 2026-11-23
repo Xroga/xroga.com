@@ -598,6 +598,47 @@ test('mobile tagline stays on one line and tool picks are editable, removable an
   expect(sends).toBe(0);
 });
 
+for (const viewport of [{ width: 320, height: 568 }, { width: 360, height: 640 }, { width: 390, height: 844 }, { width: 768, height: 1024 }, { width: 1440, height: 900 }]) {
+test(`extension trigger clears the heading and keeps capability cards reachable at ${viewport.width}px`, async ({ page }, testInfo) => {
+  await page.setViewportSize(viewport);
+  await page.goto('/workspace');
+  const extension = page.locator('[data-xroga-extension-trigger]');
+  const heading = page.getByRole('heading', { name: 'Super Intelligence', exact: true });
+  await expect(extension).toBeVisible();
+  await expect(heading).toBeVisible();
+  const extensionBox = await extension.boundingBox();
+  const headingBox = await heading.boundingBox();
+  expect(extensionBox).not.toBeNull();
+  expect(headingBox).not.toBeNull();
+  expect(extensionBox!.y + extensionBox!.height + 10).toBeLessThanOrEqual(headingBox!.y);
+
+  const guidance = page.getByText('Type or speak in your native language, and the right tools handle the work automatically.', { exact: true });
+  await expect(guidance).toBeVisible({ timeout: 4_000 });
+  expect(await guidance.evaluate(element => {
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    const lines = Array.from(range.getClientRects());
+    const bounds = element.getBoundingClientRect();
+    return lines.length === 1 && lines[0].left >= bounds.left - 1 && lines[0].right <= bounds.right + 1;
+  })).toBe(true);
+
+  const descriptions = page.locator('[data-capability="create"] [class*="cardWords"] > span, [data-capability="find"] [class*="cardWords"] > span, [data-capability="build"] [class*="cardWords"] > span, [data-capability="ship"] [class*="cardWords"] > span');
+  await expect(descriptions).toHaveCount(4);
+  for (let index = 0; index < 4; index++) {
+    expect(Number.parseFloat(await descriptions.nth(index).evaluate(element => getComputedStyle(element).fontSize))).toBeLessThan(12);
+  }
+
+  await page.screenshot({ path: testInfo.outputPath(`workspace-${viewport.width}-top.png`) });
+  const workPacks = page.locator('[data-capability="work-packs"]');
+  await workPacks.scrollIntoViewIfNeeded();
+  await expect(workPacks).toBeVisible();
+  const packsBox = await workPacks.boundingBox();
+  expect(packsBox!.y + packsBox!.height).toBeLessThanOrEqual(viewport.height);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: testInfo.outputPath(`workspace-${viewport.width}-cards.png`) });
+});
+}
+
 test('search dialog escapes workspace stacking context and has an opaque foreground', async ({ page }) => {
   await page.goto('/workspace');
   const search = page.getByRole('button', { name: 'Search workspace', exact: true });

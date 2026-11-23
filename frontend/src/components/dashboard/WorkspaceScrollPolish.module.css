@@ -25,6 +25,20 @@
   position: static;
   white-space: normal;
 }
+/* Keep the extension trigger compact in its own toolbar row on phones. */
+@media (max-width: 639px) {
+  .browserControl [data-xroga-extension-trigger] {
+    gap: 5px;
+    padding: 4px 7px;
+    border-radius: 7px;
+    font-size: 10px;
+    line-height: 1;
+  }
+  .browserControl [data-xroga-extension-trigger] svg { width: 13px; height: 13px; }
+}
+@media (max-width: 320px) {
+  .browserControl [data-xroga-extension-trigger] { padding-inline: 6px; font-size: 9px; }
+}
 :global(.terminal-skin-gray) .browserControl [data-xroga-extension-trigger],
 :global(.terminal-skin-dark) .browserControl [data-xroga-extension-trigger],
 :global(.terminal-skin-amoled) .browserControl [data-xroga-extension-trigger] {
