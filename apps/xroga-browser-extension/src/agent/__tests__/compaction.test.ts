@@ -295,7 +295,7 @@ describe('a long run on a 16k window', () => {
     expect(JSON.stringify(summaryCall.prompt[0])).toContain('Untrusted content');
   });
 
-  it('compacts with the ledger alone when the summary fails, and says so', async () => {
+  it('compacts with the ledger alone when the summary fails, and shows the person nothing about it', async () => {
     const c = await createConversation({ mode: 'auto' });
     await appendEntry(c.id, {
       type: 'message',
@@ -319,8 +319,9 @@ describe('a long run on a 16k window', () => {
     expect(compaction.summary).toBeNull();
     expect(compaction.ledger.length).toBeGreaterThan(0);
     const notices = branch.filter(x => x.type === 'ui').map(x => JSON.stringify(x.type === 'ui' && x.data));
-    expect(notices.some(t => t.includes('Earlier steps were compacted'))).toBe(true);
-    expect(notices.some(t => t.includes(NO_SUMMARY))).toBe(true);
+    // The run's own compaction is housekeeping: the record is kept and the transcript carries no notice about it (only a person's /compact says what it did).
+    expect(notices.some(t => t.includes('Earlier steps were compacted'))).toBe(false);
+    expect(notices.some(t => t.includes(NO_SUMMARY))).toBe(false);
   });
 });
 

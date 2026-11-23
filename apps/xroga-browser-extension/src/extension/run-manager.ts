@@ -1666,7 +1666,8 @@ export class RunManager {
       // Adaptive, never above high (owner: no max). Planning turns and every turn after an error, a result in doubt or a read-back of written work run at high; routine
       // turns after two calm ones run at none. Measured 2026-11-23 on the same 26 live tasks: 26 of 26 passed at fixed high and at adaptive, 0 tool errors in both,
       // adaptive mean 52 s against 72 s and 257 calls against 342.
-      const effort = new EffortControl('high', { adaptive: true, noMax: true });
+      // One model setting for every turn: high (owner decision 2026-11-23 after the matched runs: adaptive and none each failed tasks that high completed; high is only 10 to 20 seconds slower).
+      const effort = new EffortControl('high', { fixed: true, noMax: true });
       let recoveryReadOnly = false;
       let interrupted: ReturnType<typeof planRestore>['results'] = [];
       try {

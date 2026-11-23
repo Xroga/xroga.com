@@ -35,6 +35,8 @@ const MAX_TURNS = 400;
 // entitlement ledger, and a refused reservation stops the run with its progress saved (BROWSER_ALLOWANCE_EXHAUSTED).
 const SEGMENT_TURNS = 96;
 const TURN_CEILING_MICROS = 3_000;
+/** The text of one model request, images apart: about 250,000 tokens, far under the model's window; it only stops a runaway request. */
+const MAX_TURN_REQUEST_BYTES = 1_200_000;
 /**
  * The reasoning a browser turn asks the model for. Zurelay takes exactly `none`, `high` or `max` for this model (probed 2026-11-21: any other word is a
  * 400 naming those three; `low` and `medium` are accepted but answered as `high`, so they are not offered). The server decides: the extension may ask,
@@ -45,8 +47,10 @@ export type BrowserEffort = 'none' | 'high' | 'max';
 const EFFORTS: readonly BrowserEffort[] = ['none', 'high', 'max'];
 const TURN_POLICY: Record<BrowserEffort, { maxTokens: number; ceilingMicros: number; timeoutMs: number }> = {
   none: { maxTokens: 2_048, ceilingMicros: TURN_CEILING_MICROS, timeoutMs: 80_000 },
-  high: { maxTokens: 4_096, ceilingMicros: 5_000, timeoutMs: 100_000 },
-  max: { maxTokens: 6_144, ceilingMicros: 8_000, timeoutMs: 120_000 },
+  // The model reads a million tokens at about three cents per million (cached input far less), so a turn is bounded by room to think and a cost ceiling that a
+  // 200,000-token request fits under, not by a small window. A long task (many pages read, many items handled) must not stop for a limit the model does not have.
+  high: { maxTokens: 24_000, ceilingMicros: 30_000, timeoutMs: 150_000 },
+  max: { maxTokens: 32_000, ceilingMicros: 34_000, timeoutMs: 200_000 },
 };
 export function defaultBrowserEffort(env: NodeJS.ProcessEnv = process.env): BrowserEffort {
   const value = env.XROGA_BROWSER_REASONING_DEFAULT;
@@ -255,7 +259,7 @@ const turnBody = z.object({
   messages: z.array(message).min(1).max(140),
   tools: z.array(tool).max(64).optional(),
   tool_choice: z.enum(['auto', 'none', 'required']).optional(),
-  max_tokens: z.number().int().min(1).max(8_192).optional(),
+  max_tokens: z.number().int().min(1).max(32_768).optional(),
   reasoning_effort: z.enum(['none', 'high', 'max']).optional(),
   vision_probe_png: z.string().min(32).max(24_000).regex(/^[A-Za-z0-9+/]+={0,2}$/).optional(),
 }).strict();
@@ -957,7 +961,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const maxTokens = Math.min(body.max_tokens ?? policy.maxTokens, policy.maxTokens);
     // Images are bounded on their own (count, size and dimensions above); the text cap counts everything else.
     const requestBytes = Buffer.byteLength(JSON.stringify({ ...body, messages }).replace(/data:image\/png;base64,[A-Za-z0-9+/=]+/g, 'data:image/png;base64,'));
-    if (requestBytes > 96_000) throw new BrowserRequestError(400, 'BROWSER_CONTEXT_TOO_LARGE');
+    if (requestBytes > MAX_TURN_REQUEST_BYTES) throw new BrowserRequestError(400, 'BROWSER_CONTEXT_TOO_LARGE');
     const admitted = allowance(row);
     if (turn !== admitted.turns + 1) {
       throw new BrowserRequestError(409, 'BROWSER_TURN_REPLAY');

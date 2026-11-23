@@ -372,6 +372,7 @@ export class AgentLoop {
   async shorten(): Promise<boolean> {
     const { model } = this.options;
     const result = await runShorten({
+      quiet: true,
       conversationId: this.options.conversationId,
       model,
       window: this.window,
@@ -419,6 +420,7 @@ export class AgentLoop {
   async compact(): Promise<boolean> {
     const { model, system, tools } = this.options;
     const result = await runCompaction({
+      quiet: true,
       conversationId: this.options.conversationId,
       model,
       window: this.window,

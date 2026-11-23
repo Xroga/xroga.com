@@ -57,7 +57,7 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
     if (busy) throw Object.assign(new Error('Model temporarily busy'), { code: 'MODEL_PROVIDER_BUSY', status: 429 });
     assert.equal(request.modelId, 'deepseek_v4_1_flash_1017');
     // The default browser turn reasons at `high` and gets the high policy's output room and spend ceiling; a picture probe stays at `none`.
-    const expected = request.body.reasoning_effort === 'none' ? { ceiling: 3_000, maxTokens: [2_048, 512] } : request.body.reasoning_effort === 'high' ? { ceiling: 5_000, maxTokens: [4_096] } : { ceiling: 8_000, maxTokens: [6_144] };
+    const expected = request.body.reasoning_effort === 'none' ? { ceiling: 3_000, maxTokens: [2_048, 512] } : request.body.reasoning_effort === 'high' ? { ceiling: 30_000, maxTokens: [24_000] } : { ceiling: 34_000, maxTokens: [32_000] };
     assert.equal(request.platformCostCeiling, expected.ceiling);
     assert.ok(expected.maxTokens.includes(request.body.max_tokens as number), `max_tokens ${String(request.body.max_tokens)} for ${String(request.body.reasoning_effort)}`);
     assert.equal(request.body.stream, false);

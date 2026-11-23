@@ -460,6 +460,8 @@ export async function runCompaction(options: {
   messages: (branch: Entry[]) => ModelMessage[];
   /** The window in force: lowered for the rest of a run after a refused request. */
   window?: number;
+  /** The run's own compaction says nothing to the person (a person's /compact does). */
+  quiet?: boolean;
 }): Promise<CompactionResult | null> {
   const { conversationId, model, unverified } = options;
   const window = options.window ?? model.profile.contextWindow;
@@ -491,6 +493,8 @@ export async function runCompaction(options: {
   await putEntry({ ...entry, tokensAfter: Math.round(tokensAfter) });
   const notices: CompactionResult['notices'] = [];
   const say = async (text: string, tone: 'info' | 'warn') => {
+    // Compaction the run does on its own is housekeeping, not news: only a person's /compact says what it did.
+    if (options.quiet) return;
     const e = await appendEntry(conversationId, { type: 'ui', kind: 'notice', data: { text, tone } });
     notices.push({ id: e.id, text, tone, at: e.at });
   };
@@ -519,6 +523,7 @@ export async function runShorten(options: {
   unverified: ReadonlySet<string>;
   messages: (branch: Entry[]) => ModelMessage[];
   window?: number;
+  quiet?: boolean;
 }): Promise<CompactionResult | null> {
   const { conversationId, unverified } = options;
   const window = options.window ?? options.model.profile.contextWindow;
@@ -568,6 +573,7 @@ export async function runShorten(options: {
   });
   const tokensAfter = (options.fixedChars + contextChars(options.messages(await activeBranch(conversationId)))) / 4;
   await putEntry({ ...entry, tokensAfter: Math.round(tokensAfter) });
+  if (options.quiet) return { tokensBefore, tokensAfter, notices: [] as CompactionResult['notices'] };
   const text = `Recent steps were shortened to fit the model's context: ${k(tokensBefore)} → ${k(tokensAfter)} tokens`;
   const notice = await appendEntry(conversationId, { type: 'ui', kind: 'notice', data: { text, tone: 'info' } });
   return { tokensBefore, tokensAfter, notices: [{ id: notice.id, text, tone: 'info', at: notice.at }] };
