@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "457ff8c7045b2a4c214f1f225ece5093dcb6650f",
+  "source_sha": "0545ab2229af17f704e06d0950bce00461ed68c7",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17066,7 +17066,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "5d9935ab696ff8f9b0c7f4513bcdef0cc1f094d205e34f50c60e7d2a55d0a18f"
+      "sha256": "4569b06a1ad2699952ffb91c44816dfd79718e9dbf04a301920ea3ba3c68f650"
     },
     {
       "path": "backend/src/ai/buildImprovementMemory.ts",
@@ -17382,7 +17382,7 @@
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "sha256": "d23b8a1652f1e14ff32e25dcd2879bf4b2a0ed3a6cad8e79827ace5dcd5468de"
+      "sha256": "ae99f7fbc463808c3bae7a54ab19324bc373af5df8eaad331038a0473f897b88"
     },
     {
       "path": "backend/src/ai/researchRankingEvidence.ts",
@@ -17682,7 +17682,7 @@
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "sha256": "ca02c0983a6302a9737d706a2bbeecccd3d95428854840a70c2ce5e28419fa95"
+      "sha256": "aae96f99a5c3a38e85532f64e8e0fe9148a2e08311b5460e9c24314ed99cffeb"
     },
     {
       "path": "backend/src/ai/zurelayWire.ts",
@@ -19446,7 +19446,7 @@
     },
     {
       "path": "backend/src/services/integrations/researchResult.ts",
-      "sha256": "0095c09bfbfcdb0dbea7af1a667d4c9ed5cd9bd36b0363eeb7b423048da00af0"
+      "sha256": "99f84bb120c73ea1a2635d47cf483387761b499d6b461372ecc5f5cbfd1a34c8"
     },
     {
       "path": "backend/src/services/integrations/supabaseAccess.ts",
@@ -34044,14 +34044,14 @@
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "line": 126,
+      "line": 150,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "line": 127,
+      "line": 151,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -34681,14 +34681,28 @@
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "line": 80,
+      "line": 73,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/workspacePublicSearch.ts",
+      "line": 87,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "line": 146,
+      "line": 153,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/workspacePublicSearch.ts",
+      "line": 186,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37488,14 +37502,14 @@
     },
     {
       "path": "backend/src/services/integrations/researchResult.ts",
-      "line": 91,
+      "line": 98,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/researchResult.ts",
-      "line": 131,
+      "line": 139,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
