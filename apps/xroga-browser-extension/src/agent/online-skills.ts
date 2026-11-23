@@ -6,6 +6,7 @@
 import { untrusted } from '@src/browser-control/core/text';
 import { skillNonce } from './well-known-skills';
 import { parseSkillMd } from './skill-md';
+import { POOL_HOST } from './aas-skills';
 import type { FetchLike } from './well-known-skills';
 
 export interface OnlineCandidate {
@@ -27,8 +28,8 @@ export interface OnlineProvider {
   resolve(keywords: string, limit: number, fetchImpl: FetchLike): Promise<OnlineCandidate[]>;
 }
 
-const TIMEOUT_MS = 2500;
-const MAX_BODY = 64 * 1024;
+const TIMEOUT_MS = 8000;
+const MAX_BODY = 1024 * 1024;
 const SLUG = /^[a-zA-Z0-9][a-zA-Z0-9._-]{0,80}$/;
 
 /** A privacy-preserving query: lower-case words only, no digits, no addresses, no long tokens, at most 12 words. Returns '' when nothing safe is left. */
@@ -100,7 +101,10 @@ export const SKILLSHUB: OnlineProvider = {
 /** Fetches one candidate's SKILL.md. Valid format required; the body is untrusted and unverified. */
 export async function loadCandidate(c: OnlineCandidate, fetchImpl: FetchLike): Promise<OnlineCandidate | null> {
   const u = new URL(c.fetchUrl);
-  if (u.protocol !== 'https:' || !SKILLSHUB.hosts.includes(u.hostname)) return null;
+  const hosts = c.provider === 'aas' ? [POOL_HOST] : SKILLSHUB.hosts;
+  // The pool's file must come from the pinned commit of its own repository (no redirect, no credentials).
+  if (u.protocol !== 'https:' || !hosts.includes(u.hostname) || u.username || u.password) return null;
+  if (c.provider === 'aas' && !/^\/sickn33\/agentic-awesome-skills\/[a-f0-9]{40}\/skills\/[A-Za-z0-9._-]+\/SKILL\.md$/.test(u.pathname)) return null;
   const got = await getText(fetchImpl, c.fetchUrl, 'text/markdown, text/plain');
   if (!got.ok) return null;
   const parsed = parseSkillMd(got.text);

@@ -62,7 +62,7 @@ describe('loadCandidate', () => {
   it('refuses an invalid file, an outage, an oversized body and an off-host address', async () => {
     expect(await loadCandidate(cand, () => reply('no frontmatter'))).toBeNull();
     expect(await loadCandidate(cand, () => Promise.reject(new Error('x')))).toBeNull();
-    expect(await loadCandidate(cand, () => reply('---\nname: g\ndescription: d\n---\n' + 'x'.repeat(70_000)))).toBeNull();
+    expect(await loadCandidate(cand, () => reply('---\nname: g\ndescription: d\n---\n' + 'x'.repeat(1_100_000)))).toBeNull();
     expect(await loadCandidate({ ...cand, fetchUrl: 'https://evil.test/g.md' }, () => reply('---\nname: g\ndescription: d\n---\nok'))).toBeNull();
   });
 });

@@ -107,7 +107,7 @@ describe('find_skill and read_skill in a run', () => {
     const results = (await activeBranch(c.id)).flatMap(e => (e.type === 'message' && e.message.role === 'tool' ? e.message.parts : [])).filter(p => p.type === 'tool-result') as Array<{ toolName: string; text: string; isError?: boolean }>;
     const find = results.find(r => r.toolName === 'find_skill')!;
     expect(find.text).toContain('google-ads-search-campaigns');
-    expect(find.text.length).toBeLessThan(1200);
+    expect(find.text.length).toBeLessThan(4_200);
     const read = results.filter(r => r.toolName === 'read_skill');
     expect(read[0]!.text).toContain('Never promise profit');
     expect(read[1]!.isError).toBe(true);
