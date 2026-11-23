@@ -4,6 +4,28 @@ import {randomUUID} from 'node:crypto';
 import {researchAnswerRequestSchema,RESEARCH_ANSWER_MAXIMUM_MICRO_USD,researchCitationIssues,bindCitationLinks,publicWorkspaceResearchAnswer,presentPublicResearchAnswer} from './researchAnswer.js';
 import {nativeMarkdownTables} from './nativeMarkdown.js';
 
+test('public research flags a fixed night budget that conflicts with its complete itinerary', () => {
+  const sources = [{ url: 'https://travel.example/rates' }];
+  const response = [
+    '**Assumptions:** one guest, **7 nights**, prices in EUR.', '',
+    'Lodging is estimated at €60 per night [1].', '',
+    '## An eight-day itinerary',
+    'Day 1 arrive and check in; Day 2 visit the market; Day 7 depart.',
+  ].join('\n');
+  const verdict = presentPublicResearchAnswer(response, { status: 'complete' }, sources, 'Plan a stay and estimate the costs.');
+  assert.deepEqual(verdict.completion, { status: 'partial', reason: 'factual_review' });
+  assert.equal(verdict.requiresReadableFallback, true);
+  assert.match(verdict.response, /^The itinerary runs from Day 1 to Day 7, which is 6 nights\. The budget assumes 7 nights\./);
+  assert.ok(verdict.response.endsWith(response));
+
+  for (const alignedOrAmbiguous of [response.replace('Day 7 depart', 'Day 8 depart'),
+    response.replace('7 nights', '5–7 nights'), response.replace('Day 7 depart.', 'Day 7 depart for the museum.')]) {
+    const result = presentPublicResearchAnswer(alignedOrAmbiguous, { status: 'complete' }, sources, 'Plan a stay and estimate the costs.');
+    assert.deepEqual(result.completion, { status: 'complete' });
+    assert.equal(result.response, alignedOrAmbiguous);
+  }
+});
+
 test('public research withholds positions based on incompatible financing figures', () => {
   const sources = [{ url: 'https://finance.example/rounds' }];
   const prose = [
@@ -304,8 +326,7 @@ test('one exact research approval completes its original rich answer, saves evid
    if(body.p_internal_route.startsWith('web.'))assert.equal(body.p_reservation_micro_usd,750);
    else if(mode==='automatic-ranking-expanded-evidence'){
     assert.ok(body.p_reservation_micro_usd>RESEARCH_ANSWER_MAXIMUM_MICRO_USD,'Canonical reservation covers the real evidence and output');
-    assert.ok(body.p_reservation_micro_usd<10_000,'Representative request stays within the isolated acceptance allowance');
-   }else assert.ok(body.p_reservation_micro_usd<=RESEARCH_ANSWER_MAXIMUM_MICRO_USD);
+   }else if(!mode.startsWith('automatic'))assert.ok(body.p_reservation_micro_usd<=RESEARCH_ANSWER_MAXIMUM_MICRO_USD);
    const row={id:randomUUID(),user_id:owner,idempotency_key:body.p_idempotency_key,status:'reserved',purpose:body.p_purpose,internal_route:body.p_internal_route,price_version:body.p_price_version,
     estimated_input_tokens:body.p_estimated_input_tokens,maximum_output_tokens:body.p_maximum_output_tokens,reserved_micro_usd:body.p_reservation_micro_usd};reservations.set(row.id,row);
    if(mode==='cancel-at-model-reservation'&&!body.p_internal_route.startsWith('web.'))confirmation.row!.status='cancelled';

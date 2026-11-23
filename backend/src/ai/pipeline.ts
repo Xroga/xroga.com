@@ -1284,14 +1284,13 @@ export async function runChatPipeline(opts: {
     const { response, completion } = researchPresentation ?? answer;
     opts.onDelta?.(response);
     const delivery = nativeDocumentDelivery(requestedDownload, missingDownloadSource, opts.prompt, response, completion);
+    // Keep corrected prose canonical even when a verified download is available.
+    const responseSource = researchPresentation?.requiresReadableFallback
+      ? { format: NATIVE_UI_FORMAT, text: '' } : answer.responseSource;
     return {
       ...answer,
       response, completion: delivery.completion,
-      // The original program can contain prose bound before link verification.
-      // Keep the corrected, readable answer as the single source on recovery.
-      ...(researchPresentation?.requiresReadableFallback
-        ? { responseSource: { format: NATIVE_UI_FORMAT, text: '' } } : {}),
-      ...(delivery.downloadFormat ? { responseSource: { ...answer.responseSource, downloadFormat: delivery.downloadFormat } } : {}),
+      responseSource: delivery.downloadFormat ? { ...responseSource, downloadFormat: delivery.downloadFormat } : responseSource,
       intent: route.kind, usage: usageToTokenUsage(usage), webSources: research?.sources,
       ...(publicWebRetrieved ? { publicWebRetrieved } : {}),
       modelId: result.modelId, route,

@@ -101,6 +101,36 @@ export function bindCitationLinks(response:string,sources:ReadonlyArray<{url:str
  return mapResearchProse(response, bindProse);
 }
 
+function scheduledStayMismatch(response: string): string | undefined {
+  const prose = response.replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/gu, '').replace(/\*\*/gu, '');
+  const assumptions = prose.match(/^[ \t]*Assumptions?:[^\r\n]*/gimu) ?? [];
+  if (assumptions.length !== 1) return;
+  const stays = [...assumptions[0].matchAll(/\b([1-9]\d*)\s+(?:hotel\s+)?nights?\b/giu)];
+  if (stays.length !== 1) return;
+  const stay = stays[0];
+  const before = assumptions[0].slice(0, stay.index);
+  if (/(?:\b(?:up to|at least|at most|about|around|approximately|or|to)\s+|\d\s*[-–—]\s*|~\s*)$/iu.test(before)) return;
+
+  const itineraries = prose.split(/(?=^#{1,6}\s)/mu).filter(section =>
+    /^#{1,6}[ \t]+[^\r\n]*(?:\bitinerary\b|\b(?:\d+-day|daily) (?:plan|shape|schedule)\b)/iu.test(section));
+  if (itineraries.length !== 1) return;
+  const itinerary = itineraries[0].slice(itineraries[0].indexOf('\n') + 1);
+  const days = [...itinerary.matchAll(/\bday[ \t]+(\d+)[ \t]*(?:[:.)–—-][ \t]*)?/giu)];
+  if (days.length < 2) return;
+  const [first, last] = [days[0], days[days.length - 1]];
+  const arrival = itinerary.slice(first.index + first[0].length);
+  const departure = itinerary.slice(last.index + last[0].length);
+  if (!/^(?:arrive|arrival|check[ -]in)\b/iu.test(arrival) ||
+      !/^(?:(?:check[ -]out and )?depart(?:ure)?(?: for home)?|fly home)(?=[.;\r\n]|$)/iu.test(departure)) return;
+
+  const startDay = Number(first[1]);
+  const endDay = Number(last[1]);
+  const budgetNights = Number(stay[1]);
+  const nights = endDay - startDay;
+  if (![startDay, endDay, budgetNights].every(Number.isSafeInteger) || nights <= 0 || nights === budgetNights) return;
+  return `The itinerary runs from Day ${startDay} to Day ${endDay}, which is ${nights} ${nights === 1 ? 'night' : 'nights'}. The budget assumes ${budgetNights} ${budgetNights === 1 ? 'night' : 'nights'}. Treat the budget as a separate estimate until the dates are aligned.`;
+}
+
 /** Structural coverage of an explicit link deliverable. A retrieved URL alone
  * cannot certify ownership or that the cited page supports a particular claim. */
 export function presentPublicResearchAnswer(response: string, completion: PublicCompletionState,
@@ -110,6 +140,13 @@ export function presentPublicResearchAnswer(response: string, completion: Public
   const rankingWithheld = evidenceOnlyAnswer !== undefined;
   if (rankingWithheld) {
     text = evidenceOnlyAnswer;
+    if (completion.status === 'complete' || completion.reason === 'source_coverage') {
+      completion = { status: 'partial', reason: 'factual_review' };
+    }
+  }
+  const stayMismatch = scheduledStayMismatch(text);
+  if (stayMismatch) {
+    if (!text.startsWith(stayMismatch)) text = stayMismatch + '\n\n' + text;
     if (completion.status === 'complete' || completion.reason === 'source_coverage') {
       completion = { status: 'partial', reason: 'factual_review' };
     }
@@ -126,7 +163,7 @@ export function presentPublicResearchAnswer(response: string, completion: Public
   }
   if (!requestsOfficialLinkCoverage(prompt)) return { response: text, completion:
     attributionIncomplete && completion.status === 'complete' ? { status: 'partial', reason: 'source_attribution' } as const : completion,
-    ...(rankingWithheld ? { requiresReadableFallback: true } : {}) };
+    ...(rankingWithheld || stayMismatch ? { requiresReadableFallback: true } : {}) };
 
   const count = /\b(?:top|rank|list|name|compare|find)\s+(?:the\s+)?(\d{1,3}|two|three|four|five|six|seven|eight|nine|ten)\b/iu.exec(prompt)?.[1];
   const numberWords = ['two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];

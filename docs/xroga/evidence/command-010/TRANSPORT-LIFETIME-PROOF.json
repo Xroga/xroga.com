@@ -322,7 +322,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "f40633d0d6a00d4d77a0f4546b2c94964f55e101043e97188cb53252996993b8",
+      "sha256": "b598c509dacca47546033b195b3d7618cde4bc634f60aa88106c07797c968cd5",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -745,7 +745,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "8e7a0d94d150b8790ae2380666666ed53dcb8e145e4d9b462c9680d9a75980c4",
+      "sha256": "5f328cb932ae5030ef4a625ec6f6e4355a825d8e726e18dee8df165041bc3a89",
       "beforeTxtDownloadRoutingSha256": "450d77c6f89e9334ef2345d316895580732bda5b614ad3d87d42f4d4643f75fa",
       "beforeInlineCalculatorRoutingSha256": "58e3fa0ea9ec46ed2aa0be0c7aa6ca0777c213059c12f3cd6ecf04a6a2ab6e29",
       "beforePlannerCompletionDiagnosticsSha256": "6ca81b0c9234195e6159d1e03735a21ce50d50cf1e8f71b53cb62199bf95cb26",

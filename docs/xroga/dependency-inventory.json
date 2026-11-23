@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a635514726a18923afb3343c40dc297b98cd460b",
+  "source_sha": "acc78a743d84370313307c0e9978fe2eecbe63af",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17310,7 +17310,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "f40633d0d6a00d4d77a0f4546b2c94964f55e101043e97188cb53252996993b8"
+      "sha256": "b598c509dacca47546033b195b3d7618cde4bc634f60aa88106c07797c968cd5"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -17330,7 +17330,7 @@
     },
     {
       "path": "backend/src/ai/prompts.ts",
-      "sha256": "82c895fc1aaf821bcaa36b38eb82f9583efce3bcd451c3dbbd1a65468dc29ab9"
+      "sha256": "8fdb9d6e34e883351d3377d4dc07c167fe512278a5621d236bdde5f71156fcf4"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -17382,7 +17382,7 @@
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "sha256": "61c670ec4ecd203c797e4d8412ca04a48fd45a03d06f1e869213699e4f4c4c30"
+      "sha256": "9163bfa5719d756916994478fef42bf44faafb7488f8d897f85bd1f58e4e5921"
     },
     {
       "path": "backend/src/ai/researchPublicationEvidence.ts",
@@ -17654,7 +17654,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "8e7a0d94d150b8790ae2380666666ed53dcb8e145e4d9b462c9680d9a75980c4"
+      "sha256": "5f328cb932ae5030ef4a625ec6f6e4355a825d8e726e18dee8df165041bc3a89"
     },
     {
       "path": "backend/src/ai/usageAccounting.ts",
@@ -25939,7 +25939,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4223,
+      "line": 4222,
       "credentialsInUrl": false
     },
     {
@@ -33884,35 +33884,35 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1678,
+      "line": 1677,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2430,
+      "line": 2429,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3989,
+      "line": 3988,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4173,
+      "line": 4172,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4952,
+      "line": 4951,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -34108,14 +34108,14 @@
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "line": 136,
+      "line": 173,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "line": 137,
+      "line": 174,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -34745,7 +34745,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1621,
+      "line": 1622,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
