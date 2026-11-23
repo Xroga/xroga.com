@@ -38,12 +38,14 @@ export interface RouteDecision {
 export function routeReadOnlyConversation(
   prompt: string,
   goal?: Pick<GoalContract, 'requiredCapabilities' | 'freshnessRequirement'>,
+  explicitWorkspaceSearch = false,
 ): RouteDecision {
   const inferred = routePrompt(prompt);
-  if (!goal && (!inferred.useResearch || !explicitlyDisablesResearch(prompt))) return inferred;
-  const research = !explicitlyDisablesResearch(prompt) && Boolean(goal
+  const researchDisabled = explicitlyDisablesResearch(prompt);
+  if (!goal && !explicitWorkspaceSearch && (!inferred.useResearch || !researchDisabled)) return inferred;
+  const research = !researchDisabled && (explicitWorkspaceSearch || Boolean(goal
     && (goal.requiredCapabilities.includes('research.public-web')
-      || goal.requiredCapabilities.includes('research.x') || goal.freshnessRequirement !== 'NONE'));
+      || goal.requiredCapabilities.includes('research.x') || goal.freshnessRequirement !== 'NONE')));
   return { ...inferred, kind: research ? 'research' : 'chat', builder: 'deepseek_v4_1_flash_1017',
     useResearch: research, reason: 'The validated semantic goal contract selected this read-only execution path.' };
 }
@@ -120,7 +122,7 @@ export function routePrompt(
   /**
    * Retrieval is handled independently:
    *
-   * general public web -> Parallel
+   * general public web -> official DeepSeek Search
    * X-native retrieval -> xAI x_search
    *
    * This route chooses only the final synthesis model.

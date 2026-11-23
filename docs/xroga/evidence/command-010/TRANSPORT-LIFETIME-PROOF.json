@@ -322,7 +322,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "0d72f9ebb7a4072e05fe675a956a4515ed5c2b52d37e2fefcde9f1a0830fc10c",
+      "sha256": "763efe2a954b3e1b38ec511b40f4eff24a862208aedb54ac0795e05d7d895cc3",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -745,7 +745,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "982d71c45c0bf2b0e032b083f368752a5d03d1d611dddd86826d894c91026276",
+      "sha256": "f8070295c4c1468f0c0474b97c9cb4dc13a1b01813b77fcf518f83f595f68fb4",
       "beforeTxtDownloadRoutingSha256": "450d77c6f89e9334ef2345d316895580732bda5b614ad3d87d42f4d4643f75fa",
       "beforeInlineCalculatorRoutingSha256": "58e3fa0ea9ec46ed2aa0be0c7aa6ca0777c213059c12f3cd6ecf04a6a2ab6e29",
       "beforePlannerCompletionDiagnosticsSha256": "6ca81b0c9234195e6159d1e03735a21ce50d50cf1e8f71b53cb62199bf95cb26",
@@ -1177,6 +1177,22 @@
         "path": "backend/src/ai/black-hole/webIntelligence.ts",
         "previousSha256": "01c533bfe2127d849264b9fdd5c8528cbfac161994842a818f4a9cfa1cd6089b",
         "currentSha256": "5d9935ab696ff8f9b0c7f4513bcdef0cc1f094d205e34f50c60e7d2a55d0a18f"
+      }
+    ]
+  },
+  "workspaceExplicitSearchRoutingContinuation": {
+    "baseline": "6bd4fdec53bbacb9896df101c5986a4390ee06ba",
+    "scope": "Route explicit public Search to the existing broker and keep the private input gate. The two reviewed persistence candidates and their enclosing build function are byte-identical. Current live acceptance remains unverified.",
+    "bindings": [
+      {
+        "path": "backend/src/ai/pipeline.ts",
+        "previousSha256": "0d72f9ebb7a4072e05fe675a956a4515ed5c2b52d37e2fefcde9f1a0830fc10c",
+        "currentSha256": "763efe2a954b3e1b38ec511b40f4eff24a862208aedb54ac0795e05d7d895cc3"
+      },
+      {
+        "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
+        "previousSha256": "982d71c45c0bf2b0e032b083f368752a5d03d1d611dddd86826d894c91026276",
+        "currentSha256": "f8070295c4c1468f0c0474b97c9cb4dc13a1b01813b77fcf518f83f595f68fb4"
       }
     ]
   }

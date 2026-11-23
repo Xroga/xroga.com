@@ -12,6 +12,8 @@ import {
 import { getRouterAdminConfig } from '../routerConfig.js';
 import { PRESENTATION_PLAN_INSTRUCTIONS } from '../responsePresentation.js';
 import { requestedNativeDocumentFormat } from '../nativeDocumentDownload.js';
+import { explicitlyRequestsWorkspaceWebSearch } from '../workspacePublicSearch.js';
+import { explicitlyDisablesResearch } from '../../lib/taskClassifier.js';
 import {prepareSonnetConversation,requestedSonnetReason} from '../sonnetApproval.js';
 
 import {
@@ -239,14 +241,15 @@ export function enforceExplicitPublicResearchControls(
   plan: SemanticRequestPlan,
   message: string,
 ): SemanticRequestPlan {
-  const explicitSearch =
-    /\b(?:web searches?|internet searches?|search (?:the )?(?:web|internet)|browse (?:the )?(?:web|internet)|research online)\b/i.test(message);
-  const negatedSearch =
-    /\b(?:do not|don't|without|avoid)\s+(?:\w+\s+){0,2}(?:web searches?|internet searches?|search (?:the )?(?:web|internet)|browse (?:the )?(?:web|internet)|research online)\b/i.test(message);
+  const explicitSearch = explicitlyRequestsWorkspaceWebSearch(message);
   const followedByAppAction =
     /\b(?:and|then|also)\s+(?:please\s+)?(?:send|email|message|create|schedule|book|update|edit|delete|remove|publish|post|upload|invite|refund|transfer|pay)\b/i.test(message);
+  // Preserve the existing mixed-workflow guard when the web instruction
+  // follows the first clause of a compound request.
+  const mixedResearch = explicitSearch || (!explicitlyDisablesResearch(message)
+    && /\b(?:search|browse) (?:the )?(?:public )?(?:web|internet)\b|\b(?:web|internet) searches?\b|\bresearch online\b/iu.test(message));
 
-  if (explicitSearch && !negatedSearch && followedByAppAction && plan.dispatch === 'chat') {
+  if (mixedResearch && followedByAppAction && plan.dispatch === 'chat') {
     const blockers = ['Public-web research followed by a connected-app action needs a reviewed multi-source workflow; no action was executed.'];
     return {
       ...plan,
@@ -260,7 +263,6 @@ export function enforceExplicitPublicResearchControls(
 
   if (
     !explicitSearch ||
-    negatedSearch ||
     plan.dispatch !== 'chat' ||
     [...plan.capabilityIds, ...plan.goalContract.requiredCapabilities].some(
       (id) => id === 'business.action' || id === 'software.implement',
@@ -271,7 +273,7 @@ export function enforceExplicitPublicResearchControls(
 
   const capabilityIds = [
     ...new Set([
-      ...plan.capabilityIds.filter((id) => id !== 'business.read'),
+      ...plan.capabilityIds.filter((id) => id !== 'business.read' && id !== 'research.x'),
       'research.public-web',
       'conversation.respond',
     ]),

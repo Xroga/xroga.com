@@ -518,9 +518,23 @@ test('one exact research approval completes its original rich answer, saves evid
  assert.equal(searches,13);
  assert.equal(models,10,'A full public source set reaches exactly one synthesis call');
  assert.equal(confirmation.row,lastConfirmation);
+
+ mode='automatic-parity';
+ expectedPublicQuery=/^kintsugi repair techniques for chipped porcelain$/u;
+ const explicit = await runChatPipeline({
+  ...withPublicPrompt('Could you search the public web for kintsugi repair techniques for chipped porcelain?'),
+  goalContract:goalContractSchema.parse({...currentGoal,semanticIntent:'ANSWER',freshnessRequirement:'NONE'}),
+ });
+ assert.equal(explicit.intent,'research');
+ assert.equal(explicit.publicWebRetrieved,true,'The typed public Search request survives a plan that selected ordinary chat');
+ const consumer=publicWorkspaceResearchAnswer(explicit);
+ assert.match(consumer.response,/https:\/\/example\.com\/docs/);
+ assert.doesNotMatch(JSON.stringify(consumer),/Review action|Confirm action|approval|settled_micro_usd|provider_request_id/i);
+ assert.equal(searches,14);assert.equal(models,11);
+ assert.equal(confirmation.row,lastConfirmation,'Public Search may not create a sensitive-action approval');
 });
 
-test('automatic Search eligibility uses only the current public lookup with ambiguous inputs held for review',()=>{
+test('automatic Search eligibility uses the literal public topic and declines ambiguous or private requests',()=>{
  assert.deepEqual(workspacePublicSearchQuery('price of btc currently'),{query:'price of btc currently',officialDomains:[]});
  assert.deepEqual(workspacePublicSearchQuery('Research the latest NASA lunar mission schedule.'),
   {query:'the latest NASA lunar mission schedule',officialDomains:[]});
@@ -546,8 +560,18 @@ test('automatic Search eligibility uses only the current public lookup with ambi
   {query:'Explain how eclipses happen site:nasa.gov',officialDomains:['nasa.gov']});
  assert.deepEqual(workspacePublicSearchQuery('Official support links for Microsoft, Apple and Google in one table.'),
   {query:'Official support links for Microsoft, Apple and Google in one table',officialDomains:[]});
+ for(const [prompt,query] of [
+  ['Could you search the public web for kintsugi repair techniques for chipped porcelain?','kintsugi repair techniques for chipped porcelain'],
+  ['Search the public web for an explanation of giant kelp ecosystems.','an explanation of giant kelp ecosystems'],
+  ['Run a web search for acoustic illusions using repeated tones.','acoustic illusions using repeated tones'],
+  ['Research online for a guide to adapting card weaving patterns.','a guide to adapting card weaving patterns'],
+ ]) assert.deepEqual(workspacePublicSearchQuery(prompt),{query,officialDomains:[]},prompt);
  for(const prompt of ['Current notes in my inbox','What is the latest private customer list',
   'Search the web for John Smith','Who is Jane Doe currently working for',
+  'Search the public web for John Michael Smith','Search the public web for john smith in London',
+  'Search the public web for an overview of John Smith','Search online for what we talked about before',
+  'Could you search the public web for techniques using the attached customer names?',
+  'Run a web search for this person','What is web search?','Web search is how I find references. Explain how ranking works.',
   'Search for name associated with 123-45-6789','Search the latest details on https://example.org/query',
   'Search the web using only official sources (edge.local). Explain the public topic.',
   'Search the web using only official sources (staging.example.com). Explain a public topic.',

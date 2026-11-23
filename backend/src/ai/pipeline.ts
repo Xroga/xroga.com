@@ -28,6 +28,7 @@ import { NATIVE_UI_FORMAT } from './nativeOpenUi.js';
 import { nativeDocumentDelivery, nativeDocumentPrompt, nativeDocumentRequiresAttachment, nativeDocumentRequiresPriorAnswer, plannedNativeDocument, requestedNativeDocumentFormat, type NativeDocumentFormat } from './nativeDocumentDownload.js';
 import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
 import { presentPublicResearchAnswer } from './researchAnswer.js';
+import { explicitlyRequestsWorkspaceWebSearch } from './workspacePublicSearch.js';
 import { nativeOpenUiPlainPrompt, workspaceNativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
 import { assessPresentationCoverage, createPresentationProjection, nativePresentedAnswerMaxTokens, NATIVE_WORKSPACE_REASONING_RESERVE_TOKENS, presentationRequestInstructions, presentationResponseFormat, presentedAnswerMaxTokens, type PresentationResponseFormat } from './responsePresentation.js';
 import { prepareAnswerCoverage, requiredNativeFormats } from './answerCoverage.js';
@@ -1075,7 +1076,9 @@ export async function runChatPipeline(opts: {
     };
   }
 
-  const route = routeReadOnlyConversation(opts.prompt, opts.goalContract);
+  const typedWorkspacePrompt = opts.workspaceSearch?.prompt;
+  const explicitWorkspaceSearch = !!typedWorkspacePrompt && explicitlyRequestsWorkspaceWebSearch(typedWorkspacePrompt);
+  const route = routeReadOnlyConversation(opts.prompt, opts.goalContract, explicitWorkspaceSearch);
   if(requestedSonnetReason(opts.prompt)){
     const usage = await checkQuotaBeforePreparation();
     if(hasAttachments||route.kind==='research')throw new RuntimeFailure('CAPABILITY_UNSUPPORTED','The approved complex-model response supports text engineering work only. No alternate model or research request was made.');
@@ -1103,6 +1106,11 @@ export async function runChatPipeline(opts: {
 
   if (!opts.approvedResearch&&route.useResearch && !explicitlyDisablesResearch(opts.prompt)) {
     const goal = opts.goalContract;
+    const plannedResearch = goal ? webDecisionFromGoalContract(goal) : null;
+    const decision = plannedResearch ?? (opts.workspaceSearch ? {
+      action: 'search' as const, objective: '', queries: [], urls: [], sourcePolicy: 'any' as const,
+      officialDomains: [], reason: 'Workspace selected public retrieval from the typed turn.',
+    } : undefined);
     try {
       const web = await runWebIntelligence({
         userId: opts.userId,
@@ -1111,9 +1119,7 @@ export async function runChatPipeline(opts: {
             ...(opts.goalContract?{goalContract:opts.goalContract}:{}),...(opts.projectEvidence?{projectEvidence:opts.projectEvidence}:{} )}},
         prompt: opts.prompt,
         workspaceSearch: opts.workspaceSearch,
-        ...(goal
-          ? { decision: webDecisionFromGoalContract(goal) ?? undefined }
-          : {}),
+        decision,
       });
 
       research = web.bundle;
