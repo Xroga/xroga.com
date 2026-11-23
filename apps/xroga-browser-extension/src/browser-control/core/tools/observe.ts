@@ -7,6 +7,7 @@ import type { ToolContext, ToolOutcome } from '../controller';
 import { lookupRef } from '../refs';
 import type { Shown } from '../refs';
 import { findContainer, isRef } from '../interaction/resolve';
+import { regionsNote } from '../perception/regions';
 import { captureTier1 } from '../perception/capture';
 import { buildObservation } from '../perception/observe';
 import type { Observation } from '../perception/observe';
@@ -102,6 +103,8 @@ export async function snapshot(
   else ctx.session.known.replace(tab.tabId, shownOf(observation, observation.refs));
   tab.rev++;
   const notices = [...observation.notices];
+  // A dense page gets a map of its regions so the next call can be scoped to one of them (see perception/regions.ts).
+  if (!scope) notices.push(...regionsNote(observation.tree, observation.refs.length));
   const snapshotText = `${observation.header}\n${observation.body}`;
   const lines = snapshotText.split('\n');
   const data: SnapshotData = {

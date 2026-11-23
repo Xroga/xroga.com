@@ -88,6 +88,10 @@ export function runCalculate(args: { expressions?: Array<{ name?: string; expr?:
   if (!list.length) return { text: 'error: expressions is a non-empty list of {name, expr}', isError: true };
   const lines = list.map((e, k) => {
     const label = e.name?.trim() || `#${k + 1}`;
+    // Times and time zones are not arithmetic to do by hand here: converting between zones and intersecting working hours is find_free_times' job.
+    if (/\b(?:utc|gmt|time ?zone|offset|lisbon|karachi|london|dubai|tokyo|new york|window|slot|busy|working hours)\b|\d{1,2}:\d{2}/i.test(`${e.name ?? ''} ${e.expr ?? ''}`)) {
+      return `${label}: error: this looks like a time or time-zone question; use find_free_times (people, zones, working hours, busy slots) instead of calculating by hand`;
+    }
     try {
       const v = calculate(String(e.expr ?? ''));
       return `${label} = ${Number.isInteger(v) ? v : Math.round(v * 1e6) / 1e6}`;

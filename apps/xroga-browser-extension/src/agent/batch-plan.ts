@@ -34,6 +34,38 @@ export interface Step {
   keep?: boolean;
   /** A group: these steps run as one unit under this step's when, unless and repeat. */
   steps?: Step[];
+  /**
+   * Run this step (or group) once per item, with `${item}`, `${item.field}` and `${index}` (from 1) replaced in every string of its arguments: ten drafts, fifty rows,
+   * a list of cities become one call instead of one model turn each. The item is data, never code.
+   */
+  foreach?: Array<string | number | Record<string, string | number>>;
+  /** With foreach: an item that fails is recorded and the loop goes on with the next (the trail shows which failed), instead of stopping the batch. */
+  continueOnError?: boolean;
+}
+
+export const MAX_FOREACH = 100;
+const PLACEHOLDER = /\$\{(item(?:\.[A-Za-z0-9_]+)?|index)\}/g;
+
+/** The step with `${...}` filled in for one item. Throws when a placeholder names a field the item does not have. */
+export function fill(step: Step, item: string | number | Record<string, string | number>, index: number): Step {
+  const value = (key: string): string => {
+    if (key === 'index') return String(index);
+    if (key === 'item') {
+      if (typeof item === 'object') throw new Error('${item} is an object: use ${item.field}');
+      return String(item);
+    }
+    const field = key.slice(5);
+    if (typeof item !== 'object' || item === null || !(field in item)) throw new Error(`item ${index} has no field "${field}"`);
+    return String(item[field]);
+  };
+  const walk = (v: unknown): unknown => {
+    if (typeof v === 'string') return v.replace(PLACEHOLDER, (_m, key: string) => value(key));
+    if (Array.isArray(v)) return v.map(walk);
+    if (v && typeof v === 'object') return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, walk(x)]));
+    return v;
+  };
+  const { foreach: _f, continueOnError: _c, ...rest } = step;
+  return walk(rest) as Step;
 }
 
 export interface StepResult {
@@ -152,7 +184,7 @@ export function worstCase(steps: Step[]): number {
         return 1;
       }
     })();
-    return n + times * (Array.isArray(s.steps) ? worstCase(s.steps) : 1);
+    return n + times * (Array.isArray(s.foreach) ? Math.min(s.foreach.length, MAX_FOREACH) : 1) * (Array.isArray(s.steps) ? worstCase(s.steps) : 1);
   }, 0);
 }
 
@@ -215,6 +247,17 @@ export async function runPlan(steps: Step[], opts: PlanOptions): Promise<{ text:
 
   const one = async (step: Step, label: string, depth: number): Promise<void> => {
     validate(step, label, depth);
+    if (Array.isArray(step.foreach)) {
+      // The step runs once per item; its own when / unless / repeat apply to each run.
+      for (const [k, item] of step.foreach.entries()) {
+        try {
+          await one(fill(step, item, k + 1), `${label}[${k + 1}]`, depth);
+        } catch (error) {
+          if (error instanceof Halt || !step.continueOnError || !(error instanceof BatchError)) throw error;
+        }
+      }
+      return;
+    }
     const args = { ...defaults, ...(step.args ?? {}) };
     const isGroup = Array.isArray(step.steps);
     const tool = isGroup ? `group(${step.steps!.length})` : step.tool!;
@@ -264,6 +307,12 @@ export async function runPlan(steps: Step[], opts: PlanOptions): Promise<{ text:
       if (step.when !== undefined && !isCondition(step.when)) throw new Error(`step ${label}: when needs a condition such as {for:"text", value:"Next"}`);
       if (step.unless !== undefined && !isCondition(step.unless)) throw new Error(`step ${label}: unless needs a condition such as {for:"text", value:"Next"}`);
       normaliseRepeat(step.repeat);
+      if (step.foreach !== undefined) {
+        if (!Array.isArray(step.foreach) || !step.foreach.length) throw new Error(`step ${label}: foreach is a non-empty list of items`);
+        if (step.foreach.length > MAX_FOREACH) throw new Error(`step ${label}: foreach takes at most ${MAX_FOREACH} items; split the list across calls`);
+        // Every item is filled in once before anything runs, so a missing field is found now, not after nine drafts.
+        step.foreach.forEach((item, k) => { try { fill(step, item, k + 1); } catch (e) { throw new Error(`step ${label}: ${e instanceof Error ? e.message : String(e)}`); } });
+      }
       if (Array.isArray(step.steps)) precheck(step.steps, depth + 1, label);
     }
   };
@@ -295,6 +344,7 @@ export const BATCH_TOOL = {
     '(a condition: {for:"text"|"text_gone"|"url", value} or {for:"visible"|"hidden", role, name}) and repeat (a number, or {until|while: condition, max}). ' +
     'steps inside a step make a group. Targets must be known: use refs or role and name from a snapshot you have. The batch stops at the first failure and ' +
     'returns the trail of what ran plus the last result; add keep:true to a read, find or snapshot step in the middle to get its text back too (check ten items in one call). Do a snapshot or read afterwards to check the page. Consequential steps still need their approvals. ' +
+    'foreach (a list of strings or {field: value} objects) runs a step or group once per item with ${item}, ${item.field} and ${index} filled into its arguments: ten drafts or fifty rows in ONE call; continueOnError records a failed item and goes on. ' +
     'Do not put a batch inside a batch. Do not use it when a step needs what the previous one shows.',
   parameters: {
     type: 'object',
@@ -312,6 +362,8 @@ export const BATCH_TOOL = {
             unless: { type: 'object' },
             repeat: {},
             keep: { type: 'boolean' },
+            foreach: { type: 'array', maxItems: 100 },
+            continueOnError: { type: 'boolean' },
             steps: { type: 'array', items: { type: 'object' } },
           },
           additionalProperties: false,

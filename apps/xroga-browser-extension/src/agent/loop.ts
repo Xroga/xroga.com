@@ -1839,6 +1839,7 @@ ${ledger}` : ''),
   #wroteSinceCheck = false;
   #consoleRuns = new RunLedger();
   #announcedSites = new Set<string>();
+  #unknownNoted = false;
   #pendingStall: StallVerdict | null = null;
   #docsRead = false;
   #scriptNote: string | null = null;
@@ -1949,7 +1950,16 @@ ${ledger}` : ''),
       const reg = this.#siteActionRegistry();
       await reg.ready();
       const acts = reg.forUrl(url);
-      if (!acts.length) return;
+      if (!acts.length) {
+        // A platform with no bundled method (most of the web): say once, for a real task, how to study it instead of guessing, so the run starts by reading the page and
+        // the platform's own help, decides the outcome itself and verifies it. Never a limit: the general tools work on any site.
+        if (request.trim().length >= 60 && !this.#unknownNoted) {
+          this.#unknownNoted = true;
+          this.#announcedSites.add(id.origin);
+          await this.writer.appNote(`No bundled method exists for ${id.host}, and none is needed. Survey first, briefly: look at its regions and controls (the fields, their options and the main buttons), open collapsed sections you will need, and decide what a complete result contains. Then execute in large batches (fill_form with its submit, batch with conditions), one region at a time, reading each saved value back: the survey is what makes the execution take seconds. Read its help or policies only when a setting is genuinely unclear; a task a person does in one minute must not take twenty here. Settings that default to on and change the result are yours to check.`);
+        }
+        return;
+      }
       this.#announcedSites.add(id.origin);
       await this.writer.appNote(`Site recognised: ${id.host}. ${acts.length} reviewed action(s) exist for it (${acts.map(a => a.id).join(', ')}). Optional: find_skill lists them and site_action runs one with a verified result; the general tools always work and nothing here limits what you may do.`);
       return;
@@ -1960,7 +1970,8 @@ ${ledger}` : ''),
       user_goal: request, site: id.host, evidence: `the page origin matches the site rule of ${matches.map(m => m.id).join(', ')}`,
       capability: `${top.id} (${top.verified})`, permissions: top.risk === 'read' ? 'read only' : `${top.risk} actions need the user's approval`,
       expected_result: 'the outcome the user asked for', verification: 'read the resulting state back from the page',
-    })} Optional: read_skill ${top.id} for the method. It does not limit what you may do on this site.`);
+    })} The method for this platform is loaded below; use it, and it does not limit what you may do on this site.
+${renderSkill(top).slice(0, 2200)}`);
   }
 
   #siteActionReg: SiteActionRegistry | null = null;

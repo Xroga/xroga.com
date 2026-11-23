@@ -25,4 +25,13 @@ describe('calculate', () => {
     expect(() => calculate('1 / 0')).toThrow(/not a finite number/);
     expect(runCalculate({ expressions: [{ name: 'daily', expr: '4200 / 7' }, { expr: 'oops(' }] }).text).toMatch(/daily = 600\n#2: error/);
   });
+
+  it('sends time and time-zone questions to find_free_times', () => {
+    const r = runCalculate({ expressions: [{ name: 'karachi to lisbon', expr: '14 - 5' }, { name: 'slot', expr: '09:00 + 2' }, { name: 'daily', expr: '4200 / 7' }] });
+    expect(r.text).toMatch(/karachi to lisbon: error: .*find_free_times/);
+    expect(r.text).toMatch(/slot: error: .*find_free_times/);
+    expect(r.text).toMatch(/daily = 600/);
+    expect(r.isError).toBe(false);
+  });
 });
+

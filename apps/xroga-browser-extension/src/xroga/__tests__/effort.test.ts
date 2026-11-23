@@ -71,3 +71,15 @@ describe('EffortControl, adaptive', () => {
   });
 });
 
+describe('EffortControl, fixed', () => {
+  it('stays at high whatever happens: stalls, errors, doubt and calm turns', () => {
+    const e = new EffortControl('high', { fixed: true });
+    for (const s of [{}, { error: true }, { uncertain: true }, { verify: true }]) { e.noteTurn(false, s); expect(e.level).toBe('high'); }
+    e.noteTurn(true);
+    expect(e.level).toBe('high');
+    for (let i = 0; i < 10; i++) e.noteTurn(false);
+    expect(e.level).toBe('high');
+    expect(e.changes).toHaveLength(0);
+  });
+});
+

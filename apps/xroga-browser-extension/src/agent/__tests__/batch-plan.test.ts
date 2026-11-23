@@ -141,3 +141,50 @@ describe('keep: texts of the middle steps come back', () => {
     expect(r.text.length).toBeLessThan(14000);
   });
 });
+
+describe('foreach', () => {
+  const people = [{ to: 'ana@x.test', subject: 'One', first: 'Ana' }, { to: 'bilal@x.test', subject: 'Two', first: 'Bilal' }, { to: 'carla@x.test', subject: 'Three', first: 'Carla' }];
+  const draft: Step = {
+    foreach: people,
+    steps: [
+      { tool: 'click', args: { target: { role: 'button', name: 'New message' } } },
+      { tool: 'fill_form', args: { fields: [{ target: { role: 'textbox', name: 'To' }, value: '${item.to}' }, { target: { role: 'textbox', name: 'Subject' }, value: '${index}. ${item.subject}' }, { target: { role: 'textbox', name: 'Body' }, value: 'Hello ${item.first},' }] } },
+    ],
+  };
+
+  it('runs a group once per item with the fields filled in, in one plan', async () => {
+    const calls: Array<{ tool: string; args: Record<string, unknown> }> = [];
+    const r = await runPlan([draft], { run: async (tool, args) => { calls.push({ tool, args }); return { text: `${tool} ok` }; }, test: async () => false });
+    expect(r.ran).toBe(6);
+    expect(calls.filter(c => c.tool === 'fill_form').map(c => (c.args.fields as Array<{ value: string }>).map(f => f.value))).toEqual([
+      ['ana@x.test', '1. One', 'Hello Ana,'], ['bilal@x.test', '2. Two', 'Hello Bilal,'], ['carla@x.test', '3. Three', 'Hello Carla,'],
+    ]);
+  });
+
+  it('fills plain string items and refuses a missing field before anything runs', async () => {
+    const calls: string[] = [];
+    await runPlan([{ foreach: ['Karachi', 'Lahore'], tool: 'type', args: { text: '${item}' } }], { run: async (_t, a) => { calls.push(String(a.text)); return { text: 'ok' }; }, test: async () => false });
+    expect(calls).toEqual(['Karachi', 'Lahore']);
+    let ran = 0;
+    await expect(runPlan([{ foreach: [{ to: 'a' }, { name: 'b' }], tool: 'type', args: { text: '${item.to}' } }], { run: async () => { ran++; return { text: 'ok' }; }, test: async () => false })).rejects.toThrow(/item 2 has no field "to"/);
+    expect(ran).toBe(0);
+  });
+
+  it('stops at the first failing item, or records it and goes on with continueOnError', async () => {
+    const run = async (_t: string, a: Record<string, unknown>) => { if (a.text === 'bad') throw new Error('refused'); return { text: `typed ${a.text}` }; };
+    const items = ['one', 'bad', 'three'];
+    await expect(runPlan([{ foreach: items, tool: 'type', args: { text: '${item}' } }], { run, test: async () => false })).rejects.toBeInstanceOf(BatchError);
+    const r = await runPlan([{ foreach: items, continueOnError: true, tool: 'type', args: { text: '${item}' } }], { run, test: async () => false, stopOnError: true });
+    expect(r.ok).toBe(false);
+    expect(r.text).toMatch(/✓ type/);
+    expect(r.text).toMatch(/✗ type: refused/);
+    expect(r.ran).toBe(3);
+  });
+
+  it('refuses an empty list and more than the item ceiling', async () => {
+    await expect(runPlan([{ foreach: [], tool: 'click' }], { run: async () => ({ text: '' }), test: async () => false })).rejects.toThrow(/non-empty/);
+    await expect(runPlan([{ foreach: Array.from({ length: 101 }, (_, i) => String(i)), tool: 'click', args: { x: '${item}' } }], { run: async () => ({ text: '' }), test: async () => false })).rejects.toThrow(/at most 100/);
+    expect(worstCase([{ foreach: ['a', 'b', 'c'], steps: [{ tool: 'click' }, { tool: 'click' }] }])).toBe(6);
+  });
+});
+

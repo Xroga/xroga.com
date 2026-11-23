@@ -35,10 +35,13 @@ export class EffortControl {
   #turn = 0;
 
   readonly #adaptive: boolean;
+  readonly #fixed: boolean;
 
   /** `adaptive`: start at `start` (high) for planning, drop to none after routine turns, and think again where a turn's evidence asks for it (see TurnSignal). */
-  constructor(start: Effort = 'high', options: { adaptive?: boolean } = {}) {
-    this.#adaptive = options.adaptive === true;
+  constructor(start: Effort = 'high', options: { adaptive?: boolean; fixed?: boolean } = {}) {
+    // `fixed`: the level never changes (the product runs at high on every turn, by the owner's decision).
+    this.#fixed = options.fixed === true;
+    this.#adaptive = options.adaptive === true && !this.#fixed;
     // An adaptive run thinks first (the turns that read the task, plan and compute), then drops to none after two routine turns.
     this.#level = start;
   }
@@ -61,6 +64,7 @@ export class EffortControl {
   /** One tool turn finished. `stalled` is the progress tracker's verdict for it. */
   noteTurn(stalled: boolean, signal: TurnSignal = {}): void {
     this.#turn++;
+    if (this.#fixed) return;
     if (stalled) {
       this.#calm = 0;
       this.#set('max', 'the run stopped making progress');

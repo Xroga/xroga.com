@@ -10,8 +10,9 @@ const state = __state; state.saved = 0; state.notifications = true; state.market
 mount(app => {
   if (SEED % 2 === 1) document.documentElement.dir = 'rtl';
   const host = h('div', { id: 'prefs' }); const root = host.attachShadow({ mode: 'open' });
-  const live = { notifications: true, marketing: true };
-  const sw = (key, label) => { const b = document.createElement('label'); const i = document.createElement('input'); i.type = 'checkbox'; i.checked = true; i.setAttribute('aria-label', label);
+  // The switches show what was saved (the page restores its state on reload, as an app would): a person who saved "off" sees "off" after a reload.
+  const live = { notifications: state.notifications !== false, marketing: state.marketing !== false };
+  const sw = (key, label) => { const b = document.createElement('label'); const i = document.createElement('input'); i.type = 'checkbox'; i.checked = live[key]; i.setAttribute('aria-label', label);
     i.addEventListener('change', () => { live[key] = i.checked; }); b.append(i, ' ' + label); return b; };
   const order = shuffle([['notifications', 'Email notifications'], ['marketing', 'Marketing emails']]);
   const h2 = document.createElement('h2'); h2.textContent = 'Preferences'; root.append(h2, ...order.map(([k, l]) => sw(k, l)));
