@@ -663,9 +663,11 @@ test('combined research and presentation preserve publisher scope and precise re
     officialDomains: ['w3.org'],
   });
   const lithium = 'Find the USGS Mineral Commodity Summaries 2026 figures for estimated 2025 lithium mine production in Australia, China, Chile, and Argentina. Make a labeled horizontal bar chart and a compact exact-value table in metric tons of lithium content. Cite the primary USGS table, then calculate the four countries’ combined share of the reported world total and label it approximate. Distinguish production from reserves and use only USGS sources.';
-  assert.deepEqual(workspacePublicSearchQuery(lithium, true)?.officialDomains, ['usgs.gov']);
-  assert.match(workspacePublicSearchQuery(lithium, true)?.query ?? '', /Mineral Commodity Summaries 2026.*lithium mine production.*site:usgs\.gov/u);
-  assert.match(workspacePublicSearchQuery(lithium, true)?.originalSourceQuestion ?? '', /original table.*2025 lithium mine production/u);
+  const usgs = workspacePublicSearchQuery(lithium, true);
+  assert.deepEqual(usgs?.officialDomains, ['usgs.gov']);
+  assert.match(usgs?.query ?? '', /Mineral Commodity Summaries 2026.*lithium mine production in Australia, China, Chile, and Argentina.*site:usgs\.gov/u);
+  assert.match(usgs?.originalSourceQuestion ?? '', /Source table:.*2025 lithium mine production in Australia, China, Chile, and Argentina$/u);
+  assert.ok([...usgs!.originalSourceQuestion!].length <= 128);
   const artemis = 'Using current official NASA sources, compare Artemis II and Artemis III. Show mission purpose, most recent verified milestone, and the next published milestone in a compact table. Cite the NASA page beside each date. Add a short timeline that distinguishes completed events from forecasts, and flag any date that NASA has not confirmed.';
   const nasa = workspacePublicSearchQuery(artemis, true);
   assert.deepEqual(nasa?.officialDomains, ['nasa.gov']);

@@ -181,16 +181,21 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
   if (!officialDomains.length && (exclusiveOfficialSource.test(request)
     || officialOnly && asksForOfficial && !requestsOfficialCitation && !officialLookup)) return;
   const publicFact = publicFactSubject.test(request) || publicPolicyPublisher.test(request);
+  const requestsPrimaryPublisherTable = officialDomains.length > 0 &&
+    /\b(?:cite|link(?:\s+to)?|use|find|include)\s+(?:the\s+)?(?:primary|original|final)\s+(?:[\p{L}.-]+\s+){0,4}table\b/iu.test(message);
 
   const scopedRequest = namedSource && (publisherDomains.length || explicitDomains.length && namedSource[0].includes('('))
     ? [request.slice(0, namedSource.index).trimEnd(),
         request.slice(namedSource.index + namedSource[0].length).replace(/^[\s,.:!?]+/u, '')].filter(Boolean).join(' ')
     : request;
-  const topic = scopedRequest.replace(bareDomain, host => isSoftwareName(host) ? host : '').replace(/\(\s*\)/g, '')
+  const checkedTopic = scopedRequest.replace(bareDomain, host => isSoftwareName(host) ? host : '').replace(/\(\s*\)/g, '')
     .replace(explicitWebLookup, '').replace(instructionStart, '').replace(sourcePreface, '').replace(instructionStart, '')
     .replace(presentationAfterTopic, '').replace(answerOnlySuffix, '')
     .replace(/[,.]?\s+(?:and\s+)?cite\s+[^.!?]+[.!?]*$/iu, '')
     .replace(/[?.!؟。？！]+$/u, '').trim();
+  // Spend the bounded publisher query on the requested metric and rows.
+  const topic = requestsPrimaryPublisherTable ? checkedTopic.replace(/^(?:find|compare)\s+(?:the\s+)?/iu, '')
+    .replace(/\b(?:figures|numbers)\s+(?:for|on)\s+(?:estimated\s+)?/iu, '') : checkedTopic;
   if (!officialDomains.length && !publicFact && !discovery && !publicOffice && !officialLookup
     && !(explicitLookup && isStandaloneSearchTopic(topic))) return;
   const sites = officialDomains.map(domain => 'site:' + domain).join(' OR ');
@@ -208,8 +213,6 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
   }
   if (focus && capacity < topicLimit) terms += ' ' + focus;
   const originalSource = originalSourceRequest.exec(message);
-  const requestsPrimaryPublisherTable = officialDomains.length > 0 &&
-    /\b(?:cite|link(?:\s+to)?|use|find|include)\s+(?:the\s+)?(?:primary|original|final)\s+(?:[\p{L}.-]+\s+){0,4}table\b/iu.test(message);
   if (!originalSource && !requestsPrimaryPublisherTable) return { query: sites ? terms + ' ' + sites : terms, officialDomains };
 
   // Keep the requested work searchable when dropping formatting and citation instructions.
@@ -232,6 +235,6 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
   return {
     query: [searchTerms + publicationTerm, sites].filter(Boolean).join(' '),
     officialDomains,
-    originalSourceQuestion: `Find the ${qualifier} ${source} for ${subject}.`,
+    originalSourceQuestion: requestedSource === 'table' ? `Source table: ${subject}` : `Find the ${qualifier} ${source} for ${subject}.`,
   };
 }
