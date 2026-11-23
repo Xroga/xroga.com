@@ -106,6 +106,8 @@ export interface ScreenshotData {
   scale: number;
   /** Top-left of the image in page CSS pixels, for full-page and element shots. */
   origin: { x: number; y: number };
+  /** With ifChanged: the picture is the same as the last one, and no image is returned (base64 is empty). */
+  unchanged?: boolean;
 }
 
 export interface TabInfo {

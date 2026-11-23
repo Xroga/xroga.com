@@ -31,6 +31,22 @@ export interface ProbeState {
 }
 
 /** Structural facts for the sensitivity classifier; the probe never decides the category. */
+export interface ExtractedTable {
+  /** The caption, aria-label or nearest heading. */
+  name: string;
+  kind: 'table' | 'grid' | 'list';
+  columns: string[];
+  rows: string[][];
+  /** The href of a link in a cell, by row and column index, when there is one. */
+  links?: Array<[number, number, string]>;
+  /** The total the page states (aria-rowcount or "of N"), when it states one. */
+  statedTotal?: number;
+  /** The table sits in a scrolling box with more below, or states more rows than it holds: scroll and read again. */
+  moreBelow?: boolean;
+  /** Cells that span more than one row or column: their text sits in the first cell only. */
+  merged?: number;
+}
+
 export interface FormField {
   role: string;
   name: string;
@@ -189,6 +205,8 @@ export interface ProbeApi {
   hasText(text: string, fields?: boolean): boolean;
   /** Every visible field of the page or of the named form, dialog or group: what a form tool needs to fill it in one call. */
   formModel(scope?: string): FormField[];
+  /** The tables, grids and repeated lists of the page (or of the named region), as rows of text: structured extraction without the model reading cells. */
+  extractRows(scope?: string, maxRows?: number): ExtractedTable[];
   startDemo(): boolean;
   stopDemo(): Array<{ t: number; kind: 'mouse' | 'key'; x?: number; y?: number; step: 'click' | 'set' | 'press'; role: string; name: string; value?: string; row?: string }>;
   /** What the element reads: a form control's value, otherwise its visible text (at most 400 characters). */
@@ -507,6 +525,107 @@ export function probeMain(): void {
 
   const api = {
     version: 1,
+
+    extractRows(scope?: string, maxRows?: number) {
+      const cap = Math.max(1, Math.min(maxRows ?? 5000, 50000));
+      const clip = (t: string) => t.replace(/\s+/g, ' ').trim().slice(0, 300);
+      const shown = (el: Element) => typeof (el as any).checkVisibility === 'function' ? (el as any).checkVisibility({ visibilityProperty: true, checkVisibilityCSS: true }) : (el as HTMLElement).getClientRects().length > 0;
+      let root: ParentNode = document;
+      let only: Element | null = null;
+      if (scope) {
+        const want = scope.toLowerCase();
+        const boxes = [...document.querySelectorAll('form,dialog,[role=dialog],[role=region],[role=group],section,article,main,table,[role=table],[role=grid]')];
+        const hit = boxes.find(b => shown(b) && (b.getAttribute('aria-label') || b.querySelector(':scope > caption,:scope > h1,:scope > h2,:scope > h3,:scope > header')?.textContent || '').toLowerCase().includes(want));
+        if (!hit) return [];
+        root = hit;
+        if (hit.matches('table,[role=table],[role=grid],[role=treegrid]')) only = hit;
+      }
+      const nameOf = (el: Element) => {
+        const own = el.getAttribute('aria-label') || (el.querySelector(':scope > caption')?.textContent ?? '');
+        if (own.trim()) return clip(own);
+        const lab = el.getAttribute('aria-labelledby');
+        if (lab) { const t = document.getElementById(lab)?.textContent; if (t) return clip(t); }
+        let n: Element | null = el;
+        for (let i = 0; i < 4 && n; i++, n = n.parentElement) {
+          let p = n.previousElementSibling;
+          for (let k = 0; k < 4 && p; k++, p = p.previousElementSibling) if (/^H[1-6]$/.test(p.tagName)) return clip(p.textContent ?? '');
+        }
+        return '';
+      };
+      const scrolling = (el: Element) => { let n: Element | null = el.parentElement; for (let i = 0; i < 6 && n; i++, n = n.parentElement) { const s = getComputedStyle(n); if (/(auto|scroll)/.test(s.overflowY) && n.scrollHeight > n.clientHeight + 4 && n.scrollTop + n.clientHeight < n.scrollHeight - 4) return true; } return false; };
+      const out: ExtractedTable[] = [];
+      const cellText = (c: Element) => clip((c as HTMLElement).innerText ?? c.textContent ?? '');
+      const grids = only ? [only] : [...root.querySelectorAll('table,[role=table],[role=grid],[role=treegrid]')].filter(e => shown(e) && !e.parentElement?.closest('table,[role=table],[role=grid],[role=treegrid]'));
+      for (const t of grids) {
+        const isTable = t.tagName === 'TABLE';
+        const rowEls = isTable ? [...t.querySelectorAll(':scope > thead > tr,:scope > tbody > tr,:scope > tfoot > tr,:scope > tr')] : [...t.querySelectorAll('[role=row]')];
+        if (rowEls.length < 2) continue;
+        const cellsOf = (r: Element) => [...r.children].filter(c => /^(TD|TH)$/.test(c.tagName) || /^(cell|gridcell|columnheader|rowheader)$/.test(c.getAttribute('role') ?? ''));
+        let header: Element | null = rowEls.find(r => cellsOf(r).length && cellsOf(r).every(c => c.tagName === 'TH' || c.getAttribute('role') === 'columnheader')) ?? null;
+        const body = rowEls.filter(r => r !== header);
+        if (!header && body.length) header = null;
+        const cols = header ? cellsOf(header).map(cellText) : [];
+        const rows: string[][] = [];
+        const links: Array<[number, number, string]> = [];
+        let merged = 0;
+        for (const r of body) {
+          if (rows.length >= cap) break;
+          const cs = cellsOf(r);
+          if (!cs.length) continue;
+          const row = cs.map(cellText);
+          cs.forEach((c, k) => {
+            if ((c as HTMLTableCellElement).colSpan > 1 || (c as HTMLTableCellElement).rowSpan > 1) merged++;
+            const a = c.querySelector('a[href]') as HTMLAnchorElement | null;
+            if (a && /^https?:/.test(a.href)) links.push([rows.length, k, a.href.slice(0, 300)]);
+          });
+          rows.push(row);
+        }
+        if (!rows.length) continue;
+        const stated = Number(t.getAttribute('aria-rowcount'));
+        const width = Math.max(...rows.map(r => r.length));
+        const columns = cols.length ? cols.map((c, k) => c || `col${k + 1}`) : Array.from({ length: width }, (_, k) => `col${k + 1}`);
+        out.push({ name: nameOf(t), kind: isTable ? 'table' : 'grid', columns, rows, ...(links.length ? { links: links.slice(0, 2000) } : {}), ...(stated > rows.length + (header ? 1 : 0) ? { statedTotal: stated - (header ? 1 : 0) } : {}), ...(scrolling(t) || (stated > rows.length + 1) ? { moreBelow: true } : {}), ...(merged ? { merged } : {}) });
+      }
+      // Repeated lists: a list (or ARIA list) of at least three items, each with text (a result list, a feed of cards).
+      for (const l of only ? [] : root.querySelectorAll('ul,ol,[role=list]')) {
+        if (!shown(l) || l.closest('nav,table,[role=navigation],[role=menu],[role=listbox]')) continue;
+        const items = [...l.children].filter(c => c.tagName === 'LI' || c.getAttribute('role') === 'listitem');
+        if (items.length < 3) continue;
+        const texts = items.map(cellText);
+        if (texts.filter(t => t.length > 3).length < 3 || texts.every(t => t.length < 12)) continue;
+        const rows = texts.slice(0, cap).map(t => [t]);
+        const links: Array<[number, number, string]> = [];
+        items.slice(0, cap).forEach((it, i) => { const a = it.querySelector('a[href]') as HTMLAnchorElement | null; if (a && /^https?:/.test(a.href)) links.push([i, 0, a.href.slice(0, 300)]); });
+        out.push({ name: nameOf(l), kind: 'list', columns: ['text'], rows, ...(links.length ? { links: links.slice(0, 2000) } : {}), ...(scrolling(l) ? { moreBelow: true } : {}) });
+      }
+      // Repeated cards (search results, a directory, product tiles): siblings that share a tag and class, at least four, each with a link and some text.
+      const seen = new Set<Element>();
+      let found = 0;
+      for (const parent of only ? [] : root.querySelectorAll('div,section,main,article,ul,ol')) {
+        if (found >= 3 || !shown(parent) || parent.closest('nav,header,footer,table,[role=navigation],[role=menu],[role=listbox]')) continue;
+        const kids = [...parent.children].filter(c => !seen.has(c));
+        if (kids.length < 4) continue;
+        const sig = (c: Element) => `${c.tagName}.${[...c.classList].sort().join('.')}`;
+        const groups = new Map<string, Element[]>();
+        for (const c of kids) { const g = groups.get(sig(c)); if (g) g.push(c); else groups.set(sig(c), [c]); }
+        const best = [...groups.values()].sort((x, y) => y.length - x.length)[0]!;
+        if (best.length < 4 || best[0]!.tagName === 'LI' || best[0]!.tagName === 'TR') continue;
+        const cards = best.filter(c => shown(c) && c.querySelector('a[href]') && cellText(c).length >= 20);
+        if (cards.length < Math.max(4, best.length * 0.6)) continue;
+        cards.forEach(c => seen.add(c));
+        const rows: string[][] = [];
+        const links: Array<[number, number, string]> = [];
+        for (const c of cards.slice(0, cap)) {
+          const head = c.querySelector('h1,h2,h3,h4,h5,h6,[role=heading],strong') ?? c.querySelector('a[href]');
+          const a = (head?.closest('a[href]') ?? head?.querySelector?.('a[href]') ?? c.querySelector('a[href]')) as HTMLAnchorElement | null;
+          if (a && /^https?:/.test(a.href)) links.push([rows.length, 0, a.href.slice(0, 300)]);
+          rows.push([clip(head?.textContent ?? ''), cellText(c)]);
+        }
+        out.push({ name: nameOf(parent), kind: 'list', columns: ['title', 'text'], rows, ...(links.length ? { links: links.slice(0, 2000) } : {}), ...(scrolling(parent) ? { moreBelow: true } : {}) });
+        found++;
+      }
+      return out;
+    },
 
     formModel(scope?: string) {
       const SEL = 'input,select,textarea,[role=combobox],[role=textbox],[role=checkbox],[role=radio],[role=switch],[role=slider],[role=spinbutton],[role=listbox],[contenteditable=""],[contenteditable=true]';

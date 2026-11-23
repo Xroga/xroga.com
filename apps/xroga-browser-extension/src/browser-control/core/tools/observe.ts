@@ -338,6 +338,13 @@ export async function screenshot(ctx: ToolContext, args: ScreenshotArgs): Promis
       ),
     );
   }
+  // The same picture again costs tokens and says nothing new (agent-browser's --if-changed, Apache-2.0): with ifChanged it is answered in words.
+  const fingerprint = pictureFingerprint(base64);
+  const same = lastPicture.get(tab.tabId) === fingerprint;
+  lastPicture.set(tab.tabId, fingerprint);
+  if (args.ifChanged && same) {
+    return { data: { mimeType: 'image/png', base64: '', width: shot.width, height: shot.height, scale, origin, unchanged: true }, lines: [`screenshot · tab ${tab.tabId} · unchanged since the last screenshot: no new image`] };
+  }
   // What the page painted in this view, word for word: the model aims at a label instead of reading it off the picture.
   let painted: string | undefined;
   if (!args.ref && !args.fullPage) painted = paintedLine(await readPaintedTexts(cdp), args.region ?? [0, 0, 1, 1]);
@@ -348,6 +355,15 @@ export async function screenshot(ctx: ToolContext, args: ScreenshotArgs): Promis
       `screenshot · tab ${tab.tabId} · ${shot.width}×${shot.height} px · scale ${scale.toFixed(2)}${args.labels ? ` · ${labelled} labels` : ''}${args.marks ? ` · ${markCount} marks numbered (use canvas mark N)` : ''}${args.region ? ` · region [${args.region.map(n => n.toFixed(3)).join(', ')}] enlarged ${zoom.toFixed(1)}x, grid labelled in whole-page fractions` : args.grid ? ' · coordinate grid drawn (fractions 0 to 1 of the page)' : ''}`,
     ],
   };
+}
+
+const lastPicture = new Map<number, string>();
+/** A cheap fingerprint of an image: its length and a sample of its bytes (the same picture gives the same value; a changed page almost never does). */
+export function pictureFingerprint(base64: string): string {
+  let h = 2166136261;
+  const step = Math.max(1, Math.floor(base64.length / 4096));
+  for (let i = 0; i < base64.length; i += step) h = Math.imul(h ^ base64.charCodeAt(i), 16777619) >>> 0;
+  return `${base64.length}:${h}`;
 }
 
 /** Nodes a screenshot paints over: masked values and options, and frames whose content was not captured or placed. */

@@ -102,6 +102,7 @@ export const ScreenshotArgsSchema = z.strictObject({
   ...readCommon,
   ref: ref.optional().describe('Only this element'),
   fullPage: z.boolean().optional(),
+  ifChanged: z.boolean().optional().describe('Return no image when the picture is the same as the last one of this tab'),
   labels: z.boolean().optional().describe('Draw ref labels over actionable elements'),
   grid: z.boolean().optional().describe('Draw a 0 to 1 coordinate grid, for placing pointer actions on a painted canvas'),
   mark: z.tuple([z.number().min(0).max(1), z.number().min(0).max(1)]).optional().describe('[x, y] fractions: draw a red crosshair where a pointer action landed'),
@@ -215,6 +216,13 @@ export const DemoArgsSchema = z.strictObject({
   action: z.enum(['start', 'stop']),
 });
 
+export const ExtractRowsArgsSchema = z.strictObject({
+  ...readCommon,
+  scope: z.string().max(120).optional().describe('Only the region, table or section with this name; default: the whole page'),
+  table: z.number().int().min(1).optional().describe('Only the Nth table found'),
+  maxRows: z.number().int().min(1).max(50_000).optional(),
+});
+
 export const FormModelArgsSchema = z.strictObject({
   ...readCommon,
   scope: z.string().max(120).optional().describe('Only the form, dialog or group with this name (a substring of its accessible name or legend); default: the whole page'),
@@ -298,6 +306,7 @@ export type WaitArgs = z.infer<typeof WaitArgsSchema>;
 export type NavigateArgs = z.infer<typeof NavigateArgsSchema>;
 export type DiagnosticsArgs = z.infer<typeof DiagnosticsArgsSchema>;
 export type FormModelArgs = z.infer<typeof FormModelArgsSchema>;
+export type ExtractRowsArgs = z.infer<typeof ExtractRowsArgsSchema>;
 export type DemoArgs = z.infer<typeof DemoArgsSchema>;
 export type TabsArgs = z.infer<typeof TabsArgsSchema>;
 export type HandleDialogArgs = z.infer<typeof HandleDialogArgsSchema>;

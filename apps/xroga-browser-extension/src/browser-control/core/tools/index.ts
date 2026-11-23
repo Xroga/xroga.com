@@ -11,6 +11,7 @@ import { askUser } from './ask';
 import { fillForm } from './fill';
 import { upload } from './upload';
 import { diagnostics } from './diagnostics';
+import { extractRows } from './extract-rows';
 import { formModel } from './form-model';
 import { demo } from './demo';
 
@@ -33,6 +34,7 @@ export const TOOL_HANDLERS: Record<string, ToolHandler> = {
   wait: (ctx, args) => wait(ctx, args as never),
   diagnostics: (ctx, args) => diagnostics(ctx, args as never),
   form_model: (ctx, args) => formModel(ctx, args as never),
+  extract_rows: (ctx, args) => extractRows(ctx, args as never),
   demo: (ctx, args) => demo(ctx, args as never),
   handle_dialog: (ctx, args) => handleDialog(ctx, args as never),
   ask_user: (ctx, args) => askUser(ctx, args as never),

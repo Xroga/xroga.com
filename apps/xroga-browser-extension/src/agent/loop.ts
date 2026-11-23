@@ -2,6 +2,9 @@
 // hooks. The worker owns the run; Chrome is reached through the ports.
 import { runCalculate } from './calculate';
 import { runDataOpsTool } from './data-ops';
+import { countRun, deleteMacro, describeMacro, expandVars, macrosFor, placeholdersOf, refusalFor, saveMacro } from './macro-tool';
+import { tableToObjects } from '@src/browser-control/core/tools/extract-rows';
+import type { ExtractedTable } from '@src/browser-control/probe/source';
 import { describePoolHit, poolCandidate, poolSuggestions, searchPool } from './aas-skills';
 import { findFreeTimes, type FreeTimesArgs } from './free-times';
 import type { RunTimings, Phase } from './timing';
@@ -1584,6 +1587,13 @@ ${ledger}` : ''),
   }
 
   async #record(outcome: CallOutcome): Promise<void> {
+    if (outcome.call.toolName === 'extract_rows' && outcome.result?.ok) {
+      const tables = (outcome.result.data as { tables?: ExtractedTable[] } | undefined)?.tables;
+      if (Array.isArray(tables) && tables.length) {
+        this.#extracted = tables.map(tableToObjects);
+        this.#workingRows = undefined;
+      }
+    }
     // The layer's receipt carries the id of the action it belongs to, so the stored record, the panel row and the receipt name one action.
     if (outcome.result?.receipt) outcome = { ...outcome, result: { ...outcome.result, receipt: { ...outcome.result.receipt, actionId: `${this.options.runId}:${outcome.call.toolCallId}` } } };
     const result = outcome.result ? storedResult(outcome.result) : undefined;
@@ -1778,6 +1788,38 @@ ${ledger}` : ''),
     return { call, kind, isError: false, text: renderDemo(name, steps) };
   }
 
+  /** A routine kept for this site: save a batch that worked, run it again with new values, list, delete. A run is an ordinary batch. */
+  async #macroTool(call: ToolCallRequest, kind: ToolKind, args: Record<string, unknown>): Promise<CallOutcome> {
+    const fail = (text: string): CallOutcome => ({ call, kind, isError: true, text: `error: ${text}` });
+    const tabs = await this.options.layer.tabs().catch(() => undefined);
+    const active = tabs?.tabs.find(t => t.tabId === (this.#boundTab ?? tabs.activeTabId));
+    let origin = '';
+    try { origin = active ? new URL(active.url).origin : ''; } catch { origin = ''; }
+    if (!origin) return fail('open the site first: routines are kept per site');
+    const name = typeof args.name === 'string' ? args.name.trim().slice(0, 80) : '';
+    if (args.action === 'list') {
+      const kept = await macrosFor(origin);
+      return { call, kind, isError: false, text: kept.length ? `Routines for ${origin}:\n${kept.map(describeMacro).join('\n')}\nRun one with macro action run, name and vars.` : `No routines are kept for ${origin}.` };
+    }
+    if (!name) return fail('name is required');
+    if (args.action === 'delete') return { call, kind, isError: false, text: (await deleteMacro(origin, name)) ? `Deleted "${name}".` : `No routine named "${name}" for ${origin}.` };
+    if (args.action === 'save') {
+      const why = refusalFor(args.steps);
+      if (why) return fail(why);
+      const steps = args.steps as unknown[];
+      const vars = placeholdersOf(steps);
+      await saveMacro({ origin, name, savedAt: Date.now(), vars, steps });
+      return { call, kind, isError: false, text: `Saved "${name}" for ${origin} (${steps.length} steps${vars.length ? `; values to give when running it: ${vars.join(', ')}` : ''}). A later run goes through the same checks and approvals as batch; the page may have changed, so verify the result.` };
+    }
+    if (args.action !== 'run') return fail('action is save, run, list or delete');
+    const found = (await macrosFor(origin)).find(m => m.name.toLowerCase() === name.toLowerCase());
+    if (!found) return fail(`no routine named "${name}" for ${origin}; macro action list shows what is kept`);
+    const expanded = expandVars(found.steps, args.vars && typeof args.vars === 'object' ? (args.vars as Record<string, unknown>) : {});
+    if (!expanded.ok) return fail(`"${name}" needs values for: ${expanded.missing.join(', ')}; pass them in vars`);
+    await countRun(origin, name);
+    return this.#runBatchTool(call, kind, { steps: expanded.steps });
+  }
+
   async #planTool(call: ToolCallRequest, kind: ToolKind, args: Record<string, unknown>): Promise<CallOutcome> {
     const fail = (text: string): CallOutcome => ({ call, kind, text: `error: ${text}`, isError: true });
     const done = (note = ''): CallOutcome => ({
@@ -1846,6 +1888,9 @@ ${ledger}` : ''),
   #routinesNoted = new Set<string>();
   #unknownNoted = false;
   #poolNoted = false;
+  /** The tables of the last extract_rows, as rows of text keyed by column, and the rows data_ops last produced: the working set of list work. */
+  #extracted: Array<Array<Record<string, string | number | boolean | null>>> = [];
+  #workingRows: Array<Record<string, string | number | boolean | null>> | undefined;
   #pendingStall: StallVerdict | null = null;
   #docsRead = false;
   #scriptNote: string | null = null;
@@ -1956,6 +2001,8 @@ ${ledger}` : ''),
     const id = identify(url);
     if (id && !this.#routinesNoted.has(id.origin)) {
       this.#routinesNoted.add(id.origin);
+      const macros = await macrosFor(id.origin).catch(() => []);
+      if (macros.length) await this.writer.appNote(`Routines kept for ${id.host} (macro action run, with vars; they are batches: verify the result): ${macros.slice(0, 8).map(m => `"${m.name}"${m.vars.length ? ` [${m.vars.join(', ')}]` : ''}`).join(', ')}.`);
       const kept = await demosFor(id.origin).catch(() => []);
       if (kept.length) await this.writer.appNote(`The user showed you ${kept.length} routine(s) on ${id.host}: ${kept.slice(0, 5).map(d => `"${d.name}"`).join(', ')}. record_demo with action list prints the steps. They are examples from an earlier session: check each target on the live page before repeating a step, use the values of this request, and ignore a routine that does not fit.`);
     }
@@ -2243,7 +2290,8 @@ ${renderSkill(top)}`);
     } else if (call.toolName === 'site_action') {
       outcome = await this.#runSiteAction(call, kind, args);
     } else if (call.toolName === 'data_ops') {
-      const r = runDataOpsTool(args as never);
+      const r = runDataOpsTool(args as never, { tables: this.#extracted, current: this.#workingRows });
+      if (r.rows) this.#workingRows = r.rows;
       outcome = { call, kind, isError: r.isError, text: r.text };
     } else if (call.toolName === 'calculate') {
       const r = runCalculate(args as { expressions?: Array<{ name?: string; expr?: string }> });
@@ -2254,6 +2302,8 @@ ${renderSkill(top)}`);
       } catch (error) {
         outcome = { call, kind, isError: true, text: `error: ${error instanceof Error ? error.message : String(error)}` };
       }
+    } else if (call.toolName === 'macro') {
+      outcome = await this.#macroTool(call, kind, args);
     } else if (call.toolName === 'record_demo') {
       outcome = await this.#recordDemo(call, kind, args);
     } else if (call.toolName === 'plan') {

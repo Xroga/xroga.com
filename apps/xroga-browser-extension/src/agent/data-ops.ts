@@ -150,22 +150,26 @@ export const DATA_OPS_TOOL = {
   parameters: {
     type: 'object',
     properties: {
-      rows: { type: 'array', maxItems: MAX_ROWS, items: { type: 'object' } },
+      rows: { type: 'array', maxItems: MAX_ROWS, items: { type: 'object' }, description: 'Leave out to work on the rows of the last extract_rows (or the result of your last data_ops)' },
+      table: { type: 'integer', minimum: 1, description: 'With rows left out: which table of the last extract_rows (default 1)' },
       steps: { type: 'array', maxItems: MAX_STEPS, items: { type: 'object', properties: { op: { type: 'string', enum: [...OPS] } }, required: ['op'] } },
     },
-    required: ['rows', 'steps'],
+    required: ['steps'],
     additionalProperties: false,
   },
 };
 
-export function runDataOpsTool(args: { rows?: Row[]; steps?: DataStep[] }): { text: string; isError: boolean } {
+export function runDataOpsTool(args: { rows?: Row[]; table?: number; steps?: DataStep[] }, working?: { tables: Row[][]; current?: Row[] }): { text: string; isError: boolean; rows?: Row[] } {
   try {
-    const out = runDataOps(args.rows as Row[], args.steps as DataStep[]);
+    const base = Array.isArray(args.rows) ? args.rows : args.table ? working?.tables[args.table - 1] : (working?.current ?? working?.tables[0]);
+    if (!base) throw new Error('there are no rows yet: pass rows, or call extract_rows on the page first');
+    const out = runDataOps(base, args.steps as DataStep[]);
     const shown = out.groups ?? out.rows;
     const body = shown.slice(0, 150).map(r => JSON.stringify(r)).join('\n');
     return {
       text: `${out.notes.join('\n')}\nresult: ${out.groups ? `${out.groups.length} groups` : `${out.rows.length} rows`}\n${body}${shown.length > 150 ? `\n... ${shown.length - 150} more not shown` : ''}`,
       isError: false,
+      rows: out.rows,
     };
   } catch (error) {
     return { text: `error: ${error instanceof Error ? error.message : String(error)}`, isError: true };
