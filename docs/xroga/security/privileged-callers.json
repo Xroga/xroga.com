@@ -7,17 +7,17 @@
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 229,
-    "persistenceCandidates": 1027,
+    "privilegedFactorySites": 231,
+    "persistenceCandidates": 1031,
     "ownerPredicateCandidates": 275,
-    "reviewRequired": 170,
+    "reviewRequired": 174,
     "reviewedCandidates": 857,
-    "unresolvedSafetyCandidates": 220,
+    "unresolvedSafetyCandidates": 224,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 170,
+    "REVIEW_REQUIRED": 174,
     "SCOPED_BOUNDARY": 547,
     "NARROW_EXCEPTION": 52,
     "NOT_PERSISTENCE": 208,
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 78,
-    "unresolvedCandidateBoundaries": 949,
+    "unresolvedCandidateBoundaries": 953,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -5000,6 +5000,22 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "199c89376cc477b8c93c"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "12690ff6770fa50bad0a"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "43f74a68b16673a66b2a"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "344cb37df2ca54037032"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "20c9e87145ae5dc93476"
       },
       {
@@ -6961,6 +6977,22 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "a0cc691275ff5a5069a1"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "199c89376cc477b8c93c"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "12690ff6770fa50bad0a"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "43f74a68b16673a66b2a"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "344cb37df2ca54037032"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -10541,10 +10573,10 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 1027,
+    "currentCallers": 1031,
     "structuredVerified": 78,
-    "structuredUnproven": 949,
-    "manualUnresolved": 220,
+    "structuredUnproven": 953,
+    "manualUnresolved": 224,
     "manualUnsupported": 729,
     "agreedVerified": 78,
     "proofAwaitingManualReconciliation": 0
@@ -20920,6 +20952,50 @@
           }
         ]
       }
+    },
+    {
+      "id": "199c89376cc477b8c93c",
+      "path": "backend/src/routes/teams.ts",
+      "line": 49,
+      "enclosing": "call",
+      "kind": "RPC_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "ed12e795542c30516005b5a9681eee3b7e734fd619d80e1eaf913d3979df0b5b"
+    },
+    {
+      "id": "12690ff6770fa50bad0a",
+      "path": "backend/src/routes/teams.ts",
+      "line": 49,
+      "enclosing": "call",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "ed12e795542c30516005b5a9681eee3b7e734fd619d80e1eaf913d3979df0b5b"
+    },
+    {
+      "id": "43f74a68b16673a66b2a",
+      "path": "backend/src/routes/teams.ts",
+      "line": 134,
+      "enclosing": "<module>",
+      "kind": "RPC_CANDIDATE",
+      "target": "team_create_link",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "ed12e795542c30516005b5a9681eee3b7e734fd619d80e1eaf913d3979df0b5b"
+    },
+    {
+      "id": "344cb37df2ca54037032",
+      "path": "backend/src/routes/teams.ts",
+      "line": 134,
+      "enclosing": "<module>",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "ed12e795542c30516005b5a9681eee3b7e734fd619d80e1eaf913d3979df0b5b"
     },
     {
       "id": "353aa869f7c46574b7a6",

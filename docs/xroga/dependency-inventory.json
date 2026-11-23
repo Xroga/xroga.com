@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "e3de9ed788655d259ead94135745380b0b6e8150",
+  "source_sha": "ac676aca0d476ac099ff707a8eca1d1eef61be61",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -18230,7 +18230,7 @@
     },
     {
       "path": "backend/src/index.ts",
-      "sha256": "32ddb81d26bd758e8b13a5f62fc7926ac85ec316a9149b0b120c178e8ead2725"
+      "sha256": "bad6bd300c892271b003b9fdf1a9f16aeda08306876d08444811bd76e763474b"
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
@@ -18843,6 +18843,10 @@
     {
       "path": "backend/src/routes/tasks.ts",
       "sha256": "f61a9e808d9708eb4929981a610087819bbed0681bd88c327cd6edecb0260f2c"
+    },
+    {
+      "path": "backend/src/routes/teams.ts",
+      "sha256": "ed12e795542c30516005b5a9681eee3b7e734fd619d80e1eaf913d3979df0b5b"
     },
     {
       "path": "backend/src/routes/terminalSessions.ts",
@@ -20449,12 +20453,20 @@
       "sha256": "2afc1c2bf12ca0f2f5b538e4d3528d4ca5372da4ca9028a688fc914581bb7c0b"
     },
     {
+      "path": "frontend/src/app/(shell)/join/[token]/page.tsx",
+      "sha256": "12652028f0357d1677220586062f843542d351de0235a743c01668ea84fc6923"
+    },
+    {
       "path": "frontend/src/app/(shell)/layout.tsx",
       "sha256": "44577045e394eb2a8183474d4516c4be72464f50567a92622757fed257625597"
     },
     {
       "path": "frontend/src/app/(shell)/settings/page.tsx",
       "sha256": "3da7fc6ae667f0a8fb5e3e1f66bdfb7731196ebb76c33c06261fdea447f04436"
+    },
+    {
+      "path": "frontend/src/app/(shell)/team/page.tsx",
+      "sha256": "542d4977cae6f2f6c83ec6cac1659ccb4fe7d2b46cfd71ec75ce9ca7f373e005"
     },
     {
       "path": "frontend/src/app/(workspace)/dashboard/page.tsx",
@@ -22965,6 +22977,14 @@
       "sha256": "c41d209915a903da8cfb6d4f0efc4e7de01c3c7113008dbb6832f737944b64d2"
     },
     {
+      "path": "frontend/src/components/team/JoinTeam.tsx",
+      "sha256": "317bf23befbbbeeb0dc661704ee53c7e55eb7775ebb145538cf7eb9e67fe4e7a"
+    },
+    {
+      "path": "frontend/src/components/team/TeamPage.tsx",
+      "sha256": "b7f0bb999a4f8fc66df0183121fa54e18e632e55dacf21a6b75a8f19f70d0dfe"
+    },
+    {
       "path": "frontend/src/components/terminal/AgentTypewriterText.tsx",
       "sha256": "02bb61853744a50898d6cac335cdbcc09f466de14936180e74359154adedc0dc"
     },
@@ -23266,7 +23286,7 @@
     },
     {
       "path": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
-      "sha256": "212ac8d6e011ee23f446f12ced2afc5a48cee62f11cb185fee75266d4c4bbbbf"
+      "sha256": "6e399e02343bab7e7bcdc4b75455758a4ee430e9afefcd775487d99a17d3d2b3"
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceScrollNavigation.tsx",
@@ -24443,6 +24463,10 @@
     {
       "path": "frontend/src/lib/tableRows.ts",
       "sha256": "583902051342bf8237a2e687256a048d0e5edbf2db4de72ec3f08c4968c096bf"
+    },
+    {
+      "path": "frontend/src/lib/teams.ts",
+      "sha256": "da070267c6186578c54577749b98a9547ce33ec7fa1c713696cd96d2775db8fa"
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
@@ -26167,42 +26191,42 @@
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/index.ts",
-      "line": 118,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
       "line": 119,
       "credentialsInUrl": false
     },
     {
-      "hostname": "www.xroga.com",
+      "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 120,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xrogaaicom.vercel.app",
+      "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 121,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga-api.fly.dev",
+      "hostname": "xrogaaicom.vercel.app",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 122,
       "credentialsInUrl": false
     },
     {
+      "hostname": "xroga-api.fly.dev",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 123,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 214,
+      "line": 215,
       "credentialsInUrl": false
     },
     {
@@ -30619,7 +30643,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
-      "line": 53,
+      "line": 68,
       "credentialsInUrl": false
     },
     {
@@ -32552,6 +32576,13 @@
       "protocol": "https:",
       "path": "frontend/src/lib/syncRepoTerminalSessions.ts",
       "line": 101,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/teams.ts",
+      "line": 49,
       "credentialsInUrl": false
     },
     {

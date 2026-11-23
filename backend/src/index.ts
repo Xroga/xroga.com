@@ -26,6 +26,7 @@ import integrationsRouter from './routes/integrations.js';
 import supabaseOAuthRouter from './routes/supabaseOAuth.js';
 import publishRouter from './routes/publish.js';
 import notificationsRouter from './routes/notifications.js';
+import teamsRouter from './routes/teams.js';
 import billingRouter from './routes/billing.js';
 import billingWebhookRouter from './routes/billingWebhook.js';
 import simpleChatRouter from './routes/simpleChat.js';
@@ -236,6 +237,8 @@ app.use('/api/referrals', authMiddleware, referralsRouter);
 app.use('/api/community', communityRouter);
 // Read access is token-scoped; create/revoke apply auth inside the router.
 app.use('/api/message-shares', messageSharesRouter);
+// Team invitations: auth required; permissions are enforced in service-only SQL functions.
+app.use('/api/teams', authMiddleware, teamsRouter);
 app.use('/api/token-distribution', authMiddleware, tokenDistributionRouter);
 app.use('/api/marketplace', authMiddleware, marketplaceRouter);
 app.use('/api/influencer', authMiddleware, influencerRouter);
