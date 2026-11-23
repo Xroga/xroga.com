@@ -112,6 +112,13 @@ export const TASKS: EvalTask[] = [
     grade: f => /49[.,]90/.test(f.answer),
   },
   {
+    // Rows collected from a page with the same company written differently (www, protocol, trailing slash, +tag in the email): an exact count and ranking is list work, not mental arithmetic.
+    id: 'leads-dedupe',
+    url: `${FIXTURE_ORIGIN}/c-leads.html`,
+    task: 'This is my list of collected leads. The same company can appear twice with its website or email written differently. How many distinct companies are there, and which three have the highest score (use the highest score a company has in the list)?',
+    grade: f => /\b12\b/.test(f.answer) && /cobalt gym/i.test(f.answer) && /vega tools/i.test(f.answer) && /pine cafe/i.test(f.answer),
+  },
+  {
     id: 'add-rows',
     url: `${FIXTURE_ORIGIN}/c-effects.html`,
     task: 'Add two rows to the list on this page.',

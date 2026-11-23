@@ -6,6 +6,7 @@
 // every card and answers every question, with a canary "password" when asked for one, and cancels hand-overs. In Auto
 // mode no write card appears. Keys come from the fixture server's environment and are never stored.
 import { CALCULATE_TOOL } from '@src/agent/calculate';
+import { DATA_OPS_TOOL } from '@src/agent/data-ops';
 import { FREE_TIMES_TOOL } from '@src/agent/free-times';
 import { EffortControl } from '@src/xroga/effort';
 import { AgentLoop } from '@src/agent/loop';
@@ -152,7 +153,7 @@ async function runOne(
         }
       : {},
   );
-  const tools = toolsForRun({ disabled: args.tools === 'short' ? SHORT_TOOLS_OFF : [], vision: profile.vision, pointAt: true, agentTools: args.batch === false ? [PLAN_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL] : [PLAN_TOOL, BATCH_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL] });
+  const tools = toolsForRun({ disabled: args.tools === 'short' ? SHORT_TOOLS_OFF : [], vision: profile.vision, pointAt: true, agentTools: args.batch === false ? [PLAN_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL, DATA_OPS_TOOL] : [PLAN_TOOL, BATCH_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL, DATA_OPS_TOOL] });
   const abort = new AbortController();
   const timer = setTimeout(() => abort.abort(), (args.runMinutes ?? 5) * 60_000);
   const timings = new RunTimings();
@@ -277,7 +278,7 @@ async function runOne(
           reported: warned(facts.answer),
         }
       : undefined,
-    answer: answer.slice(0, 600),
+    answer: answer.slice(0, 3000),
     timing: Object.fromEntries(Object.entries(timings.summary().phases ?? {}).map(([k, v]) => [k, Math.round((v as { totalMs: number }).totalMs)])),
     plan: branch.flatMap(e => (e.type === 'message' && e.message.role === 'tool' ? e.message.parts : [])).filter(p => p.type === 'tool-result' && p.toolName === 'plan').map(p => (p.type === 'tool-result' ? p.text : '')).at(-1) ?? null,
     // What the grader's page expression returned when the run ended (the application's own state), for diagnosing a graded failure.
