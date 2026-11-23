@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "5839d88b836348390146f4678155d18a2d40ebb2",
+  "source_sha": "c90eca6952f24f9f3f99a52f1215b39bd164b1eb",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17682,7 +17682,7 @@
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "sha256": "2e9871adfe442b337f03e1e3be1852560ef2a77035707032865c76e2ab029c7a"
+      "sha256": "98240f57d19248a18af765b7eb18c2b8a573e5ee698fffd9a50e17e307402177"
     },
     {
       "path": "backend/src/ai/zurelayWire.ts",

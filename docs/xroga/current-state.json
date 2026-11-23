@@ -15547,7 +15547,7 @@
       "id": "surface:82ff96c046038933cdb9",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/workspacePublicSearch.ts",
-      "sha256": "2e9871adfe442b337f03e1e3be1852560ef2a77035707032865c76e2ab029c7a",
+      "sha256": "98240f57d19248a18af765b7eb18c2b8a573e5ee698fffd9a50e17e307402177",
       "symbols": [
         "answerOnlySuffix",
         "asksForOfficial",
@@ -15555,6 +15555,7 @@
         "capacity",
         "categorySpellingKey",
         "characters",
+        "checkedTopic",
         "citationFooter",
         "contextDependentTopic",
         "currencyPeriod",
