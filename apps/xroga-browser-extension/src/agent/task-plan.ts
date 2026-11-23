@@ -14,12 +14,12 @@ export interface LedgerItem { key: string; status: LedgerStatus; note?: string; 
 /** A fact the work depends on (a phone number, a price, an account id), as read from a page or a source. Two different values for one key is a conflict to settle before reporting success. */
 export interface Fact { key: string; value: string; source?: string; earlier?: string; earlierSource?: string; settled?: boolean }
 export interface PlanSnapshot { revision: number; milestones: Milestone[]; ledger?: LedgerItem[]; facts?: Fact[] }
-export const MAX_FACTS = 60;
+export const MAX_FACTS = 2_000;
 
-export const MAX_LEDGER = 300;
+export const MAX_LEDGER = 20_000;
 const LEDGER_SETTABLE = new Set<string>(['saved', 'verified', 'failed', 'skipped', 'pending']);
 
-export const MAX_MILESTONES = 12;
+export const MAX_MILESTONES = 100;
 const ID = /^[a-z0-9][a-z0-9_-]{0,23}$/;
 const SETTABLE = new Set(['pending', 'working', 'done', 'blocked', 'waiting']);
 

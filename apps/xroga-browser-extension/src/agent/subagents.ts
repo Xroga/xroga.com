@@ -13,8 +13,8 @@ import type { LayerPort } from './ports';
 import type { AgentTool } from './tools';
 import { challengeNote, detectChallenge } from './challenge';
 
-export const MAX_JOBS = 10;
-export const MAX_FOLLOW = 10;
+export const MAX_JOBS = 100;
+export const MAX_FOLLOW = 100;
 const PAGE_TIMEOUT_MS = 40_000;
 /**
  * Pages loading in background tabs at the same moment. Chrome loads and renders only so many background tabs at once; opening dozens

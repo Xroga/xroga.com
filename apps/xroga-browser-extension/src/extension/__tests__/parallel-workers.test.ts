@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ParallelWorkers, PARALLEL_TOOLS, MAX_ACTIVE_WORKERS, type WorkerDeps, type WorkerJob } from '../parallel-workers';
+import { ParallelWorkers, PARALLEL_TOOLS, MAX_ACTIVE_WORKERS, MAX_INSTRUCTION, MAX_RESULT, MAX_TASKS, type WorkerDeps, type WorkerJob } from '../parallel-workers';
 import { kindOf } from '@src/agent/tools';
 
 function harness(overrides: Partial<WorkerDeps> = {}) {
@@ -86,15 +86,15 @@ describe('starting workers', () => {
   it('refuses a task beyond the limit, counting those running and waiting', async () => {
     const h = harness();
     await h.workers.start('parent', { tasks: Array.from({ length: 3 }, (_, i) => task(i + 1)) });
-    const r = await h.workers.start('parent', { tasks: Array.from({ length: 22 }, (_, i) => task(i + 10)) });
+    const r = await h.workers.start('parent', { tasks: Array.from({ length: MAX_TASKS - 2 }, (_, i) => task(i + 10)) });
     expect(r.isError).toBe(true);
-    expect(r.text).toContain('at most 24');
+    expect(r.text).toContain(`at most ${MAX_TASKS}`);
     expect(h.opened).toHaveLength(MAX_ACTIVE_WORKERS);
   });
 
   it('refuses empty, missing and oversized input', async () => {
     const h = harness();
-    for (const input of [{}, { tasks: [] }, { tasks: [{ instruction: '', url: 'https://a.example' }] }, { tasks: [{ instruction: 'x'.repeat(4_001), url: 'https://a.example' }] }, { tasks: Array.from({ length: 25 }, (_, i) => task(i + 1)) }]) {
+    for (const input of [{}, { tasks: [] }, { tasks: [{ instruction: '', url: 'https://a.example' }] }, { tasks: [{ instruction: 'x'.repeat(MAX_INSTRUCTION + 1), url: 'https://a.example' }] }, { tasks: Array.from({ length: MAX_TASKS + 1 }, (_, i) => task(i + 1)) }]) {
       expect((await h.workers.start('parent', input)).isError).toBe(true);
     }
     expect(h.opened).toHaveLength(0);
@@ -134,12 +134,12 @@ describe('collecting results', () => {
   it('truncates a long result and maps each ending to a state', async () => {
     const h = harness();
     await h.workers.start('parent', { tasks: [task(1), task(2), task(3)] });
-    await h.workers.ended('conv-1', { status: 'done', outcome: 'partial', result: 'x'.repeat(20_000) });
+    await h.workers.ended('conv-1', { status: 'done', outcome: 'partial', result: 'x'.repeat(MAX_RESULT + 20_000) });
     await h.workers.ended('conv-2', { status: 'failed', reason: 'The run failed.' });
     await h.workers.ended('conv-3', { status: 'stopped' });
     const s = parse(await h.workers.status('parent', 0)).workers;
     expect(s.map((w: { state: string }) => w.state)).toEqual(['completed', 'failed', 'cancelled']);
-    expect(s[0].result.length).toBe(6_000);
+    expect(s[0].result.length).toBe(MAX_RESULT);
     expect(s[1].result).toBe('The run failed.');
   });
 
@@ -216,7 +216,7 @@ describe('worker capacity follows the account limit the server reports', () => {
   const six = [1, 2, 3, 4, 5, 6].map(task);
   it('maps an account limit to workers: the parent holds one slot, never more than six, three when unknown', async () => {
     const { workersFor } = await import('../parallel-workers');
-    expect([undefined, 0, 4, 6, 7, 8, 12, 13, 40].map(n => workersFor(n))).toEqual([3, 3, 3, 5, 6, 7, 11, 12, 12]);
+    expect([undefined, 0, 4, 6, 7, 8, 12, 13, 40].map(n => workersFor(n))).toEqual([3, 3, 3, 5, 6, 7, 11, 12, 32]);
   });
   it('with the default account (four runs) three of six tasks run and three wait; they start as slots free', async () => {
     const h = harness();

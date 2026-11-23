@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BatchError, MAX_OPS, MAX_REPEAT, isCondition, runPlan, worstCase, type Condition, type Step } from '../batch-plan';
+import { BatchError, MAX_FOREACH, MAX_OPS, MAX_REPEAT, isCondition, runPlan, worstCase, type Condition, type Step } from '../batch-plan';
 
 /** A page that is a set of facts: text on it, and a "Next" button that stays until it has been clicked `pages` times. */
 function page(pages = 3) {
@@ -94,7 +94,7 @@ describe('a batch', () => {
     await expect(runPlan([{ ...click('Next'), repeat: { until: { for: 'text_gone', value: 'Next' }, max: 5 } }], { run: p.run, test: p.test })).rejects.toThrow(/repeat hit max 5/);
     expect(p.calls).toHaveLength(5);
     // max is clamped, and a plan that could exceed the ceiling is refused before it starts.
-    expect(worstCase([{ ...click('x'), repeat: 1000 }])).toBe(MAX_REPEAT);
+    expect(worstCase([{ ...click('x'), repeat: MAX_REPEAT + 1000 }])).toBe(MAX_REPEAT);
     await expect(runPlan(Array.from({ length: Math.ceil(MAX_OPS / MAX_REPEAT) + 1 }, () => ({ ...click('x'), repeat: MAX_REPEAT })), { run: p.run, test: p.test })).rejects.toThrow(`more than ${MAX_OPS}`);
   });
 
@@ -183,7 +183,7 @@ describe('foreach', () => {
 
   it('refuses an empty list and more than the item ceiling', async () => {
     await expect(runPlan([{ foreach: [], tool: 'click' }], { run: async () => ({ text: '' }), test: async () => false })).rejects.toThrow(/non-empty/);
-    await expect(runPlan([{ foreach: Array.from({ length: 101 }, (_, i) => String(i)), tool: 'click', args: { x: '${item}' } }], { run: async () => ({ text: '' }), test: async () => false })).rejects.toThrow(/at most 100/);
+    await expect(runPlan([{ foreach: Array.from({ length: MAX_FOREACH + 1 }, (_, i) => String(i)), tool: 'click', args: { x: '${item}' } }], { run: async () => ({ text: '' }), test: async () => false })).rejects.toThrow(new RegExp(`at most ${MAX_FOREACH}`));
     expect(worstCase([{ foreach: ['a', 'b', 'c'], steps: [{ tool: 'click' }, { tool: 'click' }] }])).toBe(6);
   });
 

@@ -10,8 +10,8 @@
 // not decide what may run: every step still goes through the caller's execution path, with its permissions, approvals and journal.
 
 export const MAX_REPEAT_DEFAULT = 10;
-export const MAX_REPEAT = 200;
-export const MAX_OPS = 1000;
+export const MAX_REPEAT = 5_000;
+export const MAX_OPS = 100_000;
 export const MAX_NESTING = 3;
 
 /** What a condition can ask about the page. Answered instantly, never waited for. */
@@ -43,7 +43,7 @@ export interface Step {
   continueOnError?: boolean;
 }
 
-export const MAX_FOREACH = 100;
+export const MAX_FOREACH = 5_000;
 const PLACEHOLDER = /\$\{(item(?:\.[A-Za-z0-9_]+)?|index)\}/g;
 
 /** The step with `${...}` filled in for one item. Throws when a placeholder names a field the item does not have. */
@@ -378,12 +378,12 @@ export const BATCH_TOOL = {
   parameters: {
     type: 'object',
     properties: {
-      foreach: { type: 'array', maxItems: 100 },
+      foreach: { type: 'array', maxItems: 5000 },
       continueOnError: { type: 'boolean' },
       steps: {
         type: 'array',
         minItems: 1,
-        maxItems: 120,
+        maxItems: 2000,
         items: {
           type: 'object',
           properties: {
@@ -393,7 +393,7 @@ export const BATCH_TOOL = {
             unless: { type: 'object' },
             repeat: {},
             keep: { type: 'boolean' },
-            foreach: { type: 'array', maxItems: 100 },
+            foreach: { type: 'array', maxItems: 5000 },
             continueOnError: { type: 'boolean' },
             steps: { type: 'array', items: { type: 'object' } },
           },

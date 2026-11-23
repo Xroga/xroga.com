@@ -669,7 +669,7 @@ ${ledger}` : ''),
     this.preActions.push('snapshot');
     await this.#announceSite(active.url, asked ? userText(asked) : '');
     // Kept within budget: a share of the window, at 4 characters a token.
-    const budget = Math.max(2_000, Math.min(30_000, this.options.model.profile.contextWindow * 4 * 0.2));
+    const budget = Math.max(2_000, Math.min(400_000, this.options.model.profile.contextWindow * 4 * 0.2));
     // Said once, in words the model acts on: this outline is the page as it is now, so a snapshot before the first action only costs a turn.
     const outline = `[Current outline of the page, already captured for you. Act on it directly; do not take a snapshot first.]\n` +
       cutText(result.text, budget, '… the outline was cut; take a snapshot to see more.');
@@ -1984,7 +1984,7 @@ ${ledger}` : ''),
       capability: `${top.id} (${top.verified})`, permissions: top.risk === 'read' ? 'read only' : `${top.risk} actions need the user's approval`,
       expected_result: 'the outcome the user asked for', verification: 'read the resulting state back from the page',
     })} The method for this platform is loaded below; use it, and it does not limit what you may do on this site.
-${renderSkill(top).slice(0, 2200)}`);
+${renderSkill(top)}`);
   }
 
   #siteActionReg: SiteActionRegistry | null = null;

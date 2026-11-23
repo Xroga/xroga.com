@@ -17,16 +17,16 @@ import type { AgentTool } from '@src/agent/tools';
 export const MAX_ACTIVE_WORKERS = 3;
 /** The most workers one parent runs at once, however much the account allows (each is a Chrome window and a model stream). */
 // 12, not 20: 20 workers ran concurrently and were correct (20 of 20 four times) but were not faster than one agent at median (89, 147, 210, 234 s against 175 s), and one run made 26 worker windows for 20 tasks; 12 workers beat one agent once (134 s against 174 s). See the v8 handover, round 4.
-export const MAX_ACTIVE_WORKERS_CEILING = 12;
+export const MAX_ACTIVE_WORKERS_CEILING = 32;
 /** Workers that may run at once for an account limit of `activeRunLimit` runs: the parent holds one slot. */
 export function workersFor(activeRunLimit: number | undefined): number {
   if (!Number.isInteger(activeRunLimit) || (activeRunLimit as number) < 2) return MAX_ACTIVE_WORKERS;
   return Math.max(1, Math.min(MAX_ACTIVE_WORKERS_CEILING, (activeRunLimit as number) - 1));
 }
 /** Tasks one parent may have assigned (running or waiting). How many of them run at once depends on the account's limit; the rest wait. */
-export const MAX_TASKS = 24;
-export const MAX_INSTRUCTION = 4_000;
-const MAX_RESULT = 6_000;
+export const MAX_TASKS = 500;
+export const MAX_INSTRUCTION = 100_000;
+export const MAX_RESULT = 100_000;
 /** What one finished task hands to a task that comes after it, and the most all of them may hand over together. */
 const HANDOFF_EACH = 2_000;
 const HANDOFF_ALL = 6_000;

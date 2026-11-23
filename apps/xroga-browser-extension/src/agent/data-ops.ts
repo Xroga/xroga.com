@@ -25,8 +25,8 @@ export interface DataStep {
   n?: number;
 }
 
-export const MAX_ROWS = 500;
-const MAX_STEPS = 12;
+export const MAX_ROWS = 100_000;
+const MAX_STEPS = 200;
 const OPS = new Set(['dedupe', 'filter', 'sort', 'pick', 'template', 'group', 'limit']);
 
 const keysOf = (by: unknown): string[] => (Array.isArray(by) ? by : typeof by === 'string' ? [by] : []).map(String).filter(Boolean);

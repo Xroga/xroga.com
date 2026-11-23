@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { addressOf, parseJobs, resultLinks, runSubagents, MAX_JOBS, DELEGATE_TOOL } from '../subagents';
+import { addressOf, parseJobs, resultLinks, runSubagents, MAX_FOLLOW, MAX_JOBS, DELEGATE_TOOL } from '../subagents';
 import { kindOf } from '../tools';
 import { isResearchRequest, researchPlan } from '../routing';
 import { FakeLayer, ok } from '../testing/fake-layer';
@@ -34,15 +34,15 @@ describe('delegate: the jobs', () => {
     const { jobs, problems } = parseJobs({ jobs: [
       { url: 'https://a.example/x' },
       { query: 'best laptops 2026', follow: 5 },
-      { query: 'x', follow: 99 },
+      { query: 'x', follow: MAX_FOLLOW + 99 },
       { url: 'javascript:alert(1)' },
       {},
     ] });
-    expect(jobs).toEqual([{ url: 'https://a.example/x' }, { query: 'best laptops 2026', follow: 5 }, { query: 'x', follow: 10 }]);
+    expect(jobs).toEqual([{ url: 'https://a.example/x' }, { query: 'best laptops 2026', follow: 5 }, { query: 'x', follow: MAX_FOLLOW }]);
     expect(problems).toHaveLength(2);
   });
-  it('runs at most ten, never none', () => {
-    const many = Array.from({ length: 14 }, (_, i) => ({ url: `https://s${i}.example` }));
+  it('runs at most the job ceiling, never none', () => {
+    const many = Array.from({ length: MAX_JOBS + 4 }, (_, i) => ({ url: `https://s${i}.example` }));
     expect(parseJobs({ jobs: many }).jobs).toHaveLength(MAX_JOBS);
     expect(parseJobs({}).jobs).toEqual([]);
   });

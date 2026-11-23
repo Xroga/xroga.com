@@ -2038,7 +2038,7 @@ The name ${asked} was not offered in this task. Do not search again: call one of
             record.canonicalBrowserFinish = {
               status,
               actions,
-              result: status === 'completed' ? result?.slice(0, 12_000) : undefined,
+              result: status === 'completed' ? result?.slice(0, 200_000) : undefined,
               ...(end?.direct ? { direct: true as const } : {}),
               localStatus: record.status,
             };

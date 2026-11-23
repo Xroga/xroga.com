@@ -17,7 +17,7 @@ export const ATTACHED_IMAGE_LINE =
 
 /** How much of an attached text goes into the message: a share of the window, at 4 characters a token. */
 export function inlineBudget(contextWindow: number): number {
-  return Math.max(4_000, Math.min(60_000, Math.floor(contextWindow * 4 * 0.25)));
+  return Math.max(4_000, Math.min(1_000_000, Math.floor(contextWindow * 4 * 0.25)));
 }
 
 async function base64(blob: Blob): Promise<string> {

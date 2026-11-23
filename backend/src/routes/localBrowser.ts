@@ -64,11 +64,11 @@ const MINUTE = 60_000;
 const SEGMENT_MS = 90 * MINUTE;
 /** A run's wall-clock segment is renewed when less than this is left. */
 const RENEW_BEFORE_MS = 10 * MINUTE;
-const MAX_GOAL = 16_000;
+const MAX_GOAL = 200_000;
 // These bound the size of one run's saved state, not what a person may do: a long task makes many searches, reads and changes.
-const MAX_PLUGIN_ACTIONS = 200;
-const MAX_PLUGIN_DISCOVERIES = 100;
-const MAX_PLUGIN_READS = 400;
+const MAX_PLUGIN_ACTIONS = 5_000;
+const MAX_PLUGIN_DISCOVERIES = 2_000;
+const MAX_PLUGIN_READS = 10_000;
 
 /**
  * Whether a connected-app call runs without a card. Reading never needs one, and neither does a change that only touches the owner's own
@@ -265,7 +265,7 @@ const turnBody = z.object({
 }).strict();
 const endBody = z.object({
   status: z.enum(['completed', 'failed', 'cancelled']),
-  result: z.string().max(12_000).optional(),
+  result: z.string().max(200_000).optional(),
   actions: z.array(z.string().regex(/^[a-z_]{1,50}$/)).max(500).default([]),
   /** A read answered from the page by the extension itself, with no model turn (agent/direct-read.ts). See DIRECT_READ_ACTIONS. */
   direct: z.literal(true).optional(),
