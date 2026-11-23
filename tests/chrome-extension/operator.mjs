@@ -843,36 +843,20 @@ try {
     assert.equal(recovery.result.actions.filter(action => action === "click").length, 1);
     useWorkspaceComponent = true;
     await workspace.goto(workspaceOrigin + "/workspace");
-    await workspace.getByText("Browser task completed", { exact: true }).waitFor({ timeout: 20_000 });
+    await workspace.locator("summary").filter({hasText:"Chrome connected"}).waitFor({ timeout: 20_000 });
+    // Browser Automation is run and shown only in the extension: the Workspace prints no task status, activity or result, and starts no task from its chat.
+    assert.equal(await workspace.getByText("Browser task completed", { exact: true }).count(), 0);
+    assert.equal(await workspace.getByText("Browser activity", { exact: true }).count(), 0);
     assert.equal(await workspace.getByRole("button", { name: "Start in Chrome" }).count(), 0);
-    await workspace.locator("summary").filter({hasText:"Chrome connected"}).waitFor();
-    await workspace.getByText("Browser activity", { exact: true }).click();
-    const activity = workspace.getByRole("list", { name: "Browser activity" });
-    await activity.waitFor();
-    assert.equal(await activity.getByText("Click control", { exact: false }).count(), 1);
-    assert.ok(await activity.getByText("Inspect page", { exact: false }).count());
     assert.equal(recovery.finishAttempts, 2);
     const priorRuns = runs.size;
     await workspace.getByLabel("Message Xroga").fill(`/chrome ${goal} ${site}`);
     await workspace.getByRole("button", { name: "Send prompt" }).click();
-    await workspace.waitForFunction(() => document.querySelector("main [role=status]")?.textContent === "Browser task completed" && window.fixtureRunStarted === true, undefined, { timeout: 25_000 });
-    await workspace.getByText("Browser task completed", { exact: true }).waitFor({ timeout: 25_000 }).catch(async error => {
-      console.error("Workspace dispatch", {
-        status: await workspace.getByRole("status").textContent(),
-        newRuns: JSON.stringify([...runs.values()].slice(priorRuns)),
-        pages: browser.pages().map(page => page.url()),
-      });
-      throw error;
-    });
-    assert.equal(runs.size, priorRuns + 1);
-    assert.equal([...runs.values()].at(-1).result.result, answer);
-    const newRunActivity = workspace.getByText("Browser activity", { exact: true });
-    await newRunActivity.waitFor();
-    if (!(await newRunActivity.evaluate(summary => summary.parentElement?.open))) await newRunActivity.click();
-    await activity.getByText("Click control", { exact: false }).waitFor();
-    assert.equal(await activity.getByText("Click control", { exact: false }).count(), 1);
-    await workspace.evaluate(() => window.fixtureAuthChanged('SIGNED_OUT', null));
-    await activity.waitFor({ state: "detached" });
+    await workspace.waitForTimeout(2_500);
+    assert.equal(runs.size, priorRuns, "The Workspace chat started no browser task");
+    assert.equal(await workspace.getByText("Browser task completed", { exact: true }).count(), 0);
+    assert.equal(await workspace.getByText("Browser task running", { exact: true }).count(), 0);
+    assert.equal(await workspace.getByText("Browser activity", { exact: true }).count(), 0);
     assert.equal(await workspace.getByText(answer, { exact: true }).count(), 0);
     assert.ok(actionCues.has("click"), "The Xroga pointer was visible when Chrome clicked");
     assert.ok(actionCues.has("input"), "The Xroga pointer was visible when Chrome typed");

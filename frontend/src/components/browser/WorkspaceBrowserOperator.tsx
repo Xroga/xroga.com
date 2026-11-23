@@ -53,11 +53,12 @@ type Operator = {
 const BrowserOperatorContext = createContext<Operator | null>(null);
 export const useWorkspaceBrowserOperator = () => useContext(BrowserOperatorContext);
 
-export function isLocalChromeRequest(text: string) {
-  return /^\s*\/chrome(?:\s|$)/i.test(text) || (
-    /^\s*(?:please\s+)?(?:open|go|visit|find|research|prepare|check|run|use|draft|inspect|compare|search)\b/i.test(text) &&
-    /\b(?:in|using|with) my (?:local )?chrome(?: browser)?\b/i.test(text)
-  );
+/**
+ * Browser Automation is run, shown and controlled only in the Xroga extension. The Workspace never starts a browser task from its chat and never prints
+ * a browser task's progress or result, so no prompt is treated as a local Chrome request here.
+ */
+export function isLocalChromeRequest(_text: string) {
+  return false;
 }
 
 function activityStep(value: unknown): Activity[] {
@@ -475,23 +476,7 @@ export function WorkspaceBrowserConnection() {
   </details>;
 }
 
-export function WorkspaceBrowserProgress({ operator, prompted }: { operator: Operator | null; prompted: boolean }) {
-  if (!operator) return prompted ? <p role="status" className="mb-2 text-xs text-[var(--muted)]">Browser Automation is unavailable in this Workspace. Your draft is still here.</p> : null;
-  if (!prompted && !operator.busy && !operator.runId) return null;
-  return <div className="mb-2 space-y-1 text-xs text-[var(--muted)]">
-    <p role="status">{!operator.paired && prompted && !operator.runId ? 'Open the Xroga extension side panel to connect Chrome. Your draft is still here.' : operator.status}</p>
-    {operator.activeTool && <p>{operator.activeTool} in progress</p>}
-    {operator.runId && (operator.busy || operator.paused) && <div className="flex flex-wrap gap-2">
-      {operator.busy && <button type="button" className="underline" onClick={() => operator.control('pause')}>Pause</button>}
-      {operator.paused && <button type="button" className="underline" onClick={() => operator.control('resume')}>Resume</button>}
-      <button type="button" className="underline" onClick={() => operator.control('cancel')}>Stop</button>
-    </div>}
-    {operator.activity.length > 0 && <details>
-      <summary className="cursor-pointer">Browser activity</summary>
-      <ol aria-label="Browser activity" className="max-h-32 space-y-1 overflow-auto">
-        {operator.activity.map(step => <li key={step.stepId}>{TOOLS[step.tool]} · {OUTCOMES[step.status]}{step.reobserved ? ' · Rechecked the page' : ''}</li>)}
-      </ol>
-    </details>}
-    {operator.result && <p className="max-h-44 overflow-auto whitespace-pre-wrap break-words text-[var(--foreground)]">{operator.result}</p>}
-  </div>;
+/** Intentionally renders nothing: a browser task's status, activity and result are shown in the extension, never in the Workspace. */
+export function WorkspaceBrowserProgress(_props: { operator: Operator | null; prompted: boolean }) {
+  return null;
 }

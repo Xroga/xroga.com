@@ -21,3 +21,9 @@ Nothing here is self-attested. The two CI jobs below fail because two security-f
 
 ## Gate 3 (same cause family): `Isolated Supabase authenticated browser verification`
 - Failing step "Full migration history and sanitized upgrade compatibility": `'NOT_RUN' !== 'PASS'` from the audit record that Gate 2 prevents from binding. Re-check after Gate 2.
+
+## Gate 4 (added 2026-11-23): Browser Automation output removed from the Workspace (owner decision)
+- Owner decision: a browser task is run, shown and controlled only in the Xroga extension; the Workspace must print no task status, activity or result and start no task from its chat.
+- Change (removal only, `frontend/src/components/browser/WorkspaceBrowserOperator.tsx`): `WorkspaceBrowserProgress` renders nothing; `isLocalChromeRequest` always returns false (so the chat bar's `/chrome` and "in my Chrome" branch no longer starts a run). The pairing card and the extension pairing/messaging code are unchanged. `tests/chrome-extension/operator.mjs` now asserts that the Workspace shows no "Browser task completed" / "Browser activity" text and that a `/chrome` message starts no run.
+- Effect on governance: `node scripts/security/audit-egress-callers.mjs` reports `Egress review evidence drift:6631f0cfac960ae10cff` for this file (its egress review evidence is bound to the previous bytes). It is a removal of rendering and of one call path (`browserOperator.start`), no new egress. Reviewer action: confirm removal-only, rebind the egress review evidence `sha256` for this file, and regenerate `egress-callers.json`, `privileged-callers.json` and `caller-reviews.json`. I did not rebind them myself. The local run could not confirm the rest of the inventory because the local TypeScript differs from the repository's pinned version; CI is authoritative.
+- Not run locally: the frontend build and `tests/chrome-extension/operator.mjs` (dependencies for them are not installed in this checkout).
