@@ -18,7 +18,33 @@ to make room, and scrollable menus stay within the visible keyboard viewport.
 Outer popup shadows are removed. All project/app/approval/usage handlers remain
 unchanged; this is not provider-execution or authenticated journey proof.
 
-Verification is pending. Initial regressions flagged expectations for the old
+Verified source: `b7fb663cb1c1ba4e8d973dfaa909ef04d9bef9d8`.
+All 1,634 frontend tests, 11 positive/negative policy tests, structured mission
+validation and lint passed. Vercel production build/type checks passed.
+The actual-component local browser fixture passed 40 cases: four popup types,
+five viewports and both idle and bottom-docked composers. No external writes,
+real auth sessions or provider requests were used in that isolated fixture.
+See `workspace-chatbar-popovers-20261123/fixture-audit.json`.
+
+The actual staged deployment passed all five viewports, including larger
+single-row mobile guidance, inline header icons and Extension label, no popup
+overflow/shadows, and centered smooth “extensions.” and “software.” endings.
+See `workspace-chatbar-popovers-20261123/staged-audit.json`.
+Promoted production deployment `dpl_J6MS6YH7tUf3JSTzkiuiAdTwLLpm` to xroga.com
+through the authenticated Vercel CLI, using the verified project/team IDs
+after the connector omitted its required project ID.
+The public release endpoint and browser audit independently confirmed
+`b7fb663cb1c1ba4e8d973dfaa909ef04d9bef9d8` in production.
+Public checks passed at all five sizes, including both exact headline endings.
+The bounded post-release error/fatal log check returned zero records.
+See `workspace-chatbar-popovers-20261123/live-audit.json` and
+`workspace-chatbar-popovers-20261123/runtime-summary.json`.
+
+Extension visibility in the private header was preserved during the move.
+Required browser evidence is retained with matching hashes; task temporary
+files are cleaned separately from reusable dependencies and source outputs.
+
+Initial regressions flagged expectations for the old
 labels, gradients, blur and above-composer geometry; they are updated to the
 requested behavior, retaining keyboard, action and authority coverage.
 No auth, tenant, approval, credential, egress, cost, billing or schema changes.

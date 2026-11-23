@@ -1,0 +1,965 @@
+{
+  "scope": "Isolated real-component UI fixture; mock read data; no authentication/provider proof",
+  "records": [
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "mode": "idle",
+      "type": "model",
+      "popup": {
+        "x": 58,
+        "y": 308,
+        "width": 250,
+        "height": 206.6875
+      },
+      "bar": {
+        "x": 12,
+        "y": 184,
+        "width": 296,
+        "height": 116
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "mode": "idle",
+      "type": "projects",
+      "popup": {
+        "x": 12,
+        "y": 308,
+        "width": 296,
+        "height": 248
+      },
+      "bar": {
+        "x": 12,
+        "y": 184,
+        "width": 296,
+        "height": 116
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "mode": "idle",
+      "type": "apps",
+      "popup": {
+        "x": 12,
+        "y": 308,
+        "width": 296,
+        "height": 248
+      },
+      "bar": {
+        "x": 12,
+        "y": 184,
+        "width": 296,
+        "height": 116
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "mode": "idle",
+      "type": "plus",
+      "popup": {
+        "x": 12,
+        "y": 308,
+        "width": 296,
+        "height": 248
+      },
+      "bar": {
+        "x": 12,
+        "y": 184,
+        "width": 296,
+        "height": 116
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "mode": "active",
+      "type": "model",
+      "popup": {
+        "x": 58,
+        "y": 349,
+        "width": 250,
+        "height": 206.6875
+      },
+      "bar": {
+        "x": 12,
+        "y": 231,
+        "width": 296,
+        "height": 110
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "mode": "active",
+      "type": "projects",
+      "popup": {
+        "x": 12,
+        "y": 272,
+        "width": 296,
+        "height": 284
+      },
+      "bar": {
+        "x": 12,
+        "y": 154,
+        "width": 296,
+        "height": 110
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "mode": "active",
+      "type": "apps",
+      "popup": {
+        "x": 12,
+        "y": 272,
+        "width": 296,
+        "height": 284
+      },
+      "bar": {
+        "x": 12,
+        "y": 154,
+        "width": 296,
+        "height": 110
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "mode": "active",
+      "type": "plus",
+      "popup": {
+        "x": 12,
+        "y": 272,
+        "width": 296,
+        "height": 284
+      },
+      "bar": {
+        "x": 12,
+        "y": 154,
+        "width": 296,
+        "height": 110
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 640
+      },
+      "mode": "idle",
+      "type": "model",
+      "popup": {
+        "x": 63,
+        "y": 308,
+        "width": 250,
+        "height": 206.6875
+      },
+      "bar": {
+        "x": 12,
+        "y": 184,
+        "width": 336,
+        "height": 116
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 640
+      },
+      "mode": "idle",
+      "type": "projects",
+      "popup": {
+        "x": 18,
+        "y": 308,
+        "width": 330,
+        "height": 320
+      },
+      "bar": {
+        "x": 12,
+        "y": 184,
+        "width": 336,
+        "height": 116
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 640
+      },
+      "mode": "idle",
+      "type": "apps",
+      "popup": {
+        "x": 12,
+        "y": 308,
+        "width": 336,
+        "height": 320
+      },
+      "bar": {
+        "x": 12,
+        "y": 184,
+        "width": 336,
+        "height": 116
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 640
+      },
+      "mode": "idle",
+      "type": "plus",
+      "popup": {
+        "x": 12,
+        "y": 308,
+        "width": 336,
+        "height": 320
+      },
+      "bar": {
+        "x": 12,
+        "y": 184,
+        "width": 336,
+        "height": 116
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 640
+      },
+      "mode": "active",
+      "type": "model",
+      "popup": {
+        "x": 63,
+        "y": 421,
+        "width": 250,
+        "height": 206.6875
+      },
+      "bar": {
+        "x": 12,
+        "y": 303,
+        "width": 336,
+        "height": 110
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 640
+      },
+      "mode": "active",
+      "type": "projects",
+      "popup": {
+        "x": 18,
+        "y": 308,
+        "width": 330,
+        "height": 320
+      },
+      "bar": {
+        "x": 12,
+        "y": 190,
+        "width": 336,
+        "height": 110
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 640
+      },
+      "mode": "active",
+      "type": "apps",
+      "popup": {
+        "x": 12,
+        "y": 308,
+        "width": 336,
+        "height": 320
+      },
+      "bar": {
+        "x": 12,
+        "y": 190,
+        "width": 336,
+        "height": 110
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 640
+      },
+      "mode": "active",
+      "type": "plus",
+      "popup": {
+        "x": 12,
+        "y": 308,
+        "width": 336,
+        "height": 320
+      },
+      "bar": {
+        "x": 12,
+        "y": 190,
+        "width": 336,
+        "height": 110
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "idle",
+      "type": "model",
+      "popup": {
+        "x": 63,
+        "y": 308,
+        "width": 250,
+        "height": 206.6875
+      },
+      "bar": {
+        "x": 12,
+        "y": 184,
+        "width": 366,
+        "height": 116
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "idle",
+      "type": "projects",
+      "popup": {
+        "x": 48,
+        "y": 308,
+        "width": 330,
+        "height": 402
+      },
+      "bar": {
+        "x": 12,
+        "y": 184,
+        "width": 366,
+        "height": 116
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "idle",
+      "type": "apps",
+      "popup": {
+        "x": 28,
+        "y": 308,
+        "width": 350,
+        "height": 422
+      },
+      "bar": {
+        "x": 12,
+        "y": 184,
+        "width": 366,
+        "height": 116
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "idle",
+      "type": "plus",
+      "popup": {
+        "x": 23,
+        "y": 308,
+        "width": 344,
+        "height": 422
+      },
+      "bar": {
+        "x": 12,
+        "y": 184,
+        "width": 366,
+        "height": 116
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "active",
+      "type": "model",
+      "popup": {
+        "x": 63,
+        "y": 625,
+        "width": 250,
+        "height": 206.6875
+      },
+      "bar": {
+        "x": 12,
+        "y": 507,
+        "width": 366,
+        "height": 110
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "active",
+      "type": "projects",
+      "popup": {
+        "x": 48,
+        "y": 430,
+        "width": 330,
+        "height": 402
+      },
+      "bar": {
+        "x": 12,
+        "y": 312,
+        "width": 366,
+        "height": 110
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "active",
+      "type": "apps",
+      "popup": {
+        "x": 28,
+        "y": 410,
+        "width": 350,
+        "height": 422
+      },
+      "bar": {
+        "x": 12,
+        "y": 292,
+        "width": 366,
+        "height": 110
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "active",
+      "type": "plus",
+      "popup": {
+        "x": 23,
+        "y": 410,
+        "width": 344,
+        "height": 422
+      },
+      "bar": {
+        "x": 12,
+        "y": 292,
+        "width": 366,
+        "height": 110
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "mode": "idle",
+      "type": "model",
+      "popup": {
+        "x": 63,
+        "y": 316,
+        "width": 250,
+        "height": 206.6875
+      },
+      "bar": {
+        "x": 12,
+        "y": 180,
+        "width": 744,
+        "height": 128
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "mode": "idle",
+      "type": "projects",
+      "popup": {
+        "x": 103,
+        "y": 316,
+        "width": 330,
+        "height": 402
+      },
+      "bar": {
+        "x": 12,
+        "y": 180,
+        "width": 744,
+        "height": 128
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "mode": "idle",
+      "type": "apps",
+      "popup": {
+        "x": 164.75,
+        "y": 316,
+        "width": 350,
+        "height": 430
+      },
+      "bar": {
+        "x": 12,
+        "y": 180,
+        "width": 744,
+        "height": 128
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "mode": "idle",
+      "type": "plus",
+      "popup": {
+        "x": 23,
+        "y": 316,
+        "width": 344,
+        "height": 512
+      },
+      "bar": {
+        "x": 12,
+        "y": 180,
+        "width": 744,
+        "height": 128
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "mode": "active",
+      "type": "model",
+      "popup": {
+        "x": 63,
+        "y": 805,
+        "width": 250,
+        "height": 206.6875
+      },
+      "bar": {
+        "x": 12,
+        "y": 687,
+        "width": 744,
+        "height": 110
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "mode": "active",
+      "type": "projects",
+      "popup": {
+        "x": 103,
+        "y": 610,
+        "width": 330,
+        "height": 402
+      },
+      "bar": {
+        "x": 12,
+        "y": 492,
+        "width": 744,
+        "height": 110
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "mode": "active",
+      "type": "apps",
+      "popup": {
+        "x": 164.75,
+        "y": 582,
+        "width": 350,
+        "height": 430
+      },
+      "bar": {
+        "x": 12,
+        "y": 464,
+        "width": 744,
+        "height": 110
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "mode": "active",
+      "type": "plus",
+      "popup": {
+        "x": 23,
+        "y": 500,
+        "width": 344,
+        "height": 512
+      },
+      "bar": {
+        "x": 12,
+        "y": 382,
+        "width": 744,
+        "height": 110
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "mode": "idle",
+      "type": "model",
+      "popup": {
+        "x": 63,
+        "y": 316,
+        "width": 250,
+        "height": 206.6875
+      },
+      "bar": {
+        "x": 12,
+        "y": 180,
+        "width": 1416,
+        "height": 128
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "mode": "idle",
+      "type": "projects",
+      "popup": {
+        "x": 103,
+        "y": 316,
+        "width": 330,
+        "height": 402
+      },
+      "bar": {
+        "x": 12,
+        "y": 180,
+        "width": 1416,
+        "height": 128
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "mode": "idle",
+      "type": "apps",
+      "popup": {
+        "x": 164.75,
+        "y": 316,
+        "width": 350,
+        "height": 430
+      },
+      "bar": {
+        "x": 12,
+        "y": 180,
+        "width": 1416,
+        "height": 128
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "mode": "idle",
+      "type": "plus",
+      "popup": {
+        "x": 23,
+        "y": 316,
+        "width": 344,
+        "height": 450
+      },
+      "bar": {
+        "x": 12,
+        "y": 180,
+        "width": 1416,
+        "height": 128
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "mode": "active",
+      "type": "model",
+      "popup": {
+        "x": 63,
+        "y": 681,
+        "width": 250,
+        "height": 206.6875
+      },
+      "bar": {
+        "x": 12,
+        "y": 563,
+        "width": 1416,
+        "height": 110
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "mode": "active",
+      "type": "projects",
+      "popup": {
+        "x": 103,
+        "y": 486,
+        "width": 330,
+        "height": 402
+      },
+      "bar": {
+        "x": 12,
+        "y": 368,
+        "width": 1416,
+        "height": 110
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "mode": "active",
+      "type": "apps",
+      "popup": {
+        "x": 164.75,
+        "y": 458,
+        "width": 350,
+        "height": 430
+      },
+      "bar": {
+        "x": 12,
+        "y": 340,
+        "width": 1416,
+        "height": 110
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "mode": "active",
+      "type": "plus",
+      "popup": {
+        "x": 23,
+        "y": 438,
+        "width": 344,
+        "height": 450
+      },
+      "bar": {
+        "x": 12,
+        "y": 320,
+        "width": 1416,
+        "height": 110
+      },
+      "shadow": [
+        "none",
+        "none"
+      ]
+    }
+  ]
+}

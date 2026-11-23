@@ -6,7 +6,7 @@
     "XR-MISSION-055",
     "XR-MISSION-056"
   ],
-  "state": "CODE_COMPLETE",
+  "state": "LIVE_VERIFIED",
   "risk": "low",
   "scope": "Shorter larger mobile guidance, centered smoothly rotating headline endings, compact inline Extension and project-edit icons, readable workspace headings, and shadow-free chatbar menus below the composer within the visible viewport.",
   "changedFiles": [
@@ -40,7 +40,8 @@
   ],
   "decisions": {
     "keep": [
-      "Original headline wording, model approval boundary, project and app handlers, backend-sourced usage and permissions"
+      "Original headline wording, model approval boundary, project and app handlers, backend-sourced usage and permissions",
+      "Extension visibility in the private workspace header"
     ],
     "extend": [
       "Shared viewport geometry and mobile keyboard bounds, accessible icon labels, smooth measured word width"
@@ -97,19 +98,19 @@
   "tests": [
     {
       "command": "npm run test:frontend",
-      "scope": "Existing frontend regression plus meaningful idle, bottom-docked and mobile-keyboard popup geometry cases.",
+      "scope": "All 1,634 frontend tests passed at b7fb663cb source, including keyboard and viewport geometry coverage.",
       "negative": true,
       "reference": "frontend/src/lib/chatbarPopoverLayout.test.ts"
     },
     {
       "command": "npm run lint --workspace=frontend and Vercel source-pinned build",
-      "scope": "Lint and production type/build checks.",
+      "scope": "Frontend lint passed with existing warnings; source-pinned production build/type checks passed.",
       "negative": false,
       "reference": "frontend/src/components/ui/useChatbarPopoverLayout.ts"
     },
     {
       "command": "Read-only Playwright deployment audit",
-      "scope": "320,360,390,768,1440px: visible compact header, larger one-line mobile guidance, centered word transitions, below-chatbar bounded shadow-free menus and preserved actions.",
+      "scope": "40 isolated actual-component popup cases passed, plus actual staged header, guidance, headline and composer checks at all five viewports. Fixture reads are not authentication/provider proof.",
       "negative": true,
       "reference": "docs/xroga/evidence/workspace-chatbar-popovers-20261123.md"
     }
@@ -119,18 +120,20 @@
   "knownGaps": [],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [
-    "docs/xroga/evidence/workspace-chatbar-popovers-20261123.md"
+    "docs/xroga/evidence/workspace-chatbar-popovers-20261123.md",
+    "docs/xroga/evidence/workspace-chatbar-popovers-20261123/fixture-audit.json",
+    "docs/xroga/evidence/workspace-chatbar-popovers-20261123/staged-audit.json",
+    "docs/xroga/evidence/workspace-chatbar-popovers-20261123/live-audit.json",
+    "docs/xroga/evidence/workspace-chatbar-popovers-20261123/runtime-summary.json"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
   "release": {
-    "state": "BLOCKED",
-    "blockers": [
-      "Complete updated regression, lint, production build and staged browser acceptance before promotion."
-    ],
+    "state": "LIVE_VERIFIED",
+    "blockers": [],
     "authenticatedE2e": "NOT_APPLICABLE",
     "stagedSecurity": "NOT_APPLICABLE",
-    "liveUrl": null,
-    "deployedSha": null
+    "liveUrl": "https://xroga.com",
+    "deployedSha": "b7fb663cb1c1ba4e8d973dfaa909ef04d9bef9d8"
   }
 }

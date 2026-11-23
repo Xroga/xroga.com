@@ -1,0 +1,18 @@
+{
+  "deploymentId": "dpl_J6MS6YH7tUf3JSTzkiuiAdTwLLpm",
+  "window": "10m",
+  "query": "error or fatal",
+  "returnedRecords": 0,
+  "schema": [
+    {
+      "type": "summary",
+      "keys": [
+        "type",
+        "recordsReturned",
+        "timeRange",
+        "pagination",
+        "excludedIntervals"
+      ]
+    }
+  ]
+}
