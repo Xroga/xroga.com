@@ -22,7 +22,7 @@ const functions: NonNullable<EvaluationContext['functions']> = Object.fromEntrie
 /** Initial readouts only, from a program that has already passed native validation.
  * Reuses the renderer's upstream functions and OpenUI evaluator. No actions, tools,
  * network, persisted-state writes or inferred inputs are available here. */
-export function initialNativeReadouts(program: string): Array<{ label: string; value: string }> {
+export function initialNativeReadouts(program: string, editableOnly = false): Array<{ label: string; value: string }> {
   try {
     const { symbols, scalar, spend } = snapshotEvaluator(program);
     const root = symbols.has('root') ? symbols.get('root')
@@ -30,7 +30,28 @@ export function initialNativeReadouts(program: string): Array<{ label: string; v
     if (!root) return [];
     const pending = [root];
     const visited = new Set<ASTNode>();
-    const result: Array<{ label: string; value: string }> = [];
+    const metrics: Array<{ label: string; value: string; expression: ASTNode }> = [];
+    const inputs = new Set<string>();
+    function usesEditableState(expression: ASTNode) {
+      const dependencies = [expression];
+      const checked = new Set<ASTNode>();
+      while (dependencies.length) {
+        const current = dependencies.pop()!;
+        if (checked.has(current)) continue;
+        checked.add(current);
+        let found = false;
+        walkAST(current, node => {
+          spend();
+          if (node.k === 'StateRef' && inputs.has(node.n)) found = true;
+          if (node.k === 'Ref') {
+            const target = symbols.get(node.n);
+            if (target) dependencies.push(target);
+          }
+        });
+        if (found) return true;
+      }
+      return false;
+    }
     while (pending.length) {
       const current = pending.pop()!;
       if (visited.has(current)) continue;
@@ -41,14 +62,23 @@ export function initialNativeReadouts(program: string): Array<{ label: string; v
           const target = symbols.get(node.n);
           if (target && !visited.has(target)) pending.push(target);
         }
-        if (node.k === 'Comp' && node.name === 'Metric' && node.args.length >= 2) {
+        if (node.k !== 'Comp') return;
+        const input = node.args[0];
+        if (editableOnly && (node.name === 'Input' || node.name === 'Slider') && input?.k === 'StateRef') {
+          inputs.add(input.n);
+        }
+        if (node.name === 'Metric' && node.args.length >= 2) {
           const label = scalar(node.args[0]), value = scalar(node.args[1]);
           if (typeof label === 'string' && label.trim() && (typeof value === 'string' || typeof value === 'number')) {
-            const row = { label, value: String(value) };
-            if (!result.some(item => item.label === row.label && item.value === row.value)) result.push(row);
+            metrics.push({ label, value: String(value), expression: node.args[1] });
           }
         }
       });
+    }
+    const result: Array<{ label: string; value: string }> = [];
+    for (const { label, value, expression } of metrics) {
+      if (editableOnly && !usesEditableState(expression)) continue;
+      if (!result.some(item => item.label === label && item.value === value)) result.push({ label, value });
     }
     return result;
   } catch { return []; }
@@ -206,6 +236,42 @@ function contextualReadoutLabel(text: string, label: string) {
 const readoutSentenceBreak = /(?<=[.!?])\s+/;
 const readoutClaimBreak = /(?<=[.!?])\s+|\n(?=[ \t]*(?:[-+*]|\d+[.)])\s)|[,;]\s*(?:but|whereas)\s+/i;
 const readoutScenario = /^[ \t]*(?:(?:[-+*]|\d+[.)])\s+)?(?:\b(?:boundary|edge) (?:cases?|values?)\b|(?:for\s+)?(?:each|every)\s+(?:additional\b|\d+(?:\.\d+)?\s+(?:percentage|basis)\s+points?\b)[^.!?\n]{0,110}\b(?:adds?|changes?|increases?|decreases?|reduces?|subtracts?)\b)/i;
+const standaloneCurrencyReadout = /^( {0,3}(?:(?:[-+*]|\d+[.)])[ \t]+)?(?:\*\*|__)?)([^:\r\n]{1,80}?)(:[ \t]*(?:\*\*|__)?[ \t]*)([$€£][ \t]*[+-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)([ \t]*(?:\*\*|__)?\.?[ \t]*)$/;
+
+/** A standalone result can be repaired in place when both representations name
+ * one unambiguous currency metric. Keep equations, examples and notes intact. */
+export function correctStandaloneCurrencyReadouts(prose: string, readouts: ReturnType<typeof initialNativeReadouts>) {
+  const lines = prose.split('\n');
+  const candidates = new Map<string, Array<{ index: number; match: RegExpExecArray }>>();
+  let fence: string | undefined;
+  for (const [index, line] of lines.entries()) {
+    const marker = /^ {0,3}(\x60{3,}|~{3,})(.*)$/.exec(line);
+    if (marker) {
+      if (!fence) fence = marker[1];
+      else if (fence[0] === marker[1][0] && fence.length <= marker[1].length && !marker[2].trim()) fence = undefined;
+      continue;
+    }
+    if (fence || /^(?: {4}|\t)/.test(line)) continue;
+    const match = standaloneCurrencyReadout.exec(line);
+    if (!match) continue;
+    const label = metricLabelKey(match[2].replace(/[*_]/g, ''));
+    const occurrences = candidates.get(label) ?? [];
+    occurrences.push({ index, match });
+    candidates.set(label, occurrences);
+  }
+  for (const [label, occurrences] of candidates) {
+    if (occurrences.length !== 1) continue;
+    const metrics = readouts.filter(row => metricLabelKey(row.label) === label);
+    if (metrics.length !== 1) continue;
+    const { value } = metrics[0];
+    const { index, match: [, prefix, name, separator, amount, suffix] } = occurrences[0];
+    if (value[0] === amount[0] && standaloneCurrencyReadout.test(name + ': ' + value) &&
+        conflictingNativeReadouts(metrics[0].label + ': ' + amount, metrics).length) {
+      lines[index] = prefix + name + separator + value + suffix;
+    }
+  }
+  return lines.join('\n');
+}
 
 /** Compare explicit currency claims to the corresponding labeled readout. An
  * unrelated example, input amount or uncategorized number is never rewritten. */

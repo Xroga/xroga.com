@@ -2,7 +2,7 @@ import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, missingNativeFormats, recoverNativeWorkspaceProgram, recoverNativeMonthlyChart, recoverTruncatedNativeWorkspaceProgram, splitNativeOpenUiAnswer, supplementNativeProse, validateNativeWorkspaceProgram, type NativeUiDiagnostic, type NativeUiValidation, type RequiredNativeFormat } from './nativeOpenUi.js';
 import { nativeAnswerReviewReason, nativeFactualGuidance, nativeTechnicalCorrections, repairNativePlainAnswer, retainReviewedTechnicalProse, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import { checklistFromProse, requestsEditableChecklist, suppliedPeriodicSeries } from './nativeOpenUiRecovery.js';
-import { conflictingNativeReadouts, initialNativeReadouts, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
+import { conflictingNativeReadouts, correctStandaloneCurrencyReadouts, initialNativeReadouts, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
 import { recoverNativeReadoutExplanations } from './nativeOpenUi.js';
 import { bindNativeAnswerText, removeRepeatedCalculatorFormulas } from './nativeOpenUi.js';
 import { reviewEditorialProse } from './nativeOpenUiEditorial.js';
@@ -228,6 +228,24 @@ export function completeNativeWorkspaceAnswer(
   const multipleConflict = multiples && (multiples.conflictingNotes.size > 0 || multiples.repairProse(response) !== response);
   if (valid && (conflictingNativeReadouts(response, readouts).length ||
       multipleConflict || (readouts.length && conflictingNativeReadouts(supplementNativeProse('', program, true), readouts).length))) {
+    if (!multipleConflict && !repair?.partial && !missing.length && requiredFormats.includes('calculator')) {
+      const correctedProse = correctStandaloneCurrencyReadouts(response, initialNativeReadouts(program, true));
+      // A bound Markdown component must carry the same correction into the
+      // interactive answer. Independently authored content still has to pass.
+      const binding = '\n_xroga_answer = ' + JSON.stringify(response);
+      if (correctedProse !== response && program.endsWith(binding)) {
+        const correctedProgram = bindNativeAnswerText(program.slice(0, -binding.length), correctedProse);
+        if (correctedProgram !== program && validateNativeWorkspaceProgram(correctedProgram, evidenceIds, correctedProse,
+          undefined, { request: prompt }).ok && !conflictingNativeReadouts(supplementNativeProse('', correctedProgram, true), readouts).length) {
+          const projection = supplementNativeProse(correctedProse, correctedProgram, true);
+          if (!conflictingNativeReadouts(projection, readouts).length) return {
+            response: projection,
+            completion: { status: 'complete' as const },
+            responseSource: { format: NATIVE_UI_FORMAT, text: correctedProgram },
+          };
+        }
+      }
+    }
     // Preserve independent prose and the calculator when its corrected
     // presentation agrees with the evaluated readouts.
     const safeProse = recoverNativeReadoutProse(response, readouts, multiples);

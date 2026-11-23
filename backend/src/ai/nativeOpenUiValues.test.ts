@@ -149,6 +149,31 @@ test('readout validation checks the result of percentage equations separately fr
   assert.deepEqual(answer.completion, { status: 'complete' });
   assert.match(answer.responseSource.text, /@Reset\(\$bill, \$rate\)/);
   assert.match(answer.response, /Tip: \$80 × 18% = \$14\.40/);
+
+  const prose = 'The percentage is applied to the bill before any additional fees.\n\n'
+    + '- **Tip: $14.41**\n- **Total to pay:** $94.41';
+  const repaired = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + native,
+    'stop', undefined, undefined, undefined, ['calculator']);
+  assert.deepEqual(repaired.completion, { status: 'complete' });
+  assert.match(repaired.response, /before any additional fees/);
+  assert.match(repaired.response, /\*\*Tip: \$14\.40\*\*/);
+  assert.match(repaired.response, /\*\*Total to pay:\*\* \$94\.40/);
+  assert.doesNotMatch(repaired.response + repaired.responseSource.text, /14\.41|94\.41/);
+  assert.match(repaired.responseSource.text, /@Reset\(\$bill, \$rate\)/);
+  assert.deepEqual(initialNativeReadouts(repaired.responseSource.text), initialNativeReadouts(native));
+  const shared = readNativeOpenUiShare(buildNativeOpenUiShare(repaired.response, repaired.responseSource.text)!);
+  assert.equal(shared?.text, repaired.response);
+  assert.equal(shared?.program, repaired.responseSource.text);
+
+  const staticTotal = native.replace('@Format($bill * (1 + $rate / 100), "currency", 2, "USD")', '"$95.00"');
+  const unverified = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + staticTotal,
+    'stop', undefined, undefined, undefined, ['calculator']);
+  assert.deepEqual(unverified.completion, { status: 'partial', reason: 'data_review' });
+
+  const equation = prose + '\n\nTip: $80 × 18% = $14.41 after rounding.';
+  const mixed = completeNativeWorkspaceAnswer(equation + NATIVE_UI_MARKER + native,
+    'stop', undefined, undefined, undefined, ['calculator']);
+  assert.deepEqual(mixed.completion, { status: 'partial', reason: 'data_review' });
 });
 
 test('sensitivity and boundary examples do not conflict with the selected calculator result', () => {
