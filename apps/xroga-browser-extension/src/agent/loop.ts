@@ -1960,7 +1960,7 @@ ${ledger}` : ''),
         if (request.trim().length >= 60 && !this.#unknownNoted) {
           this.#unknownNoted = true;
           this.#announcedSites.add(id.origin);
-          await this.writer.appNote(`No bundled method exists for ${id.host}, and none is needed. Survey first, briefly: look at its regions and controls (the fields, their options and the main buttons), open collapsed sections you will need, and decide what a complete result contains. Then execute in large batches (fill_form with its submit, batch with conditions), one region at a time, reading each saved value back: the survey is what makes the execution take seconds. Read its help or policies only when a setting is genuinely unclear; a task a person does in one minute must not take twenty here. Settings that default to on and change the result are yours to check.`);
+          await this.writer.appNote(`No bundled method exists for ${id.host}, and none is needed. Survey first, briefly: look at its regions and controls (form_model lists every field of a form or dialog with its value, required flag and options in one call), open collapsed sections you will need, and decide what a complete result contains. Then execute in large batches (fill_form with its submit, batch with conditions), one region at a time, reading each saved value back: the survey is what makes the execution take seconds. Read its help or policies only when a setting is genuinely unclear; a task a person does in one minute must not take twenty here. Settings that default to on and change the result are yours to check.`);
         }
         return;
       }

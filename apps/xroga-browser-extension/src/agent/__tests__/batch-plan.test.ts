@@ -194,5 +194,12 @@ describe('foreach', () => {
     // a foreach on the group covers the steps inside it
     await expect(runPlan([{ foreach: [{ email: 'a@x.test' }], steps: [{ tool: 'type', args: { text: '${item.email}' } }] }], { run: async () => ({ text: 'ok' }), test: async () => false })).resolves.toBeTruthy();
   });
+
+  it('reports a tally of how many foreach items ran and which failed', async () => {
+    const run = async (_tool: string, args: Record<string, unknown>) => (args.text === 'b' ? { text: 'no', ok: false } : { text: 'ok' });
+    const out = await runPlan([{ foreach: ['a', 'b', 'c'], continueOnError: true, tool: 'type', args: { text: '${item}' } }], { run, test: async () => false });
+    expect(out.text).toMatch(/foreach 1: 2 of 3 items ran every step without error, 1 failed/);
+    expect(out.text).toMatch(/Failed: 2 b/);
+  });
 });
 

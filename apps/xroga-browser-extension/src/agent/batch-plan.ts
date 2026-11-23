@@ -188,10 +188,21 @@ export function worstCase(steps: Step[]): number {
   }, 0);
 }
 
+/** How an item is named in a tally: a string or number as it is, an object by its email, to, name, id or title (else its first value). */
+function itemKey(item: unknown): string {
+  if (item && typeof item === 'object') {
+    const o = item as Record<string, unknown>;
+    const k = ['email', 'to', 'name', 'id', 'title'].find(f => o[f] !== undefined) ?? Object.keys(o)[0];
+    return String(k ? o[k] : '').slice(0, 40);
+  }
+  return String(item).slice(0, 40);
+}
+
 export async function runPlan(steps: Step[], opts: PlanOptions): Promise<{ text: string; ran: number; ok: boolean; halted?: string }> {
   const { run, test, defaults = {}, stopOnError = true, forbidden = new Set<string>(), allow } = opts;
   if (!Array.isArray(steps) || !steps.length) throw new Error('batch needs at least one step');
   const outputs: Output[] = [];
+  const tallies: string[] = [];
   let ops = 0;
   let halted: string | undefined;
   let finalIndex = -1;
@@ -249,13 +260,26 @@ export async function runPlan(steps: Step[], opts: PlanOptions): Promise<{ text:
     validate(step, label, depth);
     if (Array.isArray(step.foreach)) {
       // The step runs once per item; its own when / unless / repeat apply to each run.
+      const failed: string[] = [];
+      let done = 0;
+      const tally = () => {
+        const total = step.foreach!.length;
+        const bad = failed.length ? ` Failed: ${failed.slice(0, 12).join('; ')}${failed.length > 12 ? '; ...' : ''}.` : '';
+        const miss = total - done - failed.length;
+        tallies.push(`foreach ${label}: ${done} of ${total} items ran every step without error${failed.length ? `, ${failed.length} failed` : ''}${miss > 0 ? `, ${miss} not reached` : ''}.${bad} This counts finished steps, not saved items: reopen the list and confirm each one.`);
+      };
       for (const [k, item] of step.foreach.entries()) {
+        const before = outputs.length;
         try {
           await one(fill(step, item, k + 1), `${label}[${k + 1}]`, depth);
+          if (outputs.slice(before).every(o => o.ok)) done++;
+          else failed.push(`${k + 1} ${itemKey(item)}`);
         } catch (error) {
-          if (error instanceof Halt || !step.continueOnError || !(error instanceof BatchError)) throw error;
+          failed.push(`${k + 1} ${itemKey(item)}`);
+          if (error instanceof Halt || !step.continueOnError || !(error instanceof BatchError)) { tally(); throw error; }
         }
       }
+      tally();
       return;
     }
     const args = { ...defaults, ...(step.args ?? {}) };
@@ -331,7 +355,7 @@ export async function runPlan(steps: Step[], opts: PlanOptions): Promise<{ text:
   const last = [...outputs].reverse().find(o => o.ok && !o.skipped) ?? outputs[outputs.length - 1];
   const stopped = halted ? `\n\nThe batch stopped here: ${halted}` : '';
   const kept = keptSection(outputs, last);
-  return { text: `${trailOf(outputs)}\n\n${kept}${last?.text ?? ''}${stopped}`.trim(), ran: ops, ok: outputs.every(o => o.ok), ...(halted ? { halted } : {}) };
+  return { text: `${trailOf(outputs)}\n\n${tallies.length ? tallies.join('\n') + '\n\n' : ''}${kept}${last?.text ?? ''}${stopped}`.trim(), ran: ops, ok: outputs.every(o => o.ok), ...(halted ? { halted } : {}) };
 }
 
 /** The tools a batch step may name: the page tools of the layer. Everything else (agent tools, `upload`, `done`) runs as an ordinary call. */

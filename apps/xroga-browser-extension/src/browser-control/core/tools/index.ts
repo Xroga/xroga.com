@@ -11,6 +11,7 @@ import { askUser } from './ask';
 import { fillForm } from './fill';
 import { upload } from './upload';
 import { diagnostics } from './diagnostics';
+import { formModel } from './form-model';
 import { demo } from './demo';
 
 /** Tool name to handler. Arguments arrive validated against the catalogue's schema. */
@@ -31,6 +32,7 @@ export const TOOL_HANDLERS: Record<string, ToolHandler> = {
   press: (ctx, args) => press(ctx, args as never),
   wait: (ctx, args) => wait(ctx, args as never),
   diagnostics: (ctx, args) => diagnostics(ctx, args as never),
+  form_model: (ctx, args) => formModel(ctx, args as never),
   demo: (ctx, args) => demo(ctx, args as never),
   handle_dialog: (ctx, args) => handleDialog(ctx, args as never),
   ask_user: (ctx, args) => askUser(ctx, args as never),

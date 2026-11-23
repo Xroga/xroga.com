@@ -31,6 +31,20 @@ export interface ProbeState {
 }
 
 /** Structural facts for the sensitivity classifier; the probe never decides the category. */
+export interface FormField {
+  role: string;
+  name: string;
+  type?: string;
+  group?: string;
+  required?: boolean;
+  disabled?: boolean;
+  checked?: boolean;
+  /** Passwords, card and one-time-code fields read as (hidden). */
+  value?: string;
+  options?: string[];
+  error?: string;
+}
+
 export interface FormFacts {
   tag: string;
   type: string;
@@ -173,6 +187,8 @@ export interface ProbeApi {
   watchBlock(el: Element): string;
   blockMutations(): number;
   hasText(text: string, fields?: boolean): boolean;
+  /** Every visible field of the page or of the named form, dialog or group: what a form tool needs to fill it in one call. */
+  formModel(scope?: string): FormField[];
   startDemo(): boolean;
   stopDemo(): Array<{ t: number; kind: 'mouse' | 'key'; x?: number; y?: number; step: 'click' | 'set' | 'press'; role: string; name: string; value?: string; row?: string }>;
   /** What the element reads: a form control's value, otherwise its visible text (at most 400 characters). */
@@ -491,6 +507,54 @@ export function probeMain(): void {
 
   const api = {
     version: 1,
+
+    formModel(scope?: string) {
+      const SEL = 'input,select,textarea,[role=combobox],[role=textbox],[role=checkbox],[role=radio],[role=switch],[role=slider],[role=spinbutton],[role=listbox],[contenteditable=""],[contenteditable=true]';
+      const clip = (t: string, n: number) => t.replace(/\s+/g, ' ').trim().slice(0, n);
+      const shown = (el: Element) => typeof (el as any).checkVisibility === 'function' ? (el as any).checkVisibility({ visibilityProperty: true, checkVisibilityCSS: true }) : (el as HTMLElement).getClientRects().length > 0;
+      let root: ParentNode = document;
+      if (scope) {
+        const want = scope.toLowerCase();
+        const boxes = [...document.querySelectorAll('form,dialog,[role=dialog],[role=form],[role=region],[role=group],[role=radiogroup],fieldset,section')];
+        const hit = boxes.find(b => {
+          const label = b.getAttribute('aria-label') || (b.querySelector(':scope > legend,:scope > h1,:scope > h2,:scope > h3,:scope > header')?.textContent ?? '') || (b.getAttribute('aria-labelledby') ? (document.getElementById(b.getAttribute('aria-labelledby')!)?.textContent ?? '') : '');
+          return label.toLowerCase().includes(want) && shown(b);
+        });
+        if (!hit) return [];
+        root = hit;
+      }
+      const out: FormField[] = [];
+      for (const el of root.querySelectorAll(SEL)) {
+        const input = el as HTMLInputElement;
+        const type = el.tagName === 'INPUT' ? (input.type || 'text').toLowerCase() : '';
+        if (['hidden', 'submit', 'button', 'reset', 'image'].includes(type) || !shown(el)) continue;
+        const tag = el.tagName;
+        const role = el.getAttribute('role') || (tag === 'SELECT' ? ((el as unknown as HTMLSelectElement).multiple ? 'listbox' : 'combobox') : tag === 'TEXTAREA' ? 'textbox' : type === 'checkbox' ? 'checkbox' : type === 'radio' ? 'radio' : type === 'range' ? 'slider' : type === 'number' ? 'spinbutton' : 'textbox');
+        const secret = type === 'password' || type === 'file' || /cc-|one-time-code/.test((input.autocomplete || '').toLowerCase()) || /card|cvv|cvc|iban|ssn|passw|otp/i.test(`${input.name} ${input.id}`);
+        const f: FormField = { role, name: clip(nameOf(el), 80) };
+        if (type && type !== 'text' && type !== 'checkbox' && type !== 'radio') f.type = type;
+        const grp = el.closest('fieldset,[role=radiogroup],[role=group]');
+        if (grp) { const g = clip(grp.getAttribute('aria-label') || grp.querySelector('legend')?.textContent || '', 60); if (g) f.group = g; }
+        if (input.required || el.getAttribute('aria-required') === 'true') f.required = true;
+        if (disabledByAncestor(el)) f.disabled = true;
+        if (type === 'checkbox' || type === 'radio' || role === 'checkbox' || role === 'radio' || role === 'switch') f.checked = type ? input.checked : el.getAttribute('aria-checked') === 'true';
+        else if (secret) f.value = '(hidden)';
+        else if (tag === 'SELECT') {
+          const s = el as unknown as HTMLSelectElement;
+          f.options = [...s.options].slice(0, 40).map(o => clip(o.text, 50));
+          f.value = [...s.selectedOptions].map(o => clip(o.text, 50)).join(', ');
+        } else if (role === 'slider' || role === 'spinbutton' || tag === 'INPUT' || tag === 'TEXTAREA') f.value = clip(input.value ?? '', 80);
+        else f.value = clip((el as HTMLElement).innerText || '', 80);
+        const listId = el.getAttribute('list');
+        const list = listId ? document.getElementById(listId) : null;
+        if (list) f.options = [...list.querySelectorAll('option')].slice(0, 40).map(o => clip((o as HTMLOptionElement).value || o.textContent || '', 50));
+        const bad = (input as any).validationMessage || (el.getAttribute('aria-invalid') === 'true' ? 'invalid' : '');
+        if (bad && (input.value || el.getAttribute('aria-invalid') === 'true')) f.error = clip(bad, 80);
+        out.push(f);
+        if (out.length >= 150) break;
+      }
+      return out;
+    },
 
     startDemo() {
       demo = [];

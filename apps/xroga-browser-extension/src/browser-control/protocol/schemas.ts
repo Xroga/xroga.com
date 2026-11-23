@@ -215,6 +215,11 @@ export const DemoArgsSchema = z.strictObject({
   action: z.enum(['start', 'stop']),
 });
 
+export const FormModelArgsSchema = z.strictObject({
+  ...readCommon,
+  scope: z.string().max(120).optional().describe('Only the form, dialog or group with this name (a substring of its accessible name or legend); default: the whole page'),
+});
+
 export const DiagnosticsArgsSchema = z.strictObject({
   ...readCommon,
   kind: z.enum(['both', 'console', 'network']).optional(),
@@ -292,6 +297,7 @@ export type ScrollArgs = z.infer<typeof ScrollArgsSchema>;
 export type WaitArgs = z.infer<typeof WaitArgsSchema>;
 export type NavigateArgs = z.infer<typeof NavigateArgsSchema>;
 export type DiagnosticsArgs = z.infer<typeof DiagnosticsArgsSchema>;
+export type FormModelArgs = z.infer<typeof FormModelArgsSchema>;
 export type DemoArgs = z.infer<typeof DemoArgsSchema>;
 export type TabsArgs = z.infer<typeof TabsArgsSchema>;
 export type HandleDialogArgs = z.infer<typeof HandleDialogArgsSchema>;

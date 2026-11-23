@@ -44,3 +44,4 @@ import './canvas-latency';
 import './set-of-marks';
 import './marks-look';
 import './clickable-zoo';
+import './form-model';
