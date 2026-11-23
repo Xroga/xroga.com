@@ -8,6 +8,7 @@ import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { PaletteIcon } from '@/components/icons/animated/PaletteIcon';
 import { useThemeStore } from '@/store/useThemeStore';
 import { cn } from '@/lib/utils';
+import { useTerminalPopoverPalette } from '@/components/ui/useTerminalPopoverPalette';
 
 /**
  * The terminal's skin picker.
@@ -30,6 +31,7 @@ export function TerminalSkinPicker() {
   const rootRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const [menuStyle, setMenuStyle] = useState<CSSProperties>({});
+  const palette = useTerminalPopoverPalette(open, rootRef);
 
   // Close on outside click and on Escape — a popover that only closes by re-clicking
   // its trigger is a trap on touch, where there is no hover affordance to hint at it.
@@ -105,7 +107,7 @@ export function TerminalSkinPicker() {
           className="xv-skin-menu xv-skin-menu--portal"
           role="menu"
           aria-label="Terminal skin"
-          style={menuStyle}
+          style={{ ...palette, ...menuStyle }}
         >
           <div className="xv-skin-menu-head">
             <span>Terminal appearance</span>

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
 import { useChatbarPopoverLayout } from './useChatbarPopoverLayout';
+import { useTerminalPopoverPalette } from './useTerminalPopoverPalette';
 
 export type AnchoredPlacement = 'bottom-start' | 'bottom-end' | 'top-start' | 'top-end' | 'right-start';
 export interface ViewportPoint { left: number; top: number }
@@ -41,6 +42,7 @@ export function AnchoredPortalPopover({ open, onClose, anchorRef, children, clas
   const popoverRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState<ViewportPoint>({ left: 12, top: 12 });
   const chatbarLayout = useChatbarPopoverLayout(open && belowChatbar, anchorRef, popoverRef, width);
+  const palette = useTerminalPopoverPalette(open, anchorRef);
   const reposition = useCallback(() => {
     const anchor = anchorRef.current; const popover = popoverRef.current;
     if (!anchor || !popover || belowChatbar) return;
@@ -63,7 +65,7 @@ export function AnchoredPortalPopover({ open, onClose, anchorRef, children, clas
   }, [anchorRef, onClose, open, reposition, belowChatbar]);
   if (!open || typeof document === 'undefined') return null;
   return createPortal(
-    <div ref={popoverRef} role="menu" aria-label={ariaLabel} className={className} data-chatbar-popover={belowChatbar ? 'true' : undefined} style={{ position: 'fixed', left: belowChatbar ? chatbarLayout.left : position.left, top: belowChatbar ? chatbarLayout.top : position.top, width: belowChatbar ? chatbarLayout.width : `min(${width}px, calc(100vw - 24px))`, maxHeight: belowChatbar ? chatbarLayout.maxHeight : 'calc(100dvh - 24px)', overflowY: 'auto', overscrollBehavior: 'contain', zIndex: 10000 }}>
+    <div ref={popoverRef} role="menu" aria-label={ariaLabel} className={className} data-chatbar-popover={belowChatbar ? 'true' : undefined} style={{ ...palette, position: 'fixed', left: belowChatbar ? chatbarLayout.left : position.left, top: belowChatbar ? chatbarLayout.top : position.top, width: belowChatbar ? chatbarLayout.width : `min(${width}px, calc(100vw - 24px))`, maxHeight: belowChatbar ? chatbarLayout.maxHeight : 'calc(100dvh - 24px)', overflowY: 'auto', overscrollBehavior: 'contain', zIndex: 10000 }}>
       {children}
     </div>, document.body,
   );

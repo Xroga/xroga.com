@@ -1,0 +1,114 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-SERIF-SKINS-20261124",
+  "baseSha": "8736a8c683b590c1df0911390b4669d0d59fc43d",
+  "requirementIds": [
+    "XR-MISSION-055",
+    "XR-MISSION-056"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "low",
+  "scope": "Restore original serif starter/card/section headings, stationary rotating headline prefix, updated guidance and Find wording, Project edits beside Share, and all ten terminal palettes across workspace surfaces and body portals.",
+  "changedFiles": [
+    "frontend/src/app/globals.css",
+    "frontend/src/components/automations/automations.module.css",
+    "frontend/src/components/dashboard/DashboardView.tsx",
+    "frontend/src/components/dashboard/WorkspaceNewTerminal.module.css",
+    "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
+    "frontend/src/components/terminal/WorkspaceControls.module.css",
+    "frontend/src/components/terminal/ChatBarActionsMenu.tsx",
+    "frontend/src/components/terminal/TerminalSkinPicker.tsx",
+    "frontend/src/components/ui/AnchoredPortalPopover.tsx",
+    "frontend/src/components/ui/useTerminalPopoverPalette.ts",
+    "frontend/src/lib/workspaceEmptyComposer.test.ts",
+    "frontend/e2e/workspace-new-terminal.spec.ts"
+  ],
+  "decisions": {
+    "keep": [
+      "Canonical authentication, usage, app/project permissions, popup geometry and shadow removal, persisted terminal skin IDs and Match theme"
+    ],
+    "extend": [
+      "Skin tokens throughout workspace and portal surfaces; stable intrinsic width for animated ending"
+    ],
+    "replace": [
+      "Prior sans-serif starter/card/section titles with original serif styling",
+      "Find copy with Answers, clients and opportunities. Research the web.",
+      "Mobile copy with Type or speak your language. Xroga does the work automatically."
+    ],
+    "deprecate": []
+  },
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Extend the existing body portal and chatbar controls; no execution or backend changes.",
+    "rfc": null
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "Frontend presentation only.",
+    "rollback": "Restore the prior verified frontend deployment; no data change."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "No authority, data, provider or configuration changes; presentation only."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No authority, data, provider or configuration changes; presentation only."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No authority, data, provider or configuration changes; presentation only."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No authority, data, provider or configuration changes; presentation only."
+    },
+    "egress": {
+      "changed": false,
+      "description": "No authority, data, provider or configuration changes; presentation only."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No authority, data, provider or configuration changes; presentation only."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No authority, data, provider or configuration changes; presentation only."
+    }
+  },
+  "tests": [
+    {
+      "command": "npm run test:frontend and npm run lint --workspace=frontend",
+      "scope": "All 1,634 frontend tests and 11 mission-policy tests passed; lint passed with existing warnings. Production build and browser acceptance remain pending.",
+      "negative": true,
+      "reference": "frontend/src/lib/workspaceEmptyComposer.test.ts"
+    },
+    {
+      "command": "Playwright actual-component and staged production UI audits",
+      "scope": "Pending headline stability and all ten palette selections, persistence, Match theme and popup viewport checks.",
+      "negative": true,
+      "reference": "docs/xroga/evidence/workspace-serif-skins-20261124.md"
+    }
+  ],
+  "rollout": "Stage an exact committed production build without domain assignment; verify the requested presentation before promoting under explicit user authorization.",
+  "rollback": "Restore dpl_J6MS6YH7tUf3JSTzkiuiAdTwLLpm, verified release b7fb663cb1c1ba4e8d973dfaa909ef04d9bef9d8. No schema changes.",
+  "knownGaps": [],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "docs/xroga/evidence/workspace-serif-skins-20261124.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Acceptance checks and production build pending"
+    ],
+    "authenticatedE2e": "NOT_APPLICABLE",
+    "stagedSecurity": "NOT_APPLICABLE",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

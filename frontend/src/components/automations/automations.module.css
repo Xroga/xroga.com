@@ -45,8 +45,8 @@
 .root h1,
 .root h2,
 .root h3 {
-  font-family: var(--font-geist-sans), Arial, sans-serif;
-  font-weight: 600;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
   letter-spacing: -0.035em;
 }
 .root h2 {
@@ -538,7 +538,7 @@
   border-radius: 12px;
   background: var(--aw-raised);
   border: 1px solid var(--aw-border);
-  font-family: var(--font-geist-sans), Arial, sans-serif;
+  font-family: Georgia, serif;
   font-size: 15px;
   color: var(--aw-text);
 }
@@ -685,7 +685,7 @@
   border-radius: 12px;
 }
 .stats strong {
-  font: 600 28px var(--font-geist-sans), Arial, sans-serif;
+  font: 28px Georgia, serif;
 }
 .stats small {
   text-transform: capitalize;

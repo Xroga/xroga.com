@@ -401,7 +401,8 @@ test('solid model and plus menus are monochrome and mobile preserves the readabl
   const panel = page.getByTestId('black-hole-model-panel');
   await expect(panel).toBeVisible();
   await expect(panel).toHaveCSS('backdrop-filter', 'none');
-  await expect(panel).toHaveCSS('background-color', 'rgb(22, 22, 22)');
+  const paletteSurface = await page.locator('.xv-terminal-dock').evaluate(el => getComputedStyle(el).getPropertyValue('--terminal-ui-raised').trim());
+  await expect.poll(() => panel.evaluate(el => getComputedStyle(el).getPropertyValue('--xv-popup-surface').trim())).toBe(paletteSurface);
   await page.keyboard.press('Escape');
   await page.getByRole('button', { name: 'More composer actions' }).click();
   await expect(page.getByRole('dialog', { name: 'Composer actions' })).toHaveCSS('filter', 'none');
@@ -612,7 +613,7 @@ test(`extension trigger clears the heading and keeps capability cards reachable 
   expect(headingBox).not.toBeNull();
   expect(extensionBox!.y + extensionBox!.height + 10).toBeLessThanOrEqual(headingBox!.y);
 
-  const guidance = page.getByText(viewport.width < 640 ? 'Type or speak your language. Xroga does the work.' : 'Type or speak in your native language, and the right tools handle the work automatically.', { exact: true });
+  const guidance = page.getByText(viewport.width < 640 ? 'Type or speak your language. Xroga does the work automatically.' : 'Type or speak in your native language, and the right tools handle the work automatically.', { exact: true });
   await expect(guidance).toBeVisible({ timeout: 4_000 });
   expect(await guidance.evaluate(element => {
     const range = document.createRange();
