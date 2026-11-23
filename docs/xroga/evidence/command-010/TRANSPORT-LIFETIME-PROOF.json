@@ -251,7 +251,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "cecee5b59a22deb0b2fab34798e0b9a72be3769d25c48b436027785eebbc6067",
+      "sha256": "b3dc5f4a46dc5c86bcd6964dd0740c103b9a322ad161bd67b5188f340da899e7",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/black-hole/webIntelligence.ts",
         "sha256": "f7ee10618d7993cc8e827b7f77d23eec06e663232d26a44c598a48825fbb6b7d"
@@ -322,7 +322,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "763efe2a954b3e1b38ec511b40f4eff24a862208aedb54ac0795e05d7d895cc3",
+      "sha256": "f40633d0d6a00d4d77a0f4546b2c94964f55e101043e97188cb53252996993b8",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -745,7 +745,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "94f90b69b5aa05010f9c8e53ec8eb88cec080eb415d08905ef3611bcedf54e0e",
+      "sha256": "8e7a0d94d150b8790ae2380666666ed53dcb8e145e4d9b462c9680d9a75980c4",
       "beforeTxtDownloadRoutingSha256": "450d77c6f89e9334ef2345d316895580732bda5b614ad3d87d42f4d4643f75fa",
       "beforeInlineCalculatorRoutingSha256": "58e3fa0ea9ec46ed2aa0be0c7aa6ca0777c213059c12f3cd6ecf04a6a2ab6e29",
       "beforePlannerCompletionDiagnosticsSha256": "6ca81b0c9234195e6159d1e03735a21ce50d50cf1e8f71b53cb62199bf95cb26",

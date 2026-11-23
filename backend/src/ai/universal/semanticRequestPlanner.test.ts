@@ -33,6 +33,28 @@ import { EgressDenied } from '../../security/egress/egressPolicy.js';
 import { RuntimeFailure } from './runtimeFailure.js';
 import { PostCompletionAccountingError } from '../postCompletionAccounting.js';
 
+it('keeps translated public queries and excludes unrelated workspace identifiers', () => {
+  const input = {
+    message: 'मेरी यात्रा के लिए नॉर्वे में ट्रेन टिकट के दाम बताओ।',
+    history: [],
+    projectContext: { repo: 'synthetic-org/internal-project', branch: 'main', projectRoot: '/' },
+    attachments: [{ mediaType: 'text/plain', name: 'Internal itinerary.txt' }],
+  };
+  const decision = {
+    semanticIntent: 'INVESTIGATE',
+    requiredCapabilities: ['research.public-web'],
+    freshnessRequirement: 'CURRENT_REQUIRED',
+  };
+  for (const query of ['Norway rail fares and ticket prices', '𠀀'.repeat(128)]) {
+    const contract = goalContractSchema.parse(normalizePlannerDecisionCandidate({ ...decision, publicWebQuery: query }, input));
+    assert.equal(contract.publicWebQuery, query);
+  }
+  for (const query of [null, '𠀀'.repeat(129), 'Norway rail fares Internal itinerary.txt', 'rail fares synthetic-org/internal-project']) {
+    const contract = goalContractSchema.parse(normalizePlannerDecisionCandidate({ ...decision, publicWebQuery: query }, input));
+    assert.equal(contract.publicWebQuery, null);
+  }
+});
+
 function goal(overrides: Partial<GoalContract> = {}): GoalContract {
   return goalContractSchema.parse({
     version: '1.0',

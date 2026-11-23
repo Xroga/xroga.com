@@ -1078,7 +1078,9 @@ export async function runChatPipeline(opts: {
 
   const typedWorkspacePrompt = opts.workspaceSearch?.prompt;
   const explicitWorkspaceSearch = !!typedWorkspacePrompt && explicitlyRequestsWorkspaceWebSearch(typedWorkspacePrompt);
-  const route = routeReadOnlyConversation(opts.prompt, opts.goalContract, explicitWorkspaceSearch);
+  const modelSelectedWorkspaceSearch = !!typedWorkspacePrompt && !!opts.goalContract?.publicWebQuery
+    && opts.goalContract.requiredCapabilities.includes('research.public-web');
+  const route = routeReadOnlyConversation(typedWorkspacePrompt ?? opts.prompt, opts.goalContract, explicitWorkspaceSearch, modelSelectedWorkspaceSearch);
   if(requestedSonnetReason(opts.prompt)){
     const usage = await checkQuotaBeforePreparation();
     if(hasAttachments||route.kind==='research')throw new RuntimeFailure('CAPABILITY_UNSUPPORTED','The approved complex-model response supports text engineering work only. No alternate model or research request was made.');
@@ -1104,7 +1106,7 @@ export async function runChatPipeline(opts: {
   let publicQueryUnverified = false;
   let publicWebRetrieved: true | undefined;
 
-  if (!opts.approvedResearch&&route.useResearch && !explicitlyDisablesResearch(opts.prompt)) {
+  if (!opts.approvedResearch && route.useResearch) {
     const goal = opts.goalContract;
     const plannedResearch = goal ? webDecisionFromGoalContract(goal) : null;
     const decision = plannedResearch ?? (opts.workspaceSearch ? {

@@ -8,6 +8,7 @@ import {
   type TaskClassification,
 } from '../lib/taskClassifier.js';
 import type { GoalContract } from './universal/goalContract.js';
+import { workspaceSearchOptOut } from './workspacePublicSearch.js';
 
 export type TaskKind =
   | 'chat'
@@ -39,9 +40,10 @@ export function routeReadOnlyConversation(
   prompt: string,
   goal?: Pick<GoalContract, 'requiredCapabilities' | 'freshnessRequirement'>,
   explicitWorkspaceSearch = false,
+  modelSelectedWorkspaceSearch = false,
 ): RouteDecision {
   const inferred = routePrompt(prompt);
-  const researchDisabled = explicitlyDisablesResearch(prompt);
+  const researchDisabled = modelSelectedWorkspaceSearch ? workspaceSearchOptOut(prompt) : explicitlyDisablesResearch(prompt);
   if (!goal && !explicitWorkspaceSearch && (!inferred.useResearch || !researchDisabled)) return inferred;
   const research = !researchDisabled && (explicitWorkspaceSearch || Boolean(goal
     && (goal.requiredCapabilities.includes('research.public-web')

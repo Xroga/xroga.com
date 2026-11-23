@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { answerObligationsSchema, assessPresentationCoverage, presentationPlanSchema } from '../responsePresentation.js';
+import { DEEPSEEK_QUERY_MAX } from '../researchSearchProvider.js';
 
 export const SEMANTIC_INTENTS = [
   'ANSWER',
@@ -201,7 +202,7 @@ export const goalContractSchema =
         officialDomains: [],
       }),
 
-    publicWebQuery: z.string().trim().min(1).max(128).optional(),
+    publicWebQuery: z.string().trim().min(1).refine(query => [...query].length <= DEEPSEEK_QUERY_MAX).nullish(),
 
     previewRequirement:
   z
@@ -563,6 +564,15 @@ export function normalizePlannerDecisionCandidate(
       unknown
     >;
 
+  const query = typeof decision.publicWebQuery === 'string' ? decision.publicWebQuery.trim() : '';
+  // Keep actual project and attachment identifiers out of a public query.
+  // These are supplied context values, never a list of banned search words.
+  const contextIdentifiers = [input.projectContext?.repo, input.projectContext?.branch, input.projectContext?.projectRoot,
+    ...input.attachments.map(file => file.name)];
+  const includesContext = contextIdentifiers.some(identifier => identifier && /[./\\]/u.test(identifier) && identifier.length > 3
+    && query.toLowerCase().includes(identifier.toLowerCase()) && !input.message.toLowerCase().includes(identifier.toLowerCase()));
+  const publicWebQuery = query && [...query].length <= DEEPSEEK_QUERY_MAX && !includesContext ? query : null;
+
   const strings = (
     candidate: unknown,
   ): string[] =>
@@ -763,9 +773,7 @@ export function normalizePlannerDecisionCandidate(
         ),
     },
 
-    ...(typeof decision.publicWebQuery === 'string'
-      && decision.publicWebQuery.trim().length > 0 && decision.publicWebQuery.trim().length <= 128
-      ? { publicWebQuery: decision.publicWebQuery.trim() } : {}),
+    ...(decision.publicWebQuery !== undefined ? { publicWebQuery } : {}),
 
     previewRequirement:
       explicitPreviewRequirement ===

@@ -543,8 +543,8 @@ test('one exact research approval completes its original rich answer, saves evid
  assert.equal(confirmation.row,lastConfirmation);
 
  const tripPrompt = 'plan my usa  trip to  dubai  tell me all costs which services are good';
- const publicWebQuery = 'USA trip to Dubai costs services';
- expectedPublicQuery = /^USA trip to Dubai costs services$/u;
+ const publicWebQuery = 'Dubai travel budget from United States airfare hotels transport tourist services';
+ expectedPublicQuery = /^Dubai travel budget from United States airfare hotels transport tourist services$/u;
  const trip = await runChatPipeline({
   ...withPublicPrompt(tripPrompt),
   goalContract:goalContractSchema.parse({...currentGoal,requiredCapabilities:['research.public-web','conversation.respond'],
@@ -555,6 +555,26 @@ test('one exact research approval completes its original rich answer, saves evid
  assert.match(publicTrip.response,/https:\/\/example\.com\/docs/);
  assert.doesNotMatch(JSON.stringify(publicTrip),/Review action|Confirm action|settled_micro_usd|provider_request_id/i);
  assert.equal(searches,16);assert.equal(models,13);
+ assert.equal(confirmation.row,lastConfirmation);
+
+ const promptWithPublicUrl = 'Avoid outdated search results. Find the latest stable Node.js release notes at https://nodejs.org/en/blog/release.';
+ const releaseQuery = 'site:nodejs.org "Node.js" latest stable release notes';
+ expectedPublicQuery = /^site:nodejs\.org "Node\.js" latest stable release notes$/u;
+ const releases = await runChatPipeline({
+  ...withPublicPrompt(promptWithPublicUrl),
+  goalContract:goalContractSchema.parse({...currentGoal,requiredCapabilities:['research.public-web','conversation.respond'],
+    publicWebQuery:releaseQuery}),
+ });
+ assert.equal(releases.publicWebRetrieved,true);
+ assert.equal(searches,17);assert.equal(models,14);
+ assert.equal(confirmation.row,lastConfirmation);
+
+ const noPublicSubject = await runChatPipeline({
+  ...withPublicPrompt('Search the web for current hospital visiting hours.'),
+  goalContract:goalContractSchema.parse({...currentGoal,publicWebQuery:null}),
+ });
+ assert.equal(noPublicSubject.intent,'research_unavailable');
+ assert.equal(searches,17,'An explicit null query never falls back to raw text');
  assert.equal(confirmation.row,lastConfirmation);
 });
 
@@ -575,21 +595,27 @@ test('public topics work across subjects without screening out individual words'
  }
 });
 
-test('a planner query cannot export context or override an explicit source constraint', () => {
- const prompt = 'Compare trail running shoes with published prices.';
- for (const ungrounded of ['trail running shoes WORKSPACE_INTERNAL_CONTEXT', 'trail running shoes site:example.org', 'trail running shoes $300']) {
-  assert.deepEqual(workspacePublicSearchQuery(prompt,false,ungrounded), workspacePublicSearchQuery(prompt));
- }
+test('planner queries support translation, public identifiers and DeepSeek operators', () => {
  for (const [request, topic] of [
-  ['Search my inbox for hotel prices in Dubai.', 'hotel prices Dubai'],
-  ['Compare this booking reference YZQTSP with historical rates.', 'historical rates'],
-  ['Search the web for Jane Doe’s whereabouts.', 'Jane Doe’s whereabouts'],
-  ['Compare the attached client records for inflation estimates.', 'inflation estimates'],
-  ['Research public airline fares. Do not browse.', 'airline fares'],
- ]) assert.equal(workspacePublicSearchQuery(request,false,topic),undefined,request);
+  ['मेरी टोक्यो यात्रा के लिए नए किराए बताओ।', 'Tokyo rail ticket fares for travelers'],
+  ['Find news about the release on 2026-10-24.', '"2026-10-24" software release notes -site:example.org'],
+  ['Check this public page: https://nodejs.org/en/blog/release.', 'site:nodejs.org "Node.js" releases'],
+  ['How should I test the public operator documented as `foo[bar]=1`?', 'documentation `foo[bar]=1` query syntax'],
+  ['Find public current ticket prices for what we discussed earlier.', 'Tokyo Skytree official admission prices'],
+ ]) assert.deepEqual(workspacePublicSearchQuery(request,false,topic),{query:topic,officialDomains:[]},request);
 
+ assert.deepEqual(workspacePublicSearchQuery('Compare the attached client records with inflation estimates.',
+  false,'published inflation estimates'), {query:'published inflation estimates',officialDomains:[]});
+});
+
+test('planned Search honors offline requests, credential boundaries and explicit publisher scope', () => {
+ assert.equal(workspacePublicSearchQuery('Research public airline fares. Do not browse.',false,'airline fares'),undefined);
+ for (const credentialQuery of ['travel fares SYNTHETIC_TEST_TOKEN', 'read https://example.org/info?token=abcdef',
+   'read https://viewer:password@example.org/info']) {
+  assert.equal(workspacePublicSearchQuery('Compare public fares.',false,credentialQuery),undefined);
+ }
  const official = 'Using only official W3C sources, find the WCAG 2.2 criteria.';
- assert.deepEqual(workspacePublicSearchQuery(official,true,'WCAG 2.2 criteria'), {
+ assert.deepEqual(workspacePublicSearchQuery(official,true,'site:example.org WCAG 2.2 criteria'), {
   query:'WCAG 2.2 criteria site:w3.org', officialDomains:['w3.org'],
  });
 });

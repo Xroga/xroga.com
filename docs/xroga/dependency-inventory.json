@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "df3850981e211c83c6c725fbcc7e4ff0348b30f8",
+  "source_sha": "b769a622e105728bdb5529f8d898121e99350d87",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17066,7 +17066,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "cecee5b59a22deb0b2fab34798e0b9a72be3769d25c48b436027785eebbc6067"
+      "sha256": "b3dc5f4a46dc5c86bcd6964dd0740c103b9a322ad161bd67b5188f340da899e7"
     },
     {
       "path": "backend/src/ai/buildImprovementMemory.ts",
@@ -17310,7 +17310,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "763efe2a954b3e1b38ec511b40f4eff24a862208aedb54ac0795e05d7d895cc3"
+      "sha256": "f40633d0d6a00d4d77a0f4546b2c94964f55e101043e97188cb53252996993b8"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -17418,7 +17418,7 @@
     },
     {
       "path": "backend/src/ai/router.ts",
-      "sha256": "0c9aa69ac24eb9d16a63a2ab2a72f210de51053ff4f764a0d8cc2a1100bb8634"
+      "sha256": "aad22a1958337fa8b0aa0d89d41944d158956c8eedb1d8e75cc9a6457f7e8b59"
     },
     {
       "path": "backend/src/ai/routerConfig.ts",
@@ -17614,7 +17614,7 @@
     },
     {
       "path": "backend/src/ai/universal/goalContract.ts",
-      "sha256": "ff24b7d9d3499cc0bb1c0a5c722d801cf3afe3830235d6eb2e2deb5404f59f2b"
+      "sha256": "14c67d696b14d8131f227cef263bd5bf032b2dc47dc8db19716df28ebc7e775b"
     },
     {
       "path": "backend/src/ai/universal/modelRequirements.ts",
@@ -17654,7 +17654,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "94f90b69b5aa05010f9c8e53ec8eb88cec080eb415d08905ef3611bcedf54e0e"
+      "sha256": "8e7a0d94d150b8790ae2380666666ed53dcb8e145e4d9b462c9680d9a75980c4"
     },
     {
       "path": "backend/src/ai/usageAccounting.ts",
@@ -17686,7 +17686,7 @@
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "sha256": "22c7dacbe122809e27991846053be5ec9b363281776ba48c670930aaf8f25df2"
+      "sha256": "af3ec907ac14fe26707c6c4a8df1edb06710b753293030ac0150f05db15c120d"
     },
     {
       "path": "backend/src/ai/zurelayWire.ts",
@@ -25911,7 +25911,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4221,
+      "line": 4223,
       "credentialsInUrl": false
     },
     {
@@ -33835,49 +33835,49 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1198,
+      "line": 1200,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1202,
+      "line": 1204,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1676,
+      "line": 1678,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2428,
+      "line": 2430,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3987,
+      "line": 3989,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4171,
+      "line": 4173,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4950,
+      "line": 4952,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -34255,7 +34255,7 @@
     },
     {
       "path": "backend/src/ai/router.ts",
-      "line": 78,
+      "line": 80,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -34605,7 +34605,7 @@
     },
     {
       "path": "backend/src/ai/universal/goalContract.ts",
-      "line": 301,
+      "line": 302,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -34717,49 +34717,42 @@
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "line": 28,
+      "line": 27,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "line": 61,
+      "line": 60,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "line": 84,
+      "line": 83,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "line": 98,
+      "line": 97,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "line": 139,
+      "line": 111,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "line": 180,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/ai/workspacePublicSearch.ts",
-      "line": 215,
+      "line": 244,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

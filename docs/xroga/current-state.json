@@ -2094,7 +2094,7 @@
       "id": "surface:0e78a2534aef2dadd6c0",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "cecee5b59a22deb0b2fab34798e0b9a72be3769d25c48b436027785eebbc6067",
+      "sha256": "b3dc5f4a46dc5c86bcd6964dd0740c103b9a322ad161bd67b5188f340da899e7",
       "symbols": [
         "ACTIONS",
         "WebAction",
@@ -2130,6 +2130,7 @@
         "provider",
         "publicSources",
         "queries",
+        "query",
         "rawResults",
         "requiresResearch",
         "result",
@@ -7780,7 +7781,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "763efe2a954b3e1b38ec511b40f4eff24a862208aedb54ac0795e05d7d895cc3",
+      "sha256": "f40633d0d6a00d4d77a0f4546b2c94964f55e101043e97188cb53252996993b8",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -7985,6 +7986,7 @@
         "modelDeletes",
         "modelId",
         "modelScope",
+        "modelSelectedWorkspaceSearch",
         "modelSwitches",
         "narrate",
         "narrator",
@@ -10434,6 +10436,7 @@
         "backend/src/ai/researchAnswer.ts:7",
         "backend/src/ai/researchPublicationEvidence.ts:2",
         "backend/src/ai/researchSearchProvider.test.ts:3",
+        "backend/src/ai/universal/goalContract.ts:3",
         "backend/src/ai/workspacePublicSearch.ts:4",
         "backend/src/services/integrations/researchResult.ts:10"
       ],
@@ -10891,7 +10894,7 @@
       "id": "surface:8c4623b66cfe2703b5ad",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/router.ts",
-      "sha256": "0c9aa69ac24eb9d16a63a2ab2a72f210de51053ff4f764a0d8cc2a1100bb8634",
+      "sha256": "aad22a1958337fa8b0aa0d89d41944d158956c8eedb1d8e75cc9a6457f7e8b59",
       "symbols": [
         "EXPLICIT_RESEARCH_RE",
         "FILE_RE",
@@ -10918,9 +10921,11 @@
       "imports": [
         "../lib/taskClassifier.js",
         "./models.js",
-        "./universal/goalContract.js"
+        "./universal/goalContract.js",
+        "./workspacePublicSearch.js"
       ],
       "runtimeImports": [
+        "backend/src/ai/workspacePublicSearch.ts",
         "backend/src/lib/taskClassifier.ts"
       ],
       "entryPoints": [
@@ -14468,7 +14473,7 @@
       "id": "surface:d0118051183ee3a6c3fe",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/universal/goalContract.ts",
-      "sha256": "ff24b7d9d3499cc0bb1c0a5c722d801cf3afe3830235d6eb2e2deb5404f59f2b",
+      "sha256": "14c67d696b14d8131f227cef263bd5bf032b2dc47dc8db19716df28ebc7e775b",
       "symbols": [
         "FRESHNESS_REQUIREMENTS",
         "FreshnessRequirement",
@@ -14478,6 +14483,7 @@
         "ProjectContext",
         "SEMANTIC_INTENTS",
         "SemanticIntent",
+        "contextIdentifiers",
         "decision",
         "deliverable",
         "deliverableSchema",
@@ -14487,6 +14493,7 @@
         "freshnessRequirement",
         "goalContractSchema",
         "hasIdentity",
+        "includesContext",
         "input",
         "interpretGoalContract",
         "isServerOwnedReadinessBlocker",
@@ -14500,15 +14507,19 @@
         "previewRequirement",
         "project",
         "projectContextSchema",
+        "publicWebQuery",
+        "query",
         "sourcePolicySchema",
         "strings",
         "suppliedSource"
       ],
       "imports": [
+        "../researchSearchProvider.js",
         "../responsePresentation.js",
         "zod"
       ],
       "runtimeImports": [
+        "backend/src/ai/researchSearchProvider.ts",
         "backend/src/ai/responsePresentation.ts"
       ],
       "entryPoints": [
@@ -15011,7 +15022,7 @@
       "id": "surface:2caccad5e3c57290edad",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "94f90b69b5aa05010f9c8e53ec8eb88cec080eb415d08905ef3611bcedf54e0e",
+      "sha256": "8e7a0d94d150b8790ae2380666666ed53dcb8e145e4d9b462c9680d9a75980c4",
       "symbols": [
         "SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS",
         "SEMANTIC_PLANNER_HEDGE_DELAY_MS",
@@ -15651,7 +15662,7 @@
       "id": "surface:82ff96c046038933cdb9",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/workspacePublicSearch.ts",
-      "sha256": "22c7dacbe122809e27991846053be5ec9b363281776ba48c670930aaf8f25df2",
+      "sha256": "af3ec907ac14fe26707c6c4a8df1edb06710b753293030ac0150f05db15c120d",
       "symbols": [
         "answerOnlySuffix",
         "asksForOfficial",
@@ -15698,11 +15709,10 @@
         "originalSourceRequest",
         "personLocationLookup",
         "personalLookup",
-        "planned",
+        "plannedPublicQuery",
         "presentationAfterTopic",
         "presentationInstruction",
         "privateSourceReferences",
-        "projectedPublicTopic",
         "publicInstitutionLeadership",
         "publicOffice",
         "publicOfficeLookup",
@@ -15711,14 +15721,17 @@
         "publicSoftwareNames",
         "publicSourceLookup",
         "publicSourcePreface",
+        "publication",
         "publicationHosts",
         "publicationQuery",
         "publicationTerm",
         "publishedWorkTopic",
         "publisher",
         "publisherDomains",
+        "publisherScope",
         "publisherSourceClause",
         "qualifier",
+        "query",
         "rawSearchOperator",
         "remaining",
         "request",
@@ -15727,11 +15740,12 @@
         "requestsOfficialLinkCoverage",
         "requestsPrimaryPublisherTable",
         "retrievalHosts",
+        "scopedHosts",
         "scopedPublicationHosts",
+        "scopedQuery",
         "scopedRequest",
         "searchTerms",
         "searchText",
-        "selected",
         "sites",
         "softwareReleaseSubject",
         "source",
@@ -15739,17 +15753,16 @@
         "sourceSelectionStart",
         "specificIdentityOrUrl",
         "subject",
-        "supplied",
         "terms",
         "topic",
         "topicLead",
         "topicLimit",
-        "topicWords",
         "unavailableDomain",
+        "url",
         "versionedWork",
         "versionedWorkDetail",
-        "words",
-        "workspacePublicSearchQuery"
+        "workspacePublicSearchQuery",
+        "workspaceSearchOptOut"
       ],
       "imports": [
         "../lib/taskClassifier.js",
@@ -15773,6 +15786,7 @@
         "backend/src/ai/researchAnswer.test.ts:77",
         "backend/src/ai/researchAnswer.ts:8",
         "backend/src/ai/researchPublicationEvidence.ts:3",
+        "backend/src/ai/router.ts:11",
         "backend/src/ai/universal/semanticRequestPlanner.ts:15"
       ],
       "reachable": true,
@@ -43274,8 +43288,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:3998",
-        "backend/src/ai/pipeline.ts:4001",
+        "backend/src/ai/pipeline.ts:4000",
+        "backend/src/ai/pipeline.ts:4003",
         "backend/src/ai/projectMemory.ts:7",
         "backend/src/ai/sessionMemory.ts:7",
         "backend/src/builder/providerTransports.ts:10",
@@ -43548,7 +43562,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:135",
-        "backend/src/ai/pipeline.ts:3997",
+        "backend/src/ai/pipeline.ts:3999",
         "backend/src/ai/tenantModelDispatch.ts:6",
         "backend/src/config/supabaseTransport.security.test.ts:6",
         "backend/src/routes/integrations.ts:19",
@@ -145899,9 +145913,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:1f610e0df415cb1295cf",
+      "id": "finding:b306041e8d648374f1dc",
       "sourcePath": "backend/src/ai/router.ts",
-      "line": 72,
+      "line": 74,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -154160,7 +154174,7 @@
     {
       "id": "test-suite:d2498a6171b68795395c",
       "sourcePath": "backend/src/ai/researchAnswer.test.ts",
-      "declaredTests": 24,
+      "declaredTests": 25,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -154636,7 +154650,7 @@
     {
       "id": "test-suite:4c7f0731a324fb7d047d",
       "sourcePath": "backend/src/ai/universal/semanticRequestPlanner.test.ts",
-      "declaredTests": 40,
+      "declaredTests": 41,
       "skipLocations": [],
       "focusLocations": []
     },

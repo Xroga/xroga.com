@@ -1,7 +1,7 @@
 import { explicitlyDisablesResearch } from '../lib/taskClassifier.js';
 import { containsCredentialSecretText } from '../security/egress/dataClassification.js';
 import { publicHttpsUrl } from '../security/egress/urlPolicy.js';
-import { DEEPSEEK_QUERY_MAX } from './researchSearchProvider.js';
+import { DEEPSEEK_QUERY_MAX, scopeOfficialSearchQuery } from './researchSearchProvider.js';
 
 const publicOfficeLookup = /^who\s+(?:is|was)\s+(?:the\s+)?(?:current\s+)?(?:president|prime minister|governor|mayor|chief executive officer|ceo)\s+of\s+\p{L}[\p{L}\p{M} .,'’-]{1,75}[?!]?$/iu;
 const publicInstitutionLeadership = /^[Ww]ho (?:currently )?(?:leads|heads) (?:the )?[A-Z][A-Z0-9]{1,15}[?!]?$/u;
@@ -21,7 +21,6 @@ const personalLookup = /\b(?:personal (?:info(?:rmation)?|details|records?|phone
 const specificIdentityOrUrl = /(?:\b[a-z][a-z\d+.-]*:\/\/|(?:\p{N}[ ().-]*){7,})/iu;
 const rawSearchOperator = /(?:^|\s)-?(?:site|url|inurl|cache|link|related):/iu;
 const searchText = /^[\p{L}\p{M}\p{N}\p{Sc} ,.'’!?()&–—،؟。？！、।॥:+"“”%#-]+$/u;
-const topicWords = /\p{Sc}?[\p{L}\p{M}\p{N}][\p{L}\p{M}\p{N}.'’+#%-]*/gu;
 const bareDomain = /(?<![\p{L}\p{N}.-])(?:[a-z\d](?:[a-z\d-]{0,61}[a-z\d])?\.)+[a-z]{2,63}(?![\p{L}\p{N}-]|\.[\p{L}\p{N}])/giu;
 // These public software names are also syntactically valid hostnames. Treat
 // them as product names only when the turn asks about software releases/docs.
@@ -104,6 +103,16 @@ function isPublicSourceHost(domain: string): boolean {
   catch { return false; }
 }
 
+function publisherScope(request: string) {
+  const namedSource = namedSourceClause.exec(request) ?? publisherSourceClause.exec(request);
+  const publisherDomains = namedSource ? namedPublisherDomains(namedSource[1]) : [];
+  const asksForOfficial = officialSourceRequest.test(request);
+  const isSoftwareName = (host: string) => softwareReleaseSubject.test(request) && publicSoftwareNames.has(host.toLowerCase());
+  const explicitDomains = [...new Set([...request.matchAll(bareDomain)]
+    .map(([host]) => host.toLowerCase()).filter(host => !isSoftwareName(host)))];
+  return { namedSource, publisherDomains, asksForOfficial, isSoftwareName, explicitDomains };
+}
+
 export function requestsOfficialLinkCoverage(prompt: string): boolean {
   // Selecting where evidence comes from does not request a separate
   // verified destination for each item in the answer.
@@ -117,6 +126,12 @@ export function explicitlyRequestsWorkspaceWebSearch(prompt: string): boolean {
   return explicitWebLookup.test(prompt.trim()) && !explicitlyDisablesResearch(prompt);
 }
 
+/** Preserve a direct offline instruction without treating mentions of search
+ * settings, quoted UI copy or filter expressions as instructions. */
+export function workspaceSearchOptOut(prompt: string): boolean {
+  return /(?:^|[.!?;\n]\s*)(?:(?:please\s+)?(?:do not|don['’]t|skip)\s+(?:(?:use|run)\s+)?(?:(?:the\s+)?(?:web|internet)\s+)?(?:search(?:ing)?|brows(?:e|ing)|research)(?:\s+(?:the\s+)?(?:web|internet|online))?|no web search|offline only)\s*[.!?]?\s*$/iu.test(prompt);
+}
+
 function isAmbiguousPersonalLookup(topic: string): boolean {
   const subject = topic.replace(topicLead, '');
   return barePersonName.test(subject) || personLocationLookup.test(subject);
@@ -127,18 +142,17 @@ function publicOfficeTopic(prompt: string): string | undefined {
   if (publicOfficeLookup.test(topic) || publicInstitutionLeadership.test(topic)) return topic;
 }
 
-/** The planner may select terms only from the current user message. Treat
- * round-tripped plan data as a hint, including when returned by our planner. */
-function projectedPublicTopic(query: string | undefined, message: string) {
-  if (!query) return;
-  const topic = query.trim().replace(/\s+/gu, ' ');
-  if ([...topic].length > DEEPSEEK_QUERY_MAX || !searchText.test(topic)
-    || specificIdentityOrUrl.test(topic) || rawSearchOperator.test(topic)
-    || hasNonPublicSearchTerms(topic) || explicitlyDisablesResearch(topic)) return;
-  const words = (text: string) => (text.toLowerCase().match(topicWords) ?? []).map(word => word.replace(/\.+$/u, ''));
-  const supplied = new Set(words(message));
-  const selected = words(topic);
-  if (selected.length && selected.every(word => supplied.has(word))) return topic;
+function plannedPublicQuery(query: string) {
+  const topic = query.trim();
+  if (!topic || [...topic].length > DEEPSEEK_QUERY_MAX || containsCredentialSecretText(topic)) return;
+  for (const [value] of topic.matchAll(/https?:\/\/[^\s"'<>]+/giu)) {
+    if (containsCredentialSecretText(value)) return;
+    try {
+      const url = new URL(value);
+      if (url.username || url.password) return;
+    } catch { /* Search treats query text as text. */ }
+  }
+  return topic;
 }
 
 /** Public lookup terms must be self-contained and safe to send to Search. */
@@ -154,9 +168,30 @@ export function hasNonPublicSearchTerms(prompt: string): boolean {
 
 /** Project the typed turn after Workspace selects public Search. This owns the
  * input boundary, while the existing planner decides when retrieval is useful. */
-export function workspacePublicSearchQuery(prompt: string, officialOnly = false, plannerQuery?: string): {
+export function workspacePublicSearchQuery(prompt: string, officialOnly = false, plannerQuery?: string | null): {
   query: string; officialDomains: string[]; originalSourceQuestion?: string;
 } | undefined {
+  if (plannerQuery !== undefined) {
+    if (plannerQuery === null || workspaceSearchOptOut(prompt)) return;
+    const query = plannedPublicQuery(plannerQuery);
+    if (!query) return;
+
+    const { publisherDomains, asksForOfficial, explicitDomains } = publisherScope(prompt);
+    const scopedHosts = asksForOfficial ? explicitDomains.filter(host => isPublicSourceHost(host) &&
+      (!publisherDomains.length || publisherDomains.some(domain => host === domain || host.endsWith('.' + domain)))) : [];
+    const officialDomains = scopedHosts.length ? scopedHosts : publisherDomains;
+    if (!officialDomains.length) return { query, officialDomains };
+
+    // Retain the existing recovery for a known, explicitly requested publication.
+    const publication = workspacePublicSearchQuery(prompt, officialOnly);
+    if (publication?.originalSourceQuestion) return publication;
+    const scopedQuery = scopeOfficialSearchQuery(query, officialDomains);
+    if (scopedQuery) return { query: scopedQuery, officialDomains };
+    return;
+  }
+
+  // Compatibility for saved or older plans with no search query. Only this
+  // path projects raw message text instead of receiving a search phrase.
   if (prompt.length > 32_000) return;
   const message = prompt.trim().replace(/\s+/gu, ' ');
   if (!message) return;
@@ -166,8 +201,7 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false,
     .replace(linkFooter, '').replace(currencyPeriod, '$1 per $2').replace(/\s*;\s*/g, ', ').trimEnd();
   const publicOffice = publicOfficeTopic(request) !== undefined;
   const officialLookup = requestsOfficialLinkCoverage(request) || publicSourceLookup.test(request);
-  const namedSource = namedSourceClause.exec(request) ?? publisherSourceClause.exec(request);
-  const publisherDomains = namedSource ? namedPublisherDomains(namedSource[1]) : [];
+  const { namedSource, publisherDomains, asksForOfficial, isSoftwareName, explicitDomains } = publisherScope(request);
   if (namedSource && /\b(?:only|exclusively)\b/iu.test(namedSource[0]) && !publisherDomains.length && !namedSource[0].includes('(')) return;
   if (explicitlyDisablesResearch(message)
     || hasNonPublicSearchTerms(prompt) || specificIdentityOrUrl.test(message) || rawSearchOperator.test(message)
@@ -175,9 +209,6 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false,
 
   // A domain becomes a filter only when the user supplied it in this request
   // with an official-source restriction. Neither a model nor history adds hosts.
-  const asksForOfficial = officialSourceRequest.test(request);
-  const isSoftwareName = (host: string) => softwareReleaseSubject.test(request) && publicSoftwareNames.has(host.toLowerCase());
-  const explicitDomains = [...new Set([...request.matchAll(bareDomain)].map(([host]) => host.toLowerCase()).filter(host => !isSoftwareName(host)))];
   if (explicitDomains.length && (!asksForOfficial || !explicitDomains.every(isPublicSourceHost))) return;
   if (publisherDomains.length && explicitDomains.some(host => !publisherDomains.some(domain => host === domain || host.endsWith('.' + domain)))) return;
   const officialDomains = explicitDomains.length ? explicitDomains : publisherDomains;
@@ -201,10 +232,8 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false,
     .replace(/[?.!؟。？！।॥]+$/u, '').trim();
   // Spend the bounded publisher query on the requested metric and rows.
   const originalSource = originalSourceRequest.exec(message);
-  const planned = !originalSource && !requestsPrimaryPublisherTable
-    ? projectedPublicTopic(plannerQuery, checkedTopic) : undefined;
   const topic = requestsPrimaryPublisherTable ? checkedTopic.replace(/^(?:find|compare)\s+(?:the\s+)?/iu, '')
-    .replace(/\b(?:figures|numbers)\s+(?:for|on)\s+(?:estimated\s+)?/iu, '') : planned ?? checkedTopic;
+    .replace(/\b(?:figures|numbers)\s+(?:for|on)\s+(?:estimated\s+)?/iu, '') : checkedTopic;
   if (contextDependentTopic.test(topic.replace(topicLead, '')) || /^(?:the\s+)?(?:latest|current|new)\s+policy$/iu.test(topic)
     || (!publicOffice && !officialDomains.length && isAmbiguousPersonalLookup(topic))) return;
   const namedPublication = originalSource && versionedWorkDetail.test(topic) && publishedWorkTopic.test(topic);
