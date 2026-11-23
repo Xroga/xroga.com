@@ -27755,9 +27755,9 @@
     },
     {
       "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "sourceSha256": "c03aad0aa73d2ebceb4617ef0ff923a2184dd8fd3e91f1c3aeeeb039385a16c1",
+      "sourceSha256": "0b5b0dec0023c8fd3732f61bad392eab19af09154c144a62479b5690afcb5c13",
       "callIds": [
-        "01c36c53723bc0d0348b"
+        "ffb158f11029e5b6ba86"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Native Array.from materializes locally queried menu buttons for keyboard focus navigation. The subsequent index/focus operations touch the DOM only. No database, storage client, credential or provider write is involved.",
@@ -29461,10 +29461,10 @@
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "sourceSha256": "25e0e7b903e062566daa189cdb20c3fad4187473b805948e1849f0f255fe4e13",
+      "sourceSha256": "ef9da002abe7c0c6002e57dfa59830f3b4672de0a9b326f8cb963f8802332415",
       "callIds": [
         "c4f69f052e53d5249b1f",
-        "a3b27cc8d5ea785117a1"
+        "83437d9a6bbff05b9371"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",

@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "21f4dd98d782f10068438a93b4c0bf2ff8769241d49d8ddc3f7558a0117ead92",
+  "reviewRegistrySha256": "fdd69bd2448177898712b43c3dc3f7cac0db3fcb13fe39e9a7e73b472ad35770",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -6544,11 +6544,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a3b27cc8d5ea785117a1"
+        "id": "83437d9a6bbff05b9371"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "01c36c53723bc0d0348b"
+        "id": "ffb158f11029e5b6ba86"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -10484,7 +10484,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "a3b27cc8d5ea785117a1"
+        "id": "83437d9a6bbff05b9371"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10492,7 +10492,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "01c36c53723bc0d0348b"
+        "id": "ffb158f11029e5b6ba86"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -31624,7 +31624,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "25e0e7b903e062566daa189cdb20c3fad4187473b805948e1849f0f255fe4e13",
+      "sourceSha256": "ef9da002abe7c0c6002e57dfa59830f3b4672de0a9b326f8cb963f8802332415",
       "semanticReview": {
         "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
         "reason": "Decodes the user-requested recording or enumerates user-selected File objects locally. Neither method is a database or storage invocation.",
@@ -31641,7 +31641,7 @@
       }
     },
     {
-      "id": "a3b27cc8d5ea785117a1",
+      "id": "83437d9a6bbff05b9371",
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
       "line": 265,
       "enclosing": "WorkspaceBrowserOperator",
@@ -31649,7 +31649,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "25e0e7b903e062566daa189cdb20c3fad4187473b805948e1849f0f255fe4e13",
+      "sourceSha256": "ef9da002abe7c0c6002e57dfa59830f3b4672de0a9b326f8cb963f8802332415",
       "semanticReview": {
         "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
         "reason": "Decodes the user-requested recording or enumerates user-selected File objects locally. Neither method is a database or storage invocation.",
@@ -31771,15 +31771,15 @@
       }
     },
     {
-      "id": "01c36c53723bc0d0348b",
+      "id": "ffb158f11029e5b6ba86",
       "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "line": 214,
+      "line": 226,
       "enclosing": "FeatureCard",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "c03aad0aa73d2ebceb4617ef0ff923a2184dd8fd3e91f1c3aeeeb039385a16c1",
+      "sourceSha256": "0b5b0dec0023c8fd3732f61bad392eab19af09154c144a62479b5690afcb5c13",
       "semanticReview": {
         "authority": "Native Array.from materializes locally queried menu buttons for keyboard focus navigation. The subsequent index/focus operations touch the DOM only. No database, storage client, credential or provider write is involved.",
         "reason": "Exact current-source receiver and surrounding data flow were inspected. Only the native in-memory conversion is excluded. No adjacent authority, persistence or provider boundary is certified.",

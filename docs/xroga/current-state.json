@@ -68955,7 +68955,7 @@
       "id": "surface:46331a69bc5be52c0a7c",
       "subsystem": "browser_sandbox",
       "sourcePath": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "sha256": "25e0e7b903e062566daa189cdb20c3fad4187473b805948e1849f0f255fe4e13",
+      "sha256": "ef9da002abe7c0c6002e57dfa59830f3b4672de0a9b326f8cb963f8802332415",
       "symbols": [
         "API",
         "BridgeMessage",
@@ -70526,7 +70526,7 @@
       "id": "surface:793b89822aa62ee49888",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/dashboard/DashboardView.tsx",
-      "sha256": "81667fb8c6778334158ea39636369fd08366746cb2d8aca5d52a0d07cf34e7e9",
+      "sha256": "939adb22e171dc1142099d5183ec2edd3ca595e86e9a21400d9eff09791599b0",
       "symbols": [
         "DashboardView",
         "activeProject",
@@ -71529,7 +71529,7 @@
       "id": "surface:6ce17d2762e1020b6c38",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "sha256": "c03aad0aa73d2ebceb4617ef0ff923a2184dd8fd3e91f1c3aeeeb039385a16c1",
+      "sha256": "0b5b0dec0023c8fd3732f61bad392eab19af09154c144a62479b5690afcb5c13",
       "symbols": [
         "AUTOMATIONS",
         "AutomaticIntro",
@@ -71540,6 +71540,7 @@
         "FeatureCard",
         "Icon",
         "ROTATING_WORDS",
+        "RotatingWord",
         "STARTER_PROMPTS",
         "TASK_ACCEPTANCE",
         "WorkspaceStartCards",
@@ -71560,6 +71561,7 @@
         "previous",
         "reducedMotion",
         "returnToCategories",
+        "textRef",
         "timer",
         "useRotation"
       ],
@@ -79743,7 +79745,7 @@
         "frontend/src/components/projects/GitHubProjectCard.tsx:5",
         "frontend/src/components/settings/SettingsView.tsx:19",
         "frontend/src/components/terminal/BuildCodeSandbox.tsx:9",
-        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:6",
+        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:7",
         "frontend/src/components/terminal/ChatBarFileGrid.tsx:19",
         "frontend/src/components/terminal/ChatBarParts.tsx:6",
         "frontend/src/components/terminal/ChatBarSendIcon.tsx:4",
@@ -80230,7 +80232,7 @@
         "frontend/src/app/software/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:7"
+        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:8"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -87554,7 +87556,7 @@
         "frontend/src/app/software/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:15"
+        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:16"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -98135,7 +98137,7 @@
       "id": "surface:9e31be4cbf4607201de1",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/ChatBarActionsMenu.tsx",
-      "sha256": "4a7e163389452581579a20aa33e3832372daf568be426bff77bd70f39aa64c2b",
+      "sha256": "1d65000bb59dc95ac1f412846966e52aa60456121c51ee6bfcebcf09df495268",
       "symbols": [
         "ChatBarActionsMenu",
         "ComposerInsertOptions",
@@ -98143,38 +98145,32 @@
         "WORK_OPTIONS",
         "activeCount",
         "activeWork",
-        "available",
-        "composer",
         "current",
         "enabledSkills",
         "entries",
         "frame",
-        "idle",
         "insert",
-        "left",
         "menu",
         "menuRef",
+        "menuStyle",
         "next",
         "on",
         "onKeyDown",
         "onPointerDown",
         "preferences",
-        "rect",
         "rootRef",
         "rules",
         "setPreferences",
         "setRules",
-        "sync",
         "target",
-        "toggleSkill",
-        "trigger",
-        "width"
+        "toggleSkill"
       ],
       "imports": [
         "./WorkspaceControls.module.css",
         "@/components/icons/animated/AnimatedIcon",
         "@/components/icons/animated/CirclePlayIcon",
         "@/components/library/NativeSkillsPicker",
+        "@/components/ui/useChatbarPopoverLayout",
         "@/lib/nativeWorkSkills",
         "@/lib/utils",
         "@/store/useComposerToolsStore",
@@ -98187,6 +98183,7 @@
         "frontend/src/components/icons/animated/CirclePlayIcon.tsx",
         "frontend/src/components/library/NativeSkillsPicker.tsx",
         "frontend/src/components/terminal/WorkspaceControls.module.css",
+        "frontend/src/components/ui/useChatbarPopoverLayout.ts",
         "frontend/src/lib/nativeWorkSkills.ts",
         "frontend/src/lib/utils.ts",
         "frontend/src/store/useComposerToolsStore.ts"
@@ -99572,7 +99569,7 @@
       "id": "surface:0d42f6431011b29940e9",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "sha256": "fbc3b85766cd15098d573a54861b2a95c089f8ff6d83b45c15b38f83294c21df",
+      "sha256": "8659a6e96cfb956c767867e9bea8c9e03c5e383fdf6aab609043a398c8f97281",
       "symbols": [
         "AppRow",
         "IntegrationsModal",
@@ -100211,7 +100208,7 @@
       "id": "surface:3484d8fe9d2b6b8e0125",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
-      "sha256": "a40707f8a0cac604978ee51ad921e4ff28620dcbb41528d5f241f219641111d6",
+      "sha256": "75bb51dc653655a97a64ab568847fca5483d9e33f6d92db8b3d570461b78be2d",
       "symbols": [
         "ProjectOption",
         "ProjectType",
@@ -102494,7 +102491,7 @@
       "id": "surface:4330f7386efdd6e1cd7c",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/WorkspaceLauncher.tsx",
-      "sha256": "fb66177195fa8ac30107e287b33e186452aa7c3a4d46bf4c279ab8affa93e6f2",
+      "sha256": "3d0028d0db5b1472c9a3405d78b2d2d33dfac9458ba3b1cdd08d0a372258e3fa",
       "symbols": [
         "WorkspaceLauncher",
         "chatbarHidden",
@@ -103998,7 +103995,7 @@
       "id": "surface:c8ff52357b76eb8bcf96",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/ui/AnchoredPortalPopover.tsx",
-      "sha256": "e044fd183587fc52246c8eb51f8b9d57a839931ea0c6a5b7e50fe777fe28835f",
+      "sha256": "192ac7deff8d10e66b5f7035e37c878d51714cfa87c1098d6fe6f6e1c284751f",
       "symbols": [
         "AnchoredPlacement",
         "AnchoredPortalPopover",
@@ -104007,6 +104004,7 @@
         "availableAbove",
         "availableBelow",
         "below",
+        "chatbarLayout",
         "clampAnchoredPosition",
         "escape",
         "maxLeft",
@@ -104022,10 +104020,13 @@
         "wantedTop"
       ],
       "imports": [
+        "./useChatbarPopoverLayout",
         "react",
         "react-dom"
       ],
-      "runtimeImports": [],
+      "runtimeImports": [
+        "frontend/src/components/ui/useChatbarPopoverLayout.ts"
+      ],
       "entryPoints": [
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
@@ -104381,7 +104382,7 @@
       "id": "surface:ba8648d24c611fd5e3b7",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/ui/ChatBarPortalPopover.tsx",
-      "sha256": "c84a61062606d1a6a3539ba3a3ad642ce672085d5eca77ccc5574a68258dc9c9",
+      "sha256": "97c8883d72c694dfa3722ef9b4f64faa428265029c9d7e48d9b9a000b7917641",
       "symbols": [
         "ChatBarPortalPopover"
       ],
@@ -106074,6 +106075,77 @@
       "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
       "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:3b867688e4e39125f58a",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/ui/useChatbarPopoverLayout.ts",
+      "sha256": "b240891be87b8c8ec2b3562f97fb2339f32b7738f27b64c389dc2b49ae6abf9b",
+      "symbols": [
+        "Box",
+        "Viewport",
+        "anchor",
+        "applied",
+        "available",
+        "bottom",
+        "composer",
+        "dock",
+        "fitChatbarPopover",
+        "frame",
+        "gap",
+        "headerBottom",
+        "margin",
+        "maxHeight",
+        "movable",
+        "next",
+        "observer",
+        "offset",
+        "panel",
+        "panelWidth",
+        "previous",
+        "rect",
+        "reposition",
+        "shifted",
+        "useChatbarPopoverLayout",
+        "viewport",
+        "visual"
+      ],
+      "imports": [
+        "react"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx",
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/ai-app-builder/page.tsx",
+        "frontend/src/app/game-builder/page.tsx",
+        "frontend/src/app/software/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:5",
+        "frontend/src/components/ui/AnchoredPortalPopover.tsx:5",
+        "frontend/src/lib/chatbarPopoverLayout.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/chatbarPopoverLayout.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -113305,7 +113377,7 @@
       ],
       "callers": [
         "frontend/src/components/library/NativeSkillsDirectory.tsx:5",
-        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:16",
+        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:17",
         "frontend/src/components/terminal/TerminalChatBar.tsx:38",
         "frontend/src/lib/nativeWorkSkills.test.ts:4"
       ],
@@ -121919,7 +121991,7 @@
         "frontend/src/components/terminal/BuildTodoList.tsx:4",
         "frontend/src/components/terminal/BuilderProjectPanel.tsx:15",
         "frontend/src/components/terminal/CapacityUnavailableCard.tsx:5",
-        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:13",
+        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:14",
         "frontend/src/components/terminal/ChatBarButtons.tsx:3",
         "frontend/src/components/terminal/ChatBarFileGrid.tsx:18",
         "frontend/src/components/terminal/ChatBarParts.tsx:9",
@@ -124680,7 +124752,7 @@
       ],
       "callers": [
         "frontend/src/components/library/LibraryWorkspace.tsx:8",
-        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:8",
+        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:9",
         "frontend/src/components/terminal/TerminalChatBar.tsx:9",
         "frontend/src/lib/composerTools.test.ts:3"
       ],
@@ -146850,7 +146922,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:c5f48241fe25302930b4",
+      "id": "finding:6b56f55254ed00ed4a1b",
       "sourcePath": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
       "line": 240,
       "kind": "COMING_SOON",
@@ -148660,9 +148732,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:9c60f1f30b39188a9c2f",
+      "id": "finding:06dbbcfb29471706fbed",
       "sourcePath": "frontend/src/components/terminal/ChatBarActionsMenu.tsx",
-      "line": 412,
+      "line": 366,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -148670,9 +148742,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:2c475728fe070f60772c",
+      "id": "finding:9f78c1b47592ebe8c211",
       "sourcePath": "frontend/src/components/terminal/ChatBarActionsMenu.tsx",
-      "line": 437,
+      "line": 391,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -148740,7 +148812,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:70e29601944cf8ad1cdd",
+      "id": "finding:5e78c09d9f0396d52b03",
       "sourcePath": "frontend/src/components/terminal/IntegrationsModal.tsx",
       "line": 190,
       "kind": "PLACEHOLDER",
@@ -148750,7 +148822,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:ec6df75c1e6fd40693f2",
+      "id": "finding:de0eb95a617539fbd7ce",
       "sourcePath": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
       "line": 152,
       "kind": "PLACEHOLDER",
@@ -148760,7 +148832,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:d6db302a2c1a61deb41a",
+      "id": "finding:362ce302014c9a122d7c",
       "sourcePath": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
       "line": 163,
       "kind": "PLACEHOLDER",
@@ -148770,7 +148842,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:2e5ffdebe7b0fc5574cd",
+      "id": "finding:f5242d8df1a8656124cd",
       "sourcePath": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
       "line": 170,
       "kind": "PLACEHOLDER",
@@ -148780,7 +148852,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:0c22755f89dff2ba18d3",
+      "id": "finding:c8b65696832cbd16636b",
       "sourcePath": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
       "line": 180,
       "kind": "PLACEHOLDER",
@@ -150039,86 +150111,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:5d408848f91f2f4a0b60",
+      "id": "frontend-call:f558cf15f803f68edd9e",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1062,
+      "line": 1063,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:9dfc72d62fae3d17dd99",
+      "id": "frontend-call:7947089777de09e46351",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1065,
+      "line": 1066,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:a695b3913e9ee692d98a",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1836,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:a1f6be05da0a021b7cec",
+      "id": "frontend-call:6b4dd80c0c7a3992826a",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1837,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:f9ddadeb9ed3d0a892b2",
+      "id": "frontend-call:d0d3d0a59dbb22a5b202",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1842,
+      "line": 1838,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:c68e867e54cb471f633b",
+      "id": "frontend-call:d323d4883d77c181647e",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1843,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:44e19607d5e1b98ad74f",
+      "id": "frontend-call:0c19f2c9751961668f7f",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1849,
+      "line": 1844,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:3de1b5bff745580db91d",
+      "id": "frontend-call:3aec9d5f3f0ce59950ea",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1854,
+      "line": 1850,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:dbd3bf3412db257f8318",
+      "id": "frontend-call:2d8d26273bdb0f28e3aa",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1911,
+      "line": 1855,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:e01d33960d657b0fe0cd",
+      "id": "frontend-call:f0d93bce74054e0e80e1",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1912,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:248da54500ccb2e04f3f",
+      "id": "frontend-call:b525fce30b6df922871d",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1919,
+      "line": 1913,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:71120609adb156379808",
+      "id": "frontend-call:a3def47e7fb1fd13b4f4",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1933,
+      "line": 1920,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:2d85eda8c889faba1ba9",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1934,
       "callee": "fetch",
       "reachable": false
     },
@@ -159396,6 +159468,13 @@
       "id": "test-suite:688ff1e1f0e7b0269f11",
       "sourcePath": "frontend/src/lib/chatbarCompactMenus.test.ts",
       "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:a7177e83c78a28f94989",
+      "sourcePath": "frontend/src/lib/chatbarPopoverLayout.test.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

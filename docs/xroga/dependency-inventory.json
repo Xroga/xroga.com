@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "50b3d364a97969a443c968ec0f539d41b069653b",
+  "source_sha": "b522ddf8e2b33ffb092316bc4a4617b56a651ccb",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -21086,7 +21086,7 @@
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "sha256": "25e0e7b903e062566daa189cdb20c3fad4187473b805948e1849f0f255fe4e13"
+      "sha256": "ef9da002abe7c0c6002e57dfa59830f3b4672de0a9b326f8cb963f8802332415"
     },
     {
       "path": "frontend/src/components/browser/XrogaBrowser.tsx",
@@ -21206,7 +21206,7 @@
     },
     {
       "path": "frontend/src/components/dashboard/DashboardView.tsx",
-      "sha256": "81667fb8c6778334158ea39636369fd08366746cb2d8aca5d52a0d07cf34e7e9"
+      "sha256": "939adb22e171dc1142099d5183ec2edd3ca595e86e9a21400d9eff09791599b0"
     },
     {
       "path": "frontend/src/components/dashboard/DashboardWelcome.tsx",
@@ -21278,7 +21278,7 @@
     },
     {
       "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "sha256": "c03aad0aa73d2ebceb4617ef0ff923a2184dd8fd3e91f1c3aeeeb039385a16c1"
+      "sha256": "0b5b0dec0023c8fd3732f61bad392eab19af09154c144a62479b5690afcb5c13"
     },
     {
       "path": "frontend/src/components/dashboard/WorkspaceResumeList.tsx",
@@ -22998,7 +22998,7 @@
     },
     {
       "path": "frontend/src/components/terminal/ChatBarActionsMenu.tsx",
-      "sha256": "4a7e163389452581579a20aa33e3832372daf568be426bff77bd70f39aa64c2b"
+      "sha256": "1d65000bb59dc95ac1f412846966e52aa60456121c51ee6bfcebcf09df495268"
     },
     {
       "path": "frontend/src/components/terminal/ChatBarButtons.tsx",
@@ -23090,7 +23090,7 @@
     },
     {
       "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "sha256": "fbc3b85766cd15098d573a54861b2a95c089f8ff6d83b45c15b38f83294c21df"
+      "sha256": "8659a6e96cfb956c767867e9bea8c9e03c5e383fdf6aab609043a398c8f97281"
     },
     {
       "path": "frontend/src/components/terminal/LegacyLandingOutputView.tsx",
@@ -23134,7 +23134,7 @@
     },
     {
       "path": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
-      "sha256": "a40707f8a0cac604978ee51ad921e4ff28620dcbb41528d5f241f219641111d6"
+      "sha256": "75bb51dc653655a97a64ab568847fca5483d9e33f6d92db8b3d570461b78be2d"
     },
     {
       "path": "frontend/src/components/terminal/ReasoningAndFollowUps.tsx",
@@ -23262,7 +23262,7 @@
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceLauncher.tsx",
-      "sha256": "fb66177195fa8ac30107e287b33e186452aa7c3a4d46bf4c279ab8affa93e6f2"
+      "sha256": "3d0028d0db5b1472c9a3405d78b2d2d33dfac9458ba3b1cdd08d0a372258e3fa"
     },
     {
       "path": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
@@ -23350,7 +23350,7 @@
     },
     {
       "path": "frontend/src/components/ui/AnchoredPortalPopover.tsx",
-      "sha256": "e044fd183587fc52246c8eb51f8b9d57a839931ea0c6a5b7e50fe777fe28835f"
+      "sha256": "192ac7deff8d10e66b5f7035e37c878d51714cfa87c1098d6fe6f6e1c284751f"
     },
     {
       "path": "frontend/src/components/ui/AnimatedIcon.tsx",
@@ -23382,7 +23382,7 @@
     },
     {
       "path": "frontend/src/components/ui/ChatBarPortalPopover.tsx",
-      "sha256": "c84a61062606d1a6a3539ba3a3ad642ce672085d5eca77ccc5574a68258dc9c9"
+      "sha256": "97c8883d72c694dfa3722ef9b4f64faa428265029c9d7e48d9b9a000b7917641"
     },
     {
       "path": "frontend/src/components/ui/ChatBarTip.tsx",
@@ -23523,6 +23523,10 @@
     {
       "path": "frontend/src/components/ui/square-chevron-up-icon.tsx",
       "sha256": "eb4be368bc3baba045b6bac57380cc6eaa7877c88ce8fba721b9e4d0861e864b"
+    },
+    {
+      "path": "frontend/src/components/ui/useChatbarPopoverLayout.ts",
+      "sha256": "b240891be87b8c8ec2b3562f97fb2339f32b7738f27b64c389dc2b49ae6abf9b"
     },
     {
       "path": "frontend/src/components/workspace/WorkspaceAuthGate.tsx",
