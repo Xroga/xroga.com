@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/workspace-release-compat-20261122",
-    "sha": "3a29f6a7514752b1282b0034f028cf362bc9a44e",
-    "sourceTimestampUtc": "2026-11-23T05:24:56+05:00",
-    "auditStartedUtc": "2026-11-23T00:25:17.999Z",
+    "sha": "10769aa2b88bad7be20b3dbbcec85fd53305db2b",
+    "sourceTimestampUtc": "2026-11-23T06:54:12+05:00",
+    "auditStartedUtc": "2026-11-23T01:54:19.888Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -5424,7 +5424,7 @@
         "backend/src/ai/researchRankingEvidence.ts:1",
         "backend/src/ai/researchWebsiteEvidence.ts:2",
         "frontend/src/components/native-openui/upstream/components/markdown.tsx:10",
-        "frontend/src/lib/xrogaFileExports.ts:4"
+        "frontend/src/lib/xrogaFileExports.ts:7"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -5528,7 +5528,7 @@
       ],
       "callers": [
         "backend/src/ai/nativeDocumentDownload.ts:3",
-        "frontend/src/lib/xrogaFileExports.ts:5"
+        "frontend/src/lib/xrogaFileExports.ts:8"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -5550,7 +5550,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "07beff0798a65d662fbe3812d366350045e2d2568660e87ad71fc7aa95fb5864",
+      "sha256": "7146ec73adc3f9d2287709cd82476a34c3cb0c6373854f795b132c113fe20c08",
       "symbols": [
         "EditorialContext",
         "MAX_EXPANDED_EXPRESSION_DEPTH",
@@ -5687,9 +5687,11 @@
         "name",
         "names",
         "narrative",
+        "nativeAssignmentStart",
         "nativeElements",
         "nativeFence",
         "nativeReadableTextKey",
+        "nativeRootAssignment",
         "nesting",
         "next",
         "node",
@@ -5751,6 +5753,7 @@
         "resolveRecoveryReference",
         "resolved",
         "resolvedEntry",
+        "rest",
         "restatedCaption",
         "restored",
         "result",
@@ -115570,7 +115573,7 @@
       "id": "surface:2f643a1aa432bf0f982e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/publicAnswerText.ts",
-      "sha256": "9cc863e5c759e5c61390607a775d349fda5afcba53efe55c5e268e0863620319",
+      "sha256": "175ab99304cdd7ccdf79f32f2856c3ae920db2348acd75d7c9ee2b0d8ade7070",
       "symbols": [
         "end",
         "isPresentationLanguage",
@@ -123683,12 +123686,14 @@
       "id": "surface:af830989f3d28a10af01",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaFileExports.ts",
-      "sha256": "27e070bb2e26ee0880745fe40550cc7ff8dde9035903bab7beb35a7a5068e7bf",
+      "sha256": "4d3ce2cb9b387b94a03a282c342910d9230b26aa76a85104243c94976d0fb26b",
       "symbols": [
         "DocumentBlock",
         "ExcelJS",
         "PdfUnsupportedCharactersError",
         "PresentationBlock",
+        "Run",
+        "RunStyle",
         "TableBlock",
         "XrogaExportFile",
         "activeFont",
@@ -123709,7 +123714,6 @@
         "children",
         "column",
         "columns",
-        "cursor",
         "data",
         "deck",
         "doc",
@@ -123731,9 +123735,8 @@
         "item",
         "line",
         "lines",
-        "links",
         "margin",
-        "match",
+        "markdown",
         "output",
         "page",
         "pageSize",
@@ -123741,9 +123744,9 @@
         "pdf",
         "plainText",
         "raw",
+        "render",
         "row",
         "rows",
-        "runs",
         "safeWebUrl",
         "sheet",
         "sheetName",
@@ -123772,8 +123775,11 @@
         "./xrogaBlocks",
         "docx",
         "exceljs",
+        "mdast",
         "pdf-lib",
-        "pptxgenjs"
+        "pptxgenjs",
+        "remark-parse",
+        "unified"
       ],
       "runtimeImports": [
         "backend/src/ai/nativeMarkdown.ts",
@@ -123794,8 +123800,11 @@
       "externalProviderDependencies": [
         "docx",
         "exceljs",
+        "mdast",
         "pdf-lib",
-        "pptxgenjs"
+        "pptxgenjs",
+        "remark-parse",
+        "unified"
       ],
       "authBoundary": [],
       "tenantBoundary": [],
@@ -153622,7 +153631,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 90,
+      "declaredTests": 91,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -158921,7 +158930,7 @@
     {
       "id": "test-suite:4ce9d7bbf578638998f1",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
-      "declaredTests": 35,
+      "declaredTests": 36,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -160594,7 +160603,7 @@
     {
       "id": "test-suite:5500ae34c3d41d033590",
       "sourcePath": "frontend/src/lib/xrogaFileExports.test.ts",
-      "declaredTests": 12,
+      "declaredTests": 13,
       "skipLocations": [],
       "focusLocations": []
     },

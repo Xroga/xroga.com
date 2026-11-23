@@ -29110,9 +29110,9 @@
     },
     {
       "path": "frontend/src/lib/xrogaFileExports.ts",
-      "sourceSha256": "27e070bb2e26ee0880745fe40550cc7ff8dde9035903bab7beb35a7a5068e7bf",
+      "sourceSha256": "4d3ce2cb9b387b94a03a282c342910d9230b26aa76a85104243c94976d0fb26b",
       "callIds": [
-        "6a61ea9f416e3391405d"
+        "8df86e806ff4832e56ab"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in exportDocumentPdf, with no database or Storage client receiver.",
