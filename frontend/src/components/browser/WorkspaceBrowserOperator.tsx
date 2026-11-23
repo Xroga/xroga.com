@@ -57,6 +57,7 @@ export const useWorkspaceBrowserOperator = () => useContext(BrowserOperatorConte
  * Browser Automation is run, shown and controlled only in the Xroga extension. The Workspace never starts a browser task from its chat and never prints
  * a browser task's progress or result, so no prompt is treated as a local Chrome request here.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- the parameter keeps the call signature of the chat bar
 export function isLocalChromeRequest(_text: string) {
   return false;
 }
@@ -477,6 +478,7 @@ export function WorkspaceBrowserConnection() {
 }
 
 /** Intentionally renders nothing: a browser task's status, activity and result are shown in the extension, never in the Workspace. */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- the props keep the call signature of the chat bar
 export function WorkspaceBrowserProgress(_props: { operator: Operator | null; prompted: boolean }) {
   return null;
 }
