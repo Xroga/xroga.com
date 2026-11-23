@@ -19,7 +19,7 @@ import {redactSecrets} from '../lib/truthfulExecution.js';
 import {createRequire} from 'node:module';
 import {researchAnswerRequestSchema,completeApprovedResearchAnswer,RESEARCH_ANSWER_MAXIMUM_MICRO_USD} from './researchAnswer.js';
 import {requireResearchResultStorage,saveResearchResult} from '../services/integrations/researchResult.js';
-import {deepseekSearchBody,researchSearchMicroUsd,DEEPSEEK_LINK_DISCOVERY_RESULTS,DEEPSEEK_SEARCH_URL} from './researchSearchProvider.js';
+import {deepseekSearchBody,researchSearchMicroUsd,DEEPSEEK_DISCOVERY_RESULTS,DEEPSEEK_SEARCH_URL} from './researchSearchProvider.js';
 import {requestsOfficialLinkCoverage,workspacePublicSearchQuery} from './workspacePublicSearch.js';
 
 const pdfParse=createRequire(import.meta.url)('pdf-parse/lib/pdf-parse.js') as (data:Uint8Array,options:{max:number})=>Promise<{text:string}>;
@@ -77,9 +77,9 @@ export async function executeWorkspacePublicSearch(
   ||scope.researchAnswer||scope.connectedAccountId!=='platform')throw denied();
  const request=workspacePublicSearchQuery(prompt, officialOnly);
  if(!request)return;
- const body={mode:'turbo',objective:'',search_queries:[request.query]};
+ const body={mode:'turbo',objective:request.originalSourceQuestion??'',search_queries:[request.query]};
  const officialLinkCoverage=requestsOfficialLinkCoverage(prompt);
- const payload=Object.freeze(deepseekSearchBody(body,officialLinkCoverage?DEEPSEEK_LINK_DISCOVERY_RESULTS:undefined));
+ const payload=Object.freeze(deepseekSearchBody(body,officialLinkCoverage||request.originalSourceQuestion?DEEPSEEK_DISCOVERY_RESULTS:undefined));
  const targetDigest=digest(payload);
  const binding={userId:context.userId,provider:'deepseek-search',connectedAccountId:'deepseek-search:platform',
   operation:'search',targetDigest,planDigest:digest({correlationId:context.correlationId,targetDigest})};

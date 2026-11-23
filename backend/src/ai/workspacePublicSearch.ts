@@ -48,6 +48,8 @@ const namedSourceClause = /\b(?:(?:use|using|from|with|based on|consult)\s+(?:(?
 const sourceSelectionStart = /^(?:use|using|from|based on|consult)\b|^with\s+(?:only|exclusively)\b/iu;
 const genericSourceSelection = /\b(?:using|from|based on|consult)\s+(?:(?:only|exclusively)\s+)?(?:the\s+)?official\s+(?:sources?|websites?|pages?|sites?)(?=\s*(?:[,:.!?(]|$))/giu;
 const answerOnlySuffix = /(?:[.!?]\s+(?:(?:present|show|put)\s+the\s+(?:results|findings|comparison|[\p{L}-]+\s+names\s+and\s+what\s+each\s+is\s+for)\s+in\s+(?:(?:one|a|an|the|compact|copyable|short)\s+){1,4}(?:table|list)|cite\s+(?:the\s+)?(?:actual\s+)?(?:primary|official)\s+sources?(?:\s+beside\s+the\s+claims)?|(?:do\s+not|don['’]t)\s+take\s+any\s+(?:external\s+)?actions?))+[.!?]?$/iu;
+const originalSourceRequest = /\b(?:cite|link(?:\s+to)?|use|find|include|verify\s+against)\s+(?:(?:the|a|an|actual|only)\s+)*(original|primary|final)\s+(source|publication|dataset|standard|paper|report|rule)s?\b/iu;
+const publishedWorkTopic = /\b(?:frameworks?|standards?|guidelines?|specifications?|regulations?|reports?|papers?)\b/iu;
 const publicSourcePreface = /^(?:i\s+(?:need|want)|(?:please\s+)?(?:cite|include|use|provide))\s+(?:a\s+)?(?:dated\s+)?public sources?\s*[:：]\s*/iu;
 const linkFooter = /\s*;\s*link\s+(?:them|each|all)(?:\s+(?:of them|\d+|one|two|three|four|five|six|seven|eight|nine|ten))?[?!.]*$/iu;
 
@@ -116,7 +118,7 @@ export function hasNonPublicSearchTerms(prompt: string): boolean {
 /** A public lookup sends only terms from this turn. The semantic planner can
  * select research, but cannot declassify its input. */
 export function workspacePublicSearchQuery(prompt: string, officialOnly = false): {
-  query: string; officialDomains: string[];
+  query: string; officialDomains: string[]; originalSourceQuestion?: string;
 } | undefined {
   const message = prompt.trim();
   if (!message || message.length > 32_000) return;
@@ -177,5 +179,20 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
     terms = terms.replace(/\s+[a-z\d]{1,24}$/iu, '');
   }
   if (focus && capacity < topicLimit) terms += ' ' + focus;
-  return { query: sites ? terms + ' ' + sites : terms, officialDomains };
+  const originalSource = originalSourceRequest.exec(message);
+  if (!originalSource) return { query: sites ? terms + ' ' + sites : terms, officialDomains };
+
+  // Keep the requested work searchable when dropping formatting and citation instructions.
+  // Only the checked topic and a fixed source type go to the provider.
+  const requestedSource = originalSource[2].toLowerCase();
+  const source = requestedSource === 'source' && publishedWorkTopic.test(terms) ? 'publication' : requestedSource;
+  const qualifier = originalSource[1].toLowerCase() === 'final' ? 'final' : 'original';
+  const subject = terms.replace(/^(?:(?:find|compare)\s+)?(?:the\s+)?/iu, '');
+  const publicationTerm = source !== 'source' && !terms.toLowerCase().includes(source)
+    && [...terms].length + source.length + 1 <= topicLimit ? ' ' + source : '';
+  return {
+    query: [terms + publicationTerm, sites].filter(Boolean).join(' '),
+    officialDomains,
+    originalSourceQuestion: `Find the ${qualifier} ${source} for ${subject}.`,
+  };
 }

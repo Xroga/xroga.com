@@ -606,8 +606,9 @@ test('a named official publisher fixes the source scope without a model-supplied
   const prompt = 'Using only official NIST pages, look up the NIST Cybersecurity Framework 2.0 functions. Present the function names and what each is for in one compact copyable table. Cite the actual primary source beside the claims. Do not take any actions.';
   const nist = workspacePublicSearchQuery(prompt, true);
   assert.deepEqual(nist, {
-    query: 'the NIST Cybersecurity Framework 2.0 functions site:nist.gov',
+    query: 'the NIST Cybersecurity Framework 2.0 functions publication site:nist.gov',
     officialDomains: ['nist.gov'],
+    originalSourceQuestion: 'Find the original publication for NIST Cybersecurity Framework 2.0 functions.',
   });
   assert.deepEqual(workspacePublicSearchQuery('Find streamflow measurements using only official U.S. Geological Survey pages.', true), {
     query: 'Find streamflow measurements site:usgs.gov', officialDomains: ['usgs.gov'],
@@ -629,6 +630,20 @@ test('a named official publisher fixes the source scope without a model-supplied
     'Using only official NASA pages, find upcoming mission dates. Present the results and my attached notes in a table.',
     'Use only official NIST sources.',
   ]) assert.equal(workspacePublicSearchQuery(denied, true), undefined, denied);
+});
+
+test('primary source lookup preserves the requested type without exporting other instructions', () => {
+  assert.deepEqual(workspacePublicSearchQuery('Using only official USGS pages, look up recent streamflow measurements. Cite the original dataset.'), {
+    query: 'recent streamflow measurements dataset site:usgs.gov',
+    officialDomains: ['usgs.gov'],
+    originalSourceQuestion: 'Find the original dataset for recent streamflow measurements.',
+  });
+  assert.deepEqual(workspacePublicSearchQuery('Using only official W3C pages, find the WCAG 2.2 criteria and cite the final standard.', true), {
+    query: 'find the WCAG 2.2 criteria standard site:w3.org',
+    officialDomains: ['w3.org'],
+    originalSourceQuestion: 'Find the final standard for WCAG 2.2 criteria.',
+  });
+  assert.equal(workspacePublicSearchQuery('Using only official W3C pages, find the WCAG 2.2 criteria. Cite the original source and compare it with our internal audit.', true), undefined);
 });
 
 test('an official source restriction does not demand an official website for each answer item', () => {

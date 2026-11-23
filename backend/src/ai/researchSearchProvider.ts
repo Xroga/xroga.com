@@ -16,9 +16,9 @@ export const DEEPSEEK_SEARCH_MICRO_USD = 750;
 /** DeepSeek accepts 1-128 characters for `query` and `ori_question`. */
 export const DEEPSEEK_QUERY_MAX = 128;
 export const DEEPSEEK_SEARCH_RESULTS = 10;
-/** Official-link coverage needs more discovery results. DeepSeek bills per
+/** Primary-source and official-link discovery need broader results. DeepSeek bills per
  * successful request, independently of the requested result count. */
-export const DEEPSEEK_LINK_DISCOVERY_RESULTS = 25;
+export const DEEPSEEK_DISCOVERY_RESULTS = 25;
 
 export function officialResearchDomains(domains: readonly string[]): string[] {
   return [...new Set(domains.map(domain => domain.trim().toLowerCase().replace(/^www\./, '').replace(/\.$/, ''))
