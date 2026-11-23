@@ -9,6 +9,18 @@ import { bindNativeAnswerText, supplementNativeProse } from '../../../../../../b
 import { initialNativeValueReader } from '../../../../../../backend/src/ai/nativeOpenUiValues';
 import { inline, MathExpression, MarkdownBlocks, nativeMarkdownMatches, placeNativeSections, preservedMarkdownTableKeys, proseOutsideNativeDocuments, tableContentKey } from './markdown';
 
+test('saved and streamed answer text hides only the attached presentation delimiter', () => {
+  const prose = 'The interest earned is $1,560.80.';
+  const marker = '<<<XROGA_OPENUI_V1>>>';
+  const continuation = '\n\n| Component | Amount |\n| --- | --- |\n| Principal | $12,500.00 |';
+  assert.equal(publicAnswerText(prose + marker + continuation), prose + continuation);
+  assert.equal(publicAnswerText(prose + '<<<XRO', true), prose);
+  const rendered = renderToStaticMarkup(createElement(MarkdownBlocks, { text: prose + marker + continuation }));
+  assert.doesNotMatch(rendered, /XROGA_OPENUI_V1/);
+  assert.match(rendered, /1,560\.80/);
+  assert.match(rendered, /12,500\.00/);
+});
+
 test('a titled native section follows the matching Markdown passage before the next heading', () => {
   const text = '## Criteria\n\nRead this first.\n\n## Review flow\n\nFollow the two branches.\n\n## Examples\n\nPreserve the full example.';
   const code = 'root = Col([Markdown(_xroga_answer), flow])\nflow = Section("Review flow", [Text("Draw the flow here.")])';

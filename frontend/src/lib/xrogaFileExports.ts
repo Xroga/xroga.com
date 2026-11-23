@@ -1,5 +1,8 @@
 import type { XrogaBlock } from './xrogaBlocks';
-import type { IParagraphOptions } from 'docx';
+import type { IParagraphOptions, IRunOptions } from 'docx';
+import type { PhrasingContent } from 'mdast';
+import { unified } from 'unified';
+import remarkParse from 'remark-parse';
 import type { NativeDocumentFormat } from '../../../backend/src/ai/nativeDocumentDownload';
 import { nativeMarkdownTables } from '../../../backend/src/ai/nativeMarkdown';
 import { parseNativeSlideDeck, parseNativeWorkbook, type NativeWorkbookFormula } from '../../../backend/src/ai/nativeOfficeContent';
@@ -43,18 +46,24 @@ function isRightToLeft(text: string): boolean {
 export async function exportDocumentDocx(block: DocumentBlock, verifiedLinks?: ReadonlySet<string>): Promise<XrogaExportFile> {
   validateSize(block.content.length, 200_000, 'Document');
   const { Document, ExternalHyperlink, HeadingLevel, Packer, Paragraph, Table, TableCell, TableRow, TextRun, WidthType } = await import('docx');
+  const markdown = unified().use(remarkParse);
+  type Run = InstanceType<typeof TextRun> | InstanceType<typeof ExternalHyperlink>;
+  type RunStyle = Pick<IRunOptions, 'bold' | 'italics' | 'style'>;
   const inlineRuns = (line: string) => {
-    const runs: Array<InstanceType<typeof TextRun> | InstanceType<typeof ExternalHyperlink>> = [];
-    const links = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
-    let cursor = 0;
-    for (const match of line.matchAll(links)) {
-      if (match.index > cursor) runs.push(new TextRun(plainText(line.slice(cursor, match.index))));
-      if (safeWebUrl(match[2]!) && (!verifiedLinks || verifiedLinks.has(match[2]!))) runs.push(new ExternalHyperlink({ children: [new TextRun({ text: match[1]!, style: 'Hyperlink' })], link: match[2]! }));
-      else runs.push(new TextRun(match[1]!));
-      cursor = match.index + match[0].length;
-    }
-    if (cursor < line.length) runs.push(new TextRun(plainText(line.slice(cursor))));
-    return runs;
+    const [paragraph] = markdown.parse(line).children;
+    if (paragraph?.type !== 'paragraph') return [new TextRun(plainText(line, verifiedLinks))];
+    const render = (nodes: PhrasingContent[], style: RunStyle = {}): Run[] => nodes.flatMap((node): Run[] => {
+      if (node.type === 'strong') return render(node.children, { ...style, bold: true });
+      if (node.type === 'emphasis') return render(node.children, { ...style, italics: true });
+      if (node.type === 'text' || node.type === 'inlineCode') return [new TextRun({ ...style, text: node.value })];
+      if (node.type === 'link') {
+        if (!safeWebUrl(node.url) || (verifiedLinks && !verifiedLinks.has(node.url))) return render(node.children, style);
+        return [new ExternalHyperlink({ children: render(node.children, { ...style, style: 'Hyperlink' }), link: node.url })];
+      }
+      const raw = line.slice(node.position?.start.offset, node.position?.end.offset);
+      return [new TextRun({ ...style, text: raw })];
+    });
+    return render(paragraph.children);
   };
   const paragraph = (line: string, options: Pick<IParagraphOptions, 'heading' | 'bullet'> = {}) =>
     new Paragraph({ ...options, bidirectional: isRightToLeft(plainText(line, verifiedLinks)) || undefined, children: inlineRuns(line) });

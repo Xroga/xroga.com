@@ -26,7 +26,9 @@ const safeKey = (key: string) => !['__proto__', 'prototype', 'constructor'].incl
 // envelope to an otherwise valid native answer. Keep transport syntax out of
 // the persisted program. A quoted example or an embedded tag is not a suffix.
 const deepSeekToolClosingSuffix = /[ \t]*<\/｜DSML｜ parameter>[ \t]*\n[ \t]*<\/｜DSML｜ invoke>[ \t]*\n[ \t]*<\/｜DSML｜ calls>[ \t]*$/u;
-const strayPresentationClosingLines = /(?:\n[ \t]*(?:<\/(?:Col>|<?XROGA_OPENUI_V1>>>)|<<<XROGA_OPENUI_V1>>>)[ \t]*)+$/u;
+const strayPresentationClosingLines = /(?:\n[ \t]*(?:<\/(?:Col>|<?XROGA_OPENUI_V1>>>|xroga_openui_v1>)|<<<XROGA_OPENUI_V1>>>)[ \t]*)+$/iu;
+const nativeAssignmentStart = /^\$?[a-z_]\w*[ \t]*=/iu;
+const nativeRootAssignment = /^ {0,3}root[ \t]*=[ \t]*[A-Z][A-Za-z0-9]*[ \t]*\(/;
 
 export function splitNativeOpenUiAnswer(raw: string, streaming = false) {
   return scanNativeOpenUiAnswer(raw, streaming, true);
@@ -97,8 +99,27 @@ function scanNativeOpenUiAnswer(raw: string, streaming: boolean, allowJsonEnvelo
     }
     const visible = line.trim();
     if (visible === marker) return envelope(prose.join('\n'), lines.slice(index + 1).join('\n'));
-    if (streaming && index === lines.length - 1 && marker.startsWith(visible)) break;
-    if (/^ {0,3}root[ \t]*=[ \t]*[A-Z][A-Za-z0-9]*[ \t]*\(/.test(line)) {
+    if (!opening && visible.endsWith(marker)) {
+      // The provider can omit the newline before the separator. A saved
+      // answer may already have prose after a leaked separator, so preserve
+      // that continuation unless the suffix starts a native program.
+      prose.push(line.slice(0, line.lastIndexOf(marker)).trimEnd());
+      const rest = lines.slice(index + 1);
+      const root = rest.findIndex(candidate => nativeRootAssignment.test(candidate));
+      if (streaming || root >= 0 && rest.slice(0, root).every(candidate =>
+        !candidate.trim() || nativeAssignmentStart.test(candidate.trimStart()))) {
+        return envelope(prose.join('\n'), rest.join('\n'));
+      }
+      continue;
+    }
+    if (streaming && index === lines.length - 1 && !opening) {
+      const pending = /<{1,3}[A-Z0-9_>]*[ \t]*$/u.exec(line);
+      if (pending && marker.startsWith(pending[0].trimEnd())) {
+        prose.push(line.slice(0, pending.index).trimEnd());
+        break;
+      }
+    }
+    if (nativeRootAssignment.test(line)) {
       // State and component assignments can precede the root.
       let start = index;
       for (let previous = index - 1; previous >= 0; previous -= 1) {

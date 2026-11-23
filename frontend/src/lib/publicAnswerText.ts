@@ -1,4 +1,4 @@
-import { splitNativeOpenUiAnswer } from '../../../backend/src/ai/nativeOpenUi';
+import { NATIVE_UI_MARKER, splitNativeOpenUiAnswer } from '../../../backend/src/ai/nativeOpenUi';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import type { Nodes } from 'mdast';
@@ -12,8 +12,8 @@ export function isPresentationLanguage(language?: string): boolean {
 
 /** Strip tagged presentation data while keeping ordinary Markdown code and prose. */
 export function publicAnswerText(text: string, streaming = false): string {
-  const markerTail = streaming && text.slice(text.lastIndexOf("\n") + 1).trim();
-  const partialMarker = markerTail && /^<{1,3}[A-Z0-9_]*$/.test(markerTail) && "<<<XROGA_OPENUI_V1>>>".startsWith(markerTail);
+  const markerTail = streaming && /<{1,3}[A-Z0-9_>]*[ \t]*$/u.exec(text)?.[0]?.trimEnd();
+  const partialMarker = markerTail && NATIVE_UI_MARKER.trim().startsWith(markerTail);
   return presentationSyntax.test(text) || partialMarker ? splitNativeOpenUiAnswer(text, streaming).text : text;
 }
 

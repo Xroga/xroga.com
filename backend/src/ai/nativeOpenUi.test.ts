@@ -907,6 +907,26 @@ test('every streamed transport prefix withholds the separator and keeps the pros
   }
 });
 
+test('an attached OpenUI separator never reaches visible or persisted prose', () => {
+  const prose = '# Compound interest\n\nChange a value to see the projected balance.';
+  const program = '$principal = 12500\nroot = Col([Markdown(_xroga_answer)])';
+  const wire = prose + NATIVE_UI_MARKER.trim() + '\n' + program + '\n</xroga_openui_v1>';
+  assert.deepEqual(splitNativeOpenUiAnswer(wire), { text: prose, program });
+  for (let size = prose.length; size <= wire.length; size += 1) {
+    assert.equal(splitNativeOpenUiAnswer(wire.slice(0, size), true).text, prose);
+  }
+  const answer = completeNativeWorkspaceAnswer(wire, 'stop');
+  assert.equal(answer.response, prose);
+  assert.equal(answer.completion.status, 'complete');
+  assert.doesNotMatch(answer.responseSource.text, /XROGA_OPENUI_V1|xroga_openui_v1/);
+
+  const continuation = '\n\nA = P × (1 + r)^n.\n\nKeep the verified values below.';
+  assert.deepEqual(splitNativeOpenUiAnswer(prose + NATIVE_UI_MARKER.trim() + continuation),
+    { text: prose + continuation, program: '' });
+  assert.equal(splitNativeOpenUiAnswer('The literal delimiter is `<<<XROGA_OPENUI_V1>>>`.').text,
+    'The literal delimiter is `<<<XROGA_OPENUI_V1>>>`.');
+});
+
 test('required visuals must render and cannot be satisfied by unused declarations or prose fallback', () => {
   const prompt = 'Build an interactive calculator with a slider. Chart and tabulate the attendance scenarios.';
   const formats = requiredNativeFormats(prompt);

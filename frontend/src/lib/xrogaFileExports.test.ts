@@ -41,6 +41,17 @@ test('requested DOCX keeps an unverified link label readable without making it c
   assert.doesNotMatch(relationships, /bad\.example/);
 });
 
+test('DOCX preserves inline emphasis and literal code in editable runs', async () => {
+  const report = '# Tool Return Checklist\n\n*Community Repair Club*\n\n**Confirm** the label `A*07`.';
+  const file = await exportAnswerFile(report, 'docx', new Set());
+  const zip = await JSZip.loadAsync(await file.blob.arrayBuffer());
+  const xml = await zip.file('word/document.xml')!.async('string');
+  assert.match(xml, /<w:rPr><w:i\/><w:iCs\/><\/w:rPr><w:t[^>]*>Community Repair Club<\/w:t>/);
+  assert.match(xml, /<w:rPr><w:b\/><w:bCs\/><\/w:rPr><w:t[^>]*>Confirm<\/w:t>/);
+  assert.match(xml, /<w:t[^>]*>A\*07<\/w:t>/);
+  assert.doesNotMatch(xml, /\*Community Repair Club\*|\*\*Confirm/);
+});
+
 test('DOCX renders Markdown data as a Word table with accessible row grouping and verified links', async () => {
   const report = [
     '# Release checks', '', '| Check | Evidence |', '| --- | --- |',
