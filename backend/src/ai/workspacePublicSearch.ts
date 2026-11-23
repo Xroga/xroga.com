@@ -67,6 +67,13 @@ const publicPublisherDomains = new Map([
   ['world wide web consortium', 'w3.org'],
 ]);
 
+// These are the publisher's technical series library and final publication
+// catalog. Use them for named works, where the main site also indexes guides
+// and user-supplied search queries.
+const publicationHosts = new Map([
+  ['nist.gov', ['csrc.nist.gov', 'nvlpubs.nist.gov']],
+]);
+
 function namedPublisherDomains(publishers: string): string[] {
   const names = publishers.toLowerCase().replace(/\./g, '').trim();
   const publisher = publicPublisherDomains.get(names);
@@ -170,7 +177,13 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
     .replace(/\b(?:figures|numbers)\s+(?:for|on)\s+(?:estimated\s+)?/iu, '') : checkedTopic;
   if (contextDependentTopic.test(topic.replace(topicLead, '')) || /^(?:the\s+)?(?:latest|current|new)\s+policy$/iu.test(topic)
     || (!publicOffice && !officialDomains.length && isAmbiguousPersonalLookup(topic))) return;
-  const sites = officialDomains.map(domain => 'site:' + domain).join(' OR ');
+  const originalSource = originalSourceRequest.exec(message);
+  const namedPublication = originalSource && versionedWorkDetail.test(topic) && publishedWorkTopic.test(topic);
+  const retrievalHosts = namedPublication
+    ? officialDomains.flatMap(domain => publicationHosts.get(domain) ?? [domain])
+    : officialDomains;
+  const scopedPublicationHosts = retrievalHosts.some(host => !officialDomains.includes(host));
+  const sites = [...new Set(retrievalHosts)].map(domain => 'site:' + domain).join(' OR ');
   const topicLimit = DEEPSEEK_QUERY_MAX - (sites ? sites.length + 1 : 0);
   if (topicLimit < 1 || !/\p{L}/u.test(topic)
     || /^(?:(?:the\s+)?(?:public\s+)?(?:web|internet)|for)$/iu.test(topic)) return;
@@ -184,7 +197,6 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
     terms = terms.replace(/\s+[a-z\d]{1,24}$/iu, '');
   }
   if (focus && capacity < topicLimit) terms += ' ' + focus;
-  const originalSource = originalSourceRequest.exec(message);
   if (!originalSource && !requestsPrimaryPublisherTable) return { query: sites ? terms + ' ' + sites : terms, officialDomains };
 
   // Keep the requested work searchable when dropping formatting and citation instructions.
@@ -202,7 +214,7 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
     ? `"${subject.slice(0, versionedWork.index).trim()}" ${versionedWork[1]}`
     : terms;
   const searchTerms = [...publicationQuery].length <= topicLimit ? publicationQuery : terms;
-  const publicationTerm = source !== 'source' && !searchTerms.toLowerCase().includes(source)
+  const publicationTerm = !scopedPublicationHosts && source !== 'source' && !searchTerms.toLowerCase().includes(source)
     && [...searchTerms].length + source.length + 1 <= topicLimit ? ' ' + source : '';
   return {
     query: [searchTerms + publicationTerm, sites].filter(Boolean).join(' '),

@@ -4,8 +4,8 @@ import {normalizeResearch,formatResearchAsEvidence} from './black-hole/researchR
 import {presentResearchResult} from '../services/integrations/researchResult.js';
 import type {TenantModelScope} from './tenantModelDispatch.js';
 import {AuthorityError} from '../security/authority/enforce.js';
-import { officialResearchDomains } from './researchSearchProvider.js';
-import { requestsOfficialLinkCoverage } from './workspacePublicSearch.js';
+import { matchesOfficialResearchDomain, officialResearchDomains } from './researchSearchProvider.js';
+import { requestsOfficialLinkCoverage, workspacePublicSearchQuery } from './workspacePublicSearch.js';
 import { bindListedWebsiteRows } from './researchWebsiteEvidence.js';
 import { withholdIncomparableResearchRanking } from './researchRankingEvidence.js';
 import type { PublicCompletionState } from './completionDiagnostics.js';
@@ -100,10 +100,26 @@ export function bindCitationLinks(response:string,sources:ReadonlyArray<{url:str
  return mapResearchProse(response, bindProse);
 }
 
+function missingNamedPublication(prompt: string, sources: ReadonlyArray<{ title?: string; url: string }>): boolean {
+  const search = workspacePublicSearchQuery(prompt);
+  if (!search?.originalSourceQuestion || !search.officialDomains.length) return false;
+  const requested = /^"([^"]+)"\s+(v?\d+(?:\.\d+)+)(?=\s|$)/iu.exec(search.query);
+  if (!requested) return false;
+  const normalizeTitle = (title: string) => title.replace(/\s*\([A-Z]{2,16}\)/gu, '')
+    .replace(/^the\s+/iu, '').replace(/\s+[|–—-]\s+.*$/u, '')
+    .replace(/\sv(?=\d)/giu, ' ').replace(/\s+/gu, ' ').trim().toLowerCase();
+  const expected = normalizeTitle(requested[1] + ' ' + requested[2]);
+  return !sources.some(source => {
+    const url = sourceUrl(source.url);
+    return url && matchesOfficialResearchDomain(url, search.officialDomains)
+      && source.title && normalizeTitle(source.title) === expected;
+  });
+}
+
 /** Structural coverage of an explicit link deliverable. A retrieved URL alone
  * cannot certify ownership or that the cited page supports a particular claim. */
 export function presentPublicResearchAnswer(response: string, completion: PublicCompletionState,
-  sources: ReadonlyArray<{ url: string; snippet?: string }>, prompt: string) {
+  sources: ReadonlyArray<{ url: string; title?: string; snippet?: string }>, prompt: string) {
   let text = bindCitationLinks(response, sources);
   const evidenceOnlyAnswer = withholdIncomparableResearchRanking(text);
   const rankingWithheld = evidenceOnlyAnswer !== undefined;
@@ -114,6 +130,14 @@ export function presentPublicResearchAnswer(response: string, completion: Public
     }
   }
   const attributionIncomplete = researchCitationIssues(text, sources).length > 0;
+  if (completion.status === 'complete' && missingNamedPublication(prompt, sources)) {
+    const note = 'I couldn’t verify the requested original publication from the retrieved sources.';
+    return {
+      response: text.trimEnd().endsWith(note) ? text : text + '\n\n' + note,
+      completion: { status: 'partial', reason: 'source_coverage' } as const,
+      requiresReadableFallback: true,
+    };
+  }
   if (!requestsOfficialLinkCoverage(prompt)) return { response: text, completion:
     attributionIncomplete && completion.status === 'complete' ? { status: 'partial', reason: 'source_attribution' } as const : completion,
     ...(rankingWithheld ? { requiresReadableFallback: true } : {}) };

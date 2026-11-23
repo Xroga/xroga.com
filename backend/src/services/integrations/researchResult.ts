@@ -79,8 +79,15 @@ export function workspaceResearchConfirmationView(confirmation: SafeBusinessActi
   };
 }
 
+function isSearchNavigation(url: URL): boolean {
+  return /\/(?:search|search[-_]results)\/?$/iu.test(url.pathname)
+    || /\/search[-_]by[-_]author(?:\/|$)/iu.test(url.pathname)
+    || /\/bibcite\/export\//iu.test(url.pathname);
+}
+
 /** Provider evidence is untrusted content, never an instruction or a new authority. */
-export function presentResearchResult(raw: unknown, officialOnly?: readonly string[]): Omit<ResearchResult, 'confirmationId' | 'receiptId'> {
+export function presentResearchResult(raw: unknown, officialOnly?: readonly string[],
+  { excludeSearchNavigation = false } = {}): Omit<ResearchResult, 'confirmationId' | 'receiptId'> {
   const envelope = record(raw);
   if (envelope.ok !== true || !['search', 'extract', 'responses'].includes(String(envelope.operation))) throw new Error('Invalid research result');
   const data = record(envelope.result);
@@ -97,6 +104,7 @@ export function presentResearchResult(raw: unknown, officialOnly?: readonly stri
       publicHttpsUrl(item.url);
       const url = new URL(item.url);
       if (officialOnly && !matchesOfficialResearchDomain(url.href, officialOnly)) continue;
+      if (excludeSearchNavigation && isSearchNavigation(url)) continue;
       url.hash = '';
       // Keep distinct paths and query parameters. A hostname is not a page ID.
       const canonical = url.href;

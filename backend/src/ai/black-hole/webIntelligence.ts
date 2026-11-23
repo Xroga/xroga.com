@@ -549,7 +549,7 @@ export async function runWebIntelligence(
     if (automatic.primaryPageContentRequested) evidenceExcerptLimit = DEEPSEEK_PRIMARY_PAGE_EXCERPT;
     publicSources = presentResearchResult({
       ok: true, operation: 'search', result: automatic.result,
-    }, automaticOfficialDomains).sources;
+    }, automaticOfficialDomains, { excludeSearchNavigation: automatic.primaryPageContentRequested }).sources;
     rawResults = toRawResults(publicSources);
   } else if (
     decision.action === 'read'

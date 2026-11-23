@@ -65,6 +65,19 @@ test('research normalization deduplicates pages, keeps distinct pages, rejects u
   assert.equal(result.text, ''); // Search snippets are not an invented synthesized answer.
 });
 
+test('primary-source research excludes publisher navigation even when the host is official', () => {
+  const receipt = { ok: true, operation: 'search', result: { provider: 'deepseek', results: [
+    { title: 'Search Publications', url: 'https://publications.example.org/publications/search?k=unrelated&page=1', excerpts: ['Unrelated search query'] },
+    { title: 'Search by author', url: 'https://publications.example.org/publications/search_by_author/1' },
+    { title: 'Citation export', url: 'https://publications.example.org/bibcite/export/ris/bibcite_reference/1' },
+    { title: 'How search works', url: 'https://publications.example.org/docs/how-search-works', excerpts: ['A substantive document'] },
+    { title: 'Final publication', url: 'https://publications.example.org/reports/final.pdf', excerpts: ['The original publication'] },
+  ] } };
+  const sources = presentResearchResult(receipt, ['example.org'], { excludeSearchNavigation: true }).sources;
+  assert.deepEqual(sources.map(source => source.title), ['How search works', 'Final publication']);
+  assert.equal(presentResearchResult(receipt, ['example.org']).sources.length, 5);
+});
+
 test('saved DeepSeek research retains native inline evidence and rejects an invented source ID', () => {
   const webSource = { title: 'Documentation', url: 'https://example.com/a', snippet: 'Retrieved excerpt', source: 'web',
     siteName: 'Example', siteIconDomain: 'example.com', publishedAt: '2026-10-17T00:00:00.000Z' };

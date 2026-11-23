@@ -648,7 +648,7 @@ test('a named official publisher fixes the source scope without a model-supplied
   const prompt = 'Using only official NIST pages, look up the NIST Cybersecurity Framework 2.0 functions. Present the function names and what each is for in one compact copyable table. Cite the actual primary source beside the claims. Do not take any actions.';
   const nist = workspacePublicSearchQuery(prompt, true);
   assert.deepEqual(nist, {
-    query: '"NIST Cybersecurity Framework" 2.0 publication site:nist.gov',
+    query: '"NIST Cybersecurity Framework" 2.0 site:csrc.nist.gov OR site:nvlpubs.nist.gov',
     officialDomains: ['nist.gov'],
     originalSourceQuestion: 'Find the original publication for NIST Cybersecurity Framework 2.0 functions.',
   });
@@ -659,6 +659,11 @@ test('a named official publisher fixes the source scope without a model-supplied
     ['nist.gov', 'nasa.gov']);
   assert.deepEqual(workspacePublicSearchQuery('Using only official pages (nist.gov), look up the latest NIST digital identity guidance.', true)?.officialDomains,
     ['nist.gov']);
+  const secondWork = workspacePublicSearchQuery('Using only official NIST pages, look up the NIST Digital Identity Guidelines 4.0 requirements. Cite the primary standard.', true);
+  assert.match(secondWork?.query ?? '', /"NIST Digital Identity Guidelines" 4\.0 site:csrc\.nist\.gov OR site:nvlpubs\.nist\.gov$/u);
+  const exactHost = workspacePublicSearchQuery('Using only official pages (nvlpubs.nist.gov), look up the NIST Cybersecurity Framework 2.0 functions. Cite the primary source.', true);
+  assert.match(exactHost?.query ?? '', /site:nvlpubs\.nist\.gov$/u);
+  assert.doesNotMatch(exactHost?.query ?? '', /site:csrc\.nist\.gov/u);
   assert.deepEqual(workspacePublicSearchQuery('Search the public web for the NOAA definition of a marine heatwave. Use only official NOAA pages (noaa.gov). Give the duration and threshold. Do not take any external action.', true), {
     query: 'the NOAA definition of a marine heatwave. Give the duration and threshold site:noaa.gov',
     officialDomains: ['noaa.gov'],
@@ -692,6 +697,17 @@ test('combined research and presentation preserve publisher scope and precise re
   assert.match(nasa?.query ?? '', /^compare Artemis II and Artemis III.*site:nasa\.gov$/u);
   assert.equal(workspacePublicSearchQuery(criteria + ' Use the attached internal audit as well.', true), undefined);
   assert.equal(workspacePublicSearchQuery('Find published streamflow data. Use only Fictional Laboratory sources.', true), undefined);
+});
+
+test('a guide about a named publication cannot substitute for the requested original', () => {
+  const prompt = 'Using only official NIST pages, look up the NIST Cybersecurity Framework 2.0 functions. Cite the primary source.';
+  const guide = { title: 'NIST Cybersecurity Framework 2.0 Quick-Start Guide', url: 'https://www.nist.gov/publications/guide' };
+  const original = { title: 'The NIST Cybersecurity Framework (CSF) 2.0 | NIST', url: 'https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.29.pdf' };
+  const text = 'The framework includes six functions [1].';
+  const missing = presentPublicResearchAnswer(text, { status: 'complete' }, [guide], prompt);
+  assert.deepEqual(missing.completion, { status: 'partial', reason: 'source_coverage' });
+  assert.match(missing.response, /couldn’t verify the requested original publication/u);
+  assert.deepEqual(presentPublicResearchAnswer(text, { status: 'complete' }, [original], prompt).completion, { status: 'complete' });
 });
 
 test('primary source lookup preserves the requested type without exporting other instructions', () => {
