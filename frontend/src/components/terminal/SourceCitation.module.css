@@ -36,6 +36,10 @@
 .named.named { max-inline-size: calc(100% - var(--citation-gap)); }
 .named .label { overflow-wrap: anywhere; white-space: normal; }
 
+:global(td) .chip.chip:not(.named) {
+  max-inline-size: 12rem;
+}
+
 @media (max-width: 540px) {
   :global(td) .chip.chip[data-citation-domain] {
     --citation-gap: 0rem;
