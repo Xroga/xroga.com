@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "11b40d2996d11135d7f11adcae86112c7aa2d5b9",
+  "source_sha": "50b3d364a97969a443c968ec0f539d41b069653b",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17286,7 +17286,7 @@
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
-      "sha256": "a3de463004064e275d6f519d2e82a3e1a15dd31541e1700ccdb370503255bfe8"
+      "sha256": "d82e36ffb0db1641aa6581737bd3f32b8913d7a78a735542e75163e7ac766c51"
     },
     {
       "path": "backend/src/ai/parallelDispatch.ts",
@@ -17382,7 +17382,11 @@
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "sha256": "8674360f785ec9b8c0bdf479663f0c6708b2b3ccdb9b88ce40d86836af26bee4"
+      "sha256": "61c670ec4ecd203c797e4d8412ca04a48fd45a03d06f1e869213699e4f4c4c30"
+    },
+    {
+      "path": "backend/src/ai/researchPublicationEvidence.ts",
+      "sha256": "ee9b32e4b5afa387366857c8099a57236a6b166e21628e4acd5758afcc1a269e"
     },
     {
       "path": "backend/src/ai/researchRankingEvidence.ts",
@@ -17390,7 +17394,7 @@
     },
     {
       "path": "backend/src/ai/researchSearchProvider.ts",
-      "sha256": "d4f6755e5075310ced59eafdfca4345cad40db1e8cb4beb2e2b9d3e551fbdffd"
+      "sha256": "e197584bc6cabe2aae16308db4ccae17b5b2a6766920c90aa56a044d447e8e5f"
     },
     {
       "path": "backend/src/ai/researchWebsiteEvidence.ts",
@@ -25917,7 +25921,7 @@
       "hostname": "cdn.deepseek.com",
       "protocol": "https:",
       "path": "backend/src/ai/researchSearchProvider.ts",
-      "line": 104,
+      "line": 107,
       "credentialsInUrl": false
     },
     {
@@ -34037,21 +34041,42 @@
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "line": 85,
+      "line": 86,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "line": 153,
+      "line": 136,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "line": 154,
+      "line": 137,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/researchPublicationEvidence.ts",
+      "line": 56,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/researchPublicationEvidence.ts",
+      "line": 67,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/researchPublicationEvidence.ts",
+      "line": 99,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -34086,14 +34111,14 @@
     },
     {
       "path": "backend/src/ai/researchSearchProvider.ts",
-      "line": 77,
+      "line": 80,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/researchSearchProvider.ts",
-      "line": 87,
+      "line": 90,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

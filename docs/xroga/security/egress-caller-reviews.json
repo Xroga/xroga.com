@@ -4364,7 +4364,7 @@
     {
       "id": "90c62dd04b83e45e1c68",
       "callSha256": "f2de81a8a454b092ec31470bbf964af50c74badbf8644e61fba47ff760f8013b",
-      "sourceFileSha256": "a3de463004064e275d6f519d2e82a3e1a15dd31541e1700ccdb370503255bfe8",
+      "sourceFileSha256": "d82e36ffb0db1641aa6581737bd3f32b8913d7a78a735542e75163e7ac766c51",
       "disposition": "VERIFIED_GUARD",
       "trust": "EXACT_APPROVED_CREDENTIAL_FREE_DNS_PINNED_DOCUMENT_READ_NO_DELEGATED_FETCH",
       "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
@@ -4984,6 +4984,36 @@
         }
       ],
       "sourceReview": "Inherited without application changes from already-serving frontend 758bce0b420354b09fa5ec9f50252ded508df13c. API_URL resolves the configured platform origin through existing protocol validation. A missing public catalog endpoint remains an unavailable response handled by the existing honest featured-app fallback. No new backend endpoint, connection authority or tenant certification is introduced."
+    },
+    {
+      "id": "5ed2120bbd7466d4c21f",
+      "callSha256": "f323d37a5dd047fc05a6eb968a20c026894786cf8f16a103bdfe65cc3c60975f",
+      "sourceFileSha256": "d82e36ffb0db1641aa6581737bd3f32b8913d7a78a735542e75163e7ac766c51",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "SCOPED_CREDENTIAL_FREE_PUBLISHER_GET_WITH_DNS_PIN_NO_REDIRECTS",
+      "tenantAuthority": "OWNER_PUBLIC_READ_WITH_PERSISTED_EGRESS_DECISION_AND_PUBLISHER_SCOPE. ONLY_PUBLIC_URL_IS_SENT. CONTENT_STAYS_UNTRUSTED.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/parallelApproval.ts",
+          "marker": "purpose: 'workspace-publisher-publication-verification'",
+          "sha256": "d82e36ffb0db1641aa6581737bd3f32b8913d7a78a735542e75163e7ac766c51"
+        },
+        {
+          "path": "backend/src/ai/researchPublicationEvidence.ts",
+          "marker": "matchesOfficialResearchDomain(url.href, work.domains)",
+          "sha256": "ee9b32e4b5afa387366857c8099a57236a6b166e21628e4acd5758afcc1a269e"
+        },
+        {
+          "path": "backend/src/ai/researchPublicationEvidence.test.ts",
+          "marker": "a missing original follows the publisher catalog and verifies the actual PDF",
+          "sha256": "3a35649df65cc924032709c687b90f07d5d65557fdd6afcec3c63067996464f0"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "Egress redirect denied",
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
+        }
+      ]
     }
   ]
 }

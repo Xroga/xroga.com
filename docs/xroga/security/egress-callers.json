@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "6c6a3d22bb01f84cd1c551eac6b052fa1736dd6a16da7f777add3f97d64a0398",
+  "sourceTreeDigest": "6bf411cd219abb6a5c9e93f139dd3c651ed22326ecdc2527134f9e100b98a8e8",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -195,9 +195,46 @@
       ]
     },
     {
+      "id": "5ed2120bbd7466d4c21f",
+      "file": "backend/src/ai/parallelApproval.ts",
+      "line": 115,
+      "entryPoint": "executeWorkspacePublicSearch",
+      "transport": "boundedPublicGet",
+      "callee": "boundedPublicGet",
+      "callSha256": "f323d37a5dd047fc05a6eb968a20c026894786cf8f16a103bdfe65cc3c60975f",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "SCOPED_CREDENTIAL_FREE_PUBLISHER_GET_WITH_DNS_PIN_NO_REDIRECTS",
+      "tenantAuthority": "OWNER_PUBLIC_READ_WITH_PERSISTED_EGRESS_DECISION_AND_PUBLISHER_SCOPE. ONLY_PUBLIC_URL_IS_SENT. CONTENT_STAYS_UNTRUSTED.",
+      "currentProtection": "CENTRAL_PUBLIC_GET_CANDIDATE_NOT_SEMANTIC_CERTIFICATION",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "backend/src/ai/parallelApproval.ts",
+          "marker": "purpose: 'workspace-publisher-publication-verification'",
+          "sha256": "d82e36ffb0db1641aa6581737bd3f32b8913d7a78a735542e75163e7ac766c51"
+        },
+        {
+          "path": "backend/src/ai/researchPublicationEvidence.ts",
+          "marker": "matchesOfficialResearchDomain(url.href, work.domains)",
+          "sha256": "ee9b32e4b5afa387366857c8099a57236a6b166e21628e4acd5758afcc1a269e"
+        },
+        {
+          "path": "backend/src/ai/researchPublicationEvidence.test.ts",
+          "marker": "a missing original follows the publisher catalog and verifies the actual PDF",
+          "sha256": "3a35649df65cc924032709c687b90f07d5d65557fdd6afcec3c63067996464f0"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "Egress redirect denied",
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
+        }
+      ]
+    },
+    {
       "id": "90c62dd04b83e45e1c68",
       "file": "backend/src/ai/parallelApproval.ts",
-      "line": 155,
+      "line": 179,
       "entryPoint": "executeParallelNativeAction",
       "transport": "boundedPublicGet",
       "callee": "boundedPublicGet",
@@ -5139,6 +5176,7 @@
       "scope": "GROUPING_NOT_SEMANTIC_CERTIFICATION",
       "callerIds": [
         "0e0e3527ad05d7405c68",
+        "5ed2120bbd7466d4c21f",
         "90c62dd04b83e45e1c68",
         "42b94382bd37c3f50c6c",
         "eae67182cbfc4c6f9091",
@@ -5382,8 +5420,8 @@
     }
   ],
   "counts": {
-    "total": 160,
-    "reviewed": 160,
+    "total": 161,
+    "reviewed": 161,
     "pending": 0,
     "unresolvedHighRiskBypasses": 0
   }

@@ -120,8 +120,8 @@
     }
   ],
   "counts": {
-    "total": 160,
-    "reviewed": 160,
+    "total": 161,
+    "reviewed": 161,
     "pending": 0,
     "unresolvedHighRiskReviewCandidates": 0
   },
@@ -1209,5 +1209,9 @@
     "previousSha256": "5d9935ab696ff8f9b0c7f4513bcdef0cc1f094d205e34f50c60e7d2a55d0a18f",
     "currentSha256": "4569b06a1ad2699952ffb91c44816dfd79718e9dbf04a301920ea3ba3c68f650",
     "scope": "Only the evidence passed from the completed automatic Search response changes here. Publisher navigation and exports are excluded for original-source requests. Outbound dispatch, persistence, and credential boundaries are unchanged. The corrected release has no verified live acceptance."
+  },
+  "workspacePublisherReadContinuation": {
+    "baseline": "84b288e3193fc0f285e699c8785c210d47937f16",
+    "scope": "One additive reviewed public publisher GET call site. Only scoped public URLs reach the DNS-pinned, credential-free transport after a persisted owner READ decision. The original paid Search dispatch and the private exact-consent action are unchanged. This static continuity does not certify live acceptance."
   }
 }

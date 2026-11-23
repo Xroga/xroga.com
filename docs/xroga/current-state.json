@@ -7093,7 +7093,7 @@
       "id": "surface:7d07dd00cd58533729b5",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/parallelApproval.ts",
-      "sha256": "a3de463004064e275d6f519d2e82a3e1a15dd31541e1700ccdb370503255bfe8",
+      "sha256": "d82e36ffb0db1641aa6581737bd3f32b8913d7a78a735542e75163e7ac766c51",
       "symbols": [
         "Operation",
         "ParallelAdmission",
@@ -7132,6 +7132,8 @@
         "pdfParse",
         "prepareParallelApproval",
         "proof",
+        "publication",
+        "readBinding",
         "readPrimaryPage",
         "request",
         "requireParallelAdmission",
@@ -7142,6 +7144,7 @@
         "results",
         "started",
         "state",
+        "target",
         "targetDigest",
         "text",
         "toolkit",
@@ -7150,7 +7153,8 @@
         "urls",
         "useCase",
         "value",
-        "withAnswer"
+        "withAnswer",
+        "work"
       ],
       "imports": [
         "../lib/truthfulExecution.js",
@@ -7170,6 +7174,7 @@
         "../services/publish/nativeReleaseAdmission.js",
         "./parallelDispatch.js",
         "./researchAnswer.js",
+        "./researchPublicationEvidence.js",
         "./researchSearchProvider.js",
         "./runStore.js",
         "./tenantModelDispatch.js",
@@ -7181,6 +7186,7 @@
       "runtimeImports": [
         "backend/src/ai/parallelDispatch.ts",
         "backend/src/ai/researchAnswer.ts",
+        "backend/src/ai/researchPublicationEvidence.ts",
         "backend/src/ai/researchSearchProvider.ts",
         "backend/src/ai/runStore.ts",
         "backend/src/ai/tenantModelDispatch.ts",
@@ -7226,8 +7232,8 @@
         "backend/src/ai/parallelApproval.ts#identity"
       ],
       "tenantBoundary": [
-        "backend/src/ai/parallelApproval.ts:132 (user_id)",
-        "backend/src/ai/parallelApproval.ts:135 (user_id)"
+        "backend/src/ai/parallelApproval.ts:156 (user_id)",
+        "backend/src/ai/parallelApproval.ts:159 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/ai/parallelApproval.ts#actionPlanDigest",
@@ -7336,8 +7342,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/parallelApproval.ts:103",
-        "backend/src/ai/parallelApproval.ts:166",
+        "backend/src/ai/parallelApproval.ts:104",
+        "backend/src/ai/parallelApproval.ts:190",
         "backend/src/ai/parallelWeb.security.test.ts:15",
         "backend/src/ai/parallelWeb.ts:1"
       ],
@@ -8374,7 +8380,7 @@
         "backend/src/ai/repositoryHydrationAuthority.test.ts:3",
         "backend/src/ai/repositoryReadFailure.test.ts:3",
         "backend/src/ai/researchAnswer.test.ts:68",
-        "backend/src/ai/researchAnswer.ts:207",
+        "backend/src/ai/researchAnswer.ts:190",
         "backend/src/ai/tenantModelDispatch.test.ts:8",
         "backend/src/ai/universal/resumeProjectContext.test.ts:54",
         "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts:5",
@@ -10058,7 +10064,7 @@
       "id": "surface:794bcc5ea45ebaad109e",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/researchAnswer.ts",
-      "sha256": "8674360f785ec9b8c0bdf479663f0c6708b2b3ccdb9b88ce40d86836af26bee4",
+      "sha256": "61c670ec4ecd203c797e4d8412ca04a48fd45a03d06f1e869213699e4f4c4c30",
       "symbols": [
         "RESEARCH_ANSWER_MAXIMUM_MICRO_USD",
         "ResearchAnswerRequest",
@@ -10080,7 +10086,6 @@
         "error",
         "evidence",
         "evidenceOnlyAnswer",
-        "expected",
         "filtered",
         "goal",
         "inlineCodeSpans",
@@ -10091,9 +10096,7 @@
         "links",
         "mapResearchProse",
         "match",
-        "missingNamedPublication",
         "missingOfficialLinks",
-        "normalizeTitle",
         "normalized",
         "note",
         "numberWords",
@@ -10104,6 +10107,7 @@
         "presentPublicResearchAnswer",
         "presentation",
         "publicWorkspaceResearchAnswer",
+        "publication",
         "rankingWithheld",
         "ref",
         "refs",
@@ -10111,7 +10115,6 @@
         "researchAnswerRequestSchema",
         "researchCitationIssues",
         "result",
-        "search",
         "siteRows",
         "source",
         "sourceUrl",
@@ -10130,6 +10133,7 @@
         "./black-hole/researchRouter.js",
         "./completionDiagnostics.js",
         "./pipeline.js",
+        "./researchPublicationEvidence.js",
         "./researchRankingEvidence.js",
         "./researchSearchProvider.js",
         "./researchWebsiteEvidence.js",
@@ -10141,6 +10145,7 @@
       "runtimeImports": [
         "backend/src/ai/black-hole/researchRouter.ts",
         "backend/src/ai/pipeline.ts",
+        "backend/src/ai/researchPublicationEvidence.ts",
         "backend/src/ai/researchRankingEvidence.ts",
         "backend/src/ai/researchSearchProvider.ts",
         "backend/src/ai/researchWebsiteEvidence.ts",
@@ -10178,6 +10183,82 @@
       ],
       "testCoverage": [
         "backend/src/ai/researchAnswer.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:f0606ea5a45549e6043b",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/researchPublicationEvidence.ts",
+      "sha256": "ee9b32e4b5afa387366857c8099a57236a6b166e21628e4acd5758afcc1a269e",
+      "symbols": [
+        "RequestedPublication",
+        "catalogPage",
+        "catalogUrls",
+        "choice",
+        "citationTitle",
+        "document",
+        "excerpt",
+        "followOfficialPublication",
+        "href",
+        "html",
+        "htmlAttribute",
+        "isRequestedPublication",
+        "links",
+        "match",
+        "namedCatalogLink",
+        "normalizedTitle",
+        "page",
+        "pdf",
+        "publication",
+        "publisherUrl",
+        "related",
+        "requestedPublication",
+        "search",
+        "source",
+        "supportingPage",
+        "target",
+        "text",
+        "title",
+        "titlePageWords",
+        "url",
+        "words",
+        "work"
+      ],
+      "imports": [
+        "../security/egress/urlPolicy.js",
+        "./researchSearchProvider.js",
+        "./workspacePublicSearch.js"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/researchSearchProvider.ts",
+        "backend/src/ai/workspacePublicSearch.ts",
+        "backend/src/security/egress/urlPolicy.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/ai/parallelApproval.ts:23",
+        "backend/src/ai/researchAnswer.ts:9",
+        "backend/src/ai/researchPublicationEvidence.test.ts:4"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/ai/researchPublicationEvidence.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -10246,7 +10327,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/researchAnswer.ts:10"
+        "backend/src/ai/researchAnswer.ts:11"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -10268,7 +10349,7 @@
       "id": "surface:5f676989c84806ca6213",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/researchSearchProvider.ts",
-      "sha256": "d4f6755e5075310ced59eafdfca4345cad40db1e8cb4beb2e2b9d3e551fbdffd",
+      "sha256": "e197584bc6cabe2aae16308db4ccae17b5b2a6766920c90aa56a044d447e8e5f",
       "symbols": [
         "DEEPSEEK_DISCOVERY_RESULTS",
         "DEEPSEEK_PRIMARY_PAGE_EXCERPT",
@@ -10335,6 +10416,7 @@
         "backend/src/ai/parallelApproval.ts:22",
         "backend/src/ai/parallelDispatch.ts:15",
         "backend/src/ai/researchAnswer.ts:7",
+        "backend/src/ai/researchPublicationEvidence.ts:2",
         "backend/src/ai/researchSearchProvider.test.ts:3",
         "backend/src/ai/workspacePublicSearch.ts:4",
         "backend/src/services/integrations/researchResult.ts:10"
@@ -10430,7 +10512,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/researchAnswer.ts:9"
+        "backend/src/ai/researchAnswer.ts:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -15661,10 +15743,11 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/parallelApproval.ts:23",
+        "backend/src/ai/parallelApproval.ts:24",
         "backend/src/ai/pipeline.ts:31",
         "backend/src/ai/researchAnswer.test.ts:77",
         "backend/src/ai/researchAnswer.ts:8",
+        "backend/src/ai/researchPublicationEvidence.ts:3",
         "backend/src/ai/universal/semanticRequestPlanner.ts:15"
       ],
       "reachable": true,
@@ -36859,6 +36942,7 @@
         "backend/src/ai/parallelApproval.ts:17",
         "backend/src/ai/parallelDispatch.ts:7",
         "backend/src/ai/parallelWeb.ts:4",
+        "backend/src/ai/researchPublicationEvidence.ts:1",
         "backend/src/ai/researchWebsiteEvidence.ts:1",
         "backend/src/ai/workspacePublicSearch.ts:3",
         "backend/src/lib/deployVerify.ts:1",
@@ -36886,6 +36970,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/ai/researchPublicationEvidence.test.ts",
         "backend/src/security/egress/egress.integration.test.ts",
         "backend/src/security/egress/fileEgress.test.ts",
         "backend/src/security/egress/publicPost.test.ts"
@@ -153984,6 +154069,13 @@
       "id": "test-suite:23d8d42196f056421b09",
       "sourcePath": "backend/src/ai/researchLive.test.ts",
       "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:af7bfcd0e60b3ff4010c",
+      "sourcePath": "backend/src/ai/researchPublicationEvidence.test.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

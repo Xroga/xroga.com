@@ -886,11 +886,11 @@
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
-      "sourceSha256": "a3de463004064e275d6f519d2e82a3e1a15dd31541e1700ccdb370503255bfe8",
+      "sourceSha256": "d82e36ffb0db1641aa6581737bd3f32b8913d7a78a735542e75163e7ac766c51",
       "callIds": [
-        "34b8ee9664023c2808f9",
-        "f983ea030f69d45aabe9",
-        "c919b1c33f5cd3bf1590"
+        "5e34cb198a12f569ccb5",
+        "09fa2ebbd8df4a4d23ac",
+        "5f55bbc07a5d1c8ffbaf"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The original context comes only from the canonical native permit. Exact user_id predicates scope the executing grant and current run/worker generation. Grant, owner, immutable digest, expiry and effect receipt are rechecked before and after provider waits and immediately after DNS before any public connection.",
@@ -947,6 +947,15 @@
           "09f9cc3bfa55e77de769"
         ],
         "scope": "Existing persistence calls and tenant predicates are unchanged. Link discovery changes only the bounded public Search request and evidence selection."
+      },
+      "workspacePublisherVerification": {
+        "baseline": "84b288e3193fc0f285e699c8785c210d47937f16",
+        "previousIds": [
+          "34b8ee9664023c2808f9",
+          "f983ea030f69d45aabe9",
+          "c919b1c33f5cd3bf1590"
+        ],
+        "scope": "Exact private-action database expressions and function remain unchanged. The new public document check adds no direct database expression."
       }
     },
     {
@@ -29392,9 +29401,9 @@
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
-      "sourceSha256": "a3de463004064e275d6f519d2e82a3e1a15dd31541e1700ccdb370503255bfe8",
+      "sourceSha256": "d82e36ffb0db1641aa6581737bd3f32b8913d7a78a735542e75163e7ac766c51",
       "callIds": [
-        "0e0ffe79748dc7345605"
+        "7993194baaccef09d70b"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in executeParallelNativeAction. This specific call uses the built-in Uint8Array.from conversion of already fetched public document bytes for the PDF parser, not the adjacent database, object storage or provider transport.",
@@ -29425,6 +29434,13 @@
           "41f72a13adc2226d0255"
         ],
         "scope": "Existing persistence calls and tenant predicates are unchanged. Link discovery changes only the bounded public Search request and evidence selection."
+      },
+      "workspacePublisherVerification": {
+        "baseline": "84b288e3193fc0f285e699c8785c210d47937f16",
+        "previousIds": [
+          "0e0ffe79748dc7345605"
+        ],
+        "scope": "Exact private-action database expressions and function remain unchanged. The new public document check adds no direct database expression."
       }
     },
     {
