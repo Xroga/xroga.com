@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "5b9d00a2202ba443eb9d8ec35834d9873cefc9b99af6c1409a8d5f5c92b0efcc",
+  "sourceTreeDigest": "42f3d0c6545711ac11dc93ebd956ca505117cfe0be944809f430243062ff8b84",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -197,7 +197,7 @@
     {
       "id": "90c62dd04b83e45e1c68",
       "file": "backend/src/ai/parallelApproval.ts",
-      "line": 153,
+      "line": 155,
       "entryPoint": "executeParallelNativeAction",
       "transport": "boundedPublicGet",
       "callee": "boundedPublicGet",

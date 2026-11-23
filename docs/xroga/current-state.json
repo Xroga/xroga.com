@@ -3,13 +3,13 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/workspace-release-compat-20261122",
-    "sha": "10769aa2b88bad7be20b3dbbcec85fd53305db2b",
-    "sourceTimestampUtc": "2026-11-23T06:54:12+05:00",
-    "auditStartedUtc": "2026-11-23T01:54:19.888Z",
+    "sha": "583943afa9d6e9e0bcc361c02eda6ba180dab988",
+    "sourceTimestampUtc": "2026-11-23T08:09:49+05:00",
+    "auditStartedUtc": "2026-11-23T03:13:26.517Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
-    "npm": "11.16.0",
+    "npm": "10.9.4",
     "lockfiles": [
       "backend/package-lock.json",
       "deploy/browser-worker/package-lock.json",
@@ -1585,7 +1585,7 @@
       "id": "surface:f18ef073f3fd23b8a6c0",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/black-hole/researchRouter.ts",
-      "sha256": "fbe97a28d4d7301cc5872cdaffaf5fdddba1c5212dd2a7087eb69b521072a10a",
+      "sha256": "8e3e5fb9062ea0e46b155686e402c852d568348a3f768e86bdc5a0b5494af852",
       "symbols": [
         "INJECTION_PATTERNS",
         "NormalizeOptions",
@@ -2094,7 +2094,7 @@
       "id": "surface:0e78a2534aef2dadd6c0",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "01c533bfe2127d849264b9fdd5c8528cbfac161994842a818f4a9cfa1cd6089b",
+      "sha256": "5d9935ab696ff8f9b0c7f4513bcdef0cc1f094d205e34f50c60e7d2a55d0a18f",
       "symbols": [
         "ACTIONS",
         "WebAction",
@@ -2112,6 +2112,7 @@
         "domains",
         "error",
         "evidence",
+        "evidenceExcerptLimit",
         "extractUrls",
         "grokXSearch",
         "host",
@@ -2192,6 +2193,7 @@
       ],
       "evidenceBoundary": [
         "backend/src/ai/black-hole/webIntelligence.ts#evidence",
+        "backend/src/ai/black-hole/webIntelligence.ts#evidenceExcerptLimit",
         "backend/src/ai/black-hole/webIntelligence.ts#formatResearchAsEvidence"
       ],
       "testCoverage": [
@@ -7091,7 +7093,7 @@
       "id": "surface:7d07dd00cd58533729b5",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/parallelApproval.ts",
-      "sha256": "2d33942d981ee2308be8cd3c8e7a36c2274350bfd4a5a7ba19cd10360c20da00",
+      "sha256": "a3de463004064e275d6f519d2e82a3e1a15dd31541e1700ccdb370503255bfe8",
       "symbols": [
         "Operation",
         "ParallelAdmission",
@@ -7130,11 +7132,13 @@
         "pdfParse",
         "prepareParallelApproval",
         "proof",
+        "readPrimaryPage",
         "request",
         "requireParallelAdmission",
         "requireRetrievalOnly",
         "response",
         "result",
+        "resultCount",
         "results",
         "started",
         "state",
@@ -7222,8 +7226,8 @@
         "backend/src/ai/parallelApproval.ts#identity"
       ],
       "tenantBoundary": [
-        "backend/src/ai/parallelApproval.ts:130 (user_id)",
-        "backend/src/ai/parallelApproval.ts:133 (user_id)"
+        "backend/src/ai/parallelApproval.ts:132 (user_id)",
+        "backend/src/ai/parallelApproval.ts:135 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/ai/parallelApproval.ts#actionPlanDigest",
@@ -7250,7 +7254,7 @@
       "id": "surface:78d9ec4b29ef687ea76d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/parallelDispatch.ts",
-      "sha256": "1e50c88700ee7b4b2bcb21efe55a93463976c6e86cac9868b0b298c8dc254c5a",
+      "sha256": "bdd54a8e208498d3d488584591ab15f57fd3ac316deb6949a2056fc38353e889",
       "symbols": [
         "Operation",
         "admission",
@@ -7275,6 +7279,7 @@
         "internalRoute",
         "next",
         "operation",
+        "primaryQuestion",
         "reader",
         "received",
         "requestId",
@@ -7331,8 +7336,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/parallelApproval.ts:101",
-        "backend/src/ai/parallelApproval.ts:164",
+        "backend/src/ai/parallelApproval.ts:103",
+        "backend/src/ai/parallelApproval.ts:166",
         "backend/src/ai/parallelWeb.security.test.ts:15",
         "backend/src/ai/parallelWeb.ts:1"
       ],
@@ -10253,38 +10258,57 @@
       "id": "surface:5f676989c84806ca6213",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/researchSearchProvider.ts",
-      "sha256": "4cc0cf849fe0ac1e10af4a13d579e4dd6d74f8ef83f61b817b66c287605641a8",
+      "sha256": "d4f6755e5075310ced59eafdfca4345cad40db1e8cb4beb2e2b9d3e551fbdffd",
       "symbols": [
         "DEEPSEEK_DISCOVERY_RESULTS",
+        "DEEPSEEK_PRIMARY_PAGE_EXCERPT",
+        "DEEPSEEK_PRIMARY_PAGE_RESULTS",
         "DEEPSEEK_QUERY_MAX",
         "DEEPSEEK_SEARCH_MICRO_USD",
         "DEEPSEEK_SEARCH_RESULTS",
         "DEEPSEEK_SEARCH_URL",
         "DeepseekResult",
         "SearchResult",
+        "best",
         "date",
         "deepseekSearchBody",
         "deepseekSearchCredential",
+        "definitions",
         "domain",
+        "end",
         "excerpt",
+        "focus",
+        "focusMatches",
         "host",
         "iconDomain",
         "limit",
+        "matches",
         "matchesOfficialResearchDomain",
+        "matchingPageParagraphs",
         "next",
         "normaliseDeepseekSearch",
         "officialResearchDomains",
         "operators",
+        "passage",
+        "passageWords",
+        "primaryText",
         "query",
         "question",
         "r",
+        "relevant",
         "researchSearchMicroUsd",
         "results",
+        "retrievalWords",
         "scopeOfficialSearchQuery",
         "scopedTerms",
+        "score",
         "siteName",
         "sites",
-        "terms"
+        "start",
+        "summary",
+        "terms",
+        "text",
+        "words"
       ],
       "imports": [
         "../config/envSecrets.js"
@@ -15512,7 +15536,7 @@
       "id": "surface:82ff96c046038933cdb9",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/workspacePublicSearch.ts",
-      "sha256": "d9e0aab9b965bc56ce44514a1cf79ab9ae9458050c0ca511d8c39dba9c8f75a3",
+      "sha256": "8feef3ebb5bab49363bd36e3e0a1f828ed6591d6dedb3951dd7a1bc55b2779d5",
       "symbols": [
         "answerOnlySuffix",
         "asksForOfficial",
@@ -15572,6 +15596,7 @@
         "publicSoftwareNames",
         "publicSourceLookup",
         "publicSourcePreface",
+        "publicationQuery",
         "publicationTerm",
         "publishedWorkTopic",
         "publisher",
@@ -15582,6 +15607,7 @@
         "requestsOfficialCitation",
         "requestsOfficialLinkCoverage",
         "scopedRequest",
+        "searchTerms",
         "sites",
         "softwareReleaseSubject",
         "source",
@@ -15593,6 +15619,8 @@
         "topic",
         "topicLimit",
         "unavailableDomain",
+        "versionedWork",
+        "versionedWorkDetail",
         "weatherLookup",
         "workspacePublicSearchQuery"
       ],
@@ -153932,7 +153960,7 @@
     {
       "id": "test-suite:fc958963f2b7e8b93a94",
       "sourcePath": "backend/src/ai/researchSearchProvider.test.ts",
-      "declaredTests": 5,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },

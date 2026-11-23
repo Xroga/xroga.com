@@ -886,11 +886,11 @@
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
-      "sourceSha256": "2d33942d981ee2308be8cd3c8e7a36c2274350bfd4a5a7ba19cd10360c20da00",
+      "sourceSha256": "a3de463004064e275d6f519d2e82a3e1a15dd31541e1700ccdb370503255bfe8",
       "callIds": [
-        "fbc2df9f668bbad18594",
-        "1ef49e46e6043f69b2d8",
-        "c62050c950eb046d1a37"
+        "34b8ee9664023c2808f9",
+        "f983ea030f69d45aabe9",
+        "c919b1c33f5cd3bf1590"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The original context comes only from the canonical native permit. Exact user_id predicates scope the executing grant and current run/worker generation. Grant, owner, immutable digest, expiry and effect receipt are rechecked before and after provider waits and immediately after DNS before any public connection.",
@@ -951,14 +951,14 @@
     },
     {
       "path": "backend/src/ai/parallelDispatch.ts",
-      "sourceSha256": "1e50c88700ee7b4b2bcb21efe55a93463976c6e86cac9868b0b298c8dc254c5a",
+      "sourceSha256": "bdd54a8e208498d3d488584591ab15f57fd3ac316deb6949a2056fc38353e889",
       "callIds": [
         "eafd89a3d20bbe8c8038",
         "d39950af553ed4c73ba8",
         "a14844e6560526208cb5",
         "5f7898751365afe3ccbb",
         "4caea0778375b8dbf0dd",
-        "9b3c321985a4f3af700b"
+        "7de431277f4a0e0788a1"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
@@ -29392,9 +29392,9 @@
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
-      "sourceSha256": "2d33942d981ee2308be8cd3c8e7a36c2274350bfd4a5a7ba19cd10360c20da00",
+      "sourceSha256": "a3de463004064e275d6f519d2e82a3e1a15dd31541e1700ccdb370503255bfe8",
       "callIds": [
-        "cc21b13f6603768e8e92"
+        "0e0ffe79748dc7345605"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in executeParallelNativeAction. This specific call uses the built-in Uint8Array.from conversion of already fetched public document bytes for the PDF parser, not the adjacent database, object storage or provider transport.",
