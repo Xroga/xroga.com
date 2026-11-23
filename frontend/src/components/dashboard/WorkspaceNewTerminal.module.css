@@ -31,11 +31,12 @@
 .repoStatus { min-width: 0; width: fit-content; flex: none; }
 .repoStatus :global(.xv-repo-chip--compact) { width:fit-content; max-width: 200px; color: var(--muted) !important; background: var(--terminal-ui-raised) !important; border-color: var(--terminal-ui-border) !important; }
 .hero { text-align: center; margin: 0 auto 28px; }
-.superIntelligence { margin: 0; font: 500 clamp(30px,4cqw,43px)/1.13 Georgia,'Times New Roman',serif; letter-spacing: -.035em; color: var(--foreground); background: linear-gradient(180deg,var(--foreground) 15%,color-mix(in srgb,var(--foreground) 65%,var(--terminal-ui-surface)) 48%,var(--foreground) 62%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.superIntelligence { margin: 0; font: 600 clamp(30px,4cqw,43px)/1.13 var(--font-geist-sans),Arial,sans-serif; letter-spacing: -.035em; color: var(--foreground); }
 .taglineRow { position: relative; display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 12px; }
 .tagline { margin: 0; font-family: var(--font-geist-sans), 'Inter', Arial, sans-serif; font-size: clamp(15px,2cqw,20px); font-weight: 400; letter-spacing: -.04em; line-height: 1.45; color: var(--muted); white-space: nowrap; }
- .dynamicWord { display: inline-block; color: var(--foreground); animation: wordReveal 500ms cubic-bezier(.19,1,.22,1) both; }
-@keyframes wordReveal { from { opacity: 0; filter: blur(8px); transform: translateY(4px); } to { opacity: 1; filter: blur(0); transform: translateY(0); } }
+.dynamicWordFrame { display: inline-grid; vertical-align: baseline; text-align: left; transition: width 550ms cubic-bezier(.2,.65,.3,1); }
+.dynamicWord { display: inline-block; width: max-content; min-width: 0; text-align: left; color: var(--foreground); animation: wordReveal 550ms cubic-bezier(.2,.65,.3,1) both; }
+@keyframes wordReveal { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: translateY(0); } }
 .mobileBreak { display: none; }
 .rotationControl { display: grid; place-items: center; width: 24px; height: 24px; color: var(--muted); border-radius: 6px; }
 .rotationControl svg { width: 11px; height: 11px; }
@@ -65,6 +66,7 @@
 .automaticFirst,.automaticDetail { grid-area: 1/1; display: block; width: 100%; transition: opacity .3s ease,filter .3s ease; }
 .automaticFirst[data-visible='false'],.automaticDetail[data-visible='false'] { opacity: 0; visibility: hidden; }
 .automaticDetail[data-visible='true'] { visibility: visible; animation: automaticReveal .5s ease-out both; }
+.guidanceMobile { display: none; }
 @keyframes automaticReveal { from { opacity: 0; filter: blur(7px); transform: translateY(5px); } to { opacity: 1; filter: blur(0); transform: translateY(0); } }
 .cards { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)) minmax(180px,.8fr); gap: 12px; max-width: 900px; margin-inline: auto; }
 .cardShell,.carouselShell { min-width: 0; position: relative; }
@@ -74,7 +76,7 @@
 .cardIcon { display: flex; color: var(--foreground); }
 .cardIcon svg { width: 22px; height: 22px; stroke-width: 1.8; }
 .cardWords { display: block; min-width: 0; }
-.cardWords strong { display: flex; align-items: center; gap: 5px; font: 500 22px/1.2 Georgia,'Times New Roman',serif; margin-bottom: 5px; }
+.cardWords strong { display: flex; align-items: center; gap: 5px; font: 600 22px/1.2 var(--font-geist-sans),Arial,sans-serif; margin-bottom: 5px; }
 .cardWords>span { display: block; font: 11.5px/1.42 Arial,sans-serif; color: var(--muted); text-wrap: pretty; }
 .cardArrow { width: 14px; height: 14px; color: var(--muted); }
 .card:focus-visible,.tool:focus-visible { outline: 2px solid var(--foreground); outline-offset: 3px; }
@@ -113,6 +115,8 @@
   .hero { margin-bottom: 22px; }
 }
 @container (max-width: 580px) {
+  .guidanceDesktop { display: none; }
+  .guidanceMobile { display: inline; }
   .card { min-height: 112px; padding: 12px; }
   .cardCopy { display: grid; grid-template-columns: 18px minmax(0,1fr); gap: 7px; align-items: center; }
   .cardIcon svg { width: 18px; height: 18px; }
@@ -127,13 +131,14 @@
   .superIntelligence { font-size: 31px; }
   .tagline { font-size: 16px; }
   .tagline { font-size: clamp(10px,2.95cqw,13px); letter-spacing: -.045em; }
-  .dynamicWord { min-width: 9ch; }
   .dock.dock.dock :global(.xv-chatbar-primary-tools) { gap: 5px; }
   .tool { padding: 5px; width: 29px; }
   .tool span { display: none; }
-  .automatic { max-width: 100%; font-size: clamp(7px,2.15cqw,10px); margin: 12px 0 15px; }
+  .automatic { max-width: 100%; font-size: 11px; margin: 12px 0 15px; }
 }
 @media (max-width: 639px) {
+  .guidanceDesktop { display: none; }
+  .guidanceMobile { display: inline; }
   .repoStatus { display: none; }
   .dock.dock.dock { padding: 12px !important; }
   .dock.dock.dock :global(.xv-chatbar-input-form) { padding: 6px 7px !important; }
@@ -145,7 +150,7 @@
   .superIntelligence { font-size: 27px; }
   .tagline { font-size: clamp(9px,2.8cqw,11px); }
   .hero { margin-bottom: 16px; }
-  .automatic { margin: 10px 0 12px; }
+  .automatic { font-size: 10.5px; margin: 10px 0 12px; }
   .card { padding: 10px; min-height: 106px; }
   .carouselShell .card .cardCopy { padding-right: 0; }
   .carouselShell .card .visual { display: none; }
@@ -157,7 +162,7 @@
   .tool { width: 25px; padding: 3px; }
   .dock.dock.dock :global(.xv-chatbar-primary-tools) { gap: 3px; }
 }
-@media (prefers-reduced-motion: reduce) { .card,.tool,.visual { transition: none; } .dynamicWord,.automaticDetail[data-visible='true'] { animation: none; filter: none; opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .card,.tool,.visual,.dynamicWordFrame { transition: none; } .dynamicWord,.automaticDetail[data-visible='true'] { animation: none; filter: none; opacity: 1; transform: none; } }
 .window :global(.xv-workspace-header),.dock :global(.xv-chatbar-tools) { --accent: var(--foreground); }
 .dock :global(.xv-companion-blackhole) svg[data-testid='mobile-model-icon'] { width: 22px; height: 22px; color: var(--foreground) !important; }
 @media (max-height: 700px) and (min-width: 640px) {

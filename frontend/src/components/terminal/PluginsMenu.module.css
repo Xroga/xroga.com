@@ -1,4 +1,4 @@
-.menu { color:var(--foreground); background:var(--surface-raised); border:1px solid var(--card-border); border-radius:15px; box-shadow:0 20px 50px #0008; overflow:hidden; }
+.menu { color:var(--foreground); background:var(--surface-raised); border:1px solid var(--card-border); border-radius:15px; box-shadow:none; overflow:hidden; }
 .panel { font:12px/1.4 Arial, sans-serif; width:100%; padding:11px; display:flex; flex-direction:column; max-height:min(430px,calc(100dvh - 24px)); }
 .header { display:flex; align-items:center; justify-content:space-between; padding:0 1px 10px; font-size:13px; }
 .header>span { display:flex; align-items:center; gap:8px; }
@@ -6,7 +6,7 @@
 .iconButton:hover { background:var(--surface-inset); }
 .tabs { display:grid; grid-template-columns:1fr 1fr; gap:4px; background:var(--surface-inset); border-radius:9px; padding:3px; margin-bottom:10px; }
 .tabs button { min-height:30px; border-radius:7px; font-size:11px; font-weight:600; }
-.tabs button[aria-pressed="true"] { background:var(--surface-raised); box-shadow:0 1px 4px #0002; }
+.tabs button[aria-pressed="true"] { background:var(--surface-raised); box-shadow:none; }
 .tabs button:focus-visible,.item:focus-visible,.loadMore:focus-visible { outline:2px solid var(--foreground); outline-offset:-2px; }
 .search { min-height:34px; padding:6px 8px; border:1px solid var(--card-border); border-radius:9px; display:flex; align-items:center; gap:8px; }
 .search>svg { flex:none; color:var(--muted); }

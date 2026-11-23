@@ -233,7 +233,7 @@ export function WorkspaceBrowserOperator({ extensionId, nonce, requestedId }: {
           <path d="M22.6 9A11 11 0 0 1 11.3 23L16 14l-3-5Z" fill="#FBBC05" />
           <circle cx="12" cy="12" r="4.65" fill="#4285F4" stroke="#fff" strokeWidth="1" />
         </svg>
-        <span>{paired ? 'Xroga Extension' : 'Install Xroga Extension'}</span>
+        <span>Extension</span>
       </summary>
       {!showConnection ? (
         <p className="absolute end-0 top-full z-10 mt-1.5 whitespace-nowrap rounded-md bg-background px-2.5 py-1.5 text-xs text-foreground shadow-md" role="status">

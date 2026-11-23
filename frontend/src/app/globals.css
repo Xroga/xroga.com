@@ -14947,7 +14947,13 @@ body.xv-sidebar-resizing .xv-terminal-dock {
 
 .xv-workspace-header-tools .xv-ws-launch:not(.xv-ws-launch--icon) { white-space: nowrap; }
 
-/* Project edits keeps its label. Other workspace actions use named icons. */
+/* Workspace controls use compact icons, with one short Extension label. */
+.xv-terminal-dock:not(.xv-terminal-dock--idle) {
+  translate: 0 calc(-1 * var(--xv-chatbar-popover-offset, 0px));
+}
+.xv-workspace-shell :is(h1,h2,h3) {
+  font-family: var(--font-geist-sans), Arial, sans-serif;
+}
 .xv-workspace-header-tools .xv-skin-trigger {
   width: 30px;
   height: 30px;

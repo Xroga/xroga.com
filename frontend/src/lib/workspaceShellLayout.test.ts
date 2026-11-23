@@ -202,9 +202,9 @@ test('the transcript renders chromeless inside the shell and framed everywhere e
 // The plus menu is part of the composer
 // ---------------------------------------------------------------------------
 
-test('the menu keeps a small deliberate gap above the composer', () => {
-  assert.match(MENU, /window\.innerHeight - rect\.top \+ 6/);
-  assert.match(MENU, /top: rect\.bottom \+ 6/);
+test('the menu keeps a small deliberate gap below the composer', () => {
+  assert.match(MENU, /useChatbarPopoverLayout/);
+  assert.match(read('../components/ui/useChatbarPopoverLayout.ts'), /const gap = 8, margin = 12/);
   assert.match(CSS, /\.xv-cba-menu\s*\{[\s\S]*?border-radius:\s*13px/);
   assert.doesNotMatch(MENU, /window\.innerHeight - rect\.top - 1/);
 });
@@ -212,28 +212,27 @@ test('the menu keeps a small deliberate gap above the composer', () => {
 test('the compact menu is aligned with its trigger within the viewport', () => {
   // The composer sets the vertical anchor and the trigger sets the horizontal anchor.
   assert.match(MENU, /className=\{cn\('xv-cba-root shrink-0', className\)\}/);
-  assert.match(MENU, /closest<HTMLElement>\('\.xv-chatbar-solid'\)/);
-  assert.match(MENU, /const frame = composer\.closest<HTMLElement>\('\.xv-kimi-composer-frame'\) \?\? composer/);
-  assert.match(MENU, /const left = Math\.max\(8, Math\.min\(trigger\.left, window\.innerWidth - width - 8\)\)/);
-  assert.match(MENU, /window\.innerHeight - rect\.top \+ 6/);
+  assert.match(MENU, /useChatbarPopoverLayout\(open, rootRef, menuRef, 344\)/);
+  const geometry = read('../components/ui/useChatbarPopoverLayout.ts');
+  assert.match(geometry, /closest<HTMLElement>\('\.xv-chatbar-solid'\)/);
+  assert.match(geometry, /closest<HTMLElement>\('\.xv-kimi-composer-frame'\)/);
 });
 
 test('opening the menu overlays the terminal instead of resizing anything', () => {
   assert.match(MENU, /createPortal\(/);
   assert.match(MENU, /document\.body/);
-  assert.match(MENU, /maxHeight:\s*Math\.min\(314, Math\.max\(130, rect\.top - 12\)\)/);
-  assert.match(MENU, /const width = Math\.min\(344, window\.innerWidth - 16\)/);
-  assert.match(MENU, /window\.addEventListener\('scroll', sync, \{ capture: true, passive: true \}\)/, 'the portal can detach while its dock scrolls');
+  assert.match(MENU, /position: 'fixed'/);
+  assert.match(MENU, /maxHeight: menuStyle\.maxHeight/);
+  const geometry = read('../components/ui/useChatbarPopoverLayout.ts');
+  assert.match(geometry, /window\.addEventListener\('scroll', reposition, true\)/, 'the portal can detach while its dock scrolls');
 });
 
-test('composer panels select the available side and remain viewport bounded on mobile', () => {
-  assert.match(MENU, /const idle = Boolean\(composer\.closest\('\.xv-terminal-dock--idle'\)\)/);
-  assert.match(MENU, /const available = window\.innerHeight - rect\.bottom - 16/);
-  assert.match(MENU, /setMenuStyle\(available >= 160 \?/);
-  assert.match(MENU, /position: 'fixed', left, top: rect\.bottom \+ 6/);
-  assert.match(MENU, /bottom: Math\.max\(8, window\.innerHeight - rect\.top \+ 6\)/);
-  assert.match(MENU, /const width = Math\.min\(344, window\.innerWidth - 16\)/);
-  assert.match(MENU, /maxHeight: Math\.max\(120, Math\.min\(314, rect\.top - 12\)\)/);
+test('composer panels share below-chatbar placement and remain viewport bounded on mobile', () => {
+  const geometry = read('../components/ui/useChatbarPopoverLayout.ts');
+  assert.match(geometry, /window\.visualViewport/);
+  assert.match(read('../components/ui/ChatBarPortalPopover.tsx'), /placement="bottom-start" belowChatbar/);
+  assert.match(read('../components/terminal/ProjectsQuickPopover.tsx'), /placement="bottom-start" belowChatbar/);
+  assert.match(read('../components/terminal/IntegrationsModal.tsx'), /placement="bottom-start" belowChatbar/);
   assert.match(MENU, /menuRef\.current\?\.contains\(target\)/);
 });
 

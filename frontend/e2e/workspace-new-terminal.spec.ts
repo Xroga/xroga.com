@@ -612,7 +612,7 @@ test(`extension trigger clears the heading and keeps capability cards reachable 
   expect(headingBox).not.toBeNull();
   expect(extensionBox!.y + extensionBox!.height + 10).toBeLessThanOrEqual(headingBox!.y);
 
-  const guidance = page.getByText('Type or speak in your native language, and the right tools handle the work automatically.', { exact: true });
+  const guidance = page.getByText(viewport.width < 640 ? 'Type or speak your language. Xroga does the work.' : 'Type or speak in your native language, and the right tools handle the work automatically.', { exact: true });
   await expect(guidance).toBeVisible({ timeout: 4_000 });
   expect(await guidance.evaluate(element => {
     const range = document.createRange();

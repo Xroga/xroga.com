@@ -110,8 +110,8 @@ test('the compact plus menu stays within the viewport', () => {
 
   // The compact portalled picker stays in a single column.
   const controls = readFileSync(new URL('../components/terminal/WorkspaceControls.module.css', import.meta.url), 'utf8');
-  assert.match(MENU, /const width = Math\.min\(344, window\.innerWidth - 16\)/);
-  assert.match(MENU, /const left = Math\.max\(8, Math\.min\(trigger\.left, window\.innerWidth - width - 8\)\)/);
+  assert.match(MENU, /useChatbarPopoverLayout\(open, rootRef, menuRef, 344\)/);
+  assert.match(MENU, /left: menuStyle\.left/);
   assert.match(MENU, /'--xv-actions-width': `\$\{menuStyle\.width\}px`/);
   assert.match(controls, /\.actions\.actions\s*\{[^}]*width: var\(--xv-actions-width\) !important;[^}]*max-width: calc\(100vw - 16px\) !important/);
   assert.match(controls, /\.actions\.actions :global\(\.xv-cba-grid\)\s*\{[^}]*grid-template-columns: 1fr/);

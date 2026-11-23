@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useChatbarPopoverLayout } from '@/components/ui/useChatbarPopoverLayout';
 import { ArrowUpRight, Bot, Bug, Check, ChevronRight, Command, FolderOpen, Globe2, Library, ListChecks, Paperclip, Plus, Puzzle, ScrollText, Sparkles, TerminalSquare, Workflow, X } from 'lucide-react';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { CirclePlayIcon } from '@/components/icons/animated/CirclePlayIcon';
@@ -104,7 +105,7 @@ export function ChatBarActionsMenu({
   const activeWork = WORK_OPTIONS.find(item => item.id === workId) ?? WORK_OPTIONS[0];
   const rootRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
+  const menuStyle = useChatbarPopoverLayout(open, rootRef, menuRef, 344);
 
   const preferences = useComposerToolsStore((s) => s.preferences);
   const setPreferences = useComposerToolsStore((s) => s.setPreferences);
@@ -151,53 +152,6 @@ export function ChatBarActionsMenu({
     return () => window.cancelAnimationFrame(frame);
   }, [open, panel]);
 
-  useLayoutEffect(() => {
-    if (!open) return;
-    const sync = () => {
-      const composer = rootRef.current?.closest<HTMLElement>('.xv-chatbar-solid');
-      if (!composer) return;
-      const frame = composer.closest<HTMLElement>('.xv-kimi-composer-frame') ?? composer;
-      const rect = frame.getBoundingClientRect();
-      const trigger = rootRef.current?.getBoundingClientRect() ?? rect;
-      const width = Math.min(344, window.innerWidth - 16);
-      const left = Math.max(8, Math.min(trigger.left, window.innerWidth - width - 8));
-      const idle = Boolean(composer.closest('.xv-terminal-dock--idle'));
-      if (idle) {
-        const available = window.innerHeight - rect.bottom - 16;
-        setMenuStyle(available >= 160 ? {
-          position: 'fixed', left, top: rect.bottom + 6,
-          bottom: 'auto', width,
-          maxHeight: Math.max(120, Math.min(314, available)),
-        } : {
-          position: 'fixed', left, top: 'auto',
-          bottom: Math.max(8, window.innerHeight - rect.top + 6), width,
-          maxHeight: Math.max(120, Math.min(314, rect.top - 12)),
-        });
-        return;
-      }
-      setMenuStyle({
-        position: 'fixed', left, top: 'auto',
-        bottom: Math.max(8, window.innerHeight - rect.top + 6),
-        width,
-        maxHeight: Math.min(314, Math.max(130, rect.top - 12)),
-      });
-    };
-    sync();
-    window.addEventListener('resize', sync);
-    // The menu is portalled to the document body. Any ancestor can scroll while the
-    // composer moves underneath it, so keep the portal aligned on captured scrolls
-    // as well as viewport resizes. This is what makes it remain attached to the
-    // composer's upper edge inside the idle workspace scroller.
-    window.addEventListener('scroll', sync, { capture: true, passive: true });
-    window.visualViewport?.addEventListener('resize', sync);
-    window.visualViewport?.addEventListener('scroll', sync, { passive: true });
-    return () => {
-      window.removeEventListener('resize', sync);
-      window.removeEventListener('scroll', sync, true);
-      window.visualViewport?.removeEventListener('resize', sync);
-      window.visualViewport?.removeEventListener('scroll', sync);
-    };
-  }, [open, panel]);
 
   // Always reopen on the menu — landing back inside the rules editor after a close
   // is disorienting when the trigger looks like a single generic button.
@@ -235,7 +189,7 @@ export function ChatBarActionsMenu({
       </button>
 
       {open && typeof document !== 'undefined' ? createPortal(
-        <div ref={menuRef} className={cn('xv-cba-menu', controls.actions)} role="dialog" aria-label="Composer actions" style={{ ...menuStyle, '--xv-actions-width': `${menuStyle.width}px` } as React.CSSProperties}>
+        <div ref={menuRef} className={cn('xv-cba-menu', controls.actions)} role="dialog" aria-label="Composer actions" data-chatbar-popover="true" style={{ position: 'fixed', left: menuStyle.left, top: menuStyle.top, width: menuStyle.width, maxHeight: menuStyle.maxHeight, overflowY: 'auto', overscrollBehavior: 'contain', zIndex: 10000, '--xv-actions-width': `${menuStyle.width}px` } as React.CSSProperties}>
           {panel === 'menu' && (
             <div className="xv-cba-grid">
               {recentTerminal && (

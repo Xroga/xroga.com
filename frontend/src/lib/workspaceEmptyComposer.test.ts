@@ -350,13 +350,13 @@ test('the top scroll fade stays inside the conversation pane, never on the toolb
   assert.match(POLISH, /\.transcriptFade\[data-scrolled='true'\]\s*\{ opacity: 1; \}/);
 });
 
-test('Chrome extension control overlays only its own corner and does not add a transcript row', () => {
+test('Chrome extension control sits inline in the workspace header and does not add a transcript row', () => {
   const POLISH = read('../components/dashboard/WorkspaceScrollPolish.module.css');
   const OPERATOR = read('../components/browser/WorkspaceBrowserOperator.tsx');
   assert.match(DASHBOARD, /<header[\s\S]*?className=\{scrollPolish\.browserControl\}>\{browserOperator\}[\s\S]*?<\/header>/);
   assert.doesNotMatch(DASHBOARD, /<\/header>\s*\{browserOperator\}/);
-  assert.match(POLISH, /\.browserControl\s*\{[^}]*position:\s*absolute/);
-  assert.match(OPERATOR, /Install Xroga Extension/);
+  assert.match(POLISH, /\.browserControl\s*\{[^}]*position:\s*relative/);
+  assert.match(OPERATOR, /<span>Extension<\/span>/);
   assert.match(OPERATOR, /supported local browser automation tasks/);
   assert.match(OPERATOR, /!showConnection[\s\S]*?Coming soon/);
   assert.doesNotMatch(OPERATOR, /chromewebstore\.google\.com|Connect from the Xroga side panel in Chrome\./);
@@ -746,7 +746,8 @@ test('new terminal renders theme-aware readable cards without black-hole artwork
   assert.match(START, /<CapabilityVisual id=\{card.id\}/);
   assert.doesNotMatch(START, /cardImage|1536/);
   assert.doesNotMatch(DASHBOARD, /BetaExpectationBanner/);
-  assert.match(START_CSS, /background-clip: text/);
+  assert.doesNotMatch(START_CSS, /background-clip: text/);
+  assert.match(START_CSS, /\.superIntelligence[^}]*color: var\(--foreground\)/);
   assert.deepEqual([...START.matchAll(/id: '([^']+)'/g)].map(match => match[1]),
     ['create', 'find', 'build', 'ship', 'workflows', 'scheduled-tasks', 'employees', 'work-packs', 'browser-automation', 'apps-mcp']);
   assert.match(START_CSS, /background: var\(--terminal-ui-surface\) !important/);

@@ -1,0 +1,136 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-CHATBAR-POPOVERS-20261123",
+  "baseSha": "460513c24b1376d6a5bd6a5c9a6f329f773fa591",
+  "requirementIds": [
+    "XR-MISSION-055",
+    "XR-MISSION-056"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "low",
+  "scope": "Shorter larger mobile guidance, centered smoothly rotating headline endings, compact inline Extension and project-edit icons, readable workspace headings, and shadow-free chatbar menus below the composer within the visible viewport.",
+  "changedFiles": [
+    "frontend/e2e/workspace-new-terminal.spec.ts",
+    "frontend/src/app/globals.css",
+    "frontend/src/components/automations/automations.module.css",
+    "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+    "frontend/src/components/dashboard/DashboardView.tsx",
+    "frontend/src/components/dashboard/WorkspaceNewTerminal.module.css",
+    "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
+    "frontend/src/components/dashboard/WorkspaceScrollPolish.module.css",
+    "frontend/src/components/icons/animated/animatedIcons.test.ts",
+    "frontend/src/components/terminal/ChatBarActionsMenu.tsx",
+    "frontend/src/components/terminal/IntegrationsModal.tsx",
+    "frontend/src/components/terminal/PluginsMenu.module.css",
+    "frontend/src/components/terminal/ProjectsQuickPopover.module.css",
+    "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
+    "frontend/src/components/terminal/WorkspaceControls.module.css",
+    "frontend/src/components/terminal/WorkspaceLauncher.tsx",
+    "frontend/src/components/ui/AnchoredPortalPopover.tsx",
+    "frontend/src/components/ui/ChatBarPortalPopover.tsx",
+    "frontend/src/lib/chatbarCompactMenus.test.ts",
+    "frontend/src/lib/workspaceComposerPolish20261021.test.ts",
+    "frontend/src/lib/workspaceEmptyComposer.test.ts",
+    "frontend/src/lib/workspaceFullscreen.test.ts",
+    "frontend/src/lib/workspaceMobileToolbar20261103.test.ts",
+    "frontend/src/lib/workspaceShellLayout.test.ts",
+    "frontend/src/lib/workspaceToolpicker20261021.test.ts",
+    "frontend/src/components/ui/useChatbarPopoverLayout.ts",
+    "frontend/src/lib/chatbarPopoverLayout.test.ts"
+  ],
+  "decisions": {
+    "keep": [
+      "Original headline wording, model approval boundary, project and app handlers, backend-sourced usage and permissions"
+    ],
+    "extend": [
+      "Shared viewport geometry and mobile keyboard bounds, accessible icon labels, smooth measured word width"
+    ],
+    "replace": [
+      "Mobile guidance with Type or speak your language. Xroga does the work.",
+      "Floating extension row with a header Extension control",
+      "Preferred above-chatbar menus with bounded menus below the composer",
+      "Serif/gradient workspace headings with clear sans-serif headings"
+    ],
+    "deprecate": []
+  },
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Extend the existing body portal and chatbar controls; no execution or backend changes.",
+    "rfc": null
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "Frontend presentation only.",
+    "rollback": "Restore the prior verified frontend deployment; no data change."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "No authority, data, provider or configuration changes; presentation only."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No authority, data, provider or configuration changes; presentation only."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No authority, data, provider or configuration changes; presentation only."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No authority, data, provider or configuration changes; presentation only."
+    },
+    "egress": {
+      "changed": false,
+      "description": "No authority, data, provider or configuration changes; presentation only."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No authority, data, provider or configuration changes; presentation only."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No authority, data, provider or configuration changes; presentation only."
+    }
+  },
+  "tests": [
+    {
+      "command": "npm run test:frontend",
+      "scope": "Existing frontend regression plus meaningful idle, bottom-docked and mobile-keyboard popup geometry cases.",
+      "negative": true,
+      "reference": "frontend/src/lib/chatbarPopoverLayout.test.ts"
+    },
+    {
+      "command": "npm run lint --workspace=frontend and Vercel source-pinned build",
+      "scope": "Lint and production type/build checks.",
+      "negative": false,
+      "reference": "frontend/src/components/ui/useChatbarPopoverLayout.ts"
+    },
+    {
+      "command": "Read-only Playwright deployment audit",
+      "scope": "320,360,390,768,1440px: visible compact header, larger one-line mobile guidance, centered word transitions, below-chatbar bounded shadow-free menus and preserved actions.",
+      "negative": true,
+      "reference": "docs/xroga/evidence/workspace-chatbar-popovers-20261123.md"
+    }
+  ],
+  "rollout": "Stage exact source, verify the actual deployment and then promote under the user's explicit xroga.com release request. Automatic main activation hold remains in place.",
+  "rollback": "Restore dpl_F468UhXs78D5ostgfRQzxWKZi8gp, verified release ca6ef0ac5ca7c3b9e24a9e026bd95e355766ba2e. No schema changes.",
+  "knownGaps": [],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "docs/xroga/evidence/workspace-chatbar-popovers-20261123.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Complete updated regression, lint, production build and staged browser acceptance before promotion."
+    ],
+    "authenticatedE2e": "NOT_APPLICABLE",
+    "stagedSecurity": "NOT_APPLICABLE",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

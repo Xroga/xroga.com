@@ -40,7 +40,8 @@ test('restored animated headline and delayed second line honor motion preference
   assert.match(header, /3400/);
   assert.match(header, /setTimeout\(\(\) => setShowDetail\(true\), 2200\)/);
   assert.match(header, /prefers-reduced-motion: reduce/);
-  assert.match(css, /filter: blur\(8px\)/);
+  assert.match(css, /animation: wordReveal 550ms/);
+  assert.doesNotMatch(css, /filter: blur\(8px\)/);
   assert.match(css, /scrollbar-width: none/);
   assert.match(sidebar, /Overview/);
 });

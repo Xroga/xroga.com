@@ -1,4 +1,4 @@
-.menu { color:var(--foreground); background:var(--surface-raised); border:1px solid var(--card-border); border-radius:15px; box-shadow:0 18px 46px #0008; overflow:hidden; }
+.menu { color:var(--foreground); background:var(--surface-raised); border:1px solid var(--card-border); border-radius:15px; box-shadow:none; overflow:hidden; }
 .panel { padding:11px; max-height:min(470px,calc(100dvh - 24px)); display:flex; flex-direction:column; font:12px/1.4 Arial,sans-serif; }
 .header { display:flex; justify-content:space-between; align-items:center; padding:1px 2px 10px; font-size:13px; }
 .header>span { display:flex; align-items:center; gap:8px; }

@@ -2,12 +2,14 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
-test('Project edits keeps its label and mobile icon hosts are visible', () => {
+test('Project edits keeps its accessible name and shows only its visible icon', () => {
   const css = readFileSync(new URL('../app/globals.css', import.meta.url), 'utf8');
   assert.doesNotMatch(css, /\.xv-workspace-header-tools \.xv-ws-launch span \{ display: none !important; \}/);
   assert.doesNotMatch(css, /\.xv-workspace-header-tools \.xv-ws-launch > span:not\(\.xv-animated-icon-host\) \{ display: none !important; \}/);
   assert.match(css, /\.xv-workspace-header-tools button > \.xv-animated-icon-host \{ display: inline-flex !important; \}/);
-  assert.match(readFileSync(new URL('../components/terminal/WorkspaceLauncher.tsx', import.meta.url), 'utf8'), /<span>Project edits<\/span>/);
+  const launcher = readFileSync(new URL('../components/terminal/WorkspaceLauncher.tsx', import.meta.url), 'utf8');
+  assert.match(launcher, /aria-label=\{workspaceOpen \? 'Close project edits' : 'Open project edits'\}/);
+  assert.doesNotMatch(launcher, /<span>Project edits<\/span>/);
 });
 
 test('workspace Share, Team and Skin are named, borderless icon actions at every width', () => {

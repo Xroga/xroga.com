@@ -34,7 +34,7 @@ test('starter details require activation and keep explicit Back and editable dra
 });
 
 test('popovers are clamped, fully opaque and accessible to small screens', () => {
-  assert.match(shell, /maxHeight: 'calc\(100dvh - 24px\)'/);
+  assert.match(shell, /maxHeight: belowChatbar \? chatbarLayout\.maxHeight : 'calc\(100dvh - 24px\)'/);
   assert.match(shell, /availableAbove/);
   assert.match(sidebar, /overviewIconRef.current\?\.startAnimation\(\)/);
   assert.match(profile, /navigator.clipboard.writeText\(email\)/);
