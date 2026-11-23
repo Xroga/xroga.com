@@ -4364,7 +4364,7 @@
     {
       "id": "90c62dd04b83e45e1c68",
       "callSha256": "f2de81a8a454b092ec31470bbf964af50c74badbf8644e61fba47ff760f8013b",
-      "sourceFileSha256": "d82e36ffb0db1641aa6581737bd3f32b8913d7a78a735542e75163e7ac766c51",
+      "sourceFileSha256": "f095255885a8740c93c4117030e99f54467850fe3ae5f8684b3277c32af6c1b0",
       "disposition": "VERIFIED_GUARD",
       "trust": "EXACT_APPROVED_CREDENTIAL_FREE_DNS_PINNED_DOCUMENT_READ_NO_DELEGATED_FETCH",
       "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
@@ -4988,7 +4988,7 @@
     {
       "id": "5ed2120bbd7466d4c21f",
       "callSha256": "f323d37a5dd047fc05a6eb968a20c026894786cf8f16a103bdfe65cc3c60975f",
-      "sourceFileSha256": "d82e36ffb0db1641aa6581737bd3f32b8913d7a78a735542e75163e7ac766c51",
+      "sourceFileSha256": "f095255885a8740c93c4117030e99f54467850fe3ae5f8684b3277c32af6c1b0",
       "disposition": "VERIFIED_GUARD",
       "trust": "SCOPED_CREDENTIAL_FREE_PUBLISHER_GET_WITH_DNS_PIN_NO_REDIRECTS",
       "tenantAuthority": "OWNER_PUBLIC_READ_WITH_PERSISTED_EGRESS_DECISION_AND_PUBLISHER_SCOPE. ONLY_PUBLIC_URL_IS_SENT. CONTENT_STAYS_UNTRUSTED.",
@@ -4996,7 +4996,7 @@
         {
           "path": "backend/src/ai/parallelApproval.ts",
           "marker": "purpose: 'workspace-publisher-publication-verification'",
-          "sha256": "d82e36ffb0db1641aa6581737bd3f32b8913d7a78a735542e75163e7ac766c51"
+          "sha256": "f095255885a8740c93c4117030e99f54467850fe3ae5f8684b3277c32af6c1b0"
         },
         {
           "path": "backend/src/ai/researchPublicationEvidence.ts",

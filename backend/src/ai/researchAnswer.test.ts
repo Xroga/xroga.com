@@ -541,6 +541,55 @@ test('one exact research approval completes its original rich answer, saves evid
  assert.doesNotMatch(JSON.stringify(published),/Review action|Confirm action|settled_micro_usd|provider_request_id/i);
  assert.equal(searches,15);assert.equal(models,12);
  assert.equal(confirmation.row,lastConfirmation);
+
+ const tripPrompt = 'plan my usa  trip to  dubai  tell me all costs which services are good';
+ const publicWebQuery = 'USA trip to Dubai costs services';
+ expectedPublicQuery = /^USA trip to Dubai costs services$/u;
+ const trip = await runChatPipeline({
+  ...withPublicPrompt(tripPrompt),
+  goalContract:goalContractSchema.parse({...currentGoal,requiredCapabilities:['research.public-web','conversation.respond'],
+    semanticIntent:'PROPOSE',freshnessRequirement:'CURRENT_REQUIRED',publicWebQuery}),
+ });
+ const publicTrip = publicWorkspaceResearchAnswer(trip);
+ assert.equal(trip.publicWebRetrieved,true);
+ assert.match(publicTrip.response,/https:\/\/example\.com\/docs/);
+ assert.doesNotMatch(JSON.stringify(publicTrip),/Review action|Confirm action|settled_micro_usd|provider_request_id/i);
+ assert.equal(searches,16);assert.equal(models,13);
+ assert.equal(confirmation.row,lastConfirmation);
+});
+
+test('public topics work across subjects without screening out individual words', () => {
+ for (const [prompt, topic] of [
+  ['plan my usa  trip to  dubai  tell me all costs which services are good', 'USA trip to Dubai costs services'],
+  ['Compare heat pumps for our budget and find prices for a typical UK installation.', 'heat pumps prices UK installation'],
+  ['Find published invoicing software prices for my company.', 'published invoicing software prices'],
+  ['Research which extensions work in Firefox Private Browsing mode.', 'extensions Firefox Private Browsing mode'],
+  ['Find the official documentation for internal links in Hugo.', 'official documentation internal links Hugo'],
+  ['Search the web for public cryptography guidance about secret sharing schemes.', 'public cryptography secret sharing schemes'],
+  ['Find public UK guidance on reporting spam phone numbers.', 'UK guidance reporting spam phone numbers'],
+  ['मेरी टोक्यो यात्रा की योजना के लिए सार्वजनिक रेल किराया खोजें।', 'टोक्यो सार्वजनिक रेल किराया'],
+ ]) {
+  assert.equal(hasNonPublicSearchTerms(prompt), false, prompt);
+  assert.deepEqual(workspacePublicSearchQuery(prompt,false,topic), { query:topic, officialDomains:[] }, prompt);
+ }
+});
+
+test('a planner query cannot export context or override an explicit source constraint', () => {
+ const prompt = 'Compare trail running shoes with published prices.';
+ for (const ungrounded of ['trail running shoes WORKSPACE_INTERNAL_CONTEXT', 'trail running shoes site:example.org', 'trail running shoes $300']) {
+  assert.deepEqual(workspacePublicSearchQuery(prompt,false,ungrounded), workspacePublicSearchQuery(prompt));
+ }
+ for (const [request, topic] of [
+  ['Search my inbox for hotel prices in Dubai.', 'hotel prices Dubai'],
+  ['Compare this booking reference YZQTSP with historical rates.', 'historical rates'],
+  ['Compare the attached client records for inflation estimates.', 'inflation estimates'],
+  ['Research public airline fares. Do not browse.', 'airline fares'],
+ ]) assert.equal(workspacePublicSearchQuery(request,false,topic),undefined,request);
+
+ const official = 'Using only official W3C sources, find the WCAG 2.2 criteria.';
+ assert.deepEqual(workspacePublicSearchQuery(official,true,'WCAG 2.2 criteria'), {
+  query:'WCAG 2.2 criteria site:w3.org', officialDomains:['w3.org'],
+ });
 });
 
 test('automatic Search eligibility uses the literal public topic and declines ambiguous or private requests',()=>{

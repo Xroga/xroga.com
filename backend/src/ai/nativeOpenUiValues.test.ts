@@ -176,6 +176,29 @@ test('readout validation checks the result of percentage equations separately fr
   assert.deepEqual(mixed.completion, { status: 'partial', reason: 'data_review' });
 });
 
+test('reconciles an explicit result sentence without altering surrounding explanation', () => {
+  const native = [
+    'root = Col([Markdown(_xroga_answer), controls, Metric("Projected balance", @Format(balance, "currency", 2, "USD")), Metric("Interest earned", @Format(balance - $principal, "currency", 2, "USD")), chart])',
+    '$principal = 12500', '$rate = 4', '$years = 3',
+    'balance = $principal * @Pow(1 + $rate / 100, $years)',
+    'controls = Controls([Input($principal, "Principal (USD)", "number"), Input($rate, "Annual rate", "number"), Input($years, "Years", "number"), Button("Reset inputs", @Reset($principal, $rate, $years))], "Compound interest inputs")',
+    'chart = Chart("bar", [{component:"Principal",usd:$principal},{component:"Interest earned",usd:balance - $principal}], "component", ["usd"], "currency", "USD")',
+  ].join('\n');
+  const prose = 'Interest compounds annually. The projected balance is **$14,066.80**. No deposits are included.\n\n'
+    + 'For example, a different principal can yield a lower balance. The projected balance is $2,000.00.';
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + native,
+    'stop', undefined, undefined, undefined, ['calculator', 'chart']);
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  assert.match(answer.response, /Interest compounds annually\. The projected balance is \*\*\$14,060\.80\*\*\. No deposits are included\./);
+  assert.match(answer.response, /The projected balance is \$2,000\.00\./);
+  assert.doesNotMatch(answer.response + answer.responseSource.text, /14,066\.80/);
+  assert.match(answer.response, /\| Interest earned \| \$1,560\.80 \|/);
+  assert.match(answer.responseSource.text, /@Reset\(\$principal, \$rate, \$years\)/);
+  const shared = readNativeOpenUiShare(buildNativeOpenUiShare(answer.response, answer.responseSource.text)!);
+  assert.equal(shared?.text, answer.response);
+  assert.equal(shared?.program, answer.responseSource.text);
+});
+
 test('sensitivity and boundary examples do not conflict with the selected calculator result', () => {
   const rows = [{ label: 'Interest', value: '$1,500.00' }, { label: 'Total balance', value: '$11,500.00' }];
   const examples = [

@@ -201,6 +201,8 @@ export const goalContractSchema =
         officialDomains: [],
       }),
 
+    publicWebQuery: z.string().trim().min(1).max(128).optional(),
+
     previewRequirement:
   z
     .enum([
@@ -313,6 +315,7 @@ const GOAL_KEYS =
     'requiredAuthorities',
     'freshnessRequirement',
     'sourcePolicy',
+    'publicWebQuery',
     'previewRequirement',
     'publicationRequirement',
     'deploymentRequirement',
@@ -759,6 +762,10 @@ export function normalizePlannerDecisionCandidate(
             .officialDomains,
         ),
     },
+
+    ...(typeof decision.publicWebQuery === 'string'
+      && decision.publicWebQuery.trim().length > 0 && decision.publicWebQuery.trim().length <= 128
+      ? { publicWebQuery: decision.publicWebQuery.trim() } : {}),
 
     previewRequirement:
       explicitPreviewRequirement ===

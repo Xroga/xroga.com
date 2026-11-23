@@ -537,7 +537,8 @@ export async function runWebIntelligence(
       ? await executeWorkspacePublicSearch({
           context: requireTenantContext(input.dispatchScope?.context),
           userId: input.userId, connectedAccountId: 'platform',
-        }, prompt, decision.sourcePolicy === 'official_only', signal)
+        }, prompt, decision.sourcePolicy === 'official_only', signal,
+        input.dispatchScope?.researchAnswer?.goalContract?.publicWebQuery)
       : undefined;
     if (!automatic) {
       return { action: decision.action, evidence: '', bundle: null, sourceCount: 0,

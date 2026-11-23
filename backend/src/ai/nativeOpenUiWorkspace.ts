@@ -2,7 +2,7 @@ import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, missingNativeFormats, recoverNativeWorkspaceProgram, recoverNativeMonthlyChart, recoverTruncatedNativeWorkspaceProgram, splitNativeOpenUiAnswer, supplementNativeProse, validateNativeWorkspaceProgram, type NativeUiDiagnostic, type NativeUiValidation, type RequiredNativeFormat } from './nativeOpenUi.js';
 import { nativeAnswerReviewReason, nativeFactualGuidance, nativeTechnicalCorrections, repairNativePlainAnswer, retainReviewedTechnicalProse, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import { checklistFromProse, requestsEditableChecklist, suppliedPeriodicSeries } from './nativeOpenUiRecovery.js';
-import { conflictingNativeReadouts, correctStandaloneCurrencyReadouts, initialNativeReadouts, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
+import { conflictingNativeReadouts, correctExplicitCurrencyReadouts, initialNativeReadouts, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
 import { recoverNativeReadoutExplanations } from './nativeOpenUi.js';
 import { bindNativeAnswerText, removeRepeatedCalculatorFormulas } from './nativeOpenUi.js';
 import { reviewEditorialProse } from './nativeOpenUiEditorial.js';
@@ -229,7 +229,7 @@ export function completeNativeWorkspaceAnswer(
   if (valid && (conflictingNativeReadouts(response, readouts).length ||
       multipleConflict || (readouts.length && conflictingNativeReadouts(supplementNativeProse('', program, true), readouts).length))) {
     if (!multipleConflict && !repair?.partial && !missing.length && requiredFormats.includes('calculator')) {
-      const correctedProse = correctStandaloneCurrencyReadouts(response, initialNativeReadouts(program, true));
+      const correctedProse = correctExplicitCurrencyReadouts(response, initialNativeReadouts(program, true));
       // A bound Markdown component must carry the same correction into the
       // interactive answer. Independently authored content still has to pass.
       const binding = '\n_xroga_answer = ' + JSON.stringify(response);

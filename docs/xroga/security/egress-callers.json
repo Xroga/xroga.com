@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "b887066811ede82938022df62ab6844618bca7379ad45fc29ca6e9a29d7714ee",
+  "sourceTreeDigest": "d7795d8f431e267e4c1a1598b1f834a31875ad85cd3371571bd4860154c2d21e",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -212,7 +212,7 @@
         {
           "path": "backend/src/ai/parallelApproval.ts",
           "marker": "purpose: 'workspace-publisher-publication-verification'",
-          "sha256": "d82e36ffb0db1641aa6581737bd3f32b8913d7a78a735542e75163e7ac766c51"
+          "sha256": "f095255885a8740c93c4117030e99f54467850fe3ae5f8684b3277c32af6c1b0"
         },
         {
           "path": "backend/src/ai/researchPublicationEvidence.ts",

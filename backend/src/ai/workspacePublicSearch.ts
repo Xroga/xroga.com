@@ -6,11 +6,22 @@ import { DEEPSEEK_QUERY_MAX } from './researchSearchProvider.js';
 const publicOfficeLookup = /^who\s+(?:is|was)\s+(?:the\s+)?(?:current\s+)?(?:president|prime minister|governor|mayor|chief executive officer|ceo)\s+of\s+\p{L}[\p{L}\p{M} .,'’-]{1,75}[?!]?$/iu;
 const publicInstitutionLeadership = /^[Ww]ho (?:currently )?(?:leads|heads) (?:the )?[A-Z][A-Z0-9]{1,15}[?!]?$/u;
 const publicSourceLookup = /\b(?:summari[sz]e|check|compare|find|cite|link)\b[^.!?;]{0,90}\b(?:dated |recent |current )?public sources?\b/iu;
-const privateOrContextual = /\b(?:my|our|your|mine(?!\s+(?:production|output)\b)|ours|private|confidential|proprietary|internal|secret|password|token|credentials?|non[- ]?public|unpublished|unreleased|attached|upload(?:ed)?|above|screenshot|spreadsheet|inbox|mailbox|date of birth|home address|social security|passport|do not share|(?:this|current|selected|active)\s+(?:project|repository|repo|workspace)|(?:as|we) discussed|earlier (?:chat|message)|(?:customer|client|patient|employee|account|order|tracking) (?:data|records?|details|list|names?|notes|numbers?|ids?|addresses?))\b/iu;
-const privateDiscoveryContext = /\b(?:crm|(?:these|those)\s+(?:compan(?:y|ies)|providers|vendors|customers)|(?:the\s+)?previous\s+(?:answer|message|conversation)|customer\s+(?:names?|information)|nuest(?:ro|ra|ros|ras)|confidencial|privad[oa]s?|intern[oa]s?|adjunt[oa]s?|notre|confidentiel\w*|privé\w*|internes?|unser\w*)\b|بياناتنا|الداخلية|سري(?:ة)?|ملفاتي|ملفنا|المرفق|حسابي|ہماری|میرے|خفیہ|اندرونی|हमार[ाेी]|मेरे|मेरी|गोपनीय|आंतरिक|संलग्न|我的|我们的|内部|机密|客户名单|附件/iu;
-const personalLookup = /\b(?:who (?:is|was)|contact (?:info(?:rmation)?|details)|phone numbers?|email addresses?|personal (?:info(?:rmation)?|details|records?)|background checks?|where (?:does|did) .+ (?:live|work))\b/iu;
+// Check references to a data source or to an identifier. Possessives and
+// words such as "private", "internal" and "secret" also describe public topics.
+const privateSourceReferences = [
+  /\b(?:my|our|your)\s+(?:(?:latest|current|private|confidential|internal|unpublished)\s+){0,3}(?:crm|inbox|mailbox|account|client account|subscription list|acquisition target|draft|notes|files?|records?|policy|audits?|credentials?|bookings?|reservations?)\b/iu,
+  /\b(?:my|our|your)\s+(?:private|confidential|internal|unpublished)\s+(?:compan(?:y|ies)|(?:client|customer|patient|employee|vendor)s?)\b|\b(?:leads|heads|(?:president|chief executive officer|ceo) of)\s+(?:my|our|your)\s+company\b/iu,
+  /\b(?:from|using|include|compare (?:it )?with)\s+(?:(?:the|my|our|your)\s+)?(?:attached|uploaded|confidential) (?:[\p{L}-]+ ){0,2}(?:files?|documents?|spreadsheets?|lists?|photos?|screenshots?|notes|records?|audits?)\b/iu,
+  /\b(?:the )?(?:attached|uploaded)\s+(?:[\p{L}-]+ ){0,2}(?:files?|documents?|spreadsheets?|photos?|screenshots?|notes|audits?|customer names|client records)\b|\b(?:use|include|from|against)\s+(?:the|my|our|your)\s+(?:itinerary|inbox|mailbox|crm)\b/iu,
+  /\b(?:this|current|selected|active)\s+(?:project|repository|repo|workspace)\b|\b(?:this|that)\s+(?:private|internal|confidential)\s+(?:crm|files?|documents?|records?|notes?|lists?|audits?)\b|\b(?:as|we) discussed\b|\b(?:earlier|previous) (?:chat|message|answer|conversation)\b|\b(?:these|those)\s+(?:compan(?:y|ies)|providers|vendors|customers)\b/iu,
+  /\b(?:customer|client|patient|employee|booking|reservation|account|order|tracking|passport|loyalty) (?:data|records?|details|list|names?|notes|numbers?|codes?|references?|ids?|addresses?)\b|\b(?:date of birth|home address|social security|do not share)\b|(?:'s|’s)\s+(?:address|phone|email)\b/iu,
+  /\b(?:nuest(?:ro|ra|ros|ras)|notre|unser\w*)\s+(?:archiv[oa]s?|données|daten|crm|dossier|fichiers?|dateien)\b|بياناتنا\s+الداخلية|ملفاتي|ملفنا|حسابي|ہماری\s+فائل|मेरी\s+फ़ाइल|我们的(?:内部|客户|账户)|客户名单/iu,
+];
+const personalLookup = /\b(?:personal (?:info(?:rmation)?|details|records?|phone|email|address)|background checks? (?:on|for)|where (?:does|did) .+ (?:live|work)|who (?:is|was) .+ (?:currently )?working for)\b/iu;
 const specificIdentityOrUrl = /(?:\b[a-z][a-z\d+.-]*:\/\/|(?:\p{N}[ ().-]*){7,})/iu;
 const rawSearchOperator = /(?:^|\s)-?(?:site|url|inurl|cache|link|related):/iu;
+const searchText = /^[\p{L}\p{M}\p{N}\p{Sc} ,.'’!?()&–—،؟。？！、।॥:+"“”%#-]+$/u;
+const topicWords = /\p{Sc}?[\p{L}\p{M}\p{N}][\p{L}\p{M}\p{N}.'’+#%-]*/gu;
 const bareDomain = /(?<![\p{L}\p{N}.-])(?:[a-z\d](?:[a-z\d-]{0,61}[a-z\d])?\.)+[a-z]{2,63}(?![\p{L}\p{N}-]|\.[\p{L}\p{N}])/giu;
 // These public software names are also syntactically valid hostnames. Treat
 // them as product names only when the turn asks about software releases/docs.
@@ -116,18 +127,34 @@ function publicOfficeTopic(prompt: string): string | undefined {
   if (publicOfficeLookup.test(topic) || publicInstitutionLeadership.test(topic)) return topic;
 }
 
+/** The planner may select terms only from the current user message. Treat
+ * round-tripped plan data as a hint, including when returned by our planner. */
+function projectedPublicTopic(query: string | undefined, message: string) {
+  if (!query) return;
+  const topic = query.trim().replace(/\s+/gu, ' ');
+  if ([...topic].length > DEEPSEEK_QUERY_MAX || !searchText.test(topic)
+    || specificIdentityOrUrl.test(topic) || rawSearchOperator.test(topic)
+    || hasNonPublicSearchTerms(topic) || explicitlyDisablesResearch(topic)) return;
+  const words = (text: string) => (text.toLowerCase().match(topicWords) ?? []).map(word => word.replace(/\.+$/u, ''));
+  const supplied = new Set(words(message));
+  const selected = words(topic);
+  if (selected.length && selected.every(word => supplied.has(word))) return topic;
+}
+
 /** Public lookup terms must be self-contained and safe to send to Search. */
 export function hasNonPublicSearchTerms(prompt: string): boolean {
   const request = prompt.trim().replace(/\s+/gu, ' ').replace(citationFooter, '').replace(presentationInstruction, '');
   const office = publicOfficeTopic(request);
-  return containsCredentialSecretText(prompt) || privateOrContextual.test(request)
-    || privateDiscoveryContext.test(request) || privateTopicLookup.test(request)
-    || personalLookup.test(office ? request.slice(office.length) : request);
+  const remaining = office ? request.slice(office.length).trim() : request;
+  const followupIdentity = office && /^who (?:is|was)\s+(.+?)[?!.]*$/i.exec(remaining);
+  return containsCredentialSecretText(prompt) || privateSourceReferences.some(reference => reference.test(request))
+    || privateTopicLookup.test(request) || personalLookup.test(remaining)
+    || Boolean(followupIdentity && isAmbiguousPersonalLookup(followupIdentity[1]));
 }
 
 /** Project the typed turn after Workspace selects public Search. This owns the
  * input boundary, while the existing planner decides when retrieval is useful. */
-export function workspacePublicSearchQuery(prompt: string, officialOnly = false): {
+export function workspacePublicSearchQuery(prompt: string, officialOnly = false, plannerQuery?: string): {
   query: string; officialDomains: string[]; originalSourceQuestion?: string;
 } | undefined {
   if (prompt.length > 32_000) return;
@@ -144,7 +171,7 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
   if (namedSource && /\b(?:only|exclusively)\b/iu.test(namedSource[0]) && !publisherDomains.length && !namedSource[0].includes('(')) return;
   if (explicitlyDisablesResearch(message)
     || hasNonPublicSearchTerms(prompt) || specificIdentityOrUrl.test(message) || rawSearchOperator.test(message)
-    || !/^[\p{L}\p{M}\p{N}\p{Sc} ,.'’!?()&–،؟。？！、:+"“”%#-]+$/u.test(request)) return;
+    || !searchText.test(request)) return;
 
   // A domain becomes a filter only when the user supplied it in this request
   // with an official-source restriction. Neither a model nor history adds hosts.
@@ -171,13 +198,15 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false)
     .replace(explicitWebLookup, '').replace(instructionStart, '').replace(sourcePreface, '').replace(instructionStart, '')
     .replace(presentationAfterTopic, '').replace(answerOnlySuffix, '')
     .replace(/[,.]?\s+(?:and\s+)?cite\s+[^.!?]+[.!?]*$/iu, '')
-    .replace(/[?.!؟。？！]+$/u, '').trim();
+    .replace(/[?.!؟。？！।॥]+$/u, '').trim();
   // Spend the bounded publisher query on the requested metric and rows.
+  const originalSource = originalSourceRequest.exec(message);
+  const planned = !originalSource && !requestsPrimaryPublisherTable
+    ? projectedPublicTopic(plannerQuery, checkedTopic) : undefined;
   const topic = requestsPrimaryPublisherTable ? checkedTopic.replace(/^(?:find|compare)\s+(?:the\s+)?/iu, '')
-    .replace(/\b(?:figures|numbers)\s+(?:for|on)\s+(?:estimated\s+)?/iu, '') : checkedTopic;
+    .replace(/\b(?:figures|numbers)\s+(?:for|on)\s+(?:estimated\s+)?/iu, '') : planned ?? checkedTopic;
   if (contextDependentTopic.test(topic.replace(topicLead, '')) || /^(?:the\s+)?(?:latest|current|new)\s+policy$/iu.test(topic)
     || (!publicOffice && !officialDomains.length && isAmbiguousPersonalLookup(topic))) return;
-  const originalSource = originalSourceRequest.exec(message);
   const namedPublication = originalSource && versionedWorkDetail.test(topic) && publishedWorkTopic.test(topic);
   const retrievalHosts = namedPublication
     ? officialDomains.flatMap(domain => publicationHosts.get(domain) ?? [domain])

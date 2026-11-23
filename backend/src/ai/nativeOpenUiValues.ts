@@ -235,42 +235,50 @@ function contextualReadoutLabel(text: string, label: string) {
 
 const readoutSentenceBreak = /(?<=[.!?])\s+/;
 const readoutClaimBreak = /(?<=[.!?])\s+|\n(?=[ \t]*(?:[-+*]|\d+[.)])\s)|[,;]\s*(?:but|whereas)\s+/i;
+const readoutExampleBlock = /^\s*(?:for example|example|scenario|hypothetical|suppose|alternative)\b/i;
 const readoutScenario = /^[ \t]*(?:(?:[-+*]|\d+[.)])\s+)?(?:\b(?:boundary|edge) (?:cases?|values?)\b|(?:for\s+)?(?:each|every)\s+(?:additional\b|\d+(?:\.\d+)?\s+(?:percentage|basis)\s+points?\b)[^.!?\n]{0,110}\b(?:adds?|changes?|increases?|decreases?|reduces?|subtracts?)\b)/i;
-const standaloneCurrencyReadout = /^( {0,3}(?:(?:[-+*]|\d+[.)])[ \t]+)?(?:\*\*|__)?)([^:\r\n]{1,80}?)(:[ \t]*(?:\*\*|__)?[ \t]*)([$€£][ \t]*[+-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)([ \t]*(?:\*\*|__)?\.?[ \t]*)$/;
+const explicitCurrencyReadout = /^( {0,3}(?:(?:[-+*]|\d+[.)])[ \t]+)?(?:\*\*|__)?)([^:=\r\n]{1,80}?)([ \t]*(?:[:=]|[ \t]+is[ \t]+)[ \t]*(?:\*\*|__)?[ \t]*)([$€£][ \t]*[+-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)([ \t]*(?:\*\*|__)?\.?[ \t]*)$/i;
 
-/** A standalone result can be repaired in place when both representations name
+/** An explicit result can be repaired in place when both representations name
  * one unambiguous currency metric. Keep equations, examples and notes intact. */
-export function correctStandaloneCurrencyReadouts(prose: string, readouts: ReturnType<typeof initialNativeReadouts>) {
-  const lines = prose.split('\n');
-  const candidates = new Map<string, Array<{ index: number; match: RegExpExecArray }>>();
+export function correctExplicitCurrencyReadouts(prose: string, readouts: ReturnType<typeof initialNativeReadouts>) {
+  const lines = prose.split('\n').map(line => line.split(/(?<=[.!?])([ \t]+)(?=\S)/));
+  const candidates = new Map<string, Array<{ line: number; part: number; match: RegExpExecArray }>>();
   let fence: string | undefined;
-  for (const [index, line] of lines.entries()) {
-    const marker = /^ {0,3}(\x60{3,}|~{3,})(.*)$/.exec(line);
+  let inExample = false;
+  for (const [line, parts] of lines.entries()) {
+    const text = parts.join('');
+    const marker = /^ {0,3}(\x60{3,}|~{3,})(.*)$/.exec(text);
     if (marker) {
       if (!fence) fence = marker[1];
       else if (fence[0] === marker[1][0] && fence.length <= marker[1].length && !marker[2].trim()) fence = undefined;
       continue;
     }
-    if (fence || /^(?: {4}|\t)/.test(line)) continue;
-    const match = standaloneCurrencyReadout.exec(line);
-    if (!match) continue;
-    const label = metricLabelKey(match[2].replace(/[*_]/g, ''));
-    const occurrences = candidates.get(label) ?? [];
-    occurrences.push({ index, match });
-    candidates.set(label, occurrences);
+    if (fence) continue;
+    if (!text.trim()) inExample = false;
+    for (const [part, sentence] of parts.entries()) {
+      if (readoutExampleBlock.test(sentence)) inExample = true;
+      if (inExample || /^(?: {4}|\t|\s*[>|])|\x60/.test(text)) continue;
+      const match = explicitCurrencyReadout.exec(sentence);
+      if (!match) continue;
+      const label = metricLabelKey(match[2].replace(/[*_]/g, '').replace(/^the\s+/i, ''));
+      const occurrences = candidates.get(label) ?? [];
+      occurrences.push({ line, part, match });
+      candidates.set(label, occurrences);
+    }
   }
   for (const [label, occurrences] of candidates) {
     if (occurrences.length !== 1) continue;
     const metrics = readouts.filter(row => metricLabelKey(row.label) === label);
     if (metrics.length !== 1) continue;
     const { value } = metrics[0];
-    const { index, match: [, prefix, name, separator, amount, suffix] } = occurrences[0];
-    if (value[0] === amount[0] && standaloneCurrencyReadout.test(name + ': ' + value) &&
+    const { line, part, match: [, prefix, name, separator, amount, suffix] } = occurrences[0];
+    if (value[0] === amount[0] && explicitCurrencyReadout.test(name + ': ' + value) &&
         conflictingNativeReadouts(metrics[0].label + ': ' + amount, metrics).length) {
-      lines[index] = prefix + name + separator + value + suffix;
+      lines[line][part] = prefix + name + separator + value + suffix;
     }
   }
-  return lines.join('\n');
+  return lines.map(parts => parts.join('')).join('\n');
 }
 
 /** Compare explicit currency claims to the corresponding labeled readout. An
@@ -295,7 +303,7 @@ export function conflictingNativeReadouts(prose: string, readouts: ReturnType<ty
   }
   const plain = prose.replace(/[*_`]/g, '');
   const statements = plain.split(/\n\s*\n/).flatMap(paragraph =>
-    /^\s*(?:for example|example|scenario|hypothetical|suppose|alternative)\b/i.test(paragraph)
+    readoutExampleBlock.test(paragraph)
       ? [] : paragraph.split(readoutClaimBreak));
   return readouts.filter(({ label, value }) => {
     const expected = [...value.matchAll(money)];

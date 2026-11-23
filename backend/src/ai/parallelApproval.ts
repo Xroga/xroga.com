@@ -71,12 +71,12 @@ export function requireParallelAdmission(value:ParallelAdmission|undefined,scope
  * A public read uses the same narrow, single-use transport admission as
  * private research, backed by a distinct READ/PUBLIC audit decision. */
 export async function executeWorkspacePublicSearch(
- scope:TenantModelScope, prompt:string, officialOnly:boolean, signal?:AbortSignal,
+ scope:TenantModelScope, prompt:string, officialOnly:boolean, signal?:AbortSignal, plannerQuery?:string,
 ):Promise<{result:unknown;officialDomains:string[];officialLinkCoverage:boolean;primaryPageContentRequested:boolean}|undefined>{
  const context=requireTenantContext(scope.context);requireResourceOwner(context,scope.userId);
  if(scope.projectId!==undefined||scope.repository!==undefined||scope.runAttempt||scope.authority
   ||scope.researchAnswer||scope.connectedAccountId!=='platform')throw denied();
- const request=workspacePublicSearchQuery(prompt, officialOnly);
+ const request=workspacePublicSearchQuery(prompt, officialOnly, plannerQuery);
  if(!request)return;
  const body={mode:'turbo',objective:request.originalSourceQuestion??'',search_queries:[request.query]};
  const officialLinkCoverage=requestsOfficialLinkCoverage(prompt);
