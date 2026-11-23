@@ -15547,7 +15547,7 @@
       "id": "surface:82ff96c046038933cdb9",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/workspacePublicSearch.ts",
-      "sha256": "cfa127877acfe589ac2dc166c685c4c37879257c80ae55b2995f66556eca6d8a",
+      "sha256": "2e9871adfe442b337f03e1e3be1852560ef2a77035707032865c76e2ab029c7a",
       "symbols": [
         "answerOnlySuffix",
         "asksForOfficial",
@@ -15596,6 +15596,7 @@
         "originalSourceRequest",
         "personLocationLookup",
         "personalLookup",
+        "presentationAfterTopic",
         "presentationInstruction",
         "privateDiscoveryContext",
         "privateOrContextual",
@@ -15617,11 +15618,13 @@
         "publishedWorkTopic",
         "publisher",
         "publisherDomains",
+        "publisherSourceClause",
         "qualifier",
         "request",
         "requestedSource",
         "requestsOfficialCitation",
         "requestsOfficialLinkCoverage",
+        "requestsPrimaryPublisherTable",
         "scopedRequest",
         "searchTerms",
         "sites",
@@ -109581,16 +109584,20 @@
       "id": "surface:a3b227ec62f0dcdb5ccb",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/connectedAppResult.ts",
-      "sha256": "70f2d14bff91738b369848897db760f8689687b3328d099d94d9fff2660545d3",
+      "sha256": "4fc848952d88a41af3443038519e7c3ee99e2be06eda20640900c77be4446b4d",
       "symbols": [
         "ACTION_REVIEW_PATH",
         "AppResultPreview",
+        "LEGACY_PUBLIC_SEARCH_LEAD",
         "RESULT_MARKER",
         "SAVED_SEARCH_REVIEW",
+        "WEB_SEARCH_NOT_RUN",
         "amount",
         "compactConnectedAppConfirmationMarkdown",
         "fenced",
+        "isLegacyPublicSearchReview",
         "itemNames",
+        "legacyPublicSearch",
         "marker",
         "name",
         "names",
@@ -115620,11 +115627,13 @@
       "id": "surface:2f643a1aa432bf0f982e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/publicAnswerText.ts",
-      "sha256": "175ab99304cdd7ccdf79f32f2856c3ae920db2348acd75d7c9ee2b0d8ade7070",
+      "sha256": "d93ef3936182e40b51dc556c4ce841ad18802c6cc8135353d5d2d6b3f9e19dd1",
       "symbols": [
+        "body",
         "end",
         "isPresentationLanguage",
         "markerTail",
+        "notice",
         "paragraph",
         "partialMarker",
         "presentationSyntax",
@@ -149943,86 +149952,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:854f7a78a6ac2aa9f134",
+      "id": "frontend-call:5d408848f91f2f4a0b60",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1033,
+      "line": 1062,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:27c8dab9dda1a1bdf434",
+      "id": "frontend-call:9dfc72d62fae3d17dd99",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1036,
+      "line": 1065,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:ad2c7f79a2a8d73f9a03",
+      "id": "frontend-call:a695b3913e9ee692d98a",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1807,
+      "line": 1836,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:0013c4c4bcc9a0b1e3a6",
+      "id": "frontend-call:a1f6be05da0a021b7cec",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1808,
+      "line": 1837,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:2e0b8c5659fad0c59b43",
+      "id": "frontend-call:f9ddadeb9ed3d0a892b2",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1813,
+      "line": 1842,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:65546afd9ac6e44e8015",
+      "id": "frontend-call:c68e867e54cb471f633b",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1814,
+      "line": 1843,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:9ef8aef8e1d39f964e03",
+      "id": "frontend-call:44e19607d5e1b98ad74f",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1820,
+      "line": 1849,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:93ec451bdd17a25d3c20",
+      "id": "frontend-call:3de1b5bff745580db91d",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1825,
+      "line": 1854,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:55da58d4723e71f8e9c1",
+      "id": "frontend-call:dbd3bf3412db257f8318",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1882,
+      "line": 1911,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:4d88778aeab41aa3eedf",
+      "id": "frontend-call:e01d33960d657b0fe0cd",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1883,
+      "line": 1912,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:72a5c923d77e2f2c7351",
+      "id": "frontend-call:248da54500ccb2e04f3f",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1890,
+      "line": 1919,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:991fc0ceb08c169fa253",
+      "id": "frontend-call:71120609adb156379808",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1904,
+      "line": 1933,
       "callee": "fetch",
       "reachable": false
     },
@@ -153965,7 +153974,7 @@
     {
       "id": "test-suite:d2498a6171b68795395c",
       "sourcePath": "backend/src/ai/researchAnswer.test.ts",
-      "declaredTests": 20,
+      "declaredTests": 21,
       "skipLocations": [],
       "focusLocations": []
     },

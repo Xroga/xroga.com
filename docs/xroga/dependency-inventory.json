@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "d4ac7988b12fe1e6e0c9f9e48dd95bc36dd67b26",
+  "source_sha": "5839d88b836348390146f4678155d18a2d40ebb2",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17682,7 +17682,7 @@
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "sha256": "cfa127877acfe589ac2dc166c685c4c37879257c80ae55b2995f66556eca6d8a"
+      "sha256": "2e9871adfe442b337f03e1e3be1852560ef2a77035707032865c76e2ab029c7a"
     },
     {
       "path": "backend/src/ai/zurelayWire.ts",
@@ -23714,7 +23714,7 @@
     },
     {
       "path": "frontend/src/lib/connectedAppResult.ts",
-      "sha256": "70f2d14bff91738b369848897db760f8689687b3328d099d94d9fff2660545d3"
+      "sha256": "4fc848952d88a41af3443038519e7c3ee99e2be06eda20640900c77be4446b4d"
     },
     {
       "path": "frontend/src/lib/constants.ts",
@@ -24158,7 +24158,7 @@
     },
     {
       "path": "frontend/src/lib/publicAnswerText.ts",
-      "sha256": "175ab99304cdd7ccdf79f32f2856c3ae920db2348acd75d7c9ee2b0d8ade7070"
+      "sha256": "d93ef3936182e40b51dc556c4ce841ad18802c6cc8135353d5d2d6b3f9e19dd1"
     },
     {
       "path": "frontend/src/lib/publicConnectCatalog.ts",
@@ -34681,21 +34681,21 @@
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "line": 62,
+      "line": 64,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "line": 92,
+      "line": 94,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "line": 169,
+      "line": 173,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
