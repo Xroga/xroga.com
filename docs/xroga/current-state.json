@@ -8374,7 +8374,7 @@
         "backend/src/ai/repositoryHydrationAuthority.test.ts:3",
         "backend/src/ai/repositoryReadFailure.test.ts:3",
         "backend/src/ai/researchAnswer.test.ts:68",
-        "backend/src/ai/researchAnswer.ts:204",
+        "backend/src/ai/researchAnswer.ts:207",
         "backend/src/ai/tenantModelDispatch.test.ts:8",
         "backend/src/ai/universal/resumeProjectContext.test.ts:54",
         "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts:5",
@@ -10058,7 +10058,7 @@
       "id": "surface:794bcc5ea45ebaad109e",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/researchAnswer.ts",
-      "sha256": "ae99f7fbc463808c3bae7a54ab19324bc373af5df8eaad331038a0473f897b88",
+      "sha256": "8674360f785ec9b8c0bdf479663f0c6708b2b3ccdb9b88ce40d86836af26bee4",
       "symbols": [
         "RESEARCH_ANSWER_MAXIMUM_MICRO_USD",
         "ResearchAnswerRequest",
