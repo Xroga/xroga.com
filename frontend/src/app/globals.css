@@ -677,25 +677,25 @@ body.theme-gray * {
   }
 
   .terminal-skin-dark {
-    background: #000000;
+    background: #0b0d12;
     border: 1px solid rgba(163, 163, 163, 0.32);
-    color: #ffffff;
-    --foreground: #fff;
+    color: #e6edf3;
+    --foreground: #e6edf3;
     --muted: #a3a3a3;
     --accent: #4a7aff;
     --term-chrome: #0b0d12;
     --term-line: rgba(163, 163, 163, 0.18);
-    --terminal-ui-surface: #000000;
-    --terminal-ui-raised: #0b0d12;
-    --terminal-ui-inset: #14171c;
+    --terminal-ui-surface: #0b0d12;
+    --terminal-ui-raised: #14171c;
+    --terminal-ui-inset: #1c2028;
     --terminal-ui-border: rgba(163, 163, 163, 0.2);
   }
 
   .terminal-skin-amoled {
     background: #000000;
     border: 1px solid rgba(163, 163, 163, 0.28);
-    color: #ffffff;
-    --foreground: #fff;
+    color: #f5f5f5;
+    --foreground: #f5f5f5;
     --muted: #9ca3af;
     --accent: #4a7aff;
     --term-chrome: #08080a;
@@ -709,10 +709,10 @@ body.theme-gray * {
   .terminal-skin-light {
     background: #ffffff;
     border: none;
-    color: #000000;
-    --foreground: #000;
+    color: #14171f;
+    --foreground: #14171f;
     --muted: #6b7280;
-    --accent: #4a7aff;
+    --accent: #0b63f6;
     --term-chrome: #f4f5f8;
     --term-line: rgba(15, 23, 42, 0.1);
     --terminal-ui-surface: #ffffff;
@@ -722,36 +722,37 @@ body.theme-gray * {
   }
 
   .terminal-skin-light-grid {
-    background-color: #ffffff;
-    background-image:
+    background-color: #fbfbfd;
+    --terminal-ui-pattern:
       linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
       linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+    background-image: var(--terminal-ui-pattern);
     background-size: 16px 16px;
     border: none;
-    color: #000000;
-    --foreground: #000;
+    color: #14171f;
+    --foreground: #14171f;
     --muted: #4b5563;
-    --accent: #4a7aff;
+    --accent: #0b63f6;
     --term-chrome: #f4f5f8;
     --term-line: rgba(15, 23, 42, 0.1);
-    --terminal-ui-surface: #ffffff;
+    --terminal-ui-surface: #fbfbfd;
     --terminal-ui-raised: #ffffff;
     --terminal-ui-inset: #eef2f7;
     --terminal-ui-border: rgba(15, 23, 42, 0.11);
   }
 
   .terminal-skin-gray {
-    background: #2a2a2a;
+    background: #1c1e22;
     border: 1px solid rgba(255, 255, 255, 0.22);
-    color: #ffffff;
-    --foreground: #fff;
+    color: #f2f4f7;
+    --foreground: #f2f4f7;
     --muted: #a3a3a3;
-    --accent: #4a7aff;
+    --accent: #7aa2ff;
     --term-chrome: #17181b;
     --term-line: rgba(255, 255, 255, 0.12);
-    --terminal-ui-surface: #2a2a2a;
-    --terminal-ui-raised: #303034;
-    --terminal-ui-inset: #3a3a3f;
+    --terminal-ui-surface: #1c1e22;
+    --terminal-ui-raised: #26292f;
+    --terminal-ui-inset: #30343c;
     --terminal-ui-border: rgba(255, 255, 255, 0.13);
   }
 
@@ -994,32 +995,15 @@ body.theme-gray * {
   }
 
   .terminal-skin-light,
-  .terminal-skin-light-grid {
-    background: #ffffff !important;
-    border: 1px solid rgba(0, 0, 0, 0.12) !important;
-    color: #000000 !important;
-    --foreground: #000;
-    --muted: #6b7280;
-    --accent: #4a7aff;
-  }
-
+  .terminal-skin-light-grid,
   .terminal-skin-amoled,
-  .terminal-skin-dark {
-    background: #000000 !important;
-    border: 1px solid rgba(163, 163, 163, 0.28) !important;
-    color: #ffffff !important;
-    --foreground: #fff;
-    --muted: #a3a3a3;
-    --accent: #4a7aff;
-  }
-
+  .terminal-skin-dark,
   .terminal-skin-gray {
-    background: #2a2a2a !important;
-    border: 1px solid rgba(0, 0, 0, 0.35) !important;
-    color: #ffffff !important;
-    --foreground: #fff;
-    --muted: #a3a3a3;
-    --accent: #4a7aff;
+    background-color: var(--terminal-ui-surface) !important;
+    background-image: var(--terminal-ui-pattern, none) !important;
+    background-size: 16px 16px;
+    border: 1px solid var(--terminal-ui-border) !important;
+    color: var(--foreground) !important;
   }
 
   .terminal-log-white {
@@ -10428,6 +10412,7 @@ body.xv-workspace-expanded-active .xv-terminal-dock {
    sibling the selected skin class and bridge the skin palette into the application
    surface names used by the composer and its attached panels. The dock itself stays
    clear; only its real controls paint solid surfaces. */
+.xv-workspace-shell[class*='terminal-skin-'],
 .xv-terminal-dock[class*='terminal-skin-'] {
   --composer-surface: var(--terminal-ui-raised);
   --composer-border: var(--terminal-ui-border);
@@ -10436,6 +10421,7 @@ body.xv-workspace-expanded-active .xv-terminal-dock {
   --background: var(--terminal-ui-surface);
   --card: var(--terminal-ui-raised);
   --card-border: var(--terminal-ui-border);
+  --app-panel: var(--terminal-ui-raised);
   --surface-base: var(--terminal-ui-surface);
   --surface-raised: var(--terminal-ui-raised);
   --surface-inset: var(--terminal-ui-inset);
@@ -10447,6 +10433,8 @@ body.xv-workspace-expanded-active .xv-terminal-dock {
   --send-button-fg: var(--foreground);
   --send-button-hover-bg: color-mix(in srgb, var(--terminal-ui-inset) 84%, var(--foreground) 16%);
   --send-button-border: var(--terminal-ui-border);
+}
+.xv-terminal-dock[class*='terminal-skin-'] {
   /* Skin classes also carry a full panel background and border with `!important`.
      The dock only borrows their tokens; painting those declarations here creates the
      large empty rectangle that cuts through the greeting. */
@@ -14963,9 +14951,6 @@ body.xv-sidebar-resizing .xv-terminal-dock {
 /* Workspace controls use compact icons, with one short Extension label. */
 .xv-terminal-dock:not(.xv-terminal-dock--idle) {
   translate: 0 calc(-1 * var(--xv-chatbar-popover-offset, 0px));
-}
-.xv-workspace-shell :is(h1,h2,h3) {
-  font-family: var(--font-geist-sans), Arial, sans-serif;
 }
 .xv-workspace-header-tools .xv-skin-trigger {
   width: 30px;

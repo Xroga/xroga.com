@@ -527,7 +527,7 @@ test('the empty dock inherits the selected terminal skin and keeps mobile starte
 
   assert.match(
     CSS,
-    /\.xv-terminal-dock\[class\*='terminal-skin-'\]\s*\{[^}]*--composer-surface:\s*var\(--terminal-ui-raised\)[^}]*background:\s*transparent[^}]*border:\s*0/,
+    /\.xv-workspace-shell\[class\*='terminal-skin-'\],[\s\S]*?\.xv-terminal-dock\[class\*='terminal-skin-'\]\s*\{[^}]*--composer-surface:\s*var\(--terminal-ui-raised\)/,
   );
 
   assert.match(
@@ -748,11 +748,13 @@ test('new terminal renders theme-aware readable cards without black-hole artwork
   assert.match(START, /<CapabilityVisual id=\{card.id\}/);
   assert.doesNotMatch(START, /cardImage|1536/);
   assert.doesNotMatch(DASHBOARD, /BetaExpectationBanner/);
-  assert.doesNotMatch(START_CSS, /background-clip: text/);
+  assert.match(START_CSS, /background-clip: text/);
+  assert.match(START_CSS, /\.superIntelligence[^}]*Georgia,'Times New Roman',serif/);
+  assert.match(START_CSS, /\.cardWords strong[^}]*Georgia,'Times New Roman',serif/);
   assert.match(START_CSS, /\.superIntelligence[^}]*color: var\(--foreground\)/);
   assert.deepEqual([...START.matchAll(/id: '([^']+)'/g)].map(match => match[1]),
     ['create', 'find', 'build', 'ship', 'workflows', 'scheduled-tasks', 'employees', 'work-packs', 'browser-automation', 'apps-mcp']);
-  assert.match(START_CSS, /background: var\(--terminal-ui-surface\) !important/);
+  assert.match(START_CSS, /background-color: var\(--terminal-ui-surface\) !important/);
   assert.match(START_CSS, /color: var\(--foreground\)/);
   assert.match(START_CSS, /font: 12px\/1\.5/);
   assert.match(START_CSS, /@container \(max-width: 580px\)/);

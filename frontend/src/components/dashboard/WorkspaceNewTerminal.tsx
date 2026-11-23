@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ChevronRight, ChevronLeft, Search, Code2, Rocket, Users, Layers, Bot, Globe2, Puzzle, Pause, Play, X } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -14,7 +14,7 @@ const CAPABILITIES = [
     ['Documents', 'Draft a document about: '], ['Presentations', 'Create a slide presentation about: '],
     ['Images', 'Create an image of: '], ['Video concepts', 'Plan a video with a script and storyboard about: '],
   ] },
-  { id: 'find', title: 'Find', icon: Search, description: 'Find answers, files and opportunities. Research the web.', features: [
+  { id: 'find', title: 'Find', icon: Search, description: 'Answers, clients and opportunities. Research the web.', features: [
     ['Web research', 'Research this topic on the web and cite sources: '], ['Answers & comparisons', 'Compare these options and explain the tradeoffs: '],
     ['Files & knowledge', 'Find and summarize information in my attached files: '], ['Opportunities', 'Research opportunities that match these goals: '],
   ] },
@@ -114,13 +114,9 @@ function CapabilityVisual({ id }: { id: Capability['id'] }) {
 }
 
 function RotatingWord({ word }: { word: string }) {
-  const textRef = useRef<HTMLSpanElement>(null);
-  const [width, setWidth] = useState<number>();
-  useLayoutEffect(() => {
-    if (textRef.current) setWidth(textRef.current.getBoundingClientRect().width);
-  }, [word]);
-  return <span className={styles.dynamicWordFrame} style={{ width }} aria-hidden="true">
-    <span ref={textRef} className={styles.dynamicWord} key={word} data-testid="workspace-rotating-word">{word}.</span>
+  return <span className={styles.dynamicWordFrame} aria-hidden="true">
+    {ROTATING_WORDS.map(value => <span className={styles.wordSizer} key={value}>{value}.</span>)}
+    <span className={styles.dynamicWord} key={word} data-testid="workspace-rotating-word">{word}.</span>
   </span>;
 }
 
@@ -153,7 +149,7 @@ function AutomaticIntro() {
     <span className={styles.automaticFirst} data-visible={!showDetail} aria-hidden={showDetail}><strong>Automatic intelligence by default.</strong><span className={styles.guidanceDesktop}> No models or tools to choose.</span></span>
     <span className={styles.automaticDetail} data-visible={showDetail} aria-hidden={!showDetail}>
       <span className={styles.guidanceDesktop}>Type or speak in your native language, and the right tools handle the work automatically.</span>
-      <span className={styles.guidanceMobile}>Type or speak your language. Xroga does the work.</span>
+      <span className={styles.guidanceMobile}>Type or speak your language. Xroga does the work automatically.</span>
     </span>
   </div>;
 }

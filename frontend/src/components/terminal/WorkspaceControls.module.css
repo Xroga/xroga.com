@@ -1,6 +1,6 @@
-/* Portals live outside the terminal: give them an opaque monochrome palette. */
+/* The anchor supplies the terminal palette; other surfaces retain their theme fallback. */
 .modelPanel,.actions,.featureMenu {
-  --mono-bg: #161616; --mono-raised: #252525; --mono-ink: #f0f0f0; --mono-muted: #b0b0b0; --mono-border: #424242;
+  --mono-bg: var(--xv-popup-surface,#161616); --mono-raised: var(--xv-popup-raised,#252525); --mono-ink: var(--xv-popup-ink,#f0f0f0); --mono-muted: var(--xv-popup-muted,#b0b0b0); --mono-border: var(--xv-popup-border,#424242);
   --foreground: var(--mono-ink); --muted: var(--mono-muted); --accent: var(--mono-ink); --accent-dim: #ffffff12;
   color: var(--mono-ink) !important; background: var(--mono-bg) !important;
   border: 1px solid var(--mono-border) !important; border-radius: 16px;
@@ -9,7 +9,7 @@
 }
 :global(body.theme-white) :is(.modelPanel,.actions,.featureMenu),
 :global(body.theme-beige) :is(.modelPanel,.actions,.featureMenu) {
-  --mono-bg: #fafafa; --mono-raised: #ededed; --mono-ink: #171717; --mono-muted: #626262; --mono-border: #d2d2d2; --accent-dim: #00000008;
+  --mono-bg: var(--xv-popup-surface,#fafafa); --mono-raised: var(--xv-popup-raised,#ededed); --mono-ink: var(--xv-popup-ink,#171717); --mono-muted: var(--xv-popup-muted,#626262); --mono-border: var(--xv-popup-border,#d2d2d2); --accent-dim: #00000008;
 }
 .modelPanel { padding: 10px 12px; max-height: min(290px,calc(100dvh - 24px)); overflow-y: auto; background: linear-gradient(135deg,var(--mono-raised),var(--mono-bg) 55%) var(--mono-bg) !important; }
 .modelHeading { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
@@ -57,7 +57,7 @@
 .actions.actions :global(.xv-cba-check.is-on) svg { color: var(--mono-bg) !important; }
 .featureMenu { padding: 8px; max-height: min(360px,calc(100dvh - 24px)); overflow-y: auto; font-family: Arial,sans-serif; }
 .featureHeading { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px 0; }
-.featureHeading strong { font: 600 18px/1.2 var(--font-geist-sans),Arial,sans-serif; }
+.featureHeading strong { font: 500 18px/1.2 Georgia,serif; }
 .featureHeading button { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 6px; }
 .featureMenu p { margin: 5px 8px 10px; font-size: 11px; color: var(--mono-muted); }
 .featureMenu [role='menuitem'] { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; text-align: left; color: var(--mono-ink); }

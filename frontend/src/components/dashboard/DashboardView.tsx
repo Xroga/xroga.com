@@ -269,8 +269,8 @@ export function DashboardView({ browserOperator }: { browserOperator?: ReactNode
             </div>
           ) : (
             <div className="xv-workspace-header-tools">
-              <WorkspaceLauncher control="project" />
               {browserOperator ? <div className={scrollPolish.browserControl}>{browserOperator}</div> : null}
+              <WorkspaceLauncher control="project" />
               <WorkspacePeopleControls />
               <WorkspaceLauncher control="visibility" />
               <TerminalSkinPicker />

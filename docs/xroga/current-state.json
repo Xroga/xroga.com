@@ -70567,7 +70567,7 @@
       "id": "surface:793b89822aa62ee49888",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/dashboard/DashboardView.tsx",
-      "sha256": "939adb22e171dc1142099d5183ec2edd3ca595e86e9a21400d9eff09791599b0",
+      "sha256": "8919b0607d5b6d172c35a260587b6158b979db66071b55648befeb1afc7e5585",
       "symbols": [
         "DashboardView",
         "activeProject",
@@ -71570,7 +71570,7 @@
       "id": "surface:6ce17d2762e1020b6c38",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "sha256": "0b5b0dec0023c8fd3732f61bad392eab19af09154c144a62479b5690afcb5c13",
+      "sha256": "65115db353d44547aece8a994153be2d71554f81db428e244a869d89dccb6fa2",
       "symbols": [
         "AUTOMATIONS",
         "AutomaticIntro",
@@ -71602,7 +71602,6 @@
         "previous",
         "reducedMotion",
         "returnToCategories",
-        "textRef",
         "timer",
         "useRotation"
       ],
@@ -79786,7 +79785,7 @@
         "frontend/src/components/projects/GitHubProjectCard.tsx:5",
         "frontend/src/components/settings/SettingsView.tsx:19",
         "frontend/src/components/terminal/BuildCodeSandbox.tsx:9",
-        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:7",
+        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:8",
         "frontend/src/components/terminal/ChatBarFileGrid.tsx:19",
         "frontend/src/components/terminal/ChatBarParts.tsx:6",
         "frontend/src/components/terminal/ChatBarSendIcon.tsx:4",
@@ -80273,7 +80272,7 @@
         "frontend/src/app/software/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:8"
+        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:9"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -87597,7 +87596,7 @@
         "frontend/src/app/software/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:16"
+        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:17"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -98178,7 +98177,7 @@
       "id": "surface:9e31be4cbf4607201de1",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/ChatBarActionsMenu.tsx",
-      "sha256": "1d65000bb59dc95ac1f412846966e52aa60456121c51ee6bfcebcf09df495268",
+      "sha256": "684fe382d3da858d6c11fa1138794a78a6b273cc0e7442b11ae5f5c4db9801d1",
       "symbols": [
         "ChatBarActionsMenu",
         "ComposerInsertOptions",
@@ -98198,6 +98197,7 @@
         "on",
         "onKeyDown",
         "onPointerDown",
+        "palette",
         "preferences",
         "rootRef",
         "rules",
@@ -98212,6 +98212,7 @@
         "@/components/icons/animated/CirclePlayIcon",
         "@/components/library/NativeSkillsPicker",
         "@/components/ui/useChatbarPopoverLayout",
+        "@/components/ui/useTerminalPopoverPalette",
         "@/lib/nativeWorkSkills",
         "@/lib/utils",
         "@/store/useComposerToolsStore",
@@ -98225,6 +98226,7 @@
         "frontend/src/components/library/NativeSkillsPicker.tsx",
         "frontend/src/components/terminal/WorkspaceControls.module.css",
         "frontend/src/components/ui/useChatbarPopoverLayout.ts",
+        "frontend/src/components/ui/useTerminalPopoverPalette.ts",
         "frontend/src/lib/nativeWorkSkills.ts",
         "frontend/src/lib/utils.ts",
         "frontend/src/store/useComposerToolsStore.ts"
@@ -101796,7 +101798,7 @@
       "id": "surface:88ebed7bde87871a3e54",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/TerminalSkinPicker.tsx",
-      "sha256": "f5a62d44cea1dc5be69f2b257d681e375c728226b28908747b0d8c721d163077",
+      "sha256": "52a7a922428cf8fec4eac16e7aeaf152f6b92549e9b4849918693f5f590d5ab9",
       "symbols": [
         "TerminalSkinPicker",
         "active",
@@ -101806,6 +101808,7 @@
         "menuRef",
         "onKeyDown",
         "onPointerDown",
+        "palette",
         "rootRef",
         "setAuto",
         "setSkin",
@@ -101818,6 +101821,7 @@
       "imports": [
         "@/components/icons/animated/AnimatedIcon",
         "@/components/icons/animated/PaletteIcon",
+        "@/components/ui/useTerminalPopoverPalette",
         "@/lib/theme",
         "@/lib/utils",
         "@/store/useThemeStore",
@@ -101828,6 +101832,7 @@
       "runtimeImports": [
         "frontend/src/components/icons/animated/AnimatedIcon.tsx",
         "frontend/src/components/icons/animated/PaletteIcon.tsx",
+        "frontend/src/components/ui/useTerminalPopoverPalette.ts",
         "frontend/src/lib/theme.ts",
         "frontend/src/lib/utils.ts",
         "frontend/src/store/useThemeStore.ts"
@@ -104036,7 +104041,7 @@
       "id": "surface:c8ff52357b76eb8bcf96",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/ui/AnchoredPortalPopover.tsx",
-      "sha256": "192ac7deff8d10e66b5f7035e37c878d51714cfa87c1098d6fe6f6e1c284751f",
+      "sha256": "98d2645d1d36e574ab0dca88135ef0435318f700b3cf142c630be9ad03e525d2",
       "symbols": [
         "AnchoredPlacement",
         "AnchoredPortalPopover",
@@ -104051,6 +104056,7 @@
         "maxLeft",
         "observer",
         "outside",
+        "palette",
         "popover",
         "popoverRef",
         "reposition",
@@ -104062,11 +104068,13 @@
       ],
       "imports": [
         "./useChatbarPopoverLayout",
+        "./useTerminalPopoverPalette",
         "react",
         "react-dom"
       ],
       "runtimeImports": [
-        "frontend/src/components/ui/useChatbarPopoverLayout.ts"
+        "frontend/src/components/ui/useChatbarPopoverLayout.ts",
+        "frontend/src/components/ui/useTerminalPopoverPalette.ts"
       ],
       "entryPoints": [
         "frontend/src/app/(shell)/layout.tsx",
@@ -106182,6 +106190,57 @@
       "testCoverage": [
         "frontend/src/lib/chatbarPopoverLayout.test.ts"
       ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:537fae9ac562b7e82bd8",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/ui/useTerminalPopoverPalette.ts",
+      "sha256": "81371b6fdd69bf7b4371cf14e1324e88b46f1db5e9a155a920ba2fdbf5f7c429",
+      "symbols": [
+        "PALETTE_TOKENS",
+        "computed",
+        "observer",
+        "scope",
+        "sync",
+        "token",
+        "useTerminalPopoverPalette",
+        "value",
+        "values"
+      ],
+      "imports": [
+        "react"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx",
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/ai-app-builder/page.tsx",
+        "frontend/src/app/game-builder/page.tsx",
+        "frontend/src/app/software/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:6",
+        "frontend/src/components/terminal/TerminalSkinPicker.tsx:11",
+        "frontend/src/components/ui/AnchoredPortalPopover.tsx:6"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -113418,7 +113477,7 @@
       ],
       "callers": [
         "frontend/src/components/library/NativeSkillsDirectory.tsx:5",
-        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:17",
+        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:18",
         "frontend/src/components/terminal/TerminalChatBar.tsx:38",
         "frontend/src/lib/nativeWorkSkills.test.ts:4"
       ],
@@ -122032,7 +122091,7 @@
         "frontend/src/components/terminal/BuildTodoList.tsx:4",
         "frontend/src/components/terminal/BuilderProjectPanel.tsx:15",
         "frontend/src/components/terminal/CapacityUnavailableCard.tsx:5",
-        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:14",
+        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:15",
         "frontend/src/components/terminal/ChatBarButtons.tsx:3",
         "frontend/src/components/terminal/ChatBarFileGrid.tsx:18",
         "frontend/src/components/terminal/ChatBarParts.tsx:9",
@@ -124793,7 +124852,7 @@
       ],
       "callers": [
         "frontend/src/components/library/LibraryWorkspace.tsx:8",
-        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:9",
+        "frontend/src/components/terminal/ChatBarActionsMenu.tsx:10",
         "frontend/src/components/terminal/TerminalChatBar.tsx:9",
         "frontend/src/lib/composerTools.test.ts:3"
       ],
@@ -148773,9 +148832,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:06dbbcfb29471706fbed",
+      "id": "finding:4e077c6946e2f7e5198c",
       "sourcePath": "frontend/src/components/terminal/ChatBarActionsMenu.tsx",
-      "line": 366,
+      "line": 368,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -148783,9 +148842,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:9f78c1b47592ebe8c211",
+      "id": "finding:871816256237b0b44f4b",
       "sourcePath": "frontend/src/components/terminal/ChatBarActionsMenu.tsx",
-      "line": 391,
+      "line": 393,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",

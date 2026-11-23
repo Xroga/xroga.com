@@ -13,29 +13,22 @@
   container-type: inline-size;
   font-family: Arial, Helvetica, sans-serif;
 }
-/* Black means true black; raised controls remain distinguishable. */
-.dock:global(.terminal-skin-dark),.window:global(.terminal-skin-dark) {
-  --terminal-ui-surface: #000000;
-  --terminal-ui-raised: #161616;
-  --terminal-ui-inset: #222222;
-  --terminal-ui-border: #ffffff14;
-  --muted: #b0b0b0;
-}
 /* The idle workspace still scrolls, but never displays a browser-native white track. */
 .dock.dock.dock::-webkit-scrollbar { display: none; width: 0; }
 .dock.dock.dock :global(.xv-terminal-dock-inner) { width: 100% !important; max-width: 1040px !important; padding: 0 !important; margin: auto !important; max-height: none !important; }
-.window.window { background: var(--terminal-ui-surface) !important; color: var(--foreground); }
+.window.window { background-color: var(--terminal-ui-surface) !important; background-image: var(--terminal-ui-pattern,none) !important; background-size: 16px 16px; color: var(--foreground); }
 .window.window::after { display: none !important; }
 .window :global(.xv-workspace-header) { background: var(--terminal-ui-surface); border-bottom-color: var(--terminal-ui-border); color: var(--foreground); }
 .window :global(.xv-workspace-header button) { color: var(--foreground); }
 .repoStatus { min-width: 0; width: fit-content; flex: none; }
 .repoStatus :global(.xv-repo-chip--compact) { width:fit-content; max-width: 200px; color: var(--muted) !important; background: var(--terminal-ui-raised) !important; border-color: var(--terminal-ui-border) !important; }
 .hero { text-align: center; margin: 0 auto 28px; }
-.superIntelligence { margin: 0; font: 600 clamp(30px,4cqw,43px)/1.13 var(--font-geist-sans),Arial,sans-serif; letter-spacing: -.035em; color: var(--foreground); }
+.superIntelligence { margin: 0; font: 500 clamp(30px,4cqw,43px)/1.13 Georgia,'Times New Roman',serif; letter-spacing: -.035em; color: var(--foreground); background: linear-gradient(180deg,var(--foreground) 15%,color-mix(in srgb,var(--foreground) 65%,var(--terminal-ui-surface)) 48%,var(--foreground) 62%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .taglineRow { position: relative; display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 12px; }
 .tagline { margin: 0; font-family: var(--font-geist-sans), 'Inter', Arial, sans-serif; font-size: clamp(15px,2cqw,20px); font-weight: 400; letter-spacing: -.04em; line-height: 1.45; color: var(--muted); white-space: nowrap; }
-.dynamicWordFrame { display: inline-grid; vertical-align: baseline; text-align: left; transition: width 550ms cubic-bezier(.2,.65,.3,1); }
-.dynamicWord { display: inline-block; width: max-content; min-width: 0; text-align: left; color: var(--foreground); animation: wordReveal 550ms cubic-bezier(.2,.65,.3,1) both; }
+.dynamicWordFrame { display: inline-grid; vertical-align: baseline; text-align: left; grid-template-areas: 'word'; }
+.wordSizer { grid-area: word; visibility: hidden; pointer-events: none; white-space: nowrap; }
+.dynamicWord { grid-area: word; display: inline-block; width: max-content; min-width: 0; text-align: left; color: var(--foreground); animation: wordReveal 550ms cubic-bezier(.2,.65,.3,1) both; }
 @keyframes wordReveal { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: translateY(0); } }
 .mobileBreak { display: none; }
 .rotationControl { display: grid; place-items: center; width: 24px; height: 24px; color: var(--muted); border-radius: 6px; }
@@ -76,7 +69,7 @@
 .cardIcon { display: flex; color: var(--foreground); }
 .cardIcon svg { width: 22px; height: 22px; stroke-width: 1.8; }
 .cardWords { display: block; min-width: 0; }
-.cardWords strong { display: flex; align-items: center; gap: 5px; font: 600 22px/1.2 var(--font-geist-sans),Arial,sans-serif; margin-bottom: 5px; }
+.cardWords strong { display: flex; align-items: center; gap: 5px; font: 500 22px/1.2 Georgia,'Times New Roman',serif; margin-bottom: 5px; }
 .cardWords>span { display: block; font: 11.5px/1.42 Arial,sans-serif; color: var(--muted); text-wrap: pretty; }
 .cardArrow { width: 14px; height: 14px; color: var(--muted); }
 .card:focus-visible,.tool:focus-visible { outline: 2px solid var(--foreground); outline-offset: 3px; }

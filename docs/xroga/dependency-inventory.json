@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b769a622e105728bdb5529f8d898121e99350d87",
+  "source_sha": "540748e5f2b9bf9085d73b4a114fe7b733339708",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -21206,7 +21206,7 @@
     },
     {
       "path": "frontend/src/components/dashboard/DashboardView.tsx",
-      "sha256": "939adb22e171dc1142099d5183ec2edd3ca595e86e9a21400d9eff09791599b0"
+      "sha256": "8919b0607d5b6d172c35a260587b6158b979db66071b55648befeb1afc7e5585"
     },
     {
       "path": "frontend/src/components/dashboard/DashboardWelcome.tsx",
@@ -21278,7 +21278,7 @@
     },
     {
       "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "sha256": "0b5b0dec0023c8fd3732f61bad392eab19af09154c144a62479b5690afcb5c13"
+      "sha256": "65115db353d44547aece8a994153be2d71554f81db428e244a869d89dccb6fa2"
     },
     {
       "path": "frontend/src/components/dashboard/WorkspaceResumeList.tsx",
@@ -22998,7 +22998,7 @@
     },
     {
       "path": "frontend/src/components/terminal/ChatBarActionsMenu.tsx",
-      "sha256": "1d65000bb59dc95ac1f412846966e52aa60456121c51ee6bfcebcf09df495268"
+      "sha256": "684fe382d3da858d6c11fa1138794a78a6b273cc0e7442b11ae5f5c4db9801d1"
     },
     {
       "path": "frontend/src/components/terminal/ChatBarButtons.tsx",
@@ -23214,7 +23214,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalSkinPicker.tsx",
-      "sha256": "f5a62d44cea1dc5be69f2b257d681e375c728226b28908747b0d8c721d163077"
+      "sha256": "52a7a922428cf8fec4eac16e7aeaf152f6b92549e9b4849918693f5f590d5ab9"
     },
     {
       "path": "frontend/src/components/terminal/TextGeneratingAnimation.tsx",
@@ -23350,7 +23350,7 @@
     },
     {
       "path": "frontend/src/components/ui/AnchoredPortalPopover.tsx",
-      "sha256": "192ac7deff8d10e66b5f7035e37c878d51714cfa87c1098d6fe6f6e1c284751f"
+      "sha256": "98d2645d1d36e574ab0dca88135ef0435318f700b3cf142c630be9ad03e525d2"
     },
     {
       "path": "frontend/src/components/ui/AnimatedIcon.tsx",
@@ -23527,6 +23527,10 @@
     {
       "path": "frontend/src/components/ui/useChatbarPopoverLayout.ts",
       "sha256": "b240891be87b8c8ec2b3562f97fb2339f32b7738f27b64c389dc2b49ae6abf9b"
+    },
+    {
+      "path": "frontend/src/components/ui/useTerminalPopoverPalette.ts",
+      "sha256": "81371b6fdd69bf7b4371cf14e1324e88b46f1db5e9a155a920ba2fdbf5f7c429"
     },
     {
       "path": "frontend/src/components/workspace/WorkspaceAuthGate.tsx",

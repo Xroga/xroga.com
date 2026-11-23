@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useChatbarPopoverLayout } from '@/components/ui/useChatbarPopoverLayout';
+import { useTerminalPopoverPalette } from '@/components/ui/useTerminalPopoverPalette';
 import { ArrowUpRight, Bot, Bug, Check, ChevronRight, Command, FolderOpen, Globe2, Library, ListChecks, Paperclip, Plus, Puzzle, ScrollText, Sparkles, TerminalSquare, Workflow, X } from 'lucide-react';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { CirclePlayIcon } from '@/components/icons/animated/CirclePlayIcon';
@@ -106,6 +107,7 @@ export function ChatBarActionsMenu({
   const rootRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const menuStyle = useChatbarPopoverLayout(open, rootRef, menuRef, 344);
+  const palette = useTerminalPopoverPalette(open, rootRef);
 
   const preferences = useComposerToolsStore((s) => s.preferences);
   const setPreferences = useComposerToolsStore((s) => s.setPreferences);
@@ -189,7 +191,7 @@ export function ChatBarActionsMenu({
       </button>
 
       {open && typeof document !== 'undefined' ? createPortal(
-        <div ref={menuRef} className={cn('xv-cba-menu', controls.actions)} role="dialog" aria-label="Composer actions" data-chatbar-popover="true" style={{ position: 'fixed', left: menuStyle.left, top: menuStyle.top, bottom: 'auto', right: 'auto', width: menuStyle.width, maxHeight: menuStyle.maxHeight, overflowY: 'auto', overscrollBehavior: 'contain', zIndex: 10000, '--xv-actions-width': `${menuStyle.width}px` } as React.CSSProperties}>
+        <div ref={menuRef} className={cn('xv-cba-menu', controls.actions)} role="dialog" aria-label="Composer actions" data-chatbar-popover="true" style={{ ...palette, position: 'fixed', left: menuStyle.left, top: menuStyle.top, bottom: 'auto', right: 'auto', width: menuStyle.width, maxHeight: menuStyle.maxHeight, overflowY: 'auto', overscrollBehavior: 'contain', zIndex: 10000, '--xv-actions-width': `${menuStyle.width}px` } as React.CSSProperties}>
           {panel === 'menu' && (
             <div className="xv-cba-grid">
               {recentTerminal && (
