@@ -200,9 +200,9 @@ export async function startXrogaModelRun(
     kind: 'openai-compatible',
     modelName: XROGA_MODEL,
     // The model reads a million tokens, and the server takes a turn of up to 1,200,000 bytes of text and 24,000 output tokens at high. A 32,000-token window made a long
-    // task (client research across many pages) compact on almost every turn and end with "start a new conversation" (owner's recording, 2026-11-23). The window is now 200,000
-    // tokens; compaction is housekeeping for a task that really is that long, and a refused request is still recovered through the overflow path above.
-    overrides: { contextWindow: 200_000, maxOutput: 24_000, vision: start.vision === true },
+    // task (client research across many pages) compact on almost every turn and end with "start a new conversation" (owner's recording, 2026-11-23). The window is the model's own,
+    // 1,000,000 tokens, and output is 64,000: no wall of ours stands between the agent and its task; a refused request is still recovered through the overflow path above.
+    overrides: { contextWindow: 1_000_000, maxOutput: 64_000, vision: start.vision === true },
   });
   const model: ResolvedModel = { ref: XROGA_REF, chat, profile, reasoning: 'none', reasoningDropped: true };
   /**

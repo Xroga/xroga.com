@@ -35,8 +35,8 @@ const MAX_TURNS = 400;
 // entitlement ledger, and a refused reservation stops the run with its progress saved (BROWSER_ALLOWANCE_EXHAUSTED).
 const SEGMENT_TURNS = 96;
 const TURN_CEILING_MICROS = 3_000;
-/** The text of one model request, images apart: about 250,000 tokens, far under the model's window; it only stops a runaway request. */
-const MAX_TURN_REQUEST_BYTES = 1_200_000;
+/** The text of one model request, images apart: about 2,000,000 tokens of text, twice the model's window, under the 10 MB body parser: it is never what stops a task. */
+const MAX_TURN_REQUEST_BYTES = 8_000_000;
 /**
  * The reasoning a browser turn asks the model for. Zurelay takes exactly `none`, `high` or `max` for this model (probed 2026-11-21: any other word is a
  * 400 naming those three; `low` and `medium` are accepted but answered as `high`, so they are not offered). The server decides: the extension may ask,
@@ -49,8 +49,8 @@ const TURN_POLICY: Record<BrowserEffort, { maxTokens: number; ceilingMicros: num
   none: { maxTokens: 2_048, ceilingMicros: TURN_CEILING_MICROS, timeoutMs: 80_000 },
   // The model reads a million tokens at about three cents per million (cached input far less), so a turn is bounded by room to think and a cost ceiling that a
   // 200,000-token request fits under, not by a small window. A long task (many pages read, many items handled) must not stop for a limit the model does not have.
-  high: { maxTokens: 24_000, ceilingMicros: 30_000, timeoutMs: 150_000 },
-  max: { maxTokens: 32_000, ceilingMicros: 34_000, timeoutMs: 200_000 },
+  high: { maxTokens: 64_000, ceilingMicros: 120_000, timeoutMs: 600_000 },
+  max: { maxTokens: 96_000, ceilingMicros: 150_000, timeoutMs: 800_000 },
 };
 export function defaultBrowserEffort(env: NodeJS.ProcessEnv = process.env): BrowserEffort {
   const value = env.XROGA_BROWSER_REASONING_DEFAULT;
@@ -101,7 +101,7 @@ export function autoApprovesCall(kind: 'read' | 'change', slug: string, env: Nod
   return outbound.length === 0 || tokens.includes('DRAFT') && outbound.every(token => DRAFT_SAFE_TOKENS.has(token));
 }
 // The job is built for each model turn, so this bounds ONE request (a safety bound, many times its reservation), not the run.
-const PER_TURN_JOB_COST_MICROS = 36_000;
+const PER_TURN_JOB_COST_MICROS = 400_000;
 const limits = { ...BROWSER_RUN_DEFAULTS, maxModelCostMicros: PER_TURN_JOB_COST_MICROS };
 const id = z.string().uuid();
 const clip = (value: unknown, max: number) => (typeof value === 'string' ? value.replace(/\s+/g, ' ').trim().slice(0, max) : undefined);
@@ -256,10 +256,10 @@ const message = z.object({
 }).strict();
 const turnBody = z.object({
   turn: z.number().int().min(1),
-  messages: z.array(message).min(1).max(140),
+  messages: z.array(message).min(1).max(2_000),
   tools: z.array(tool).max(64).optional(),
   tool_choice: z.enum(['auto', 'none', 'required']).optional(),
-  max_tokens: z.number().int().min(1).max(32_768).optional(),
+  max_tokens: z.number().int().min(1).max(131_072).optional(),
   reasoning_effort: z.enum(['none', 'high', 'max']).optional(),
   vision_probe_png: z.string().min(32).max(24_000).regex(/^[A-Za-z0-9+/]+={0,2}$/).optional(),
 }).strict();

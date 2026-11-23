@@ -245,15 +245,15 @@ describe('the loop', () => {
     expect(r.b).toMatch(/eval is not available/);
   });
 
-  it('caps a result at 8,000 characters and keeps the end marker', async () => {
-    const big = `read · ok\nThe text …\n<<<page-content 0123456789ab site=x>>>\n${'x'.repeat(20_000)}\n<<<end-page-content 0123456789ab>>>`;
+  it('cuts only a result larger than the cap (250,000 characters) and keeps the end marker', async () => {
+    const big = `read · ok\nThe text …\n<<<page-content 0123456789ab site=x>>>\n${'x'.repeat(400_000)}\n<<<end-page-content 0123456789ab>>>`;
     const { c, loop } = await setup(
       [{ toolCalls: [call('read', {}, 'a')] }, done()],
       new FakeLayer({ read: () => ok(big) }),
     );
     await loop.run();
     const text = (await results(c.id)).a;
-    expect(text.length).toBeLessThan(8_200);
+    expect(text.length).toBeLessThan(250_200);
     expect(text).toContain('<<<end-page-content 0123456789ab>>>');
     expect(text.trim().endsWith('characters.')).toBe(true);
   });

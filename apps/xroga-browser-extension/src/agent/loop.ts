@@ -59,9 +59,9 @@ import { allTools, DONE_TOOL, kindOf, PAGE_ACTIONS } from './tools';
 import type { AgentTool, ToolKind } from './tools';
 
 /** Every tool result is capped; a cut keeps a boundary's end marker. */
-export const RESULT_CAP = 8_000;
-/** A request with more messages than this is compacted first; the server refuses 140. */
-export const MESSAGE_SOFT_LIMIT = 100;
+export const RESULT_CAP = 250_000;
+/** A request with more messages than this is compacted first; the server takes 2,000. */
+export const MESSAGE_SOFT_LIMIT = 1_800;
 /** The most tools one model request may list: the Xroga server's turn schema allows 64 and refuses the request beyond that. */
 export const MAX_TOOLS_PER_REQUEST = 64;
 const PLAN_ONLY = /\b(?:i['’]ll|i will|i['’]m going to|let me|first,? i(?:['’]ll| will)?|here(?:['’]s| is) (?:my|the) plan|my plan)\b/i;
