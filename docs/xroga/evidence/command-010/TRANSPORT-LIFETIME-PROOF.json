@@ -251,7 +251,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "01c533bfe2127d849264b9fdd5c8528cbfac161994842a818f4a9cfa1cd6089b",
+      "sha256": "5d9935ab696ff8f9b0c7f4513bcdef0cc1f094d205e34f50c60e7d2a55d0a18f",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/black-hole/webIntelligence.ts",
         "sha256": "f7ee10618d7993cc8e827b7f77d23eec06e663232d26a44c598a48825fbb6b7d"
@@ -1167,5 +1167,17 @@
     "review": "docs/xroga/security/egress-caller-reviews.json",
     "scope": "CURRENT_METADATA_COUNT_AND_SOURCE_BINDING_ONLY_NOT_TRANSPORT_OR_TENANT_SECURITY_ACCEPTANCE",
     "reason": "Preserve the already-serving credential-free public platform catalog GET. Its source-bound negative tests and manual review are recorded. Historical archives, SDK guard dispositions, unresolved caller obligations and acceptance flags remain unchanged."
+  },
+  "workspacePrimaryPublicationContinuation": {
+    "reviewedBaseline": "a60c06ff62f54998a8d00b008a7e56e302bfa4b4",
+    "source": "67219af2457cfac8b08fd57828998d08e4aeade9",
+    "scope": "Source binding maintenance for the existing Search adapter and public READ scope. Publisher page content uses the same reviewed network admission, credential and model usage ledger. Historical transport receipts and phase acceptance states are unchanged.",
+    "bindings": [
+      {
+        "path": "backend/src/ai/black-hole/webIntelligence.ts",
+        "previousSha256": "01c533bfe2127d849264b9fdd5c8528cbfac161994842a818f4a9cfa1cd6089b",
+        "currentSha256": "5d9935ab696ff8f9b0c7f4513bcdef0cc1f094d205e34f50c60e7d2a55d0a18f"
+      }
+    ]
   }
 }
