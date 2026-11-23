@@ -146,7 +146,7 @@ export const DATA_OPS_TOOL = {
   source: 'agent' as const,
   group: 'working' as const,
   description:
-    'Exact list work on rows you collected (prospects, products, contacts, results): remove duplicates, filter, sort, pick columns, fill a template per row, group and count, so nothing is miscounted or dropped silently. rows is a list of objects; steps run in order, e.g. [{"op":"dedupe","by":"email","loose":true},{"op":"filter","field":"country","test":"eq","value":"UK"},{"op":"sort","by":"score","order":"desc"}]. Also op pick (fields), template (as, text with {field}), group (by, counts), limit (n). It reports every row it dropped.',
+    'Exact list work on rows you collected: dedupe, filter, sort, pick, template, group, limit; it reports every row it drops. steps run in order, e.g. [{"op":"dedupe","by":"email","loose":true},{"op":"filter","field":"country","test":"eq","value":"UK"},{"op":"sort","by":"score","order":"desc"}]; template needs as and text with {field}.',
   parameters: {
     type: 'object',
     properties: {
