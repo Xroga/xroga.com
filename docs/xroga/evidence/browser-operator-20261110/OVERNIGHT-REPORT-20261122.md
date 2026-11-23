@@ -225,3 +225,19 @@ Measured first: in our live runs model inference is about 90% of wall time (for 
 5. **Test-page fix**: the novel-UI replica reset its switches on every load, so a reload always looked unsaved; fixed (`app-novel-1` 36 turns, 300 s to 6 turns, 28 s at high).
 Chromium scenarios all pass (`scenarios-full-20261123e.json`); unit suite 1536.
 
+## Round 21 (2026-11-23): the effort decision measured on both criteria, and foreach live
+**Adaptive against fixed high, same 26 live tasks, same build (`live-model/regression-high-r20.jsonl`, `regression-adaptive-r20.jsonl`; DeepSeek, cap 40, one run per task per arm):**
+
+| | Fixed high | Adaptive |
+|---|---|---|
+| Passed (server-state grade) | 26 of 26 | 26 of 26 |
+| Tool errors or skipped calls | 0 | 0 |
+| Mean / median wall time | 72 s / 40 s | 52 s / 27 s |
+| Mean turns | 12.2 | 9.5 |
+| Total calls / look-only calls | 342 / 107 | 257 / 66 |
+
+The fixed-high arm includes one 300 s outlier (`app-novel-1`, caused by the test-page bug fixed in round 20); without it adaptive is still about 15% faster on the mean. One adaptive outlier: `timeline-split` 24 turns and 192 s (5 turns and 30 s at high; 23 s in an earlier adaptive run), so adaptive variance on painted editors is higher. n is one run per task per arm.
+**Decision (owner delegated, criteria: completion and precision first, then time):** product default is adaptive, capped at high (a stall asks for high, never max; owner: no max): `run-manager.ts`, `EffortControl('high', {adaptive:true, noMax:true})`. High on planning turns and after an error, a result in doubt or a read-back of written work; none after two calm turns.
+**`foreach` live (adaptive; `live-model/foreach-r20.jsonl`):** ten drafts: 5 of 5 passes across the runs of this round; in the run that used `foreach` it took 11 turns and 96 s against 25 turns and 241 s before; a run that did not use it took 21 turns and 142 s (uptake is not guaranteed: the repeat advice now recommends it). Four drafts 17 turns and 81 to 89 s, lost-acknowledgement drafts 25 turns and 105 s.
+Chromium scenarios all pass (`scenarios-full-20261123f.json`); unit suite 1537.
+

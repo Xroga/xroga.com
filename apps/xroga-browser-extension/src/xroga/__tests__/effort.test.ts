@@ -83,3 +83,16 @@ describe('EffortControl, fixed', () => {
   });
 });
 
+describe('EffortControl, adaptive without max', () => {
+  it('asks for high, never max, on a stall', () => {
+    const e = new EffortControl('high', { adaptive: true, noMax: true });
+    e.noteTurn(false); e.noteTurn(false);
+    expect(e.level).toBe('none');
+    e.noteTurn(true);
+    expect(e.level).toBe('high');
+    for (let i = 0; i < 10; i++) e.noteTurn(true);
+    expect(e.level).toBe('high');
+    expect(e.changes.every(c => c.level !== 'max')).toBe(true);
+  });
+});
+

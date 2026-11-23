@@ -36,9 +36,12 @@ export class EffortControl {
 
   readonly #adaptive: boolean;
   readonly #fixed: boolean;
+  readonly #noMax: boolean;
 
   /** `adaptive`: start at `start` (high) for planning, drop to none after routine turns, and think again where a turn's evidence asks for it (see TurnSignal). */
-  constructor(start: Effort = 'high', options: { adaptive?: boolean; fixed?: boolean } = {}) {
+  constructor(start: Effort = 'high', options: { adaptive?: boolean; fixed?: boolean; noMax?: boolean } = {}) {
+    // `noMax`: a stall asks for high (already the top of what this run uses), never max.
+    this.#noMax = options.noMax === true;
     // `fixed`: the level never changes (the product runs at high on every turn, by the owner's decision).
     this.#fixed = options.fixed === true;
     this.#adaptive = options.adaptive === true && !this.#fixed;
@@ -67,7 +70,7 @@ export class EffortControl {
     if (this.#fixed) return;
     if (stalled) {
       this.#calm = 0;
-      this.#set('max', 'the run stopped making progress');
+      this.#set(this.#noMax ? 'high' : 'max', 'the run stopped making progress');
       return;
     }
     if (this.#adaptive && (signal.error || signal.uncertain || signal.verify)) {

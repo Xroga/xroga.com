@@ -23,7 +23,8 @@ describe('RepeatDetector', () => {
     const given = notes.filter(Boolean);
     expect(given).toHaveLength(1);
     expect(given[0]).toContain('click button «New message» → fill_form(3 fields) → click button «Close»');
-    expect(given[0]).toContain('one batch call');
+    expect(given[0]).toContain('ONE batch call');
+    expect(given[0]).toContain('foreach');
     // It arrives on the third repetition, not before.
     expect(notes.findIndex(Boolean)).toBe(8);
   });

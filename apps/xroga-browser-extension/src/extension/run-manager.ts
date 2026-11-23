@@ -1662,9 +1662,10 @@ export class RunManager {
       let end: LoopEnd | undefined;
       let canonical: Awaited<ReturnType<typeof startXrogaModelRun>> | undefined;
       // Adaptive: no reasoning on routine turns, high after an error, a result in doubt or a read-back of written work, max on a stall (measured 2026-11-23: 17 of 18 replica tasks, about a third to a half faster than high on routine work).
-      // Fixed at high on every turn, by the owner's decision (2026-11-23): the best reasoning level for DeepSeek browser work, never none, low or max. Adaptive switching
-      // (EffortControl adaptive) stays in the code for measurement only.
-      const effort = new EffortControl('high', { fixed: true });
+      // Adaptive, never above high (owner: no max). Planning turns and every turn after an error, a result in doubt or a read-back of written work run at high; routine
+      // turns after two calm ones run at none. Measured 2026-11-23 on the same 26 live tasks: 26 of 26 passed at fixed high and at adaptive, 0 tool errors in both,
+      // adaptive mean 52 s against 72 s and 257 calls against 342.
+      const effort = new EffortControl('high', { adaptive: true, noMax: true });
       let recoveryReadOnly = false;
       let interrupted: ReturnType<typeof planRestore>['results'] = [];
       try {
