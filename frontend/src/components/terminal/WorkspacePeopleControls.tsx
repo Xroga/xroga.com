@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import Link from 'next/link';
+import { teamsApi, type TeamInbox } from '@/lib/teams';
 import { Share2, UsersRound, ExternalLink, X } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
@@ -20,7 +22,14 @@ export function WorkspacePeopleControls() {
   const activeProject = useProjectWorkspaceStore(state => state.activeProjectContext);
   const [open, setOpen] = useState(false);
   const [share, setShare] = useState(false);
+  const [inbox, setInbox] = useState<TeamInbox | null>(null);
   const drawerRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!open || identity.status !== 'authenticated') return;
+    let cancelled = false;
+    teamsApi.inbox().then(value => { if (!cancelled) setInbox(value); }).catch(() => { if (!cancelled) setInbox(null); });
+    return () => { cancelled = true; };
+  }, [open, identity.status]);
   const transcript = messages.filter(message => message.role === 'user' || message.role === 'assistant').map(message => `${message.role === 'user' ? 'You' : 'Xroga'}:\n${message.content}`).join('\n\n');
   useEffect(() => {
     if (!open) return;
@@ -48,7 +57,13 @@ export function WorkspacePeopleControls() {
         <div className={styles.teamIntro}><UsersRound size={22} /><h2>Work together, with clear access.</h2><p>{activeProject?.repo || 'This workspace'} · {identity.displayName}</p></div>
         <section className={styles.teamSection}><h3>Conversation sharing</h3><p>Share a read-only snapshot of this conversation. It does not grant access to files, connected accounts or project editing.</p><button type="button" disabled={!transcript.trim()} onClick={() => { setOpen(false); setShare(true); }}><Share2 size={15} /> Share conversation</button></section>
         <section className={styles.teamSection}><h3>Project collaborators</h3><p>Repository collaborators are managed by GitHub. Inviting someone there does not give them Xroga workspace access or charge your plan.</p>{activeProject?.repo ? <a href={`https://github.com/${activeProject.repo}/settings/access`} target="_blank" rel="noreferrer">Manage GitHub access <ExternalLink size={14} /></a> : <p>Connect a GitHub repository to manage its collaborators.</p>}</section>
-        <section className={styles.teamSection}><h3>Xroga workspace roles</h3><p>Viewer, client, worker and owner invitations are not backed by workspace membership yet. No invite or owner-funded usage can be granted from this panel.</p></section>
+        <section className={styles.teamSection}>
+          <h3>Xroga teams</h3>
+          {identity.status !== 'authenticated' ? <p>Sign in to create a team and invite people.</p> : inbox ? <>
+            <p>{inbox.teams.length ? `You are in ${inbox.teams.length} team${inbox.teams.length === 1 ? '' : 's'}: ${inbox.teams.map(t => t.name).join(', ')}.` : 'You are not in a team yet.'}{inbox.invitations.length ? ` ${inbox.invitations.length} invitation${inbox.invitations.length === 1 ? '' : 's'} waiting for you.` : ''}</p>
+          </> : <p>Invite people with an in-app invitation or a link you share yourself. No email is sent, and inviting someone does not charge your plan.</p>}
+          <Link href="/team" onClick={() => setOpen(false)}>Open Team page <ExternalLink size={14} /></Link>
+        </section>
       </aside>
     </div>, document.body) : null}
   </>;
