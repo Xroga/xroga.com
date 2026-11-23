@@ -118,6 +118,17 @@ export const SKILLS: Skill[] = [
     ].join('\n'),
   },
   {
+    id: 'scheduling',
+    when: has(/\b(?:meeting|call|slot|windows?|availability|available|free time|calendar|schedule|time ?zones?|utc|gmt)\b.*\b(?:time ?zones?|utc[+-]?\d*|lisbon|karachi|london|new york|dubai|tokyo|both|everyone|attendees|participants)\b/i),
+    body: [
+      'Finding times across people and time zones:',
+      '- Call find_free_times with every person (zone, working hours, busy slots in their own zone) and use the windows it returns; do not convert times in your head.',
+      '- First write the working hours AND every busy slot of each person converted into ONE zone (the zone the answer must use), showing the offset you applied (Karachi UTC+5 to Lisbon UTC+0: subtract 5 h). Busy times given in the own zone of a person must be converted too.',
+      '- Then intersect: a window counts only if it is inside the working hours of every person in that zone and overlaps no converted busy slot. Check each candidate against the list before you use it.',
+      '- In the answer or draft, list the windows only in the requested zone and format; mention other zones in words, not in the same format, so nothing is read as an extra window.',
+    ].join('\n'),
+  },
+  {
     id: 'exact-count',
     when: has(/\b(?:exactly|only|just)\s+(?:\w+\s+)?(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten)\b|\badd\s+(?:\d+|two|three|four|five|six|seven|eight|nine|ten)\b|\bmake sure (?:there (?:are|is)|the list has)\b/i),
     body: [

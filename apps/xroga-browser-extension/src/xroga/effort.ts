@@ -36,10 +36,11 @@ export class EffortControl {
 
   readonly #adaptive: boolean;
 
-  /** `adaptive`: start at none and think only where a turn's evidence asks for it (see TurnSignal); otherwise start at `start` (high) as before. */
+  /** `adaptive`: start at `start` (high) for planning, drop to none after routine turns, and think again where a turn's evidence asks for it (see TurnSignal). */
   constructor(start: Effort = 'high', options: { adaptive?: boolean } = {}) {
     this.#adaptive = options.adaptive === true;
-    this.#level = this.#adaptive ? 'none' : start;
+    // An adaptive run thinks first (the turns that read the task, plan and compute), then drops to none after two routine turns.
+    this.#level = start;
   }
 
   get level(): Effort {
