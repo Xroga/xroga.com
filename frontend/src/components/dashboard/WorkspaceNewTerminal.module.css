@@ -60,7 +60,7 @@
 .dock :global(.xv-send__glow) { display: none; }
 .dock :global(.xv-send)>svg { color: var(--terminal-ui-surface) !important; stroke: var(--terminal-ui-surface) !important; }
 .dock.dock.dock :global(.xv-chatbar-row-modern) { gap: 4px; }
- .automatic { position: relative; display: grid; place-items: center; margin: 14px auto 20px; max-width: 620px; color: var(--muted); font: 12px/1.5 Arial,sans-serif; letter-spacing: .015em; text-align: center; min-height: 24px; }
+.automatic { position: relative; display: grid; place-items: center; margin: 14px auto 20px; max-width: 620px; color: var(--muted); font: 12px/1.5 Arial,sans-serif; letter-spacing: -.025em; text-align: center; min-height: 24px; white-space: nowrap; }
 .automatic strong { color: var(--foreground); font-weight: 600; }
 .automaticFirst,.automaticDetail { grid-area: 1/1; display: block; width: 100%; transition: opacity .3s ease,filter .3s ease; }
 .automaticFirst[data-visible='false'],.automaticDetail[data-visible='false'] { opacity: 0; visibility: hidden; }
@@ -75,7 +75,7 @@
 .cardIcon svg { width: 22px; height: 22px; stroke-width: 1.8; }
 .cardWords { display: block; min-width: 0; }
 .cardWords strong { display: flex; align-items: center; gap: 5px; font: 500 22px/1.2 Georgia,'Times New Roman',serif; margin-bottom: 5px; }
-.cardWords>span { display: block; font: 12px/1.5 Arial,sans-serif; color: var(--muted); text-wrap: pretty; }
+.cardWords>span { display: block; font: 11.5px/1.42 Arial,sans-serif; color: var(--muted); text-wrap: pretty; }
 .cardArrow { width: 14px; height: 14px; color: var(--muted); }
 .card:focus-visible,.tool:focus-visible { outline: 2px solid var(--foreground); outline-offset: 3px; }
 .visual { position: absolute; width: 100px; height: 100px; right: -28px; top: -16px; color: var(--foreground); opacity: .07; pointer-events: none; transition: transform .35s,opacity .35s; }
@@ -122,7 +122,7 @@
   .carouselShell .card .cardIcon { display: none; }
   .cardWords strong { font-size: 19px; margin-bottom: 0; }
   .carouselShell .cardWords strong { margin-bottom: 5px; }
-  .cardWords>span { font-size: 12px; line-height: 1.4; }
+  .cardWords>span { font-size: 10.75px; line-height: 1.38; }
   .visual { width: 70px; height: 70px; }
   .superIntelligence { font-size: 31px; }
   .tagline { font-size: 16px; }
@@ -131,7 +131,7 @@
   .dock.dock.dock :global(.xv-chatbar-primary-tools) { gap: 5px; }
   .tool { padding: 5px; width: 29px; }
   .tool span { display: none; }
-  .automatic { font-size: 11px; margin: 12px 0 15px; }
+  .automatic { max-width: 100%; font-size: clamp(7px,2.15cqw,10px); margin: 12px 0 15px; }
 }
 @media (max-width: 639px) {
   .repoStatus { display: none; }

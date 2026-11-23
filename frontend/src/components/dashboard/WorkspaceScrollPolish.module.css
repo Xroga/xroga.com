@@ -19,6 +19,28 @@
   max-inline-size: calc(100% - 20px);
   z-index: 1;
 }
+/* On phones the extension trigger gets a reserved row underneath workspace
+   chrome. It must never compete with the empty-workspace heading. */
+@media (max-width: 639px) {
+  .headerChrome { margin-block-end: 34px; }
+  .browserControl {
+    inset-block-start: calc(100% + 5px);
+    inset-inline-end: 8px;
+    max-inline-size: calc(100% - 16px);
+  }
+  .browserControl [data-xroga-extension-trigger] {
+    gap: 5px;
+    padding: 4px 7px;
+    border-radius: 7px;
+    font-size: 10px;
+    line-height: 1;
+  }
+  .browserControl [data-xroga-extension-trigger] svg { width: 13px; height: 13px; }
+}
+@media (max-width: 320px) {
+  .headerChrome { margin-block-end: 30px; }
+  .browserControl [data-xroga-extension-trigger] { padding-inline: 6px; font-size: 9px; }
+}
 :global(.terminal-skin-gray) .browserControl [data-xroga-extension-trigger],
 :global(.terminal-skin-dark) .browserControl [data-xroga-extension-trigger],
 :global(.terminal-skin-amoled) .browserControl [data-xroga-extension-trigger] {

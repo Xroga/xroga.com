@@ -1,0 +1,98 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-MOBILE-SPACING-20261123",
+  "baseSha": "5efcda9ecce8459f82b5712158f0e2ab1a5752b6",
+  "requirementIds": [
+    "XR-MISSION-055",
+    "XR-MISSION-056"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "low",
+  "scope": "Keep the compact mobile extension trigger below workspace icons and above Super Intelligence; display native-language guidance on one line and reduce capability description typography without removing content.",
+  "changedFiles": [
+    "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
+    "frontend/src/components/dashboard/WorkspaceNewTerminal.module.css",
+    "frontend/src/components/dashboard/WorkspaceScrollPolish.module.css",
+    "frontend/e2e/workspace-new-terminal.spec.ts"
+  ],
+  "decisions": {
+    "keep": [
+      "All card descriptions, workspace actions and extension connection behavior"
+    ],
+    "extend": [
+      "Responsive spacing, compact text sizes and viewport acceptance checks"
+    ],
+    "replace": [
+      "Automatic guidance sentence with the requested native-language sentence"
+    ],
+    "deprecate": []
+  },
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Use the existing workspace header and idle dock geometry.",
+    "rfc": null
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "Frontend display only.",
+    "rollback": "Restore the previously verified frontend deployment."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "No changes; layout and copy only."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No changes; layout and copy only."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No changes; layout and copy only."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No changes; layout and copy only."
+    },
+    "egress": {
+      "changed": false,
+      "description": "No changes; layout and copy only."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No changes; layout and copy only."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No changes; layout and copy only."
+    }
+  },
+  "tests": [
+    {
+      "command": "playwright test e2e/workspace-new-terminal.spec.ts --grep 'extension trigger clears'",
+      "scope": "320/360/390/768/1440px: no heading overlap, one guidance line without clipping, smaller complete descriptions, last card reachable and no page overflow.",
+      "negative": true,
+      "reference": "frontend/e2e/workspace-new-terminal.spec.ts"
+    }
+  ],
+  "rollout": "Stage the source matching the currently live tree plus these changes, verify the browser layout, then promote that tested deployment under the user's explicit xroga.com release request. Leave automatic main deployment hold in place.",
+  "rollback": "Restore Vercel deployment dpl_AUTehNHbnRfbA6PWKx2gZUKyNfpR, release 1cbe7dc7dc9a51c20a6d60ef2748b9b77789e61e; no data changes.",
+  "knownGaps": [],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "docs/xroga/evidence/workspace-mobile-spacing-20261123.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Run scoped tests, lint and build, then verify the staged and live browser layout."
+    ],
+    "authenticatedE2e": "NOT_APPLICABLE",
+    "stagedSecurity": "NOT_APPLICABLE",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}
