@@ -708,6 +708,16 @@ test('a guide about a named publication cannot substitute for the requested orig
   assert.deepEqual(missing.completion, { status: 'partial', reason: 'source_coverage' });
   assert.match(missing.response, /couldn’t verify the requested original publication/u);
   assert.deepEqual(presentPublicResearchAnswer(text, { status: 'complete' }, [original], prompt).completion, { status: 'complete' });
+  const officialRecord = {
+    title: 'CSWP 29, The NIST Cybersecurity Framework (CSF) 2.0 | CSRC',
+    url: 'https://csrc.nist.gov/pubs/cswp/29/the-nist-cybersecurity-framework-csf-20/final',
+  };
+  assert.deepEqual(presentPublicResearchAnswer(text, { status: 'complete' }, [officialRecord], prompt).completion, { status: 'complete' });
+
+  const acronymPrompt = 'Using only official W3C pages, find the WCAG 2.2 criteria and cite the final standard.';
+  const standard = { title: 'Web Content Accessibility Guidelines (WCAG) 2.2', url: 'https://www.w3.org/TR/WCAG22/' };
+  assert.deepEqual(presentPublicResearchAnswer('The standard has criteria [1].', { status: 'complete' }, [standard], acronymPrompt).completion,
+    { status: 'complete' });
 });
 
 test('primary source lookup preserves the requested type without exporting other instructions', () => {

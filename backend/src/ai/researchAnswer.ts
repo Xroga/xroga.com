@@ -104,8 +104,11 @@ function missingNamedPublication(prompt: string, sources: ReadonlyArray<{ title?
   const search = workspacePublicSearchQuery(prompt);
   if (!search?.originalSourceQuestion || !search.officialDomains.length) return false;
   const requested = /^"([^"]+)"\s+(v?\d+(?:\.\d+)+)(?=\s|$)/iu.exec(search.query);
-  if (!requested) return false;
-  const normalizeTitle = (title: string) => title.replace(/\s*\([A-Z]{2,16}\)/gu, '')
+  // A short name can be an acronym for the official publication title.
+  // Only conclude that evidence is missing when we have a full named work.
+  if (!requested || !/\s/u.test(requested[1])) return false;
+  const normalizeTitle = (title: string) => title.replace(/^[A-Z][A-Z-]{1,15}\s+[\d.-]+[,:]\s+/u, '')
+    .replace(/\s*\([A-Z]{2,16}\)/gu, '')
     .replace(/^the\s+/iu, '').replace(/\s+[|–—-]\s+.*$/u, '')
     .replace(/\sv(?=\d)/giu, ' ').replace(/\s+/gu, ' ').trim().toLowerCase();
   const expected = normalizeTitle(requested[1] + ' ' + requested[2]);
