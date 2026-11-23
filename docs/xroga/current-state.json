@@ -158835,7 +158835,7 @@
     {
       "id": "test-suite:54038800c2d8eb8020a7",
       "sourcePath": "frontend/e2e/composer-polish.spec.ts",
-      "declaredTests": 8,
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },

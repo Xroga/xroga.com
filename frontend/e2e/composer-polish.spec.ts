@@ -26,6 +26,25 @@ test('Workspace keeps its compact, accessible header controls on desktop and mob
   }
 });
 
+test('the expanded Extension panel fits the header on phone and desktop', async ({ page }) => {
+  await page.goto('/workspace?browserExtension=abcdefghijklmnopabcdefghijklmnop&browserPair=11111111-1111-4111-8111-111111111111');
+  const header = page.getByTestId('terminal-identity-header');
+  const extension = header.locator('summary[data-xroga-extension-trigger]');
+  const panel = extension.locator('..');
+  await expect(panel.getByRole('status')).toBeVisible();
+  await expect(panel).toHaveJSProperty('open', true);
+
+  for (const width of [320, 390, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    const headerBox = (await header.boundingBox())!;
+    const panelBox = (await panel.boundingBox())!;
+    expect(panelBox.x).toBeGreaterThanOrEqual(headerBox.x - 1);
+    expect(panelBox.x + panelBox.width).toBeLessThanOrEqual(Math.min(width, headerBox.x + headerBox.width) + 1);
+    expect(panelBox.y + panelBox.height).toBeLessThanOrEqual(headerBox.y + headerBox.height + 1);
+    await expect(header.getByRole('button', { name: 'Fullscreen terminal' })).toBeInViewport();
+  }
+});
+
 test('feedback ratings are named icon buttons and Send stays inside the message field', async ({ page }) => {
   await page.clock.install();
   await page.addInitScript(() => localStorage.setItem('xroga_first_visit', String(Date.now() - 6 * 60 * 60 * 1000)));

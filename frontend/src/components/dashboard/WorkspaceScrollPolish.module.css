@@ -18,6 +18,11 @@
   align-items: center;
   flex: none;
 }
+.headerChrome > :global(.xv-workspace-header-tools):has(.browserControl > details[open]),
+.browserControl:has(> details[open]) {
+  flex-shrink: 1;
+  min-inline-size: 0;
+}
 .browserControl > details > [role='status'] {
   position: static;
   white-space: normal;
