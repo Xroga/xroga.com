@@ -78,8 +78,8 @@ function matchingPageParagraphs(content: string, question: string): string {
   const focus = terms.at(-1);
   if (!focus) return '';
   let best = '', score = 0;
-  const text = content.trim().replace(/\s+/gu, ' ');
-  for (let start = 0; start < text.length; start += 800) {
+  const text = content.trim().replace(/[^\S\r\n]+/gu, ' ');
+  for (let start = 0; start < text.length; start += 400) {
     const end = start + DEEPSEEK_PRIMARY_PAGE_EXCERPT;
     const passage = text.slice(start, end)
       .replace(start ? /^\S*\s+/u : /^$/u, '').replace(end < text.length ? /\s+\S*$/u : /^$/u, '');
@@ -87,13 +87,14 @@ function matchingPageParagraphs(content: string, question: string): string {
     const matches = new Set(passageWords);
     const focusMatches = passageWords.filter(word => word === focus).length;
     if (!focusMatches) continue;
-    const relevant = terms.filter(word => matches.has(word)).length + Math.min(8, focusMatches);
+    const definitions = passage.match(/(?:^|\s)[•▪◦]\s+\p{L}[\p{L}\p{N}\s()[\]_-]{0,55}?(?:\s[–—]\s|:\s)/gu)?.length ?? 0;
+    const relevant = terms.filter(word => matches.has(word)).length + Math.min(8, focusMatches) + 4 * definitions;
     if (relevant > score) {
       score = relevant;
       best = passage;
     }
   }
-  return best;
+  return best.replace(/\s+/gu, ' ');
 }
 
 function iconDomain(value: unknown, source: string): string | undefined {
