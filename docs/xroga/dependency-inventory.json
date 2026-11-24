@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "261e45b31a688a63c37d6ceb5c94e4baba91cf1f",
+  "source_sha": "97df3ad47e938c4e317df18d777c26e754ea5197",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -18230,7 +18230,7 @@
     },
     {
       "path": "backend/src/index.ts",
-      "sha256": "bad6bd300c892271b003b9fdf1a9f16aeda08306876d08444811bd76e763474b"
+      "sha256": "24f60f51d782c4d3e8213817308a75e08b166739ed073074508785fa4034bcb9"
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
@@ -18795,6 +18795,10 @@
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
       "sha256": "4ccfe63df5c66aba86d83c2816411c8c23a0179a452d7423557189c9ead64a7d"
+    },
+    {
+      "path": "backend/src/routes/phase1ChatProgress.ts",
+      "sha256": "17b29bc05c805b7dee6f09ce70a08b78b527813116a5be7d520c224a8592faf6"
     },
     {
       "path": "backend/src/routes/profile.ts",
@@ -23570,7 +23574,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "ac4ed979e70d42e5056daeeabc50c19f9c2ea273748e585cef5e6cf56e0868d3"
+      "sha256": "62fb9c922f434f413d8d71456a3de6eeb4083a4a0c89f14e8ca13cdeacc069d6"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -23618,7 +23622,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "2f0253f05f525018f5ac5a44305fefd3aff7377e6c552c4eafdb8839e493fb81"
+      "sha256": "de2010a50b8f6e16f06858a8ed38769c8968673674d17eebdfac9847f15294ae"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -26207,42 +26211,42 @@
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/index.ts",
-      "line": 119,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
       "line": 120,
       "credentialsInUrl": false
     },
     {
-      "hostname": "www.xroga.com",
+      "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 121,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xrogaaicom.vercel.app",
+      "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 122,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga-api.fly.dev",
+      "hostname": "xrogaaicom.vercel.app",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 123,
       "credentialsInUrl": false
     },
     {
+      "hostname": "xroga-api.fly.dev",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 124,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 215,
+      "line": 216,
       "credentialsInUrl": false
     },
     {
