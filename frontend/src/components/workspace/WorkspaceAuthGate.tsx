@@ -28,6 +28,7 @@ import {
 } from '@/lib/supabase/authErrors';
 import { requireGitHubProvider } from '@/lib/supabase/authProviders';
 import { apiFetch } from '@/lib/api';
+import { UiverseShineText } from '@/components/ui/UiverseShineText';
 import {
   clearGuestMigrationMarker,
   loadGuestMigrationMarker,
@@ -489,7 +490,7 @@ export function WorkspaceAuthGateProvider({
                     className="group flex min-h-12 items-center justify-center gap-2 rounded-[15px] bg-[linear-gradient(135deg,#006aff_0%,#2d7dff_55%,#73adff_100%)] px-4 text-[12px] font-bold text-white shadow-[0_14px_32px_rgba(0,106,255,0.24)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(0,106,255,0.32)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006aff]/60 sm:col-span-2"
                   >
                     <UserPlus className="h-4 w-4" aria-hidden="true" />
-                    Create free account
+                    <UiverseShineText>Create free account</UiverseShineText>
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
                   </Link>
 

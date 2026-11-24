@@ -24,7 +24,12 @@ export interface ProcessingChecklistItem {
   id: string;
   label: string;
   status: ProcessingStepStatus;
+  /** Used only to pick a matching icon. Never affects status. */
+  family?: TimelineFamily;
 }
+
+/** Where the checklist came from. A backend plan is a plan; event rows are only what has really happened. */
+export type ProcessingChecklistSource = 'plan' | 'events';
 
 export interface ProcessingView {
   /** Short dynamic heading, e.g. "Searching the web". */
@@ -35,6 +40,7 @@ export interface ProcessingView {
   tone: ProcessingTone;
   /** Present only for genuinely multi-stage requests with a backend-supplied plan. */
   checklist: ProcessingChecklistItem[] | null;
+  checklistSource: ProcessingChecklistSource | null;
   /** Finished real steps so far (no denominator, no percentage). */
   finishedSteps: number;
   failedSteps: number;
@@ -96,6 +102,18 @@ function progressClause(finished: number, failed: number): string {
   return `${parts.join(', ')} so far.`;
 }
 
+/** Icon hint for a backend plan step, from its wording only. Unmatched steps get no family. */
+export function familyFromLabel(label: string): TimelineFamily | undefined {
+  const text = label.toLowerCase();
+  if (/\b(search|research|look up|find)\b/.test(text)) return 'research';
+  if (/\b(test|check|verif|validat|secur)/.test(text)) return 'verify';
+  if (/\b(read|review|inspect|analy[sz]e|understand|explore|scan)/.test(text)) return 'read';
+  if (/\b(write|edit|implement|build|create|generat|chang|updat|fix|refactor)/.test(text)) return 'write';
+  if (/\b(deploy|publish|ship|launch)/.test(text)) return 'deploy';
+  if (/\b(command|install|run)\b/.test(text)) return 'command';
+  return undefined;
+}
+
 /** Backend plan entries only. A status the backend did not send is never promoted. */
 export function checklistFromTodos(
   todos: readonly Pick<SwarmTodoItem, 'id' | 'label' | 'status'>[] | undefined,
@@ -109,9 +127,36 @@ export function checklistFromTodos(
     // A run that ended in failure leaves its running step failed, never silently done.
     if (status === 'active' && outcome === 'failure') status = 'failed';
     if (status === 'active' && outcome === 'interrupted') status = 'pending';
-    return { id: todo.id, label, status };
+    return { id: todo.id, label, status, family: familyFromLabel(label) };
   }).filter(item => item.label);
   return items.length >= 3 ? items : null;
+}
+
+/**
+ * Steps that have really happened (or are happening), taken from normalised execution rows. Used only when the
+ * backend sent no plan. It never lists future work and never marks a step done unless its row completed, so it is a
+ * truthful progress list, not a plan. Shown only once there are three or more real steps.
+ */
+export function checklistFromRows(
+  rows: readonly XrogaActivityPresentation[],
+  outcome: 'success' | 'failure' | 'interrupted' | null = null,
+): ProcessingChecklistItem[] | null {
+  const seen = new Set<string>();
+  const items: ProcessingChecklistItem[] = [];
+  for (const row of rows) {
+    if (row.kind === 'respond') continue;
+    const label = clean(row.label, 90);
+    if (!label || seen.has(label.toLowerCase())) continue;
+    seen.add(label.toLowerCase());
+    let status: ProcessingStepStatus =
+      row.status === 'complete' || row.status === 'warning' ? 'done'
+        : row.status === 'error' ? 'failed'
+          : row.status === 'cancelled' || row.status === 'interrupted' ? 'skipped' : 'active';
+    if (status === 'active' && outcome === 'failure') status = 'failed';
+    if (status === 'active' && outcome === 'interrupted') status = 'skipped';
+    items.push({ id: row.id, label, status, family: familyOf(row.kind) });
+  }
+  return items.length >= 3 ? items.slice(-8) : null;
 }
 
 export interface BuildProcessingViewOptions {
@@ -131,13 +176,18 @@ export function buildProcessingView(options: BuildProcessingViewOptions): Proces
   const failedSteps = rows.filter(row => row.status === 'error').length;
   const finishedSteps = finishedRows.length;
 
+  const plan = checklistFromTodos(todos, outcome);
+  const checklist = plan ?? checklistFromRows(rows, outcome);
+  const checklistSource: ProcessingChecklistSource | null = plan ? 'plan' : checklist ? 'events' : null;
+
   if (!active) {
     return {
       heading: finishedSteps > 0 ? 'Working through your request' : 'Getting started',
       paragraph: sentence(clean(pendingLabel, 120) || 'Starting request'),
       family: 'start',
       tone: 'brand',
-      checklist: checklistFromTodos(todos, outcome),
+      checklist,
+      checklistSource,
       finishedSteps,
       failedSteps,
     };
@@ -156,7 +206,8 @@ export function buildProcessingView(options: BuildProcessingViewOptions): Proces
     paragraph,
     family,
     tone: toneFor(active),
-    checklist: checklistFromTodos(todos, outcome),
+    checklist,
+    checklistSource,
     finishedSteps,
     failedSteps,
   };
