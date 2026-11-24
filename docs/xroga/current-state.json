@@ -4516,6 +4516,7 @@
       "callers": [
         "backend/src/ai/intentReasoning.test.ts:11",
         "backend/src/ai/presentationRelevance.test.ts:5",
+        "backend/src/routes/phase1ChatProgress.ts:2",
         "backend/src/routes/swarm.ts:18"
       ],
       "reachable": true,
@@ -5556,7 +5557,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "474ae22ef7bbca22d3988f3dcb3ba6f541a11926f88f6b87e265ab921ef1f0ea",
+      "sha256": "cdfa61e5be0fa51a5d38a674c318cb75f284c049f82833328a757205405bde72",
       "symbols": [
         "EditorialContext",
         "MAX_EXPANDED_EXPRESSION_DEPTH",
@@ -6784,10 +6785,9 @@
       "id": "surface:93911e9946fd4b21d50d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "025fabc5060fb833f7631c6c0c48b9deef4571cc24114370983f960aeb068885",
+      "sha256": "d821c962ffaf8f87b8f121b0aff6ff55c83315b408b779807b51d7087d778a5f",
       "symbols": [
         "authorityIssue",
-        "binding",
         "calculatorUnavailable",
         "candidate",
         "checkRecoveredProgram",
@@ -13917,6 +13917,7 @@
         "backend/src/ai/pipeline.ts:110",
         "backend/src/ai/startupProgress.test.ts:107",
         "backend/src/ai/startupProgress.test.ts:3",
+        "backend/src/routes/phase1ChatProgress.ts:3",
         "backend/src/routes/swarm.ts:19"
       ],
       "reachable": true,
@@ -24854,6 +24855,7 @@
         "backend/src/routes/operations.ts",
         "backend/src/routes/phase1.ts",
         "backend/src/routes/phase1BusinessPreflight.ts",
+        "backend/src/routes/phase1ChatProgress.ts",
         "backend/src/routes/profile.ts",
         "backend/src/routes/projectRuntime.ts",
         "backend/src/routes/projects.ts",
@@ -26246,6 +26248,7 @@
       ],
       "callers": [
         "backend/src/lib/publicAiIdentity.test.ts:3",
+        "backend/src/routes/phase1ChatProgress.ts:4",
         "backend/src/routes/swarm.ts:17",
         "backend/src/workers/googleSwarmQueue.ts:8"
       ],
@@ -33221,6 +33224,63 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/routes/phase1BusinessPreflight.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:a84cf17b2bc2287e5cc5",
+      "subsystem": "backend_routes",
+      "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
+      "sha256": "17b29bc05c805b7dee6f09ce70a08b78b527813116a5be7d520c224a8592faf6",
+      "symbols": [
+        "HEARTBEAT_MS",
+        "heartbeat",
+        "line",
+        "message",
+        "open",
+        "originalStatus",
+        "reading",
+        "router",
+        "sendJson",
+        "status",
+        "wantsStream",
+        "write"
+      ],
+      "imports": [
+        "../ai/intentReasoning.js",
+        "../ai/startupProgress.js",
+        "../lib/publicAiIdentity.js",
+        "express"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/intentReasoning.ts",
+        "backend/src/ai/startupProgress.ts",
+        "backend/src/lib/publicAiIdentity.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/index.ts:38",
+        "backend/src/routes/phase1ChatProgress.test.ts:5"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "express"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/routes/phase1ChatProgress.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -138565,6 +138625,18 @@
       "inlineResponse": true
     },
     {
+      "id": "registration:a7cd8f4b7f4e660f32cb",
+      "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
+      "line": 33,
+      "receiver": "router",
+      "method": "post",
+      "path": "/chat",
+      "handlers": [],
+      "scope": "module",
+      "functionName": "<module>",
+      "inlineResponse": true
+    },
+    {
       "id": "registration:153d87437bfc6991b4b2",
       "sourcePath": "backend/src/routes/profile.ts",
       "line": 9,
@@ -140097,6 +140169,23 @@
       "reachable": true,
       "state": "IMPLEMENTED_AND_REACHABLE",
       "reason": "Router factory invoked by an imported default export; terminal middleware traced, behavior must still be tested."
+    },
+    {
+      "id": "route:b8387ed099219967dd91",
+      "registrationId": "registration:a7cd8f4b7f4e660f32cb",
+      "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
+      "line": 33,
+      "method": "POST",
+      "path": "/api/phase1/chat",
+      "mountChain": [
+        "backend/src/index.ts:227"
+      ],
+      "authBoundary": [
+        "phase1AuthMiddleware"
+      ],
+      "reachable": true,
+      "state": "IMPLEMENTED_AND_REACHABLE",
+      "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
       "id": "route:99a9914457640bbb1022",
@@ -145389,6 +145478,15 @@
       "line": 278,
       "kind": "setInterval",
       "symbol": "createLocalBrowserRouter",
+      "reachable": true,
+      "state": "IMPLEMENTED_BUT_UNVERIFIED"
+    },
+    {
+      "id": "schedule:71083ee0a5668589841f",
+      "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
+      "line": 52,
+      "kind": "setInterval",
+      "symbol": "<module>",
       "reachable": true,
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
@@ -155160,7 +155258,7 @@
     {
       "id": "test-suite:cf78e18abc3aa283d701",
       "sourcePath": "backend/src/ai/nativeOpenUiValues.test.ts",
-      "declaredTests": 25,
+      "declaredTests": 26,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -157249,6 +157347,13 @@
       "id": "test-suite:bb1a3a635e9b70d6b649",
       "sourcePath": "backend/src/routes/phase1BusinessPreflight.test.ts",
       "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:8d73808569e38c5b4489",
+      "sourcePath": "backend/src/routes/phase1ChatProgress.test.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -162580,7 +162685,6 @@
     "Computed route paths, runtime registrations, Docker/worker commands and dynamic nonliteral imports require explicit manual reconciliation.",
     "No production credentials or customer data were read; live behavior remains unverified in this command.",
     "Static imports do not prove provider availability or authorization correctness.",
-    "Unresolved local import backend/src/index.ts:38 -> ./routes/phase1ChatProgress.js",
     "Unresolved local import scripts/batch3/live-github-check.ts:22 -> ../../backend/src/existingSource/change/localProcessPort.testsupport.js",
     "Unresolved local import scripts/batch3/local-supabase-check.ts:17 -> ../../backend/src/existingSource/change/localProcessPort.testsupport.js",
     "Unresolved local import scripts/render-software-art.mjs:17 -> ../node_modules/playwright/index.mjs"

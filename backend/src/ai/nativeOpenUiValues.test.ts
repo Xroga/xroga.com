@@ -199,6 +199,26 @@ test('reconciles an explicit result sentence without altering surrounding explan
   assert.equal(shared?.program, answer.responseSource.text);
 });
 
+test('an exact correction inside the calculator keeps its controls and full answer', () => {
+  const prose = 'Base price and quantity can both be edited. This estimate excludes tax.';
+  const native = [
+    'root = Col([Markdown(_xroga_answer), purchase, Text("Order total: $53.00. Delivery is included.")])',
+    '$price = 10', '$quantity = 5',
+    'purchase = Controls([Input($price, "Unit price", "number"), Input($quantity, "Quantity", "number"), Button("Reset", @Reset($price, $quantity)), Metric("Order total", @Format($price * $quantity, "currency", 2, "USD"))], "Purchase inputs")',
+  ].join('\n');
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + native,
+    'stop', undefined, undefined, undefined, ['calculator']);
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  assert.match(answer.response, /Base price and quantity can both be edited/);
+  assert.match(answer.response, /Order total: \$50\.00\. Delivery is included/);
+  assert.doesNotMatch(answer.response + answer.responseSource.text, /\$53\.00/);
+  assert.match(answer.responseSource.text, /@Reset\(\$price, \$quantity\)/);
+  assert.deepEqual(initialNativeReadouts(answer.responseSource.text), initialNativeReadouts(native));
+  const snapshot = buildNativeOpenUiShare(answer.response, answer.responseSource.text);
+  assert.ok(snapshot);
+  assert.equal(readNativeOpenUiShare(snapshot)?.text, answer.response);
+});
+
 test('sensitivity and boundary examples do not conflict with the selected calculator result', () => {
   const rows = [{ label: 'Interest', value: '$1,500.00' }, { label: 'Total balance', value: '$11,500.00' }];
   const examples = [

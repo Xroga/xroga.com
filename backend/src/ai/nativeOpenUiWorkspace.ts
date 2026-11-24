@@ -240,22 +240,21 @@ export function completeNativeWorkspaceAnswer(
         && withoutControlClaims(response) === response.trim()) {
       return { response, completion, responseSource: { format: NATIVE_UI_FORMAT, text: '' } };
     }
-    if (!multipleConflict && !repair?.partial && !missing.length && requiredFormats.includes('calculator')) {
+    if (!evidenceIds?.size && !multipleConflict && !repair?.partial && !missing.length && requiredFormats.includes('calculator')) {
       const correctedProse = correctExplicitCurrencyReadouts(response, initialNativeReadouts(program, true));
-      // A bound Markdown component must carry the same correction into the
-      // interactive answer. Independently authored content still has to pass.
-      const binding = '\n_xroga_answer = ' + JSON.stringify(response);
-      if (correctedProse !== response && program.endsWith(binding)) {
-        const correctedProgram = bindNativeAnswerText(program.slice(0, -binding.length), correctedProse);
-        if (correctedProgram !== program && validateNativeWorkspaceProgram(correctedProgram, evidenceIds, correctedProse,
-          undefined, { request: prompt }).ok && !conflictingNativeReadouts(supplementNativeProse('', correctedProgram, true), readouts).length) {
-          const projection = supplementNativeProse(correctedProse, correctedProgram, true);
-          if (!conflictingNativeReadouts(projection, readouts).length) return {
-            response: projection,
-            completion: { status: 'complete' as const },
-            responseSource: { format: NATIVE_UI_FORMAT, text: correctedProgram },
-          };
-        }
+      const correctedProgram = recoverNativeReadoutExplanations(program, true);
+      // Exact replacements in both representations preserve all instructions
+      // and leave the model's validated controls and formulas intact.
+      if ((correctedProse !== response || correctedProgram !== program)
+          && validateNativeWorkspaceProgram(correctedProgram, evidenceIds, correctedProse, undefined, { prose: correctedProse, request: prompt }).ok
+          && !missingNativeFormats(correctedProgram, requiredFormats).length
+          && !conflictingNativeReadouts(supplementNativeProse('', correctedProgram, true), readouts).length) {
+        const projection = supplementNativeProse(correctedProse, correctedProgram, true);
+        if (!conflictingNativeReadouts(projection, readouts).length) return {
+          response: projection,
+          completion: { status: 'complete' as const },
+          responseSource: { format: NATIVE_UI_FORMAT, text: correctedProgram },
+        };
       }
     }
     // Preserve independent prose and the calculator when its corrected

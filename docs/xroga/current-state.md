@@ -6,15 +6,15 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 
 ## Counts
 
-- surfaces: 1979
-- routeRegistrations: 409
-- routes: 344
-- reachableRoutes: 253
+- surfaces: 1980
+- routeRegistrations: 410
+- routes: 345
+- reachableRoutes: 254
 - queues: 4
 - migrations: 164
 - workflows: 21
-- testSuites: 1129
-- declaredTests: 7783
+- testSuites: 1130
+- declaredTests: 7787
 - classifiedMarkers: 439
 - reachableMarkers: 373
 - absentRequiredPaths: 5
@@ -91,7 +91,6 @@ The JSON includes every discovered registration, source module, scheduler, migra
 - Computed route paths, runtime registrations, Docker/worker commands and dynamic nonliteral imports require explicit manual reconciliation.
 - No production credentials or customer data were read; live behavior remains unverified in this command.
 - Static imports do not prove provider availability or authorization correctness.
-- Unresolved local import backend/src/index.ts:38 -> ./routes/phase1ChatProgress.js
 - Unresolved local import scripts/batch3/live-github-check.ts:22 -> ../../backend/src/existingSource/change/localProcessPort.testsupport.js
 - Unresolved local import scripts/batch3/local-supabase-check.ts:17 -> ../../backend/src/existingSource/change/localProcessPort.testsupport.js
 - Unresolved local import scripts/render-software-art.mjs:17 -> ../node_modules/playwright/index.mjs
