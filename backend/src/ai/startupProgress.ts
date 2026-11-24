@@ -113,6 +113,25 @@ export function startupProgress(
   };
 }
 
+/**
+ * A short, plain account of how the request was read, taken from the deterministic intent
+ * analysis (`readIntent`). It is not model reasoning: no provider text, prompt or hidden chain of
+ * thought is involved, and it costs no model call. Returns null when there is nothing to say.
+ */
+export function understandingProgress(reasoning: readonly string[]): StartupProgressLine | null {
+  const sentences = reasoning.map((line) => line.replace(/\s+/g, ' ').trim()).filter(Boolean).slice(0, 3);
+  if (!sentences.length) return null;
+  const text = sentences.join(' ');
+  const message = text.length > 280 ? `${text.slice(0, 279).trimEnd()}…` : text;
+  return {
+    agent: 'session',
+    status: 'understanding_request',
+    message,
+    swarmStatusLabel: 'Planning',
+    swarmActivity: message,
+  };
+}
+
 /** Every step, in the order the pipeline performs them. Used by the ordering test. */
 export const STARTUP_STEPS: readonly StartupStep[] = [
   'accepted',
