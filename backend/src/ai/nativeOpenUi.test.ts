@@ -797,6 +797,24 @@ test('one malformed wrapper preserves later blocks in a long answer', () => {
   assert.doesNotMatch(answer.responseSource.text, /Section\(42/);
 });
 
+test('repairing root layout settings keeps a complete verified calculator and chart', () => {
+  const prose = 'Four items cost $40.00 at $10 per item.';
+  const program = [
+    'root = Col([estimate, chart], "compact")',
+    '$units = 4',
+    'estimate = Card([Slider($units, 1, 10, 1, "Items"), Metric("Total", @Format($units * 10, "currency", 2, "USD"))])',
+    'chart = Chart("bar", [{item:"Total", value:$units * 10}], "item", ["value"], "currency", "USD")',
+  ].join('\n');
+  assert.deepEqual(validateNativeWorkspaceProgram(program, undefined, prose), { ok: false, reason: 'schema' });
+  const deliver = (source: string) => completeNativeWorkspaceAnswer(
+    prose + NATIVE_UI_MARKER + source, 'stop', undefined, undefined, undefined, ['calculator', 'chart']);
+  const repaired = deliver(program);
+  assert.deepEqual(repaired.completion, { status: 'complete' });
+  assert.equal(repaired.responseSource.text, program.replace(', "compact")', ')'));
+  const lostChart = deliver(program.replace('"bar"', '"unknown"'));
+  assert.deepEqual(lostChart.completion, { status: 'partial', reason: 'presentation_contract' });
+});
+
 test('a native-only schema failure recovers verified content and leaves unknown list fields alone', () => {
   const program = 'root = Col([Section("Report", [Text("Verified result."), List([{title:"Do not surface", unknown:"metadata"}])])])';
   const answer = completeNativeWorkspaceAnswer(NATIVE_UI_MARKER.slice(1) + program, 'stop');

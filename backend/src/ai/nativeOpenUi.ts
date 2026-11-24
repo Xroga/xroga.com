@@ -1236,15 +1236,24 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
       return { container: { ...node, args }, children: els };
     }
     const layout = salvageLayout(root, 0);
-    const recovered = layout && (usable(validate(layout.container)) ? layout.container : group(layout.children));
-    if (!recovered || blockedAuthority) return;
+    if (!layout) return;
+    const recovered = usable(validate(layout.container)) ? layout.container : group(layout.children);
+    if (blockedAuthority) return;
     const restored = render(recovered);
     const validation = check(restored, failure === 'factual_review' ? reviewContext : narrative);
     if (failure === 'factual_review') {
       // Omitted components must not hide a contradiction with any surviving chart.
       if (!validation.ok || contradictsMonthlyChart(parseProgram.parse(restored).root, narrative)) return;
     }
-    if (validation.ok || validation.reason === 'data_review') return { program: restored, validation, partial: true };
+    if (validation.ok || validation.reason === 'data_review') {
+      const originalChildren = resolveRecoveryReference(root.args[0], symbols);
+      // A schema repair that only resets the root's optional layout settings
+      // keeps every requested block. A discarded or replaced child stays partial.
+      const keptAllChildren = failure === 'schema' && originalChildren?.k === 'Arr'
+        && originalChildren.els.length === layout.children.length
+        && originalChildren.els.every((child, index) => child === layout.children[index]);
+      return { program: restored, validation, partial: !keptAllChildren };
+    }
   } catch {
     // Keep the original prose when recovery cannot safely rebuild the layout.
   }

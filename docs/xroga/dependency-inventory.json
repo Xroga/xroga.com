@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "70bfa1bd405a2a87b0ce45b2bf15fdf101127ab0",
+  "source_sha": "4a13e268b6ea1ed41f1ff07e9542147cbac0f079",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17242,7 +17242,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "12ed1faf2a938c9cd5edc294cac498118474a68ea064926459dd9ac0ea21f232"
+      "sha256": "474ae22ef7bbca22d3988f3dcb3ba6f541a11926f88f6b87e265ab921ef1f0ea"
     },
     {
       "path": "backend/src/ai/nativeOpenUiAccuracy.ts",

@@ -5553,7 +5553,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "12ed1faf2a938c9cd5edc294cac498118474a68ea064926459dd9ac0ea21f232",
+      "sha256": "474ae22ef7bbca22d3988f3dcb3ba6f541a11926f88f6b87e265ab921ef1f0ea",
       "symbols": [
         "EditorialContext",
         "MAX_EXPANDED_EXPRESSION_DEPTH",
@@ -5668,6 +5668,7 @@
         "item",
         "items",
         "kept",
+        "keptAllChildren",
         "key",
         "keys",
         "label",
@@ -5712,6 +5713,7 @@
         "optionalFields",
         "orderedScopes",
         "original",
+        "originalChildren",
         "originals",
         "outline",
         "outputs",
@@ -155129,7 +155131,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 94,
+      "declaredTests": 95,
       "skipLocations": [],
       "focusLocations": []
     },
