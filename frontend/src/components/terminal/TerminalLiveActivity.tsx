@@ -9,6 +9,8 @@ import {
 } from '@/lib/terminal/activityPresentation';
 import { buildActivityTimeline, formatElapsed, pendingWorkLabel, type PendingReplyKind } from '@/lib/terminal/activityTimeline';
 import type { TerminalRunState } from '@/lib/terminal/terminalEvent';
+import { buildProcessingView } from '@/lib/terminal/processingView';
+import type { SwarmTodoItem } from '@/lib/swarm';
 
 /** Nothing new for this long is worth saying out loud, and only as a measured fact. */
 const STALLED_AFTER_MS = 9_000;
@@ -18,6 +20,8 @@ interface TerminalLiveActivityProps {
   activity?: readonly XrogaActivityPresentation[];
   pending?: boolean;
   pendingReply?: PendingReplyKind;
+  /** Backend plan for the current turn. Shown as a checklist only when it has three or more steps. */
+  todos?: readonly SwarmTodoItem[];
 }
 
 /**
@@ -30,6 +34,7 @@ export function TerminalLiveActivity({
   activity,
   pending = false,
   pendingReply,
+  todos,
 }: TerminalLiveActivityProps) {
   const [now, setNow] = useState(() => Date.now());
   const [mountedAt] = useState(() => Date.now());
@@ -68,13 +73,16 @@ export function TerminalLiveActivity({
   if (rows.length === 0 && !active && !run?.outcome) return null;
 
   const label = pendingWorkLabel(run?.events ?? [], rows.length > 0, pendingReply);
+  const processing = active
+    ? buildProcessingView({ active: model.active, otherActive: model.otherActive, rows, pendingLabel: label, todos, outcome: run?.outcome ?? null })
+    : undefined;
   const shell = rows.length === 0 && active;
   return (
     <div
       data-testid="terminal-live-activity"
       data-state={shell ? 'pending' : active ? 'active' : 'settled'}
     >
-      <ActivityTimeline model={model} now={now} runStartedAt={run?.startedAt ?? mountedAt} pendingLabel={label} note={note} />
+      <ActivityTimeline model={model} now={now} runStartedAt={run?.startedAt ?? mountedAt} pendingLabel={label} note={note} processing={processing} />
     </div>
   );
 }

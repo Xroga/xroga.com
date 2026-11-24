@@ -67291,7 +67291,7 @@
       "id": "surface:1dacf962de020747d05b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/activity/ActivityTimeline.tsx",
-      "sha256": "bbffbbc5c9d1e92434d5826f04ee36d1bbe074e2f702b8a0e28b5cabb5dc6ce0",
+      "sha256": "77ab799329a9524780c5c989997c8ba8716cbd9558bdecf171a1c10bc8862d6a",
       "symbols": [
         "ActivityTimeline",
         "ActivityTimelineProps",
@@ -67324,14 +67324,17 @@
       ],
       "imports": [
         "./BlackHoleIndicator",
+        "./ProcessingSurface",
         "./activity.module.css",
         "@/lib/terminal/activityPresentation",
         "@/lib/terminal/activityTimeline",
+        "@/lib/terminal/processingView",
         "lucide-react",
         "react"
       ],
       "runtimeImports": [
         "frontend/src/components/activity/BlackHoleIndicator.tsx",
+        "frontend/src/components/activity/ProcessingSurface.tsx",
         "frontend/src/components/activity/activity.module.css",
         "frontend/src/lib/terminal/activityTimeline.ts"
       ],
@@ -67389,6 +67392,56 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:837308a60584f4bf9784",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/activity/ProcessingSurface.tsx",
+      "sha256": "f1224a3cfccf2c230c15ac0a2e785637a4f073f06324aee4499d370c2beba8f0",
+      "symbols": [
+        "FAMILY_ICON",
+        "Icon",
+        "ProcessingSurface",
+        "STATUS_WORD",
+        "StepMark",
+        "checklist",
+        "finished",
+        "showCopy"
+      ],
+      "imports": [
+        "./processing.module.css",
+        "@/lib/terminal/activityTimeline",
+        "@/lib/terminal/processingView",
+        "lucide-react",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/activity/processing.module.css"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/activity/ActivityTimeline.tsx:15"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react",
         "react"
       ],
       "authBoundary": [],
@@ -101563,7 +101616,7 @@
       "id": "surface:9c57a6290c71522141f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "4ca867c15ca4ca9d11c2e7cf9e5aa60807addec793a294158f9251561ea4aff8",
+      "sha256": "bd53987b93b3e6fa44e40ec17ec9d7afc1b256024c74e32fbd6b3595a48d645d",
       "symbols": [
         "AGENT_STYLES",
         "SwarmMessageLog",
@@ -102131,7 +102184,7 @@
       "id": "surface:d57670e245a2278fa94d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/TerminalLiveActivity.tsx",
-      "sha256": "3e5dd7535d5a54d02c201d7a72199d415083664d089f718020f58dca8a685a47",
+      "sha256": "199888ca766163415e0b8dd8f3cd1b0af462d1a13cb6c7bff000fe7c5db0aa78",
       "symbols": [
         "STALLED_AFTER_MS",
         "TerminalLiveActivity",
@@ -102141,6 +102194,7 @@
         "lastObservableAt",
         "model",
         "note",
+        "processing",
         "rows",
         "shell",
         "silentForMs",
@@ -102148,15 +102202,18 @@
       ],
       "imports": [
         "@/components/activity/ActivityTimeline",
+        "@/lib/swarm",
         "@/lib/terminal/activityPresentation",
         "@/lib/terminal/activityTimeline",
+        "@/lib/terminal/processingView",
         "@/lib/terminal/terminalEvent",
         "react"
       ],
       "runtimeImports": [
         "frontend/src/components/activity/ActivityTimeline.tsx",
         "frontend/src/lib/terminal/activityPresentation.ts",
-        "frontend/src/lib/terminal/activityTimeline.ts"
+        "frontend/src/lib/terminal/activityTimeline.ts",
+        "frontend/src/lib/terminal/processingView.ts"
       ],
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx"
@@ -121040,6 +121097,8 @@
         "frontend/src/components/terminal/TerminalLiveActivity.tsx:6",
         "frontend/src/context/TerminalChatContext.tsx:15",
         "frontend/src/lib/terminal/activityPresentation.test.ts:4",
+        "frontend/src/lib/terminal/processingView.test.ts:4",
+        "frontend/src/lib/terminal/processingView.ts:3",
         "frontend/src/lib/terminal/softwareAgentEvents.test.ts:3"
       ],
       "reachable": true,
@@ -121060,6 +121119,7 @@
         "frontend/src/components/response-experience-v2/conversation.test.ts",
         "frontend/src/lib/terminal/activityPresentation.test.ts",
         "frontend/src/lib/terminal/activityTimeline.test.ts",
+        "frontend/src/lib/terminal/processingView.test.ts",
         "frontend/src/lib/terminal/softwareAgentEvents.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -121135,7 +121195,9 @@
       "callers": [
         "frontend/src/components/activity/ActivityTimeline.tsx:9",
         "frontend/src/components/terminal/TerminalLiveActivity.tsx:10",
-        "frontend/src/lib/terminal/activityTimeline.test.ts:4"
+        "frontend/src/lib/terminal/activityTimeline.test.ts:4",
+        "frontend/src/lib/terminal/processingView.test.ts:5",
+        "frontend/src/lib/terminal/processingView.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -121150,7 +121212,8 @@
         "frontend/src/lib/terminal/activityTimeline.ts#TerminalEvent"
       ],
       "testCoverage": [
-        "frontend/src/lib/terminal/activityTimeline.test.ts"
+        "frontend/src/lib/terminal/activityTimeline.test.ts",
+        "frontend/src/lib/terminal/processingView.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -121285,6 +121348,77 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:64d3429f35e151f27537",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/terminal/processingView.ts",
+      "sha256": "0e59f8e5f9ac9d06b0f99af176a64124b2b1feb78477ee97a3cf20c8bab7492a",
+      "symbols": [
+        "BuildProcessingViewOptions",
+        "HEADING_BY_KIND",
+        "MODEL_KINDS",
+        "ProcessingChecklistItem",
+        "ProcessingStepStatus",
+        "ProcessingTone",
+        "ProcessingView",
+        "buildProcessingView",
+        "checklistFromTodos",
+        "clean",
+        "detail",
+        "done",
+        "failedSteps",
+        "family",
+        "finishedRows",
+        "finishedSteps",
+        "heading",
+        "items",
+        "label",
+        "lead",
+        "paragraph",
+        "parallel",
+        "parts",
+        "progressClause",
+        "sentence",
+        "status",
+        "text",
+        "toneFor"
+      ],
+      "imports": [
+        "../swarm",
+        "./activityPresentation",
+        "./activityTimeline",
+        "./terminalRedaction"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/terminal/activityPresentation.ts",
+        "frontend/src/lib/terminal/activityTimeline.ts",
+        "frontend/src/lib/terminal/terminalRedaction.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/terminal/TerminalLiveActivity.tsx:12",
+        "frontend/src/lib/terminal/processingView.test.ts:6"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/terminal/processingView.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:a91eaf7f089c8dce4b1c",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/terminal/requiredInteractions.ts",
@@ -121391,6 +121525,7 @@
         "frontend/src/lib/terminal/activityPresentation.test.ts",
         "frontend/src/lib/terminal/activityTimeline.test.ts",
         "frontend/src/lib/terminal/liveActivity.test.ts",
+        "frontend/src/lib/terminal/processingView.test.ts",
         "frontend/src/lib/terminal/requiredInteractions.test.ts",
         "frontend/src/lib/terminal/terminalEventModel.test.ts"
       ],
@@ -121609,6 +121744,7 @@
         "frontend/src/lib/engineeringArtifact.ts:14",
         "frontend/src/lib/sanitizeChatMessages.ts:5",
         "frontend/src/lib/terminal/activityPresentation.ts:2",
+        "frontend/src/lib/terminal/processingView.ts:5",
         "frontend/src/lib/terminal/terminalEventAdapter.ts:24",
         "frontend/src/lib/terminal/terminalEventModel.test.ts:7"
       ],
@@ -150851,6 +150987,66 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
+      "id": "finding:b2cada71a61668b569ba",
+      "sourcePath": "frontend/src/lib/terminal/processingView.ts",
+      "line": 105,
+      "kind": "TODO",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:5645257f7c0c8ef5fffa",
+      "sourcePath": "frontend/src/lib/terminal/processingView.ts",
+      "line": 106,
+      "kind": "TODO",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:da0b33872cd80b6d31d3",
+      "sourcePath": "frontend/src/lib/terminal/processingView.ts",
+      "line": 108,
+      "kind": "TODO",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:a561ecc38fd7a93384f4",
+      "sourcePath": "frontend/src/lib/terminal/processingView.ts",
+      "line": 108,
+      "kind": "TODO",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:5e40999be5fd46586eb4",
+      "sourcePath": "frontend/src/lib/terminal/processingView.ts",
+      "line": 108,
+      "kind": "TODO",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:db6e1253fa6b445d5794",
+      "sourcePath": "frontend/src/lib/terminal/processingView.ts",
+      "line": 112,
+      "kind": "TODO",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
       "id": "finding:56ca1048e6215c4dc817",
       "sourcePath": "scripts/batch4/local-fairness-benchmark.ts",
       "line": 35,
@@ -161552,6 +161748,13 @@
       "id": "test-suite:40ea852b01c026961485",
       "sourcePath": "frontend/src/lib/terminal/plainResponseUi.test.ts",
       "declaredTests": 7,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:6c26b862d0b3fa86b3fd",
+      "sourcePath": "frontend/src/lib/terminal/processingView.test.ts",
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },
