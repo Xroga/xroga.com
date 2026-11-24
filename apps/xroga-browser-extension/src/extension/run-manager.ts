@@ -8,6 +8,7 @@ import { DATA_OPS_TOOL } from '@src/agent/data-ops';
 import { MACRO_TOOL } from '@src/agent/macro-tool';
 import { BROWSER_DATA_TOOL } from '@src/agent/browser-data';
 import { PYTHON_REPL_TOOL, runPythonRepl } from '@src/agent/python-repl';
+import { SITE_SCAN_TOOL, runSiteScan } from '@src/agent/site-scan';
 import { FREE_TIMES_TOOL } from '@src/agent/free-times';
 import { AgentLoop, REASONING_DROPPED, STOPPED_BY_USER, STOPPED_NOTE } from '@src/agent/loop';
 import type { LoopEnd } from '@src/agent/loop';
@@ -104,7 +105,7 @@ import { onWorkspaceDisconnect, postWorkspace, workspacePaired, workspaceRequest
 import { ACTIVITY_LIMIT, browserActivity } from '@src/xroga/activity';
 import { startXrogaModelRun } from '@src/xroga/model';
 import { EffortControl } from '@src/xroga/effort';
-import { HTTP_GET_TOOL, PLUGIN_CONNECT_TOOL, REPO_RUN_TOOL, CHANGE_REPO_TOOL, runRepositoryTool, changeRepositoryTool, nativeAppCall, nativeAppTool, rankAppTools, runPluginConnect, runPluginTool, runPublicGet, PLUGIN_TOOLS, PLUGIN_CHAIN_TOOL, runPluginChain, type AppToolInfo } from '@src/xroga/plugins';
+import { fetchPublicRaw, HTTP_GET_TOOL, PLUGIN_CONNECT_TOOL, REPO_RUN_TOOL, CHANGE_REPO_TOOL, runRepositoryTool, changeRepositoryTool, nativeAppCall, nativeAppTool, rankAppTools, runPluginConnect, runPluginTool, runPublicGet, PLUGIN_TOOLS, PLUGIN_CHAIN_TOOL, runPluginChain, type AppToolInfo } from '@src/xroga/plugins';
 import { repairingPluginCaller, type PluginToolName } from '@src/xroga/plugin-repair';
 import { SEARCH_HOME, browserTarget } from '@src/xroga/navigation';
 import { XROGA_PRODUCT } from '@src/xroga/product';
@@ -1806,7 +1807,7 @@ export class RunManager {
           vision: model.profile.vision, localScreenshots: !!canonical,
           agentTools: isWorker
             ? [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, PLAN_TOOL, RECORD_DEMO_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL, DATA_OPS_TOOL, MACRO_TOOL, BROWSER_DATA_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL] : [])]
-            : [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, PLAN_TOOL, RECORD_DEMO_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL, DATA_OPS_TOOL, MACRO_TOOL, BROWSER_DATA_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, REPO_RUN_TOOL, CHANGE_REPO_TOOL, PYTHON_REPL_TOOL] : []), ...(canonical?.plugins ? [...PLUGIN_TOOLS, PLUGIN_CHAIN_TOOL, PLUGIN_CONNECT_TOOL] : []), ...PARALLEL_TOOLS],
+            : [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, PLAN_TOOL, RECORD_DEMO_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL, DATA_OPS_TOOL, MACRO_TOOL, BROWSER_DATA_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, SITE_SCAN_TOOL, REPO_RUN_TOOL, CHANGE_REPO_TOOL, PYTHON_REPL_TOOL] : []), ...(canonical?.plugins ? [...PLUGIN_TOOLS, PLUGIN_CHAIN_TOOL, PLUGIN_CONNECT_TOOL] : []), ...PARALLEL_TOOLS],
         });
         // A request that only reads starts with the small tool list; the model switches to the full one if it needs to act.
         const { tools, full: fullTools } = startingTools(
@@ -1886,6 +1887,10 @@ export class RunManager {
             const callPlugin = pluginCaller;
             if (call.toolName === 'http_get' && canonical) return runPublicGet(canonical.runId, call.input, signal, wrapApp);
             if (call.toolName === 'run_repository' && canonical) return runRepositoryTool(canonical.runId, call.input, signal, wrapApp);
+            if (call.toolName === 'site_scan' && canonical) {
+              const scan = await runSiteScan((call.input ?? {}) as { url?: string; pages?: number; only?: string[] }, u => fetchPublicRaw(canonical!.runId, u, signal), signal);
+              return { text: wrapApp(scan.text, 'public web pages'), isError: scan.isError };
+            }
             if (call.toolName === 'python_repl' && canonical) return runPythonRepl(canonical.runId, call.input, signal, wrapApp, runRepositoryTool);
             if (call.toolName === 'change_repository' && canonical) return changeRepositoryTool(canonical.runId, call.input, signal, wrapApp);
             if (call.toolName === 'plugin_connect' && canonical?.plugins) return runPluginConnect(canonical.runId, call.input, signal);

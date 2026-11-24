@@ -266,6 +266,7 @@ export const SKILLS: Skill[] = [
     body: [
       'Testing or auditing a site (exploratory QA):',
       '- Orient first: open the start page, take one snapshot, list the sections and the main flows (sign up, search, buy, contact, account). Decide what a user came to do; test those flows first and the periphery last.',
+      '- For a whole site, start with site_scan: it finds the pages (robots.txt, sitemap, links), reads each one over HTTP and lists the problems across the site (duplicate titles, missing descriptions, broken pages, noindex), and names the pages that need the browser. Then audit_page the important ones for speed.',
       '- For each page: audit_page (title, description, headings, alt text, structured data, speed), diagnostics (console errors and failed requests; the first call starts recording, so call it, act, call again), and one screenshot. form_model lists a form’s fields and rules in one call.',
       '- Try each flow like a person: fill a form with valid values, with an empty required field, with a wrong format; open each menu, dialog and tab; follow the main links and look for 404s and wrong destinations; check empty states and what happens after a refresh or the back button.',
       '- Look at the page on a phone (emulate device iphone-15), in dark mode (emulate colorScheme dark) and in print (emulate media print), then emulate reset. Check slow and offline behaviour only when the task asks for it.',

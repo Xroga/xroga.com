@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DiagnosticsLog, formatCookies, formatDiagnostics, formatStorage, scrubText, stripUrl } from '../diagnostics';
+import { DiagnosticsLog, formatCookies, formatDiagnostics, formatIssues, formatStorage, scrubText, stripUrl } from '../diagnostics';
 
 describe('stripUrl', () => {
   it('drops the query and fragment, which can carry a token', () => {
@@ -102,5 +102,26 @@ describe('cookies and storage', () => {
     expect(out).toContain('localStorage · 2 keys, 124 characters');
     expect(out).toContain('token · 120 characters');
     expect(out).toContain('sessionStorage · 0 keys');
+  });
+});
+
+describe('browser-reported issues', () => {
+  it('groups the browser\'s own issues with counts and says what to do, without query strings', () => {
+    const out = formatIssues([
+      { code: 'MixedContentIssue', details: { mixedContentIssueDetails: { resourceType: 'Image', resolutionStatus: 'MixedContentBlocked', insecureURL: 'http://cdn.test/a.png?token=secret' } } },
+      { code: 'MixedContentIssue', details: { mixedContentIssueDetails: { resourceType: 'Image', resolutionStatus: 'MixedContentBlocked', insecureURL: 'http://cdn.test/b.png' } } },
+      { code: 'LowTextContrastIssue', details: { lowTextContrastIssueDetails: { contrastRatio: 2.1, thresholdAA: 4.5, violatingNodeSelector: 'p.hint' } } },
+      { code: 'GenericIssue', details: { genericIssueDetails: { errorType: 'FormInputWithNoLabelError' } } },
+      { code: 'CookieIssue', details: { cookieIssueDetails: { cookie: { name: 'sid' }, cookieWarningReasons: ['WarnSameSiteNoneInsecure'] } } },
+    ]).join('\n');
+    expect(out).toContain('4 kinds, 5 in all');
+    expect(out).toMatch(/2× mixed content: a Image from cdn\.test on a secure page was blocked/);
+    expect(out).toContain('low text contrast 2.10:1 on p.hint');
+    expect(out).toContain('form input with no label error');
+    expect(out).toContain('SameSite=None needs Secure');
+    expect(out).not.toContain('token=secret');
+  });
+  it('says so when there are none', () => {
+    expect(formatIssues([])[0]).toMatch(/no issues/);
   });
 });

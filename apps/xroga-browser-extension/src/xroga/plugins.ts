@@ -376,6 +376,31 @@ export function runPluginTool(
   return next;
 }
 
+/** A public read as data, for tools that read many addresses (site_scan): the same queue, the same server route and the same per-run cache as http_get, no text shaping. */
+export function fetchPublicRaw(runId: string, url: string, signal: AbortSignal): Promise<{ status?: number; contentType?: string; finalUrl?: string; body?: string; error?: string }> {
+  const previous = pluginQueues.get(runId) ?? Promise.resolve();
+  const next = previous.catch(() => undefined).then(async () => {
+    if (signal.aborted) return { error: 'cancelled' };
+    const key = `${runId} ${url}`;
+    const hit = fetchCache.get(key);
+    if (hit && Date.now() - hit.at < FETCH_CACHE_MS) return hit.value;
+    try {
+      const value = await workspaceRequest('public-get', { runId, body: { url } }, signal) as { status?: number; contentType?: string; finalUrl?: string; body?: string; truncated?: boolean; totalChars?: number; note?: string };
+      if (typeof value.status === 'number' && value.status < 400) {
+        if (fetchCache.size >= FETCH_CACHE_MAX) fetchCache.delete(fetchCache.keys().next().value as string);
+        fetchCache.set(key, { at: Date.now(), value });
+      }
+      return value;
+    } catch (error) {
+      const code = (error as { code?: unknown } | null)?.code;
+      return { error: code === 'BROWSER_POLICY_DENIED' ? 'address not allowed' : code === 'BROWSER_PUBLIC_GET_FAILED' ? 'no answer in time' : 'could not be read' };
+    }
+  });
+  pluginQueues.set(runId, next);
+  void next.catch(() => undefined).finally(() => { if (pluginQueues.get(runId) === next) pluginQueues.delete(runId); });
+  return next;
+}
+
 /** Direct reads share the per-run queue with connected-app calls: the server takes one call per run at a time. */
 export function runPublicGet(runId: string, input: unknown, signal: AbortSignal, wrap: (text: string, source: string) => string): Promise<{ text: string; isError: boolean }> {
   const previous = pluginQueues.get(runId) ?? Promise.resolve();

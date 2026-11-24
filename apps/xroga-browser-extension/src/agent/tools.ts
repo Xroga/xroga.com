@@ -234,7 +234,7 @@ export function kindOf(tool: string, args: Record<string, unknown>): ToolKind {
   if (tool === 'plan') return 'read';
   if (tool === 'browser_data') return ['history_search', 'bookmarks_search', 'tabs_all', 'tabs_duplicates'].includes(String(args.action)) ? 'read' : 'mutate';
   if (tool === 'save_file' || tool === 'save_page_pdf') return 'state';
-  if (tool === 'read_attachment' || tool === 'find_color' || tool === 'find_skill' || tool === 'read_skill' || tool === 'confirm_download' || tool === 'plugin_search' || tool === 'plugin_action_search' || tool === 'http_get' || tool === 'plugin_connect' || tool === 'run_repository' || tool === 'python_repl' || tool === 'change_repository') return 'read';
+  if (tool === 'read_attachment' || tool === 'find_color' || tool === 'find_skill' || tool === 'read_skill' || tool === 'confirm_download' || tool === 'plugin_search' || tool === 'plugin_action_search' || tool === 'http_get' || tool === 'site_scan' || tool === 'plugin_connect' || tool === 'run_repository' || tool === 'python_repl' || tool === 'change_repository') return 'read';
   // An approved connected read can transmit private arguments. Fence it like a dispatched effect on recovery.
   if (tool === 'plugin_read' || tool === 'plugin_chain') return 'mutate';
   if (tool === 'tabs') return args.action === 'list' ? 'read' : 'mutate';

@@ -2,11 +2,12 @@
 // domains on), so the first answer says what to do to make the page report: repeat the action, or reload, then ask again.
 import type { DiagnosticsArgs } from '../../protocol/schemas';
 import type { ToolContext, ToolOutcome } from '../controller';
-import { DiagnosticsLog, formatCookies, formatDiagnostics, formatStorage } from '../diagnostics';
-import type { CookieInfo, StorageSummary } from '../diagnostics';
+import { DiagnosticsLog, formatCookies, formatDiagnostics, formatIssues, formatStorage } from '../diagnostics';
+import type { CookieInfo, InspectorIssue, StorageSummary } from '../diagnostics';
 import type { TabAttachment } from '../ports';
 
 const LOGS = new WeakMap<TabAttachment, DiagnosticsLog>();
+const ISSUES = new WeakMap<TabAttachment, InspectorIssue[]>();
 
 async function start(attachment: TabAttachment): Promise<DiagnosticsLog> {
   const log = new DiagnosticsLog();
@@ -44,6 +45,19 @@ async function start(attachment: TabAttachment): Promise<DiagnosticsLog> {
 export async function diagnostics(ctx: ToolContext, args: DiagnosticsArgs): Promise<ToolOutcome> {
   const attachment = await ctx.attach();
   // Cookies and storage are read when asked, from the browser itself, and show names, flags and sizes only: a value can be a login.
+  if (args.kind === 'issues') {
+    // Audits.enable replays the issues the page already has, then reports new ones: listen first, enable, give the replay a moment.
+    let list = ISSUES.get(attachment);
+    if (!list) {
+      list = [];
+      ISSUES.set(attachment, list);
+      const seen = list;
+      attachment.cdp.on('Audits.issueAdded', p => { const i = (p as { issue?: InspectorIssue }).issue; if (i && seen.length < 500) seen.push(i); });
+    }
+    await attachment.cdp.send(undefined, 'Audits.enable').catch(() => undefined);
+    await new Promise(r => setTimeout(r, 400));
+    return { data: { issues: list.length }, pageText: formatIssues(list).join('\n') };
+  }
   if (args.kind === 'cookies') {
     await attachment.cdp.send(undefined, 'Network.enable').catch(() => undefined);
     const got = (await attachment.cdp.send(undefined, 'Network.getCookies').catch(() => ({ cookies: [] }))) as { cookies?: CookieInfo[] };

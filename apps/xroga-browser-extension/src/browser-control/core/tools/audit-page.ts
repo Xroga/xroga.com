@@ -38,6 +38,9 @@ export function auditIssues(a: PageAudit): AuditIssue[] {
   if (!a.social.ogTitle || !a.social.ogImage) w('Open Graph title or image missing: shared links look bare.');
   if (!a.structuredData.length) w('No structured data (JSON-LD).');
   const { lcpMs, cls, ttfbMs, transferKb, domNodes } = a.perf;
+  const lcpD = a.perf.lcpDetail;
+  if (lcpD?.lazy) w(`The largest element (${lcpD.tag}) is lazy-loaded, which delays it: remove loading=lazy from it.`);
+  if (lcpD?.sizeKb && lcpD.sizeKb > 300) w(`The largest element is a ${lcpD.sizeKb} KB file: compress or resize it.`);
   if (lcpMs !== undefined && lcpMs > 2500) (lcpMs > 4000 ? p : w)(`Largest contentful paint ${lcpMs} ms (good is 2500 or less).`);
   if (cls !== undefined && cls > 0.1) (cls > 0.25 ? p : w)(`Layout shift ${cls} (good is 0.1 or less).`);
   if (ttfbMs !== undefined && ttfbMs > 800) w(`Server answered after ${ttfbMs} ms.`);
@@ -59,6 +62,7 @@ export function describeAudit(a: PageAudit): string[] {
     `structured data: ${a.structuredData.length ? a.structuredData.join(', ') : 'none'} · og ${a.social.ogTitle && a.social.ogImage ? 'complete' : 'incomplete'} · twitter card ${a.social.twitterCard ? 'yes' : 'no'} · hreflang ${a.hreflang}`,
     `contact on the page: emails ${a.contacts?.emails.length ? a.contacts.emails.join(', ') : 'none'} · phones ${a.contacts?.phones.length ? a.contacts.phones.join(', ') : 'none'}`,
     `speed: TTFB ${t(perf.ttfbMs)} · FCP ${t(perf.fcpMs)} · LCP ${t(perf.lcpMs)} · CLS ${perf.cls ?? 'n/a'} · load ${t(perf.loadMs)} · ${t(perf.transferKb, ' KB')} in ${perf.requests ?? '?'} requests · ${perf.domNodes} elements`,
+    ...(perf.lcpDetail ? [`largest element: <${perf.lcpDetail.tag}>${perf.lcpDetail.url ? ` ${perf.lcpDetail.url}` : ''}${perf.lcpDetail.sizeKb ? ` (${perf.lcpDetail.sizeKb} KB)` : ''} · TTFB ${t(perf.ttfbMs)}${perf.lcpDetail.delayMs !== undefined ? ` · load delay ${perf.lcpDetail.delayMs} ms · load time ${perf.lcpDetail.loadMs} ms · render delay ${perf.lcpDetail.renderMs} ms` : ''}`] : []),
     ...(issues.length ? ['Findings, worst first:', ...issues.map(i => `- ${i.level === 'problem' ? 'PROBLEM' : 'warning'}: ${i.text}`)] : ['No findings.']),
   ];
 }

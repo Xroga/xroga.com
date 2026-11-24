@@ -82,7 +82,7 @@ export class DiagnosticsLog {
 }
 
 export interface DiagnosticsQuery {
-  kind?: 'both' | 'console' | 'network' | 'endpoints' | 'cookies' | 'storage';
+  kind?: 'both' | 'console' | 'network' | 'endpoints' | 'cookies' | 'storage' | 'issues';
   onlyProblems?: boolean;
   urlPattern?: string;
   limit?: number;
@@ -172,4 +172,72 @@ export function formatStorage(s: StorageSummary): string[] {
     ...(items.length > 60 ? [`  ... ${items.length - 60} more`] : []),
   ];
   return [...part('localStorage', s.local), ...part('sessionStorage', s.session)];
+}
+
+export interface InspectorIssue { code: string; details?: Record<string, unknown> }
+
+const str = (v: unknown) => (typeof v === 'string' ? v : '');
+const hostOf = (u: unknown) => { try { return new URL(str(u)).host; } catch { return str(u).slice(0, 80); } };
+
+/** One line for an issue the browser itself reported (Chrome's Issues panel): what it is and what to do, never a URL's query. */
+export function describeIssue(issue: InspectorIssue): { key: string; line: string } {
+  const d = (issue.details ?? {}) as Record<string, any>;
+  const code = issue.code;
+  if (code === 'CookieIssue') {
+    const c = d.cookieIssueDetails ?? {};
+    const reasons = [...(c.cookieWarningReasons ?? []), ...(c.cookieExclusionReasons ?? [])].map(String);
+    const name = str(c.cookie?.name);
+    const fix = reasons.some(r => /SameSiteNoneInsecure/.test(r)) ? 'SameSite=None needs Secure'
+      : reasons.some(r => /SameSiteUnspecified|SameSiteLax/.test(r)) ? 'set SameSite explicitly (Lax, Strict or None with Secure)'
+      : reasons.some(r => /ThirdParty|Phaseout/.test(r)) ? 'a third-party cookie that browsers are phasing out'
+      : 'see the reason';
+    return { key: `cookie ${reasons.join(',')}`, line: `cookie${name ? ` "${name}"` : ''}: ${reasons.join(', ') || 'problem'} (${fix})` };
+  }
+  if (code === 'MixedContentIssue') {
+    const m = d.mixedContentIssueDetails ?? {};
+    return { key: `mixed ${m.resolutionStatus}`, line: `mixed content: a ${str(m.resourceType) || 'resource'} from ${hostOf(m.insecureURL)} on a secure page was ${str(m.resolutionStatus).replace('MixedContent', '').toLowerCase() || 'flagged'} (load it over https)` };
+  }
+  if (code === 'LowTextContrastIssue') {
+    const c = d.lowTextContrastIssueDetails ?? {};
+    return { key: 'contrast', line: `low text contrast ${Number(c.contrastRatio).toFixed(2)}:1 on ${str(c.violatingNodeSelector) || 'an element'} (needs ${c.thresholdAA ?? 4.5}:1 for AA)` };
+  }
+  if (code === 'ContentSecurityPolicyIssue') {
+    const c = d.contentSecurityPolicyIssueDetails ?? {};
+    return { key: `csp ${c.violatedDirective}`, line: `Content-Security-Policy blocked ${hostOf(c.blockedURL) || 'something'} (${str(c.violatedDirective) || str(c.contentSecurityPolicyViolationType)}): allow it in the policy or remove it` };
+  }
+  if (code === 'CorsIssue') {
+    const c = d.corsIssueDetails ?? {};
+    return { key: `cors ${c.corsErrorStatus?.corsError}`, line: `CORS: ${str(c.corsErrorStatus?.corsError)} for ${hostOf(c.request?.url)} (the server must send the right Access-Control headers)` };
+  }
+  if (code === 'BlockedByResponseIssue') {
+    const c = d.blockedByResponseIssueDetails ?? {};
+    return { key: `blocked ${c.reason}`, line: `blocked by a response header (${str(c.reason)}) for ${hostOf(c.request?.url)}` };
+  }
+  if (code === 'GenericIssue') {
+    const c = d.genericIssueDetails ?? {};
+    return { key: `generic ${c.errorType}`, line: `${str(c.errorType).replace(/([A-Z])/g, ' $1').trim().toLowerCase()}${c.violatingNodeId ? '' : ''}` };
+  }
+  if (code === 'QuirksModeIssue') {
+    const c = d.quirksModeIssueDetails ?? {};
+    return { key: 'quirks', line: `the page renders in ${c.isLimitedQuirksMode ? 'limited quirks' : 'quirks'} mode: add <!doctype html>` };
+  }
+  if (code === 'DeprecationIssue') {
+    return { key: `dep ${d.deprecationIssueDetails?.type}`, line: `deprecated feature in use: ${str(d.deprecationIssueDetails?.type)}` };
+  }
+  if (code === 'HeavyAdIssue') return { key: 'heavyad', line: 'an ad was removed for using too much CPU or network' };
+  if (code === 'SharedArrayBufferIssue') return { key: 'sab', line: 'SharedArrayBuffer is used without cross-origin isolation' };
+  return { key: code, line: code.replace(/Issue$/, '').replace(/([A-Z])/g, ' $1').trim().toLowerCase() };
+}
+
+/** The browser's own issues for the page, the same ones as its Issues panel, grouped with counts. */
+export function formatIssues(issues: InspectorIssue[]): string[] {
+  if (!issues.length) return ['issues · the browser reports no issues for this page (reload the page if it was open before recording started)'];
+  const groups = new Map<string, { line: string; n: number }>();
+  for (const i of issues) {
+    const { key, line } = describeIssue(i);
+    const g = groups.get(key) ?? { line, n: 0 };
+    g.n++;
+    groups.set(key, g);
+  }
+  return [`issues · ${groups.size} kinds, ${issues.length} in all, as the browser's Issues panel reports them`, ...[...groups.values()].sort((a, b) => b.n - a.n).slice(0, 40).map(g => `  ${g.n > 1 ? `${g.n}× ` : ''}${g.line}`)];
 }

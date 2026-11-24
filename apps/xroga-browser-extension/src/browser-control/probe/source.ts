@@ -69,7 +69,7 @@ export interface PageAudit {
   mixedContent: number;
   /** Contact details the page publishes: mailto and tel links and addresses written in its text. */
   contacts: { emails: string[]; phones: string[] };
-  perf: { ttfbMs?: number; fcpMs?: number; lcpMs?: number; cls?: number; domContentLoadedMs?: number; loadMs?: number; transferKb?: number; requests?: number; domNodes: number };
+  perf: { lcpDetail?: { tag: string; url?: string; sizeKb?: number; lazy?: boolean; delayMs?: number; loadMs?: number; renderMs?: number }; ttfbMs?: number; fcpMs?: number; lcpMs?: number; cls?: number; domContentLoadedMs?: number; loadMs?: number; transferKb?: number; requests?: number; domNodes: number };
 }
 
 export interface SearchHit {
@@ -625,12 +625,12 @@ export function probeMain(): void {
       const imgs = q('img') as HTMLImageElement[];
       const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
       const fcp = performance.getEntriesByName('first-contentful-paint')[0]?.startTime;
-      const observed = await new Promise<{ lcp?: number; cls?: number }>(resolve => {
-        const got: { lcp?: number; cls?: number } = {};
+      const observed = await new Promise<{ lcp?: number; cls?: number; entry?: any }>(resolve => {
+        const got: { lcp?: number; cls?: number; entry?: any } = {};
         try {
           const po = new PerformanceObserver(list => {
             for (const e of list.getEntries() as any[]) {
-              if (e.entryType === 'largest-contentful-paint') got.lcp = e.startTime;
+              if (e.entryType === 'largest-contentful-paint') { got.lcp = e.startTime; got.entry = e; }
               if (e.entryType === 'layout-shift' && !e.hadRecentInput) got.cls = (got.cls ?? 0) + e.value;
             }
           });
@@ -639,6 +639,24 @@ export function probeMain(): void {
           setTimeout(() => { po.disconnect(); resolve(got); }, 120);
         } catch { resolve(got); }
       });
+      // The largest element and where its time went: the server (TTFB), finding the file (load delay), downloading it (load time) and painting it (render delay).
+      let lcpDetail: { tag: string; url?: string; sizeKb?: number; lazy?: boolean; delayMs?: number; loadMs?: number; renderMs?: number } | undefined;
+      if (observed.entry) {
+        const en = observed.entry;
+        const el = en.element as Element | null;
+        const u = en.url ? String(en.url) : '';
+        const rt = u ? (performance.getEntriesByName(u) as PerformanceResourceTiming[])[0] : undefined;
+        const rnd = (n: number) => Math.round(n);
+        lcpDetail = {
+          tag: el ? el.tagName.toLowerCase() + (el.id ? '#' + el.id : '') : 'text block',
+          url: u ? u.split(/[?#]/)[0]!.slice(0, 140) : undefined,
+          sizeKb: rt?.transferSize ? rnd(rt.transferSize / 1024) : undefined,
+          lazy: el?.getAttribute?.('loading') === 'lazy',
+          delayMs: rt ? rnd(Math.max(0, rt.startTime - (nav?.responseStart ?? 0))) : undefined,
+          loadMs: rt ? rnd(Math.max(0, rt.responseEnd - rt.startTime)) : undefined,
+          renderMs: rt ? rnd(Math.max(0, en.startTime - rt.responseEnd)) : undefined,
+        };
+      }
       const res = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
       const bytes = (nav?.transferSize ?? 0) + res.reduce((n, r) => n + (r.transferSize || 0), 0);
       const round = (n: number | undefined) => (typeof n === 'number' && isFinite(n) ? Math.round(n) : undefined);
@@ -672,7 +690,7 @@ export function probeMain(): void {
           for (const m of text.match(/(?:\+\d{1,3}[\s().-]*)?(?:\(?0\d{2,4}\)?[\s.-]*)\d{3,4}[\s.-]*\d{3,4}/g) ?? []) if (m.replace(/\D/g, '').length >= 9) phones.add(m.trim());
           return { emails: [...emails].slice(0, 5), phones: [...phones].slice(0, 5) };
         })(),
-        perf: { ttfbMs: round(nav?.responseStart), fcpMs: round(fcp), lcpMs: round(observed.lcp), cls: observed.cls === undefined ? undefined : Math.round(observed.cls * 1000) / 1000, domContentLoadedMs: round(nav?.domContentLoadedEventEnd), loadMs: round(nav?.loadEventEnd), transferKb: Math.round(bytes / 1024), requests: res.length + 1, domNodes: document.getElementsByTagName('*').length },
+        perf: { lcpDetail, ttfbMs: round(nav?.responseStart), fcpMs: round(fcp), lcpMs: round(observed.lcp), cls: observed.cls === undefined ? undefined : Math.round(observed.cls * 1000) / 1000, domContentLoadedMs: round(nav?.domContentLoadedEventEnd), loadMs: round(nav?.loadEventEnd), transferKb: Math.round(bytes / 1024), requests: res.length + 1, domNodes: document.getElementsByTagName('*').length },
       };
     },
 
