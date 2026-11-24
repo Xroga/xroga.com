@@ -13,6 +13,7 @@ const outputLimitNote = 'This answer reached the provider output limit. The avai
 const promisesControls = (text: string) => /\b(?:controls?|sliders?|input fields?)\s+(?:above|below)\b|\b(?:above|below)\s+(?:calculator|controls?)\b/i.test(text);
 const unavailableControlInstruction = /^ {0,3}(?:[-*+]\s+)?(?:(?:the\s+)?(?:controls?|sliders?|input fields?)\s+(?:above|below)\b|(?:change|adjust|edit|move|set|use|drag)\b[^.?!]*\b(?:in|with|via|using|on)\s+(?:the\s+)?(?:controls?|sliders?|input fields?)\b)/i;
 const unavailableReactiveInstruction = /^ {0,3}(?:[-*+]\s+)?(?:chang(?:e|ing)|adjust(?:ing)?|edit(?:ing)?|reset(?:ting)?)\b[^.?!\n]*\b(?:updates? immediately|re-?runs?|recalculates?|restores?)\b/i;
+const unavailableInputInstruction = /^ {0,3}(?:[-*+]\s+)?(?:adjust|change|edit)\s+the\s+inputs\s+to\s+(?:see|preview|update|recalculate)\b/i;
 const unavailableCalculatorNote = "The interactive controls couldn't be displayed. Treat the calculation below as a worked example.";
 
 function withoutControlClaims(text: string): string {
@@ -24,7 +25,8 @@ function withoutControlClaims(text: string): string {
       else if (marker[1][0] === fence[0] && marker[1].length >= fence.length && !marker[2].trim()) fence = undefined;
       return line;
     }
-    if (fence || !(unavailableControlInstruction.test(line) || unavailableReactiveInstruction.test(line))) return line;
+    if (fence || !(unavailableControlInstruction.test(line) || unavailableReactiveInstruction.test(line)
+        || unavailableInputInstruction.test(line))) return line;
     // Keep an independent sentence following the unusable instructions.
     const next = /[.!?][ \t]+(?=[\p{Lu}])/u.exec(line);
     return next ? line.slice(next.index + next[0].length) : '';
@@ -225,9 +227,19 @@ export function completeNativeWorkspaceAnswer(
   const valid = validation?.ok === true && completion.status === 'complete';
   const readouts = valid ? initialNativeReadouts(program) : [];
   const multiples = valid ? nativePrincipalMultipleReview(program) : undefined;
-  const multipleConflict = multiples && (multiples.conflictingNotes.size > 0 || multiples.repairProse(response) !== response);
-  if (valid && (conflictingNativeReadouts(response, readouts).length ||
-      multipleConflict || (readouts.length && conflictingNativeReadouts(supplementNativeProse('', program, true), readouts).length))) {
+  const proseMultipleConflict = multiples && multiples.repairProse(response) !== response;
+  const multipleConflict = proseMultipleConflict || (multiples?.conflictingNotes.size ?? 0) > 0;
+  const proseReadoutConflict = conflictingNativeReadouts(response, readouts).length > 0;
+  const visualReadoutConflict = readouts.length > 0 && conflictingNativeReadouts(supplementNativeProse('', program, true), readouts).length > 0;
+  if (valid && (proseReadoutConflict || multipleConflict || visualReadoutConflict)) {
+    const optionalCalculator = !requiredFormats.length && !missingNativeFormats(program, ['calculator']).length;
+    // The complete prose can stand on its own when only an optional calculator
+    // supplied the contradictory content. Keep requested or relied-on visuals partial.
+    if (optionalCalculator && prose.trim() && !repair?.partial && !missing.length
+        && !promisesInlineControls && !proseReadoutConflict && !proseMultipleConflict
+        && withoutControlClaims(response) === response.trim()) {
+      return { response, completion, responseSource: { format: NATIVE_UI_FORMAT, text: '' } };
+    }
     if (!multipleConflict && !repair?.partial && !missing.length && requiredFormats.includes('calculator')) {
       const correctedProse = correctExplicitCurrencyReadouts(response, initialNativeReadouts(program, true));
       // A bound Markdown component must carry the same correction into the
@@ -255,11 +267,12 @@ export function completeNativeWorkspaceAnswer(
     const readable = corrected.ok ? recoverNativeReadoutProse(projected, readouts, multiples)
       : [safeProse, ...readouts.map(row => row.label + ': ' + row.value)].filter(Boolean).join('\n\n');
     const keepVisual = corrected.ok && readable === projected;
-    const controlsUnavailable = !keepVisual && (requiredFormats.includes('calculator') || promisesInlineControls);
+    const controlsUnavailable = !keepVisual && (optionalCalculator || requiredFormats.includes('calculator') || promisesInlineControls);
+    const fallback = optionalCalculator && controlsUnavailable ? safeProse : readable;
     return {
       response: [controlsUnavailable ? unavailableCalculatorNote : '',
         'The calculated results replace an inconsistent numerical explanation.',
-        controlsUnavailable ? withoutControlClaims(readable) : readable].filter(Boolean).join('\n\n'),
+        controlsUnavailable ? withoutControlClaims(fallback) : fallback].filter(Boolean).join('\n\n'),
       completion: { status: 'partial' as const, reason: 'data_review' as const },
       responseSource: { format: NATIVE_UI_FORMAT, text: keepVisual ? correctedProgram : '' },
     };

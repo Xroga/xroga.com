@@ -331,6 +331,24 @@ export function supplementNativeProse(prose: string, program: string, includeAll
       return columns.every(matches => matches.length === 1) && new Set(columns.flat()).size === head.length;
     });
   };
+  const rootChartHasReadableData = (rows: string[][]) => {
+    if (!rows.length) return false;
+    const categories = new Set(rows.map(([label]) => label));
+    if (categories.size !== rows.length) return false;
+
+    return outline.tables.filter(table => {
+      const plottedRows = table.rows.filter(([label]) => categories.has(label));
+      if (plottedRows.length !== rows.length || !plottedRows.every(([label], index) => label === rows[index][0])) return false;
+      const valueColumns = table.head.slice(1).filter((_heading, index) => plottedRows.every((row, rowIndex) =>
+        nativeTableDecimalKey(row[index + 1]) === nativeTableDecimalKey(rows[rowIndex][1])));
+      return valueColumns.length === 1;
+    }).length === 1;
+  };
+  const metricHasReadableValue = (label: string, value: string, scope: readonly string[]) =>
+    outline.tables.filter(table => !scope.length || isSingleScope([table.headings.map(scopeLabel)], scope))
+      .flatMap(table => table.rows)
+      .filter(([name, ...values]) => nativeReadableTextKey(name) === nativeReadableTextKey(label)
+        && values.some(cell => nativeTableDecimalKey(cell) === nativeTableDecimalKey(value))).length === 1;
   const seenHeadings = new Set<string>();
   const seenTables = new Set<string>();
   const existingText = new Set(prose.split(/\n\s*\n|\n(?=\s*[-*+]\s)/).map(value =>
@@ -438,7 +456,7 @@ export function supplementNativeProse(prose: string, program: string, includeAll
     } else if (node.typeName === 'Metric') {
       const label = scalar(props.label);
       const initial = readouts.find(row => row.label === label);
-      if (initial) add(initial.label + ': ' + initial.value);
+      if (initial && !metricHasReadableValue(initial.label, initial.value, scope)) add(initial.label + ': ' + initial.value);
       add(scalar(props.note));
     } else if (node.typeName === 'Table') {
       const headings = initialValue(props.columns);
@@ -474,8 +492,10 @@ export function supplementNativeProse(prose: string, program: string, includeAll
             ? formatInitialNativeCurrency(amount, currency) : String(amount))]);
         }
         const yLabel = scalar(presentation.yLabel);
-        const headings = [scalar(presentation.xLabel) || x, ...(series.length === 1 && yLabel ? [yLabel] : series)];
-        if (series.length === 1 && chartHasReadableData(headings, rows, scope)) {
+        const xLabel = scalar(presentation.xLabel);
+        const headings = [xLabel || x, ...(series.length === 1 && yLabel ? [yLabel] : series)];
+        if (series.length === 1 && (chartHasReadableData(headings, rows, scope)
+          || (!scope.length && !xLabel && !yLabel && /^(?:name|label|category)$/iu.test(x) && rootChartHasReadableData(rows)))) {
           if (yLabel) add(yLabel, scope);
         } else {
           addTable(headings, rows, scope);
@@ -1216,15 +1236,24 @@ export function recoverNativeWorkspaceProgram(program: string, evidenceIds: Read
       return { container: { ...node, args }, children: els };
     }
     const layout = salvageLayout(root, 0);
-    const recovered = layout && (usable(validate(layout.container)) ? layout.container : group(layout.children));
-    if (!recovered || blockedAuthority) return;
+    if (!layout) return;
+    const recovered = usable(validate(layout.container)) ? layout.container : group(layout.children);
+    if (blockedAuthority) return;
     const restored = render(recovered);
     const validation = check(restored, failure === 'factual_review' ? reviewContext : narrative);
     if (failure === 'factual_review') {
       // Omitted components must not hide a contradiction with any surviving chart.
       if (!validation.ok || contradictsMonthlyChart(parseProgram.parse(restored).root, narrative)) return;
     }
-    if (validation.ok || validation.reason === 'data_review') return { program: restored, validation, partial: true };
+    if (validation.ok || validation.reason === 'data_review') {
+      const originalChildren = resolveRecoveryReference(root.args[0], symbols);
+      // A schema repair that only resets the root's optional layout settings
+      // keeps every requested block. A discarded or replaced child stays partial.
+      const keptAllChildren = failure === 'schema' && originalChildren?.k === 'Arr'
+        && originalChildren.els.length === layout.children.length
+        && originalChildren.els.every((child, index) => child === layout.children[index]);
+      return { program: restored, validation, partial: !keptAllChildren };
+    }
   } catch {
     // Keep the original prose when recovery cannot safely rebuild the layout.
   }

@@ -797,6 +797,24 @@ test('one malformed wrapper preserves later blocks in a long answer', () => {
   assert.doesNotMatch(answer.responseSource.text, /Section\(42/);
 });
 
+test('repairing root layout settings keeps a complete verified calculator and chart', () => {
+  const prose = 'Four items cost $40.00 at $10 per item.';
+  const program = [
+    'root = Col([estimate, chart], "compact")',
+    '$units = 4',
+    'estimate = Card([Slider($units, 1, 10, 1, "Items"), Metric("Total", @Format($units * 10, "currency", 2, "USD"))])',
+    'chart = Chart("bar", [{item:"Total", value:$units * 10}], "item", ["value"], "currency", "USD")',
+  ].join('\n');
+  assert.deepEqual(validateNativeWorkspaceProgram(program, undefined, prose), { ok: false, reason: 'schema' });
+  const deliver = (source: string) => completeNativeWorkspaceAnswer(
+    prose + NATIVE_UI_MARKER + source, 'stop', undefined, undefined, undefined, ['calculator', 'chart']);
+  const repaired = deliver(program);
+  assert.deepEqual(repaired.completion, { status: 'complete' });
+  assert.equal(repaired.responseSource.text, program.replace(', "compact")', ')'));
+  const lostChart = deliver(program.replace('"bar"', '"unknown"'));
+  assert.deepEqual(lostChart.completion, { status: 'partial', reason: 'presentation_contract' });
+});
+
 test('a native-only schema failure recovers verified content and leaves unknown list fields alone', () => {
   const program = 'root = Col([Section("Report", [Text("Verified result."), List([{title:"Do not surface", unknown:"metadata"}])])])';
   const answer = completeNativeWorkspaceAnswer(NATIVE_UI_MARKER.slice(1) + program, 'stop');
@@ -991,7 +1009,8 @@ test('a live calculator fallback removes directions to unavailable inputs withou
   const instruction = 'Change the rate and duration in the controls and the interest, total, and principal/interest split update immediately.';
   const independent = 'Interest is calculated on the principal.';
   const fenced = ['~~~text', instruction, '~~~'].join('\n');
-  const prose = [example, instruction, instruction + ' ' + independent, fenced].join('\n\n');
+  const prose = [example, instruction, instruction + ' ' + independent,
+    'Adjust the inputs to see the group totals.', fenced].join('\n\n');
   const raw = prose + NATIVE_UI_MARKER + 'root = Col([UnknownControl()])';
   const result = completeNativeWorkspaceAnswer(raw, 'stop', undefined, undefined, undefined, ['calculator']);
 
@@ -1000,7 +1019,31 @@ test('a live calculator fallback removes directions to unavailable inputs withou
   assert.ok(result.response.includes(example));
   assert.ok(result.response.includes(independent));
   assert.ok(result.response.includes(fenced));
+  assert.doesNotMatch(result.response, /Adjust the inputs to see/);
   assert.equal(result.response.split(instruction).length - 1, 1, 'only the fenced example remains');
+});
+
+test('an inconsistent optional calculator cannot spoil a complete independent answer', () => {
+  const prose = 'Tickets are $10 each [1]. Four tickets cost $40 before fees.';
+  const program = [
+    'root = Col([estimate, Text("Total: $99.00"), Text("Adjust the inputs to see updated totals.")])',
+    '$units = 4',
+    'estimate = Card([Slider($units, 1, 10, 1, "Units"), Metric("Total", @Format($units * 10, "currency", 2, "USD"))])',
+  ].join('\n');
+  const complete = (body: string, formats: Parameters<typeof completeNativeWorkspaceAnswer>[5] = []) =>
+    completeNativeWorkspaceAnswer(body + NATIVE_UI_MARKER + program, 'stop', new Set(['source-1']), undefined, undefined, formats);
+  const optional = complete(prose);
+  assert.deepEqual(optional.completion, { status: 'complete' });
+  assert.equal(optional.response, prose);
+  assert.equal(optional.responseSource.text, '');
+
+  const reliesOnControls = complete(prose + '\n\nAdjust the inputs to see the group totals.');
+  assert.deepEqual(reliesOnControls.completion, { status: 'partial', reason: 'data_review' });
+  assert.match(reliesOnControls.response, /Four tickets cost \$40/);
+  assert.doesNotMatch(reliesOnControls.response, /\$99/);
+  assert.match(reliesOnControls.responseSource.text, /Slider\(/);
+  assert.deepEqual(complete(prose, ['calculator']).completion, { status: 'partial', reason: 'data_review' });
+  assert.deepEqual(complete('Total: $99.00.').completion, { status: 'partial', reason: 'data_review' });
 });
 
 test('a rejected decorative branch can be omitted while verified calculator controls survive', () => {
@@ -1152,6 +1195,28 @@ test('saved chart data evaluates the initial values from the same calculator bin
     assert.ok(invalid.response.startsWith(prose));
     assert.doesNotMatch(invalid.response, /\| Component \| USD \|/);
   }
+});
+
+test('the readable calculator keeps one exact amount table and the independent readout notes', () => {
+  const prose = [
+    '## Initial results',
+    '| Component | Amount | Share |',
+    '| --- | --- | --- |',
+    '| Core work | $80.00 | 80% |',
+    '| Extras | $20.00 | 20% |',
+    '| Total | $100.00 | 100% |',
+  ].join('\n');
+  const program = [
+    'root = Col([extra, chart])',
+    '$amount = 20',
+    'extra = Metric("Extras", @Format($amount, "currency", 2, "USD"), "Total includes optional work.")',
+    'chart = Chart("donut", [{name:"Core work", value:80}, {name:"Extras", value:$amount}], "name", ["value"], "currency", "USD")',
+  ].join('\n');
+  const readable = supplementNativeProse(prose, program, true);
+  assert.equal(readable, prose + '\n\nTotal includes optional work.');
+  assert.equal(supplementNativeProse(readable, program, true), readable);
+  assert.match(supplementNativeProse(prose.replace('$80.00', '$70.00'), program, true), /\| name \| value \|/);
+  assert.match(supplementNativeProse(prose.replace('$20.00', '$30.00'), program, true), /Extras: \$20\.00/);
 });
 
 test('the saved prose and clipboard fallback retain the substantive native body after an unfinished heading', () => {

@@ -110,6 +110,26 @@ function fixedStayLength(text: string): number | undefined {
   return Number(stay[1]);
 }
 
+function scheduledDays(body: string) {
+  const explicit = [...body.matchAll(/\bday[ \t]+(\d+)[ \t]*(?:[:.)–—-][ \t]*)?/giu)];
+  const numbered = [...body.matchAll(/^ {0,3}(\d+)[.)][ \t]+(?=\S)/gmu)];
+  // Markdown lists can repeat "1." and let the renderer number the items.
+  // Require a consecutive list before treating its raw markers as day numbers.
+  const ordered = numbered.every((row, index) => Number(row[1]) === index + 1) ? numbered : [];
+  const days = explicit.length >= 2 ? explicit : ordered;
+  return days.map((day, index) => ({
+    number: Number(day[1]),
+    label: body.slice(day.index + day[0].length, days[index + 1]?.index).trim(),
+  }));
+}
+
+function endsWithDeparture(label: string) {
+  const withoutCitations = label.replace(inlineMarkdownLinks, (link, title: string) => /^\d+$/u.test(title) ? '' : link)
+    .replace(/\[\d+\](?!\()/gu, '').trimEnd();
+  return /^(?:(?:check[ -]out and )?depart(?:ure)?(?: for home)?|(?:transfer and )?fly home)(?=[ \t]*[.;\r\n]|$)/iu.test(withoutCitations)
+    || /(?:[,;.]\s*|\band\s+)then\s+(?:fly|depart|travel)\s+(?:back\s+)?home[ \t]*[.!]?$/iu.test(withoutCitations);
+}
+
 function scheduledStayMismatch(response: string): string | undefined {
   const prose = response.replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/gu, '').replace(/\*\*/gu, '');
   const itineraries = prose.split(/(?=^#{1,6}[ \t])/mu).flatMap(section => {
@@ -117,23 +137,22 @@ function scheduledStayMismatch(response: string): string | undefined {
     const heading = section.slice(0, headingEnd);
     if (headingEnd === -1 || !/^#{1,6}[ \t]+[^\r\n]*(?:\bitinerary\b|\b(?:\d+[- ](?:day|night)|daily) (?:plan|shape|schedule)\b)/iu.test(heading)) return [];
     const body = section.slice(headingEnd + 1);
-    const days = [...body.matchAll(/\bday[ \t]+(\d+)[ \t]*(?:[:.)–—-][ \t]*)?/giu)];
-    return days.length >= 2 ? [{ heading, body, days }] : [];
+    const days = scheduledDays(body);
+    return days.length >= 2 ? [{ heading, days }] : [];
   });
   if (itineraries.length !== 1) return;
-  const [{ heading, body, days }] = itineraries;
+  const [{ heading, days }] = itineraries;
   const assumptions = prose.match(/^[ \t]*Assumptions?:[^\r\n]*/gimu) ?? [];
   const headingNights = fixedStayLength(heading);
   const budgetNights = assumptions.length === 1 ? fixedStayLength(assumptions[0]) : undefined;
   if (headingNights === undefined && budgetNights === undefined) return;
 
-  const labels = days.map((day, index) => body.slice(day.index + day[0].length, days[index + 1]?.index).trimStart());
-  const arrivals = days.filter((_, index) => /^(?:arrive|arrival|check[ -]in)\b/iu.test(labels[index]));
+  const arrivals = days.filter(({ label }) => /^(?:arrive|arrival|check[ -]in)\b/iu.test(label));
   const last = days[days.length - 1];
-  if (arrivals.length !== 1 || !/^(?:(?:check[ -]out and )?depart(?:ure)?(?: for home)?|(?:transfer and )?fly home)(?=[.;\r\n]|$)/iu.test(labels[labels.length - 1])) return;
+  if (arrivals.length !== 1 || !endsWithDeparture(last.label)) return;
 
-  const startDay = Number(arrivals[0][1]);
-  const endDay = Number(last[1]);
+  const startDay = arrivals[0].number;
+  const endDay = last.number;
   const nights = endDay - startDay;
   const mismatch = [budgetNights, headingNights].find(count => count !== undefined && Number.isSafeInteger(count) && count !== nights);
   if (![startDay, endDay].every(Number.isSafeInteger) || nights <= 0 || mismatch === undefined) return;
