@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "c5908e76ddbf796c29d80ee9582a8dd28e4d624b",
+  "source_sha": "4c56967162fc9b5d424467d3531b11d05393086e",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -20958,11 +20958,15 @@
     },
     {
       "path": "frontend/src/components/activity/ActivityTimeline.tsx",
-      "sha256": "bbffbbc5c9d1e92434d5826f04ee36d1bbe074e2f702b8a0e28b5cabb5dc6ce0"
+      "sha256": "77ab799329a9524780c5c989997c8ba8716cbd9558bdecf171a1c10bc8862d6a"
     },
     {
       "path": "frontend/src/components/activity/BlackHoleIndicator.tsx",
       "sha256": "11ebdc5d0b82014fea49078e631e98242aef268235d948611f632f60de5ca6cd"
+    },
+    {
+      "path": "frontend/src/components/activity/ProcessingSurface.tsx",
+      "sha256": "f1224a3cfccf2c230c15ac0a2e785637a4f073f06324aee4499d370c2beba8f0"
     },
     {
       "path": "frontend/src/components/analytics/GoogleTag.tsx",
@@ -23214,7 +23218,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "4ca867c15ca4ca9d11c2e7cf9e5aa60807addec793a294158f9251561ea4aff8"
+      "sha256": "bd53987b93b3e6fa44e40ec17ec9d7afc1b256024c74e32fbd6b3595a48d645d"
     },
     {
       "path": "frontend/src/components/terminal/TerminalBuildReport.tsx",
@@ -23230,7 +23234,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalLiveActivity.tsx",
-      "sha256": "3e5dd7535d5a54d02c201d7a72199d415083664d089f718020f58dca8a685a47"
+      "sha256": "199888ca766163415e0b8dd8f3cd1b0af462d1a13cb6c7bff000fe7c5db0aa78"
     },
     {
       "path": "frontend/src/components/terminal/TerminalSearchBar.tsx",
@@ -24487,6 +24491,10 @@
     {
       "path": "frontend/src/lib/terminal/executionIntent.ts",
       "sha256": "f0ec2bd7ec9a5e9c460e33be29a83f45faec46588d29c54b06d858df225df487"
+    },
+    {
+      "path": "frontend/src/lib/terminal/processingView.ts",
+      "sha256": "0e59f8e5f9ac9d06b0f99af176a64124b2b1feb78477ee97a3cf20c8bab7492a"
     },
     {
       "path": "frontend/src/lib/terminal/requiredInteractions.ts",
@@ -41135,6 +41143,13 @@
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
       "line": 284,
       "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/terminal/processingView.ts",
+      "line": 72,
+      "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
