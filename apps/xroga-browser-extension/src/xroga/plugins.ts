@@ -1,4 +1,5 @@
 import type { AgentTool } from '@src/agent/tools';
+import { looksLikeHtml, trimHtml } from './html-trim';
 import { workspaceRequest } from './bridge';
 import { pluginFailureMessage, type PluginFailureKind } from './plugin-failures';
 
@@ -34,7 +35,7 @@ export const PLUGIN_TOOLS: AgentTool[] = [
 export const HTTP_GET_TOOL: AgentTool = {
   name: 'http_get', source: 'agent', group: 'working',
   description: 'Read a public https address directly (an official free API endpoint, API documentation, a JSON or text data file). No login, no credentials, no private networks. Returns the status, content type and the text (long answers are cut). Use this when a service publishes a free public API for what is needed: check its documentation first if you are unsure of the address, then call the exact endpoint. It only reads; changes to a service need its own connected tool.',
-  parameters: { type: 'object', properties: { url: { type: 'string', maxLength: 2000 }, outline: { type: 'boolean', description: 'Only the headings (Markdown # lines, HTML h1 to h4, JSON top-level keys): see the shape of a long page first' }, filter: { type: 'string', maxLength: 200, description: 'Only the lines containing this text (case-insensitive) with one line of context' } }, required: ['url'], additionalProperties: false },
+  parameters: { type: 'object', properties: { url: { type: 'string', maxLength: 2000 }, outline: { type: 'boolean', description: 'Only the headings (Markdown # lines, HTML h1 to h4, JSON top-level keys): see the shape of a long page first' }, filter: { type: 'string', maxLength: 200, description: 'Only the lines containing this text (case-insensitive) with one line of context' }, raw: { type: 'boolean', description: 'A web page as its markup, not trimmed' } }, required: ['url'], additionalProperties: false },
 };
 
 /** Outline or filter of a text answer, made here so the model reads the part it needs of a long document. */
@@ -79,7 +80,7 @@ export function clearFetchCache(): void { fetchCache.clear(); }
 async function runPublicGetNow(runId: string, input: unknown, signal: AbortSignal, wrap: (text: string, source: string) => string): Promise<{ text: string; isError: boolean }> {
   try {
     // The model adds an `intent` to its calls like it does on every tool; the server's request check rejects unknown fields, so only the address goes.
-    const { outline, filter, intent: _intent, ...serverInput } = (input ?? {}) as { outline?: boolean; filter?: string; url?: string; intent?: string };
+    const { outline, filter, raw, intent: _intent, ...serverInput } = (input ?? {}) as { outline?: boolean; filter?: string; raw?: boolean; url?: string; intent?: string };
     type Got = { status?: number; contentType?: string; finalUrl?: string; body?: string; truncated?: boolean; totalChars?: number; note?: string };
     // The same address read again in one run (an outline, then a filter, then a re-check) is answered from the first read: no second request to the server, no wait.
     const key = `${runId} ${String(serverInput.url ?? '')}`;
@@ -94,9 +95,12 @@ async function runPublicGetNow(runId: string, input: unknown, signal: AbortSigna
         fetchCache.set(key, { at: Date.now(), value });
       }
     }
-    const head = `HTTP ${value.status ?? '?'} ${value.contentType ?? ''} ${value.finalUrl ?? ''}${reused ? ' (read earlier in this run; reused)' : ''}${value.truncated ? ` (cut: ${value.totalChars} characters in total)` : ''}${value.note ? '\n' + value.note : ''}`;
     const failed = typeof value.status === 'number' && value.status >= 400;
-    const body = outline || filter ? shapeBody(String(value.body ?? ''), { outline: !!outline, filter: typeof filter === 'string' && filter ? filter : undefined }) : String(value.body ?? '');
+    const whole = String(value.body ?? '');
+    // A web page is returned without its scripts, styles, comments and drawings (PinchTab's trim); raw gives the markup as it came.
+    const trimmed = !raw && !outline && !filter && looksLikeHtml(value.contentType, whole);
+    const head = `HTTP ${value.status ?? '?'} ${value.contentType ?? ''} ${value.finalUrl ?? ''}${reused ? ' (read earlier in this run; reused)' : ''}${trimmed ? ' (scripts, styles and drawings removed; raw true gives the markup as it came)' : ''}${trimmed ? ' (scripts, styles and drawings removed; raw true gives the markup as it came)' : ''}${value.truncated ? ` (cut: ${value.totalChars} characters in total)` : ''}${value.note ? '\n' + value.note : ''}`;
+    const body = outline || filter ? shapeBody(whole, { outline: !!outline, filter: typeof filter === 'string' && filter ? filter : undefined }) : trimmed ? trimHtml(whole) : whole;
     return { text: head + '\n' + wrap(body, 'public web address'), isError: failed };
   } catch (error) {
     const code = (error as { code?: unknown } | null)?.code;
