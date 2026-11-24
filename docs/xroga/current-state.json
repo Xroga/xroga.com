@@ -4510,12 +4510,15 @@
       "runtimeImports": [
         "backend/src/ai/verificationLifecycle.ts"
       ],
-      "entryPoints": [],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
       "callers": [
         "backend/src/ai/intentReasoning.test.ts:11",
-        "backend/src/ai/presentationRelevance.test.ts:5"
+        "backend/src/ai/presentationRelevance.test.ts:5",
+        "backend/src/routes/swarm.ts:18"
       ],
-      "reachable": false,
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
       "authBoundary": [
@@ -4535,11 +4538,11 @@
         "backend/src/ai/intentReasoning.test.ts",
         "backend/src/ai/presentationRelevance.test.ts"
       ],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -11402,7 +11405,7 @@
         "backend/src/routes/existingSource.ts:214",
         "backend/src/routes/existingSource.ts:88",
         "backend/src/routes/swarm.notificationAuthority.test.ts:6",
-        "backend/src/routes/swarm.ts:18",
+        "backend/src/routes/swarm.ts:20",
         "backend/src/sandbox/google/executionBinding.test.ts:4",
         "backend/src/sandbox/google/executionBinding.ts:2",
         "backend/src/sandbox/meteredExecution.ts:22",
@@ -13890,7 +13893,7 @@
       "id": "surface:6915d22ab57331737667",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/startupProgress.ts",
-      "sha256": "05df1ea4329ccb0d4c15c5edcc8e3a87eb86d3aa89429cab00f2ecdb1bcb45c7",
+      "sha256": "902caff1aa0094e551437ba8f8df128fae3e3ea627dd7f99fe0a3d3c8270dbe2",
       "symbols": [
         "LINES",
         "STARTUP_STEPS",
@@ -13898,7 +13901,11 @@
         "StartupStep",
         "count",
         "line",
-        "startupProgress"
+        "message",
+        "sentences",
+        "startupProgress",
+        "text",
+        "understandingProgress"
       ],
       "imports": [],
       "runtimeImports": [],
@@ -13908,7 +13915,9 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:110",
-        "backend/src/ai/startupProgress.test.ts:3"
+        "backend/src/ai/startupProgress.test.ts:107",
+        "backend/src/ai/startupProgress.test.ts:3",
+        "backend/src/routes/swarm.ts:19"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -33941,7 +33950,7 @@
       "id": "surface:10d425da4453da6d649f",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "sha256": "d15e6178d0e9ae30c0b7a1b5cb42996d1ddcc41dc06fcbdd90c09fc125fcd098",
+      "sha256": "bfd7f8aa7bf0be0806fd4665282147ce886abedc2b662c7909a0472c6ee276ec",
       "symbols": [
         "ac",
         "activeBuildControllers",
@@ -33980,6 +33989,7 @@
         "plainRunId",
         "projectId",
         "prompt",
+        "reading",
         "recorded",
         "replay",
         "result",
@@ -33992,13 +34002,16 @@
         "saved",
         "streamConnected",
         "terminalStatus",
+        "understanding",
         "userId",
         "wantStream"
       ],
       "imports": [
         "../ai/eventReplay.js",
+        "../ai/intentReasoning.js",
         "../ai/pipeline.js",
         "../ai/runStore.js",
+        "../ai/startupProgress.js",
         "../builder/service.js",
         "../builder/swarmBridge.js",
         "../lib/buildStreamLifecycle.js",
@@ -34017,8 +34030,10 @@
       ],
       "runtimeImports": [
         "backend/src/ai/eventReplay.ts",
+        "backend/src/ai/intentReasoning.ts",
         "backend/src/ai/pipeline.ts",
         "backend/src/ai/runStore.ts",
+        "backend/src/ai/startupProgress.ts",
         "backend/src/builder/swarmBridge.ts",
         "backend/src/lib/buildStreamLifecycle.ts",
         "backend/src/lib/clientRunId.ts",
@@ -139119,9 +139134,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:d98bac3c7945cef76dc4",
+      "id": "registration:b989bbacce18dc04c051",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 47,
+      "line": 49,
       "receiver": "router",
       "method": "post",
       "path": "/execute",
@@ -139131,9 +139146,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:f88938befc66245c8089",
+      "id": "registration:27dde9ea60b634ab490b",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 380,
+      "line": 390,
       "receiver": "router",
       "method": "get",
       "path": "/history",
@@ -139143,9 +139158,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:794b6e9ab8147240e13c",
+      "id": "registration:bbee844cccb852314424",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 396,
+      "line": 406,
       "receiver": "router",
       "method": "get",
       "path": "/runs/:runId",
@@ -139155,9 +139170,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:c0f3288b2f39f3668bfb",
+      "id": "registration:97655779b7e4d4a27c32",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 438,
+      "line": 448,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/cancel",
@@ -139167,9 +139182,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a774c5ff9edccc8b1ba2",
+      "id": "registration:64a72e213395a207970d",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 495,
+      "line": 505,
       "receiver": "router",
       "method": "post",
       "path": "/runs/:runId/conversation",
@@ -139181,9 +139196,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:506ad108a8730c14da01",
+      "id": "registration:ca3070e73f1997afec07",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 496,
+      "line": 506,
       "receiver": "router",
       "method": "patch",
       "path": "/runs/:runId/conversation",
@@ -139957,10 +139972,10 @@
       "reason": "Router factory invoked by an imported default export; terminal middleware traced, behavior must still be tested."
     },
     {
-      "id": "route:017baa147fe9c7f85665",
-      "registrationId": "registration:d98bac3c7945cef76dc4",
+      "id": "route:0b63257e2790a034a6c0",
+      "registrationId": "registration:b989bbacce18dc04c051",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 47,
+      "line": 49,
       "method": "POST",
       "path": "/api/swarm/execute",
       "mountChain": [
@@ -139974,10 +139989,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:de68049937c45ba52e22",
-      "registrationId": "registration:f88938befc66245c8089",
+      "id": "route:e5b631791e6e9559974b",
+      "registrationId": "registration:27dde9ea60b634ab490b",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 380,
+      "line": 390,
       "method": "GET",
       "path": "/api/swarm/history",
       "mountChain": [
@@ -139991,10 +140006,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:825aaf19ef9fc22a2b34",
-      "registrationId": "registration:794b6e9ab8147240e13c",
+      "id": "route:ba5d64ba815247e3556b",
+      "registrationId": "registration:bbee844cccb852314424",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 396,
+      "line": 406,
       "method": "GET",
       "path": "/api/swarm/runs/:runId",
       "mountChain": [
@@ -140008,10 +140023,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:3a4a3e82a9133ba44af2",
-      "registrationId": "registration:c0f3288b2f39f3668bfb",
+      "id": "route:ecd428fe5d15c5f1f9fe",
+      "registrationId": "registration:97655779b7e4d4a27c32",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 438,
+      "line": 448,
       "method": "POST",
       "path": "/api/swarm/runs/:runId/cancel",
       "mountChain": [
@@ -140025,10 +140040,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:2ad16fa75e9478a45808",
-      "registrationId": "registration:a774c5ff9edccc8b1ba2",
+      "id": "route:8933522b14a155921469",
+      "registrationId": "registration:64a72e213395a207970d",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 495,
+      "line": 505,
       "method": "POST",
       "path": "/api/swarm/runs/:runId/conversation",
       "mountChain": [
@@ -140042,10 +140057,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:edf89c240b6bdca73c94",
-      "registrationId": "registration:506ad108a8730c14da01",
+      "id": "route:800f2283aebc2f20b9a6",
+      "registrationId": "registration:ca3070e73f1997afec07",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 496,
+      "line": 506,
       "method": "PATCH",
       "path": "/api/swarm/runs/:runId/conversation",
       "mountChain": [
@@ -145371,18 +145386,18 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:0c0ba01b65ee36445c9b",
+      "id": "schedule:3461ba50b71942db4811",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 152,
+      "line": 154,
       "kind": "setInterval",
       "symbol": "<module>",
       "reachable": true,
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:5c3c77b437ba713b2e4e",
+      "id": "schedule:a25fa2e8e83589fe5f84",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 162,
+      "line": 164,
       "kind": "setInterval",
       "symbol": "<module>",
       "reachable": true,
@@ -147337,9 +147352,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:dd88f6702b33c7d16e0b",
+      "id": "finding:cca7659d222163404af6",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "line": 486,
+      "line": 496,
       "kind": "STUB",
       "reachable": true,
       "state": "PARTIAL",
@@ -155782,7 +155797,7 @@
     {
       "id": "test-suite:ec419861d0c5625f9469",
       "sourcePath": "backend/src/ai/startupProgress.test.ts",
-      "declaredTests": 12,
+      "declaredTests": 13,
       "skipLocations": [],
       "focusLocations": []
     },

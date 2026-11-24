@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "4a13e268b6ea1ed41f1ff07e9542147cbac0f079",
+  "source_sha": "7dddabbdfbc2d7fbd6adea9c4f3457e42fa74f22",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17578,7 +17578,7 @@
     },
     {
       "path": "backend/src/ai/startupProgress.ts",
-      "sha256": "05df1ea4329ccb0d4c15c5edcc8e3a87eb86d3aa89429cab00f2ecdb1bcb45c7"
+      "sha256": "902caff1aa0094e551437ba8f8df128fae3e3ea627dd7f99fe0a3d3c8270dbe2"
     },
     {
       "path": "backend/src/ai/staticValidate.ts",
@@ -18838,7 +18838,7 @@
     },
     {
       "path": "backend/src/routes/swarm.ts",
-      "sha256": "d15e6178d0e9ae30c0b7a1b5cb42996d1ddcc41dc06fcbdd90c09fc125fcd098"
+      "sha256": "bfd7f8aa7bf0be0806fd4665282147ce886abedc2b662c7909a0472c6ee276ec"
     },
     {
       "path": "backend/src/routes/tasks.ts",
@@ -37071,7 +37071,7 @@
     },
     {
       "path": "backend/src/routes/swarm.ts",
-      "line": 36,
+      "line": 38,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
