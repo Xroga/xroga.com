@@ -70,13 +70,31 @@ export function shapeBody(body: string, opts: { outline?: boolean; filter?: stri
   return body;
 }
 
+const FETCH_CACHE_MS = 10 * 60_000;
+const FETCH_CACHE_MAX = 80;
+const fetchCache = new Map<string, { at: number; value: { status?: number; contentType?: string; finalUrl?: string; body?: string; truncated?: boolean; totalChars?: number; note?: string } }>();
+/** For tests. */
+export function clearFetchCache(): void { fetchCache.clear(); }
+
 async function runPublicGetNow(runId: string, input: unknown, signal: AbortSignal, wrap: (text: string, source: string) => string): Promise<{ text: string; isError: boolean }> {
   try {
     // The model adds an `intent` to its calls like it does on every tool; the server's request check rejects unknown fields, so only the address goes.
     const { outline, filter, intent: _intent, ...serverInput } = (input ?? {}) as { outline?: boolean; filter?: string; url?: string; intent?: string };
-    const value = await workspaceRequest('public-get', { runId, body: serverInput }, signal) as
-      { status?: number; contentType?: string; finalUrl?: string; body?: string; truncated?: boolean; totalChars?: number; note?: string };
-    const head = `HTTP ${value.status ?? '?'} ${value.contentType ?? ''} ${value.finalUrl ?? ''}${value.truncated ? ` (cut: ${value.totalChars} characters in total)` : ''}${value.note ? '\n' + value.note : ''}`;
+    type Got = { status?: number; contentType?: string; finalUrl?: string; body?: string; truncated?: boolean; totalChars?: number; note?: string };
+    // The same address read again in one run (an outline, then a filter, then a re-check) is answered from the first read: no second request to the server, no wait.
+    const key = `${runId} ${String(serverInput.url ?? '')}`;
+    const hit = fetchCache.get(key);
+    let reused = false;
+    let value: Got;
+    if (hit && Date.now() - hit.at < FETCH_CACHE_MS) { value = hit.value; reused = true; }
+    else {
+      value = await workspaceRequest('public-get', { runId, body: serverInput }, signal) as Got;
+      if (typeof value.status === 'number' && value.status < 400) {
+        if (fetchCache.size >= FETCH_CACHE_MAX) fetchCache.delete(fetchCache.keys().next().value as string);
+        fetchCache.set(key, { at: Date.now(), value });
+      }
+    }
+    const head = `HTTP ${value.status ?? '?'} ${value.contentType ?? ''} ${value.finalUrl ?? ''}${reused ? ' (read earlier in this run; reused)' : ''}${value.truncated ? ` (cut: ${value.totalChars} characters in total)` : ''}${value.note ? '\n' + value.note : ''}`;
     const failed = typeof value.status === 'number' && value.status >= 400;
     const body = outline || filter ? shapeBody(String(value.body ?? ''), { outline: !!outline, filter: typeof filter === 'string' && filter ? filter : undefined }) : String(value.body ?? '');
     return { text: head + '\n' + wrap(body, 'public web address'), isError: failed };

@@ -14,6 +14,8 @@ export interface PerfEntry {
   outcome?: string;
   canonical: boolean;
   timings: TimingSummary;
+  /** What the run (and its workers) spent: see spend.ts. */
+  spend?: import('./spend').Spend;
 }
 
 /** Keeps the newest PERF_LIMIT entries. Never throws into the run: measuring must not break working. */

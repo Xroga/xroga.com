@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 const sent: unknown[] = [];
 vi.mock('../bridge', () => ({ workspaceRequest: async (_kind: string, payload: { body: unknown }) => { sent.push(payload.body); return { status: 200, contentType: 'text/html', finalUrl: 'https://a.test/', body: '<h1>Hi</h1>'+String.fromCharCode(10)+'line two' }; } }));
 
-import { runPublicGet, shapeBody } from '../plugins';
+import { clearFetchCache, runPublicGet, shapeBody } from '../plugins';
 
 describe('shapeBody', () => {
   const md = ['# Title', 'intro', '## Pricing', 'Starter 10 pounds', 'Pro 30 pounds', '## Contact', 'mail us'].join('\n');
@@ -24,14 +24,27 @@ describe('shapeBody', () => {
 });
 
 describe('http_get request body', () => {
+  it('reads the same address once per run and reuses it', async () => {
+    clearFetchCache();
+    sent.length = 0;
+    const wrap = (text: string) => text;
+    const a = await runPublicGet('run-2', { url: 'https://c.test/' }, new AbortController().signal, wrap);
+    const b = await runPublicGet('run-2', { url: 'https://c.test/', filter: 'line two' }, new AbortController().signal, wrap);
+    await runPublicGet('run-3', { url: 'https://c.test/' }, new AbortController().signal, wrap);
+    expect(sent.length).toBe(2);
+    expect(a.text).not.toContain('reused');
+    expect(b.text).toContain('reused');
+    expect(b.text).toContain('2: line two');
+  });
   it('carries only the address to the server, and applies outline and filter to the answer', async () => {
+    clearFetchCache();
     sent.length = 0;
     const wrap = (text: string) => text;
     const out = await runPublicGet('run-1', { url: 'https://a.test/', intent: 'read it', outline: true, filter: undefined }, new AbortController().signal, wrap);
     expect(sent).toEqual([{ url: 'https://a.test/' }]);
     expect(out.text).toContain('1: Hi');
-    const filtered = await runPublicGet('run-1', { url: 'https://a.test/', intent: 'x', filter: 'line two' }, new AbortController().signal, wrap);
-    expect(sent[1]).toEqual({ url: 'https://a.test/' });
+    const filtered = await runPublicGet('run-1', { url: 'https://a.test/two', intent: 'x', filter: 'line two' }, new AbortController().signal, wrap);
+    expect(sent[1]).toEqual({ url: 'https://a.test/two' });
     expect(filtered.text).toContain('2: line two');
   });
 });

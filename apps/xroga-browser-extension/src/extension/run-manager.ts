@@ -1,5 +1,6 @@
 // The RunManager: one run per active conversation, the panel commands, run records and statuses. The worker owns the
 // run; panels are views that can close and reopen.
+import { spendOf } from './spend';
 import { clearCutOff, markCutOff, takeToResume } from './auto-resume';
 import { CALCULATE_TOOL } from '@src/agent/calculate';
 import { DATA_OPS_TOOL } from '@src/agent/data-ops';
@@ -1954,9 +1955,13 @@ The name ${asked} was not offered in this task. Do not search again: call one of
         loopRef = loop;
         loop.hasSteering = () => (this.#queues.get(conversationId)?.length ?? 0) > 0;
         end = await loop.run();
-        void recordPerf({ runId, startedAt: record.startedAt, turns: end.turns, status: end.status, outcome: end.outcome, canonical: !!canonical, timings: timings.summary() });
         record.turns += end.turns;
         record.usage = addUsage(record.usage, end.usage);
+        void (async () => {
+          const jobs = Object.values(((await chrome.storage.local.get(WORKER_JOBS_KEY))[WORKER_JOBS_KEY] as Record<string, WorkerJob> | undefined) ?? {}).filter(j => j.parentId === conversationId && j.conversationId);
+          const runs = (await Promise.all(jobs.map(j => getRun(j.conversationId!)))).filter((r): r is RunRecord => !!r);
+          await recordPerf({ runId, startedAt: record.startedAt, turns: end.turns, status: end.status, outcome: end.outcome, canonical: !!canonical, timings: timings.summary(), spend: spendOf({ turns: record.turns, usage: record.usage }, runs) });
+        })().catch(() => undefined);
         record.outcome = end.outcome;
         record.debt = loop.debt;
         record.guards = loop.guards.state;
