@@ -124,12 +124,12 @@ defineScenario({
     const tabId = await ctx.open(`${FIXTURE_ORIGIN}/busy.html?ms=0`);
     const first = await ctx.call('snapshot');
     const knownBefore = ctx.session.known.size(tabId);
-    // Block the page's main thread for 25 s: the frame tree read (5 s budget) and the AX capture (10 s) both run out.
-    const blockedUntil = Date.now() + 25_000;
+    // Block the page's main thread for 40 s: the frame tree read (30 s command timeout) and the AX capture (10 s) both run out.
+    const blockedUntil = Date.now() + 40_000;
     await evaluate(
       tabId,
       undefined,
-      `setTimeout(() => { const end = Date.now() + 25000; while (Date.now() < end) {} }, 0); 1`,
+      `setTimeout(() => { const end = Date.now() + 40000; while (Date.now() < end) {} }, 0); 1`,
     );
     await sleep(100);
     const failed = await ctx.call('snapshot');
