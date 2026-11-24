@@ -1,0 +1,1061 @@
+{
+  "scope": "Isolated actual starter components. No authentication, provider calls or writes.",
+  "records": [
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "id": "create",
+      "box": {
+        "x": 13,
+        "y": 230.546875,
+        "width": 224,
+        "height": 205
+      },
+      "metrics": [
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "id": "find",
+      "box": {
+        "x": 84,
+        "y": 230.546875,
+        "width": 224,
+        "height": 205
+      },
+      "metrics": [
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "id": "build",
+      "box": {
+        "x": 13,
+        "y": 17.546875,
+        "width": 224,
+        "height": 205
+      },
+      "metrics": [
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "id": "ship",
+      "box": {
+        "x": 84,
+        "y": 17.546875,
+        "width": 224,
+        "height": 205
+      },
+      "metrics": [
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "id": "Workflows",
+      "box": {
+        "x": 13,
+        "y": 167.546875,
+        "width": 224,
+        "height": 169
+      }
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "id": "Scheduled Tasks",
+      "box": {
+        "x": 13,
+        "y": 157.546875,
+        "width": 224,
+        "height": 179
+      }
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "id": "AI Employees",
+      "box": {
+        "x": 13,
+        "y": 123.546875,
+        "width": 224,
+        "height": 213
+      }
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "id": "Work Packs",
+      "box": {
+        "x": 13,
+        "y": 167.546875,
+        "width": 224,
+        "height": 169
+      }
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "id": "Browser Automation",
+      "box": {
+        "x": 13,
+        "y": 125.546875,
+        "width": 224,
+        "height": 211
+      }
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "id": "Apps & MCP",
+      "box": {
+        "x": 13,
+        "y": 135.546875,
+        "width": 224,
+        "height": 201
+      }
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 640
+      },
+      "id": "create",
+      "box": {
+        "x": 13,
+        "y": 239.515625,
+        "width": 224,
+        "height": 205
+      },
+      "metrics": [
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 640
+      },
+      "id": "find",
+      "box": {
+        "x": 124,
+        "y": 239.515625,
+        "width": 224,
+        "height": 205
+      },
+      "metrics": [
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 640
+      },
+      "id": "build",
+      "box": {
+        "x": 13,
+        "y": 26.515625,
+        "width": 224,
+        "height": 205
+      },
+      "metrics": [
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 640
+      },
+      "id": "ship",
+      "box": {
+        "x": 124,
+        "y": 26.515625,
+        "width": 224,
+        "height": 205
+      },
+      "metrics": [
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 640
+      },
+      "id": "Workflows",
+      "box": {
+        "x": 13,
+        "y": 176.515625,
+        "width": 224,
+        "height": 169
+      }
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 640
+      },
+      "id": "Scheduled Tasks",
+      "box": {
+        "x": 13,
+        "y": 166.515625,
+        "width": 224,
+        "height": 179
+      }
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 640
+      },
+      "id": "AI Employees",
+      "box": {
+        "x": 13,
+        "y": 132.515625,
+        "width": 224,
+        "height": 213
+      }
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 640
+      },
+      "id": "Work Packs",
+      "box": {
+        "x": 13,
+        "y": 176.515625,
+        "width": 224,
+        "height": 169
+      }
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 640
+      },
+      "id": "Browser Automation",
+      "box": {
+        "x": 13,
+        "y": 134.515625,
+        "width": 224,
+        "height": 211
+      }
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 640
+      },
+      "id": "Apps & MCP",
+      "box": {
+        "x": 13,
+        "y": 144.515625,
+        "width": 224,
+        "height": 201
+      }
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "id": "create",
+      "box": {
+        "x": 13,
+        "y": 240.578125,
+        "width": 224,
+        "height": 205
+      },
+      "metrics": [
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "id": "find",
+      "box": {
+        "x": 154,
+        "y": 240.578125,
+        "width": 224,
+        "height": 205
+      },
+      "metrics": [
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "id": "build",
+      "box": {
+        "x": 13,
+        "y": 27.578125,
+        "width": 224,
+        "height": 205
+      },
+      "metrics": [
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "id": "ship",
+      "box": {
+        "x": 154,
+        "y": 27.578125,
+        "width": 224,
+        "height": 205
+      },
+      "metrics": [
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "id": "Workflows",
+      "box": {
+        "x": 13,
+        "y": 177.578125,
+        "width": 224,
+        "height": 169
+      }
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "id": "Scheduled Tasks",
+      "box": {
+        "x": 13,
+        "y": 167.578125,
+        "width": 224,
+        "height": 179
+      }
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "id": "AI Employees",
+      "box": {
+        "x": 13,
+        "y": 133.578125,
+        "width": 224,
+        "height": 213
+      }
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "id": "Work Packs",
+      "box": {
+        "x": 13,
+        "y": 177.578125,
+        "width": 224,
+        "height": 169
+      }
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "id": "Browser Automation",
+      "box": {
+        "x": 13,
+        "y": 135.578125,
+        "width": 224,
+        "height": 211
+      }
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "id": "Apps & MCP",
+      "box": {
+        "x": 13,
+        "y": 145.578125,
+        "width": 224,
+        "height": 201
+      }
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "id": "create",
+      "box": {
+        "x": 13,
+        "y": 296.09375,
+        "width": 224,
+        "height": 205
+      },
+      "metrics": [
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "id": "find",
+      "box": {
+        "x": 281.421875,
+        "y": 296.09375,
+        "width": 224,
+        "height": 205
+      },
+      "metrics": [
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "id": "build",
+      "box": {
+        "x": 13,
+        "y": 87.09375,
+        "width": 224,
+        "height": 205
+      },
+      "metrics": [
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "id": "ship",
+      "box": {
+        "x": 281.421875,
+        "y": 87.09375,
+        "width": 224,
+        "height": 205
+      },
+      "metrics": [
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "id": "Workflows",
+      "box": {
+        "x": 532,
+        "y": 443.546875,
+        "width": 224,
+        "height": 169
+      }
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "id": "Scheduled Tasks",
+      "box": {
+        "x": 532,
+        "y": 443.546875,
+        "width": 224,
+        "height": 179
+      }
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "id": "AI Employees",
+      "box": {
+        "x": 532,
+        "y": 443.546875,
+        "width": 224,
+        "height": 213
+      }
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "id": "Work Packs",
+      "box": {
+        "x": 532,
+        "y": 443.546875,
+        "width": 224,
+        "height": 169
+      }
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "id": "Browser Automation",
+      "box": {
+        "x": 532,
+        "y": 443.546875,
+        "width": 224,
+        "height": 211
+      }
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "id": "Apps & MCP",
+      "box": {
+        "x": 532,
+        "y": 443.546875,
+        "width": 224,
+        "height": 201
+      }
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "id": "create",
+      "box": {
+        "x": 270,
+        "y": 312.859375,
+        "width": 224,
+        "height": 205
+      },
+      "metrics": [
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "id": "find",
+      "box": {
+        "x": 594.84375,
+        "y": 312.859375,
+        "width": 224,
+        "height": 205
+      },
+      "metrics": [
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "id": "build",
+      "box": {
+        "x": 270,
+        "y": 103.859375,
+        "width": 224,
+        "height": 205
+      },
+      "metrics": [
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "id": "ship",
+      "box": {
+        "x": 594.84375,
+        "y": 103.859375,
+        "width": 224,
+        "height": 205
+      },
+      "metrics": [
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        },
+        {
+          "font": 11,
+          "height": 30
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "id": "Workflows",
+      "box": {
+        "x": 919.703125,
+        "y": 460.3125,
+        "width": 224,
+        "height": 169
+      }
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "id": "Scheduled Tasks",
+      "box": {
+        "x": 919.703125,
+        "y": 460.3125,
+        "width": 224,
+        "height": 179
+      }
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "id": "AI Employees",
+      "box": {
+        "x": 919.703125,
+        "y": 460.3125,
+        "width": 224,
+        "height": 213
+      }
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "id": "Work Packs",
+      "box": {
+        "x": 919.703125,
+        "y": 460.3125,
+        "width": 224,
+        "height": 169
+      }
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "id": "Browser Automation",
+      "box": {
+        "x": 919.703125,
+        "y": 460.3125,
+        "width": 224,
+        "height": 211
+      }
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "id": "Apps & MCP",
+      "box": {
+        "x": 919.703125,
+        "y": 460.3125,
+        "width": 224,
+        "height": 201
+      }
+    }
+  ],
+  "endings": [
+    {
+      "error": 0.0078125,
+      "text": "One AI workspace for every kind of work."
+    },
+    {
+      "error": 0.0078125,
+      "text": "One AI workspace for every kind of automation."
+    },
+    {
+      "error": 0,
+      "text": "One AI workspace for every kind of code."
+    },
+    {
+      "error": 0,
+      "text": "One AI workspace for every kind of apps."
+    },
+    {
+      "error": 0.0078125,
+      "text": "One AI workspace for every kind of websites."
+    },
+    {
+      "error": 0,
+      "text": "One AI workspace for every kind of tools."
+    },
+    {
+      "error": 0,
+      "text": "One AI workspace for every kind of extensions."
+    },
+    {
+      "error": 0,
+      "text": "One AI workspace for every kind of software."
+    },
+    {
+      "error": 0.0078125,
+      "text": "One AI workspace for every kind of research."
+    },
+    {
+      "error": 0.0078125,
+      "text": "One AI workspace for every kind of browser automation."
+    },
+    {
+      "error": 0,
+      "text": "One AI workspace for every kind of app automation."
+    }
+  ]
+}

@@ -26,9 +26,8 @@
 .superIntelligence { margin: 0; font: 500 clamp(30px,4cqw,43px)/1.13 Georgia,'Times New Roman',serif; letter-spacing: -.035em; color: var(--foreground); background: linear-gradient(180deg,var(--foreground) 15%,color-mix(in srgb,var(--foreground) 65%,var(--terminal-ui-surface)) 48%,var(--foreground) 62%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .taglineRow { position: relative; display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 12px; }
 .tagline { margin: 0; font-family: var(--font-geist-sans), 'Inter', Arial, sans-serif; font-size: clamp(15px,2cqw,20px); font-weight: 400; letter-spacing: -.04em; line-height: 1.45; color: var(--muted); white-space: nowrap; }
-.dynamicWordFrame { display: inline-grid; vertical-align: baseline; text-align: left; grid-template-areas: 'word'; }
-.wordSizer { grid-area: word; visibility: hidden; pointer-events: none; white-space: nowrap; }
-.dynamicWord { grid-area: word; display: inline-block; width: max-content; min-width: 0; text-align: left; color: var(--foreground); animation: wordReveal 550ms cubic-bezier(.2,.65,.3,1) both; }
+.dynamicWordFrame { display: inline-block; vertical-align: baseline; text-align: left; }
+.dynamicWord { display: inline-block; width: max-content; min-width: 0; text-align: left; color: var(--foreground); animation: wordReveal 550ms cubic-bezier(.2,.65,.3,1) both; }
 @keyframes wordReveal { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: translateY(0); } }
 .mobileBreak { display: none; }
 .rotationControl { display: grid; place-items: center; width: 24px; height: 24px; color: var(--muted); border-radius: 6px; }

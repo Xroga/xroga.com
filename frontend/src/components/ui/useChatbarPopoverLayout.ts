@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useState, type RefObject } from 'react';
 
 type Box = { left: number; top: number; bottom: number; height: number };
 type Viewport = { left: number; top: number; width: number; height: number };
@@ -9,7 +9,7 @@ export function fitChatbarPopover(frame: Box, anchorLeft: number, width: number,
   const gap = 8, margin = 12;
   const bottom = viewport.top + viewport.height;
   const available = movable ? bottom - minimumTop - frame.height - gap - margin : bottom - frame.bottom - gap - margin;
-  const maxHeight = Math.max(1, Math.min(height, viewport.height / 2, available));
+  const maxHeight = Math.max(1, Math.min(height, viewport.height / 2, available, 360));
   const offset = movable ? Math.max(0, frame.bottom + gap + maxHeight + margin - bottom) : 0;
   const panelWidth = Math.max(1, Math.min(width, viewport.width - margin * 2));
   return {
@@ -22,7 +22,7 @@ export function fitChatbarPopover(frame: Box, anchorLeft: number, width: number,
 export function fitChatbarPopoverAbove(frame: Box, anchorLeft: number, width: number, height: number, viewport: Viewport, minimumTop = viewport.top + 12) {
   const gap = 8, margin = 12;
   const available = frame.top - minimumTop - gap;
-  const maxHeight = Math.max(1, Math.min(height, available));
+  const maxHeight = Math.max(1, Math.min(height, available, viewport.height / 2, 360));
   const panelWidth = Math.max(1, Math.min(width, viewport.width - margin * 2));
   return {
     left: Math.max(viewport.left + margin, Math.min(anchorLeft, viewport.left + viewport.width - panelWidth - margin)),
@@ -33,7 +33,6 @@ export function fitChatbarPopoverAbove(frame: Box, anchorLeft: number, width: nu
 /** Chatbar menus open below the centered start composer and above a bottom-docked one. */
 export function useChatbarPopoverLayout(open: boolean, anchorRef: RefObject<HTMLElement | null>, panelRef: RefObject<HTMLElement | null>, width: number) {
   const [layout, setLayout] = useState({ left: 12, top: 12, width, maxHeight: 1, offset: 0 });
-  const shifted = useRef<{ dock: HTMLElement; previous: string; offset: number } | null>(null);
   const reposition = useCallback(() => {
     const anchor = anchorRef.current, panel = panelRef.current;
     if (!anchor || !panel) return;
@@ -41,37 +40,23 @@ export function useChatbarPopoverLayout(open: boolean, anchorRef: RefObject<HTML
     const frame = composer?.closest<HTMLElement>('.xv-kimi-composer-frame') ?? composer ?? anchor;
     const dock = composer?.closest<HTMLElement>('.xv-terminal-dock');
     const movable = Boolean(dock && !dock.classList.contains('xv-terminal-dock--idle'));
-    if (shifted.current && (!movable || shifted.current.dock !== dock)) {
-      const previous = shifted.current;
-      if (previous.previous) previous.dock.style.setProperty('--xv-chatbar-popover-offset', previous.previous);
-      else previous.dock.style.removeProperty('--xv-chatbar-popover-offset');
-      shifted.current = null;
-    }
     const visual = window.visualViewport;
     const viewport = { left: visual?.offsetLeft ?? 0, top: visual?.offsetTop ?? 0, width: visual?.width ?? innerWidth, height: visual?.height ?? innerHeight };
     const rect = frame.getBoundingClientRect();
-    const applied = shifted.current && shifted.current.dock === dock ? shifted.current.offset : 0;
     const headerBottom = document.querySelector('[data-testid="terminal-identity-header"]')?.getBoundingClientRect().bottom ?? 0;
     const minimumTop = Math.max(viewport.top + 12, headerBottom + 8);
+    const panelHeight = panel.scrollHeight + panel.offsetHeight - panel.clientHeight;
     const next = movable
-      ? fitChatbarPopoverAbove({ left: rect.left, top: rect.top + applied, bottom: rect.bottom + applied, height: rect.height },
-        anchor.getBoundingClientRect().left, width, panel.scrollHeight || 320, viewport, minimumTop)
-      : fitChatbarPopover({ left: rect.left, top: rect.top + applied, bottom: rect.bottom + applied, height: rect.height },
-        anchor.getBoundingClientRect().left, width, panel.scrollHeight || 320, viewport, false, minimumTop);
+      ? fitChatbarPopoverAbove({ left: rect.left, top: rect.top, bottom: rect.bottom, height: rect.height },
+        anchor.getBoundingClientRect().left, width, panelHeight || 320, viewport, minimumTop)
+      : fitChatbarPopover({ left: rect.left, top: rect.top, bottom: rect.bottom, height: rect.height },
+        anchor.getBoundingClientRect().left, width, panelHeight || 320, viewport, false, minimumTop);
     setLayout(previous => Object.keys(next).every(key => previous[key as keyof typeof next] === next[key as keyof typeof next]) ? previous : next);
   }, [anchorRef, panelRef, width]);
 
   useLayoutEffect(() => {
     if (!open) return;
     reposition();
-    return () => {
-      const previous = shifted.current;
-      if (previous) {
-        if (previous.previous) previous.dock.style.setProperty('--xv-chatbar-popover-offset', previous.previous);
-        else previous.dock.style.removeProperty('--xv-chatbar-popover-offset');
-        shifted.current = null;
-      }
-    };
   }, [open, reposition]);
   useEffect(() => {
     if (!open) return;

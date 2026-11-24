@@ -106,7 +106,7 @@ export function ChatBarActionsMenu({
   const activeWork = WORK_OPTIONS.find(item => item.id === workId) ?? WORK_OPTIONS[0];
   const rootRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const menuStyle = useChatbarPopoverLayout(open, rootRef, menuRef, 344);
+  const menuStyle = useChatbarPopoverLayout(open, rootRef, menuRef, 288);
   const palette = useTerminalPopoverPalette(open, rootRef);
 
   const preferences = useComposerToolsStore((s) => s.preferences);
