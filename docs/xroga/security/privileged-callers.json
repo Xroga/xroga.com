@@ -5008,11 +5008,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "43f74a68b16673a66b2a"
+        "id": "07a57216d12e3fdb2f58"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "344cb37df2ca54037032"
+        "id": "869dd9bc27f666f2782e"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6988,11 +6988,11 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "43f74a68b16673a66b2a"
+        "id": "07a57216d12e3fdb2f58"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "344cb37df2ca54037032"
+        "id": "869dd9bc27f666f2782e"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -20962,7 +20962,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ed12e795542c30516005b5a9681eee3b7e734fd619d80e1eaf913d3979df0b5b"
+      "sourceSha256": "302cc16b56f4908a3c06f68073312f59d76c38a2efefa1a37b9ad163793c4537"
     },
     {
       "id": "12690ff6770fa50bad0a",
@@ -20973,29 +20973,29 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ed12e795542c30516005b5a9681eee3b7e734fd619d80e1eaf913d3979df0b5b"
+      "sourceSha256": "302cc16b56f4908a3c06f68073312f59d76c38a2efefa1a37b9ad163793c4537"
     },
     {
-      "id": "43f74a68b16673a66b2a",
+      "id": "07a57216d12e3fdb2f58",
       "path": "backend/src/routes/teams.ts",
-      "line": 134,
+      "line": 140,
       "enclosing": "<module>",
       "kind": "RPC_CANDIDATE",
       "target": "team_create_link",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ed12e795542c30516005b5a9681eee3b7e734fd619d80e1eaf913d3979df0b5b"
+      "sourceSha256": "302cc16b56f4908a3c06f68073312f59d76c38a2efefa1a37b9ad163793c4537"
     },
     {
-      "id": "344cb37df2ca54037032",
+      "id": "869dd9bc27f666f2782e",
       "path": "backend/src/routes/teams.ts",
-      "line": 134,
+      "line": 140,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ed12e795542c30516005b5a9681eee3b7e734fd619d80e1eaf913d3979df0b5b"
+      "sourceSha256": "302cc16b56f4908a3c06f68073312f59d76c38a2efefa1a37b9ad163793c4537"
     },
     {
       "id": "353aa869f7c46574b7a6",

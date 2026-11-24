@@ -101,34 +101,44 @@ export function bindCitationLinks(response:string,sources:ReadonlyArray<{url:str
  return mapResearchProse(response, bindProse);
 }
 
+function fixedStayLength(text: string): number | undefined {
+  const stays = [...text.matchAll(/\b([1-9]\d*)[ \t-]+(?:hotel[ \t-]+)?nights?\b/giu)];
+  if (stays.length !== 1) return;
+  const [stay] = stays;
+  const before = text.slice(0, stay.index);
+  if (/(?:\b(?:up to|at least|at most|about|around|approximately|or|to)\s+|\d\s*[-–—]\s*|~\s*)$/iu.test(before)) return;
+  return Number(stay[1]);
+}
+
 function scheduledStayMismatch(response: string): string | undefined {
   const prose = response.replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/gu, '').replace(/\*\*/gu, '');
-  const assumptions = prose.match(/^[ \t]*Assumptions?:[^\r\n]*/gimu) ?? [];
-  if (assumptions.length !== 1) return;
-  const stays = [...assumptions[0].matchAll(/\b([1-9]\d*)\s+(?:hotel\s+)?nights?\b/giu)];
-  if (stays.length !== 1) return;
-  const stay = stays[0];
-  const before = assumptions[0].slice(0, stay.index);
-  if (/(?:\b(?:up to|at least|at most|about|around|approximately|or|to)\s+|\d\s*[-–—]\s*|~\s*)$/iu.test(before)) return;
-
-  const itineraries = prose.split(/(?=^#{1,6}\s)/mu).filter(section =>
-    /^#{1,6}[ \t]+[^\r\n]*(?:\bitinerary\b|\b(?:\d+-day|daily) (?:plan|shape|schedule)\b)/iu.test(section));
+  const itineraries = prose.split(/(?=^#{1,6}[ \t])/mu).flatMap(section => {
+    const headingEnd = section.indexOf('\n');
+    const heading = section.slice(0, headingEnd);
+    if (headingEnd === -1 || !/^#{1,6}[ \t]+[^\r\n]*(?:\bitinerary\b|\b(?:\d+[- ](?:day|night)|daily) (?:plan|shape|schedule)\b)/iu.test(heading)) return [];
+    const body = section.slice(headingEnd + 1);
+    const days = [...body.matchAll(/\bday[ \t]+(\d+)[ \t]*(?:[:.)–—-][ \t]*)?/giu)];
+    return days.length >= 2 ? [{ heading, body, days }] : [];
+  });
   if (itineraries.length !== 1) return;
-  const itinerary = itineraries[0].slice(itineraries[0].indexOf('\n') + 1);
-  const days = [...itinerary.matchAll(/\bday[ \t]+(\d+)[ \t]*(?:[:.)–—-][ \t]*)?/giu)];
-  if (days.length < 2) return;
-  const [first, last] = [days[0], days[days.length - 1]];
-  const arrival = itinerary.slice(first.index + first[0].length);
-  const departure = itinerary.slice(last.index + last[0].length);
-  if (!/^(?:arrive|arrival|check[ -]in)\b/iu.test(arrival) ||
-      !/^(?:(?:check[ -]out and )?depart(?:ure)?(?: for home)?|fly home)(?=[.;\r\n]|$)/iu.test(departure)) return;
+  const [{ heading, body, days }] = itineraries;
+  const assumptions = prose.match(/^[ \t]*Assumptions?:[^\r\n]*/gimu) ?? [];
+  const headingNights = fixedStayLength(heading);
+  const budgetNights = assumptions.length === 1 ? fixedStayLength(assumptions[0]) : undefined;
+  if (headingNights === undefined && budgetNights === undefined) return;
 
-  const startDay = Number(first[1]);
+  const labels = days.map((day, index) => body.slice(day.index + day[0].length, days[index + 1]?.index).trimStart());
+  const arrivals = days.filter((_, index) => /^(?:arrive|arrival|check[ -]in)\b/iu.test(labels[index]));
+  const last = days[days.length - 1];
+  if (arrivals.length !== 1 || !/^(?:(?:check[ -]out and )?depart(?:ure)?(?: for home)?|(?:transfer and )?fly home)(?=[.;\r\n]|$)/iu.test(labels[labels.length - 1])) return;
+
+  const startDay = Number(arrivals[0][1]);
   const endDay = Number(last[1]);
-  const budgetNights = Number(stay[1]);
   const nights = endDay - startDay;
-  if (![startDay, endDay, budgetNights].every(Number.isSafeInteger) || nights <= 0 || nights === budgetNights) return;
-  return `The itinerary runs from Day ${startDay} to Day ${endDay}, which is ${nights} ${nights === 1 ? 'night' : 'nights'}. The budget assumes ${budgetNights} ${budgetNights === 1 ? 'night' : 'nights'}. Treat the budget as a separate estimate until the dates are aligned.`;
+  const mismatch = [budgetNights, headingNights].find(count => count !== undefined && Number.isSafeInteger(count) && count !== nights);
+  if (![startDay, endDay].every(Number.isSafeInteger) || nights <= 0 || mismatch === undefined) return;
+  const basis = mismatch === budgetNights ? 'The budget assumes' : 'The itinerary heading says';
+  return `The itinerary runs from Day ${startDay} to Day ${endDay}, which is ${nights} ${nights === 1 ? 'night' : 'nights'}. ${basis} ${mismatch} ${mismatch === 1 ? 'night' : 'nights'}. Treat the budget as a separate estimate until the dates are aligned.`;
 }
 
 /** Structural coverage of an explicit link deliverable. A retrieved URL alone

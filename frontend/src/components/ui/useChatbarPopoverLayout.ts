@@ -18,7 +18,19 @@ export function fitChatbarPopover(frame: Box, anchorLeft: number, width: number,
   };
 }
 
-/** Keep chatbar menus below their entire composer, including above a mobile keyboard. */
+/** A composer docked at the bottom of the screen opens its menu above itself, never off-screen below. */
+export function fitChatbarPopoverAbove(frame: Box, anchorLeft: number, width: number, height: number, viewport: Viewport, minimumTop = viewport.top + 12) {
+  const gap = 8, margin = 12;
+  const available = frame.top - minimumTop - gap;
+  const maxHeight = Math.max(1, Math.min(height, available));
+  const panelWidth = Math.max(1, Math.min(width, viewport.width - margin * 2));
+  return {
+    left: Math.max(viewport.left + margin, Math.min(anchorLeft, viewport.left + viewport.width - panelWidth - margin)),
+    top: Math.max(minimumTop, frame.top - gap - maxHeight), width: panelWidth, maxHeight, offset: 0,
+  };
+}
+
+/** Chatbar menus open below the centered start composer and above a bottom-docked one. */
 export function useChatbarPopoverLayout(open: boolean, anchorRef: RefObject<HTMLElement | null>, panelRef: RefObject<HTMLElement | null>, width: number) {
   const [layout, setLayout] = useState({ left: 12, top: 12, width, maxHeight: 1, offset: 0 });
   const shifted = useRef<{ dock: HTMLElement; previous: string; offset: number } | null>(null);
@@ -40,13 +52,12 @@ export function useChatbarPopoverLayout(open: boolean, anchorRef: RefObject<HTML
     const rect = frame.getBoundingClientRect();
     const applied = shifted.current && shifted.current.dock === dock ? shifted.current.offset : 0;
     const headerBottom = document.querySelector('[data-testid="terminal-identity-header"]')?.getBoundingClientRect().bottom ?? 0;
-    const next = fitChatbarPopover({ left: rect.left, top: rect.top + applied, bottom: rect.bottom + applied, height: rect.height },
-      anchor.getBoundingClientRect().left, width, panel.scrollHeight || 320, viewport, movable, Math.max(viewport.top + 12, headerBottom + 8));
-    if (movable && dock) {
-      if (!shifted.current) shifted.current = { dock, previous: dock.style.getPropertyValue('--xv-chatbar-popover-offset'), offset: 0 };
-      shifted.current.offset = next.offset;
-      dock.style.setProperty('--xv-chatbar-popover-offset', `${next.offset}px`);
-    }
+    const minimumTop = Math.max(viewport.top + 12, headerBottom + 8);
+    const next = movable
+      ? fitChatbarPopoverAbove({ left: rect.left, top: rect.top + applied, bottom: rect.bottom + applied, height: rect.height },
+        anchor.getBoundingClientRect().left, width, panel.scrollHeight || 320, viewport, minimumTop)
+      : fitChatbarPopover({ left: rect.left, top: rect.top + applied, bottom: rect.bottom + applied, height: rect.height },
+        anchor.getBoundingClientRect().left, width, panel.scrollHeight || 320, viewport, false, minimumTop);
     setLayout(previous => Object.keys(next).every(key => previous[key as keyof typeof next] === next[key as keyof typeof next]) ? previous : next);
   }, [anchorRef, panelRef, width]);
 
