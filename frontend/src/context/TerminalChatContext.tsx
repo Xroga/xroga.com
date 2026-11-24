@@ -17,7 +17,7 @@ import { adaptTerminalEvent } from '@/lib/terminal/terminalEventAdapter';
 import { terminalRunReducer } from '@/lib/terminal/terminalRunReducer';
 import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { streamSwarmExecute, apiFetch, ApiError, type ChatAttachment, api } from '@/lib/api';
+import { streamSwarmExecute, apiFetch, ApiError, type ChatAttachment, api, phase1ChatWithProgress } from '@/lib/api';
 import { resolveBuilderProject, syncBuilderConversation } from '@/lib/builderChat';
 import { attachResearchResult, markResearchUnavailable, pendingResearchConfirmation, RESEARCH_RECEIPT_AVAILABLE, type ResearchHandoff } from '@/lib/researchHandoff';
 import {attachModelResult,markModelUnavailable,pendingModelConfirmation,type ModelHandoff} from '@/lib/modelHandoff';
@@ -3018,7 +3018,7 @@ if (
               kind: needsCurrentSources || semanticPlan.goalContract.requiredCapabilities.includes('research.public-web')
                 ? 'source-backed' : 'standard',
             });
-            const result = await api.phase1.chat(displayPrompt, history, attachments, semanticPlan.goalContract, controller.signal)
+            const result = await phase1ChatWithProgress({ message: displayPrompt, history, ...(attachments?.length ? { attachments } : {}), ...(semanticPlan.goalContract ? { goalContract: semanticPlan.goalContract } : {}) }, { signal: controller.signal, onProgress: (frame) => pushTerminalEvent('progress', frame) })
               .finally(() => setPendingReply((current) => current?.messageId === assistantId ? null : current));
             if (controller.signal.aborted || sessionIdRef.current !== originatingSessionId) return;
             const rawReply = (result.response || '').trim();

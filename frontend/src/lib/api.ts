@@ -1637,6 +1637,65 @@ export async function uploadChatFile(
   }
 }
 
+/**
+ * Same request as `api.phase1.chat`, but asks the server for live progress. When the server
+ * supports it, `onProgress` receives each real progress frame while the answer is prepared and
+ * the final `result` frame is returned (or thrown as an ApiError, exactly like the JSON path).
+ * A server that answers with plain JSON is handled too, so this is safe to ship first.
+ */
+export async function phase1ChatWithProgress(
+  body: Record<string, unknown>,
+  options: { signal?: AbortSignal; onProgress?: (frame: Record<string, unknown>) => void } = {},
+): Promise<Phase1ChatResult> {
+  const token = await getAccessToken();
+  const res = await fetchApiResponse(`${API_URL}/api/phase1/chat`, {
+    method: 'POST',
+    signal: options.signal,
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'text/event-stream, application/json;q=0.9',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify(body),
+  });
+  const contentType = res.headers.get('content-type') ?? '';
+  if (!contentType.includes('text/event-stream') || !res.body) {
+    const data = await res.json().catch(() => ({})) as Record<string, unknown>;
+    if (!res.ok) throw new ApiError(typeof data.error === 'string' ? data.error : `Request failed (${res.status})`, res.status, data);
+    return data as unknown as Phase1ChatResult;
+  }
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let result: { status: number; body: Record<string, unknown> } | null = null;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (value) buffer += decoder.decode(value, { stream: !done });
+    let boundary = buffer.indexOf('\n\n');
+    while (boundary !== -1) {
+      const block = buffer.slice(0, boundary);
+      buffer = buffer.slice(boundary + 2);
+      const event = /^event: (.+)$/m.exec(block)?.[1];
+      const data = /^data: (.+)$/m.exec(block)?.[1];
+      if (event && data) {
+        try {
+          const parsed = JSON.parse(data) as Record<string, unknown>;
+          if (event === 'progress') options.onProgress?.(parsed);
+          else if (event === 'result') result = parsed as unknown as { status: number; body: Record<string, unknown> };
+        } catch { /* A malformed frame is skipped; the result frame decides the outcome. */ }
+      }
+      boundary = buffer.indexOf('\n\n');
+    }
+    if (done) break;
+  }
+  if (!result) throw new ApiError('The reply ended before it was complete. Please send it again.', 502, {});
+  if (result.status >= 400) {
+    const data = result.body ?? {};
+    throw new ApiError(typeof data.error === 'string' ? data.error : `Request failed (${result.status})`, result.status, data);
+  }
+  return result.body as unknown as Phase1ChatResult;
+}
+
 export async function apiFetch<
   T =
     unknown
