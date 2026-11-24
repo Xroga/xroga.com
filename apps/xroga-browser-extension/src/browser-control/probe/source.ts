@@ -67,6 +67,8 @@ export interface PageAudit {
   forms: { total: number; unlabelled: number };
   buttonsNoName: number;
   mixedContent: number;
+  /** Contact details the page publishes: mailto and tel links and addresses written in its text. */
+  contacts: { emails: string[]; phones: string[] };
   perf: { ttfbMs?: number; fcpMs?: number; lcpMs?: number; cls?: number; domContentLoadedMs?: number; loadMs?: number; transferKb?: number; requests?: number; domNodes: number };
 }
 
@@ -658,6 +660,16 @@ export function probeMain(): void {
         forms: { total: q('form').length, unlabelled },
         buttonsNoName,
         mixedContent: location.protocol === 'https:' ? q('img[src^="http:"],script[src^="http:"],link[href^="http:"],iframe[src^="http:"]').length : 0,
+        contacts: (() => {
+          const emails = new Set<string>();
+          const phones = new Set<string>();
+          for (const a of q('a[href^="mailto:"]') as HTMLAnchorElement[]) { const m = decodeURIComponent(a.getAttribute('href')!.slice(7).split('?')[0]!).trim(); if (m) emails.add(m.toLowerCase()); }
+          for (const a of q('a[href^="tel:"]') as HTMLAnchorElement[]) { const t = decodeURIComponent(a.getAttribute('href')!.slice(4)).trim(); if (t) phones.add(t); }
+          const text = document.body?.innerText ?? '';
+          for (const m of text.match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g) ?? []) emails.add(m.toLowerCase());
+          for (const m of text.match(/(?:\+\d{1,3}[\s().-]*)?(?:\(?0\d{2,4}\)?[\s.-]*)\d{3,4}[\s.-]*\d{3,4}/g) ?? []) if (m.replace(/\D/g, '').length >= 9) phones.add(m.trim());
+          return { emails: [...emails].slice(0, 5), phones: [...phones].slice(0, 5) };
+        })(),
         perf: { ttfbMs: round(nav?.responseStart), fcpMs: round(fcp), lcpMs: round(observed.lcp), cls: observed.cls === undefined ? undefined : Math.round(observed.cls * 1000) / 1000, domContentLoadedMs: round(nav?.domContentLoadedEventEnd), loadMs: round(nav?.loadEventEnd), transferKb: Math.round(bytes / 1024), requests: res.length + 1, domNodes: document.getElementsByTagName('*').length },
       };
     },

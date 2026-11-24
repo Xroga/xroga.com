@@ -96,3 +96,29 @@ describe('exact-count playbook', () => {
     expect(ids('Open example.com and tell me the heading')).not.toContain('exact-count');
   });
 });
+
+describe('isCompanyPage', () => {
+  it('is true for ordinary web pages and false for APIs, data files and docs hosts', async () => {
+    const { isCompanyPage } = await import('../loop');
+    expect(isCompanyPage('https://brightpath.co.uk/')).toBe(true);
+    expect(isCompanyPage('https://brightpath.co.uk/seo-leeds/')).toBe(true);
+    expect(isCompanyPage('https://brightpath.co.uk/about.html')).toBe(true);
+    expect(isCompanyPage('https://brightpath.co.uk/robots.txt')).toBe(false);
+    expect(isCompanyPage('https://brightpath.co.uk/sitemap.xml')).toBe(false);
+    expect(isCompanyPage('https://api.llama.fi/tvl/aave')).toBe(false);
+    expect(isCompanyPage('https://x.test/api/v1/users')).toBe(false);
+    expect(isCompanyPage('https://www.googleapis.com/pagespeedonline/v5/runPagespeed')).toBe(false);
+    expect(isCompanyPage('http://brightpath.co.uk/')).toBe(false);
+    expect(isCompanyPage(undefined)).toBe(false);
+  });
+});
+
+describe('the research prompt is recognised as an audit task', () => {
+  it('matches the SEO playbook even when other playbooks fill the prompt', async () => {
+    const { SKILLS } = await import('../skills');
+    const task = 'Find 5 SEO agencies in Leeds, UK. For each one give the website, a contact email or phone number from its own site, and the two most serious SEO problems of its website. Put the result in a table.';
+    const ids = SKILLS.filter(k => k.when(task)).map(k => k.id);
+    expect(ids).toContain('seo');
+    expect(ids.length).toBeGreaterThanOrEqual(4);
+  });
+});

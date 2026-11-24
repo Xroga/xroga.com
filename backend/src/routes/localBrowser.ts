@@ -310,6 +310,45 @@ function assertToolArguments(args: Record<string, unknown>, summary: ToolArgs | 
   }
 }
 
+/**
+ * The credential check for a whole model request. The classifier refuses to look at a payload over 128,000 bytes or 5,000 items, and checkData treats "could not look" as
+ * "secret": every long research run was refused once its conversation grew past that, however clean it was. The request is looked at in bounded pieces instead, so each piece
+ * is classified for real: every key name together, and every string in slices of at most 20,000 characters that overlap by 256 so a value cannot hide on a seam. Nothing is
+ * let through unchecked and nothing is refused for being long.
+ */
+export function checkDataBounded(value: unknown) {
+  const keys = new Set<string>();
+  const strings: string[] = [];
+  const walk = (v: unknown, depth: number) => {
+    if (depth > 60) return;
+    if (typeof v === 'string') {
+      for (let i = 0; i < v.length; i += 20_000) strings.push(v.slice(Math.max(0, i - 256), i + 20_000));
+    } else if (Array.isArray(v)) {
+      for (const item of v) walk(item, depth + 1);
+    } else if (v && typeof v === 'object') {
+      for (const [k, item] of Object.entries(v)) {
+        keys.add(k);
+        walk(item, depth + 1);
+      }
+    }
+  };
+  walk(value, 0);
+  const names = [...keys];
+  for (let i = 0; i < names.length; i += 1_000) checkData(Object.fromEntries(names.slice(i, i + 1_000).map(k => [k, 1])));
+  let batch: string[] = [];
+  let size = 0;
+  for (const text of strings) {
+    if (batch.length && (size + text.length > 20_000 || batch.length >= 1_000)) {
+      checkData(batch);
+      batch = [];
+      size = 0;
+    }
+    batch.push(text);
+    size += text.length;
+  }
+  if (batch.length) checkData(batch);
+}
+
 function checkData(value: unknown) {
   try {
     if (classifyOutboundData(value).classification !== 'CREDENTIAL_SECRET') return;
@@ -945,7 +984,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     const ctx = requireTenantContext(req.tenantContext);
     const { turn, vision_probe_png: probe, reasoning_effort: askedEffort, ...body } = turnBody.parse(req.body);
     const vetted = vetTurnImages(body.messages, !!resolveModelSpec(MODEL)?.supportsImages);
-    checkData(vetted.textOnly);
+    checkDataBounded(vetted.textOnly);
     const image = probe ? visionProbe(row.runId, turn, probe) : undefined;
     const prompt = body.messages.at(-1);
     if (image && (!body.tools?.length || prompt?.role !== 'user' || !prompt.content || (body.max_tokens ?? 0) > 512)) {

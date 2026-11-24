@@ -19,6 +19,7 @@ const good: PageAudit = {
   social: { ogTitle: true, ogImage: true, twitterCard: true },
   structuredData: ['Organization'],
   hreflang: 0,
+  contacts: { emails: ['hello@x.test'], phones: ['0113 555 0142'] },
   forms: { total: 1, unlabelled: 0 },
   buttonsNoName: 0,
   mixedContent: 0,
@@ -47,6 +48,11 @@ describe('auditIssues', () => {
     expect(text).toMatch(/problem:2 resources load over http/);
     expect(text).toMatch(/problem:Largest contentful paint 5200/);
     expect(text).toMatch(/problem:Layout shift 0.4/);
+  });
+
+  it('prints the contact details the page publishes', () => {
+    const text = describeAudit(good).join('\n');
+    expect(text).toContain('contact on the page: emails hello@x.test · phones 0113 555 0142');
   });
 
   it('treats a missing measurement as unknown, not as a failure', () => {

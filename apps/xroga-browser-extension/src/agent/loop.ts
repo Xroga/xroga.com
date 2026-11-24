@@ -4,7 +4,7 @@ import { runCalculate } from './calculate';
 import { runDataOpsTool } from './data-ops';
 import { searchUrlToQuery } from './search-redirect';
 import { judgeTask } from './task-judge';
-import { skillsFor } from './skills';
+import { SKILLS, skillsFor } from './skills';
 import { runBrowserData } from './browser-data';
 import { countRun, deleteMacro, describeMacro, expandVars, httpRefusalFor, httpUrlsOf, macrosFor, placeholdersOf, refusalFor, saveMacro } from './macro-tool';
 import { tableToObjects } from '@src/browser-control/core/tools/extract-rows';
@@ -95,6 +95,22 @@ export const STOPPED_NOTE =
 
 /** Evidence screenshots kept per run. */
 const EVIDENCE_SHOT_LIMIT = 6;
+
+/** A company's web page (not an API, a data file or documentation host): the kind of address a site audit should open in the browser. */
+export function isCompanyPage(raw: unknown): boolean {
+  if (typeof raw !== 'string') return false;
+  let u: URL;
+  try {
+    u = new URL(raw);
+  } catch {
+    return false;
+  }
+  if (u.protocol !== 'https:') return false;
+  if (/(?:^|\.)(?:googleapis|github|githubusercontent|wikipedia|llama|wikimedia)\./i.test(u.hostname)) return false;
+  if (/\/api(?:\/|$)/i.test(u.pathname) || /\/(?:v\d+|graphql|rest|feed|rss)(?:\/|$)/i.test(u.pathname)) return false;
+  const file = /\.([a-z0-9]{1,5})$/i.exec(u.pathname)?.[1]?.toLowerCase();
+  return !file || ['html', 'htm', 'php', 'asp', 'aspx'].includes(file);
+}
 const UNCERTAIN_WRITE_SUMMARY = 'A browser action may have been delivered. Further changes were paused.';
 
 /** The fixed line before a screenshot sent to the model. */
@@ -1828,7 +1844,10 @@ ${ledger}` : ''),
     const branch = await activeBranch(this.options.conversationId);
     const first = branch.find((e): e is EntryOf<'message'> => e.type === 'message' && e.message.role === 'user' && !e.appOwned);
     const task = first?.message.parts.map(p => (p.type === 'text' ? p.text : '')).join('\n') ?? '';
-    const ids = new Set(skillsFor(task).map(k => k.id));
+    // Every playbook that fits the words, not only the few put into the prompt: the prompt keeps four, this decides what the extension does for the model.
+    // At the start of a run the page outline is captured before the person's message is stored: nothing is decided, and nothing is remembered, until the task text exists.
+    if (!task.trim()) return { audit: false, rows: false };
+    const ids = new Set(SKILLS.filter(k => k.when(task)).map(k => k.id));
     this.#intent = { audit: ids.has('seo') || ids.has('site-qa'), rows: ids.has('lead-generation') || ids.has('research') };
     return this.#intent;
   }
@@ -2329,6 +2348,7 @@ ${renderSkill(top)}`);
     // The intent record is on disk before anything is dispatched.
     await this.#time('tool.journal', () => this.writer.intent(call.toolCallId, call.toolName, args));
     let outcome: CallOutcome;
+    if (call.toolName === 'http_get') await this.#intents();
     if (call.toolName === 'done') {
       outcome = await this.#judgeDone(call, kind, args);
     } else if (call.toolName === 'enable_actions' && this.options.fullTools) {
@@ -2405,6 +2425,15 @@ ${renderSkill(top)}`);
       outcome = {
         call, kind: 'read', isError: !result.ok, result,
         text: `${result.text}\nThese are the results of that search, read for you in a background tab that was closed again: the search page itself needs no visit. Open a result with navigate, or search again with other words.`,
+      };
+    } else if (call.toolName === 'http_get' && this.#intent?.audit && isCompanyPage(args.url)) {
+      // On a task that audits sites, a company's web page is not read by the server (rate limited, stopped by bot checks that the person's own browser passes): it is audited in a
+      // background tab that is closed again, which also reads the contact details the page publishes. One call, no navigation, the task's own tab untouched.
+      const url = String(args.url);
+      const result = await this.#time('tool.layer', () => this.options.layer.call('audit_page', { url, intent: `Audit ${url}` }, signal));
+      outcome = {
+        call, kind: 'read', isError: !result.ok, result,
+        text: `${result.ok ? '' : 'The page could not be opened in the browser either. '}${result.text}\n(This page was audited in the browser instead of fetched by the server: the audit, the contact details on the page and its speed come from the live page. For other pages of the site, navigate to them or call audit_page with their url.)`,
       };
     } else if (call.toolName === 'macro') {
       outcome = await this.#macroTool(call, kind, args);

@@ -181,6 +181,17 @@ async function main() {
       const text = await ask('custom', opt('--prompt'), Number(opt('--max-ms') ?? 1_200_000));
       report.steps.seconds = Math.round((Date.now() - t0) / 1000);
       report.steps.screenshotMentions = (text.match(/screenshot/gi) ?? []).length;
+      try {
+        const dump = await evalIn(operator.sid, `(async () => { const dbs = await indexedDB.databases(); const out = [];
+          for (const d of dbs) { if (!/nanobrowser/.test(d.name)) continue;
+            const db = await new Promise((res, rej) => { const r = indexedDB.open(d.name); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+            if (![...db.objectStoreNames].includes('entries')) { db.close(); continue; }
+            const rows = await new Promise(res => { const g = db.transaction('entries').objectStore('entries').getAll(); g.onsuccess = () => res(g.result); });
+            out.push(...rows); db.close(); }
+          return JSON.stringify(out); })()`);
+        (await import('node:fs')).writeFileSync('C:/Users/hp/AppData/Local/Temp/entries-dump.json', dump);
+        report.steps.entriesDumped = dump.length;
+      } catch (e) { report.steps.entriesDumped = String(e); }
       report.steps.lastRefusal = await evalIn(operator.sid, `chrome.storage.local.get('xroga_last_refusal').then(v => JSON.stringify(v.xroga_last_refusal ?? null))`).catch(e => String(e));
       report.steps.workerConsole = (cdp.events ?? []).filter(e => /secret-like|model\]/.test(e.text)).slice(-6);
       report.steps.finalAnswer = text.replace(/\s+/g, ' ').slice(-2500);

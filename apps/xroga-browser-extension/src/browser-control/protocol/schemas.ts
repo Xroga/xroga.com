@@ -254,6 +254,7 @@ export const EmulateArgsSchema = z.strictObject({
 
 export const AuditPageArgsSchema = z.strictObject({
   ...readCommon,
+  url: z.string().url().max(2000).optional().describe('Audit this address in a background tab that is closed again, instead of the open page: one call per site, no navigation'),
 });
 
 export const DiagnosticsArgsSchema = z.strictObject({
