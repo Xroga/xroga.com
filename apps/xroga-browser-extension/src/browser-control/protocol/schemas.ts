@@ -96,6 +96,8 @@ export const ReadArgsSchema = z.strictObject({
   format: z.enum(['markdown', 'text']).default('markdown'),
   maxChars: z.number().int().min(100).max(200_000).optional(),
   offset: z.number().int().min(0).optional().describe('Character offset to continue from'),
+  match: z.string().max(200).optional().describe('Only the lines matching this word or pattern, with context'),
+  context: z.number().int().min(0).max(10).optional(),
 });
 
 export const ScreenshotArgsSchema = z.strictObject({

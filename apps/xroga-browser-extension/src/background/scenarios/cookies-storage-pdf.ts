@@ -42,3 +42,40 @@ defineScenario({
     );
   },
 });
+
+defineScenario({
+  id: 'S3-browser-issues',
+  set: 'C',
+  title: 'diagnostics issues lists what the browser itself reports about a page (quirks mode, unlabelled fields)',
+  covers: 'kind issues: Audits issues replayed on enable, grouped with counts, sentences not codes',
+  async run(ctx) {
+    await ctx.open(`${FIXTURE_ORIGIN}/c-issues.html`);
+    await new Promise(r => setTimeout(r, 400));
+    const first = await ctx.call('diagnostics', { kind: 'issues' });
+    await new Promise(r => setTimeout(r, 600));
+    const second = await ctx.call('diagnostics', { kind: 'issues' });
+    const t = second.text;
+    return outcome(
+      'the browser reports quirks mode for the page without a doctype and form inputs with no label',
+      JSON.stringify({ first: first.text.slice(0, 300), second: t.slice(0, 700) }),
+      first.ok && second.ok && /issues · \d+ kinds/.test(t) && /quirks mode/.test(t) && /form input with no label|no label/i.test(t),
+    );
+  },
+});
+
+defineScenario({
+  id: 'S3-audit-lcp',
+  set: 'C',
+  title: 'audit_page names the largest element of the page and where its time went',
+  covers: 'largest-contentful-paint entry: element, and resource phases when it is a file',
+  async run(ctx) {
+    await ctx.open(`${FIXTURE_ORIGIN}/c-audit-page.html`);
+    await new Promise(r => setTimeout(r, 600));
+    const r = await ctx.call('audit_page', {});
+    return outcome(
+      'a line starting "largest element: <" in the audit',
+      (r.text.match(/largest element:[^\n]*/) ?? ['none'])[0],
+      r.ok && /largest element: </.test(r.text),
+    );
+  },
+});

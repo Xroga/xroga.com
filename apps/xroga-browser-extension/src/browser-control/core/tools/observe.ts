@@ -1,4 +1,5 @@
 // The read-only tools: snapshot, find, read, screenshot. Observation is read-only.
+import { grepContent } from '../perception/grep';
 import { paintedLine, readPaintedTexts } from '../painted-text';
 import { LayerError } from '../../protocol/errors';
 import type { FindArgs, ReadArgs, ScreenshotArgs, SnapshotArgs } from '../../protocol/schemas';
@@ -246,6 +247,10 @@ export async function read(
     roots = [node];
   }
   const content = renderContent(roots, args.format ?? 'markdown');
+  if (args.match) {
+    const g = grepContent(content, args.match, args.context ?? 2);
+    return { data: { content: g.text, offset: 0, remaining: 0 }, lines: [`read · tab ${tab.tabId} · ${quote(observation.title)} · ${g.matches} matching lines of ${g.lines}`], pageText: g.text, notices: [] };
+  }
   const offset = args.offset ?? 0;
   const { text, remaining } = sliceContent(content, offset, args.maxChars ?? 20_000);
   const notices = remaining ? [`… ${remaining} more characters; continue with offset ${offset + text.length}.`] : [];
