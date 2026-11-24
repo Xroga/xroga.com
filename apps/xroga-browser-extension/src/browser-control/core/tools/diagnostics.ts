@@ -57,9 +57,12 @@ export async function diagnostics(ctx: ToolContext, args: DiagnosticsArgs): Prom
       const seen = list;
       attachment.cdp.on('Audits.issueAdded', p => { const i = (p as { issue?: InspectorIssue }).issue; if (i && seen.length < 500) seen.push(i); });
     }
-    await attachment.cdp.send(undefined, 'Audits.enable').catch(() => undefined);
-    await new Promise(r => setTimeout(r, 400));
-    return { data: { issues: list.length }, pageText: formatIssues(list).join('\n') };
+    let failed = '';
+    await attachment.cdp.send(undefined, 'Audits.enable').catch((error: unknown) => {
+      failed = error instanceof Error ? error.message : String(error);
+    });
+    await new Promise(r => setTimeout(r, 700));
+    return { data: { issues: list.length }, pageText: [...(failed ? [`issues · the browser would not start reporting issues (${failed})`] : []), ...formatIssues(list)].join('\n') };
   }
   if (args.kind === 'cookies') {
     await attachment.cdp.send(undefined, 'Network.enable').catch(() => undefined);
