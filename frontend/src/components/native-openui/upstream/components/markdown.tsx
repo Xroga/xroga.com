@@ -334,10 +334,12 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
         }
       }
     }
-    if (typeName === "Chart" && !node.hasDynamicProps) {
-      const table = staticChartTable(props);
-      const key = table && tableContentKey(table.headings, table.rows);
-      if (key) tables.add(key);
+    if (typeName === "Chart" && !hidden) {
+      const table = staticChartTable(props, node.hasDynamicProps ? readInitial : undefined);
+      for (const rows of [table?.rows, table?.displayRows]) {
+        const key = table && rows && tableContentKey(table.headings, rows);
+        if (key) tables.add(key);
+      }
       if (table?.title) paragraphs.add(citationTextKey(table.title));
       if (table?.note) paragraphs.add(citationTextKey(table.note));
     }

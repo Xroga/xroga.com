@@ -234,6 +234,31 @@ test('a calculated table with a dynamic header replaces its initial fallback tab
   assert.match(fallback,/Balance after 10 years/);
 });
 
+test('a visible interactive chart replaces its exact saved data table', () => {
+  const program = [
+    'root = Col([input, Markdown(_xroga_answer), chart])',
+    '$principal = 12500',
+    'input = Input($principal, "Principal (USD)", "number")',
+    'interest = $principal * 0.124864',
+    'rows = [{"part": "Principal", "usd": $principal}, {"part": "Interest earned", "usd": interest}]',
+    'chart = Chart("bar", rows, "part", ["usd"], "currency", "USD", false, 240, {"xLabel": "Component", "yLabel": "USD"})',
+  ].join('\n');
+  const text = supplementNativeProse('Edit the principal to update the chart.', program, true);
+  const parser = createParser(catalog.schema as LibraryJSONSchema, 'Col');
+  const withMatches = (source: string, markdown: string) => {
+    const bound = bindNativeAnswerText(source, text);
+    const matches = nativeMarkdownMatches(parser.parse(bound).root, initialNativeValueReader(bound));
+    return renderToStaticMarkup(createElement(MarkdownBlocks, { text: markdown, matches }));
+  };
+  assert.match(text, /\| Interest earned \| \$1,560.80 \|/);
+  assert.doesNotMatch(withMatches(program, text), /<table/);
+  assert.match(withMatches(program, text.replace('$1,560.80', '$1,560.81')), /<table/);
+  assert.match(withMatches(program, text.replace('$1,560.80', '$1,560.80 [1]')), /<table/);
+  const hidden = program.replace('Markdown(_xroga_answer), chart', 'Markdown(_xroga_answer), Popover("View chart", chart)');
+  assert.match(withMatches(hidden, text), /<table/);
+  assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, { text })), /<table.*12,500.00.*1,560.80/);
+});
+
 test('an opening Markdown title does not repeat its native display heading', () => {
   const matches = nativeMarkdownMatches({type:'element',typeName:'Title',props:{text:'Sortable table: time by color'}});
   const render = (text: string, withNativeTitle = true) => renderToStaticMarkup(createElement(MarkdownBlocks, {

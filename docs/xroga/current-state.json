@@ -90114,7 +90114,7 @@
       "id": "surface:54b82e40fb048a969cb3",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/chart.tsx",
-      "sha256": "93880c8d8679ef5af22535f93fff05d6e19fb0d51e3080efc6f2dbbf702f3f04",
+      "sha256": "1a28c0ee2f7ca6fb56f17035050695baa792212be26cf2a2651904fb143637b4",
       "symbols": [
         "COLORS",
         "Cartesian",
@@ -90181,6 +90181,7 @@
         "px",
         "py",
         "r",
+        "readRecord",
         "rows",
         "segment",
         "series",
@@ -90628,7 +90629,7 @@
       "id": "surface:0fef6875af5860e2f4b4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "cb1ce647d1194ca41473b0b53b7bfa4d10efcd14d9266d8225a70afe84f9a80b",
+      "sha256": "b158b2e1da53d04ce7426747a7a4406bb009db8b745c1d24c191284913d1c5c4",
       "symbols": [
         "Block",
         "ChecklistItem",
@@ -160583,7 +160584,7 @@
     {
       "id": "test-suite:4ce9d7bbf578638998f1",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
-      "declaredTests": 36,
+      "declaredTests": 37,
       "skipLocations": [],
       "focusLocations": []
     },
