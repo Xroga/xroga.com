@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b121f74ff9a6e8a0866beb9a0c05723cc850c935",
+  "source_sha": "97df3ad47e938c4e317df18d777c26e754ea5197",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17330,7 +17330,7 @@
     },
     {
       "path": "backend/src/ai/prompts.ts",
-      "sha256": "d955e8f621c6bab72e45189e61f19b852a8801e4b60ba931fe8853e95af23904"
+      "sha256": "bf0b6cec72b13403379a09a3df62fff61e5accd8a752fd9ad34228be15689317"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -17382,7 +17382,7 @@
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "sha256": "1b0802fa3df4ec84a46b48ed42e130670ec29ec5d53588b360b8bfc1b21db12d"
+      "sha256": "c02a2d09f53d3226205fa1ddcfcbd26dcb2ea35abd186608b05ac3920946e151"
     },
     {
       "path": "backend/src/ai/researchPublicationEvidence.ts",
@@ -34128,21 +34128,35 @@
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "line": 86,
+      "line": 87,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "line": 202,
+      "line": 185,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "line": 203,
+      "line": 191,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/researchAnswer.ts",
+      "line": 250,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/researchAnswer.ts",
+      "line": 251,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

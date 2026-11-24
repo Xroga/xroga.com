@@ -9,6 +9,7 @@ import { requestsOfficialLinkCoverage } from './workspacePublicSearch.js';
 import { isRequestedPublication, requestedPublication } from './researchPublicationEvidence.js';
 import { bindListedWebsiteRows } from './researchWebsiteEvidence.js';
 import { withholdIncomparableResearchRanking } from './researchRankingEvidence.js';
+import { nativeMarkdownTables, nativeTableDecimalKey } from './nativeMarkdown.js';
 import type { PublicCompletionState } from './completionDiagnostics.js';
 import type { ChatPipelineResult } from './pipeline.js';
 
@@ -160,6 +161,46 @@ function scheduledStayMismatch(response: string): string | undefined {
   return `The itinerary runs from Day ${startDay} to Day ${endDay}, which is ${nights} ${nights === 1 ? 'night' : 'nights'}. ${basis} ${mismatch} ${mismatch === 1 ? 'night' : 'nights'}. Treat the budget as a separate estimate until the dates are aligned.`;
 }
 
+const listedCurrency = /\$\s*((?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)(?!\d|[.,]\d)/g;
+const airportCode = /\b[A-Z]{3}\b/g;
+const flightRoute = /\(([A-Z]{3})\)\s*(?:to|[→–—-])\s*[^()\r\n]{1,90}\(([A-Z]{3})\)/g;
+
+/** Review a priced listing when the cited excerpt places a route code under
+ * another offer on the same page. A page-level citation cannot move that field. */
+function withholdCrossListingRoutes(text: string, sources: ReadonlyArray<{ snippet?: string }>) {
+  const tables = nativeMarkdownTables(text);
+  if (!tables.length) return;
+  const amounts = (value: string) => [...value.matchAll(listedCurrency)].map(match => nativeTableDecimalKey(match[1]));
+  const listings = sources.map(source => (source.snippet ?? '').split(/(?=^#{3,6}[ \t])/mu)
+    .filter(block => /^#{3,6}[ \t]/u.test(block)).map(block => ({
+      prices: amounts(block),
+      airports: [...block.matchAll(flightRoute)].flatMap(match => [match[1], match[2]]),
+    })));
+  const lines = text.split(/\r\n?|\n/);
+  let withheld = false;
+  for (const { start, end } of tables.reverse()) {
+    const rows = lines.slice(start + 2, end).filter(row => {
+      const visible = row.replace(inlineMarkdownLinks, (_link, label: string) => label);
+      if (!/\b(?:flight|airfare|nonstop|round[- ]trip)s?\b/iu.test(visible)) return true;
+      const refs = new Set([...row.matchAll(/\[(\d+)\]/g)].map(match => Number(match[1]) - 1));
+      const offers = [...refs].flatMap(ref => listings[ref] ?? []);
+      const prices = amounts(visible);
+      const matched = offers.filter(listing => listing.prices.some(price => prices.includes(price)));
+      if (matched.length !== 1) return true;
+      const [offer] = matched;
+      const routesElsewhere = new Set(offers.filter(listing => listing !== offer).flatMap(listing => listing.airports));
+      const unsupported = [...visible.matchAll(airportCode)].some(([code]) =>
+        routesElsewhere.has(code) && !offer.airports.includes(code));
+      withheld ||= unsupported;
+      return !unsupported;
+    });
+    if (rows.length !== end - start - 2) {
+      lines.splice(start, end - start, ...(rows.length ? lines.slice(start, start + 2).concat(rows) : []));
+    }
+  }
+  if (withheld) return 'I left out flight offers whose cited listings didn’t verify the route and price together.\n\n' + lines.join('\n').trim();
+}
+
 /** Structural coverage of an explicit link deliverable. A retrieved URL alone
  * cannot certify ownership or that the cited page supports a particular claim. */
 export function presentPublicResearchAnswer(response: string, completion: PublicCompletionState,
@@ -180,6 +221,13 @@ export function presentPublicResearchAnswer(response: string, completion: Public
       completion = { status: 'partial', reason: 'factual_review' };
     }
   }
+  const checkedOffers = withholdCrossListingRoutes(text, sources);
+  if (checkedOffers !== undefined) {
+    text = checkedOffers;
+    if (completion.status === 'complete' || completion.reason === 'source_coverage') {
+      completion = { status: 'partial', reason: 'source_attribution' };
+    }
+  }
   const attributionIncomplete = researchCitationIssues(text, sources).length > 0;
   const publication = completion.status === 'complete' ? requestedPublication(prompt) : undefined;
   if (publication && !sources.some(source => isRequestedPublication(source, publication))) {
@@ -192,7 +240,7 @@ export function presentPublicResearchAnswer(response: string, completion: Public
   }
   if (!requestsOfficialLinkCoverage(prompt)) return { response: text, completion:
     attributionIncomplete && completion.status === 'complete' ? { status: 'partial', reason: 'source_attribution' } as const : completion,
-    ...(rankingWithheld || stayMismatch ? { requiresReadableFallback: true } : {}) };
+    ...(rankingWithheld || stayMismatch || checkedOffers !== undefined ? { requiresReadableFallback: true } : {}) };
 
   const count = /\b(?:top|rank|list|name|compare|find)\s+(?:the\s+)?(\d{1,3}|two|three|four|five|six|seven|eight|nine|ten)\b/iu.exec(prompt)?.[1];
   const numberWords = ['two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];

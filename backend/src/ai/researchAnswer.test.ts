@@ -4,6 +4,41 @@ import {randomUUID} from 'node:crypto';
 import {researchAnswerRequestSchema,RESEARCH_ANSWER_MAXIMUM_MICRO_USD,researchCitationIssues,bindCitationLinks,publicWorkspaceResearchAnswer,presentPublicResearchAnswer} from './researchAnswer.js';
 import {nativeMarkdownTables} from './nativeMarkdown.js';
 
+test('public research ties a package route to the listing with its price', () => {
+  const sources = [{
+    url: 'https://travel.example/packages',
+    snippet: [
+      '### Cedar Hotel', 'Package $850 per person.',
+      'Roundtrip flight included from Portland (PDX) to Vienna (VIE).',
+      '### Vista Hotel', 'Package now $1,123 per person.', 'Aug 2 to Aug 6.',
+    ].join('\n'),
+  }];
+  const verified = '| Cedar Hotel, flight from PDX to VIE | $850 | [1] |';
+  const crossListing = '| Vista Hotel, flight from PDX to VIE | $1,123 | [1] |';
+  const prose = ['Budget benchmarks [1].', '', '| Package | Price | Source |', '| --- | --- | --- |', verified, crossListing,
+    '', 'Compare rates for your dates.'].join('\n');
+  const review = (text: string, evidence = sources) =>
+    presentPublicResearchAnswer(text, { status: 'complete' }, evidence, 'Compare flight and hotel packages.');
+  const result = review(prose);
+  assert.deepEqual(result.completion, { status: 'partial', reason: 'source_attribution' });
+  assert.equal(result.requiresReadableFallback, true);
+  assert.match(result.response, /didn’t verify the route and price together/);
+  assert.match(result.response, /Compare rates for your dates/);
+  assert.deepEqual(nativeMarkdownTables(result.response)[0].rows, [['Cedar Hotel, flight from PDX to VIE', '$850', '[1]']]);
+  assert.doesNotMatch(result.response, /Vista Hotel|\$1,123/);
+
+  const fieldMissing = prose.replace('Vista Hotel, flight from PDX to VIE','Vista Hotel, flight route unspecified');
+  assert.equal(review(fieldMissing).response, fieldMissing);
+  const bothSupported = review(prose, [{
+    ...sources[0],
+    snippet: sources[0].snippet + '\nPortland (PDX) to Vienna (VIE) is included.',
+  }]);
+  assert.deepEqual(bothSupported.completion, { status: 'complete' });
+  assert.equal(bothSupported.response, prose);
+  const documentedExample = 'Prices [1].\n\n~~~md\n' + prose + '\n~~~';
+  assert.equal(review(documentedExample).response, documentedExample);
+});
+
 test('public research flags a fixed night budget that conflicts with its complete itinerary', () => {
   const sources = [{ url: 'https://travel.example/rates' }];
   const response = [
