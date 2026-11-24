@@ -14,6 +14,12 @@ function toHostTab(tab: chrome.tabs.Tab): HostTab {
   };
 }
 
+/** The extension asks to hear about each tab the layer opens (to tidy and mute the agent's tabs); the layer itself knows nothing of that. */
+let tabOpenedHook: ((tabId: number, background: boolean) => void) | undefined;
+export function onLayerTabOpened(hook: (tabId: number, background: boolean) => void): void {
+  tabOpenedHook = hook;
+}
+
 export const chromeTabHost: TabHost = {
   async get(tabId) {
     try {
@@ -26,9 +32,9 @@ export const chromeTabHost: TabHost = {
     return (await chrome.tabs.query({})).filter(t => t.id !== undefined).map(toHostTab);
   },
   async open(url, options = {}) {
-    return toHostTab(
-      await chrome.tabs.create({ url, active: options.active ?? true, openerTabId: options.openerTabId }),
-    );
+    const tab = await chrome.tabs.create({ url, active: options.active ?? true, openerTabId: options.openerTabId });
+    if (tab.id !== undefined) tabOpenedHook?.(tab.id, options.active === false);
+    return toHostTab(tab);
   },
   load(tabId, url, timeoutMs) {
     return new Promise<void>((resolve, reject) => {

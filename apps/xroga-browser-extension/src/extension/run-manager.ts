@@ -10,6 +10,8 @@ import { BROWSER_DATA_TOOL } from '@src/agent/browser-data';
 import { PYTHON_REPL_TOOL, runPythonRepl } from '@src/agent/python-repl';
 import { SITE_SCAN_TOOL, runSiteScan } from '@src/agent/site-scan';
 import { MEMORY_TOOL } from '@src/agent/memory';
+import { installTabTidy, trackAgentTab } from './tab-tidy';
+import { onLayerTabOpened } from '@src/browser-control/host/chrome-host';
 import { MEMORY_KEY, memoryForRun, runMemoryTool } from './memory-store';
 import { FREE_TIMES_TOOL } from '@src/agent/free-times';
 import { AgentLoop, REASONING_DROPPED, STOPPED_BY_USER, STOPPED_NOTE } from '@src/agent/loop';
@@ -191,6 +193,12 @@ export class RunManager {
           const timer = setTimeout(resolve, ms);
           signal?.addEventListener('abort', () => { clearTimeout(timer); resolve(); }, { once: true });
         }),
+    });
+    // Tabs the agent opens are muted when opened in the background and closed after a long idle time; the person's own tabs are never touched.
+    onLayerTabOpened((tabId, background) => void trackAgentTab(tabId, background).catch(() => undefined));
+    installTabTidy(async tabId => {
+      const owner = await this.scope.conversationOf(tabId);
+      return !!owner && this.#runs.has(owner);
     });
     // A worker window closed by the person fails only that worker.
     chrome.windows.onRemoved.addListener(windowId => void this.#workers.windowClosed(windowId).catch(() => undefined));
