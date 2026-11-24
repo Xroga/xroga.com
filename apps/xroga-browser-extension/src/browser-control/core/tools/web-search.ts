@@ -6,6 +6,11 @@ import type { SearchHit } from '../../probe/source';
 import type { WebSearchArgs } from '../../protocol/schemas';
 import type { ToolContext, ToolOutcome } from '../controller';
 import { closeTab, openTab } from './navigate';
+import { SearchGate } from './search-gate';
+
+const gate = new SearchGate<SearchHit>();
+/** For tests. */
+export const searchGate = gate;
 
 export const ENGINES = {
   duckduckgo: (q: string) => `https://html.duckduckgo.com/html/?q=${encodeURIComponent(q)}`,
@@ -26,8 +31,19 @@ export function describeHits(engine: string, query: string, hits: SearchHit[], b
 }
 
 export async function webSearch(ctx: ToolContext, args: WebSearchArgs): Promise<ToolOutcome> {
-  const engine: Engine = args.engine ?? 'duckduckgo';
+  const asked: Engine = args.engine ?? 'duckduckgo';
   const query = args.query.trim();
+  // The same question read lately is answered from that read; an engine that just asked for a human check is left alone and another is used.
+  const cachedHit = gate.cached(asked, query);
+  if (cachedHit) return { data: { engine: asked, query, hits: cachedHit.hits }, lines: [`(read earlier in this run; reused)`, ...describeHits(asked, query, cachedHit.hits)] };
+  const chosen = gate.pick(asked, Object.keys(ENGINES));
+  if (!chosen) {
+    const note = `web_search · every engine asked for a human check a short while ago and is being left alone. Do not search again now: read the pages already found, open a firm's own site, or ask the person to pass a check in a tab.`;
+    return { data: { engine: asked, query, hits: [], blocked: 'all engines resting' }, lines: [note] };
+  }
+  const engine = chosen as Engine;
+  const pause = gate.wait(engine);
+  if (pause > 0) await new Promise(r => setTimeout(r, pause));
   const previous = ctx.session.activeTabId;
   const opened = await openTab(ctx, { action: 'open', url: (engineOverride[engine] ?? ENGINES[engine])(query) });
   const tabId = opened.data!.opened;
@@ -44,5 +60,7 @@ export async function webSearch(ctx: ToolContext, args: WebSearchArgs): Promise<
     await closeTab(ctx, { action: 'close', tabId }).catch(() => undefined);
     if (previous !== null && previous !== undefined && ctx.session.hasTab(previous)) ctx.session.setActive(previous);
   }
-  return { data: { engine, query, hits, ...(blocked ? { blocked } : {}) }, lines: describeHits(engine, query, hits, blocked) };
+  gate.record(engine, query, { hits, ...(blocked ? { blocked } : {}) });
+  const moved = engine !== asked ? [`(${asked} is resting after a check, so ${engine} was used)`] : [];
+  return { data: { engine, query, hits, ...(blocked ? { blocked } : {}) }, lines: [...moved, ...describeHits(engine, query, hits, blocked)] };
 }

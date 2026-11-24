@@ -201,6 +201,7 @@ async function main() {
       } catch (e) { report.steps.entriesDumped = String(e); }
       report.steps.lastIntent = await evalIn(operator.sid, `chrome.storage.local.get('xroga_last_intent').then(v => JSON.stringify(v.xroga_last_intent ?? null))`).catch(e => String(e));
       report.steps.lastRefusal = await evalIn(operator.sid, `chrome.storage.local.get('xroga_last_refusal').then(v => JSON.stringify(v.xroga_last_refusal ?? null))`).catch(e => String(e));
+      report.steps.spend = await evalIn(operator.sid, `chrome.storage.local.get('xroga_perf_v1').then(v => JSON.stringify((v.xroga_perf_v1 ?? []).slice(-1).map(p => p.spend)))`).catch(e => String(e));
       report.steps.workerConsole = (cdp.events ?? []).filter(e => /secret-like|model\]/.test(e.text)).slice(-6);
       report.steps.finalAnswer = text.replace(/\s+/g, ' ').slice(-2500);
       const broken = /Xroga paused|could not be verified|Interrupted|BROWSER_[A-Z_]+|Resume to continue|reply was cut|Try again|Retry$/.test(text.slice(-1500));
