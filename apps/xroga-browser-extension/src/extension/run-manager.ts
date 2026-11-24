@@ -749,7 +749,7 @@ export class RunManager {
           type: 'export',
           conversationId: command.conversationId,
           filename: exportName(conversation),
-          markdown: conversationMarkdown(conversation, await activeBranch(command.conversationId)),
+          markdown: conversationMarkdown(conversation, await activeBranch(command.conversationId), new Date(), XROGA_PRODUCT ? 'Xroga' : 'Nanobrowser'),
         });
         return;
       }
