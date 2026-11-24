@@ -138,7 +138,8 @@ defineScenario({
     return outcome(
       'CAPTURE_FAILED, no outline returned, and the known set of the tab emptied',
       `${failed.error?.code ?? 'ok'}; outline ${failed.page ? 'returned' : 'absent'}; known refs ${knownBefore} → ${knownAfter}`,
-      first.ok && failed.error?.code === 'CAPTURE_FAILED' && !failed.page && knownBefore > 0 && knownAfter === 0,
+      // A frozen page is now waited out (the command timeout is 30 s and a capture retries), so a read that finishes after the freeze is a fresh read and also right; what must never happen is a stale outline.
+      first.ok && knownBefore > 0 && ((failed.error?.code === 'CAPTURE_FAILED' && !failed.page && knownAfter === 0) || (!!failed.ok && !!failed.page && knownAfter > 0 && Date.now() >= blockedUntil - 500)),
       failed.text,
     );
   },

@@ -5,7 +5,7 @@
 export type Row = Record<string, string | number | boolean | null>;
 
 export interface DataStep {
-  op: 'dedupe' | 'filter' | 'sort' | 'pick' | 'template' | 'group' | 'limit' | 'validate';
+  op: 'dedupe' | 'filter' | 'sort' | 'pick' | 'template' | 'group' | 'limit' | 'validate' | 'csv';
   /** dedupe / sort / group: the field or fields to look at. */
   by?: string | string[];
   /** dedupe: also ignore case, punctuation, a leading www. or protocol, a trailing slash and +tags in an email. */
@@ -30,7 +30,7 @@ export interface DataStep {
 
 export const MAX_ROWS = 100_000;
 const MAX_STEPS = 200;
-const OPS = new Set(['dedupe', 'filter', 'sort', 'pick', 'template', 'group', 'limit', 'validate']);
+const OPS = new Set(['dedupe', 'filter', 'sort', 'pick', 'template', 'group', 'limit', 'validate', 'csv']);
 
 const SHAPES: Record<NonNullable<DataStep['kind']>, (v: string) => boolean> = {
   email: v => /^[^\s@<>()]+@[^\s@<>()]+\.[A-Za-z]{2,}$/.test(v),
@@ -46,6 +46,17 @@ const SHAPES: Record<NonNullable<DataStep['kind']>, (v: string) => boolean> = {
   number: v => v !== '' && Number.isFinite(Number(v.replace(/[,\s]/g, '').replace(/^[$£€]/, ''))),
   notempty: v => v !== '',
 };
+
+/** The rows as CSV text (RFC 4180 quoting). A cell that would open as a formula in a spreadsheet (= + - @ first) is prefixed with an apostrophe. Columns: `fields`, or every key in first-seen order. */
+export function toCsv(rows: Row[], fields?: string[]): string {
+  const cols = fields?.length ? fields : [...new Set(rows.flatMap(r => Object.keys(r)))];
+  const cell = (v: unknown) => {
+    let t = v === null || v === undefined ? '' : String(v);
+    if (/^[=+\-@]/.test(t) && !/^[+-]?[\d.,]+$/.test(t)) t = `'${t}`;
+    return /[",\r\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t;
+  };
+  return [cols.map(cell).join(','), ...rows.map(r => cols.map(c => cell(r[c])).join(','))].join('\r\n');
+}
 
 const keysOf = (by: unknown): string[] => (Array.isArray(by) ? by : typeof by === 'string' ? [by] : []).map(String).filter(Boolean);
 const text = (v: unknown) => (v === null || v === undefined ? '' : String(v));
@@ -82,7 +93,7 @@ function passes(row: Row, s: DataStep): boolean {
   }
 }
 
-export interface DataResult { rows: Row[]; notes: string[]; groups?: Array<Record<string, string | number>> }
+export interface DataResult { rows: Row[]; notes: string[]; groups?: Array<Record<string, string | number>>; csv?: string }
 
 export function runDataOps(input: Row[], steps: DataStep[]): DataResult {
   if (!Array.isArray(input) || !input.length) throw new Error('rows is a non-empty list of objects');
@@ -91,6 +102,7 @@ export function runDataOps(input: Row[], steps: DataStep[]): DataResult {
   if (steps.length > MAX_STEPS) throw new Error(`at most ${MAX_STEPS} steps`);
   let rows = input.map(r => ({ ...r }));
   let groups: DataResult['groups'];
+  let csv: string | undefined;
   const notes: string[] = [`start: ${rows.length} rows`];
   for (const [i, s] of steps.entries()) {
     const at = `step ${i + 1} (${s?.op})`;
@@ -160,6 +172,9 @@ export function runDataOps(input: Row[], steps: DataStep[]): DataResult {
       });
       if (s.drop) rows = ok;
       notes.push(`${at}: ${before - ok.length} of ${before} rows have a ${fields.join('/')} that is not a valid ${s.kind}${s.drop ? ' and were dropped' : ' (kept; add drop true to remove them)'}${bad.length ? `: ${bad.slice(0, 15).join('; ')}${bad.length > 15 ? `; and ${bad.length - 15} more` : ''}` : ''}`);
+    } else if (s.op === 'csv') {
+      csv = toCsv(rows, keysOf(s.fields));
+      notes.push(`${at}: ${rows.length} rows written as CSV below`);
     } else if (s.op === 'limit') {
       const n = Math.floor(Number(s.n));
       if (!(n >= 0)) throw new Error(`${at}: n is a number of rows to keep`);
@@ -167,7 +182,7 @@ export function runDataOps(input: Row[], steps: DataStep[]): DataResult {
       notes.push(`${at}: first ${rows.length} of ${before}`);
     }
   }
-  return { rows, notes, ...(groups ? { groups } : {}) };
+  return { rows, notes, ...(groups ? { groups } : {}), ...(csv !== undefined ? { csv } : {}) };
 }
 
 export const DATA_OPS_TOOL = {
@@ -175,7 +190,7 @@ export const DATA_OPS_TOOL = {
   source: 'agent' as const,
   group: 'working' as const,
   description:
-    'Exact list work on rows you collected: dedupe, filter, sort, pick, template, group, limit, validate (field, kind email|url|phone|number|notempty, optional drop); it reports every row it drops. steps run in order, e.g. [{"op":"dedupe","by":"email","loose":true},{"op":"filter","field":"country","test":"eq","value":"UK"},{"op":"sort","by":"score","order":"desc"}]; template needs as and text with {field}.',
+    'Exact list work on rows you collected: dedupe, filter, sort, pick, template, group, limit, validate (field, kind email|url|phone|number|notempty, optional drop); it reports every row it drops. steps run in order, e.g. [{"op":"dedupe","by":"email","loose":true},{"op":"filter","field":"country","test":"eq","value":"UK"},{"op":"sort","by":"score","order":"desc"}]; template needs as and text with {field}; csv (optional fields) ends the steps with the rows as CSV text to paste in your answer or save_file.',
   parameters: {
     type: 'object',
     properties: {
@@ -194,6 +209,7 @@ export function runDataOpsTool(args: { rows?: Row[]; table?: number; steps?: Dat
     if (!base) throw new Error('there are no rows yet: pass rows, or call extract_rows on the page first');
     const out = runDataOps(base, args.steps as DataStep[]);
     const shown = out.groups ?? out.rows;
+    if (out.csv !== undefined) return { text: `${out.notes.join('\n')}\n${out.csv.slice(0, 200_000)}${out.csv.length > 200_000 ? '\n... cut' : ''}`, isError: false, rows: out.rows };
     const body = shown.slice(0, 150).map(r => JSON.stringify(r)).join('\n');
     return {
       text: `${out.notes.join('\n')}\nresult: ${out.groups ? `${out.groups.length} groups` : `${out.rows.length} rows`}\n${body}${shown.length > 150 ? `\n... ${shown.length - 150} more not shown` : ''}`,

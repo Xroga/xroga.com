@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { runDataOps, runDataOpsTool, normalise } from '../data-ops';
+import { runDataOps, runDataOpsTool, normalise, toCsv } from '../data-ops';
 
 const rows = [
   { name: 'Ana', email: 'Ana@Mail.test', site: 'https://www.ana.test/', score: '12', country: 'UK' },
@@ -67,5 +67,19 @@ describe('data_ops validate', () => {
   });
   it('needs a field and a kind', () => {
     expect(() => runDataOps(messy, [{ op: 'validate', field: 'email' }])).toThrow(/kind/);
+  });
+});
+
+describe('csv', () => {
+  it('quotes commas, quotes and newlines, and keeps formulas from running in a spreadsheet', () => {
+    const out = toCsv([{ name: 'A, B', note: 'say "hi"', f: '=SUM(A1)', n: '-5', p: '+44 113 000' }], ['name', 'note', 'f', 'n', 'p']);
+    expect(out).toBe('name,note,f,n,p\r\n"A, B","say ""hi""",\'=SUM(A1),-5,\'+44 113 000');
+  });
+  it('takes every column in first-seen order when none are named', () => {
+    expect(toCsv([{ a: 1 }, { a: 2, b: 3 }])).toBe('a,b\r\n1,\r\n2,3');
+  });
+  it('is a step that ends data_ops with the rows as CSV text', () => {
+    const out = runDataOpsTool({ rows: [{ a: 'x', b: 1 }, { a: 'y', b: 2 }], steps: [{ op: 'sort', by: 'b', order: 'desc' }, { op: 'csv', fields: ['a', 'b'] }] });
+    expect(out.text).toContain('a,b\r\ny,2\r\nx,1');
   });
 });
