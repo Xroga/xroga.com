@@ -5556,7 +5556,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "474ae22ef7bbca22d3988f3dcb3ba6f541a11926f88f6b87e265ab921ef1f0ea",
+      "sha256": "cdfa61e5be0fa51a5d38a674c318cb75f284c049f82833328a757205405bde72",
       "symbols": [
         "EditorialContext",
         "MAX_EXPANDED_EXPRESSION_DEPTH",
@@ -6784,10 +6784,9 @@
       "id": "surface:93911e9946fd4b21d50d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "025fabc5060fb833f7631c6c0c48b9deef4571cc24114370983f960aeb068885",
+      "sha256": "d821c962ffaf8f87b8f121b0aff6ff55c83315b408b779807b51d7087d778a5f",
       "symbols": [
         "authorityIssue",
-        "binding",
         "calculatorUnavailable",
         "candidate",
         "checkRecoveredProgram",
@@ -155160,7 +155159,7 @@
     {
       "id": "test-suite:cf78e18abc3aa283d701",
       "sourcePath": "backend/src/ai/nativeOpenUiValues.test.ts",
-      "declaredTests": 25,
+      "declaredTests": 26,
       "skipLocations": [],
       "focusLocations": []
     },

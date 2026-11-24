@@ -4,7 +4,7 @@ import { DIAGRAM_NODE_TONES, hasRenderableDiagramTopology } from './nativeDiagra
 import { nativeMarkdownOutline, nativeMarkdownTables, nativeTableDecimalKey, type NativeMarkdownTable } from './nativeMarkdown.js';
 import { reviewEditorialVisuals } from './nativeOpenUiEditorial.js';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
-import { formatInitialNativeCurrency, initialNativeReadouts, initialNativeValueReader, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
+import { correctExplicitCurrencyReadouts, formatInitialNativeCurrency, initialNativeReadouts, initialNativeValueReader, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
 
 export const NATIVE_UI_FORMAT = 'xroga-openui-v1' as const;
 export const NATIVE_UI_LIBRARY = 'xroga-native-v1' as const;
@@ -904,24 +904,27 @@ export function removeRepeatedCalculatorFormulas(program: string, prose: string)
   return changed ? statements.map(({ id, expression }) => id + ' = ' + printRecoveryExpression(expression)).join('\n') : program;
 }
 
-/** Remove conflicting static explanatory paragraphs from the visual itself,
- * before deriving saved prose. Calculations, inputs and unrelated text stay intact. */
-export function recoverNativeReadoutExplanations(program: string): string {
-  const readouts = initialNativeReadouts(program);
-  const multiples = nativePrincipalMultipleReview(program);
-  const initial = initialNativeValueReader(program);
+/** Reconcile static explanations before deriving saved prose. Calculations,
+ * inputs and unrelated text stay intact. Exact repair only replaces labeled values. */
+export function recoverNativeReadoutExplanations(program: string, replaceExactReadoutsOnly = false): string {
+  const readouts = initialNativeReadouts(program, replaceExactReadoutsOnly);
+  const multiples = replaceExactReadoutsOnly ? undefined : nativePrincipalMultipleReview(program);
+  const initial = multiples?.conflictingNotes.size ? initialNativeValueReader(program) : undefined;
   const statements = split(tokenize(program)).map(statement=>({id:statement.id,expression:parseExpression(statement.tokens)}));
   const symbols = new Map(statements.map(statement=>[statement.id,statement.expression]));
   let changed = false;
   for (const {expression} of statements) {
     walkAST(expression, node => {
-      if(node.k==='Comp' && node.name==='Metric' && multiples?.conflictingNotes.has(String(initial(node.args[0])))){
-        node.args[2]={k:'Str',v:''};changed=true;
+      if (initial && node.k === 'Comp' && node.name === 'Metric' && multiples?.conflictingNotes.has(String(initial(node.args[0])))) {
+        node.args[2] = { k: 'Str', v: '' };
+        changed = true;
       }
       if (node.k !== 'Comp' || !['Text', 'Caption', 'Markdown'].includes(node.name)) return;
       const body = resolveRecoveryReference(node.args[0],symbols);
       if (body?.k !== 'Str') return;
-      const corrected = recoverNativeReadoutProse(body.v, readouts, multiples);
+      const corrected = replaceExactReadoutsOnly
+        ? correctExplicitCurrencyReadouts(body.v, readouts)
+        : recoverNativeReadoutProse(body.v, readouts, multiples);
       if (corrected !== body.v) {
         body.v = corrected;
         changed = true;
