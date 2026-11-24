@@ -45,6 +45,12 @@ export function TerminalLiveActivity({
     return [];
   }, [activity, run]);
   const active = !run?.outcome && Boolean(run?.active || pending);
+  // The surface above the answer follows every real stage report from the backend, including plain status lines
+  // that the folded history leaves out (understanding, routing, writing). Generic filler is still dropped.
+  const stageRows = useMemo(() => (run ? coalesceActivity(run.events) : []), [run]);
+  const stage = active
+    ? (stageRows.findLast((row) => row.status === 'active' || row.status === 'waiting') ?? stageRows.at(-1) ?? null)
+    : null;
 
   useEffect(() => {
     if (!active) return;
@@ -72,9 +78,10 @@ export function TerminalLiveActivity({
 
   if (rows.length === 0 && !active && !run?.outcome) return null;
 
-  const label = pendingWorkLabel(run?.events ?? [], rows.length > 0, pendingReply);
+  const baseLabel = pendingWorkLabel(run?.events ?? [], rows.length > 0, pendingReply);
+  const label = !model.active && stage && baseLabel !== 'Writing response' ? stage.label : baseLabel;
   const processing = active
-    ? buildProcessingView({ active: model.active, otherActive: model.otherActive, rows, pendingLabel: label, todos, outcome: run?.outcome ?? null })
+    ? buildProcessingView({ active: model.active ?? stage, otherActive: model.active ? model.otherActive : 0, rows: stageRows.length > rows.length ? stageRows : rows, pendingLabel: label, todos, outcome: run?.outcome ?? null })
     : undefined;
   const shell = rows.length === 0 && active;
   return (
