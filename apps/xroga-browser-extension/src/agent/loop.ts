@@ -1974,7 +1974,11 @@ ${outcome.text.toLowerCase()}`.slice(-600_000);
       }
       return { call, kind: 'read', isError: failed, text: `Routine "${name}" replayed over HTTP (${parts.length} request${parts.length === 1 ? '' : 's'}, no page opened):\n${parts.join('\n\n')}` };
     }
-    return this.#runBatchTool(call, kind, { steps: expanded.steps });
+    const ran = await this.#runBatchTool(call, kind, { steps: expanded.steps });
+    // A saved flow that no longer fits the page is mended, not abandoned: the agent finishes the job by hand from the step that failed, then saves the corrected routine under the same name.
+    if (!ran.isError) return ran;
+    return { ...ran, text: `${ran.text}
+Routine "${name}" did not run through: the site may have changed. Take a snapshot, do the remaining steps by hand from the step that failed, then call macro save with the same name and the corrected steps so the next run works.` };
   }
 
   async #planTool(call: ToolCallRequest, kind: ToolKind, args: Record<string, unknown>): Promise<CallOutcome> {

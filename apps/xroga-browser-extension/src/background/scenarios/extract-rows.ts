@@ -33,3 +33,22 @@ defineScenario({
     );
   },
 });
+
+defineScenario({
+  id: 'S3-extract-cards',
+  set: 'C',
+  title: 'extract_rows reads repeated cards by the selectors the model names, with each card\'s link and an attribute',
+  covers: 'cards + fields: columns named by the caller, text per field, link of a field, selector@attr, an unknown selector gives an empty cell, a selector that matches nothing says so',
+  async run(ctx) {
+    await ctx.open(`${FIXTURE_ORIGIN}/c-extract-rows.html`);
+    await ctx.call('snapshot');
+    const got = await ctx.call('extract_rows', { cards: '#dir .card', fields: { name: 'h3', about: 'p', url: 'a@href', missing: '.nope' } });
+    const none = await ctx.call('extract_rows', { cards: '.no-such-card', fields: { name: 'h3' } });
+    const t = got.text;
+    return outcome(
+      'four cards with name, about, url and an empty column; a selector that matches nothing says so',
+      JSON.stringify({ got: t.slice(0, 700), none: none.text.slice(0, 160) }),
+      got.ok && /1 table/.test(t) && /name \| about \| url \| missing/.test(t) && /Dental clinic 1 \| Family dentist in Leeds/.test(t) && /https:\/\/dir\.example\.test\/1/.test(t) && /4 rows/.test(t) && /no table, grid or list with rows/.test(none.text),
+    );
+  },
+});

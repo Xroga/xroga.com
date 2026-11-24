@@ -51,6 +51,11 @@ export async function extractRows(ctx: ToolContext, args: ExtractRowsArgs): Prom
   const frames = await attachment.topology.frames();
   const tables: ExtractedTable[] = [];
   for (const frame of frames) {
+    if (args.cards && args.fields) {
+      const t = await tab.probe!.callGlobal<ExtractedTable>(frame, 'extractCards', args.cards, args.fields, args.maxRows).catch(() => undefined);
+      if (t?.rows.length) tables.push(t);
+      continue;
+    }
     const part = await tab.probe!.callGlobal<ExtractedTable[]>(frame, 'extractRows', args.scope, args.maxRows).catch(() => [] as ExtractedTable[]);
     tables.push(...(part ?? []));
   }

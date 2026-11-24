@@ -244,6 +244,8 @@ export interface ProbeApi {
   auditPage(): Promise<PageAudit>;
   /** The tables, grids and repeated lists of the page (or of the named region), as rows of text: structured extraction without the model reading cells. */
   extractRows(scope?: string, maxRows?: number): ExtractedTable[];
+  /** Repeated cards picked by CSS selector, each field read by its own selector (text, or an attribute with `selector@attr`): the model names where, the page does the reading. */
+  extractCards(cards: string, fields: Record<string, string>, maxRows?: number): ExtractedTable;
   startDemo(): boolean;
   stopDemo(): Array<{ t: number; kind: 'mouse' | 'key'; x?: number; y?: number; step: 'click' | 'set' | 'press'; role: string; name: string; value?: string; row?: string }>;
   /** What the element reads: a form control's value, otherwise its visible text (at most 400 characters). */
@@ -729,6 +731,30 @@ export function probeMain(): void {
         }
       }
       return { hits: hits.slice(0, cap) };
+    },
+
+    extractCards(cards: string, fields: Record<string, string>, maxRows?: number) {
+      const cap = Math.max(1, Math.min(maxRows ?? 5000, 50000));
+      const clip = (t: string) => t.replace(/\s+/g, ' ').trim().slice(0, 300);
+      const names = Object.keys(fields).slice(0, 40);
+      const rows: string[][] = [];
+      const links: Array<[number, number, string]> = [];
+      let list: Element[] = [];
+      try { list = [...document.querySelectorAll(cards)]; } catch { return { name: `cards "${cards}"`, kind: 'list' as const, columns: names, rows: [], statedTotal: undefined }; }
+      for (const card of list.slice(0, cap)) {
+        const r = names.map((n, c) => {
+          const [sel, attr] = String(fields[n]).split('@');
+          let el: Element | null = null;
+          try { el = sel ? card.querySelector(sel) : card; } catch { el = null; }
+          if (!el) return '';
+          if (attr) return clip(el.getAttribute(attr) ?? '');
+          const a = el.closest('a[href]') ?? el.querySelector('a[href]');
+          if (a) { const href = (a as HTMLAnchorElement).href; if (/^https?:/.test(href)) links.push([rows.length, c, href]); }
+          return clip((el as HTMLElement).innerText ?? el.textContent ?? '');
+        });
+        if (r.some(x => x)) rows.push(r);
+      }
+      return { name: `cards "${cards}"`, kind: 'list' as const, columns: names, rows, ...(links.length ? { links } : {}), ...(list.length > rows.length && list.length > cap ? { moreBelow: true } : {}) };
     },
 
     extractRows(scope?: string, maxRows?: number) {
