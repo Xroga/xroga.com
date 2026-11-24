@@ -27755,9 +27755,9 @@
     },
     {
       "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "sourceSha256": "65115db353d44547aece8a994153be2d71554f81db428e244a869d89dccb6fa2",
+      "sourceSha256": "435a987f8529000167f6a50c2f52b6e65a7e351eb6986d306bec197f37538b4e",
       "callIds": [
-        "659e12ed14484210b4a4"
+        "ed5669121537ca504798"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Native Array.from materializes locally queried menu buttons for keyboard focus navigation. The subsequent index/focus operations touch the DOM only. No database, storage client, credential or provider write is involved.",

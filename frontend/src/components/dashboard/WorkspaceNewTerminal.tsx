@@ -115,7 +115,6 @@ function CapabilityVisual({ id }: { id: Capability['id'] }) {
 
 function RotatingWord({ word }: { word: string }) {
   return <span className={styles.dynamicWordFrame} aria-hidden="true">
-    {ROTATING_WORDS.map(value => <span className={styles.wordSizer} key={value}>{value}.</span>)}
     <span className={styles.dynamicWord} key={word} data-testid="workspace-rotating-word">{word}.</span>
   </span>;
 }
@@ -214,7 +213,7 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
       </span>
       <CapabilityVisual id={card.id} />
     </button>
-    <AnchoredPortalPopover open={open} onClose={close} anchorRef={anchorRef} placement="top-start" width={264} ariaLabel={`${card.title} features`} className={controls.featureMenu}>
+    <AnchoredPortalPopover open={open} onClose={close} anchorRef={anchorRef} placement="top-start" width={224} ariaLabel={`${card.title} features`} className={controls.featureMenu}>
       <div ref={menuRef}
         onKeyDown={event => {
           if (event.key === 'Escape') { event.stopPropagation(); close(); anchorRef.current?.focus(); }

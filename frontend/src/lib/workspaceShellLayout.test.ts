@@ -213,7 +213,7 @@ test('the menu keeps a small deliberate gap below the composer', () => {
 test('the compact menu is aligned with its trigger within the viewport', () => {
   // The composer sets the vertical anchor and the trigger sets the horizontal anchor.
   assert.match(MENU, /className=\{cn\('xv-cba-root shrink-0', className\)\}/);
-  assert.match(MENU, /useChatbarPopoverLayout\(open, rootRef, menuRef, 344\)/);
+  assert.match(MENU, /useChatbarPopoverLayout\(open, rootRef, menuRef, 288\)/);
   const geometry = read('../components/ui/useChatbarPopoverLayout.ts');
   assert.match(geometry, /closest<HTMLElement>\('\.xv-chatbar-solid'\)/);
   assert.match(geometry, /closest<HTMLElement>\('\.xv-kimi-composer-frame'\)/);

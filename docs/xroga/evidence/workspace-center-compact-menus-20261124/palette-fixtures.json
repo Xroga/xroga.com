@@ -1,0 +1,725 @@
+{
+  "scope": "Isolated actual UI components; no authentication or provider execution",
+  "records": [
+    {
+      "mode": "idle",
+      "id": "dark",
+      "name": "Xroga Dark",
+      "surface": "#0b0d12",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(20, 23, 28)",
+          "expected": "rgb(20, 23, 28)",
+          "foreground": "rgb(230, 237, 243)",
+          "surface": "#14171c"
+        },
+        {
+          "label": "Projects",
+          "background": "rgb(20, 23, 28)",
+          "expected": "rgb(20, 23, 28)",
+          "foreground": "rgb(230, 237, 243)",
+          "surface": "#14171c"
+        },
+        {
+          "label": "Connect Apps",
+          "background": "rgb(20, 23, 28)",
+          "expected": "rgb(20, 23, 28)",
+          "foreground": "rgb(230, 237, 243)",
+          "surface": "#14171c"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(20, 23, 28)",
+          "expected": "rgb(20, 23, 28)",
+          "foreground": "rgb(230, 237, 243)",
+          "surface": "#14171c"
+        }
+      ]
+    },
+    {
+      "mode": "idle",
+      "id": "amoled",
+      "name": "True Black",
+      "surface": "#000000",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(8, 8, 10)",
+          "expected": "rgb(8, 8, 10)",
+          "foreground": "rgb(245, 245, 245)",
+          "surface": "#08080a"
+        },
+        {
+          "label": "Projects",
+          "background": "rgb(8, 8, 10)",
+          "expected": "rgb(8, 8, 10)",
+          "foreground": "rgb(245, 245, 245)",
+          "surface": "#08080a"
+        },
+        {
+          "label": "Connect Apps",
+          "background": "rgb(8, 8, 10)",
+          "expected": "rgb(8, 8, 10)",
+          "foreground": "rgb(245, 245, 245)",
+          "surface": "#08080a"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(8, 8, 10)",
+          "expected": "rgb(8, 8, 10)",
+          "foreground": "rgb(245, 245, 245)",
+          "surface": "#08080a"
+        }
+      ]
+    },
+    {
+      "mode": "idle",
+      "id": "midnight",
+      "name": "Midnight",
+      "surface": "#10131f",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(21, 26, 42)",
+          "expected": "rgb(21, 26, 42)",
+          "foreground": "rgb(200, 211, 245)",
+          "surface": "#151a2a"
+        },
+        {
+          "label": "Projects",
+          "background": "rgb(21, 26, 42)",
+          "expected": "rgb(21, 26, 42)",
+          "foreground": "rgb(200, 211, 245)",
+          "surface": "#151a2a"
+        },
+        {
+          "label": "Connect Apps",
+          "background": "rgb(21, 26, 42)",
+          "expected": "rgb(21, 26, 42)",
+          "foreground": "rgb(200, 211, 245)",
+          "surface": "#151a2a"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(21, 26, 42)",
+          "expected": "rgb(21, 26, 42)",
+          "foreground": "rgb(200, 211, 245)",
+          "surface": "#151a2a"
+        }
+      ]
+    },
+    {
+      "mode": "idle",
+      "id": "gray",
+      "name": "Graphite",
+      "surface": "#1c1e22",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(38, 41, 47)",
+          "expected": "rgb(38, 41, 47)",
+          "foreground": "rgb(242, 244, 247)",
+          "surface": "#26292f"
+        },
+        {
+          "label": "Projects",
+          "background": "rgb(38, 41, 47)",
+          "expected": "rgb(38, 41, 47)",
+          "foreground": "rgb(242, 244, 247)",
+          "surface": "#26292f"
+        },
+        {
+          "label": "Connect Apps",
+          "background": "rgb(38, 41, 47)",
+          "expected": "rgb(38, 41, 47)",
+          "foreground": "rgb(242, 244, 247)",
+          "surface": "#26292f"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(38, 41, 47)",
+          "expected": "rgb(38, 41, 47)",
+          "foreground": "rgb(242, 244, 247)",
+          "surface": "#26292f"
+        }
+      ]
+    },
+    {
+      "mode": "idle",
+      "id": "forest",
+      "name": "Evergreen",
+      "surface": "#0d1a14",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(17, 35, 26)",
+          "expected": "rgb(17, 35, 26)",
+          "foreground": "rgb(214, 232, 221)",
+          "surface": "#11231a"
+        },
+        {
+          "label": "Projects",
+          "background": "rgb(17, 35, 26)",
+          "expected": "rgb(17, 35, 26)",
+          "foreground": "rgb(214, 232, 221)",
+          "surface": "#11231a"
+        },
+        {
+          "label": "Connect Apps",
+          "background": "rgb(17, 35, 26)",
+          "expected": "rgb(17, 35, 26)",
+          "foreground": "rgb(214, 232, 221)",
+          "surface": "#11231a"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(17, 35, 26)",
+          "expected": "rgb(17, 35, 26)",
+          "foreground": "rgb(214, 232, 221)",
+          "surface": "#11231a"
+        }
+      ]
+    },
+    {
+      "mode": "idle",
+      "id": "matrix",
+      "name": "Phosphor",
+      "surface": "#000f04",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(0, 23, 7)",
+          "expected": "rgb(0, 23, 7)",
+          "foreground": "rgb(55, 255, 139)",
+          "surface": "#001707"
+        },
+        {
+          "label": "Projects",
+          "background": "rgb(0, 23, 7)",
+          "expected": "rgb(0, 23, 7)",
+          "foreground": "rgb(55, 255, 139)",
+          "surface": "#001707"
+        },
+        {
+          "label": "Connect Apps",
+          "background": "rgb(0, 23, 7)",
+          "expected": "rgb(0, 23, 7)",
+          "foreground": "rgb(55, 255, 139)",
+          "surface": "#001707"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(0, 23, 7)",
+          "expected": "rgb(0, 23, 7)",
+          "foreground": "rgb(55, 255, 139)",
+          "surface": "#001707"
+        }
+      ]
+    },
+    {
+      "mode": "idle",
+      "id": "amber",
+      "name": "Amber CRT",
+      "surface": "#17110a",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(33, 23, 13)",
+          "expected": "rgb(33, 23, 13)",
+          "foreground": "rgb(255, 184, 97)",
+          "surface": "#21170d"
+        },
+        {
+          "label": "Projects",
+          "background": "rgb(33, 23, 13)",
+          "expected": "rgb(33, 23, 13)",
+          "foreground": "rgb(255, 184, 97)",
+          "surface": "#21170d"
+        },
+        {
+          "label": "Connect Apps",
+          "background": "rgb(33, 23, 13)",
+          "expected": "rgb(33, 23, 13)",
+          "foreground": "rgb(255, 184, 97)",
+          "surface": "#21170d"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(33, 23, 13)",
+          "expected": "rgb(33, 23, 13)",
+          "foreground": "rgb(255, 184, 97)",
+          "surface": "#21170d"
+        }
+      ]
+    },
+    {
+      "mode": "idle",
+      "id": "light",
+      "name": "Daylight",
+      "surface": "#ffffff",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(255, 255, 255)",
+          "expected": "rgb(255, 255, 255)",
+          "foreground": "rgb(20, 23, 31)",
+          "surface": "#ffffff"
+        },
+        {
+          "label": "Projects",
+          "background": "rgb(255, 255, 255)",
+          "expected": "rgb(255, 255, 255)",
+          "foreground": "rgb(20, 23, 31)",
+          "surface": "#ffffff"
+        },
+        {
+          "label": "Connect Apps",
+          "background": "rgb(255, 255, 255)",
+          "expected": "rgb(255, 255, 255)",
+          "foreground": "rgb(20, 23, 31)",
+          "surface": "#ffffff"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(255, 255, 255)",
+          "expected": "rgb(255, 255, 255)",
+          "foreground": "rgb(20, 23, 31)",
+          "surface": "#ffffff"
+        }
+      ]
+    },
+    {
+      "mode": "idle",
+      "id": "light-grid",
+      "name": "Grid Paper",
+      "surface": "#fbfbfd",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(255, 255, 255)",
+          "expected": "rgb(255, 255, 255)",
+          "foreground": "rgb(20, 23, 31)",
+          "surface": "#ffffff"
+        },
+        {
+          "label": "Projects",
+          "background": "rgb(255, 255, 255)",
+          "expected": "rgb(255, 255, 255)",
+          "foreground": "rgb(20, 23, 31)",
+          "surface": "#ffffff"
+        },
+        {
+          "label": "Connect Apps",
+          "background": "rgb(255, 255, 255)",
+          "expected": "rgb(255, 255, 255)",
+          "foreground": "rgb(20, 23, 31)",
+          "surface": "#ffffff"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(255, 255, 255)",
+          "expected": "rgb(255, 255, 255)",
+          "foreground": "rgb(20, 23, 31)",
+          "surface": "#ffffff"
+        }
+      ]
+    },
+    {
+      "mode": "idle",
+      "id": "solar",
+      "name": "Parchment",
+      "surface": "#fdf6e3",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(248, 239, 217)",
+          "expected": "rgb(248, 239, 217)",
+          "foreground": "rgb(59, 70, 80)",
+          "surface": "#f8efd9"
+        },
+        {
+          "label": "Projects",
+          "background": "rgb(248, 239, 217)",
+          "expected": "rgb(248, 239, 217)",
+          "foreground": "rgb(59, 70, 80)",
+          "surface": "#f8efd9"
+        },
+        {
+          "label": "Connect Apps",
+          "background": "rgb(248, 239, 217)",
+          "expected": "rgb(248, 239, 217)",
+          "foreground": "rgb(59, 70, 80)",
+          "surface": "#f8efd9"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(248, 239, 217)",
+          "expected": "rgb(248, 239, 217)",
+          "foreground": "rgb(59, 70, 80)",
+          "surface": "#f8efd9"
+        }
+      ]
+    },
+    {
+      "mode": "active",
+      "id": "dark",
+      "name": "Xroga Dark",
+      "surface": "#0b0d12",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(20, 23, 28)",
+          "expected": "rgb(20, 23, 28)",
+          "foreground": "rgb(230, 237, 243)",
+          "surface": "#14171c"
+        },
+        {
+          "label": "Projects",
+          "background": "rgb(20, 23, 28)",
+          "expected": "rgb(20, 23, 28)",
+          "foreground": "rgb(230, 237, 243)",
+          "surface": "#14171c"
+        },
+        {
+          "label": "Connect Apps",
+          "background": "rgb(20, 23, 28)",
+          "expected": "rgb(20, 23, 28)",
+          "foreground": "rgb(230, 237, 243)",
+          "surface": "#14171c"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(20, 23, 28)",
+          "expected": "rgb(20, 23, 28)",
+          "foreground": "rgb(230, 237, 243)",
+          "surface": "#14171c"
+        }
+      ]
+    },
+    {
+      "mode": "active",
+      "id": "amoled",
+      "name": "True Black",
+      "surface": "#000000",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(8, 8, 10)",
+          "expected": "rgb(8, 8, 10)",
+          "foreground": "rgb(245, 245, 245)",
+          "surface": "#08080a"
+        },
+        {
+          "label": "Projects",
+          "background": "rgb(8, 8, 10)",
+          "expected": "rgb(8, 8, 10)",
+          "foreground": "rgb(245, 245, 245)",
+          "surface": "#08080a"
+        },
+        {
+          "label": "Connect Apps",
+          "background": "rgb(8, 8, 10)",
+          "expected": "rgb(8, 8, 10)",
+          "foreground": "rgb(245, 245, 245)",
+          "surface": "#08080a"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(8, 8, 10)",
+          "expected": "rgb(8, 8, 10)",
+          "foreground": "rgb(245, 245, 245)",
+          "surface": "#08080a"
+        }
+      ]
+    },
+    {
+      "mode": "active",
+      "id": "midnight",
+      "name": "Midnight",
+      "surface": "#10131f",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(21, 26, 42)",
+          "expected": "rgb(21, 26, 42)",
+          "foreground": "rgb(200, 211, 245)",
+          "surface": "#151a2a"
+        },
+        {
+          "label": "Projects",
+          "background": "rgb(21, 26, 42)",
+          "expected": "rgb(21, 26, 42)",
+          "foreground": "rgb(200, 211, 245)",
+          "surface": "#151a2a"
+        },
+        {
+          "label": "Connect Apps",
+          "background": "rgb(21, 26, 42)",
+          "expected": "rgb(21, 26, 42)",
+          "foreground": "rgb(200, 211, 245)",
+          "surface": "#151a2a"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(21, 26, 42)",
+          "expected": "rgb(21, 26, 42)",
+          "foreground": "rgb(200, 211, 245)",
+          "surface": "#151a2a"
+        }
+      ]
+    },
+    {
+      "mode": "active",
+      "id": "gray",
+      "name": "Graphite",
+      "surface": "#1c1e22",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(38, 41, 47)",
+          "expected": "rgb(38, 41, 47)",
+          "foreground": "rgb(242, 244, 247)",
+          "surface": "#26292f"
+        },
+        {
+          "label": "Projects",
+          "background": "rgb(38, 41, 47)",
+          "expected": "rgb(38, 41, 47)",
+          "foreground": "rgb(242, 244, 247)",
+          "surface": "#26292f"
+        },
+        {
+          "label": "Connect Apps",
+          "background": "rgb(38, 41, 47)",
+          "expected": "rgb(38, 41, 47)",
+          "foreground": "rgb(242, 244, 247)",
+          "surface": "#26292f"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(38, 41, 47)",
+          "expected": "rgb(38, 41, 47)",
+          "foreground": "rgb(242, 244, 247)",
+          "surface": "#26292f"
+        }
+      ]
+    },
+    {
+      "mode": "active",
+      "id": "forest",
+      "name": "Evergreen",
+      "surface": "#0d1a14",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(17, 35, 26)",
+          "expected": "rgb(17, 35, 26)",
+          "foreground": "rgb(214, 232, 221)",
+          "surface": "#11231a"
+        },
+        {
+          "label": "Projects",
+          "background": "rgb(17, 35, 26)",
+          "expected": "rgb(17, 35, 26)",
+          "foreground": "rgb(214, 232, 221)",
+          "surface": "#11231a"
+        },
+        {
+          "label": "Connect Apps",
+          "background": "rgb(17, 35, 26)",
+          "expected": "rgb(17, 35, 26)",
+          "foreground": "rgb(214, 232, 221)",
+          "surface": "#11231a"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(17, 35, 26)",
+          "expected": "rgb(17, 35, 26)",
+          "foreground": "rgb(214, 232, 221)",
+          "surface": "#11231a"
+        }
+      ]
+    },
+    {
+      "mode": "active",
+      "id": "matrix",
+      "name": "Phosphor",
+      "surface": "#000f04",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(0, 23, 7)",
+          "expected": "rgb(0, 23, 7)",
+          "foreground": "rgb(55, 255, 139)",
+          "surface": "#001707"
+        },
+        {
+          "label": "Projects",
+          "background": "rgb(0, 23, 7)",
+          "expected": "rgb(0, 23, 7)",
+          "foreground": "rgb(55, 255, 139)",
+          "surface": "#001707"
+        },
+        {
+          "label": "Connect Apps",
+          "background": "rgb(0, 23, 7)",
+          "expected": "rgb(0, 23, 7)",
+          "foreground": "rgb(55, 255, 139)",
+          "surface": "#001707"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(0, 23, 7)",
+          "expected": "rgb(0, 23, 7)",
+          "foreground": "rgb(55, 255, 139)",
+          "surface": "#001707"
+        }
+      ]
+    },
+    {
+      "mode": "active",
+      "id": "amber",
+      "name": "Amber CRT",
+      "surface": "#17110a",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(33, 23, 13)",
+          "expected": "rgb(33, 23, 13)",
+          "foreground": "rgb(255, 184, 97)",
+          "surface": "#21170d"
+        },
+        {
+          "label": "Projects",
+          "background": "rgb(33, 23, 13)",
+          "expected": "rgb(33, 23, 13)",
+          "foreground": "rgb(255, 184, 97)",
+          "surface": "#21170d"
+        },
+        {
+          "label": "Connect Apps",
+          "background": "rgb(33, 23, 13)",
+          "expected": "rgb(33, 23, 13)",
+          "foreground": "rgb(255, 184, 97)",
+          "surface": "#21170d"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(33, 23, 13)",
+          "expected": "rgb(33, 23, 13)",
+          "foreground": "rgb(255, 184, 97)",
+          "surface": "#21170d"
+        }
+      ]
+    },
+    {
+      "mode": "active",
+      "id": "light",
+      "name": "Daylight",
+      "surface": "#ffffff",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(255, 255, 255)",
+          "expected": "rgb(255, 255, 255)",
+          "foreground": "rgb(20, 23, 31)",
+          "surface": "#ffffff"
+        },
+        {
+          "label": "Projects",
+          "background": "rgb(255, 255, 255)",
+          "expected": "rgb(255, 255, 255)",
+          "foreground": "rgb(20, 23, 31)",
+          "surface": "#ffffff"
+        },
+        {
+          "label": "Connect Apps",
+          "background": "rgb(255, 255, 255)",
+          "expected": "rgb(255, 255, 255)",
+          "foreground": "rgb(20, 23, 31)",
+          "surface": "#ffffff"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(255, 255, 255)",
+          "expected": "rgb(255, 255, 255)",
+          "foreground": "rgb(20, 23, 31)",
+          "surface": "#ffffff"
+        }
+      ]
+    },
+    {
+      "mode": "active",
+      "id": "light-grid",
+      "name": "Grid Paper",
+      "surface": "#fbfbfd",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(255, 255, 255)",
+          "expected": "rgb(255, 255, 255)",
+          "foreground": "rgb(20, 23, 31)",
+          "surface": "#ffffff"
+        },
+        {
+          "label": "Projects",
+          "background": "rgb(255, 255, 255)",
+          "expected": "rgb(255, 255, 255)",
+          "foreground": "rgb(20, 23, 31)",
+          "surface": "#ffffff"
+        },
+        {
+          "label": "Connect Apps",
+          "background": "rgb(255, 255, 255)",
+          "expected": "rgb(255, 255, 255)",
+          "foreground": "rgb(20, 23, 31)",
+          "surface": "#ffffff"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(255, 255, 255)",
+          "expected": "rgb(255, 255, 255)",
+          "foreground": "rgb(20, 23, 31)",
+          "surface": "#ffffff"
+        }
+      ]
+    },
+    {
+      "mode": "active",
+      "id": "solar",
+      "name": "Parchment",
+      "surface": "#fdf6e3",
+      "popups": [
+        {
+          "label": "Black Hole model and usage",
+          "background": "rgb(248, 239, 217)",
+          "expected": "rgb(248, 239, 217)",
+          "foreground": "rgb(59, 70, 80)",
+          "surface": "#f8efd9"
+        },
+        {
+          "label": "Projects",
+          "background": "rgb(248, 239, 217)",
+          "expected": "rgb(248, 239, 217)",
+          "foreground": "rgb(59, 70, 80)",
+          "surface": "#f8efd9"
+        },
+        {
+          "label": "Connect Apps",
+          "background": "rgb(248, 239, 217)",
+          "expected": "rgb(248, 239, 217)",
+          "foreground": "rgb(59, 70, 80)",
+          "surface": "#f8efd9"
+        },
+        {
+          "label": "More composer actions",
+          "background": "rgb(248, 239, 217)",
+          "expected": "rgb(248, 239, 217)",
+          "foreground": "rgb(59, 70, 80)",
+          "surface": "#f8efd9"
+        }
+      ]
+    }
+  ]
+}

@@ -71801,7 +71801,7 @@
       "id": "surface:6ce17d2762e1020b6c38",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "sha256": "65115db353d44547aece8a994153be2d71554f81db428e244a869d89dccb6fa2",
+      "sha256": "435a987f8529000167f6a50c2f52b6e65a7e351eb6986d306bec197f37538b4e",
       "symbols": [
         "AUTOMATIONS",
         "AutomaticIntro",
@@ -98405,7 +98405,7 @@
       "id": "surface:2b798fdec54f6dbe2e24",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/BlackHoleVButton.tsx",
-      "sha256": "63ea8e31d85fe06f4af105055de0a9648531b029124609fe894b230097e755fd",
+      "sha256": "8c294e7ced3674c0032690ddd9223f48e9ffee6be1945a414345b9676541d272",
       "symbols": [
         "BlackHoleVButton",
         "btnRef",
@@ -98674,7 +98674,7 @@
       "id": "surface:9e31be4cbf4607201de1",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/ChatBarActionsMenu.tsx",
-      "sha256": "684fe382d3da858d6c11fa1138794a78a6b273cc0e7442b11ae5f5c4db9801d1",
+      "sha256": "17b4fb0848a200913a42760584d9f75364bf08570e4251f820a2e7fbb67c66f9",
       "symbols": [
         "ChatBarActionsMenu",
         "ComposerInsertOptions",
@@ -100109,7 +100109,7 @@
       "id": "surface:0d42f6431011b29940e9",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "sha256": "8659a6e96cfb956c767867e9bea8c9e03c5e383fdf6aab609043a398c8f97281",
+      "sha256": "c3573b1b575b2ac0acfb435b6517ee8ee9abe556daace7251c732ac2494b2b6e",
       "symbols": [
         "AppRow",
         "IntegrationsModal",
@@ -100748,7 +100748,7 @@
       "id": "surface:3484d8fe9d2b6b8e0125",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
-      "sha256": "75bb51dc653655a97a64ab568847fca5483d9e33f6d92db8b3d570461b78be2d",
+      "sha256": "9c3deab7d81e2b194c8e871f47b2cd7548419d6f6a24d74c2f028c6dc49ff452",
       "symbols": [
         "ProjectOption",
         "ProjectType",
@@ -106633,12 +106633,11 @@
       "id": "surface:3b867688e4e39125f58a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/ui/useChatbarPopoverLayout.ts",
-      "sha256": "76530083f3bad4133f5f022951b808121a60ef86f01b609426f6a8ce899c72ff",
+      "sha256": "c8a7c545d2bc48e0ca950882d251d8baed5d78b82f37a8b743b80bb8e7bd7d07",
       "symbols": [
         "Box",
         "Viewport",
         "anchor",
-        "applied",
         "available",
         "bottom",
         "composer",
@@ -106656,11 +106655,10 @@
         "observer",
         "offset",
         "panel",
+        "panelHeight",
         "panelWidth",
-        "previous",
         "rect",
         "reposition",
-        "shifted",
         "useChatbarPopoverLayout",
         "viewport",
         "visual"

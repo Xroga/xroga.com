@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "936566aab78fb32cbf905c586e61dbd8c12cc23887c5fecd203f13fb53f2676c",
+  "reviewRegistrySha256": "c02d5b43db4e00c002c53906b3ba27f1eab238404b13476542d76a0d23851afb",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -6564,7 +6564,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "659e12ed14484210b4a4"
+        "id": "ed5669121537ca504798"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -10524,7 +10524,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "659e12ed14484210b4a4"
+        "id": "ed5669121537ca504798"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -31847,15 +31847,15 @@
       }
     },
     {
-      "id": "659e12ed14484210b4a4",
+      "id": "ed5669121537ca504798",
       "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "line": 222,
+      "line": 221,
       "enclosing": "FeatureCard",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "65115db353d44547aece8a994153be2d71554f81db428e244a869d89dccb6fa2",
+      "sourceSha256": "435a987f8529000167f6a50c2f52b6e65a7e351eb6986d306bec197f37538b4e",
       "semanticReview": {
         "authority": "Native Array.from materializes locally queried menu buttons for keyboard focus navigation. The subsequent index/focus operations touch the DOM only. No database, storage client, credential or provider write is involved.",
         "reason": "Exact current-source receiver and surrounding data flow were inspected. Only the native in-memory conversion is excluded. No adjacent authority, persistence or provider boundary is certified.",
