@@ -102184,12 +102184,13 @@
       "id": "surface:d57670e245a2278fa94d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/TerminalLiveActivity.tsx",
-      "sha256": "199888ca766163415e0b8dd8f3cd1b0af462d1a13cb6c7bff000fe7c5db0aa78",
+      "sha256": "876d8a153763686e2931deb259bba9066f2aa5854b0ad09e5b6e11c57d306eea",
       "symbols": [
         "STALLED_AFTER_MS",
         "TerminalLiveActivity",
         "TerminalLiveActivityProps",
         "active",
+        "baseLabel",
         "label",
         "lastObservableAt",
         "model",
@@ -102198,6 +102199,8 @@
         "rows",
         "shell",
         "silentForMs",
+        "stage",
+        "stageRows",
         "timer"
       ],
       "imports": [
