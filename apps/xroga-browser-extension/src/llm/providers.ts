@@ -1,13 +1,14 @@
 // Provider factories, ported from the current Nanobrowser's src/background/llm/providers.ts and reduced to the
 // providers of the first release. The loop runs tools itself, so a model handle is only a model, its call settings and
 // its provider options.
+import { createAmazonBedrock } from '@ai-sdk/amazon-bedrock';
 import { createAnthropic } from '@ai-sdk/anthropic';
 import { createGoogle } from '@ai-sdk/google';
 import { createOpenAI } from '@ai-sdk/openai';
 import type { LanguageModel } from 'ai';
 
 export type ProviderKind =
-  'anthropic' | 'openai' | 'gemini' | 'openai-compatible' | 'ollama' | 'lmstudio' | 'openrouter';
+  'anthropic' | 'openai' | 'gemini' | 'openai-compatible' | 'ollama' | 'lmstudio' | 'openrouter' | 'bedrock';
 
 /** Everything needed to call one model. The key is passed in; src/llm never reads storage. */
 export interface ModelSpec {
@@ -51,6 +52,91 @@ export const CHAT_COMPLETIONS_KINDS: readonly ProviderKind[] = [
   'lmstudio',
   'openrouter',
 ];
+
+/**
+ * An AWS region name, such as us-east-1 or ap-southeast-2: the only text a Bedrock host name is built from. Only the
+ * regions under amazonaws.com: China's and the isolated and sovereign clouds' have other domains.
+ */
+const AWS_REGION = /^(?!cn-|us-iso|eu-isoe-)[a-z]{2}(-[a-z]+)+-\d+$/;
+
+/** The Bedrock endpoint of a region: `bedrock` lists the models, `bedrock-runtime` runs them. */
+export function bedrockEndpoint(service: 'bedrock' | 'bedrock-runtime', region: string): string {
+  return `https://${service}.${region}.amazonaws.com`;
+}
+
+/**
+ * AWS region for Bedrock: a bare region, or a Bedrock URL that contains one. Undefined when the text names no region,
+ * so the key is never sent to a host other than AWS's.
+ */
+export function bedrockRegion(baseUrl?: string): string | undefined {
+  const text = baseUrl?.trim().toLowerCase() || 'us-east-1';
+  const fromHost = /^(?:https?:\/\/)?bedrock(?:-runtime)?\.([a-z0-9-]+)\.amazonaws\.com\/?$/.exec(text)?.[1];
+  const region = fromHost ?? text;
+  return AWS_REGION.test(region) ? region : undefined;
+}
+
+/**
+ * A Bedrock API key is used as a bearer token. An access key ID and secret, and an optional
+ * session token, are written in one field separated by colons.
+ */
+export function parseBedrockKey(apiKey?: string): {
+  apiKey?: string;
+  accessKeyId?: string;
+  secretAccessKey?: string;
+  sessionToken?: string;
+} {
+  const raw = apiKey?.trim() ?? '';
+  if (!raw) return {};
+  const first = raw.indexOf(':');
+  if (first === -1) return { apiKey: raw };
+  const accessKeyId = raw.slice(0, first).trim();
+  const rest = raw.slice(first + 1);
+  const second = rest.indexOf(':');
+  if (second === -1) return { accessKeyId, secretAccessKey: rest.trim() };
+  const sessionToken = rest.slice(second + 1).trim();
+  return { accessKeyId, secretAccessKey: rest.slice(0, second).trim(), ...(sessionToken ? { sessionToken } : {}) };
+}
+
+/**
+ * A fetch that hides the entered key in a refused response. AWS's error text can quote the request it expected, with the
+ * session token in it, and that text is shown to the user and kept in the conversation. Each part of the key, as it is
+ * and URL-encoded, becomes `[redacted]`; a part shorter than 8 characters is left, so ordinary words are not replaced.
+ * A response that is OK is passed through unread.
+ */
+export function redactingFetch(apiKey: string | undefined, base?: typeof fetch): typeof fetch {
+  const creds = parseBedrockKey(apiKey);
+  const parts = [creds.apiKey, creds.accessKeyId, creds.secretAccessKey, creds.sessionToken]
+    .filter((part): part is string => !!part && part.length >= 8)
+    // As entered, URL-encoded, and escaped inside a JSON string (`/` may be written `\/`).
+    .flatMap(part => [part, encodeURIComponent(part), JSON.stringify(part).slice(1, -1).replaceAll('/', '\\/')]);
+  // The longest first, so a part inside another is not replaced in it first.
+  const unique = [...new Set(parts)].sort((a, b) => b.length - a.length);
+  // The global fetch is looked up at each call, as the SDK does when it is given none.
+  const send: typeof fetch = base ?? ((input, init) => globalThis.fetch(input, init));
+  if (unique.length === 0) return send;
+  return async (input, init) => {
+    const response = await send(input, init);
+    if (response.ok) return response;
+    let body = await response.text();
+    for (const part of unique) body = body.split(part).join('[redacted]');
+    // The body is now plain text of another length.
+    const headers = new Headers(response.headers);
+    headers.delete('content-length');
+    headers.delete('content-encoding');
+    return new Response(body, { status: response.status, statusText: response.statusText, headers });
+  };
+}
+
+/**
+ * Why a Bedrock card cannot be used as it stands, or undefined when it can. A key with a part missing is refused: the
+ * AWS SDK would fill the gap from the environment's AWS credentials.
+ */
+export function bedrockProblem(baseUrl?: string, apiKey?: string): string | undefined {
+  if (!bedrockRegion(baseUrl)) return 'The Bedrock region must be an AWS region, such as us-east-1.';
+  const creds = parseBedrockKey(apiKey);
+  if (creds.apiKey || (creds.accessKeyId && creds.secretAccessKey)) return undefined;
+  return 'Bedrock needs an API key, or an access key ID and secret separated by a colon.';
+}
 
 /**
  * The OpenAI-compatible endpoint of an Ollama or LM Studio server: `/v1` is added unless the address ends with it,
@@ -99,6 +185,32 @@ export function createModel(spec: ModelSpec, options: CreateModelOptions = {}): 
         model: openai.responses(modelName),
         providerOptions: { openai: { strictJsonSchema: false, store: false } },
       };
+    }
+    case 'bedrock': {
+      const problem = bedrockProblem(spec.baseUrl, apiKey);
+      if (problem) {
+        // Refused at the first request rather than here, so the user sees it as a failed test or turn. The placeholder
+        // key and the endpoint keep the SDK from reading AWS settings from the environment.
+        const refused = createAmazonBedrock({
+          region: 'us-east-1',
+          baseURL: bedrockEndpoint('bedrock-runtime', 'us-east-1'),
+          apiKey: 'none',
+          fetch: () => Promise.reject(new Error(problem)),
+        });
+        return { spec, model: refused(modelName) };
+      }
+      const region = bedrockRegion(spec.baseUrl)!;
+      const creds = parseBedrockKey(apiKey);
+      // The endpoint and the auth are both given, so the SDK reads neither from the environment (AWS_ENDPOINT_URL,
+      // AWS_BEARER_TOKEN_BEDROCK): an empty apiKey means SigV4 with the access key entered.
+      const bedrock = createAmazonBedrock({
+        region,
+        baseURL: bedrockEndpoint('bedrock-runtime', region),
+        ...creds,
+        apiKey: creds.apiKey ?? '',
+        fetch: redactingFetch(apiKey, fetch),
+      });
+      return { spec, model: bedrock(modelName) };
     }
     default: {
       // Ollama, LM Studio, OpenRouter and any other OpenAI-compatible server: chat completions at the base URL.

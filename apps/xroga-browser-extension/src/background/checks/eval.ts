@@ -131,7 +131,7 @@ async function runOne(
     type: 'message',
     message: { role: 'user', parts: [{ type: 'text', text: task.task }] },
   });
-  let detected: number | undefined;
+  let detected: Awaited<ReturnType<typeof detectContext>>;
   if (args.kind === 'ollama' || args.kind === 'lmstudio') {
     detected = await detectContext({ kind: args.kind, modelName: args.model, baseUrl: args.baseUrl });
   }
@@ -140,7 +140,8 @@ async function runOne(
     modelName: args.model,
     baseUrl: args.baseUrl,
     overrides: { ...(args.contextWindow ? { contextWindow: args.contextWindow } : {}), ...(args.vision ? { vision: true } : {}) },
-    detectedContext: detected,
+    detectedContext: detected?.window,
+    detectedLoaded: detected?.loaded,
   });
   // `adaptive`: the run's own EffortControl decides each request's effort, as the product's Xroga model path does.
   const adaptive = args.rawEffort === 'adaptive' ? new EffortControl('high', { adaptive: true }) : undefined;

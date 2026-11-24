@@ -1,21 +1,26 @@
-// Settings → Providers: the default model and its reasoning effort, then voice input, whose voice model comes from an
-// OpenAI or Gemini provider, then the list of providers with their keys, base URLs and models. Test models calls
+// Settings → Providers: the default model with its reasoning effort and context window, then voice input, whose voice
+// model comes from an OpenAI or Gemini provider, then the list of providers with their keys, base URLs and models. Test models calls
 // src/llm from this page; settings are written through chrome.storage, with no worker command.
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { KeyboardEvent, ReactNode } from 'react';
-import { listModels } from '@src/llm';
+import { listModels, MAX_CONTEXT_WINDOW, MIN_CONTEXT_WINDOW } from '@src/llm';
 import type { ConnectionResult, ModelList, ProviderKind } from '@src/llm';
 import type { ReasoningEffort } from '@src/llm/catalogue';
 import {
+  autoWindow,
   capabilityOf,
   DEFAULT_SETTINGS,
+  findModel,
   keysStorage,
   LOCAL_KINDS,
   providersStorage,
+  setContextWindow,
   settingsStorage,
+  windowFromText,
   withBaseUrl,
 } from '@src/store/settings';
 import type { ModelEntry, ProviderConfig } from '@src/store/settings';
+import type { ModelRef } from '@src/store/types';
 import { newId } from '@src/store/conversations';
 import { Button, Input, Notice, Select } from '@src/ui/components';
 import { SettingsCard } from './SettingsCard';
@@ -32,6 +37,7 @@ export const KINDS: Array<{ kind: ProviderKind; label: string; needsKey: boolean
   { kind: 'openai', label: 'OpenAI', needsKey: true },
   { kind: 'gemini', label: 'Google Gemini', needsKey: true },
   { kind: 'openrouter', label: 'OpenRouter', needsKey: true },
+  { kind: 'bedrock', label: 'AWS Bedrock', needsKey: true, baseUrl: 'us-east-1' },
   { kind: 'ollama', label: 'Ollama', needsKey: false, baseUrl: 'http://localhost:11434' },
   { kind: 'lmstudio', label: 'LM Studio', needsKey: false, baseUrl: 'http://localhost:1234' },
   { kind: 'openai-compatible', label: 'OpenAI-compatible', needsKey: false, baseUrl: '' },
@@ -51,10 +57,11 @@ const PRESETS: Array<{ id: string; label: string; baseUrl: string }> = [
 ];
 
 /**
- * The Add a provider list: the vendors' own APIs (OpenAI, Anthropic, then Google Gemini), with the presets among them
- * as providers of their own, then OpenRouter, the local servers and any other OpenAI-compatible endpoint.
+ * The Add a provider list: the vendors' own APIs (OpenAI, Anthropic, Google Gemini, then AWS Bedrock), with the
+ * presets among them as providers of their own, then OpenRouter, the local servers and any other OpenAI-compatible
+ * endpoint.
  */
-const VENDORS: ProviderKind[] = ['openai', 'anthropic', 'gemini'];
+const VENDORS: ProviderKind[] = ['openai', 'anthropic', 'gemini', 'bedrock'];
 const CHOICES: Array<{ value: string; label: string }> = [
   ...VENDORS.map(kind => ({ value: kind, label: kindInfo(kind).label })),
   ...PRESETS.map(p => ({ value: p.id, label: p.label })),
@@ -147,6 +154,9 @@ export function ProvidersSection() {
             </Select>
           </label>
         ) : null}
+        {current && settings.defaultModel ? (
+          <WindowField key={current} model={settings.defaultModel} providers={providers} />
+        ) : null}
       </SettingsCard>
       <VoiceCard />
       <SettingsCard title={t('settings.nav.providers')} className="flex flex-col gap-4">
@@ -161,6 +171,65 @@ export function ProvidersSection() {
         <AddProvider onAdd={choice => void add(choice)} />
       </SettingsCard>
     </section>
+  );
+}
+
+/**
+ * The default model's context window: "Auto (N)" with the window it runs at when nothing is set, or the number the user
+ * typed, stored on the model's entry so it holds wherever the model runs. Enter or leaving the field stores it; an
+ * emptied field returns to Auto; a number out of range is not stored, and the field says so.
+ */
+/** A number of tokens with ASCII digits and comma groups, which the field reads back whatever the browser's locale. */
+const tokens = (n: number) => n.toLocaleString('en-US');
+
+function WindowField({ model, providers }: { model: ModelRef; providers: ProviderConfig[] }) {
+  const set = findModel(providers, model)?.model.overrides?.contextWindow;
+  const auto = autoWindow(providers, model);
+  const [draft, setDraft] = useState<string | null>(null);
+  const [invalid, setInvalid] = useState(false);
+  // Read from the field itself, so a submit right after typing sees what was typed.
+  const save = (text: string) => {
+    const value = windowFromText(text);
+    if (value === undefined) return setInvalid(true);
+    setInvalid(false);
+    setDraft(null);
+    if (value !== (set ?? null)) void setContextWindow(model, value);
+  };
+  return (
+    <form
+      className="flex flex-wrap items-center gap-x-3 gap-y-1"
+      onSubmit={e => {
+        e.preventDefault();
+        const field = e.currentTarget.querySelector('input');
+        if (field) save(field.value);
+      }}>
+      <label className="flex items-center gap-3">
+        <span className="text-nb-muted">{t('models.contextWindow')}</span>
+        <Input
+          aria-label={t('models.contextWindow')}
+          aria-invalid={invalid}
+          aria-describedby={invalid ? 'context-window-range' : undefined}
+          inputMode="numeric"
+          className="w-40"
+          value={draft ?? (set ? tokens(set) : '')}
+          placeholder={auto ? t('models.contextWindowAuto', { tokens: tokens(auto) }) : ''}
+          onChange={e => {
+            setDraft(e.target.value);
+            setInvalid(false);
+          }}
+          // Leaving the field stores only an edit.
+          onBlur={e => draft !== null && save(e.target.value)}
+        />
+      </label>
+      {invalid ? (
+        <span id="context-window-range" role="alert" className="text-sm text-nb-muted">
+          {t('models.contextWindowRange', {
+            min: tokens(MIN_CONTEXT_WINDOW),
+            max: tokens(MAX_CONTEXT_WINDOW),
+          })}
+        </span>
+      ) : null}
+    </form>
   );
 }
 
@@ -456,15 +525,18 @@ function ProviderItem({ provider }: { provider: ProviderConfig }) {
                 void keysStorage.set(({ [provider.id]: _cleared, ...rest }) => rest);
               }}
             />
+            {provider.kind === 'bedrock' ? (
+              <span className="text-sm text-nb-muted">{t('models.bedrockKey')}</span>
+            ) : null}
           </Line>
         ) : null}
-        {local ? (
-          <Line label={t('models.baseUrl')}>
+        {local || provider.kind === 'bedrock' ? (
+          <Line label={provider.kind === 'bedrock' ? t('models.region') : t('models.baseUrl')}>
             <Input
-              aria-label={t('models.baseUrl')}
+              aria-label={provider.kind === 'bedrock' ? t('models.region') : t('models.baseUrl')}
               className="w-full sm:max-w-sm"
               value={provider.baseUrl ?? ''}
-              placeholder={info.baseUrl || 'http://localhost:8000/v1'}
+              placeholder={provider.kind === 'bedrock' ? 'us-east-1' : info.baseUrl || 'http://localhost:8000/v1'}
               onChange={e => {
                 const baseUrl = e.target.value;
                 void providersStorage.set(list => list.map(p => (p.id === provider.id ? withBaseUrl(p, baseUrl) : p)));

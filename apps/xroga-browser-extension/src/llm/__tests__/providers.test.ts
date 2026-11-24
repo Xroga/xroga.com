@@ -1,5 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createModel, openAICompatibleBaseUrl } from '../providers';
+import {
+  bedrockProblem,
+  bedrockRegion,
+  createModel,
+  openAICompatibleBaseUrl,
+  parseBedrockKey,
+  redactingFetch,
+} from '../providers';
 import type { ModelSpec } from '../providers';
 import { streamTurn } from '../stream';
 
@@ -120,10 +127,133 @@ describe('providers', () => {
     expect(r.url).toBe('http://10.0.0.2:8000/v1/chat/completions');
   });
 
+  it('Bedrock API key: bearer auth on the regional runtime', async () => {
+    const r = await capture({
+      kind: 'bedrock',
+      modelName: 'amazon.nova-lite-v1:0',
+      apiKey: 'bedrock-key',
+      baseUrl: 'eu-west-1',
+    });
+    expect(new URL(r.url).origin).toBe('https://bedrock-runtime.eu-west-1.amazonaws.com');
+    expect(r.headers.get('authorization')).toBe('Bearer bedrock-key');
+  });
+
+  it('Bedrock access key: SigV4 on the regional runtime', async () => {
+    const r = await capture({
+      kind: 'bedrock',
+      modelName: 'amazon.nova-lite-v1:0',
+      apiKey: 'AKIAIOSFODNN7EXAMPLE:wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY',
+    });
+    expect(new URL(r.url).origin).toBe('https://bedrock-runtime.us-east-1.amazonaws.com');
+    expect(r.headers.get('authorization')).toMatch(/^AWS4-HMAC-SHA256 /);
+  });
+
+  it('Bedrock ignores AWS endpoint and key settings in the environment', async () => {
+    vi.stubEnv('AWS_ENDPOINT_URL_BEDROCK_RUNTIME', 'https://elsewhere.example');
+    vi.stubEnv('AWS_ENDPOINT_URL', 'https://elsewhere.example');
+    vi.stubEnv('AWS_BEARER_TOKEN_BEDROCK', 'environment-token');
+    try {
+      const signed = await capture({
+        kind: 'bedrock',
+        modelName: 'amazon.nova-lite-v1:0',
+        apiKey: 'AKIAIOSFODNN7EXAMPLE:wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY',
+        baseUrl: 'eu-west-1',
+      });
+      expect(new URL(signed.url).origin).toBe('https://bedrock-runtime.eu-west-1.amazonaws.com');
+      expect(signed.headers.get('authorization')).toMatch(/^AWS4-HMAC-SHA256 Credential=AKIAIOSFODNN7EXAMPLE\//);
+      const bearer = await capture({ kind: 'bedrock', modelName: 'amazon.nova-lite-v1:0', apiKey: 'bedrock-key' });
+      expect(new URL(bearer.url).origin).toBe('https://bedrock-runtime.us-east-1.amazonaws.com');
+      expect(bearer.headers.get('authorization')).toBe('Bearer bedrock-key');
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it('Bedrock: a region that is not one, or a key with a part missing, fails before any request', async () => {
+    for (const spec of [
+      { baseUrl: 'evil.example#', apiKey: 'bedrock-key' },
+      { baseUrl: 'eu-west-1', apiKey: ':secret' },
+      { baseUrl: 'eu-west-1', apiKey: '' },
+    ]) {
+      const { fetch, requests } = captureFetch();
+      const result = await streamTurn({
+        chat: createModel({ kind: 'bedrock', modelName: 'amazon.nova-lite-v1:0', ...spec }, { fetch }),
+        system: 'You are a test.',
+        messages: [{ role: 'user', content: 'hi' }],
+        tools,
+        retry: { attempts: 1, baseMs: 0, maxMs: 0 },
+      });
+      expect(requests).toEqual([]);
+      expect(result.error?.message).toMatch(/^(The Bedrock region|Bedrock needs)/);
+    }
+  });
+
+  it('Bedrock: no part of the key comes back in a refused turn', async () => {
+    const token = 'IQoJb3JpZ2luX2VjEXAMPLE/session+token==';
+    const secret = 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY';
+    // The token also as JSON may write it, with `/` escaped: parsed, it is the token again.
+    const escaped = token.replaceAll('/', '\\/');
+    const body = `{"message":"The request signature we calculated does not match. x-amz-security-token:${token} ${encodeURIComponent(token)} ${secret} ${escaped}"}`;
+    const fetch = vi.fn(
+      async () => new Response(body, { status: 403, headers: { 'content-type': 'application/json' } }),
+    ) as unknown as typeof globalThis.fetch;
+    const result = await streamTurn({
+      chat: createModel(
+        {
+          kind: 'bedrock',
+          modelName: 'amazon.nova-lite-v1:0',
+          apiKey: `ASIAEXAMPLE1234:${secret}:${token}`,
+          baseUrl: 'eu-west-1',
+        },
+        { fetch },
+      ),
+      system: 'You are a test.',
+      messages: [{ role: 'user', content: 'hi' }],
+      tools,
+      retry: { attempts: 1, baseMs: 0, maxMs: 0 },
+    });
+    const text = result.error?.message ?? '';
+    expect(text).toContain('The request signature we calculated does not match');
+    expect(text).toContain('[redacted]');
+    for (const part of [token, encodeURIComponent(token), secret]) expect(text).not.toContain(part);
+  });
+
   it('OpenRouter sends its headers', async () => {
     const r = await capture({ kind: 'openrouter', modelName: 'anthropic/claude-sonnet-5.5', apiKey: 'or' });
     expect(r.url).toBe('https://openrouter.ai/api/v1/chat/completions');
     expect(r.headers.get('x-title')).toBe('Nanobrowser');
+  });
+});
+
+describe('redactingFetch', () => {
+  it('replaces each part of the key in a refused body, and keeps the status, the headers and the rest', async () => {
+    const base = vi.fn(
+      async () =>
+        new Response('{"message":"bad key ABSKbearerkey123 near AKIAEXAMPLE1 and short"}', {
+          status: 403,
+          statusText: 'Forbidden',
+          headers: { 'x-amzn-requestid': 'r1', 'content-length': '999' },
+        }),
+    ) as unknown as typeof globalThis.fetch;
+    for (const key of ['ABSKbearerkey123', 'AKIAEXAMPLE1:short']) {
+      const response = await redactingFetch(key, base)('https://bedrock.eu-west-1.amazonaws.com/x');
+      expect(response.status).toBe(403);
+      expect(response.statusText).toBe('Forbidden');
+      expect(response.headers.get('x-amzn-requestid')).toBe('r1');
+      const text = await response.text();
+      expect(text).not.toContain(key.split(':')[0]);
+      // A part under 8 characters is not replaced.
+      expect(text).toContain('and short');
+      expect(JSON.parse(text).message).toMatch(/^bad key /);
+    }
+  });
+
+  it('passes a successful response through unread', async () => {
+    const ok = new Response('ABSKbearerkey123', { status: 200 });
+    const base = vi.fn(async () => ok) as unknown as typeof globalThis.fetch;
+    const response = await redactingFetch('ABSKbearerkey123', base)('https://example.test');
+    expect(response).toBe(ok);
+    expect(response.bodyUsed).toBe(false);
   });
 });
 
@@ -132,6 +262,38 @@ describe('helpers', () => {
     expect(openAICompatibleBaseUrl('ollama')).toBe('http://localhost:11434/v1');
     expect(openAICompatibleBaseUrl('ollama', 'http://box:11434/')).toBe('http://box:11434/v1');
     expect(openAICompatibleBaseUrl('lmstudio', 'http://localhost:1234/v1')).toBe('http://localhost:1234/v1');
+  });
+
+  it('reads a Bedrock region and splits an access key from a bearer key', () => {
+    expect(bedrockRegion()).toBe('us-east-1');
+    expect(bedrockRegion('eu-central-1')).toBe('eu-central-1');
+    expect(bedrockRegion('https://bedrock-runtime.ap-southeast-2.amazonaws.com')).toBe('ap-southeast-2');
+    expect(bedrockRegion(' US-GOV-WEST-1 ')).toBe('us-gov-west-1');
+    // Only a region reaches the host name: anything else would send the key to another host.
+    for (const text of ['evil.example#', 'us-east-1.evil.example', 'us-east-1#', 'https://us-east-1', 'eu-west-1/x']) {
+      expect(bedrockRegion(text)).toBeUndefined();
+    }
+    expect(bedrockRegion('https://bedrock-runtime.eu-west-1.amazonaws.com.evil.example')).toBeUndefined();
+    // Regions whose endpoints are not under amazonaws.com.
+    for (const text of ['cn-north-1', 'us-iso-east-1', 'us-isob-east-1', 'eu-isoe-west-1', 'eusc-de-east-1']) {
+      expect(bedrockRegion(text)).toBeUndefined();
+    }
+    expect(bedrockProblem('eu-west-1', 'AKIAEXAMPLE:secret')).toBeUndefined();
+    expect(bedrockProblem('eu-west-1', 'AKIAEXAMPLE:')).toMatch(/^Bedrock needs/);
+    expect(bedrockProblem('eu west 1', 'bedrock-key')).toMatch(/^The Bedrock region/);
+    expect(parseBedrockKey('ASIAEXAMPLE:secret:')).toEqual({ accessKeyId: 'ASIAEXAMPLE', secretAccessKey: 'secret' });
+    expect(parseBedrockKey(' ASIAEXAMPLE : secret : session ')).toEqual({
+      accessKeyId: 'ASIAEXAMPLE',
+      secretAccessKey: 'secret',
+      sessionToken: 'session',
+    });
+    expect(parseBedrockKey('bedrock-api-key')).toEqual({ apiKey: 'bedrock-api-key' });
+    expect(parseBedrockKey('AKIAEXAMPLE:secret')).toEqual({ accessKeyId: 'AKIAEXAMPLE', secretAccessKey: 'secret' });
+    expect(parseBedrockKey('ASIAEXAMPLE:secret:session')).toEqual({
+      accessKeyId: 'ASIAEXAMPLE',
+      secretAccessKey: 'secret',
+      sessionToken: 'session',
+    });
   });
 
   it("keeps OpenRouter's fixed address, whatever an older card stored", () => {

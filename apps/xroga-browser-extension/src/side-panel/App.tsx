@@ -13,7 +13,7 @@ import { PanelClient, panelTabId } from './client';
 import { automaticWorkspaceConnect } from './automatic-workspace-connect';
 import { Composer, pickModel, sameModel } from './Composer';
 import type { LauncherItem, ModelChoice, PendingFile } from './Composer';
-import { attachmentKind, MAX_FILE, MAX_XROGA_FILE, MAX_XROGA_FILES } from '@src/store/attachments';
+import { attachmentKind, MAX_FILE, MAX_FILES, MAX_XROGA_FILE, MAX_XROGA_FILES } from '@src/store/attachments';
 import { voiceLanguage, voiceSetup, workspaceVoiceSegments } from '@src/ui/voice';
 import { transcribeAudio } from '@src/llm/transcribe';
 import { newId, putBlob } from '@src/store/conversations';
@@ -201,7 +201,8 @@ export function App() {
   useEffect(() => {
     const fresh = state.attached.slice(taken.current);
     taken.current = state.attached.length;
-    if (fresh.length) setFiles(current => [...current, ...fresh]);
+    // Never past the cap, even when a screenshot arrives after other files filled the message.
+    if (fresh.length) setFiles(current => [...current, ...fresh].slice(0, XROGA_PRODUCT ? MAX_XROGA_FILES : MAX_FILES));
   }, [state.attached]);
   const clearFiles = () => {
     for (const f of files) if (f.preview) URL.revokeObjectURL(f.preview);
@@ -214,6 +215,7 @@ export function App() {
    */
   const attach = async (list: File[]) => {
     setAttachError(null);
+    let room = (XROGA_PRODUCT ? MAX_XROGA_FILES : MAX_FILES) - files.length;
     const available = MAX_XROGA_FILES - files.length;
     if (XROGA_PRODUCT && list.length > available) setAttachError('Attach up to ten files per task.');
     for (let file of XROGA_PRODUCT ? list.slice(0, Math.max(0, available)) : list) {
@@ -271,10 +273,14 @@ export function App() {
         setAttachError(t('composer.attachFailed', { name: file.name }));
         continue;
       }
-      setFiles(current => [
-        ...current,
-        { ref, ...(kind.kind === 'image' ? { preview: URL.createObjectURL(file) } : {}) },
-      ]);
+      room--;
+      // Two drops at once each counted the chips before either was added: the cap holds here too.
+      setFiles(current =>
+        [...current, { ref, ...(kind.kind === 'image' ? { preview: URL.createObjectURL(file) } : {}) }].slice(
+          0,
+          XROGA_PRODUCT ? MAX_XROGA_FILES : MAX_FILES,
+        ),
+      );
     }
   };
   useEffect(() => {
@@ -810,7 +816,10 @@ export function App() {
         onScreenshot={() =>
           client?.send({ type: 'screenshot-tab', tabId: client.tabId, conversationId: state.conversationId })
         }
-        onRemoveFile={id => setFiles(current => current.filter(f => f.ref.id !== id))}
+        onRemoveFile={id => {
+          setFiles(current => current.filter(f => f.ref.id !== id));
+          setAttachError(null);
+        }}
         sharedTabs={[client?.tabId ?? -1, ...(!XROGA_PRODUCT ? state.tabs.map(x => x.tabId) : []), ...pendingTabs.map(p => p.tabId)]}
         onShareTab={tab => {
           if (!XROGA_PRODUCT && state.conversationId)

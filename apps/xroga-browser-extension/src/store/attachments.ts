@@ -6,6 +6,11 @@ export const MAX_CONVERSATION = 100 * 1024 * 1024;
 export const MAX_XROGA_FILES = 10;
 /** The Xroga product accepts files up to the general limit: photos, videos, audio, archives and documents can all be attached. */
 export const MAX_XROGA_FILE = MAX_FILE;
+/**
+ * The most files and screenshots one request to the model carries, the newest; so a message takes at most this many
+ * files too.
+ */
+export const MAX_FILES = 16;
 
 const IMAGE_TYPES = new Set(['image/png', 'image/jpeg', 'image/webp', 'image/gif']);
 const TEXT_TYPES = new Set([

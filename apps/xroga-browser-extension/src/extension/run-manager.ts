@@ -61,7 +61,7 @@ import {
   takenOver,
 } from '@src/agent/restore';
 import { runCompaction } from '@src/agent/compaction';
-import { attachmentKind, MAX_CONVERSATION, MAX_FILE } from '@src/agent/attachments';
+import { attachmentKind, MAX_CONVERSATION, MAX_FILE, MAX_FILES } from '@src/agent/attachments';
 import { toModelMessages } from '@src/agent/context';
 import type {
   Conversation,
@@ -1160,6 +1160,10 @@ export class RunManager {
       }
       if (blob.size > MAX_FILE) {
         warnings.push(`${blob.name} is larger than 25 MB and was not attached.`);
+        continue;
+      }
+      if (out.length >= MAX_FILES) {
+        warnings.push(`${blob.name} was not attached: a message holds at most ${MAX_FILES} files.`);
         continue;
       }
       if (blob.conversationId !== conversationId) {

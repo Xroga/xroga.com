@@ -22,7 +22,11 @@
 //   GET  /__llm/transcriptions    what the fake voice model received (model, language, file type, size), newest last
 //   POST /__llm/script            replaces the queue of scripted replies ({ replies: [...], rejectReasoning? }); with
 //                                 rejectReasoning, a request that carries reasoning_effort is refused with a 400 that
-//                                 names the field and takes no reply. A reply's reasoningTokens go in its usage
+//                                 names the field and takes no reply; with maxTokens, a request whose max_tokens is
+//                                 above it is refused with a 400 that names max_tokens and takes no reply; with
+//                                 contextLimit, a request whose messages, tools and max_tokens come to more tokens
+//                                 (characters / 4) is refused as vLLM does, stating the limit. A reply's
+//                                 reasoningTokens go in its usage
 //   GET  /__llm/requests          the requests the fake model received (newest last)
 //   POST /__llm/reset             clears the queue and the recorded requests
 //   GET  /download?name=<file>    a small text file sent as an attachment (GET or POST), for the download report
@@ -56,7 +60,7 @@ const counters = new Map();
 const posts = [];
 const autorunJobs = [];
 /** The fake model: replies to give, in order, and the requests it received. */
-const llm = { replies: [], requests: [], transcriptions: [], rejectReasoning: false };
+const llm = { replies: [], requests: [], transcriptions: [], rejectReasoning: false, maxTokens: 0, contextLimit: 0 };
 /** The fake PostHog: the events it received, and how many more to refuse. */
 const posthog = { events: [], fail: 0 };
 export const autorunEvents = new EventEmitter();
@@ -201,6 +205,8 @@ async function handleLlm(req, res, path) {
     const script = JSON.parse((await readBody(req)) || '{}');
     llm.replies = script.replies ?? [];
     llm.rejectReasoning = !!script.rejectReasoning;
+    llm.maxTokens = Number(script.maxTokens) || 0;
+    llm.contextLimit = Number(script.contextLimit) || 0;
     return send(res, 200, { ok: true, queued: llm.replies.length });
   }
   if (path === '/__llm/reset' && req.method === 'POST') {
@@ -208,6 +214,8 @@ async function handleLlm(req, res, path) {
     llm.requests = [];
     llm.transcriptions = [];
     llm.rejectReasoning = false;
+    llm.maxTokens = 0;
+    llm.contextLimit = 0;
     return send(res, 200, { ok: true });
   }
   if (path === '/__llm/transcriptions') return send(res, 200, llm.transcriptions);
@@ -305,6 +313,26 @@ async function handleLlm(req, res, path) {
     : String(firstUser?.content ?? '');
   const at = llm.replies.findIndex(r => !r.when || firstText.includes(r.when));
   const reply = (at >= 0 ? llm.replies.splice(at, 1)[0] : undefined) ?? { text: `You said: ${userText}` };
+  const asked = body.max_tokens ?? body.max_completion_tokens;
+  if (llm.maxTokens && asked > llm.maxTokens) {
+    return send(res, 400, {
+      error: {
+        message: `max_tokens is too large: ${asked}. This model supports at most ${llm.maxTokens} completion tokens, whereas you provided ${asked}.`,
+        type: 'invalid_request_error',
+      },
+    });
+  }
+  if (llm.contextLimit) {
+    const input = Math.ceil((JSON.stringify(body.messages ?? []).length + JSON.stringify(body.tools ?? []).length) / 4);
+    if (input + (asked ?? 0) > llm.contextLimit) {
+      return send(res, 400, {
+        error: {
+          message: `This model's maximum context length is ${llm.contextLimit} tokens. However, you requested ${input + (asked ?? 0)} tokens (${input} in the messages, ${asked ?? 0} in the completion). Please reduce the length of the messages or completion.`,
+          type: 'invalid_request_error',
+        },
+      });
+    }
+  }
   if (reply.delayMs) await new Promise(r => setTimeout(r, reply.delayMs));
   if (reply.status) return send(res, reply.status, { error: { message: reply.error ?? `HTTP ${reply.status}` } });
   res.writeHead(200, {

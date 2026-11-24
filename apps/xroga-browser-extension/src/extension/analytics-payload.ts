@@ -14,6 +14,7 @@ export const PROVIDER_KINDS: readonly ProviderKind[] = [
   'openai-compatible',
   'ollama',
   'lmstudio',
+  'bedrock',
   'openrouter',
 ];
 export const BROWSERS = ['chrome', 'edge', 'other'] as const;

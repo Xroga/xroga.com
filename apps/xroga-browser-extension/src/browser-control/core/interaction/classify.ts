@@ -184,6 +184,7 @@ export function classify(input: ClassifyInput): Classification {
       reason: `it submits its form (${facts.form.method.toUpperCase()} ${quote(facts.form.action)})`,
     };
   }
+  // A button literally named like a submission still counts in a search-style form (Xroga is stricter than upstream here: a named Submit is the user's step).
   if (SUBMIT_WORDS.test(name) && !COOKIE_REJECT.test(name))
     return { category: 'submit', reason: `the name ${quote(name)} is submission vocabulary` };
   return { category: null, reason: 'not submit, pay or delete' };
