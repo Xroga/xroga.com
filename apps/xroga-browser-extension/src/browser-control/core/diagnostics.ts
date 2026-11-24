@@ -82,7 +82,7 @@ export class DiagnosticsLog {
 }
 
 export interface DiagnosticsQuery {
-  kind?: 'both' | 'console' | 'network' | 'endpoints';
+  kind?: 'both' | 'console' | 'network' | 'endpoints' | 'cookies' | 'storage';
   onlyProblems?: boolean;
   urlPattern?: string;
   limit?: number;
@@ -140,4 +140,36 @@ export function formatDiagnostics(log: DiagnosticsLog, q: DiagnosticsQuery, now 
     }
   }
   return lines;
+}
+
+export interface CookieInfo { name: string; domain: string; path: string; secure: boolean; httpOnly: boolean; sameSite?: string; expires?: number; size?: number; session?: boolean }
+
+/** The page's cookies as names and flags, never values (a value can be a login), with what looks wrong about each: no Secure on a secure page, SameSite=None without Secure, a session-like name readable by scripts. */
+export function formatCookies(cookies: CookieInfo[], pageUrl: string, now = Date.now()): string[] {
+  if (!cookies.length) return ['cookies · none are set for this page (or the browser holds them back)'];
+  const https = /^https:/i.test(pageUrl);
+  const lines = [`cookies · ${cookies.length} for this page (values are never shown)`];
+  for (const c of cookies.slice(0, 80)) {
+    const flags = [c.secure ? 'Secure' : 'not Secure', c.httpOnly ? 'HttpOnly' : 'readable by scripts', `SameSite=${c.sameSite ?? 'unset'}`];
+    const expiry = c.session || !c.expires || c.expires < 0 ? 'session' : `expires in ${Math.round((c.expires * 1000 - now) / 86_400_000)} days`;
+    const warn: string[] = [];
+    if (https && !c.secure) warn.push('sent over http too: add Secure');
+    if (c.sameSite === 'None' && !c.secure) warn.push('SameSite=None needs Secure; browsers drop it');
+    if (!c.httpOnly && /sess|auth|token|jwt|sid|login/i.test(c.name)) warn.push('looks like a login cookie but scripts can read it: add HttpOnly');
+    lines.push(`  ${c.name} · ${c.domain}${c.path} · ${flags.join(', ')} · ${expiry}${c.size ? ` · ${c.size} bytes` : ''}${warn.length ? ` · ! ${warn.join('; ')}` : ''}`);
+  }
+  if (cookies.length > 80) lines.push(`  ... ${cookies.length - 80} more`);
+  return lines;
+}
+
+export interface StorageSummary { local: Array<[string, number]>; session: Array<[string, number]> }
+
+/** localStorage and sessionStorage as key names and value sizes, never values. */
+export function formatStorage(s: StorageSummary): string[] {
+  const part = (label: string, items: Array<[string, number]>) => [
+    `${label} · ${items.length} key${items.length === 1 ? '' : 's'}, ${items.reduce((n, [, size]) => n + size, 0)} characters`,
+    ...items.slice(0, 60).map(([k, size]) => `  ${k.slice(0, 80)} · ${size} characters`),
+    ...(items.length > 60 ? [`  ... ${items.length - 60} more`] : []),
+  ];
+  return [...part('localStorage', s.local), ...part('sessionStorage', s.session)];
 }

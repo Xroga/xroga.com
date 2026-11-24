@@ -261,7 +261,7 @@ export const AuditPageArgsSchema = z.strictObject({
 
 export const DiagnosticsArgsSchema = z.strictObject({
   ...readCommon,
-  kind: z.enum(['both', 'console', 'network', 'endpoints']).optional().describe('endpoints: the page’s API calls by method and path'),
+  kind: z.enum(['both', 'console', 'network', 'endpoints', 'cookies', 'storage']).optional().describe('endpoints: API calls by method and path; cookies and storage: names, flags and sizes, never values'),
   onlyProblems: z.boolean().optional().describe('Errors, and requests that failed or got 400+'),
   urlPattern: z.string().optional(),
   limit: z.number().int().min(1).max(100).optional(),

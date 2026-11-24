@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DiagnosticsLog, formatDiagnostics, scrubText, stripUrl } from '../diagnostics';
+import { DiagnosticsLog, formatCookies, formatDiagnostics, formatStorage, scrubText, stripUrl } from '../diagnostics';
 
 describe('stripUrl', () => {
   it('drops the query and fragment, which can carry a token', () => {
@@ -78,5 +78,29 @@ describe('endpoint map', () => {
 
   it('says what to do when nothing was seen', () => {
     expect(formatDiagnostics(new DiagnosticsLog(), { kind: 'endpoints' })[0]).toContain('no API calls seen yet');
+  });
+});
+
+describe('cookies and storage', () => {
+  it('shows cookie names and flags, never values, and says what looks wrong', () => {
+    const out = formatCookies(
+      [
+        { name: 'session_id', domain: 'a.test', path: '/', secure: false, httpOnly: false, sameSite: 'None', session: true },
+        { name: 'theme', domain: 'a.test', path: '/', secure: true, httpOnly: false, sameSite: 'Lax', expires: Date.now() / 1000 + 86_400 * 30 },
+      ],
+      'https://a.test/',
+    ).join('\n');
+    expect(out).toContain('2 for this page (values are never shown)');
+    expect(out).toMatch(/session_id .* not Secure, readable by scripts, SameSite=None · session .* add Secure.*SameSite=None needs Secure.*add HttpOnly/);
+    expect(out).toMatch(/theme .* Secure, readable by scripts, SameSite=Lax · expires in 30 days$/m);
+  });
+  it('says so when there are no cookies', () => {
+    expect(formatCookies([], 'https://a.test/')[0]).toMatch(/none are set/);
+  });
+  it('lists storage keys with sizes only', () => {
+    const out = formatStorage({ local: [['token', 120], ['theme', 4]], session: [] }).join('\n');
+    expect(out).toContain('localStorage · 2 keys, 124 characters');
+    expect(out).toContain('token · 120 characters');
+    expect(out).toContain('sessionStorage · 0 keys');
   });
 });

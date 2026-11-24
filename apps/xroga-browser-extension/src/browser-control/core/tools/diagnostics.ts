@@ -2,7 +2,8 @@
 // domains on), so the first answer says what to do to make the page report: repeat the action, or reload, then ask again.
 import type { DiagnosticsArgs } from '../../protocol/schemas';
 import type { ToolContext, ToolOutcome } from '../controller';
-import { DiagnosticsLog, formatDiagnostics } from '../diagnostics';
+import { DiagnosticsLog, formatCookies, formatDiagnostics, formatStorage } from '../diagnostics';
+import type { CookieInfo, StorageSummary } from '../diagnostics';
 import type { TabAttachment } from '../ports';
 
 const LOGS = new WeakMap<TabAttachment, DiagnosticsLog>();
@@ -42,6 +43,21 @@ async function start(attachment: TabAttachment): Promise<DiagnosticsLog> {
 
 export async function diagnostics(ctx: ToolContext, args: DiagnosticsArgs): Promise<ToolOutcome> {
   const attachment = await ctx.attach();
+  // Cookies and storage are read when asked, from the browser itself, and show names, flags and sizes only: a value can be a login.
+  if (args.kind === 'cookies') {
+    await attachment.cdp.send(undefined, 'Network.enable').catch(() => undefined);
+    const got = (await attachment.cdp.send(undefined, 'Network.getCookies').catch(() => ({ cookies: [] }))) as { cookies?: CookieInfo[] };
+    const here = (await attachment.cdp.send(undefined, 'Runtime.evaluate', { expression: 'location.href', returnByValue: true }).catch(() => undefined)) as { result?: { value?: string } } | undefined;
+    const url = here?.result?.value ?? '';
+    return { data: { cookies: (got.cookies ?? []).length }, pageText: formatCookies(got.cookies ?? [], url).join('\n') };
+  }
+  if (args.kind === 'storage') {
+    const expr = `(() => { const sz = s => { try { return Object.keys(s).map(k => [k, (s.getItem(k) || '').length]); } catch { return []; } }; return JSON.stringify({ local: sz(localStorage), session: sz(sessionStorage) }); })()`;
+    const got = (await attachment.cdp.send(undefined, 'Runtime.evaluate', { expression: expr, returnByValue: true }).catch(() => undefined)) as { result?: { value?: string } } | undefined;
+    let summary: StorageSummary = { local: [], session: [] };
+    try { summary = JSON.parse(got?.result?.value ?? '') as StorageSummary; } catch { /* the page held it back */ }
+    return { data: { local: summary.local.length, session: summary.session.length }, pageText: formatStorage(summary).join('\n') };
+  }
   let log = LOGS.get(attachment);
   if (!log) {
     log = await start(attachment);

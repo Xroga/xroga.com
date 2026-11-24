@@ -275,6 +275,43 @@ export const SKILLS: Skill[] = [
     ].join('\n'),
   },
   {
+    // The method of chrome-devtools-mcp's a11y-debugging skill (Apache-2.0), rewritten for Xroga's own tools.
+    id: 'a11y-audit',
+    when: has(/\b(?:accessib\w*|a11y|screen reader|wcag|aria|colou?r contrast|keyboard (?:navigation|access)|tap targets?|focus (?:order|states?))\b/i),
+    body: [
+      'Accessibility check:',
+      '- The accessibility tree is what assistive technology sees, so snapshot first: every control needs a role and a name; an unnamed button or link, an image with no alt text, a field with no label and a heading that skips a level are findings. audit_page counts several of these; form_model lists unlabelled fields.',
+      '- Keyboard: press Tab through the page and watch the focus move (each press reports where focus went). Every control must be reachable, the order must follow the visual order, focus must stay visible, and a dialog must trap focus and close on Escape.',
+      '- Hidden is not one thing: display none and aria-hidden remove an element for screen readers; opacity 0 does not. Check that decorative things are hidden and real content is not.',
+      '- Report each finding with the element, what is wrong, why it matters to a person using a screen reader or keyboard, and the fix, worst first. Do not claim the page passes WCAG: say which checks you made and which need a person or a contrast tool.',
+    ].join('\n'),
+  },
+  {
+    // The method of chrome-devtools-mcp's debug-optimize-lcp skill (Apache-2.0), rewritten for Xroga's own tools.
+    id: 'speed-debug',
+    when: has(/\b(?:lcp|largest contentful paint|core web vitals?|cwv|page ?speed|site speed|slow (?:page|site|website|load\w*)|load(?:ing)? time|why is .{0,30} slow)\b/i),
+    body: [
+      'Page speed:',
+      '- Measure before advising: audit_page gives time to first byte, first and largest paint, layout shift, elements, requests and weight. Good is LCP 2.5 s or less, CLS 0.1 or less; 4 s and 0.25 are poor. Measure the page as it loads: navigate again, then audit_page.',
+      '- Find which part is late. A slow first byte is the server or a redirect chain; a late largest paint with a fast first byte is the hero image or font (large, not preloaded, lazy-loaded by mistake) or render-blocking scripts and styles; layout shift is images and embeds without size, late banners and web fonts swapping.',
+      '- diagnostics (network) lists what loaded and what failed; the biggest and the slowest requests are the first suspects. Check on a phone with emulate (device, network slow-3g) because most visitors are not on your connection.',
+      '- Give the fix next to each finding (size and compress the image, preload the hero, defer scripts, set width and height, use font-display) and which finding would gain the most. Re-measure after a change you were asked to make and report the numbers before and after.',
+    ].join('\n'),
+  },
+  {
+    // The method of chrome-devtools-mcp's cookie-debugging skill (Apache-2.0), rewritten for Xroga's own tools.
+    id: 'cookie-debug',
+    when: has(/\b(?:cookies?|samesite|httponly|session (?:expir\w*|lost)|keeps? (?:logging|signing) (?:me )?out|login loop|redirect loop|consent banner|cookie (?:banner|consent)|401|403)\b/i),
+    body: [
+      'Cookies and sessions:',
+      '- diagnostics with kind cookies lists the page’s cookies as names and flags (never values) and marks the ones that look wrong: a login cookie scripts can read, SameSite=None without Secure, no Secure on a secure page. kind storage lists localStorage and sessionStorage keys with sizes.',
+      '- An HttpOnly cookie cannot be read by page scripts but the browser still sends it with every request, so a missing login after a redirect is read from the requests: diagnostics network with onlyProblems shows 401, 403 and redirect chains.',
+      '- A login that loops usually means the session cookie is not stored (wrong domain, SameSite or Secure) or expires at once. Compare the cookie list before and after the login step.',
+      '- Consent banners: check that choosing Reject sets no analytics or advertising cookies (list cookies before and after). Report what was set and by which domain.',
+      '- Never copy a cookie value into an answer, a message or a file, and do not try to read or change another person’s session.',
+    ].join('\n'),
+  },
+  {
     id: 'debugging',
     when: has(/\b(?:debug|debugging|broken|not working|doesn.t work|isn.t working|error|errors|failing|fails|failed|crash|bug|issue|problem|why (?:is|does|did)|timeout)\b/i),
     body: [

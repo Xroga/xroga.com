@@ -122,3 +122,12 @@ describe('the research prompt is recognised as an audit task', () => {
     expect(ids.length).toBeGreaterThanOrEqual(4);
   });
 });
+
+describe('batch 2 skills', () => {
+  it('picks the accessibility, speed and cookie playbooks from what the person asks', () => {
+    expect(ids('check this page for accessibility problems and keyboard navigation')).toContain('a11y-audit');
+    expect(ids('why is my site slow? check the LCP and core web vitals')).toContain('speed-debug');
+    expect(ids('I keep getting logged out, check the cookies and samesite')).toContain('cookie-debug');
+    expect(ids('find 5 plumbers in Leeds')).not.toContain('cookie-debug');
+  });
+});
