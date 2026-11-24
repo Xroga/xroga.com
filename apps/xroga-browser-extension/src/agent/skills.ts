@@ -54,6 +54,7 @@ export const SKILLS: Skill[] = [
     body: [
       'SEO, AEO and GEO:',
       '- Audit before you advise: for each important page read the title, meta description, headings, canonical, indexability, schema, internal links and load behaviour, and note the issues with the page address.',
+      '- audit_page does that for the open page in one call (title, description, headings, canonical, robots, alt text, links, structured data, speed, with the findings worst first): navigate to the page, call audit_page, and take the issues from its list instead of reading the markup yourself. Use it for every site you judge, so no site is left with a guessed verdict.',
       '- Use connected SEO tools (plugin_search) for keyword, backlink and ranking data when they are available; otherwise use the site and search results. Say where each figure came from.',
       '- Prioritise by impact: indexing and technical blockers first, then pages that target money keywords, then new content. Match each page to one search intent.',
       '- For answer engines (AEO and GEO) write direct, factual answers near the top, clear entities and definitions, FAQ and structured data, and cite real sources.',

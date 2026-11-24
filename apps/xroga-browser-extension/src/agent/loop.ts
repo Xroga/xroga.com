@@ -4,6 +4,7 @@ import { runCalculate } from './calculate';
 import { runDataOpsTool } from './data-ops';
 import { searchUrlToQuery } from './search-redirect';
 import { judgeTask } from './task-judge';
+import { skillsFor } from './skills';
 import { runBrowserData } from './browser-data';
 import { countRun, deleteMacro, describeMacro, expandVars, httpRefusalFor, httpUrlsOf, macrosFor, placeholdersOf, refusalFor, saveMacro } from './macro-tool';
 import { tableToObjects } from '@src/browser-control/core/tools/extract-rows';
@@ -45,7 +46,6 @@ import { ProgressTracker } from './progress-tracker';
 import { DeadSpots } from './dead-spots';
 import { RepeatDetector } from './repeat-detector';
 import type { PictureChange } from './pixels';
-import { skillsFor } from './skills';
 import { demosFor, renderDemo, saveDemo, type SavedDemo } from './demo-tool';
 import { describeHit, renderSkill, searchSkills, skillById } from './skill-catalog';
 import { runMenuPath, validateMenuPath } from './menu-path';
@@ -1272,10 +1272,8 @@ ${ledger}` : ''),
     if (!this.options.localScreenshots || this.#evidenceShots >= EVIDENCE_SHOT_LIMIT || this.options.signal.aborted) return undefined;
     const tool = outcome.call.toolName;
     const args = (outcome.call.input ?? {}) as Record<string, unknown>;
-    const wanted =
-      (tool === 'navigate' && typeof args.url === 'string') ||
-      (tool === 'tabs' && args.action === 'open') ||
-      (tool === 'fill_form' && args.submit !== undefined);
+    // Only a submitted form: a picture after every page opened made each navigation wait for a screenshot nobody needed to decide anything.
+    const wanted = tool === 'fill_form' && args.submit !== undefined;
     if (!wanted || !outcome.result?.ok) return undefined;
     const tabId = outcome.result.page?.tabId ?? args.tabId ?? this.#activeTab;
     const shot = await this.options.layer
@@ -1818,6 +1816,51 @@ ${ledger}` : ''),
     if (typeof given === 'string' && /^https?:\/\//i.test(given)) return given;
     const tabs = await this.options.layer.tabs().catch(() => undefined);
     return tabs?.tabs.find(t => t.tabId === tabs.activeTabId)?.url;
+  }
+
+  /** What the task is about, decided once from the person's first message: which helpers are run for the model after a page opens. */
+  #intent?: { audit: boolean; rows: boolean };
+  #autoDone = new Set<string>();
+
+  async #intents(): Promise<{ audit: boolean; rows: boolean }> {
+    if (this.#intent) return this.#intent;
+    const branch = await activeBranch(this.options.conversationId);
+    const first = branch.find((e): e is EntryOf<'message'> => e.type === 'message' && e.message.role === 'user' && !e.appOwned);
+    const task = first?.message.parts.map(p => (p.type === 'text' ? p.text : '')).join('\n') ?? '';
+    const ids = new Set(skillsFor(task).map(k => k.id));
+    this.#intent = { audit: ids.has('seo') || ids.has('site-qa'), rows: ids.has('lead-generation') || ids.has('research') };
+    return this.#intent;
+  }
+
+  /**
+   * Tools the model has but rarely chooses are run for it when the task is the kind that needs them, so the result is in its hands without a turn spent asking:
+   * a task that audits sites gets audit_page for each page it opens, a research or lead task gets the tables and result lists of each page as held rows (extract_rows,
+   * for data_ops). Each page once; a page with nothing to report adds nothing; a failure adds nothing.
+   */
+  async #autoHelp(result: { ok?: boolean; page?: { url?: string } }, args: Record<string, unknown>): Promise<string> {
+    const url = await this.#pageUrl(result, args);
+    if (!result.ok || !url || !/^https?:\/\//i.test(url)) return '';
+    const key = url.split('#')[0]!;
+    if (this.#autoDone.has(key)) return '';
+    this.#autoDone.add(key);
+    const intent = await this.#intents();
+    if (!intent.audit && !intent.rows) return '';
+    const signal = this.options.signal;
+    const [audit, rows] = await Promise.all([
+      intent.audit ? this.options.layer.call('audit_page', {}, signal).catch(() => undefined) : undefined,
+      intent.rows ? this.options.layer.call('extract_rows', {}, signal).catch(() => undefined) : undefined,
+    ]);
+    const parts: string[] = [];
+    if (audit?.ok && audit.text) parts.push(`audit_page, run for you because this task audits sites:\n${audit.text.slice(0, 2500)}`);
+    if (rows?.ok) {
+      const tables = (rows.data as { tables?: ExtractedTable[] } | undefined)?.tables;
+      if (Array.isArray(tables) && tables.some(t => (t.rows?.length ?? 0) >= 4)) {
+        this.#extracted = tables.map(tableToObjects);
+        this.#workingRows = undefined;
+        parts.push(`extract_rows, run for you: this page holds list data, now held for data_ops (dedupe, filter, sort) without retyping a cell:\n${rows.text.slice(0, 1500)}`);
+      }
+    }
+    return parts.join('\n');
   }
 
   async #macroTool(call: ToolCallRequest, kind: ToolKind, args: Record<string, unknown>): Promise<CallOutcome> {
@@ -2398,6 +2441,9 @@ ${renderSkill(top)}`);
         if (challenge) {
           this.#blocked.add(await this.#pageUrl(result, args), challenge);
           outcome.text = `${result.text}\n${challengeNote(challenge)}`;
+        } else if (call.toolName === 'navigate' || ((call.toolName === 'read' || call.toolName === 'snapshot') && !args.ref && !args.scope)) {
+          const extra = await this.#autoHelp(result, args);
+          if (extra) outcome.text = `${outcome.text}\n${extra}`;
         }
       }
     }

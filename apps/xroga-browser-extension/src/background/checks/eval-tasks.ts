@@ -129,6 +129,20 @@ export const TASKS: EvalTask[] = [
     grade: f => /c-agency-brightpath\.html|c-agency-yorkshire\.html/.test(f.answer) && !/ad\.example/.test(f.answer),
   },
   {
+    // A read-only question about a page's text and structure: it needs no picture and should take a few seconds.
+    id: 'read-headings',
+    url: `${FIXTURE_ORIGIN}/c-audit-page.html`,
+    task: 'What is the title of this page, and what are its headings (every h1 and h2)? Answer in one short list.',
+    grade: f => /brightpath dental/i.test(f.answer) && /book a check-up/i.test(f.answer) && /treatments/i.test(f.answer) && !f.calls.some(c => c.name === 'screenshot'),
+  },
+  {
+    // The page's missing meta description and viewport tag are not in its visible text: only audit_page shows them, and it is run for the model on an audit task.
+    id: 'audit-auto',
+    url: `${FIXTURE_ORIGIN}/c-audit-page.html`,
+    task: 'Do an SEO check of this page and tell me its most serious problems.',
+    grade: f => /meta description/i.test(f.answer) && /viewport|alt/i.test(f.answer),
+  },
+  {
     id: 'add-rows',
     url: `${FIXTURE_ORIGIN}/c-effects.html`,
     task: 'Add two rows to the list on this page.',

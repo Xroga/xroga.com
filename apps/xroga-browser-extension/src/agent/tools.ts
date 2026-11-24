@@ -215,7 +215,7 @@ export function toolsForRun(options: {
         ? {
             ...t,
             description:
-              'Capture a redacted screenshot for the user to view locally. Use when requested or needed as evidence. You receive only capture metadata, so use snapshot or read to inspect the page.',
+              'Slow, and you cannot see it: it only saves a redacted picture for the person. Use it only when they ask for a picture or a finished result needs picture evidence. Never to read text, headings or links or to find controls: read, find and snapshot are far faster and show you the page.',
           }
         : t,
     );

@@ -166,6 +166,18 @@ async function main() {
     };
 
     const failures = [];
+    if (opt('--prompt')) {
+      // A real task of the person's choosing: timed, with the number of screenshots the run mentions.
+      const t0 = Date.now();
+      const text = await ask('custom', opt('--prompt'), Number(opt('--max-ms') ?? 1_200_000));
+      report.steps.seconds = Math.round((Date.now() - t0) / 1000);
+      report.steps.screenshotMentions = (text.match(/screenshot/gi) ?? []).length;
+      report.steps.finalAnswer = text.replace(/\s+/g, ' ').slice(-2500);
+      const broken = /Xroga paused|could not be verified|Interrupted|BROWSER_[A-Z_]+|Resume to continue/.test(text.slice(-1500));
+      report.ok = report.steps.custom.settled && !broken;
+      report.failures = report.ok ? [] : [broken ? 'the run paused or failed (see finalAnswer)' : 'the task did not settle in time'];
+      throw null;
+    }
     // 1. python_repl: two cells, the second uses a variable of the first.
     const t1 = flag('--skip-python') ? '' : await ask('pythonRepl', 'Use the python_repl tool, two separate calls. First call: define total = sum(i*i for i in range(1, 21)) and print it. Second call: using the variable total from the first call (do not redefine it), print total + 7. Then tell me both numbers.', 360_000);
     if (!flag('--skip-python')) {
@@ -183,7 +195,7 @@ async function main() {
     report.failures = failures;
     report.ok = failures.length === 0;
   } catch (error) {
-    report.error = String(error?.stack ?? error);
+    if (error) report.error = String(error?.stack ?? error);
   } finally {
     chrome.kill();
     await sleep(500);

@@ -570,22 +570,22 @@ export function probeMain(): void {
       let y = 0;
       let steps = 0;
       // Down in steps of 90% of the window: lazy images and appended rows load as they come into view. Bounded, so an endless feed cannot hold the capture.
-      while (y < se.scrollHeight && steps < 150 && Date.now() - t0 < 8000) {
+      while (y < se.scrollHeight && steps < 150 && Date.now() - t0 < 2500) {
         window.scrollTo(0, y);
-        await wait(100);
+        await wait(60);
         y += Math.max(200, Math.floor(window.innerHeight * 0.9));
         steps++;
       }
       // Rows appended when the end comes into view: go to the new end until the height stops growing.
-      for (let grown = 0; grown < 3 && Date.now() - t0 < 8000; ) {
+      for (let grown = 0; grown < 2 && Date.now() - t0 < 3500; ) {
         const before = se.scrollHeight;
         window.scrollTo(0, before);
-        await wait(150);
+        await wait(120);
         grown = se.scrollHeight > before ? 0 : grown + 1;
       }
       let last = se.scrollHeight;
       let stable = 0;
-      while (stable < 400 && Date.now() - t0 < 10_000) {
+      while (stable < 200 && Date.now() - t0 < 4000) {
         await wait(100);
         if (se.scrollHeight === last) stable += 100;
         else { last = se.scrollHeight; stable = 0; }

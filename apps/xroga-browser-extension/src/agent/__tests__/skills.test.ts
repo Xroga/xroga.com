@@ -34,6 +34,10 @@ describe('skillsFor', () => {
     expect(skillsSection('Debug why the contact form is not working')).toContain('Reproduce the problem first');
   });
 
+  it('points the SEO playbook at audit_page', () => {
+    expect(skillsSection('Do an SEO audit of these agencies')).toContain('audit_page');
+  });
+
   it('picks the site QA method for a bug hunt or audit of a site', () => {
     expect(ids('Please test my website and find the bugs')).toContain('site-qa');
     expect(ids('Do an exploratory test of this web app')).toContain('site-qa');
