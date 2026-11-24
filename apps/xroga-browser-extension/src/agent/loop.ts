@@ -1415,6 +1415,21 @@ ${ledger}` : ''),
 
   // --- The loop ------------------------------------------------------------------------------------------------
 
+  #paceAt = Date.now();
+  #paceTurns = 0;
+  /** Not a limit: every few minutes (and every 12 turns) of one approach the agent is asked to compare time spent with what the task needs and, if it is behind, to switch route. */
+  async #paceNote(): Promise<void> {
+    const now = Date.now();
+    const turnsHere = this.#turns - this.#paceTurns;
+    if (now - this.#paceAt < 240_000 && turnsHere < 12) return;
+    if (this.#turns < 3) return;
+    this.#paceAt = now;
+    this.#paceTurns = this.#turns;
+    await this.writer.appNote(
+      `${Math.round((now - (Number(this.options.startedAt) || Date.parse(String(this.options.startedAt)) || now)) / 60_000)} minutes and ${this.#turns} turns so far. Nothing stops you, but check the pace: if this step needs more time than its worth or the same kind of call keeps failing, change the method now: read page text instead of looking, http_get or audit_page instead of clicking through, python_repl for data work, parallel workers for many items, a different site or a search for the same fact.`,
+    );
+  }
+
   async run(): Promise<LoopEnd> {
     const { emit, signal } = this.options;
     emit({ type: 'agent_start', runId: this.options.runId });
@@ -1424,6 +1439,7 @@ ${ledger}` : ''),
       for (;;) {
         if (signal.aborted) return this.#end({ status: 'stopped' });
         const { request, check } = await this.#time('prepare', async () => {
+          await this.#paceNote();
           await this.#deliverSteering();
           await this.storeHeader();
           const request = await this.prepareRequest();

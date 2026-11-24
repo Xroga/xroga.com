@@ -35,7 +35,7 @@ export class CdpTimeoutError extends Error {
 }
 
 /** Timeouts: 10 s for captures, 5 s otherwise. */
-export const DEFAULT_COMMAND_TIMEOUT_MS = 5_000;
+export const DEFAULT_COMMAND_TIMEOUT_MS = 30_000;
 export const CAPTURE_TIMEOUT_MS = 10_000;
 
 /** One input the agent dispatched through the debugger: what the page will see as a trusted event, to tell it from a person's. */

@@ -31,14 +31,14 @@ export const MAX_RESULT = 100_000;
 const HANDOFF_EACH = 2_000;
 const HANDOFF_ALL = 6_000;
 // A parent waiting on workers spends a model turn per look; it sleeps until a worker finishes (a result to use), at most a minute.
-const MAX_WAIT_SECONDS = 60;
+const MAX_WAIT_SECONDS = 120;
 const KEEP_ENDED_MS = 24 * 3_600_000;
 /**
  * How long one worker may run before the coordinator stops waiting for it. Generous on purpose (a real research worker takes minutes), it
  * only exists so a worker that went silent (a stuck page, a lost tab) cannot hold the whole task: that worker alone is failed with a
  * clear reason, its window is closed, and the others and the queue carry on. An operator can change it with `deadlineMs`.
  */
-const WORKER_DEADLINE_MS = 15 * 60_000;
+const WORKER_DEADLINE_MS = 60 * 60_000;
 const LABEL = /^[a-z][a-z0-9_-]{0,23}$/i;
 const RESOURCE = /^[a-z0-9][a-z0-9:_./-]{0,59}$/i;
 

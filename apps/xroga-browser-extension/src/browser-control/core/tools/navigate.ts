@@ -15,7 +15,7 @@ import { quote } from '../text';
 
 /** DOMContentLoaded plus network idle, capped at 5 s. */
 const NAVIGATION_BUDGET_MS = 5_000;
-const NAVIGATION_TIMEOUT_MS = 30_000;
+const NAVIGATION_TIMEOUT_MS = 60_000;
 /** Failures before any request reached a server, worth one more try after a short pause. */
 const TRANSIENT_LOOKUP = /net::ERR_(?:NAME_NOT_RESOLVED|NETWORK_CHANGED|INTERNET_DISCONNECTED)/;
 const TRANSIENT_RETRY_MS = 800;

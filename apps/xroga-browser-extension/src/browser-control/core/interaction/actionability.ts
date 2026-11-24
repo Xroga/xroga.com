@@ -15,7 +15,7 @@ import type { ResolvedTarget } from './resolve';
 import { quote } from '../text';
 
 /** The budget: 5 s; re-check at 0, 20, 100, 100, 500 ms, then every 500 ms. */
-export const ACTIONABILITY_BUDGET_MS = 5_000;
+export const ACTIONABILITY_BUDGET_MS = 10_000;
 const SCHEDULE = [0, 20, 100, 100, 500];
 const STABLE_GAP_MS = 50;
 const STABLE_TOLERANCE_PX = 2;
