@@ -107,7 +107,8 @@ import {
   resumeRunDurable,
 } from './runStore.js';
 import { authorizeLegacyBuild } from './legacyBuilderAdapter.js';
-import { startupProgress } from './startupProgress.js';
+import { startupProgress, understandingProgress } from './startupProgress.js';
+import { decideArchitecture, readIntent } from './intentReasoning.js';
 import {
   blueprintBriefForBuilder,
   describeBlueprintGaps,
@@ -1552,6 +1553,11 @@ if(opts.deliveryClaim){
     repositorySource: prior.source,
   });
   emit({ ...startupProgress('route'), swarmTodos: todosForBuild('route', 'omit') });
+  try {
+    const reading = readIntent(opts.prompt);
+    const understanding = understandingProgress([...reading.reasoning, ...decideArchitecture(reading).reasoning]);
+    if (understanding) emit({ ...understanding, swarmTodos: todosForBuild('route', 'omit') });
+  } catch { /* A summary is optional and must never fail a build. */ }
   const isUpdate = Boolean((meta?.buildUpdate || opts.builder) && prior.files.length);
   const providerKeyName = (modelId: ModelId): string => {
     return MODELS[modelId].provider;
