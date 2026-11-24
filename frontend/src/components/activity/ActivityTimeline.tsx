@@ -162,7 +162,7 @@ export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel
               <span>{waiting ? text : 'Black Hole is working'}</span>
               {elapsed ? <span className={styles.meta} aria-hidden="true">{elapsed}</span> : null}
             </span>
-            {!waiting ? <span className={styles.stage}>{text}</span> : null}
+            {!waiting && !(processing && processing.family !== 'start') ? <span className={styles.stage}>{text}</span> : null}
           </span>
           {hasDetails ? <ChevronDown className={styles.chevron} aria-hidden="true" /> : null}
         </button>

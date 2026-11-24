@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import type { XrogaActivityKind, XrogaActivityPresentation, XrogaActivityStatus } from './activityPresentation';
 import { coalesceActivity } from './activityPresentation';
 import { buildActivityTimeline } from './activityTimeline';
-import { buildProcessingView, checklistFromTodos } from './processingView';
+import { buildProcessingView, checklistFromRows, checklistFromTodos, familyFromLabel } from './processingView';
 import type { TerminalEvent } from './terminalEvent';
 
 let n = 0;
@@ -103,4 +103,45 @@ test('a settled run produces no live view (handoff to the folded history)', () =
   const timeline = buildActivityTimeline(rows, { runActive: false, outcome: 'success' });
   assert.equal(timeline.active, null);
   assert.equal(timeline.state, 'done');
+});
+
+test('without a backend plan, a progress list is built only from real rows and never lists future work', () => {
+  const rows = [
+    row('read-file', 'Read the project', 'complete'),
+    row('search', 'Searched the web', 'complete'),
+    row('compare', 'Comparing findings', 'active'),
+  ];
+  const view = buildProcessingView({ active: rows[2], rows });
+  assert.equal(view.checklistSource, 'events');
+  assert.deepEqual(view.checklist?.map(item => item.status), ['done', 'done', 'active']);
+  assert.deepEqual(view.checklist?.map(item => item.family), ['read', 'research', 'research']);
+});
+
+test('fewer than three real steps shows no list, and a backend plan wins over event rows', () => {
+  const two = [row('search', 'Searched the web', 'complete'), row('compare', 'Comparing findings', 'active')];
+  assert.equal(buildProcessingView({ active: two[1], rows: two }).checklist, null);
+  const todos = [
+    { id: 'a', label: 'Review project files', status: 'done' as const },
+    { id: 'b', label: 'Make the changes', status: 'active' as const },
+    { id: 'c', label: 'Run checks', status: 'pending' as const },
+  ];
+  const view = buildProcessingView({ active: two[1], rows: two, todos });
+  assert.equal(view.checklistSource, 'plan');
+  assert.deepEqual(view.checklist?.map(item => item.family), ['read', 'write', 'verify']);
+});
+
+test('a failed run never leaves an event step looking active, and errors stay failed', () => {
+  const rows = [
+    row('command', 'Ran the build', 'error'),
+    row('code', 'Editing components', 'active'),
+    row('test', 'Ran checks', 'complete'),
+  ];
+  assert.deepEqual(checklistFromRows(rows, 'failure')?.map(item => item.status), ['failed', 'failed', 'done']);
+  assert.equal(checklistFromRows(rows, 'interrupted')?.[1].status, 'skipped');
+});
+
+test('icon hints come from whole words, so "findings" is not a search', () => {
+  assert.equal(familyFromLabel('Compare the findings'), undefined);
+  assert.equal(familyFromLabel('Search the web'), 'research');
+  assert.equal(familyFromLabel('Run the tests'), 'verify');
 });

@@ -67405,7 +67405,7 @@
       "id": "surface:1dacf962de020747d05b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/activity/ActivityTimeline.tsx",
-      "sha256": "77ab799329a9524780c5c989997c8ba8716cbd9558bdecf171a1c10bc8862d6a",
+      "sha256": "2d4df6889f4521a926859c315889ef3c39a784f936ce6e8fa981a07f2ac2f080",
       "symbols": [
         "ActivityTimeline",
         "ActivityTimelineProps",
@@ -67525,22 +67525,32 @@
       "id": "surface:837308a60584f4bf9784",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/activity/ProcessingSurface.tsx",
-      "sha256": "f1224a3cfccf2c230c15ac0a2e785637a4f073f06324aee4499d370c2beba8f0",
+      "sha256": "cb8b1cdd10f3e55935e07a0803f67e8f873bcc28ccdc419e71b8435c194a63c9",
       "symbols": [
+        "DEFAULT_OPEN_MAX",
         "FAMILY_ICON",
+        "Family",
         "Icon",
         "ProcessingSurface",
         "STATUS_WORD",
         "StepMark",
+        "SwapText",
         "checklist",
+        "current",
         "finished",
-        "showCopy"
+        "live",
+        "mark",
+        "open",
+        "reduced",
+        "showCopy",
+        "title"
       ],
       "imports": [
         "./processing.module.css",
         "@/lib/terminal/activityTimeline",
         "@/lib/terminal/processingView",
         "lucide-react",
+        "motion/react",
         "react"
       ],
       "runtimeImports": [
@@ -67556,6 +67566,7 @@
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "lucide-react",
+        "motion/react",
         "react"
       ],
       "authBoundary": [],
@@ -106872,7 +106883,7 @@
       "id": "surface:c00e4d07c1af6ef847a7",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/workspace/WorkspaceAuthGate.tsx",
-      "sha256": "88eee388034976b13d211132a8523bd0c5bec1d94ded80dc3fcbb930a9e6128f",
+      "sha256": "8f41b33b057e3b90a8428eec2cef060b835481438d18fa1f7956d4b37a8bded1",
       "symbols": [
         "GATE_COPY",
         "GateCopy",
@@ -106905,6 +106916,7 @@
       "imports": [
         "@/components/icons/GitHubIcon",
         "@/components/layout/WorkspaceIdentityContext",
+        "@/components/ui/UiverseShineText",
         "@/lib/api",
         "@/lib/guestWorkspace",
         "@/lib/supabase/authErrors",
@@ -112360,7 +112372,7 @@
       ],
       "callers": [
         "frontend/src/components/layout/Sidebar.tsx:96",
-        "frontend/src/components/workspace/WorkspaceAuthGate.tsx:31",
+        "frontend/src/components/workspace/WorkspaceAuthGate.tsx:32",
         "frontend/src/lib/runGuestLaneChat.ts:3",
         "frontend/src/lib/userScopedCache.test.ts:11",
         "frontend/src/lib/userScopedCache.ts:1",
@@ -121471,22 +121483,27 @@
       "id": "surface:64d3429f35e151f27537",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/terminal/processingView.ts",
-      "sha256": "0e59f8e5f9ac9d06b0f99af176a64124b2b1feb78477ee97a3cf20c8bab7492a",
+      "sha256": "ae3c357b3cce71ebd0a0dd34170f9d73d7f12903ea2d7dc4b7a69b46e79777ad",
       "symbols": [
         "BuildProcessingViewOptions",
         "HEADING_BY_KIND",
         "MODEL_KINDS",
         "ProcessingChecklistItem",
+        "ProcessingChecklistSource",
         "ProcessingStepStatus",
         "ProcessingTone",
         "ProcessingView",
         "buildProcessingView",
+        "checklist",
+        "checklistFromRows",
         "checklistFromTodos",
+        "checklistSource",
         "clean",
         "detail",
         "done",
         "failedSteps",
         "family",
+        "familyFromLabel",
         "finishedRows",
         "finishedSteps",
         "heading",
@@ -121496,7 +121513,10 @@
         "paragraph",
         "parallel",
         "parts",
+        "plan",
         "progressClause",
+        "row",
+        "seen",
         "sentence",
         "status",
         "text",
@@ -151146,9 +151166,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:b2cada71a61668b569ba",
+      "id": "finding:abdc16b9962627aad39a",
       "sourcePath": "frontend/src/lib/terminal/processingView.ts",
-      "line": 105,
+      "line": 123,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -151156,9 +151176,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:5645257f7c0c8ef5fffa",
+      "id": "finding:6efdef97c43fd2033a45",
       "sourcePath": "frontend/src/lib/terminal/processingView.ts",
-      "line": 106,
+      "line": 124,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -151166,9 +151186,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:da0b33872cd80b6d31d3",
+      "id": "finding:6410c72fcd24412bc1c7",
       "sourcePath": "frontend/src/lib/terminal/processingView.ts",
-      "line": 108,
+      "line": 126,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -151176,9 +151196,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:a561ecc38fd7a93384f4",
+      "id": "finding:09ddefe88c19f41fc10d",
       "sourcePath": "frontend/src/lib/terminal/processingView.ts",
-      "line": 108,
+      "line": 126,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -151186,9 +151206,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:5e40999be5fd46586eb4",
+      "id": "finding:668d2c1cf17d1b708204",
       "sourcePath": "frontend/src/lib/terminal/processingView.ts",
-      "line": 108,
+      "line": 126,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -151196,9 +151216,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:db6e1253fa6b445d5794",
+      "id": "finding:82791678b903dd817f4b",
       "sourcePath": "frontend/src/lib/terminal/processingView.ts",
-      "line": 112,
+      "line": 130,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -161913,7 +161933,7 @@
     {
       "id": "test-suite:6c26b862d0b3fa86b3fd",
       "sourcePath": "frontend/src/lib/terminal/processingView.test.ts",
-      "declaredTests": 9,
+      "declaredTests": 13,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -162704,6 +162724,7 @@
     "Computed route paths, runtime registrations, Docker/worker commands and dynamic nonliteral imports require explicit manual reconciliation.",
     "No production credentials or customer data were read; live behavior remains unverified in this command.",
     "Static imports do not prove provider availability or authorization correctness.",
+    "Unresolved local import frontend/src/components/workspace/WorkspaceAuthGate.tsx:31 -> @/components/ui/UiverseShineText",
     "Unresolved local import scripts/batch3/live-github-check.ts:22 -> ../../backend/src/existingSource/change/localProcessPort.testsupport.js",
     "Unresolved local import scripts/batch3/local-supabase-check.ts:17 -> ../../backend/src/existingSource/change/localProcessPort.testsupport.js",
     "Unresolved local import scripts/render-software-art.mjs:17 -> ../node_modules/playwright/index.mjs"
