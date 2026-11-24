@@ -106414,6 +106414,51 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:08df5882c2ec2f6c3d6a",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/ui/UiverseShineText.tsx",
+      "sha256": "1d3d28da00172537fbb80483d3ce22ad254cf999c3df9734b1ea7aa93c020ae5",
+      "symbols": [
+        "UiverseShineText"
+      ],
+      "imports": [
+        "./UiverseShineText.module.css",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/ui/UiverseShineText.module.css"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(shell)/dashboard/automations/page.tsx",
+        "frontend/src/app/(shell)/dashboard/integrations/page.tsx",
+        "frontend/src/app/(shell)/dashboard/projects/page.tsx",
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx",
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/workspace/WorkspaceAuthGate.tsx:31"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:8d845e31ab0f6136ce23",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/ui/UiverseTableCard.tsx",
@@ -106929,6 +106974,7 @@
       "runtimeImports": [
         "frontend/src/components/icons/GitHubIcon.tsx",
         "frontend/src/components/layout/WorkspaceIdentityContext.tsx",
+        "frontend/src/components/ui/UiverseShineText.tsx",
         "frontend/src/lib/api.ts",
         "frontend/src/lib/guestWorkspace.ts",
         "frontend/src/lib/supabase/authErrors.ts",
@@ -162724,7 +162770,6 @@
     "Computed route paths, runtime registrations, Docker/worker commands and dynamic nonliteral imports require explicit manual reconciliation.",
     "No production credentials or customer data were read; live behavior remains unverified in this command.",
     "Static imports do not prove provider availability or authorization correctness.",
-    "Unresolved local import frontend/src/components/workspace/WorkspaceAuthGate.tsx:31 -> @/components/ui/UiverseShineText",
     "Unresolved local import scripts/batch3/live-github-check.ts:22 -> ../../backend/src/existingSource/change/localProcessPort.testsupport.js",
     "Unresolved local import scripts/batch3/local-supabase-check.ts:17 -> ../../backend/src/existingSource/change/localProcessPort.testsupport.js",
     "Unresolved local import scripts/render-software-art.mjs:17 -> ../node_modules/playwright/index.mjs"

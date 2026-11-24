@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "c23b07377ff3f1e42f663334032b5f66cdbbfe3a",
+  "source_sha": "237939149ec2fd0244f2de96e1c3d52e31df7c61",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -23523,6 +23523,10 @@
     {
       "path": "frontend/src/components/ui/Uiverse.tsx",
       "sha256": "b624f120a3479498119c2b7f3b2eb1d106c96d792d4fbd97777b9d34d4a03fa5"
+    },
+    {
+      "path": "frontend/src/components/ui/UiverseShineText.tsx",
+      "sha256": "1d3d28da00172537fbb80483d3ce22ad254cf999c3df9734b1ea7aa93c020ae5"
     },
     {
       "path": "frontend/src/components/ui/UiverseTableCard.tsx",
