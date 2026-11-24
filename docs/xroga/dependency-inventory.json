@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "2d7ddda61e66597ed7bbf5e4c2af49293cae50a3",
+  "source_sha": "43462bba7346f209a5a64e056b6d83d84be6c93d",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -23238,7 +23238,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalLiveActivity.tsx",
-      "sha256": "199888ca766163415e0b8dd8f3cd1b0af462d1a13cb6c7bff000fe7c5db0aa78"
+      "sha256": "876d8a153763686e2931deb259bba9066f2aa5854b0ad09e5b6e11c57d306eea"
     },
     {
       "path": "frontend/src/components/terminal/TerminalSearchBar.tsx",
