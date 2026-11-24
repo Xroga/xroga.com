@@ -4,6 +4,7 @@ import { runCalculate } from './calculate';
 import { runDataOpsTool } from './data-ops';
 import { searchUrlToQuery } from './search-redirect';
 import { judgeTask } from './task-judge';
+import { Coach } from './coach';
 import { SKILLS, skillsFor } from './skills';
 import { runBrowserData } from './browser-data';
 import { countRun, deleteMacro, describeMacro, expandVars, httpRefusalFor, httpUrlsOf, macrosFor, placeholdersOf, refusalFor, saveMacro } from './macro-tool';
@@ -1415,19 +1416,20 @@ ${ledger}` : ''),
 
   // --- The loop ------------------------------------------------------------------------------------------------
 
-  #paceAt = Date.now();
-  #paceTurns = 0;
-  /** Not a limit: every few minutes (and every 12 turns) of one approach the agent is asked to compare time spent with what the task needs and, if it is behind, to switch route. */
+  #coach = new Coach();
+  /** Not a limit and not a stop: when the evidence says the run is in trouble (calls failing, no step finished for minutes), a separate read of the recent trace suggests one different approach. Never throws. */
   async #paceNote(): Promise<void> {
-    const now = Date.now();
-    const turnsHere = this.#turns - this.#paceTurns;
-    if (now - this.#paceAt < 240_000 && turnsHere < 12) return;
-    if (this.#turns < 3) return;
-    this.#paceAt = now;
-    this.#paceTurns = this.#turns;
-    await this.writer.appNote(
-      `${Math.round((now - (Number(this.options.startedAt) || Date.parse(String(this.options.startedAt)) || now)) / 60_000)} minutes and ${this.#turns} turns so far. Nothing stops you, but check the pace: if this step needs more time than its worth or the same kind of call keeps failing, change the method now: read page text instead of looking, http_get or audit_page instead of clicking through, python_repl for data work, parallel workers for many items, a different site or a search for the same fact.`,
-    );
+    const why = this.#coach.due();
+    if (!why || this.options.signal.aborted) return;
+    try {
+      const branch = (await activeBranch(this.options.conversationId)).filter((e): e is EntryOf<'message'> => e.type === 'message');
+      const task = branch.find(e => e.message.role === 'user' && !e.appOwned)?.message.parts.map(p => (p.type === 'text' ? p.text : '')).join(String.fromCharCode(10)) ?? '';
+      if (!task) return;
+      const note = await this.#coach.look(this.options.model, task, branch, why, this.options.signal);
+      if (note) await this.writer.appNote(`Coach: ${why} ${note.advice} This is advice, not an order; use it if it fits.`);
+    } catch {
+      /* the coach never holds a run up */
+    }
   }
 
   async run(): Promise<LoopEnd> {
@@ -1447,6 +1449,7 @@ ${ledger}` : ''),
         });
         if (check.stop) return this.#end({ status: 'failed', outcome: 'failed', reason: check.stop, cause: 'context' });
         this.#turns++;
+        this.#coach.turn();
         emit({ type: 'turn_start', turn: this.#turns });
         const sent = check.request ?? request;
         this.options.timings?.mark('first-model-request');
@@ -1651,6 +1654,10 @@ ${ledger}` : ''),
   }
 
   async #record(outcome: CallOutcome): Promise<void> {
+    if (!outcome.skipped) {
+      this.#coach.note(outcome.isError);
+      if (!outcome.isError && ['audit_page', 'extract_rows', 'data_ops', 'python_repl', 'save_file'].includes(outcome.call.toolName)) this.#coach.progress();
+    }
     if (!outcome.isError && !outcome.skipped) {
       const tool = outcome.call.toolName;
       if (['click', 'set', 'type', 'press', 'fill_form', 'drag', 'canvas', 'upload', 'handle_dialog', 'batch', 'macro', 'site_action', 'menu_path', 'run_script_console'].includes(tool)) this.#changedPages = true;
@@ -1991,9 +1998,11 @@ ${outcome.text.toLowerCase()}`.slice(-600_000);
       if (m.check) {
         if (!(await this.#milestoneSeen(m.check, true))) return fail(`milestone ${id} is NOT verified: its check (${m.check.text ? `text "${m.check.text}"` : ''}${m.check.url ? ` url containing "${m.check.url}"` : ''}) is not on the page now. It stays unfinished. Observe the page, fix what is missing, or revise the plan.`);
         this.#plan.apply(id, 'verified', note);
+        this.#coach.progress();
         return done();
       }
       this.#plan.apply(id, 'reported', note);
+      this.#coach.progress();
       return done('This milestone has no check, so it shows as reported, not verified. Prefer a check the page can confirm.');
     }
     if (args.action === 'items') {
