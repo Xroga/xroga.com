@@ -295,7 +295,7 @@ export const SKILLS: Skill[] = [
       'Page speed:',
       '- Measure before advising: audit_page gives time to first byte, first and largest paint, layout shift, elements, requests and weight. Good is LCP 2.5 s or less, CLS 0.1 or less; 4 s and 0.25 are poor. Measure the page as it loads: navigate again, then audit_page.',
       '- Find which part is late. A slow first byte is the server or a redirect chain; a late largest paint with a fast first byte is the hero image or font (large, not preloaded, lazy-loaded by mistake) or render-blocking scripts and styles; layout shift is images and embeds without size, late banners and web fonts swapping.',
-      '- diagnostics kind weight lists the page's requests by type with the biggest and the slowest first (call it once, reload, call it again); those are the first suspects, and diagnostics network shows what failed. Check on a phone with emulate (device, network slow-3g) because most visitors are not on your connection.',
+      '- diagnostics kind weight lists the requests by type with the biggest and the slowest first (call it once, reload, call it again); those are the first suspects, and diagnostics network shows what failed. Check on a phone with emulate (device, network slow-3g) because most visitors are not on your connection.',
       '- Give the fix next to each finding (size and compress the image, preload the hero, defer scripts, set width and height, use font-display) and which finding would gain the most. Re-measure after a change you were asked to make and report the numbers before and after.',
     ].join('\n'),
   },
