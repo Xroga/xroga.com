@@ -6,7 +6,7 @@
     "XR-MISSION-055",
     "XR-MISSION-056"
   ],
-  "state": "CODE_COMPLETE",
+  "state": "LIVE_VERIFIED",
   "risk": "low",
   "scope": "Center the visible animated headline under Super Intelligence; isolate the Xroga app header from terminal skins; compact chatbar and capability menus; idle composer menus below and bottom-docked conversation menus above without moving the composer.",
   "changedFiles": [
@@ -91,7 +91,7 @@
     },
     {
       "command": "Isolated actual-component menu audit and staged/live workspace browser audit",
-      "scope": "40 menu geometry cases, 80 palette popup checks, 50 compact capability menus and 11 centered endings passed in isolated actual components. Actual staged/live header-color isolation and source identity remain pending. Fixtures do not prove provider/account operations.",
+      "scope": "Actual live production source passed five viewports, eleven visibly centered endings and twenty palette cases with unchanged Xroga app chrome. Isolated actual components passed forty idle/active menu bounds checks, eighty palette menu checks and fifty compact capability menus. Fixtures do not prove authentication or provider execution.",
       "negative": true,
       "reference": "docs/xroga/evidence/workspace-center-compact-menus-20261124.md"
     }
@@ -101,18 +101,20 @@
   "knownGaps": [],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [
-    "docs/xroga/evidence/workspace-center-compact-menus-20261124.md"
+    "docs/xroga/evidence/workspace-center-compact-menus-20261124.md",
+    "docs/xroga/evidence/workspace-center-compact-menus-20261124/staged-layout.json",
+    "docs/xroga/evidence/workspace-center-compact-menus-20261124/staged-palettes.json",
+    "docs/xroga/evidence/workspace-center-compact-menus-20261124/live-layout.json",
+    "docs/xroga/evidence/workspace-center-compact-menus-20261124/live-palettes.json"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
   "release": {
-    "state": "BLOCKED",
-    "blockers": [
-      "Regression, build and actual browser acceptance pending"
-    ],
+    "state": "LIVE_VERIFIED",
+    "blockers": [],
     "authenticatedE2e": "NOT_APPLICABLE",
     "stagedSecurity": "NOT_APPLICABLE",
-    "liveUrl": null,
-    "deployedSha": null
+    "liveUrl": "https://xroga.com",
+    "deployedSha": "cabcba38ee5ff35b767d6ec4e083a28ad80cd475"
   }
 }
