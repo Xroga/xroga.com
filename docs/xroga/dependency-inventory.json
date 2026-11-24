@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "21b2c667959a0b5cbd1e5ca33dc8fe7cf43fdfc1",
+  "source_sha": "7dddabbdfbc2d7fbd6adea9c4f3457e42fa74f22",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17310,7 +17310,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "9db2df4abcab1acfcea25bb759b7ffe5825d275b3edad9faa6ece39996d3542a"
+      "sha256": "b598c509dacca47546033b195b3d7618cde4bc634f60aa88106c07797c968cd5"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -18838,7 +18838,7 @@
     },
     {
       "path": "backend/src/routes/swarm.ts",
-      "sha256": "d15e6178d0e9ae30c0b7a1b5cb42996d1ddcc41dc06fcbdd90c09fc125fcd098"
+      "sha256": "bfd7f8aa7bf0be0806fd4665282147ce886abedc2b662c7909a0472c6ee276ec"
     },
     {
       "path": "backend/src/routes/tasks.ts",
@@ -25955,7 +25955,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4228,
+      "line": 4222,
       "credentialsInUrl": false
     },
     {
@@ -33872,70 +33872,70 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 544,
+      "line": 543,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 574,
+      "line": 573,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 769,
+      "line": 768,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1201,
+      "line": 1200,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1205,
+      "line": 1204,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1683,
+      "line": 1677,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2435,
+      "line": 2429,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3994,
+      "line": 3988,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4178,
+      "line": 4172,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4957,
+      "line": 4951,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37071,7 +37071,7 @@
     },
     {
       "path": "backend/src/routes/swarm.ts",
-      "line": 36,
+      "line": 38,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
