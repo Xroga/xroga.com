@@ -200,6 +200,17 @@ test('existing conversation tools fit on a small phone without an external Plugi
   expect(voiceBox!.x + voiceBox!.width).toBeLessThanOrEqual(sendBox!.x - 1);
   expect(sendBox!.x + sendBox!.width).toBeLessThanOrEqual(390);
   await page.screenshot({ path: 'test-results/composer-existing-mobile.png' });
+  await surface.getByRole('button', { name: 'Black Hole model and usage' }).click();
+  const panel = page.getByTestId('black-hole-model-panel');
+  await expect(panel).toBeInViewport();
+  const menu = panel.locator('..');
+  await expect.poll(async () => {
+    const [menuBox, frameBox] = await Promise.all([menu.boundingBox(), frame.boundingBox()]);
+    return menuBox && frameBox ? menuBox.y + menuBox.height - frameBox.y : Infinity;
+  }).toBeLessThanOrEqual(-6);
+  expect((await frame.boundingBox())!.y).toBeCloseTo(b!.y, 0);
+  await page.keyboard.press('Escape');
+  await expect(panel).toHaveCount(0);
 });
 
 test('desktop active and new composers share a maximum 740px frame width', async ({ page }) => {

@@ -34083,7 +34083,7 @@
       "id": "surface:5300586660e535d8ccef",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/teams.ts",
-      "sha256": "ed12e795542c30516005b5a9681eee3b7e734fd619d80e1eaf913d3979df0b5b",
+      "sha256": "302cc16b56f4908a3c06f68073312f59d76c38a2efefa1a37b9ad163793c4537",
       "symbols": [
         "ERRORS",
         "body",
@@ -79969,7 +79969,7 @@
         "frontend/src/components/terminal/SwarmMessageLog.tsx:57",
         "frontend/src/components/terminal/TerminalSkinPicker.tsx:7",
         "frontend/src/components/terminal/WorkspaceLauncher.tsx:3",
-        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:14",
+        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:15",
         "frontend/src/components/ui/ProfileQuickMenu.tsx:6",
         "frontend/src/components/ui/Uiverse.tsx:5"
       ],
@@ -82285,7 +82285,7 @@
       "callers": [
         "frontend/src/components/terminal/MessageBubbleActions.tsx:13",
         "frontend/src/components/terminal/MessageShareModal.tsx:17",
-        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:17"
+        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:18"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -83048,7 +83048,7 @@
       "callers": [
         "frontend/src/components/dashboard/WorkspaceShowcaseStarts.tsx:23",
         "frontend/src/components/layout/Sidebar.tsx:87",
-        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:16",
+        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:17",
         "frontend/src/components/ui/ProfileQuickMenu.tsx:12"
       ],
       "reachable": true,
@@ -83871,7 +83871,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/AppShell.tsx:12"
+        "frontend/src/components/layout/AppShell.tsx:13"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -85223,7 +85223,7 @@
       "id": "surface:c2786546b607faccd5cc",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/layout/AppShell.tsx",
-      "sha256": "9f1e4e747595fb5eb215a6a186f30fa44bd4661885d59b9e7b0894258bb34616",
+      "sha256": "d901c37299e83937a2703cabb38f69a75ceabee67a6fd7108fc74867d964e24e",
       "symbols": [
         "AppShell",
         "AppShellProps",
@@ -85254,6 +85254,7 @@
         "@/components/layout/ShellIdentityContext",
         "@/components/layout/WorkspaceIdentityContext",
         "@/components/layout/WorkspacePerformanceProbe",
+        "@/components/team/TeamInvitePopup",
         "@/components/terminal/TerminalDock",
         "@/components/workspace/WorkspaceAuthGate",
         "@/context/TerminalChatContext",
@@ -85275,6 +85276,7 @@
         "frontend/src/components/layout/SidebarNavScroller.tsx",
         "frontend/src/components/layout/WorkspaceIdentityContext.tsx",
         "frontend/src/components/layout/WorkspacePerformanceProbe.tsx",
+        "frontend/src/components/team/TeamInvitePopup.tsx",
         "frontend/src/components/terminal/TerminalDock.tsx",
         "frontend/src/components/workspace/WorkspaceAuthGate.tsx",
         "frontend/src/context/TerminalChatContext.tsx",
@@ -85333,7 +85335,7 @@
         "frontend/src/app/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/AppShell.tsx:21",
+        "frontend/src/components/layout/AppShell.tsx:22",
         "frontend/src/components/layout/PublicMarketingChrome.tsx:7"
       ],
       "reachable": true,
@@ -86127,7 +86129,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/AppShell.tsx:17",
+        "frontend/src/components/layout/AppShell.tsx:18",
         "frontend/src/components/settings/SettingsView.tsx:18"
       ],
       "reachable": true,
@@ -87119,7 +87121,7 @@
         "frontend/src/components/automations/useDrafts.ts:3",
         "frontend/src/components/dashboard/DashboardHomeView.tsx:22",
         "frontend/src/components/integrations/PluginMarketplace.tsx:57",
-        "frontend/src/components/layout/AppShell.tsx:19",
+        "frontend/src/components/layout/AppShell.tsx:20",
         "frontend/src/components/layout/Sidebar.tsx:94",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:61",
         "frontend/src/components/layout/SidebarSearchModal.tsx:6",
@@ -87127,6 +87129,7 @@
         "frontend/src/components/notifications/NotificationExperience.tsx:8",
         "frontend/src/components/providers/AppProviders.tsx:8",
         "frontend/src/components/team/JoinTeam.tsx:6",
+        "frontend/src/components/team/TeamInvitePopup.tsx:6",
         "frontend/src/components/team/TeamWorkspace.tsx:7",
         "frontend/src/components/terminal/TerminalChatBar.tsx:30",
         "frontend/src/components/terminal/WorkspaceConversationMenu.tsx:7",
@@ -87195,7 +87198,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/AppShell.tsx:18"
+        "frontend/src/components/layout/AppShell.tsx:19"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -98010,6 +98013,76 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:787b7c5bbe0c45e26ed8",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/team/TeamInvitePopup.tsx",
+      "sha256": "3a0ead01b89195f3c98b7169c5884bc2a6191fbd2c507288fb31d0ec05487235",
+      "symbols": [
+        "POLL_MS",
+        "SNOOZE_KEY",
+        "TeamInvitePopup",
+        "answer",
+        "authed",
+        "e",
+        "identity",
+        "inbox",
+        "later",
+        "load",
+        "next",
+        "onFocus",
+        "readSnoozed",
+        "t",
+        "timer",
+        "v",
+        "visible"
+      ],
+      "imports": [
+        "./TeamInvitePopup.module.css",
+        "@/components/layout/WorkspaceIdentityContext",
+        "@/lib/teams",
+        "lucide-react",
+        "next/link",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/layout/WorkspaceIdentityContext.tsx",
+        "frontend/src/components/team/TeamInvitePopup.module.css",
+        "frontend/src/lib/teams.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/layout/AppShell.tsx:7"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react",
+        "next/link",
+        "react"
+      ],
+      "authBoundary": [
+        "frontend/src/components/team/TeamInvitePopup.tsx#authed",
+        "frontend/src/components/team/TeamInvitePopup.tsx#identity",
+        "frontend/src/components/team/TeamInvitePopup.tsx#useWorkspaceIdentity"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "frontend/src/components/team/TeamInvitePopup.tsx#TEAM_CHANGED_EVENT"
+      ],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:c589e92faf55cd3a82ea",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/team/TeamPage.tsx",
@@ -98049,7 +98122,7 @@
       "id": "surface:4c3e7ee20fc190abb71c",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/team/TeamWorkspace.tsx",
-      "sha256": "95ee4829a62b56aa5251fe30c17b091bec6bd4ead634cc7ca658fc0c64fc12bc",
+      "sha256": "17dcd723477a0acb654790393f221c0b5c853661a69555fa5f1ed8fe64656c28",
       "symbols": [
         "Avatar",
         "Seg",
@@ -98079,6 +98152,7 @@
         "pathname",
         "r",
         "refresh",
+        "reload",
         "run",
         "submitCreate",
         "t",
@@ -98124,7 +98198,9 @@
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
-      "evidenceBoundary": [],
+      "evidenceBoundary": [
+        "frontend/src/components/team/TeamWorkspace.tsx#TEAM_CHANGED_EVENT"
+      ],
       "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -102024,7 +102100,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/AppShell.tsx:7"
+        "frontend/src/components/layout/AppShell.tsx:8"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -102967,23 +103043,19 @@
       "id": "surface:301bb246215ac84afb3b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
-      "sha256": "5d112d10939c6451239c7a6278a33f4489c225dd1893ef59178403a27981611f",
+      "sha256": "f07e483f4254f672759d234307b80c39ef29db55525e8fbd4897bd7516e302a8",
       "symbols": [
         "WorkspacePeopleControls",
         "activeProject",
-        "drawerRef",
         "escape",
-        "first",
         "identity",
-        "last",
-        "nodes",
-        "previous",
         "shareConversation",
         "transcript"
       ],
       "imports": [
         "./MessageShareModal",
         "./WorkspacePeopleControls.module.css",
+        "./teamPanelPush.css",
         "@/components/icons/animated/AnimatedIcon",
         "@/components/icons/animated/ShareIcon",
         "@/components/icons/animated/UsersRoundIcon",
@@ -103006,6 +103078,7 @@
         "frontend/src/components/team/TeamWorkspace.tsx",
         "frontend/src/components/terminal/MessageShareModal.tsx",
         "frontend/src/components/terminal/WorkspacePeopleControls.module.css",
+        "frontend/src/components/terminal/teamPanelPush.css",
         "frontend/src/components/workspace/WorkspaceAuthGate.tsx",
         "frontend/src/context/TerminalChatContext.tsx",
         "frontend/src/lib/publicAnswerText.ts",
@@ -106497,7 +106570,7 @@
       "id": "surface:3b867688e4e39125f58a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/ui/useChatbarPopoverLayout.ts",
-      "sha256": "b240891be87b8c8ec2b3562f97fb2339f32b7738f27b64c389dc2b49ae6abf9b",
+      "sha256": "76530083f3bad4133f5f022951b808121a60ef86f01b609426f6a8ce899c72ff",
       "symbols": [
         "Box",
         "Viewport",
@@ -106508,11 +106581,13 @@
         "composer",
         "dock",
         "fitChatbarPopover",
+        "fitChatbarPopoverAbove",
         "frame",
         "gap",
         "headerBottom",
         "margin",
         "maxHeight",
+        "minimumTop",
         "movable",
         "next",
         "observer",
@@ -106681,7 +106756,7 @@
       ],
       "callers": [
         "frontend/src/components/integrations/PluginMarketplace.tsx:58",
-        "frontend/src/components/layout/AppShell.tsx:20",
+        "frontend/src/components/layout/AppShell.tsx:21",
         "frontend/src/components/layout/Sidebar.tsx:95",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:62",
         "frontend/src/components/terminal/TerminalChatBar.tsx:31",
@@ -107217,7 +107292,7 @@
         "frontend/src/components/dashboard/WorkspaceResumeList.tsx:6",
         "frontend/src/components/dashboard/WorkspaceShowcaseStarts.tsx:17",
         "frontend/src/components/dashboard/WorkspaceStarterIdeas.tsx:8",
-        "frontend/src/components/layout/AppShell.tsx:8",
+        "frontend/src/components/layout/AppShell.tsx:9",
         "frontend/src/components/layout/IncognitoModeButton.tsx:8",
         "frontend/src/components/layout/Sidebar.tsx:71",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:29",
@@ -107304,7 +107379,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/AppShell.tsx:9",
+        "frontend/src/components/layout/AppShell.tsx:10",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:5",
         "frontend/src/components/terminal/TerminalDock.tsx:10"
       ],
@@ -107582,7 +107657,7 @@
         "frontend/src/components/icons/animated/VercelIcon.tsx:12",
         "frontend/src/components/incognito/IncognitoFullscreenBackground.tsx:7",
         "frontend/src/components/layout/AnimatedNavIcon.tsx:8",
-        "frontend/src/components/layout/AppShell.tsx:14",
+        "frontend/src/components/layout/AppShell.tsx:15",
         "frontend/src/components/layout/IncognitoModeButton.tsx:7",
         "frontend/src/components/layout/Sidebar.tsx:73",
         "frontend/src/components/library/LibraryWorkspace.tsx:9",
@@ -116305,7 +116380,7 @@
         "frontend/src/components/terminal/MessageBubbleActions.tsx:18",
         "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:16",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:32",
-        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:15",
+        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:16",
         "frontend/src/lib/assistantCopy.test.ts:5",
         "frontend/src/lib/assistantCopy.ts:1"
       ],
@@ -116477,7 +116552,7 @@
       "id": "surface:756700cae3b8fde0ce44",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/publicMarketing.ts",
-      "sha256": "9dce975db94613aa2e65466f913a0f413d0976b73b31dbb1007971a8712b5f72",
+      "sha256": "9d06cb0d4a00ed76873ad81b6a1a18ae39dee562a5a5faccea91043c9e4b65f7",
       "symbols": [
         "IMAGE_BACKGROUND_PATHS",
         "MARKETING_THEME",
@@ -120815,23 +120890,29 @@
       "id": "surface:add267caa6b70dd265e3",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/teams.ts",
-      "sha256": "da070267c6186578c54577749b98a9547ce33ec7fa1c713696cd96d2775db8fa",
+      "sha256": "45bad7d107b6ad45db6dde58b5d0bfedc1ef90c23d9ca9a0fbfd46547e2cbcc8",
       "symbols": [
         "FoundUser",
         "InviteLink",
         "InviteRole",
         "LinkPreview",
         "PendingInvite",
+        "TEAM_CHANGED_EVENT",
+        "TeamActivityItem",
         "TeamInbox",
         "TeamInvitationForMe",
         "TeamMember",
         "TeamOverview",
         "TeamRole",
         "TeamSummary",
+        "announceTeamChange",
+        "describeActivity",
         "errorText",
         "inviteUrl",
         "json",
-        "teamsApi"
+        "target",
+        "teamsApi",
+        "who"
       ],
       "imports": [
         "@/lib/api"
@@ -120841,11 +120922,14 @@
       ],
       "entryPoints": [
         "frontend/src/app/(shell)/join/[token]/page.tsx",
+        "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(shell)/team/page.tsx",
+        "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
         "frontend/src/components/team/JoinTeam.tsx:7",
+        "frontend/src/components/team/TeamInvitePopup.tsx:7",
         "frontend/src/components/team/TeamWorkspace.tsx:8"
       ],
       "reachable": true,
@@ -120857,7 +120941,9 @@
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
-      "evidenceBoundary": [],
+      "evidenceBoundary": [
+        "frontend/src/lib/teams.ts#TEAM_CHANGED_EVENT"
+      ],
       "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -121962,7 +122048,7 @@
         "frontend/src/components/companion/HomepageThemeSwitcher.tsx:7",
         "frontend/src/components/homepage/HomepageWorkspaceTour.tsx:32",
         "frontend/src/components/homepage/integrations/HomepageIntegrationConstellation.tsx:36",
-        "frontend/src/components/layout/AppShell.tsx:16",
+        "frontend/src/components/layout/AppShell.tsx:17",
         "frontend/src/components/layout/DesktopBackgroundSlideshow.tsx:4",
         "frontend/src/components/layout/Logo.tsx:5",
         "frontend/src/components/layout/ProcessingLogo.tsx:6",
@@ -122495,7 +122581,7 @@
         "frontend/src/components/incognito/IncognitoProfileBox.tsx:4",
         "frontend/src/components/integrations/IntegrationLogo.tsx:5",
         "frontend/src/components/layout/AnimatedNavIcon.tsx:6",
-        "frontend/src/components/layout/AppShell.tsx:15",
+        "frontend/src/components/layout/AppShell.tsx:16",
         "frontend/src/components/layout/DesktopBackgroundSlideshow.tsx:5",
         "frontend/src/components/layout/HeaderActionMeter.tsx:6",
         "frontend/src/components/layout/IncognitoModeButton.tsx:11",
@@ -125523,7 +125609,7 @@
         "frontend/src/components/dashboard/DashboardView.tsx:17",
         "frontend/src/components/dashboard/IncognitoDashboard.tsx:5",
         "frontend/src/components/incognito/IncognitoFullscreenBackground.tsx:6",
-        "frontend/src/components/layout/AppShell.tsx:13",
+        "frontend/src/components/layout/AppShell.tsx:14",
         "frontend/src/components/layout/IncognitoModeButton.tsx:6",
         "frontend/src/components/layout/Sidebar.tsx:72",
         "frontend/src/components/providers/AppProviders.tsx:6",
@@ -125755,7 +125841,7 @@
         "frontend/src/components/icons/animated/TerminalPromptIcon.tsx:11",
         "frontend/src/components/icons/animated/VercelIcon.tsx:11",
         "frontend/src/components/layout/AnimatedNavIcon.tsx:7",
-        "frontend/src/components/layout/AppShell.tsx:10",
+        "frontend/src/components/layout/AppShell.tsx:11",
         "frontend/src/components/layout/Sidebar.tsx:59",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:10",
         "frontend/src/components/layout/ThemeToggle.tsx:7",
@@ -129842,8 +129928,11 @@
       "id": "surface:b5fb9b6d0970672ddebe",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/full-supabase-history.mjs",
-      "sha256": "cfd9d484734202fa39e511281ab7778df9115f3e956002eab0fa869aed258a2d",
+      "sha256": "71f45e72a2e4e5fdd558c7e7d9144680f24f89cc58e3988de6575240e53dc3dc",
       "symbols": [
+        "activity",
+        "activityOutsider",
+        "activityOwner",
         "actual",
         "additions",
         "afterPolicies",
@@ -129890,6 +129979,7 @@
         "supplement",
         "table",
         "target",
+        "team",
         "teamFunctions",
         "upgradeFiles",
         "url",
@@ -139027,9 +139117,21 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:61d9a6ee2cfe8d280f86",
+      "id": "registration:709eabc7410e71dee0f3",
       "sourcePath": "backend/src/routes/teams.ts",
       "line": 106,
+      "receiver": "router",
+      "method": "get",
+      "path": "/:teamId/activity",
+      "handlers": [],
+      "scope": "module",
+      "functionName": "<module>",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:195bd08390480e7bf13c",
+      "sourcePath": "backend/src/routes/teams.ts",
+      "line": 112,
       "receiver": "router",
       "method": "get",
       "path": "/:teamId/search",
@@ -139039,9 +139141,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:b704b3a4301ee7e19125",
+      "id": "registration:0c005cb5d5ade17b9123",
       "sourcePath": "backend/src/routes/teams.ts",
-      "line": 113,
+      "line": 119,
       "receiver": "router",
       "method": "post",
       "path": "/:teamId/invitations",
@@ -139051,9 +139153,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:8e2cd909714e5f460031",
+      "id": "registration:58ab6a5b9a62ab8e585f",
       "sourcePath": "backend/src/routes/teams.ts",
-      "line": 121,
+      "line": 127,
       "receiver": "router",
       "method": "post",
       "path": "/:teamId/links",
@@ -139063,9 +139165,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:c13a11cccda7d1de87d3",
+      "id": "registration:fbff2475e8e44dcf82c1",
       "sourcePath": "backend/src/routes/teams.ts",
-      "line": 154,
+      "line": 160,
       "receiver": "router",
       "method": "delete",
       "path": "/:teamId/members/:userId",
@@ -139075,9 +139177,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:7fd4858ac71789c6bbca",
+      "id": "registration:f13f36b505bd712f2970",
       "sourcePath": "backend/src/routes/teams.ts",
-      "line": 161,
+      "line": 167,
       "receiver": "router",
       "method": "patch",
       "path": "/:teamId/members/:userId",
@@ -140747,10 +140849,27 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:9aaf4ffe4dbc10212e18",
-      "registrationId": "registration:61d9a6ee2cfe8d280f86",
+      "id": "route:a878a01093ec85321d28",
+      "registrationId": "registration:709eabc7410e71dee0f3",
       "sourcePath": "backend/src/routes/teams.ts",
       "line": 106,
+      "method": "GET",
+      "path": "/api/teams/:teamId/activity",
+      "mountChain": [
+        "backend/src/index.ts:241"
+      ],
+      "authBoundary": [
+        "authMiddleware"
+      ],
+      "reachable": true,
+      "state": "IMPLEMENTED_AND_REACHABLE",
+      "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
+    },
+    {
+      "id": "route:c34e34b32fe3c36a5026",
+      "registrationId": "registration:195bd08390480e7bf13c",
+      "sourcePath": "backend/src/routes/teams.ts",
+      "line": 112,
       "method": "GET",
       "path": "/api/teams/:teamId/search",
       "mountChain": [
@@ -140764,10 +140883,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:567aeb4f0a4e11804cf8",
-      "registrationId": "registration:b704b3a4301ee7e19125",
+      "id": "route:13a8854b1862dcc0b228",
+      "registrationId": "registration:0c005cb5d5ade17b9123",
       "sourcePath": "backend/src/routes/teams.ts",
-      "line": 113,
+      "line": 119,
       "method": "POST",
       "path": "/api/teams/:teamId/invitations",
       "mountChain": [
@@ -140781,10 +140900,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:87601e82c86158fdde60",
-      "registrationId": "registration:8e2cd909714e5f460031",
+      "id": "route:7499a4b879b790c862d9",
+      "registrationId": "registration:58ab6a5b9a62ab8e585f",
       "sourcePath": "backend/src/routes/teams.ts",
-      "line": 121,
+      "line": 127,
       "method": "POST",
       "path": "/api/teams/:teamId/links",
       "mountChain": [
@@ -140798,10 +140917,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:69bb9d2f1529749a2f94",
-      "registrationId": "registration:c13a11cccda7d1de87d3",
+      "id": "route:16f9872eef45865ccdf9",
+      "registrationId": "registration:fbff2475e8e44dcf82c1",
       "sourcePath": "backend/src/routes/teams.ts",
-      "line": 154,
+      "line": 160,
       "method": "DELETE",
       "path": "/api/teams/:teamId/members/:userId",
       "mountChain": [
@@ -140815,10 +140934,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:cff1cb93c714f2091d17",
-      "registrationId": "registration:7fd4858ac71789c6bbca",
+      "id": "route:45affbbe43f75c57b2a1",
+      "registrationId": "registration:f13f36b505bd712f2970",
       "sourcePath": "backend/src/routes/teams.ts",
-      "line": 161,
+      "line": 167,
       "method": "PATCH",
       "path": "/api/teams/:teamId/members/:userId",
       "mountChain": [
@@ -146501,6 +146620,13 @@
       "version": "20261110212913",
       "order": 163,
       "sha256": "3e1373475910689fc9ce26fb18fc2fbe2cf93fffef7416cb811aa87b4fbee5b1"
+    },
+    {
+      "id": "migration:ceb3dd2d6f77058fbf2b",
+      "sourcePath": "supabase/migrations/20261125000000_team_activity.sql",
+      "version": "20261125000000",
+      "order": 164,
+      "sha256": "85f3b42c1c745d1bbc6e60326a3b3a7568d3a7621738b490cc2fc64b664325ec"
     }
   ],
   "workflows": [
@@ -149629,9 +149755,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:8eee4f50c1df885a8bad",
+      "id": "finding:351451bc6ed9e8948526",
       "sourcePath": "frontend/src/components/team/TeamWorkspace.tsx",
-      "line": 99,
+      "line": 106,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -149639,9 +149765,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:fec9737e6bf213884a78",
+      "id": "finding:558ecb44edcadc2d3af3",
       "sourcePath": "frontend/src/components/team/TeamWorkspace.tsx",
-      "line": 277,
+      "line": 311,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
