@@ -1251,12 +1251,11 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     : composerBox.y - (menuBox.y + menuBox.height);
   expect(composerGap).toBeGreaterThanOrEqual(4);
   expect(composerGap).toBeLessThanOrEqual(12);
-  // The new menu is a compact, trigger-anchored popover rather than
-  // the former full-width overlay. Preserve containment and alignment.
+  // The compact menu anchors to the trigger with 12 px viewport gutters.
   const triggerBox = (await terminalDock.locator('.xv-cba-trigger').first().boundingBox())!;
   const viewportWidth = await page.evaluate(() => window.innerWidth);
-  const expectedWidth = Math.min(344, viewportWidth - 16);
-  const expectedLeft = Math.max(8, Math.min(triggerBox.x, viewportWidth - expectedWidth - 8));
+  const expectedWidth = Math.min(288, viewportWidth - 24);
+  const expectedLeft = Math.max(12, Math.min(triggerBox.x, viewportWidth - expectedWidth - 12));
   expect(Math.abs(menuBox.x - expectedLeft)).toBeLessThanOrEqual(2);
   expect(menuBox.width).toBeCloseTo(expectedWidth, 0);
 
