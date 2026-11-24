@@ -1,7 +1,7 @@
 /* Theme-agnostic: everything derives from the inherited text color. */
-.root { --t-line: color-mix(in srgb, currentColor 16%, transparent); --t-soft: color-mix(in srgb, currentColor 7%, transparent); --t-mute: color-mix(in srgb, currentColor 62%, transparent); --t-accent: #d6a24a; --t-accent-ink: #1a1206; color: inherit; font-family: inherit; display: flex; flex-direction: column; gap: 16px; text-align: left; }
+.root { --t-line: color-mix(in srgb, currentColor 16%, transparent); --t-soft: color-mix(in srgb, currentColor 7%, transparent); --t-mute: color-mix(in srgb, currentColor 62%, transparent); --t-accent: #3b82f6; --t-accent-ink: #ffffff; color: inherit; font-family: inherit; display: flex; flex-direction: column; gap: 16px; text-align: left; }
 .root * { box-sizing: border-box; }
-.page { max-width: 1040px; margin: 0 auto; padding: 120px 24px 80px; }
+.page { max-width: 1040px; margin: 0 auto; padding: 32px 24px 80px; }
 .panel { padding: 0; }
 
 .hero h1 { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 26px; font-weight: 650; letter-spacing: -.01em; }
@@ -27,7 +27,7 @@
 .btn:active:not(:disabled) { transform: translateY(1px); }
 .btn:disabled { opacity: .45; cursor: not-allowed; }
 .primary { background: var(--t-accent); border-color: var(--t-accent); color: var(--t-accent-ink); }
-.primary:hover:not(:disabled) { background: #e3b25c; }
+.primary:hover:not(:disabled) { background: #5b9bff; border-color: #5b9bff; }
 .danger { color: #e5604f; border-color: color-mix(in srgb, #e5604f 45%, transparent); }
 .small { height: 30px; padding: 0 10px; font-size: 12px; border-radius: 8px; }
 .icon { width: 30px; padding: 0; }

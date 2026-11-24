@@ -13,6 +13,8 @@ export const PRIVATE_PREFIXES = [
   '/admin',
   '/settings',
   '/drive',
+  '/team',
+  '/join',
   '/auth',
   '/onboarding',
   '/share',

@@ -52,7 +52,8 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
     pathname === '/dashboard' ||
     pathname.startsWith('/dashboard/') ||
     pathname === '/settings' ||
-    pathname.startsWith('/settings/');
+    pathname.startsWith('/settings/') ||
+    pathname === '/team';
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
   const incognito = hydrated && incognitoRaw;
   const effectiveSidebarOpen = hydrated ? sidebarOpen : true;
