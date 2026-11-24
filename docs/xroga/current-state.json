@@ -87127,7 +87127,7 @@
         "frontend/src/components/notifications/NotificationExperience.tsx:8",
         "frontend/src/components/providers/AppProviders.tsx:8",
         "frontend/src/components/team/JoinTeam.tsx:6",
-        "frontend/src/components/team/TeamPage.tsx:6",
+        "frontend/src/components/team/TeamWorkspace.tsx:7",
         "frontend/src/components/terminal/TerminalChatBar.tsx:30",
         "frontend/src/components/terminal/WorkspaceConversationMenu.tsx:7",
         "frontend/src/components/terminal/WorkspaceLauncher.tsx:10",
@@ -98013,38 +98013,15 @@
       "id": "surface:c589e92faf55cd3a82ea",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/team/TeamPage.tsx",
-      "sha256": "b7f0bb999a4f8fc66df0183121fa54e18e632e55dacf21a6b75a8f19f70d0dfe",
+      "sha256": "cde92e06a076b450a920ee74077ea528e51a837fef9fca352df766b3a17568c6",
       "symbols": [
-        "TeamDetail",
-        "TeamPage",
-        "btn",
-        "canInvite",
-        "card",
-        "e",
-        "identity",
-        "input",
-        "isOwner",
-        "load",
-        "myId",
-        "n",
-        "name",
-        "next",
-        "r",
-        "refresh",
-        "run",
-        "t",
-        "when"
+        "TeamPage"
       ],
       "imports": [
-        "@/components/layout/WorkspaceIdentityContext",
-        "@/lib/teams",
-        "lucide-react",
-        "next/link",
-        "react"
+        "./TeamWorkspace"
       ],
       "runtimeImports": [
-        "frontend/src/components/layout/WorkspaceIdentityContext.tsx",
-        "frontend/src/lib/teams.ts"
+        "frontend/src/components/team/TeamWorkspace.tsx"
       ],
       "entryPoints": [
         "frontend/src/app/(shell)/team/page.tsx"
@@ -98054,14 +98031,95 @@
       ],
       "reachable": true,
       "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:4c3e7ee20fc190abb71c",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/team/TeamWorkspace.tsx",
+      "sha256": "95ee4829a62b56aa5251fe30c17b091bec6bd4ead634cc7ca658fc0c64fc12bc",
+      "symbols": [
+        "Avatar",
+        "Seg",
+        "Tab",
+        "TeamDetail",
+        "TeamWorkspace",
+        "TeamWorkspaceView",
+        "accountKey",
+        "canInvite",
+        "canManage",
+        "canRemove",
+        "canSearch",
+        "copy",
+        "createForm",
+        "cx",
+        "e",
+        "identity",
+        "isOwner",
+        "isPage",
+        "label",
+        "live",
+        "load",
+        "mine",
+        "myId",
+        "n",
+        "next",
+        "pathname",
+        "r",
+        "refresh",
+        "run",
+        "submitCreate",
+        "t",
+        "term",
+        "timer",
+        "waiting",
+        "when"
+      ],
+      "imports": [
+        "./TeamWorkspace.module.css",
+        "@/components/layout/WorkspaceIdentityContext",
+        "@/lib/teams",
+        "lucide-react",
+        "next/link",
+        "next/navigation",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/layout/WorkspaceIdentityContext.tsx",
+        "frontend/src/components/team/TeamWorkspace.module.css",
+        "frontend/src/lib/teams.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(shell)/team/page.tsx",
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/team/TeamPage.tsx:3",
+        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:6"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
       "externalProviderDependencies": [
         "lucide-react",
         "next/link",
+        "next/navigation",
         "react"
       ],
       "authBoundary": [
-        "frontend/src/components/team/TeamPage.tsx#identity",
-        "frontend/src/components/team/TeamPage.tsx#useWorkspaceIdentity"
+        "frontend/src/components/team/TeamWorkspace.tsx#identity",
+        "frontend/src/components/team/TeamWorkspace.tsx#useWorkspaceIdentity"
       ],
       "tenantBoundary": [],
       "approvalBoundary": [],
@@ -102909,21 +102967,19 @@
       "id": "surface:301bb246215ac84afb3b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
-      "sha256": "6e399e02343bab7e7bcdc4b75455758a4ee430e9afefcd775487d99a17d3d2b3",
+      "sha256": "5d112d10939c6451239c7a6278a33f4489c225dd1893ef59178403a27981611f",
       "symbols": [
         "WorkspacePeopleControls",
         "activeProject",
-        "cancelled",
         "drawerRef",
         "escape",
         "first",
         "identity",
-        "inbox",
         "last",
         "nodes",
         "previous",
-        "transcript",
-        "userId"
+        "shareConversation",
+        "transcript"
       ],
       "imports": [
         "./MessageShareModal",
@@ -102932,10 +102988,10 @@
         "@/components/icons/animated/ShareIcon",
         "@/components/icons/animated/UsersRoundIcon",
         "@/components/layout/WorkspaceIdentityContext",
+        "@/components/team/TeamWorkspace",
         "@/components/workspace/WorkspaceAuthGate",
         "@/context/TerminalChatContext",
         "@/lib/publicAnswerText",
-        "@/lib/teams",
         "@/store/useProjectWorkspaceStore",
         "lucide-react",
         "next/link",
@@ -102947,12 +103003,12 @@
         "frontend/src/components/icons/animated/ShareIcon.tsx",
         "frontend/src/components/icons/animated/UsersRoundIcon.tsx",
         "frontend/src/components/layout/WorkspaceIdentityContext.tsx",
+        "frontend/src/components/team/TeamWorkspace.tsx",
         "frontend/src/components/terminal/MessageShareModal.tsx",
         "frontend/src/components/terminal/WorkspacePeopleControls.module.css",
         "frontend/src/components/workspace/WorkspaceAuthGate.tsx",
         "frontend/src/context/TerminalChatContext.tsx",
         "frontend/src/lib/publicAnswerText.ts",
-        "frontend/src/lib/teams.ts",
         "frontend/src/store/useProjectWorkspaceStore.ts"
       ],
       "entryPoints": [
@@ -120790,8 +120846,7 @@
       ],
       "callers": [
         "frontend/src/components/team/JoinTeam.tsx:7",
-        "frontend/src/components/team/TeamPage.tsx:7",
-        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:6"
+        "frontend/src/components/team/TeamWorkspace.tsx:8"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -149574,9 +149629,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:740a3c7b09b52ed3b654",
-      "sourcePath": "frontend/src/components/team/TeamPage.tsx",
-      "line": 82,
+      "id": "finding:8eee4f50c1df885a8bad",
+      "sourcePath": "frontend/src/components/team/TeamWorkspace.tsx",
+      "line": 99,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -149584,9 +149639,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:d1c00dea6f4a1181c5b9",
-      "sourcePath": "frontend/src/components/team/TeamPage.tsx",
-      "line": 161,
+      "id": "finding:fec9737e6bf213884a78",
+      "sourcePath": "frontend/src/components/team/TeamWorkspace.tsx",
+      "line": 277,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",

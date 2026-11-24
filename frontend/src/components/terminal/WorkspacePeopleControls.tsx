@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
-import { teamsApi, type TeamInbox } from '@/lib/teams';
+import { TeamWorkspace } from '@/components/team/TeamWorkspace';
 import { Share2, UsersRound, ExternalLink, X } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
@@ -23,30 +23,22 @@ export function WorkspacePeopleControls() {
   const activeProject = useProjectWorkspaceStore(state => state.activeProjectContext);
   const [open, setOpen] = useState(false);
   const [share, setShare] = useState(false);
-  const userId = identity.status === 'authenticated' ? identity.userId : undefined;
-  const [teamInbox, setTeamInbox] = useState<{ userId: string; result: TeamInbox } | null>(null);
-  const inbox = teamInbox && teamInbox.userId === userId ? teamInbox.result : null;
   const drawerRef = useRef<HTMLElement>(null);
   const transcript = messages.filter(message => message.role === 'user' || message.role === 'assistant').map(message =>
     message.role === 'user' ? `You:\n${message.content}` : `Xroga:\n${publicAnswerExportText(message.content)}`,
   ).join('\n\n');
-  useEffect(() => {
-    if (!open || !userId) return;
-    let cancelled = false;
-    teamsApi.inbox().then(result => {
-      if (!cancelled) setTeamInbox({ userId, result });
-    }).catch(() => {
-      if (!cancelled) setTeamInbox(null);
-    });
-    return () => { cancelled = true; };
-  }, [open, userId]);
+  const shareConversation = () => {
+    setOpen(false);
+    if (identity.status === 'guest') { requestAuthGate('integration'); return; }
+    setShare(true);
+  };
   useEffect(() => {
     if (!open) return;
     const previous = document.activeElement as HTMLElement | null;
     const escape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setOpen(false);
       if (event.key === 'Tab') {
-        const nodes = drawerRef.current?.querySelectorAll<HTMLElement>('button,a[href]');
+        const nodes = drawerRef.current?.querySelectorAll<HTMLElement>('button:not(:disabled),a[href],input:not(:disabled),select:not(:disabled)');
         if (!nodes?.length) return;
         const first = nodes[0], last = nodes[nodes.length - 1];
         if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
@@ -57,22 +49,20 @@ export function WorkspacePeopleControls() {
     return () => { document.removeEventListener('keydown', escape); previous?.focus(); };
   }, [open]);
   return <>
-    <button type="button" className={styles.control} aria-label="Share conversation" title="Share a read-only conversation snapshot" disabled={!transcript.trim()} onClick={() => { if (identity.status === 'guest') { requestAuthGate('integration'); return; } setShare(true); }}><AnimatedIcon icon={ShareIcon} size={14} intro={false} /></button>
+    <button type="button" className={styles.control} aria-label="Share conversation" title="Share a read-only conversation snapshot" disabled={!transcript.trim()} onClick={shareConversation}><AnimatedIcon icon={ShareIcon} size={14} intro={false} /></button>
     <button type="button" className={styles.control} aria-label="Team" title="Team" aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen(true)}><AnimatedIcon icon={UsersRoundIcon} size={15} intro={false} /></button>
     <MessageShareModal open={share} onClose={() => setShare(false)} response={transcript} contentLabel="conversation snapshot" />
-    {open ? createPortal(<div className={styles.overlay} onClick={() => setOpen(false)}>
-      <aside ref={drawerRef} className={styles.drawer} role="dialog" aria-label="Team workspace" aria-modal="true" onClick={event => event.stopPropagation()}>
-        <header><strong>Team</strong><button autoFocus type="button" aria-label="Close team panel" onClick={() => setOpen(false)}><X size={18} /></button></header>
-        <div className={styles.teamIntro}><UsersRound size={22} /><h2>Work together, with clear access.</h2><p>{activeProject?.repo || 'This workspace'} · {identity.displayName}</p></div>
-        <section className={styles.teamSection}><h3>Conversation sharing</h3><p>Share a read-only snapshot of this conversation. It does not grant access to files, connected accounts or project editing.</p><button type="button" disabled={!transcript.trim()} onClick={() => { setOpen(false); setShare(true); }}><Share2 size={15} /> Share conversation</button></section>
-        <section className={styles.teamSection}><h3>Project collaborators</h3><p>Repository collaborators are managed by GitHub. Inviting someone there does not give them Xroga workspace access or charge your plan.</p>{activeProject?.repo ? <a href={`https://github.com/${activeProject.repo}/settings/access`} target="_blank" rel="noreferrer">Manage GitHub access <ExternalLink size={14} /></a> : <p>Connect a GitHub repository to manage its collaborators.</p>}</section>
-        <section className={styles.teamSection}>
-          <h3>Xroga teams</h3>
-          {identity.status !== 'authenticated' ? <p>Sign in to create a team and invite people.</p> : inbox ? <>
-            <p>{inbox.teams.length ? `You are in ${inbox.teams.length} team${inbox.teams.length === 1 ? '' : 's'}: ${inbox.teams.map(t => t.name).join(', ')}.` : 'You are not in a team yet.'}{inbox.invitations.length ? ` ${inbox.invitations.length} invitation${inbox.invitations.length === 1 ? '' : 's'} waiting for you.` : ''}</p>
-          </> : <p>Invite people with an in-app invitation or a link you share yourself. No email is sent, and inviting someone does not charge your plan.</p>}
-          <Link href="/team" onClick={() => setOpen(false)}>Open Team page <ExternalLink size={14} /></Link>
-        </section>
+    {open ? createPortal(<div className={styles.teamOverlay} onClick={() => setOpen(false)}>
+      <aside ref={drawerRef} className={styles.teamDrawer} role="dialog" aria-label="Team workspace" aria-modal="true" onClick={event => event.stopPropagation()}>
+        <header className={styles.teamHead}><strong><UsersRound size={17} /> Team</strong><button autoFocus type="button" aria-label="Close team panel" onClick={() => setOpen(false)}><X size={18} /></button></header>
+        <div className={styles.teamBody}>
+          <TeamWorkspace variant="panel" />
+          <div className={styles.teamExtras}>
+            <button type="button" disabled={!transcript.trim()} onClick={shareConversation}><Share2 size={14} /> Share conversation (read-only)</button>
+            {activeProject?.repo ? <a href={`https://github.com/${activeProject.repo}/settings/access`} target="_blank" rel="noreferrer">GitHub collaborators <ExternalLink size={13} /></a> : null}
+            <Link href="/team" onClick={() => setOpen(false)}>Open full Team page <ExternalLink size={13} /></Link>
+          </div>
+        </div>
       </aside>
     </div>, document.body) : null}
   </>;

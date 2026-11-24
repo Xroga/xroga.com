@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "c74b9616f21cdc85619c8e7e5da6147912ac28e1",
+  "source_sha": "c5908e76ddbf796c29d80ee9582a8dd28e4d624b",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -22982,7 +22982,11 @@
     },
     {
       "path": "frontend/src/components/team/TeamPage.tsx",
-      "sha256": "b7f0bb999a4f8fc66df0183121fa54e18e632e55dacf21a6b75a8f19f70d0dfe"
+      "sha256": "cde92e06a076b450a920ee74077ea528e51a837fef9fca352df766b3a17568c6"
+    },
+    {
+      "path": "frontend/src/components/team/TeamWorkspace.tsx",
+      "sha256": "95ee4829a62b56aa5251fe30c17b091bec6bd4ead634cc7ca658fc0c64fc12bc"
     },
     {
       "path": "frontend/src/components/terminal/AgentTypewriterText.tsx",
@@ -23286,7 +23290,7 @@
     },
     {
       "path": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
-      "sha256": "6e399e02343bab7e7bcdc4b75455758a4ee430e9afefcd775487d99a17d3d2b3"
+      "sha256": "5d112d10939c6451239c7a6278a33f4489c225dd1893ef59178403a27981611f"
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceScrollNavigation.tsx",
@@ -30643,7 +30647,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
-      "line": 68,
+      "line": 62,
       "credentialsInUrl": false
     },
     {
