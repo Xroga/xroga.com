@@ -103,6 +103,12 @@ router.get('/:teamId', (req: AuthRequest, res) => {
   return call(req, res, 'team_overview', { p_team: team.data });
 });
 
+router.get('/:teamId/activity', (req: AuthRequest, res) => {
+  const team = uuid.safeParse(req.params.teamId);
+  if (!team.success) return invalid(res);
+  return call(req, res, 'team_activity', { p_team: team.data, p_limit: 30 });
+});
+
 router.get('/:teamId/search', (req: AuthRequest, res) => {
   const team = uuid.safeParse(req.params.teamId);
   const q = z.string().trim().min(3).max(120).safeParse(req.query.q);
