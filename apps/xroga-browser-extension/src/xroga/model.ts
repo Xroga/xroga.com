@@ -1,4 +1,5 @@
 import { createModel, resolveProfile } from '@src/llm';
+import { diagnoseSecretShape, scrubDeep } from '@src/browser-control';
 import type { ResolvedModel } from '@src/agent/run';
 import { workspaceRequest } from './bridge';
 import { fitRequest } from './fit-request';
@@ -118,6 +119,8 @@ export async function startXrogaModelRun(
           // the task simply waits its turn. Up to 20 minutes of waiting, with a growing pause, instead of an error for the person.
           const deadline = Date.now() + 20 * 60_000;
           let stalls = 0;
+          // Set after the server refused a request for looking like it carried a secret: the retry is cleaned more strictly.
+          let strict = false;
           for (let wait = 2_000; ; wait = Math.min(15_000, Math.round(wait * 1.5))) {
             try {
               const value = await workspaceRequest(
@@ -126,7 +129,8 @@ export async function startXrogaModelRun(
                   runId,
                   body: {
                     turn: ++turn,
-                    messages: request.messages,
+                    // Whatever a page, a file or an earlier step put into the conversation, nothing credential-shaped leaves the browser: the server refuses the whole turn for it.
+                    messages: scrubDeep(request.messages, strict),
                     tools: request.tools,
                     tool_choice: request.tool_choice,
                     // Reasoning tokens count against the output limit: a thinking turn gets more room than the 2,048 of a plain one. The server asks
@@ -142,6 +146,18 @@ export async function startXrogaModelRun(
               // A model request that stalled or got a temporary server error (the provider did not answer in time) is asked again, up to
               // three times, under the next turn number: it is a model call only, so no browser action or app change is ever repeated.
               const code = (busy as { code?: unknown } | null)?.code;
+              // Refused before anything was reserved or charged: asked once more, cleaned strictly, under the same turn number.
+              if (code === 'BROWSER_DATA_DENIED') {
+                const local = diagnoseSecretShape(scrubDeep(request.messages, strict)) ?? 'no local match (a value held on the server, or a rule not copied here)';
+                console.warn('[model] the server refused a request as secret-like; local check:', local, strict ? '(after the strict clean)' : '');
+                // A rule name and a path, never content: kept so a refusal can be explained afterwards.
+                void chrome.storage.local.set({ xroga_last_refusal: { at: Date.now(), strict, local } }).catch(() => undefined);
+              }
+              if (code === 'BROWSER_DATA_DENIED' && !strict && !signal.aborted) {
+                strict = true;
+                turn--;
+                continue;
+              }
               const temporary = code === 'BROWSER_GATEWAY_UNAVAILABLE' || code === 'BROWSER_MODEL_EMPTY';
               if (temporary && !signal.aborted && stalls < 3) stalls++;
               else if (code !== 'BROWSER_MODEL_BUSY' || Date.now() + wait > deadline) throw busy;

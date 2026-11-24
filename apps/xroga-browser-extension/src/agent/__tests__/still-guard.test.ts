@@ -64,3 +64,20 @@ describe('calls on one page that change nothing', () => {
     expect(final).toMatch(/next call must be done/);
   });
 });
+
+describe('work that is not on the page', () => {
+  it('fetches, data work and searches never count toward the dead-end stop', () => {
+    const g = new Guards();
+    const tools = ['http_get', 'python_repl', 'data_ops', 'web_search', 'browser_data', 'plan'];
+    for (let i = 0; i < STILL_STOP * 3; i++) {
+      const v = g.record(tools[i % tools.length]!, { url: `https://x.test/${i}` }, { ok: true, text: `result ${i}` } as never, false);
+      expect(v.stop).toBeUndefined();
+    }
+    expect(g.state.still).toBeUndefined();
+  });
+  it('page reads still count', () => {
+    const g = new Guards();
+    for (let i = 0; i < 5; i++) g.record('find', { role: `r${i}` }, look(i), false);
+    expect(g.state.still?.calls).toBe(5);
+  });
+});

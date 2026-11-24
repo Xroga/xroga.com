@@ -29,7 +29,12 @@ export const READ_STREAK_NUDGE = 5;
  */
 export const CYCLE_NUDGE = 4;
 export const CYCLE_STOP = 16;
-const POLLING_TOOLS = new Set(['wait', 'parallel_task_status']);
+const POLLING_TOOLS = new Set([
+  'wait', 'parallel_task_status',
+  // Work that is not on the current page: a read of another address, data the run holds, a search, a skill, a plan. It cannot "change nothing on this page", so it never counts
+  // toward the dead-end stop (a research run that fetches many sources is making progress, not repeating itself).
+  'http_get', 'python_repl', 'data_ops', 'calculate', 'browser_data', 'web_search', 'find_free_times', 'find_skill', 'read_skill', 'plan', 'macro', 'read_attachment', 'plugin_search', 'plugin_read', 'plugin_action_search', 'plugin_chain',
+]);
 
 export interface GuardVerdict {
   nudge?: string;

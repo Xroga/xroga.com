@@ -133,11 +133,20 @@ async function main() {
     let paired = false;
     for (let i = 0; i < 360 && !paired; i++) {
       await sleep(500);
+      // The handshake is sometimes dropped: press Connect again every 30 seconds while the panel still says it is connecting.
+      if (i > 0 && i % 60 === 0) await panelOp('click', { label: 'Connect Xroga Workspace' }).catch(() => undefined);
       paired = String((await panelOp('read').catch(() => null))?.body ?? '').includes('Signed in to Xroga');
     }
     report.steps.paired = paired;
     if (!paired) report.steps.panelWhenNotPaired = String((await panelOp('read').catch(() => null))?.body ?? '').replace(/\s+/g, ' ').slice(0, 400);
     if (!paired) { report.steps.workerConsole = (cdp.events ?? []).slice(-15); report.steps.workerNetwork = (cdp.net ?? []).slice(-20); report.steps.workspaceTabs = (await targets()).filter(t => t.type === 'page').map(t => t.url.slice(0, 160)); }
+    if (!paired) {
+      report.steps.workspaceTexts = [];
+      for (const t of (await targets()).filter(t => t.type === 'page' && /\/workspace/.test(t.url))) {
+        const sid = await attach(t.targetId);
+        report.steps.workspaceTexts.push(String(await evalIn(sid, 'document.body.innerText').catch(e => String(e))).replace(/\s+/g, ' ').slice(0, 500));
+      }
+    }
     if (!paired) throw new Error('the extension did not pair with the Workspace');
     const allow = async read => {
       if (/\nAllow\n/.test(String(read?.body ?? ''))) await panelOp('click', { label: 'Allow' }).catch(() => undefined);
@@ -172,8 +181,10 @@ async function main() {
       const text = await ask('custom', opt('--prompt'), Number(opt('--max-ms') ?? 1_200_000));
       report.steps.seconds = Math.round((Date.now() - t0) / 1000);
       report.steps.screenshotMentions = (text.match(/screenshot/gi) ?? []).length;
+      report.steps.lastRefusal = await evalIn(operator.sid, `chrome.storage.local.get('xroga_last_refusal').then(v => JSON.stringify(v.xroga_last_refusal ?? null))`).catch(e => String(e));
+      report.steps.workerConsole = (cdp.events ?? []).filter(e => /secret-like|model\]/.test(e.text)).slice(-6);
       report.steps.finalAnswer = text.replace(/\s+/g, ' ').slice(-2500);
-      const broken = /Xroga paused|could not be verified|Interrupted|BROWSER_[A-Z_]+|Resume to continue/.test(text.slice(-1500));
+      const broken = /Xroga paused|could not be verified|Interrupted|BROWSER_[A-Z_]+|Resume to continue|reply was cut|Try again|Retry$/.test(text.slice(-1500));
       report.ok = report.steps.custom.settled && !broken;
       report.failures = report.ok ? [] : [broken ? 'the run paused or failed (see finalAnswer)' : 'the task did not settle in time'];
       throw null;

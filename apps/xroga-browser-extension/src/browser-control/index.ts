@@ -13,7 +13,7 @@ export { applyDiff } from './core/perception/diff';
 export { classify, enterSubmits } from './core/interaction/classify';
 export type { ConfirmPolicy } from './core/interaction/gate';
 export { ProbeClient } from './core/probe-client';
-export { cutText, defuse, quote, untrusted } from './core/text';
+export { cutText, defuse, diagnoseSecretShape, quote, scrubCredentialLike, scrubDeep, untrusted } from './core/text';
 export type { ContentSource, DefuseOptions } from './core/text';
 export { siteOf } from './core/site';
 export { PROBE_SOURCE, PROBE_WORLD_NAME } from './probe';

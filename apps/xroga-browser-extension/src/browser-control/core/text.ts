@@ -90,6 +90,56 @@ export function scrubCredentialLike(text: string): string {
   return urls.replace(CREDENTIAL_SHAPES, '[credential-like text removed]');
 }
 
+/**
+ * Where a request looks like it carries a secret, by the server's own rules, as a path and a rule name and never a value: the key name that matches (key names are
+ * not content), or the path of a string and which shape matched. Used only to explain a refusal in the console.
+ */
+export function diagnoseSecretShape(value: unknown, path = '$', depth = 0): string | null {
+  if (depth > 24) return null;
+  if (typeof value === 'string') {
+    const hit = new RegExp(CREDENTIAL_SHAPES.source, 'i').exec(value);
+    if (hit) return `${path}: string matches ${/^-----BEGIN/i.test(hit[0]) ? 'private key block' : /^sb_secret_/i.test(hit[0]) ? 'sb_secret_' : /^sk-/i.test(hit[0]) ? 'sk-' : /^gh[pousr]_/i.test(hit[0]) ? 'gh?_' : /^bearer/i.test(hit[0]) ? 'Bearer' : /^vault/i.test(hit[0]) ? 'vault:v3' : 'SYNTHETIC_'} at offset ${hit.index}`;
+    return null;
+  }
+  if (Array.isArray(value)) {
+    for (const [i, v] of value.entries()) {
+      const found = diagnoseSecretShape(v, `${path}[${i}]`, depth + 1);
+      if (found) return found;
+    }
+    return null;
+  }
+  if (value && typeof value === 'object') {
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+      if (SECRET_PARAM.test(k)) return `${path}: key named "${k}"`;
+      const found = diagnoseSecretShape(v, `${path}.${k}`, depth + 1);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+/** Keys whose value is image bytes: never changed. */
+const BINARY_KEYS = new Set(['image', 'data', 'base64', 'thumb', 'thumbnail']);
+
+/**
+ * A copy of a whole outgoing request (messages as the model API takes them) with every text value cleaned of credential-shaped text, wherever it came from: page text,
+ * tool results the extension composed from page data, tab titles and addresses in the page header, summaries of earlier steps. With `strict`, long opaque strings
+ * (24 or more letters, digits and _+/=- in a row, such as session identifiers) are removed as well: the retry after the server refused a request for looking like it carried a secret.
+ */
+export function scrubDeep<T>(value: T, strict = false, key = ''): T {
+  if (typeof value === 'string') {
+    if (BINARY_KEYS.has(key)) return value;
+    let text = scrubCredentialLike(value);
+    if (strict) text = text.replace(/[A-Za-z0-9_+/=-]{24,}/g, run => (/^[a-z]+(?:-[a-z]+)+$/.test(run) ? run : '[long identifier removed]'));
+    return text as unknown as T;
+  }
+  if (Array.isArray(value)) return value.map(v => scrubDeep(v, strict, key)) as unknown as T;
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value as Record<string, unknown>).map(([k, v]) => [k, scrubDeep(v, strict, k)])) as T;
+  }
+  return value;
+}
+
 /** Where wrapped content came from: a page, a file the user attached, or a connected app. */
 export type ContentSource = { site: string } | { attachment: string } | { connectedApp: string };
 

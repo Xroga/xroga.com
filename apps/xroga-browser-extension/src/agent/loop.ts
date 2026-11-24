@@ -1821,6 +1821,7 @@ ${ledger}` : ''),
   /** What the task is about, decided once from the person's first message: which helpers are run for the model after a page opens. */
   #intent?: { audit: boolean; rows: boolean };
   #autoDone = new Set<string>();
+  #httpHinted = new Set<string>();
 
   async #intents(): Promise<{ audit: boolean; rows: boolean }> {
     if (this.#intent) return this.#intent;
@@ -2423,6 +2424,17 @@ ${renderSkill(top)}`);
         ? await this.options.agentTool(call, signal)
         : { text: `error: ${call.toolName} is not available.`, isError: true };
       outcome = { call, kind, text: r.text, isError: r.isError };
+      // A company's web page read by the server instead of the browser: on an audit task it is told once per site that the browser gets further (no rate limit, bot checks pass) and runs the audit itself.
+      if (call.toolName === 'http_get' && (await this.#intents()).audit) {
+        const target = String((call.input as { url?: unknown } | undefined)?.url ?? '');
+        let host = '';
+        try { host = new URL(target).hostname; } catch { host = ''; }
+        if (host && !/(?:^|\.)(?:googleapis|github|githubusercontent|wikipedia)\.|\/api\/|\.json(?:$|\?)/i.test(`${host}${target}`) && !this.#httpHinted.has(host)) {
+          this.#httpHinted.add(host);
+          outcome.text = `${outcome.text}
+Note: for judging ${host} open it in the browser (navigate): a server read is rate limited and stopped by bot checks that the browser passes, and audit_page runs there for you.`;
+        }
+      }
       if (r.registerTools?.length) this.#registerTools(r.registerTools);
       // Any connected-app call (plugin_read, plugin_act, or an app tool called by its own name) leaves a provider receipt.
       if (!r.isError && r.result && typeof r.result === 'object' &&
