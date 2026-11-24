@@ -10,6 +10,8 @@ import { BROWSER_DATA_TOOL } from '@src/agent/browser-data';
 import { PYTHON_REPL_TOOL, runPythonRepl } from '@src/agent/python-repl';
 import { SITE_SCAN_TOOL, runSiteScan } from '@src/agent/site-scan';
 import { MEMORY_TOOL } from '@src/agent/memory';
+import { LIGHTHOUSE_TOOL } from '@src/agent/lighthouse-tool';
+import { runLighthouse } from './lighthouse';
 import { installTabTidy, trackAgentTab } from './tab-tidy';
 import { onLayerTabOpened } from '@src/browser-control/host/chrome-host';
 import { MEMORY_KEY, memoryForRun, runMemoryTool } from './memory-store';
@@ -1821,8 +1823,8 @@ export class RunManager {
           pointAt,
           vision: model.profile.vision, localScreenshots: !!canonical,
           agentTools: isWorker
-            ? [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, PLAN_TOOL, RECORD_DEMO_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL, DATA_OPS_TOOL, MACRO_TOOL, BROWSER_DATA_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, MEMORY_TOOL] : [])]
-            : [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, PLAN_TOOL, RECORD_DEMO_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL, DATA_OPS_TOOL, MACRO_TOOL, BROWSER_DATA_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, SITE_SCAN_TOOL, MEMORY_TOOL, REPO_RUN_TOOL, CHANGE_REPO_TOOL, PYTHON_REPL_TOOL] : []), ...(canonical?.plugins ? [...PLUGIN_TOOLS, PLUGIN_CHAIN_TOOL, PLUGIN_CONNECT_TOOL] : []), ...PARALLEL_TOOLS],
+            ? [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, PLAN_TOOL, RECORD_DEMO_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL, DATA_OPS_TOOL, MACRO_TOOL, BROWSER_DATA_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, MEMORY_TOOL, LIGHTHOUSE_TOOL] : [])]
+            : [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, PLAN_TOOL, RECORD_DEMO_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL, DATA_OPS_TOOL, MACRO_TOOL, BROWSER_DATA_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, SITE_SCAN_TOOL, MEMORY_TOOL, LIGHTHOUSE_TOOL, REPO_RUN_TOOL, CHANGE_REPO_TOOL, PYTHON_REPL_TOOL] : []), ...(canonical?.plugins ? [...PLUGIN_TOOLS, PLUGIN_CHAIN_TOOL, PLUGIN_CONNECT_TOOL] : []), ...PARALLEL_TOOLS],
         });
         // A request that only reads starts with the small tool list; the model switches to the full one if it needs to act.
         const { tools, full: fullTools } = startingTools(
@@ -1904,6 +1906,14 @@ export class RunManager {
             if (call.toolName === 'http_get' && canonical) return runPublicGet(canonical.runId, call.input, signal, wrapApp);
             if (call.toolName === 'run_repository' && canonical) return runRepositoryTool(canonical.runId, call.input, signal, wrapApp);
             if (call.toolName === 'memory' && canonical) return runMemoryTool(conversationId, call.input);
+            if (call.toolName === 'lighthouse' && canonical) {
+              const target = String(((call.input ?? {}) as { url?: string }).url ?? '');
+              const allowed = browserTarget(target);
+              if (!allowed) return { text: 'error: lighthouse needs an https address.', isError: true };
+              if (isBlockedSite(allowed, this.permissions.blockedSites())) return { text: 'error: that site is blocked in Settings.', isError: true };
+              const audit = await runLighthouse({ ...((call.input ?? {}) as object), url: allowed });
+              return { text: wrapApp(audit.text, 'Lighthouse'), isError: audit.isError };
+            }
             if (call.toolName === 'site_scan' && canonical) {
               const scan = await runSiteScan((call.input ?? {}) as { url?: string; pages?: number; only?: string[] }, u => fetchPublicRaw(canonical!.runId, u, signal), signal);
               return { text: wrapApp(scan.text, 'public web pages'), isError: scan.isError };

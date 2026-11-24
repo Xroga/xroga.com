@@ -1672,7 +1672,7 @@ ${ledger}` : ''),
   async #record(outcome: CallOutcome): Promise<void> {
     if (!outcome.skipped) {
       this.#coach.note(outcome.isError);
-      if (!outcome.isError && ['audit_page', 'site_scan', 'extract_rows', 'data_ops', 'python_repl', 'save_file'].includes(outcome.call.toolName)) this.#coach.progress();
+      if (!outcome.isError && ['audit_page', 'site_scan', 'lighthouse', 'extract_rows', 'data_ops', 'python_repl', 'save_file'].includes(outcome.call.toolName)) this.#coach.progress();
     }
     if (!outcome.isError && !outcome.skipped) {
       const tool = outcome.call.toolName;

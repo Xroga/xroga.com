@@ -43,7 +43,7 @@ export default defineConfig({
   // Unattended development builds (fixtures/autorun.mjs) go elsewhere, so dist/ stays a normal build.
   outDir: !autorun ? 'dist' : productPermissions ? '.output/autorun-product' : '.output/autorun',
   outDirTemplate: '',
-  filterEntrypoints: autorun ? undefined : ['background', 'sidepanel', 'options', 'offscreen', 'permission'],
+  filterEntrypoints: autorun ? undefined : ['background', 'sidepanel', 'options', 'offscreen', 'permission', 'lighthouse'],
   alias: {
     '@src': 'src',
   },

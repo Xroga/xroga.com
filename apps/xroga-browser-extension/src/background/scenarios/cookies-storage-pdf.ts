@@ -101,3 +101,22 @@ defineScenario({
     );
   },
 });
+
+defineScenario({
+  id: 'S3-lighthouse',
+  set: 'C',
+  title: 'Lighthouse runs on a page in its own window and comes back as a summary',
+  covers: 'the helper page loads the bundle, attaches to the audited tab, runs a navigation audit and the windows are closed afterwards',
+  async run() {
+    const { runLighthouse } = await import('../../extension/lighthouse');
+    const windowsBefore = (await chrome.windows.getAll()).length;
+    const r = await runLighthouse({ url: `${FIXTURE_ORIGIN}/c-audit-page.html`, device: 'desktop', categories: ['accessibility', 'seo'] });
+    await new Promise(res => setTimeout(res, 500));
+    const windowsAfter = (await chrome.windows.getAll()).length;
+    return outcome(
+      'a summary with Accessibility and SEO scores and failing audits, and no window left open',
+      `${r.text.slice(0, 900)} | windows ${windowsBefore} -> ${windowsAfter}`,
+      !r.isError && /scores \(0 to 100\):.*Accessibility \d+/.test(r.text) && /SEO \d+/.test(r.text) && windowsAfter <= windowsBefore,
+    );
+  },
+});
