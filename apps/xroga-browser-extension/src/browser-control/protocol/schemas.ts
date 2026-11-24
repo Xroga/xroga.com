@@ -221,8 +221,8 @@ export const ExtractRowsArgsSchema = z.strictObject({
   scope: z.string().max(120).optional().describe('Only the region, table or section with this name; default: the whole page'),
   table: z.number().int().min(1).optional().describe('Only the Nth table found'),
   maxRows: z.number().int().min(1).max(50_000).optional(),
-  cards: z.string().max(200).optional().describe('CSS selector of repeated cards to read; with fields'),
-  fields: z.record(z.string().max(60), z.string().max(200)).optional().describe('column name to a CSS selector inside each card; selector@attr reads an attribute'),
+  cards: z.string().max(200).optional().describe('CSS selector of repeated cards'),
+  fields: z.record(z.string().max(60), z.string().max(200)).optional().describe('column to selector in a card; sel@attr reads an attribute'),
 });
 
 export const WebSearchArgsSchema = z.strictObject({
@@ -261,7 +261,7 @@ export const AuditPageArgsSchema = z.strictObject({
 
 export const DiagnosticsArgsSchema = z.strictObject({
   ...readCommon,
-  kind: z.enum(['both', 'console', 'network', 'endpoints', 'cookies', 'storage']).optional().describe('endpoints: API calls by method and path; cookies and storage: names, flags and sizes, never values'),
+  kind: z.enum(['both', 'console', 'network', 'endpoints', 'cookies', 'storage']).optional().describe('endpoints: API calls; cookies, storage: names and sizes only'),
   onlyProblems: z.boolean().optional().describe('Errors, and requests that failed or got 400+'),
   urlPattern: z.string().optional(),
   limit: z.number().int().min(1).max(100).optional(),

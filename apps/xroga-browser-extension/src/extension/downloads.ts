@@ -29,9 +29,9 @@ async function revoke(url: string): Promise<void> {
 }
 
 /** A blob URL for the content, made in the offscreen document. */
-export async function blobUrl(content: string, mimeType: string): Promise<string> {
+export async function blobUrl(content: string, mimeType: string, base64 = false): Promise<string> {
   await ensureOffscreen();
-  const answer = (await chrome.runtime.sendMessage({ target: 'offscreen', type: 'blob-url', content, mimeType })) as {
+  const answer = (await chrome.runtime.sendMessage({ target: 'offscreen', type: 'blob-url', content, mimeType, base64 })) as {
     url: string;
   };
   held.add(answer.url);
@@ -103,10 +103,10 @@ export function isNumberedCopy(saved: string, asked: string): boolean {
  * Chrome's own dialog lets the user choose where.
  */
 export async function saveText(
-  file: { filename: string; content: string; mimeType: string },
+  file: { filename: string; content: string; mimeType: string; base64?: boolean },
   saveAs = false,
 ): Promise<SavedFile> {
-  const url = await blobUrl(file.content, file.mimeType);
+  const url = await blobUrl(file.content, file.mimeType, file.base64 === true);
   naming.set(url, file.filename);
   chrome.downloads.onDeterminingFilename.addListener(suggestName);
   try {

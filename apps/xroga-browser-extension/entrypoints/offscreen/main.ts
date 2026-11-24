@@ -5,7 +5,8 @@ const urls = new Set<string>();
 chrome.runtime.onMessage.addListener((message, _sender, reply) => {
   if (message?.target !== 'offscreen') return;
   if (message.type === 'blob-url') {
-    const url = URL.createObjectURL(new Blob([message.content as string], { type: message.mimeType as string }));
+    const bytes = message.base64 ? Uint8Array.from(atob(message.content as string), c => c.charCodeAt(0)) : undefined;
+    const url = URL.createObjectURL(new Blob([bytes ?? (message.content as string)], { type: message.mimeType as string }));
     urls.add(url);
     reply({ url });
   } else if (message.type === 'revoke') {

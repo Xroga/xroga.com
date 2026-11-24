@@ -31,7 +31,8 @@ describe('compactSchema', () => {
     // 0.84 until the diagnostics tool, wait.reading and count.delta (about 1,000 characters, served from the provider's prompt cache) were added.
     // 0.875 with the enabled and attribute postconditions (about 200 characters across the tools that take expect).
     // 0.89 with within taking `dialog "Name"` (a container named by role and part of its name, about 450 characters across the tools that take a semantic target).
-    expect(size(tools)).toBeLessThan(32_064 * 0.89);
+    // 0.905 with extract_rows cards and fields, diagnostics cookies and storage, and save_page_pdf (about 450 characters, served from the prompt cache).
+    expect(size(tools)).toBeLessThan(32_064 * 0.905);
   });
 
   it('offers the at option of click only to a run that asks for it', () => {

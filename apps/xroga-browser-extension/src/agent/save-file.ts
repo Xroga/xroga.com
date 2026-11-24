@@ -54,3 +54,15 @@ export function checkSave(args: Record<string, unknown>): SaveCheck {
   if (bytes > MAX_SAVE) return { ok: false, reason: 'the file is larger than 5 MB.' };
   return { ok: true, filename: raw, mimeType, bytes };
 }
+
+export const SAVE_PDF_TOOL: AgentTool = {
+  name: 'save_page_pdf',
+  source: 'agent',
+  group: 'files',
+  description: 'Save the current tab as a PDF in Downloads. Asks first in Ask mode. Only when a PDF was asked for.',
+  parameters: {
+    type: 'object',
+    properties: { filename: { type: 'string' } },
+    additionalProperties: false,
+  },
+};

@@ -1,5 +1,6 @@
 // The RunManager: one run per active conversation, the panel commands, run records and statuses. The worker owns the
 // run; panels are views that can close and reopen.
+import { pdfName, printTab } from './page-pdf';
 import { spendOf } from './spend';
 import { clearCutOff, markCutOff, takeToResume } from './auto-resume';
 import { CALCULATE_TOOL } from '@src/agent/calculate';
@@ -1285,6 +1286,26 @@ export class RunManager {
         };
       }
       return { text: verdict.line, isError: verdict.isError };
+    }
+    if (call.toolName === 'save_page_pdf') {
+      const tabId = (await this.scope.tabsOf(conversationId))[0];
+      if (tabId === undefined) return { text: 'error: there is no tab in this task to print.', isError: true };
+      const tab = await chrome.tabs.get(tabId).catch(() => undefined);
+      const asked = typeof args.filename === 'string' ? args.filename.trim() : '';
+      const filename = asked && /^[^/\\:*?"<>|]{1,110}\.pdf$/i.test(asked) && !asked.startsWith('.') ? asked : pdfName(tab?.title);
+      const canSave = () => chrome.permissions.contains({ permissions: ['downloads'] }).catch(() => false);
+      let saveAs = false;
+      if ((this.#modes.get(conversationId) ?? 'ask') === 'ask' || !(await canSave())) {
+        const answer = await this.broker.open<'save' | 'save-as' | 'discard'>(conversationId, 'save-file', { filename, mimeType: 'application/pdf', bytes: 0, preview: `PDF of the page "${tab?.title ?? ''}"` }, signal);
+        if (answer !== 'save' && answer !== 'save-as') return { text: 'save_page_pdf · the user discarded the file; nothing was saved.', isError: true };
+        saveAs = answer === 'save-as';
+      }
+      if (!(await canSave())) return { text: "error SAVE_FAILED (not saved)\nSaving files needs Chrome's downloads permission, which the user has not allowed.", isError: true };
+      const printed = await printTab(tabId);
+      if (!printed.ok) return { text: `error SAVE_FAILED (not saved)\n${printed.reason}`, isError: true };
+      const saved = await saveText({ filename, content: printed.base64, mimeType: 'application/pdf', base64: true }, saveAs).catch((error: Error) => ({ state: 'interrupted' as const, error: error.message, name: filename, downloadId: -1 }));
+      if (saved.state !== 'complete') return { text: `error SAVE_FAILED (not saved)\nThe download did not complete: ${saved.error ?? 'interrupted'}.`, isError: true };
+      return { text: `save_page_pdf · saved "${saved.name}" (${Math.round(printed.bytes / 1024)} KB) in Downloads.`, isError: false };
     }
     if (call.toolName !== 'save_file') return { text: `error: ${call.toolName} is not available.`, isError: true };
     const check = checkSave(args);

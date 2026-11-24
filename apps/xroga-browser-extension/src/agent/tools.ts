@@ -3,7 +3,7 @@
 import { argsJsonSchema, isReadOnly, TOOL_SPECS } from '@src/browser-control';
 import type { ToolDefinition } from '@src/llm';
 import { READ_ATTACHMENT_TOOL } from './attachments';
-import { SAVE_FILE_TOOL } from './save-file';
+import { SAVE_FILE_TOOL, SAVE_PDF_TOOL } from './save-file';
 
 export type ToolKind = 'read' | 'wait' | 'mutate' | 'control' | 'state';
 
@@ -177,7 +177,7 @@ export function allTools(agentTools: AgentTool[] = []): AgentTool[] {
         ),
       }) satisfies AgentTool,
   );
-  return [...layer, DONE_TOOL, READ_ATTACHMENT_TOOL, SAVE_FILE_TOOL, ...agentTools];
+  return [...layer, DONE_TOOL, READ_ATTACHMENT_TOOL, SAVE_FILE_TOOL, SAVE_PDF_TOOL, ...agentTools];
 }
 
 /**
@@ -233,7 +233,7 @@ export function kindOf(tool: string, args: Record<string, unknown>): ToolKind {
   if (tool === 'start_parallel_tasks') return 'mutate';
   if (tool === 'plan') return 'read';
   if (tool === 'browser_data') return ['history_search', 'bookmarks_search', 'tabs_all', 'tabs_duplicates'].includes(String(args.action)) ? 'read' : 'mutate';
-  if (tool === 'save_file') return 'state';
+  if (tool === 'save_file' || tool === 'save_page_pdf') return 'state';
   if (tool === 'read_attachment' || tool === 'find_color' || tool === 'find_skill' || tool === 'read_skill' || tool === 'confirm_download' || tool === 'plugin_search' || tool === 'plugin_action_search' || tool === 'http_get' || tool === 'plugin_connect' || tool === 'run_repository' || tool === 'python_repl' || tool === 'change_repository') return 'read';
   // An approved connected read can transmit private arguments. Fence it like a dispatched effect on recovery.
   if (tool === 'plugin_read' || tool === 'plugin_chain') return 'mutate';
