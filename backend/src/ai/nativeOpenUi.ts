@@ -331,6 +331,24 @@ export function supplementNativeProse(prose: string, program: string, includeAll
       return columns.every(matches => matches.length === 1) && new Set(columns.flat()).size === head.length;
     });
   };
+  const rootChartHasReadableData = (rows: string[][]) => {
+    if (!rows.length) return false;
+    const categories = new Set(rows.map(([label]) => label));
+    if (categories.size !== rows.length) return false;
+
+    return outline.tables.filter(table => {
+      const plottedRows = table.rows.filter(([label]) => categories.has(label));
+      if (plottedRows.length !== rows.length || !plottedRows.every(([label], index) => label === rows[index][0])) return false;
+      const valueColumns = table.head.slice(1).filter((_heading, index) => plottedRows.every((row, rowIndex) =>
+        nativeTableDecimalKey(row[index + 1]) === nativeTableDecimalKey(rows[rowIndex][1])));
+      return valueColumns.length === 1;
+    }).length === 1;
+  };
+  const metricHasReadableValue = (label: string, value: string, scope: readonly string[]) =>
+    outline.tables.filter(table => !scope.length || isSingleScope([table.headings.map(scopeLabel)], scope))
+      .flatMap(table => table.rows)
+      .filter(([name, ...values]) => nativeReadableTextKey(name) === nativeReadableTextKey(label)
+        && values.some(cell => nativeTableDecimalKey(cell) === nativeTableDecimalKey(value))).length === 1;
   const seenHeadings = new Set<string>();
   const seenTables = new Set<string>();
   const existingText = new Set(prose.split(/\n\s*\n|\n(?=\s*[-*+]\s)/).map(value =>
@@ -438,7 +456,7 @@ export function supplementNativeProse(prose: string, program: string, includeAll
     } else if (node.typeName === 'Metric') {
       const label = scalar(props.label);
       const initial = readouts.find(row => row.label === label);
-      if (initial) add(initial.label + ': ' + initial.value);
+      if (initial && !metricHasReadableValue(initial.label, initial.value, scope)) add(initial.label + ': ' + initial.value);
       add(scalar(props.note));
     } else if (node.typeName === 'Table') {
       const headings = initialValue(props.columns);
@@ -474,8 +492,10 @@ export function supplementNativeProse(prose: string, program: string, includeAll
             ? formatInitialNativeCurrency(amount, currency) : String(amount))]);
         }
         const yLabel = scalar(presentation.yLabel);
-        const headings = [scalar(presentation.xLabel) || x, ...(series.length === 1 && yLabel ? [yLabel] : series)];
-        if (series.length === 1 && chartHasReadableData(headings, rows, scope)) {
+        const xLabel = scalar(presentation.xLabel);
+        const headings = [xLabel || x, ...(series.length === 1 && yLabel ? [yLabel] : series)];
+        if (series.length === 1 && (chartHasReadableData(headings, rows, scope)
+          || (!scope.length && !xLabel && !yLabel && /^(?:name|label|category)$/iu.test(x) && rootChartHasReadableData(rows)))) {
           if (yLabel) add(yLabel, scope);
         } else {
           addTable(headings, rows, scope);

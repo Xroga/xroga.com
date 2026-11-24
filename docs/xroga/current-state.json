@@ -5553,7 +5553,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "54382d7232460261b7a69b5272bae7fc4b122553a3b9fc80b09dcd7bbe305e0b",
+      "sha256": "12ed1faf2a938c9cd5edc294cac498118474a68ea064926459dd9ac0ea21f232",
       "symbols": [
         "EditorialContext",
         "MAX_EXPANDED_EXPRESSION_DEPTH",
@@ -5590,6 +5590,7 @@
         "branches",
         "budget",
         "candidate",
+        "categories",
         "cell",
         "changed",
         "chartHasReadableData",
@@ -5684,6 +5685,7 @@
         "marker",
         "matched",
         "matchingMetricFormula",
+        "metricHasReadableValue",
         "middle",
         "missingNativeFormats",
         "multiples",
@@ -5717,6 +5719,7 @@
         "parts",
         "path",
         "pending",
+        "plottedRows",
         "prefix",
         "presentation",
         "previous",
@@ -5765,6 +5768,7 @@
         "reviewContext",
         "reviewStrings",
         "root",
+        "rootChartHasReadableData",
         "rootChildBoundary",
         "rootListOpen",
         "row",
@@ -5818,6 +5822,7 @@
         "validateNativeWorkspaceProgram",
         "validation",
         "value",
+        "valueColumns",
         "values",
         "visible",
         "visibleAmounts",
@@ -5827,6 +5832,7 @@
         "workLimit",
         "wrapper",
         "x",
+        "xLabel",
         "yLabel"
       ],
       "imports": [
@@ -8400,8 +8406,8 @@
         "backend/src/ai/projectName.test.ts:3",
         "backend/src/ai/repositoryHydrationAuthority.test.ts:3",
         "backend/src/ai/repositoryReadFailure.test.ts:3",
-        "backend/src/ai/researchAnswer.test.ts:112",
-        "backend/src/ai/researchAnswer.ts:237",
+        "backend/src/ai/researchAnswer.test.ts:136",
+        "backend/src/ai/researchAnswer.ts:256",
         "backend/src/ai/tenantModelDispatch.test.ts:8",
         "backend/src/ai/universal/resumeProjectContext.test.ts:54",
         "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts:5",
@@ -8756,7 +8762,7 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "bef2e1e9c88666a97ca09a2812119b41e08066557175b4f1ea6cf015bd7b114b",
+      "sha256": "c4da3ef813c8f0e06433b1762eecca0c10c336d95f63c55154afb2c661eb5f15",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
@@ -10085,7 +10091,7 @@
       "id": "surface:794bcc5ea45ebaad109e",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/researchAnswer.ts",
-      "sha256": "c3e80fbc5a3a01ce0c646981ed018d0c985228a18a99ee91f732c4172dcdd450",
+      "sha256": "1b0802fa3df4ec84a46b48ed42e130670ec29ec5d53588b360b8bfc1b21db12d",
       "symbols": [
         "RESEARCH_ANSWER_MAXIMUM_MICRO_USD",
         "ResearchAnswerRequest",
@@ -10112,9 +10118,11 @@
         "destination",
         "directUrls",
         "endDay",
+        "endsWithDeparture",
         "error",
         "evidence",
         "evidenceOnlyAnswer",
+        "explicit",
         "filtered",
         "fixedStayLength",
         "goal",
@@ -10126,7 +10134,6 @@
         "input",
         "issues",
         "itineraries",
-        "labels",
         "last",
         "linked",
         "links",
@@ -10138,7 +10145,9 @@
         "normalized",
         "note",
         "numberWords",
+        "numbered",
         "officialOnly",
+        "ordered",
         "original",
         "output",
         "position",
@@ -10154,6 +10163,7 @@
         "researchAnswerRequestSchema",
         "researchCitationIssues",
         "result",
+        "scheduledDays",
         "scheduledStayMismatch",
         "siteRows",
         "source",
@@ -10168,7 +10178,8 @@
         "unverified",
         "url",
         "value",
-        "visible"
+        "visible",
+        "withoutCitations"
       ],
       "imports": [
         "../security/authority/enforce.js",
@@ -14556,7 +14567,7 @@
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.test.ts:6",
         "backend/src/ai/pipeline.ts:173",
-        "backend/src/ai/researchAnswer.test.ts:113",
+        "backend/src/ai/researchAnswer.test.ts:137",
         "backend/src/ai/researchAnswer.ts:2",
         "backend/src/ai/responseCoverage.test.ts:4",
         "backend/src/ai/tenantModelDispatch.test.ts:9",
@@ -15810,7 +15821,7 @@
       "callers": [
         "backend/src/ai/parallelApproval.ts:24",
         "backend/src/ai/pipeline.ts:31",
-        "backend/src/ai/researchAnswer.test.ts:121",
+        "backend/src/ai/researchAnswer.test.ts:145",
         "backend/src/ai/researchAnswer.ts:8",
         "backend/src/ai/researchPublicationEvidence.ts:3",
         "backend/src/ai/router.ts:11",
@@ -37534,7 +37545,7 @@
         "backend/src/ai/quota.ts:2",
         "backend/src/ai/repoSummarize.security.test.ts:6",
         "backend/src/ai/repoSummarize.ts:19",
-        "backend/src/ai/researchAnswer.test.ts:117",
+        "backend/src/ai/researchAnswer.test.ts:141",
         "backend/src/ai/resourceLedger.test.ts:5",
         "backend/src/ai/resourceLedger.ts:10",
         "backend/src/ai/resourceMeter.ts:17",
@@ -38722,7 +38733,7 @@
       "callers": [
         "backend/src/ai/parallelApproval.ts:13",
         "backend/src/ai/parallelWeb.security.test.ts:16",
-        "backend/src/ai/researchAnswer.test.ts:120",
+        "backend/src/ai/researchAnswer.test.ts:144",
         "backend/src/ai/sonnetApproval.test.ts:9",
         "backend/src/ai/sonnetApproval.ts:10",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:11",
@@ -38893,7 +38904,7 @@
       "callers": [
         "backend/src/ai/parallelApproval.ts:12",
         "backend/src/ai/parallelWeb.security.test.ts:18",
-        "backend/src/ai/researchAnswer.test.ts:114",
+        "backend/src/ai/researchAnswer.test.ts:138",
         "backend/src/ai/sonnetApproval.test.ts:5",
         "backend/src/ai/sonnetApproval.ts:9",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:4",
@@ -42745,7 +42756,7 @@
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.ts:19",
         "backend/src/ai/parallelApproval.ts:21",
-        "backend/src/ai/researchAnswer.test.ts:115",
+        "backend/src/ai/researchAnswer.test.ts:139",
         "backend/src/ai/researchAnswer.ts:4",
         "backend/src/routes/phase1.ts:1",
         "backend/src/services/integrations/businessActionConfirmations.ts:1",
@@ -44370,7 +44381,7 @@
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.test.ts:8",
         "backend/src/ai/parallelWeb.security.test.ts:17",
-        "backend/src/ai/researchAnswer.test.ts:118",
+        "backend/src/ai/researchAnswer.test.ts:142",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:3",
         "backend/src/services/integrations/businessModelEgress.test.ts:5",
         "backend/src/services/integrations/composioAccountSelection.security.test.ts:4",
@@ -48995,7 +49006,7 @@
       ],
       "callers": [
         "backend/src/ai/parallelWeb.security.test.ts:13",
-        "backend/src/ai/researchAnswer.test.ts:116",
+        "backend/src/ai/researchAnswer.test.ts:140",
         "backend/src/ai/sonnetApproval.test.ts:7",
         "backend/src/index.ts:61",
         "backend/src/routes/browserRuns.ts:20",
@@ -49425,7 +49436,7 @@
       "entryPoints": [],
       "callers": [
         "backend/src/ai/parallelWeb.security.test.ts:12",
-        "backend/src/ai/researchAnswer.test.ts:119",
+        "backend/src/ai/researchAnswer.test.ts:143",
         "backend/src/routes/browserRunInternal.test.ts:6",
         "backend/src/routes/browserRuns.test.ts:11",
         "backend/src/routes/drive.test.ts:7",
@@ -155112,7 +155123,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 92,
+      "declaredTests": 93,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -155399,7 +155410,7 @@
     {
       "id": "test-suite:d2498a6171b68795395c",
       "sourcePath": "backend/src/ai/researchAnswer.test.ts",
-      "declaredTests": 27,
+      "declaredTests": 28,
       "skipLocations": [],
       "focusLocations": []
     },

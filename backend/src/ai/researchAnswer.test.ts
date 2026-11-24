@@ -48,6 +48,30 @@ test('a titled stay counts nights from destination arrival after an overnight fl
   assert.equal(presentPublicResearchAnswer(aligned, { status: 'complete' }, sources, 'Plan a trip.').response, aligned);
 });
 
+test('counts an ordered itinerary that puts departure after the final activity', () => {
+  const sources = [{ url: 'https://travel.example/rates' }];
+  const response = [
+    'Room prices are illustrative [1].', '',
+    '## A 3-night shape', '',
+    '1. Arrive, settle in and get dinner.',
+    '2. Visit the old town.',
+    '3. See the market, then fly home [1].',
+  ].join('\n');
+  const present = (text: string) => presentPublicResearchAnswer(text, { status: 'complete' }, sources, 'Plan a stay.');
+  const reviewed = present(response);
+  assert.deepEqual(reviewed.completion, { status: 'partial', reason: 'factual_review' });
+  assert.equal(reviewed.requiresReadableFallback, true);
+  assert.match(reviewed.response, /^The itinerary runs from Day 1 to Day 3, which is 2 nights\. The itinerary heading says 3 nights\./);
+  assert.ok(reviewed.response.endsWith(response));
+  for (const alignedOrAmbiguous of [
+    response.replace('3-night shape', '2-night shape'),
+    response.replace('then fly home', 'then depart for another local sight'),
+    response.replace('2. Visit', '1. Visit'),
+  ]) {
+    assert.deepEqual(present(alignedOrAmbiguous).completion, { status: 'complete' });
+  }
+});
+
 test('public research withholds positions based on incompatible financing figures', () => {
   const sources = [{ url: 'https://finance.example/rounds' }];
   const prose = [

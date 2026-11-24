@@ -1154,6 +1154,28 @@ test('saved chart data evaluates the initial values from the same calculator bin
   }
 });
 
+test('the readable calculator keeps one exact amount table and the independent readout notes', () => {
+  const prose = [
+    '## Initial results',
+    '| Component | Amount | Share |',
+    '| --- | --- | --- |',
+    '| Core work | $80.00 | 80% |',
+    '| Extras | $20.00 | 20% |',
+    '| Total | $100.00 | 100% |',
+  ].join('\n');
+  const program = [
+    'root = Col([extra, chart])',
+    '$amount = 20',
+    'extra = Metric("Extras", @Format($amount, "currency", 2, "USD"), "Total includes optional work.")',
+    'chart = Chart("donut", [{name:"Core work", value:80}, {name:"Extras", value:$amount}], "name", ["value"], "currency", "USD")',
+  ].join('\n');
+  const readable = supplementNativeProse(prose, program, true);
+  assert.equal(readable, prose + '\n\nTotal includes optional work.');
+  assert.equal(supplementNativeProse(readable, program, true), readable);
+  assert.match(supplementNativeProse(prose.replace('$80.00', '$70.00'), program, true), /\| name \| value \|/);
+  assert.match(supplementNativeProse(prose.replace('$20.00', '$30.00'), program, true), /Extras: \$20\.00/);
+});
+
 test('the saved prose and clipboard fallback retain the substantive native body after an unfinished heading', () => {
   const prose = 'Separate identity and authorization.\n\n## Request path';
   const program = 'root = Col([Title("Request path"), Text("Separate identity and authorization."), Diagram("Trust boundaries", [{id: "client", label: "Client", level: 0}, {id: "app", label: "App", level: 1}], [{from: "client", to: "app", label: "HTTPS"}], "The app authorizes the request."), Table(["Concern", "Guard"], [["Billing", "Verify the webhook"]])])';
