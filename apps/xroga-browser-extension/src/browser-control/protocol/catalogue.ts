@@ -214,7 +214,7 @@ export const TOOL_SPECS: ToolSpec[] = [
   {
     name: 'diagnostics',
     description:
-      "The page's console errors and its requests with status: for an action that did nothing or a success message with no result. The first call starts recording; repeat the action, call again.",
+      "The page's console errors and requests with status (an action that did nothing); kind cookies and storage (names, flags, sizes: what a site sets), issues (the browser's own problem list), weight (biggest requests). Recording starts on the first call; repeat the action, call again.",
     args: DiagnosticsArgsSchema,
     readOnly: true,
     capability: 'core',

@@ -70,6 +70,8 @@ async function main() {
     [
       `--user-data-dir=${profile}`, `--load-extension=${outDir}`, `--disable-extensions-except=${outDir}`,
       `--remote-debugging-port=${CDP_PORT}`, '--use-mock-keychain', '--no-first-run', '--no-default-browser-check', '--lang=en-US',
+      // A locked or covered screen must not make pages count as hidden: the panel refreshes only while visible, and background tabs are throttled.
+      '--disable-features=CalculateNativeWinOcclusion', '--disable-backgrounding-occluded-windows', '--disable-renderer-backgrounding', '--disable-background-timer-throttling',
       '--window-size=1280,900', 'about:blank',
     ],
     { stdio: 'ignore' },
@@ -105,7 +107,11 @@ async function main() {
     const open = async url => {
       const { targetId } = await cdp.send('Target.createTarget', { url });
       await sleep(1500);
-      return { targetId, sid: await attach(targetId) };
+      const sid = await attach(targetId);
+      // A page counts as visible and focused even when its window is covered or the screen is off: the panel refreshes its state only while visible.
+      await cdp.send('Emulation.setFocusEmulationEnabled', { enabled: true }, sid).catch(() => undefined);
+      await cdp.send('Page.bringToFront', {}, sid).catch(() => undefined);
+      return { targetId, sid };
     };
     const operator = await open(`chrome-extension://${extId}/options.html`);
     // The saved test profile may hold the extension's state from an earlier build (device, origins): start the extension clean, keep the browser's own logins.
@@ -145,7 +151,9 @@ async function main() {
       paired = String((await panelOp('read').catch(() => null))?.body ?? '').includes('Signed in to Xroga');
     }
     report.steps.paired = paired;
-    if (!paired) report.steps.connection = await evalIn(operator.sid, `chrome.runtime.sendMessage({ type: 'xroga.browser.connection.v1' }).then(r => JSON.stringify(r))`).catch(e => String(e));
+    if (!paired) report.steps.visibility = await evalIn(panelTarget.sid, 'document.visibilityState').catch(e => String(e));
+    if (!paired) report.steps.connection = await evalIn(panelTarget.sid, `chrome.runtime.sendMessage({ type: 'xroga.browser.connection.v1' }).then(r => JSON.stringify(r))`).catch(e => String(e));
+    if (!paired) report.steps.storageKeys = await evalIn(operator.sid, `chrome.storage.local.get(null).then(v => JSON.stringify(Object.keys(v)))`).catch(e => String(e));
     if (!paired) report.steps.panelWhenNotPaired = String((await panelOp('read').catch(() => null))?.body ?? '').replace(/\s+/g, ' ').slice(0, 400);
     if (!paired) { report.steps.workerConsole = (cdp.events ?? []).slice(-15); report.steps.workerNetwork = (cdp.net ?? []).slice(-20); report.steps.workspaceTabs = (await targets()).filter(t => t.type === 'page').map(t => t.url.slice(0, 160)); }
     if (!paired) {
