@@ -38,7 +38,7 @@ describe('outputRoom', () => {
   it('gives thinking turns more room than non-thinking ones', () => {
     expect(outputRoom('none')).toBe(4_096);
     // Thinking counts against the output room: a long reasoning turn must still have room left to write its answer.
-    expect(outputRoom('high')).toBeGreaterThanOrEqual(32_000);
+    expect(outputRoom('high')).toBeGreaterThanOrEqual(16_000);
     expect(outputRoom('high')).toBeGreaterThan(outputRoom('none'));
     expect(outputRoom('max')).toBeGreaterThan(outputRoom('high'));
   });

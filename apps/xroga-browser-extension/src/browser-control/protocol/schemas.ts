@@ -237,29 +237,29 @@ export const FormModelArgsSchema = z.strictObject({
 
 export const EmulateArgsSchema = z.strictObject({
   ...readCommon,
-  device: z.enum(['iphone-15', 'pixel-8', 'ipad', 'laptop', 'desktop']).optional().describe('A device size preset'),
+  device: z.enum(['iphone-15', 'pixel-8', 'ipad', 'laptop', 'desktop']).optional(),
   width: z.number().int().min(100).max(10000).optional(),
   height: z.number().int().min(100).max(10000).optional(),
-  scale: z.number().min(0.5).max(5).optional().describe('Device pixel ratio'),
+  scale: z.number().min(0.5).max(5).optional(),
   mobile: z.boolean().optional(),
   colorScheme: z.enum(['light', 'dark']).optional(),
   reducedMotion: z.boolean().optional(),
-  media: z.enum(['print', 'screen']).optional().describe('print shows the print layout'),
-  network: z.enum(['offline', 'slow-3g', 'fast-3g', 'none']).optional().describe('none removes throttling'),
-  cpuSlowdown: z.number().min(1).max(20).optional().describe('1 is full speed; 4 is four times slower'),
-  timezone: z.string().max(60).optional().describe('IANA name such as Asia/Tokyo; empty restores the system'),
-  locale: z.string().max(20).optional().describe('Language tag such as de-DE; empty restores the system'),
-  reset: z.boolean().optional().describe('Undo every setting above'),
+  media: z.enum(['print', 'screen']).optional(),
+  network: z.enum(['offline', 'slow-3g', 'fast-3g', 'none']).optional(),
+  cpuSlowdown: z.number().min(1).max(20).optional(),
+  timezone: z.string().max(60).optional().describe('IANA name, e.g. Asia/Tokyo'),
+  locale: z.string().max(20).optional().describe('e.g. de-DE'),
+  reset: z.boolean().optional(),
 });
 
 export const AuditPageArgsSchema = z.strictObject({
   ...readCommon,
-  url: z.string().url().max(2000).optional().describe('Audit this address in a background tab that is closed again, instead of the open page: one call per site, no navigation'),
+  url: z.string().url().max(2000).optional().describe('Audit this address in a background tab instead of the open page'),
 });
 
 export const DiagnosticsArgsSchema = z.strictObject({
   ...readCommon,
-  kind: z.enum(['both', 'console', 'network', 'endpoints']).optional().describe('endpoints: the page’s API calls grouped by method and path (no bodies)'),
+  kind: z.enum(['both', 'console', 'network', 'endpoints']).optional().describe('endpoints: the page’s API calls by method and path'),
   onlyProblems: z.boolean().optional().describe('Errors, and requests that failed or got 400+'),
   urlPattern: z.string().optional(),
   limit: z.number().int().min(1).max(100).optional(),

@@ -220,14 +220,20 @@ describe('the summary call', () => {
 describe('a reply that is all reasoning', () => {
   const allReasoning: ScriptedReply = { finish: 'length', usage: { input: 100, output: 400, reasoning: 400 } };
 
-  it('ends the turn as an error before a mutation', async () => {
-    const { loop } = await setup([allReasoning], { support: 'optional' });
+  it('is asked again, and ends as an error only after the fourth cut in a row', async () => {
+    const { loop } = await setup([allReasoning, allReasoning, allReasoning, allReasoning], { support: 'optional' });
     expect(await loop.run()).toMatchObject({ status: 'failed', outcome: 'failed', reason: CUT_BEFORE_ANYTHING });
   });
 
-  it('and after one', async () => {
+  it('carries on when a retry gets through, and the count starts again', async () => {
+    const done = { toolCalls: [call('done', { outcome: 'success', summary: 'ok' }, 'd')] };
+    const { loop } = await setup([allReasoning, allReasoning, done], { support: 'optional' });
+    expect(await loop.run()).toMatchObject({ status: 'done', outcome: 'success' });
+  });
+
+  it('and after a call that ran', async () => {
     const layer = new FakeLayer({ click: () => ok('clicked', { receipt: receipt() }) });
-    const { loop } = await setup([{ toolCalls: [call('click', { target: { ref: 'a1' } }, 'c')] }, allReasoning], {
+    const { loop } = await setup([{ toolCalls: [call('click', { target: { ref: 'a1' } }, 'c')] }, allReasoning, allReasoning, allReasoning, allReasoning], {
       support: 'optional',
       layer,
     });

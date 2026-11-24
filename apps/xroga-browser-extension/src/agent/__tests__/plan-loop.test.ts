@@ -75,3 +75,27 @@ describe('plan in a run', () => {
     expect(r[2]!.text).toContain('[#] verify');
   });
 });
+
+describe('plan milestones in a read-only run', () => {
+  const failWait = () => ({ ok: false, text: 'timeout', error: { code: 'TIMEOUT', message: 'no' } }) as never;
+  const research = { toolCalls: [{ name: 'plan', id: 'p1', input: { action: 'set', milestones: [{ id: 'find', title: 'Find the agencies', check: { text: 'Leeds' } }] } }] };
+  const finish = { toolCalls: [{ name: 'plan', id: 'p3', input: { action: 'update', id: 'find', status: 'done' } }] };
+
+  it('is verified by text the run has read, though that page is no longer open', async () => {
+    const l = new FakeLayer({ snapshot: () => ({ ok: true, text: 'Top SEO agencies in Leeds: Alpha, Beta', page: { tabId: 1, url: 'https://x.test/list', title: 't', rev: 2 } as never }), wait: failWait });
+    const { results } = await run([research, { toolCalls: [{ name: 'snapshot', id: 's1', input: {} }] }, finish, done], l);
+    const p = results.filter(x => x.toolName === 'plan');
+    expect(p[1]!.text).not.toContain('NOT verified');
+  });
+
+  it('is not verified by what was read once the run has changed a page', async () => {
+    const l = new FakeLayer({
+      snapshot: () => ({ ok: true, text: 'Top SEO agencies in Leeds', page: { tabId: 1, url: 'https://x.test/list', title: 't', rev: 2 } as never }),
+      click: () => ok('clicked', { receipt: { effect: { verdict: 'changed', signals: [] } } as never }),
+      wait: failWait,
+    });
+    const { results } = await run([research, { toolCalls: [{ name: 'snapshot', id: 's1', input: {} }] }, { toolCalls: [{ name: 'click', id: 'c1', input: { target: { ref: 'a1' } } }] }, finish, done], l);
+    const p = results.filter(x => x.toolName === 'plan');
+    expect(p[1]!.text).toContain('NOT verified');
+  });
+});

@@ -197,7 +197,7 @@ export const TOOL_SPECS: ToolSpec[] = [
   },
   {
     name: 'emulate',
-    description: 'View the tab as a phone or tablet, in dark mode, print, offline or slow network, another time zone or language. Display only; reset undoes it.',
+    description: 'View the tab as a phone, in dark mode, print, offline, slow, or another time zone or language. reset undoes it.',
     args: EmulateArgsSchema,
     readOnly: true,
     capability: 'core',
@@ -205,7 +205,7 @@ export const TOOL_SPECS: ToolSpec[] = [
   },
   {
     name: 'audit_page',
-    description: 'On-page SEO, accessibility basics and speed of the open page (title, description, headings, alt text, links, structured data, LCP, CLS) with findings worst first. One call per page.',
+    description: 'SEO, accessibility and speed of the open page or of a url (title, headings, alt text, schema, contacts, LCP), findings worst first.',
     args: AuditPageArgsSchema,
     readOnly: true,
     capability: 'core',

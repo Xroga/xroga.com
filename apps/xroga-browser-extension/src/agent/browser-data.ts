@@ -9,7 +9,7 @@ export const BROWSER_DATA_TOOL = {
   source: 'agent' as const,
   group: 'working' as const,
   description:
-    "The person's own browser: history_search (text, days, max), bookmarks_search (text), bookmark_add (title, url), tabs_all (every tab of every window), tabs_duplicates, tabs_group (tabIds, title, color), tabs_group_by_site (groups the tabs that share a site, two or more), tabs_ungroup (tabIds). History and bookmarks need the person's permission (Settings, Browser features). Nothing is closed or deleted.",
+    "The person's own browser: history_search, bookmarks_search, bookmark_add, tabs_all, tabs_duplicates, tabs_group, tabs_group_by_site, tabs_ungroup. History and bookmarks need the person's permission in Settings. Nothing is closed or deleted.",
   parameters: {
     type: 'object',
     properties: {

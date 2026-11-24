@@ -72,7 +72,8 @@ export function shapeBody(body: string, opts: { outline?: boolean; filter?: stri
 
 async function runPublicGetNow(runId: string, input: unknown, signal: AbortSignal, wrap: (text: string, source: string) => string): Promise<{ text: string; isError: boolean }> {
   try {
-    const { outline, filter, ...serverInput } = (input ?? {}) as { outline?: boolean; filter?: string; url?: string };
+    // The model adds an `intent` to its calls like it does on every tool; the server's request check rejects unknown fields, so only the address goes.
+    const { outline, filter, intent: _intent, ...serverInput } = (input ?? {}) as { outline?: boolean; filter?: string; url?: string; intent?: string };
     const value = await workspaceRequest('public-get', { runId, body: serverInput }, signal) as
       { status?: number; contentType?: string; finalUrl?: string; body?: string; truncated?: boolean; totalChars?: number; note?: string };
     const head = `HTTP ${value.status ?? '?'} ${value.contentType ?? ''} ${value.finalUrl ?? ''}${value.truncated ? ` (cut: ${value.totalChars} characters in total)` : ''}${value.note ? '\n' + value.note : ''}`;

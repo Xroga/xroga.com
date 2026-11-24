@@ -58,6 +58,13 @@ async function main() {
   const server = await startServer();
   const profile = 'C:/Users/hp/xr-live-profile'; // kept between runs so one sign-in serves them all; removed by hand at the end
   const outDir = join(root, '.output', 'autorun-product');
+  // The profile is kept so one sign-in serves every run, but Chrome keeps the extension's old background script in its caches and can keep running it after a rebuild:
+  // the caches and the extension's own stored state go, the browser's logins stay.
+  const { rmSync: rm } = await import('node:fs');
+  for (const dir of ['Service Worker', 'Code Cache', 'Extension Rules', 'Extension Scripts', 'Extension State', 'Local Extension Settings', 'Sync Extension Settings', 'IndexedDB']) {
+    if (dir === 'IndexedDB') continue;
+    rm(join(profile, 'Default', dir), { recursive: true, force: true });
+  }
   const chrome = spawn(
     findChrome(),
     [
@@ -192,6 +199,7 @@ async function main() {
         (await import('node:fs')).writeFileSync('C:/Users/hp/AppData/Local/Temp/entries-dump.json', dump);
         report.steps.entriesDumped = dump.length;
       } catch (e) { report.steps.entriesDumped = String(e); }
+      report.steps.lastIntent = await evalIn(operator.sid, `chrome.storage.local.get('xroga_last_intent').then(v => JSON.stringify(v.xroga_last_intent ?? null))`).catch(e => String(e));
       report.steps.lastRefusal = await evalIn(operator.sid, `chrome.storage.local.get('xroga_last_refusal').then(v => JSON.stringify(v.xroga_last_refusal ?? null))`).catch(e => String(e));
       report.steps.workerConsole = (cdp.events ?? []).filter(e => /secret-like|model\]/.test(e.text)).slice(-6);
       report.steps.finalAnswer = text.replace(/\s+/g, ' ').slice(-2500);

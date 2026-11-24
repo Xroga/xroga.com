@@ -19,11 +19,11 @@ export const SAVE_FILE_TOOL: AgentTool = {
   source: 'agent',
   group: 'files',
   description:
-    "Save text you made as a file in the user's Downloads folder: CSV, Markdown, JSON, plain text or HTML. In Ask mode the user is asked first. An existing file is never overwritten.",
+    "Save text as a file in Downloads (CSV, Markdown, JSON, text, HTML). Asks first in Ask mode; never overwrites. Only when the person asked for a file: a table or report goes in your answer.",
   parameters: {
     type: 'object',
     properties: {
-      filename: { type: 'string', description: 'A plain file name ending in .csv, .md, .json, .txt or .html' },
+      filename: { type: 'string', description: 'File name ending .csv, .md, .json, .txt or .html' },
       content: { type: 'string', description: 'The whole text of the file' },
       mimeType: { type: 'string', enum: Object.values(SAVE_TYPES) },
     },

@@ -86,5 +86,5 @@ export class EffortControl {
 
 /** The output room a request asks for: reasoning tokens count against it, so a thinking turn needs more than the 2,048 a non-thinking one does. The server caps it. */
 export function outputRoom(effort: Effort): number {
-  return effort === 'max' ? 48_000 : effort === 'high' ? 32_000 : 4_096;
+  return effort === 'max' ? 24_000 : effort === 'high' ? 16_000 : 4_096;
 }

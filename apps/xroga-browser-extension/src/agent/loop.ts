@@ -281,6 +281,9 @@ export class AgentLoop {
   #doneRefusals = 0;
   /** The task-level check of a claimed success runs once per run. */
   #taskJudged = false;
+  /** Replies in a row that were cut before saying anything, and whether the next one is asked without extended thinking. */
+  #cuts = 0;
+  #lowEffort = false;
   /** Sites that wanted a person or refused the visit, for the end of the summary. */
   #blocked = new BlockedQueue();
   /** The session's current tab, as the header last read it. */
@@ -1469,8 +1472,17 @@ ${ledger}` : ''),
         }
         // A reply that spent its whole allowance reasoning ends the turn as an error, not a silent success.
         if (reply.finish === 'length' && !reply.text && !reply.toolCalls.length) {
+          // A reply that thought until its room ran out is asked again, not given up on: up to three times, with a note to decide briefly; the last attempt without extended thinking.
+          if (this.#cuts < 3) {
+            this.#cuts++;
+            this.#lowEffort = this.#cuts >= 3;
+            await this.writer.appNote('Your last reply ran out of room while thinking and said nothing. Do not think at length: decide the next step in a few sentences and call a tool now.');
+            continue;
+          }
           return this.#end({ status: 'failed', outcome: 'failed', reason: CUT_BEFORE_ANYTHING, cause: 'cut' });
         }
+        this.#cuts = 0;
+        this.#lowEffort = false;
         this.#overflowStage = 0;
         const outcomes = await this.#time('tools', () => this.#runBatch(reply));
         if (signal.aborted && !outcomes.some(o => o.done)) return this.#end({ status: 'stopped' });
@@ -1517,7 +1529,7 @@ ${ledger}` : ''),
     const id = newId();
     emit({ type: 'message_start', id });
     let text = '';
-    const { reasoning, noneRetry } = turnEffort(model);
+    const { reasoning, noneRetry } = this.#lowEffort ? turnEffort(model, 'none') : turnEffort(model);
     const reply = await streamTurn({
       chat: model.chat,
       system: this.options.system,
@@ -1623,6 +1635,12 @@ ${ledger}` : ''),
   }
 
   async #record(outcome: CallOutcome): Promise<void> {
+    if (!outcome.isError && !outcome.skipped) {
+      const tool = outcome.call.toolName;
+      if (['click', 'set', 'type', 'press', 'fill_form', 'drag', 'canvas', 'upload', 'handle_dialog', 'batch', 'macro', 'site_action', 'menu_path', 'run_script_console'].includes(tool)) this.#changedPages = true;
+      else if (typeof outcome.text === 'string') this.#readText = `${this.#readText}
+${outcome.text.toLowerCase()}`.slice(-600_000);
+    }
     if (outcome.call.toolName === 'extract_rows' && outcome.result?.ok) {
       const tables = (outcome.result.data as { tables?: ExtractedTable[] } | undefined)?.tables;
       if (Array.isArray(tables) && tables.length) {
@@ -1789,11 +1807,16 @@ ${ledger}` : ''),
     });
   }
 
-  async #milestoneSeen(check: { text?: string; url?: string }): Promise<boolean> {
+  /** Whether the run has changed anything on a page, and the text it has read since it began (capped): a read-only task is checked against what was read, a task that changes things against the page now. */
+  #changedPages = false;
+  #readText = '';
+
+  async #milestoneSeen(check: { text?: string; url?: string }, readCounts = false): Promise<boolean> {
     const { layer, signal } = this.options;
     if (check.text) {
       const r = await layer.call('wait', { text: check.text, timeoutMs: 1500 }, signal).catch(() => ({ ok: false as const }));
-      if (!r.ok) return false;
+      // Research reads pages and moves on: the text a step names was seen when it was read, and is not on the page that is open now. Not for a run that changed something.
+      if (!r.ok && !(readCounts && !this.#changedPages && this.#readText.includes(check.text.toLowerCase()))) return false;
     }
     if (check.url) {
       const tabs = await layer.tabs().catch(() => undefined);
@@ -1838,6 +1861,8 @@ ${ledger}` : ''),
   #intent?: { audit: boolean; rows: boolean };
   #autoDone = new Set<string>();
   #httpHinted = new Set<string>();
+  /** Test builds only: what was decided about the last http_get, shown in its result so a live run can be explained. */
+  #decidedNote = '';
 
   async #intents(): Promise<{ audit: boolean; rows: boolean }> {
     if (this.#intent) return this.#intent;
@@ -1948,7 +1973,7 @@ ${ledger}` : ''),
       if (args.status !== 'done') { this.#plan.apply(id, args.status as 'pending' | 'working' | 'blocked' | 'waiting', note); return done(); }
       const m = this.#plan.get(id)!;
       if (m.check) {
-        if (!(await this.#milestoneSeen(m.check))) return fail(`milestone ${id} is NOT verified: its check (${m.check.text ? `text "${m.check.text}"` : ''}${m.check.url ? ` url containing "${m.check.url}"` : ''}) is not on the page now. It stays unfinished. Observe the page, fix what is missing, or revise the plan.`);
+        if (!(await this.#milestoneSeen(m.check, true))) return fail(`milestone ${id} is NOT verified: its check (${m.check.text ? `text "${m.check.text}"` : ''}${m.check.url ? ` url containing "${m.check.url}"` : ''}) is not on the page now. It stays unfinished. Observe the page, fix what is missing, or revise the plan.`);
         this.#plan.apply(id, 'verified', note);
         return done();
       }
@@ -2348,7 +2373,11 @@ ${renderSkill(top)}`);
     // The intent record is on disk before anything is dispatched.
     await this.#time('tool.journal', () => this.writer.intent(call.toolCallId, call.toolName, args));
     let outcome: CallOutcome;
-    if (call.toolName === 'http_get') await this.#intents();
+    if (call.toolName === 'http_get') {
+      const decided = await this.#intents();
+      // Test builds show what was decided in the call's result, so a live run can be explained.
+      this.#decidedNote = import.meta.env.WXT_AUTORUN_URL ? `[test build: audit=${decided.audit} rows=${decided.rows} company=${isCompanyPage((call.input as { url?: unknown } | undefined)?.url)} intentFieldSet=${!!this.#intent}]` : '';
+    }
     if (call.toolName === 'done') {
       outcome = await this.#judgeDone(call, kind, args);
     } else if (call.toolName === 'enable_actions' && this.options.fullTools) {
@@ -2452,7 +2481,8 @@ ${renderSkill(top)}`);
       const r = this.options.agentTool
         ? await this.options.agentTool(call, signal)
         : { text: `error: ${call.toolName} is not available.`, isError: true };
-      outcome = { call, kind, text: r.text, isError: r.isError };
+      outcome = { call, kind, text: this.#decidedNote ? `${r.text}
+${this.#decidedNote}` : r.text, isError: r.isError };
       // A company's web page read by the server instead of the browser: on an audit task it is told once per site that the browser gets further (no rate limit, bot checks pass) and runs the audit itself.
       if (call.toolName === 'http_get' && (await this.#intents()).audit) {
         const target = String((call.input as { url?: unknown } | undefined)?.url ?? '');

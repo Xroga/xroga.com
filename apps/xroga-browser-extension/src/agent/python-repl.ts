@@ -11,7 +11,7 @@ export const PYTHON_REPL_TOOL = {
   source: 'agent' as const,
   group: 'working' as const,
   description:
-    'Run Python for data work on what you already hold (rows from extract_rows, text you read, numbers): parse, clean, dedupe, join, count, compute, build a CSV or report. Each call is one cell; variables, imports and functions from earlier successful cells are still there. Print what you need: only the new cell’s output comes back. Files written to xroga-out/ are returned. No internet, no secrets, no extra packages (standard library only), nothing kept after the run. Put the data in the code (paste it as a literal or JSON string). action reset starts clean.',
+    'Run Python on data you hold (parse, clean, join, count, compute, build a CSV). One cell per call; variables and imports of earlier successful cells stay. Print what you need: only the new cell’s output returns; files written to xroga-out/ return too. Standard library only, no internet, nothing kept after the run. Put the data in the code. action reset starts clean.',
   parameters: {
     type: 'object',
     properties: {
