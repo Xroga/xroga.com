@@ -5,7 +5,7 @@ import { runDataOpsTool } from './data-ops';
 import { searchUrlToQuery } from './search-redirect';
 import { judgeTask } from './task-judge';
 import { runBrowserData } from './browser-data';
-import { countRun, deleteMacro, describeMacro, expandVars, macrosFor, placeholdersOf, refusalFor, saveMacro } from './macro-tool';
+import { countRun, deleteMacro, describeMacro, expandVars, httpRefusalFor, httpUrlsOf, macrosFor, placeholdersOf, refusalFor, saveMacro } from './macro-tool';
 import { tableToObjects } from '@src/browser-control/core/tools/extract-rows';
 import type { ExtractedTable } from '@src/browser-control/probe/source';
 import { describePoolHit, poolCandidate, poolSuggestions, searchPool } from './aas-skills';
@@ -1811,6 +1811,15 @@ ${ledger}` : ''),
   }
 
   /** A routine kept for this site: save a batch that worked, run it again with new values, list, delete. A run is an ordinary batch. */
+  /** The address a result belongs to: the page state when the tool returned one, else the address navigated to, else the active tab's. */
+  async #pageUrl(result: { page?: { url?: string } }, args: unknown): Promise<string | undefined> {
+    if (result.page?.url) return result.page.url;
+    const given = (args as { url?: unknown } | undefined)?.url;
+    if (typeof given === 'string' && /^https?:\/\//i.test(given)) return given;
+    const tabs = await this.options.layer.tabs().catch(() => undefined);
+    return tabs?.tabs.find(t => t.tabId === tabs.activeTabId)?.url;
+  }
+
   async #macroTool(call: ToolCallRequest, kind: ToolKind, args: Record<string, unknown>): Promise<CallOutcome> {
     const fail = (text: string): CallOutcome => ({ call, kind, isError: true, text: `error: ${text}` });
     const tabs = await this.options.layer.tabs().catch(() => undefined);
@@ -1829,6 +1838,8 @@ ${ledger}` : ''),
       const why = refusalFor(args.steps);
       if (why) return fail(why);
       const steps = args.steps as unknown[];
+      const httpWhy = httpUrlsOf(steps) ? httpRefusalFor(httpUrlsOf(steps)!) : null;
+      if (httpWhy) return fail(httpWhy);
       const vars = placeholdersOf(steps);
       await saveMacro({ origin, name, savedAt: Date.now(), vars, steps });
       return { call, kind, isError: false, text: `Saved "${name}" for ${origin} (${steps.length} steps${vars.length ? `; values to give when running it: ${vars.join(', ')}` : ''}). A later run goes through the same checks and approvals as batch; the page may have changed, so verify the result.` };
@@ -1836,9 +1847,22 @@ ${ledger}` : ''),
     if (args.action !== 'run') return fail('action is save, run, list or delete');
     const found = (await macrosFor(origin)).find(m => m.name.toLowerCase() === name.toLowerCase());
     if (!found) return fail(`no routine named "${name}" for ${origin}; macro action list shows what is kept`);
-    const expanded = expandVars(found.steps, args.vars && typeof args.vars === 'object' ? (args.vars as Record<string, unknown>) : {});
+    const runVars = args.vars && typeof args.vars === 'object' ? (args.vars as Record<string, unknown>) : {};
+    const viaHttp = httpUrlsOf(found.steps) !== null;
+    const expanded = expandVars(found.steps, runVars, viaHttp);
     if (!expanded.ok) return fail(`"${name}" needs values for: ${expanded.missing.join(', ')}; pass them in vars`);
     await countRun(origin, name);
+    if (viaHttp && this.options.agentTool) {
+      // A routine of public reads is replayed over plain HTTP: no page is opened.
+      const parts: string[] = [];
+      let failed = false;
+      for (const url of httpUrlsOf(expanded.steps)!) {
+        const r = await this.options.agentTool({ ...call, toolName: 'http_get', input: { url } }, this.options.signal);
+        parts.push(`GET ${url}\n${r.text}`);
+        if (r.isError) { failed = true; break; }
+      }
+      return { call, kind: 'read', isError: failed, text: `Routine "${name}" replayed over HTTP (${parts.length} request${parts.length === 1 ? '' : 's'}, no page opened):\n${parts.join('\n\n')}` };
+    }
     return this.#runBatchTool(call, kind, { steps: expanded.steps });
   }
 
@@ -1981,7 +2005,7 @@ ${ledger}` : ''),
           const title = result.page?.title ?? /«([^»]{0,120})»/.exec(result.text)?.[1];
           const challenge = detectChallenge({ title, text: result.text });
           if (challenge) {
-            this.#blocked.add(result.page?.url, challenge);
+            this.#blocked.add(await this.#pageUrl(result, input), challenge);
             outcome.text = `${result.text}\n${challengeNote(challenge)}`;
           }
         }
@@ -2372,7 +2396,7 @@ ${renderSkill(top)}`);
         const title = result.page?.title ?? /«([^»]{0,120})»/.exec(result.text)?.[1];
         const challenge = detectChallenge({ title, text: result.text });
         if (challenge) {
-          this.#blocked.add(result.page?.url, challenge);
+          this.#blocked.add(await this.#pageUrl(result, args), challenge);
           outcome.text = `${result.text}\n${challengeNote(challenge)}`;
         }
       }

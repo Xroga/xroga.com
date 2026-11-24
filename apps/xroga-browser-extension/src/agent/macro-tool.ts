@@ -21,7 +21,7 @@ export const MACRO_TOOL = {
   source: 'agent' as const,
   group: 'acting' as const,
   description:
-    'Keep a batch that worked as a named routine for this site and run it again later with new values. action save: name and steps (a batch\'s steps, with ${name} placeholders where the values change; never secrets). action run: name and vars ({name: value}). action list shows this site\'s routines; action delete removes one. A run is a batch: the same checks and approvals apply, and you verify the result after it.',
+    'Keep a batch that worked as a named routine for this site and run it again later with new values. A routine of public reads only, with steps like {"http_get":"https://host/path?q=${term}"}, is replayed over plain HTTP with no page opened (much faster; values are URL-encoded). action save: name and steps (a batch\'s steps, with ${name} placeholders where the values change; never secrets). action run: name and vars ({name: value}). action list shows this site\'s routines; action delete removes one. A run is a batch: the same checks and approvals apply, and you verify the result after it.',
   parameters: {
     type: 'object',
     properties: {
@@ -56,6 +56,31 @@ export function placeholdersOf(steps: unknown[]): string[] {
   return seen;
 }
 
+/**
+ * A routine made only of public reads, each step {"http_get": "https://host/path?q=${term}"}: it is replayed over plain HTTP, with no page opened, which is far
+ * faster than driving the site again (the saved flows of agent-browser, Apache-2.0, replayed over HTTP first; written here). Null when the steps are not all of this form.
+ */
+export function httpUrlsOf(steps: unknown[]): string[] | null {
+  const urls: string[] = [];
+  for (const s of steps) {
+    const u = s && typeof s === 'object' && !Array.isArray(s) && Object.keys(s).length === 1 ? (s as Record<string, unknown>).http_get : undefined;
+    if (typeof u !== 'string') return null;
+    urls.push(u);
+  }
+  return urls;
+}
+
+const SECRET_QUERY = /[?&;](?:[a-z_]*(?:key|token|secret|password|passwd|auth|session|sig|signature)[a-z_]*)=/i;
+
+/** Why a set of http_get steps cannot be kept: not a public https address, or a credential in the address. */
+export function httpRefusalFor(urls: string[]): string | null {
+  for (const u of urls) {
+    if (!/^https:\/\//i.test(u)) return `an http_get step must be a public https address (got "${u.slice(0, 60)}")`;
+    if (SECRET_QUERY.test(u) || /\/\/[^/]*@/.test(u)) return 'an address with a key, token, password or login in it is never kept in a routine; use a connected app for anything that needs a credential';
+  }
+  return null;
+}
+
 /** Why a set of steps cannot be kept, or null: nothing to run, too long, or a step that handles a secret. */
 export function refusalFor(steps: unknown): string | null {
   if (!Array.isArray(steps) || !steps.length) return 'steps is a non-empty list, as for batch';
@@ -72,12 +97,12 @@ export function refusalFor(steps: unknown): string | null {
 }
 
 /** The steps with each ${name} replaced by its value (JSON-safe); a name without a value is an error, so nothing runs half-filled. */
-export function expandVars(steps: unknown[], vars: Record<string, unknown>): { ok: true; steps: unknown[] } | { ok: false; missing: string[] } {
+export function expandVars(steps: unknown[], vars: Record<string, unknown>, encode = false): { ok: true; steps: unknown[] } | { ok: false; missing: string[] } {
   const missing = placeholdersOf(steps).filter(n => !(n in vars));
   if (missing.length) return { ok: false, missing };
   const json = JSON.stringify(steps).replace(PLACEHOLDER, (whole, name: string) => {
     if (BATCH_OWN.has(name)) return whole;
-    return JSON.stringify(String(vars[name] ?? '')).slice(1, -1);
+    return JSON.stringify(encode ? encodeURIComponent(String(vars[name] ?? '')) : String(vars[name] ?? '')).slice(1, -1);
   });
   return { ok: true, steps: JSON.parse(json) as unknown[] };
 }

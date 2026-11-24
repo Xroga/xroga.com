@@ -31,3 +31,24 @@ describe('macro routines', () => {
     expect(refusalFor([])).toMatch(/non-empty/);
   });
 });
+
+describe('http routines', () => {
+  it('recognises a routine made only of http_get steps', async () => {
+    const { httpUrlsOf } = await import('../macro-tool');
+    expect(httpUrlsOf([{ http_get: 'https://api.test/s?q=${term}' }, { http_get: 'https://api.test/t' }])).toEqual(['https://api.test/s?q=${term}', 'https://api.test/t']);
+    expect(httpUrlsOf([{ http_get: 'https://a.test' }, { tool: 'click' }])).toBeNull();
+    expect(httpUrlsOf([{ http_get: 'https://a.test', extra: 1 }])).toBeNull();
+  });
+  it('refuses http addresses and credentials in the address', async () => {
+    const { httpRefusalFor } = await import('../macro-tool');
+    expect(httpRefusalFor(['https://api.test/s?q=x'])).toBeNull();
+    expect(httpRefusalFor(['http://api.test/s'])).toContain('https');
+    expect(httpRefusalFor(['https://api.test/s?api_key=abc'])).toContain('never kept');
+    expect(httpRefusalFor(['https://user:pw@api.test/s'])).toContain('never kept');
+  });
+  it('url-encodes values when asked', async () => {
+    const { expandVars } = await import('../macro-tool');
+    const r = expandVars([{ http_get: 'https://api.test/s?q=${term}' }], { term: 'seo agency & co' }, true);
+    expect(r).toEqual({ ok: true, steps: [{ http_get: 'https://api.test/s?q=seo%20agency%20%26%20co' }] });
+  });
+});
