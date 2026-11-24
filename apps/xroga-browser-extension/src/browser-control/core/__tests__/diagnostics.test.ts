@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DiagnosticsLog, formatCookies, formatDiagnostics, formatIssues, formatStorage, scrubText, stripUrl } from '../diagnostics';
+import { DiagnosticsLog, formatCookies, formatDiagnostics, formatIssues, formatStorage, scrubText, stripUrl, weightReport } from '../diagnostics';
 
 describe('stripUrl', () => {
   it('drops the query and fragment, which can carry a token', () => {
@@ -123,5 +123,29 @@ describe('browser-reported issues', () => {
   });
   it('says so when there are none', () => {
     expect(formatIssues([])[0]).toMatch(/no issues/);
+  });
+});
+
+describe('page weight', () => {
+  it('totals what loaded by type and lists the biggest and the slowest requests', () => {
+    const log = new DiagnosticsLog();
+    log.request('1', 'GET', 'https://a.test/hero.jpg?x=1', 'Image', 1);
+    log.response('1', 200);
+    log.finished('1', 1.8, 900_000);
+    log.request('2', 'GET', 'https://a.test/app.js', 'Script', 1);
+    log.response('2', 200);
+    log.finished('2', 1.2, 120_000);
+    log.request('3', 'GET', 'https://a.test/api/data', 'XHR', 1);
+    log.response('3', 500);
+    log.finished('3', 3.5, 2_000);
+    const out = weightReport(log).join('\n');
+    expect(out).toContain('3 requests');
+    expect(out).toContain('by type: Image 1 (879 KB)');
+    expect(out).toMatch(/biggest:\n {2}Image https:\/\/a\.test\/hero\.jpg\?… · 879 KB · 800 ms/);
+    expect(out).toMatch(/slowest:\n {2}XHR https:\/\/a\.test\/api\/data · 2 KB · 2500 ms · 500/);
+    expect(out).not.toContain('x=1');
+  });
+  it('says so before anything has finished', () => {
+    expect(weightReport(new DiagnosticsLog())[0]).toMatch(/no finished requests/);
   });
 });

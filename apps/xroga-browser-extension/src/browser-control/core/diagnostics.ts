@@ -14,6 +14,10 @@ export interface NetEntry {
   status?: number;
   failed?: string;
   at: number;
+  /** Bytes over the network and milliseconds from request to the end of the download, when the browser reported them. */
+  bytes?: number;
+  ms?: number;
+  startTs?: number;
 }
 export interface ConsoleEntry {
   level: 'error' | 'warning' | 'info' | 'log' | 'exception';
@@ -44,6 +48,9 @@ export function scrubText(text: string): string {
 
 export class DiagnosticsLog {
   readonly net: NetEntry[] = [];
+  /** Every kind of request (scripts, images, styles, fonts too) with its size and time: the page's weight. */
+  readonly assets: NetEntry[] = [];
+  readonly #all = new Map<string, NetEntry>();
   readonly console: ConsoleEntry[] = [];
   readonly #open = new Map<string, NetEntry>();
   readonly startedAt = Date.now();
@@ -53,8 +60,12 @@ export class DiagnosticsLog {
     if (list.length > MAX_ENTRIES) list.shift();
   }
 
-  request(id: string, method: string, url: string, type: string | undefined): void {
+  request(id: string, method: string, url: string, type: string | undefined, startTs?: number): void {
     const t = type ?? 'Other';
+    const weight: NetEntry = { method, url: stripUrl(url), type: t, at: Date.now(), startTs };
+    this.#all.set(id, weight);
+    this.#push(this.assets, weight);
+    if (this.#all.size > 2000) this.#all.delete(this.#all.keys().next().value as string);
     if (!PAGE_TYPES.has(t)) return;
     const entry: NetEntry = { method, url: stripUrl(url), type: t, at: Date.now() };
     this.#open.set(id, entry);
@@ -64,6 +75,8 @@ export class DiagnosticsLog {
   response(id: string, status: number): void {
     const e = this.#open.get(id);
     if (e) e.status = status;
+    const a = this.#all.get(id);
+    if (a) a.status = status;
   }
 
   failed(id: string, errorText: string): void {
@@ -72,8 +85,14 @@ export class DiagnosticsLog {
     this.#open.delete(id);
   }
 
-  finished(id: string): void {
+  finished(id: string, endTs?: number, bytes?: number): void {
     this.#open.delete(id);
+    const a = this.#all.get(id);
+    if (a) {
+      if (typeof bytes === 'number') a.bytes = bytes;
+      if (typeof endTs === 'number' && typeof a.startTs === 'number') a.ms = Math.max(0, Math.round((endTs - a.startTs) * 1000));
+      this.#all.delete(id);
+    }
   }
 
   log(level: ConsoleEntry['level'], text: string): void {
@@ -82,7 +101,7 @@ export class DiagnosticsLog {
 }
 
 export interface DiagnosticsQuery {
-  kind?: 'both' | 'console' | 'network' | 'endpoints' | 'cookies' | 'storage' | 'issues';
+  kind?: 'both' | 'console' | 'network' | 'endpoints' | 'cookies' | 'storage' | 'issues' | 'weight';
   onlyProblems?: boolean;
   urlPattern?: string;
   limit?: number;
@@ -115,6 +134,7 @@ export function formatDiagnostics(log: DiagnosticsLog, q: DiagnosticsQuery, now 
   const limit = Math.max(1, Math.min(q.limit ?? 30, 100));
   const lines: string[] = [];
   if (q.kind === 'endpoints') return endpointMap(log);
+  if (q.kind === 'weight') return weightReport(log);
   const ago = (t: number) => `${Math.max(0, Math.round((now - t) / 1000))}s ago`;
   if (q.kind !== 'network') {
     const all = log.console.filter(c => !q.onlyProblems || c.level === 'error' || c.level === 'warning' || c.level === 'exception');
@@ -240,4 +260,29 @@ export function formatIssues(issues: InspectorIssue[]): string[] {
     groups.set(key, g);
   }
   return [`issues · ${groups.size} kinds, ${issues.length} in all, as the browser's Issues panel reports them`, ...[...groups.values()].sort((a, b) => b.n - a.n).slice(0, 40).map(g => `  ${g.n > 1 ? `${g.n}× ` : ''}${g.line}`)];
+}
+
+const kb = (n: number) => (n >= 1048576 ? `${(n / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(n / 1024))} KB`);
+
+/** What the page loaded, by type, and the biggest and the slowest requests: the first suspects for a slow page. Sizes are what went over the network. */
+export function weightReport(log: DiagnosticsLog): string[] {
+  const done = log.assets.filter(e => typeof e.bytes === 'number');
+  if (!done.length) return ['weight · no finished requests were recorded yet: reload the page after the first diagnostics call, then ask again'];
+  const byType = new Map<string, { n: number; bytes: number }>();
+  for (const e of done) {
+    const g = byType.get(e.type) ?? { n: 0, bytes: 0 };
+    g.n++;
+    g.bytes += e.bytes ?? 0;
+    byType.set(e.type, g);
+  }
+  const total = done.reduce((n, e) => n + (e.bytes ?? 0), 0);
+  const row = (e: NetEntry) => `  ${e.type} ${e.url.length > 90 ? e.url.slice(0, 90) + '…' : e.url} · ${kb(e.bytes ?? 0)}${typeof e.ms === 'number' ? ` · ${e.ms} ms` : ''}${e.status && e.status >= 400 ? ` · ${e.status}` : ''}`;
+  return [
+    `weight · ${done.length} requests, ${kb(total)} over the network`,
+    `by type: ${[...byType].sort((a, b) => b[1].bytes - a[1].bytes).map(([t, g]) => `${t} ${g.n} (${kb(g.bytes)})`).join(' · ')}`,
+    'biggest:',
+    ...[...done].sort((a, b) => (b.bytes ?? 0) - (a.bytes ?? 0)).slice(0, 8).map(row),
+    'slowest:',
+    ...[...done].filter(e => typeof e.ms === 'number').sort((a, b) => (b.ms ?? 0) - (a.ms ?? 0)).slice(0, 8).map(row),
+  ];
 }

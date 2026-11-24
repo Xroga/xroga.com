@@ -13,8 +13,8 @@ async function start(attachment: TabAttachment): Promise<DiagnosticsLog> {
   const log = new DiagnosticsLog();
   const { cdp } = attachment;
   cdp.on('Network.requestWillBeSent', (p, s) => {
-    const e = p as { requestId: string; type?: string; request: { method: string; url: string } };
-    log.request(`${s ?? ''}|${e.requestId}`, e.request.method, e.request.url, e.type);
+    const e = p as { requestId: string; type?: string; timestamp?: number; request: { method: string; url: string } };
+    log.request(`${s ?? ''}|${e.requestId}`, e.request.method, e.request.url, e.type, e.timestamp);
   });
   cdp.on('Network.responseReceived', (p, s) => {
     const e = p as { requestId: string; response: { status: number } };
@@ -24,7 +24,10 @@ async function start(attachment: TabAttachment): Promise<DiagnosticsLog> {
     const e = p as { requestId: string; errorText: string; canceled?: boolean };
     if (!e.canceled) log.failed(`${s ?? ''}|${e.requestId}`, e.errorText);
   });
-  cdp.on('Network.loadingFinished', (p, s) => log.finished(`${s ?? ''}|${(p as { requestId: string }).requestId}`));
+  cdp.on('Network.loadingFinished', (p, s) => {
+    const e = p as { requestId: string; timestamp?: number; encodedDataLength?: number };
+    log.finished(`${s ?? ''}|${e.requestId}`, e.timestamp, e.encodedDataLength);
+  });
   cdp.on('Runtime.consoleAPICalled', p => {
     const e = p as { type: string; args: Array<{ value?: unknown; description?: string; type?: string }> };
     const level = e.type === 'error' || e.type === 'assert' ? 'error' : e.type === 'warning' ? 'warning' : e.type === 'info' ? 'info' : 'log';
