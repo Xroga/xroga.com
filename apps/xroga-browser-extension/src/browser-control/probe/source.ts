@@ -47,6 +47,29 @@ export interface ExtractedTable {
   merged?: number;
 }
 
+export interface PageAudit {
+  url: string;
+  https: boolean;
+  title: string;
+  description: string | null;
+  canonical: string | null;
+  robots: string | null;
+  lang: string | null;
+  viewport: boolean;
+  h1: string[];
+  headings: { h2: number; h3: number };
+  words: number;
+  images: { total: number; noAlt: number; lazy: number };
+  links: { internal: number; external: number; nofollow: number; noText: number };
+  social: { ogTitle: boolean; ogImage: boolean; twitterCard: boolean };
+  structuredData: string[];
+  hreflang: number;
+  forms: { total: number; unlabelled: number };
+  buttonsNoName: number;
+  mixedContent: number;
+  perf: { ttfbMs?: number; fcpMs?: number; lcpMs?: number; cls?: number; domContentLoadedMs?: number; loadMs?: number; transferKb?: number; requests?: number; domNodes: number };
+}
+
 export interface SearchHit {
   title: string;
   url: string;
@@ -213,6 +236,10 @@ export interface ProbeApi {
   formModel(scope?: string): FormField[];
   /** The organic results of a search engine's results page (title, address, snippet), or the reason the engine asked for a human check. */
   searchResults(engine: string, limit?: number): { hits: SearchHit[]; blocked?: string };
+  /** Scrolls the page top to bottom so lazy content loads, waits for its height to settle, scrolls back: a full-page picture is then complete. */
+  settleForCapture(): Promise<{ height: number; steps: number; grew: boolean }>;
+  /** The page's on-page SEO, accessibility basics and loading numbers, read in the page (no network). */
+  auditPage(): Promise<PageAudit>;
   /** The tables, grids and repeated lists of the page (or of the named region), as rows of text: structured extraction without the model reading cells. */
   extractRows(scope?: string, maxRows?: number): ExtractedTable[];
   startDemo(): boolean;
@@ -533,6 +560,107 @@ export function probeMain(): void {
 
   const api = {
     version: 1,
+
+    async settleForCapture() {
+      const wait = (ms: number) => new Promise<void>(r => setTimeout(r, ms));
+      const se = (document.scrollingElement ?? document.documentElement) as HTMLElement;
+      const start = { x: window.scrollX, y: window.scrollY };
+      const first = se.scrollHeight;
+      const t0 = Date.now();
+      let y = 0;
+      let steps = 0;
+      // Down in steps of 90% of the window: lazy images and appended rows load as they come into view. Bounded, so an endless feed cannot hold the capture.
+      while (y < se.scrollHeight && steps < 150 && Date.now() - t0 < 8000) {
+        window.scrollTo(0, y);
+        await wait(100);
+        y += Math.max(200, Math.floor(window.innerHeight * 0.9));
+        steps++;
+      }
+      // Rows appended when the end comes into view: go to the new end until the height stops growing.
+      for (let grown = 0; grown < 3 && Date.now() - t0 < 8000; ) {
+        const before = se.scrollHeight;
+        window.scrollTo(0, before);
+        await wait(150);
+        grown = se.scrollHeight > before ? 0 : grown + 1;
+      }
+      let last = se.scrollHeight;
+      let stable = 0;
+      while (stable < 400 && Date.now() - t0 < 10_000) {
+        await wait(100);
+        if (se.scrollHeight === last) stable += 100;
+        else { last = se.scrollHeight; stable = 0; }
+      }
+      window.scrollTo(start.x, start.y);
+      return { height: se.scrollHeight, steps, grew: se.scrollHeight > first };
+    },
+
+    async auditPage() {
+      const q = (sel: string) => [...document.querySelectorAll(sel)];
+      const meta = (n: string) => (document.querySelector(`meta[name="${n}" i]`) as HTMLMetaElement | null)?.content?.trim() || null;
+      const prop = (n: string) => (document.querySelector(`meta[property="${n}"]`) as HTMLMetaElement | null)?.content?.trim() || null;
+      const here = location.hostname;
+      let internal = 0, external = 0, nofollow = 0, noText = 0;
+      for (const a of q('a[href]') as HTMLAnchorElement[]) {
+        let host = '';
+        try { host = new URL(a.href, location.href).hostname; } catch { continue; }
+        if (!/^https?:/.test(a.href)) continue;
+        if (host === here) internal++; else external++;
+        if (/nofollow/i.test(a.rel)) nofollow++;
+        if (!(a.textContent ?? '').trim() && !a.getAttribute('aria-label') && !a.querySelector('img[alt]:not([alt=""])')) noText++;
+      }
+      const types: string[] = [];
+      for (const s of q('script[type="application/ld+json"]')) {
+        try {
+          const walk = (v: unknown) => { if (Array.isArray(v)) v.forEach(walk); else if (v && typeof v === 'object') { const t = (v as Record<string, unknown>)['@type']; if (typeof t === 'string') types.push(t); else if (Array.isArray(t)) types.push(...t.map(String)); Object.values(v).forEach(walk); } };
+          walk(JSON.parse(s.textContent ?? ''));
+        } catch { types.push('(unreadable)'); }
+      }
+      const inputs = q('input:not([type=hidden]):not([type=submit]):not([type=button]),select,textarea') as HTMLInputElement[];
+      const unlabelled = inputs.filter(i => !i.labels?.length && !i.getAttribute('aria-label') && !i.getAttribute('aria-labelledby') && !i.title).length;
+      const buttonsNoName = (q('button,[role=button]') as HTMLElement[]).filter(b => !(b.innerText ?? '').trim() && !b.getAttribute('aria-label') && !b.title && !b.querySelector('img[alt]:not([alt=""])')).length;
+      const imgs = q('img') as HTMLImageElement[];
+      const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+      const fcp = performance.getEntriesByName('first-contentful-paint')[0]?.startTime;
+      const observed = await new Promise<{ lcp?: number; cls?: number }>(resolve => {
+        const got: { lcp?: number; cls?: number } = {};
+        try {
+          const po = new PerformanceObserver(list => {
+            for (const e of list.getEntries() as any[]) {
+              if (e.entryType === 'largest-contentful-paint') got.lcp = e.startTime;
+              if (e.entryType === 'layout-shift' && !e.hadRecentInput) got.cls = (got.cls ?? 0) + e.value;
+            }
+          });
+          po.observe({ type: 'largest-contentful-paint', buffered: true });
+          po.observe({ type: 'layout-shift', buffered: true });
+          setTimeout(() => { po.disconnect(); resolve(got); }, 120);
+        } catch { resolve(got); }
+      });
+      const res = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
+      const bytes = (nav?.transferSize ?? 0) + res.reduce((n, r) => n + (r.transferSize || 0), 0);
+      const round = (n: number | undefined) => (typeof n === 'number' && isFinite(n) ? Math.round(n) : undefined);
+      return {
+        url: location.href,
+        https: location.protocol === 'https:',
+        title: document.title.trim(),
+        description: meta('description'),
+        canonical: (document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null)?.href ?? null,
+        robots: meta('robots'),
+        lang: document.documentElement.lang || null,
+        viewport: !!meta('viewport'),
+        h1: (q('h1') as HTMLElement[]).map(h => (h.innerText ?? '').trim().slice(0, 100)).filter(Boolean).slice(0, 5),
+        headings: { h2: q('h2').length, h3: q('h3').length },
+        words: ((document.body?.innerText ?? '').match(/\S+/g) ?? []).length,
+        images: { total: imgs.length, noAlt: imgs.filter(i => !i.hasAttribute('alt')).length, lazy: imgs.filter(i => i.loading === 'lazy').length },
+        links: { internal, external, nofollow, noText },
+        social: { ogTitle: !!prop('og:title'), ogImage: !!prop('og:image'), twitterCard: !!meta('twitter:card') },
+        structuredData: [...new Set(types)].slice(0, 12),
+        hreflang: q('link[rel="alternate"][hreflang]').length,
+        forms: { total: q('form').length, unlabelled },
+        buttonsNoName,
+        mixedContent: location.protocol === 'https:' ? q('img[src^="http:"],script[src^="http:"],link[href^="http:"],iframe[src^="http:"]').length : 0,
+        perf: { ttfbMs: round(nav?.responseStart), fcpMs: round(fcp), lcpMs: round(observed.lcp), cls: observed.cls === undefined ? undefined : Math.round(observed.cls * 1000) / 1000, domContentLoadedMs: round(nav?.domContentLoadedEventEnd), loadMs: round(nav?.loadEventEnd), transferKb: Math.round(bytes / 1024), requests: res.length + 1, domNodes: document.getElementsByTagName('*').length },
+      };
+    },
 
     searchResults(engine: string, limit?: number) {
       const cap = Math.max(1, Math.min(limit ?? 10, 30));

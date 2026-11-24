@@ -290,6 +290,8 @@ export async function screenshot(ctx: ToolContext, args: ScreenshotArgs): Promis
   const observation = await recentObservation(ctx);
   // An enlarged region gives small painted labels enough pixels to be read and aimed at (at most 1600 px wide).
   const zoom = args.region && clip ? Math.max(1, Math.min(4, 1600 / clip.width)) : 1;
+  // A full-page picture of a page that loads as it scrolls would show blank images and missing rows: scroll through once first (bounded).
+  if (args.fullPage && !args.ref && !args.region) await tab.probe!.callGlobal(frames[0], 'settleForCapture').catch(() => undefined);
   const shot = await attachment.page.screenshot({ fullPage: !args.ref && !args.region && args.fullPage, clip, ...(zoom > 1 ? { scale: zoom } : {}) });
   // A clipped image is as wide as its clip. A viewport image is as wide as the viewport with its scrollbar, which
   // the layout viewport of Page.getLayoutMetrics leaves out, so that width is read in the page (the probe).

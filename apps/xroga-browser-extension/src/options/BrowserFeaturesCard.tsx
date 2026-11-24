@@ -63,6 +63,28 @@ export function BrowserFeaturesCard() {
             }}
           />
         </SettingsRow>
+        <SettingsRow label="History" description="Let Xroga search your browsing history when a task asks for it. It only reads.">
+          <Switch
+            aria-label="History access"
+            checked={granted?.history ?? false}
+            disabled={!granted}
+            onChange={enabled => {
+              if (enabled) void requestOptionalPermissions(['history']);
+              else void chrome.permissions.remove({ permissions: ['history'] }).catch(() => false);
+            }}
+          />
+        </SettingsRow>
+        <SettingsRow label="Bookmarks" description="Let Xroga search your bookmarks and add one when a task asks for it.">
+          <Switch
+            aria-label="Bookmarks access"
+            checked={granted?.bookmarks ?? false}
+            disabled={!granted}
+            onChange={enabled => {
+              if (enabled) void requestOptionalPermissions(['bookmarks']);
+              else void chrome.permissions.remove({ permissions: ['bookmarks'] }).catch(() => false);
+            }}
+          />
+        </SettingsRow>
       </SettingsCard>
     );
   return (

@@ -34,16 +34,51 @@ export const PLUGIN_TOOLS: AgentTool[] = [
 export const HTTP_GET_TOOL: AgentTool = {
   name: 'http_get', source: 'agent', group: 'working',
   description: 'Read a public https address directly (an official free API endpoint, API documentation, a JSON or text data file). No login, no credentials, no private networks. Returns the status, content type and the text (long answers are cut). Use this when a service publishes a free public API for what is needed: check its documentation first if you are unsure of the address, then call the exact endpoint. It only reads; changes to a service need its own connected tool.',
-  parameters: { type: 'object', properties: { url: { type: 'string', maxLength: 2000 } }, required: ['url'], additionalProperties: false },
+  parameters: { type: 'object', properties: { url: { type: 'string', maxLength: 2000 }, outline: { type: 'boolean', description: 'Only the headings (Markdown # lines, HTML h1 to h4, JSON top-level keys): see the shape of a long page first' }, filter: { type: 'string', maxLength: 200, description: 'Only the lines containing this text (case-insensitive) with one line of context' } }, required: ['url'], additionalProperties: false },
 };
+
+/** Outline or filter of a text answer, made here so the model reads the part it needs of a long document. */
+export function shapeBody(body: string, opts: { outline?: boolean; filter?: string }): string {
+  if (opts.filter) {
+    const needle = opts.filter.toLowerCase();
+    const lines = body.split(/\r?\n/);
+    const keep = new Set<number>();
+    lines.forEach((l, i) => {
+      if (l.toLowerCase().includes(needle)) {
+        keep.add(i - 1);
+        keep.add(i);
+        keep.add(i + 1);
+      }
+    });
+    const out = [...keep].filter(i => i >= 0 && i < lines.length).sort((x, y) => x - y).map(i => `${i + 1}: ${lines[i]!.slice(0, 300)}`);
+    return out.length ? out.slice(0, 400).join('\n') : `(no line contains "${opts.filter}")`;
+  }
+  if (opts.outline) {
+    const t = body.trimStart();
+    if (t.startsWith('{') || t.startsWith('[')) {
+      try {
+        const v = JSON.parse(t) as unknown;
+        if (Array.isArray(v)) return `JSON array of ${v.length} items; first item keys: ${v[0] && typeof v[0] === 'object' ? Object.keys(v[0] as object).join(', ') : typeof v[0]}`;
+        return Object.entries(v as Record<string, unknown>).slice(0, 80).map(([k, x]) => `${k}: ${Array.isArray(x) ? `array of ${x.length}` : typeof x === 'object' && x ? 'object' : typeof x}`).join('\n');
+      } catch {
+        /* not whole JSON (it may be cut): read it as text */
+      }
+    }
+    const heads = body.split(/\r?\n/).map((l, i) => ({ l, i })).filter(({ l }) => /^#{1,4}\s/.test(l) || /<h[1-4][\s>]/i.test(l));
+    return heads.length ? heads.slice(0, 200).map(({ l, i }) => `${i + 1}: ${l.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 160)}`).join('\n') : '(no headings found; use filter to find a part by its words)';
+  }
+  return body;
+}
 
 async function runPublicGetNow(runId: string, input: unknown, signal: AbortSignal, wrap: (text: string, source: string) => string): Promise<{ text: string; isError: boolean }> {
   try {
-    const value = await workspaceRequest('public-get', { runId, body: input }, signal) as
+    const { outline, filter, ...serverInput } = (input ?? {}) as { outline?: boolean; filter?: string; url?: string };
+    const value = await workspaceRequest('public-get', { runId, body: serverInput }, signal) as
       { status?: number; contentType?: string; finalUrl?: string; body?: string; truncated?: boolean; totalChars?: number; note?: string };
     const head = `HTTP ${value.status ?? '?'} ${value.contentType ?? ''} ${value.finalUrl ?? ''}${value.truncated ? ` (cut: ${value.totalChars} characters in total)` : ''}${value.note ? '\n' + value.note : ''}`;
     const failed = typeof value.status === 'number' && value.status >= 400;
-    return { text: head + '\n' + wrap(String(value.body ?? ''), 'public web address'), isError: failed };
+    const body = outline || filter ? shapeBody(String(value.body ?? ''), { outline: !!outline, filter: typeof filter === 'string' && filter ? filter : undefined }) : String(value.body ?? '');
+    return { text: head + '\n' + wrap(body, 'public web address'), isError: failed };
   } catch (error) {
     const code = (error as { code?: unknown } | null)?.code;
     if (code === 'BROWSER_POLICY_DENIED') return { text: 'That address is not allowed: only public https addresses without ports or logins can be read directly. Use the browser for anything else.', isError: true };

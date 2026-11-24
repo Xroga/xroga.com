@@ -15,6 +15,9 @@ export const OPTIONAL_PERMISSIONS = [
 
 export type OptionalPermission = (typeof OPTIONAL_PERMISSIONS)[number];
 
+/** Xroga's own two, for the browser_data tool: the person's history and bookmarks, each allowed with a click (a switch in Settings, Browser features). */
+export const XROGA_DATA_PERMISSIONS = ['history', 'bookmarks'] as const satisfies readonly chrome.runtime.ManifestOptionalPermission[];
+
 /** Always required. None of them adds a warning the old version did not have. */
 export const REQUIRED_PERMISSIONS = [
   'debugger',
@@ -39,10 +42,10 @@ export function permissionLists(build: 'product' | 'autorun' | 'xroga'): Permiss
   if (build === 'xroga') {
     return {
       permissions: [...REQUIRED_PERMISSIONS, 'tabGroups', 'downloads'],
-      optional_permissions: ['notifications', 'downloads.open'],
+      optional_permissions: ['notifications', 'downloads.open', ...XROGA_DATA_PERMISSIONS],
     };
   }
   return build === 'product'
     ? { permissions: [...REQUIRED_PERMISSIONS], optional_permissions: [...OPTIONAL_PERMISSIONS] }
-    : { permissions: [...REQUIRED_PERMISSIONS, ...OPTIONAL_PERMISSIONS], optional_permissions: [] };
+    : { permissions: [...REQUIRED_PERMISSIONS, ...OPTIONAL_PERMISSIONS, ...XROGA_DATA_PERMISSIONS], optional_permissions: [] };
 }

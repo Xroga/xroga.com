@@ -34,6 +34,14 @@ describe('skillsFor', () => {
     expect(skillsSection('Debug why the contact form is not working')).toContain('Reproduce the problem first');
   });
 
+  it('picks the site QA method for a bug hunt or audit of a site', () => {
+    expect(ids('Please test my website and find the bugs')).toContain('site-qa');
+    expect(ids('Do an exploratory test of this web app')).toContain('site-qa');
+    expect(ids('Run a site audit on example.com')).toContain('site-qa');
+    expect(skillsSection('QA the checkout of my store')).toContain('Confirm every finding');
+    expect(ids('Compare the pricing of three competitors')).not.toContain('site-qa');
+  });
+
   it('picks research for multi-site work and forms for data entry', () => {
     expect(ids('Compare the pricing of three competitors and give me the top 3')).toContain('research');
     expect(ids('Fill in the contact form on example.com and submit it')).toContain('forms');

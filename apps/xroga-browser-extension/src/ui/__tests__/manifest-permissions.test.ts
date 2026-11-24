@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { OPTIONAL_PERMISSIONS, permissionLists } from '../manifest-permissions';
 
 const FOUR = ['tabGroups', 'notifications', 'downloads', 'downloads.open'];
+const DATA = ['history', 'bookmarks'];
 
 describe('manifest permission lists', () => {
   it('the product makes the four optional and requires none of them', () => {
@@ -27,8 +28,18 @@ describe('manifest permission lists', () => {
     expect(autorun.optional_permissions).toEqual([]);
   });
 
+  it('Xroga asks for history and bookmarks only when the person allows them; the autorun build requires them for its checks', () => {
+    const xroga = permissionLists('xroga');
+    for (const p of DATA) {
+      expect(xroga.permissions).not.toContain(p);
+      expect(xroga.optional_permissions).toContain(p);
+      expect(permissionLists('product').permissions).not.toContain(p);
+      expect(permissionLists('autorun').permissions).toContain(p);
+    }
+  });
+
   it('both builds require the same other permissions', () => {
-    const others = (list: string[]) => list.filter(p => !FOUR.includes(p)).sort();
+    const others = (list: string[]) => list.filter(p => !FOUR.includes(p) && !DATA.includes(p)).sort();
     expect(others(permissionLists('product').permissions)).toEqual(others(permissionLists('autorun').permissions));
   });
 });

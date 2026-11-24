@@ -53,3 +53,30 @@ describe('DiagnosticsLog', () => {
     expect(log.console.length).toBe(300);
   });
 });
+
+describe('endpoint map', () => {
+  it('groups API calls by method and path, folds ids, and keeps neither query values nor bodies', () => {
+    const log = new DiagnosticsLog();
+    const calls: Array<[string, string, string, number]> = [
+      ['GET', 'https://a.test/api/users/17?token=SECRET', 'Fetch', 200],
+      ['GET', 'https://a.test/api/users/18', 'Fetch', 200],
+      ['GET', 'https://a.test/api/users/19', 'XHR', 404],
+      ['POST', 'https://a.test/api/orders', 'Fetch', 201],
+      ['GET', 'https://a.test/logo.png', 'Image', 200],
+    ];
+    calls.forEach(([m, u, t, s], i) => {
+      log.request(String(i), m, u, t);
+      log.response(String(i), s);
+    });
+    const text = formatDiagnostics(log, { kind: 'endpoints' }).join('\n');
+    expect(text).toContain('2 from 4 API calls');
+    expect(text).toContain('GET https://a.test/api/users/:id × 3 → 200, 404');
+    expect(text).toContain('POST https://a.test/api/orders × 1 → 201');
+    expect(text).not.toContain('SECRET');
+    expect(text).not.toContain('logo.png');
+  });
+
+  it('says what to do when nothing was seen', () => {
+    expect(formatDiagnostics(new DiagnosticsLog(), { kind: 'endpoints' })[0]).toContain('no API calls seen yet');
+  });
+});

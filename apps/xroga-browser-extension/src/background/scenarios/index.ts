@@ -45,5 +45,8 @@ import './set-of-marks';
 import './marks-look';
 import './clickable-zoo';
 import './form-model';
+import './audit-page';
+import './emulate';
+import './full-page-lazy';
 import './extract-rows';
 import './web-search';

@@ -26,8 +26,8 @@ defineScenario({
         JSON.stringify({ ddg: t.slice(0, 700), google: google.text.slice(0, 300), blocked: blocked.text.slice(0, 260), before: before.text.slice(0, 200), after: after.text.slice(0, 200) }),
         ddg.ok &&
           /3 results/.test(t) &&
-          /1\. Leeds SEO Agency\n\s+https:\/\/example\.org\/seo-agency\n\s+We help local firms rank/.test(t) &&
-          /https:\/\/example\.net\/clients/.test(t) &&
+          /1\. Leeds SEO Agency\n\s+https:\/\/brightpathseo\.co\.uk\/seo-agency\n\s+We help local firms rank/.test(t) &&
+          /https:\/\/yorkshiredigitalgrowth\.co\.uk\/clients/.test(t) &&
           !/Sponsored|ad\.example/.test(t) &&
           google.ok && /1 result/.test(google.text) && /First organic result/.test(google.text) && !/Second organic/.test(google.text) &&
           /asked for a human check/.test(blocked.text) && /not bypassed/.test(blocked.text) &&

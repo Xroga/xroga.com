@@ -3,6 +3,8 @@
 import { runCalculate } from './calculate';
 import { runDataOpsTool } from './data-ops';
 import { searchUrlToQuery } from './search-redirect';
+import { judgeTask } from './task-judge';
+import { runBrowserData } from './browser-data';
 import { countRun, deleteMacro, describeMacro, expandVars, macrosFor, placeholdersOf, refusalFor, saveMacro } from './macro-tool';
 import { tableToObjects } from '@src/browser-control/core/tools/extract-rows';
 import type { ExtractedTable } from '@src/browser-control/probe/source';
@@ -261,6 +263,8 @@ export class AgentLoop {
   #recoveryReadOnly: boolean;
   #plainEndings = 0;
   #doneRefusals = 0;
+  /** The task-level check of a claimed success runs once per run. */
+  #taskJudged = false;
   /** The session's current tab, as the header last read it. */
   #activeTab: number | null = null;
   /** Until this turn the ratio is not applied: the cooldown after a compaction. */
@@ -1203,6 +1207,20 @@ ${ledger}` : ''),
       summary = `${summary}\n\n${this.#plan.ledgerSummary()}`;
     }
     this.#doneRefusals = 0;
+    // A long run's claim of success is read once by a separate call against the task and the trace: parts of the task that nothing shows were done send the agent back
+    // once. It never ends a run, a failed call lets the run finish, and a run that stops as partial or failed is not asked.
+    if (outcomeArg === 'success' && !this.#taskJudged && this.#turns >= 8 && !this.#recoveryReadOnly && !this.options.signal.aborted) {
+      this.#taskJudged = true;
+      const branch = (await activeBranch(this.options.conversationId)).filter((e): e is EntryOf<'message'> => e.type === 'message');
+      const task = branch.find(e => e.message.role === 'user' && !e.appOwned)?.message.parts.map(p => (p.type === 'text' ? p.text : '')).join('\n') ?? '';
+      const verdict = task ? await this.#time('tool.judge' as never, () => judgeTask(this.options.model, task, summary, branch, this.options.signal)) : null;
+      if (verdict && !verdict.complete) {
+        return {
+          call, kind, isError: true,
+          text: `Not accepted as success yet: a check of the task against what this run did and saw found parts with no evidence:\n${verdict.missing.map(m => `- ${m}`).join('\n')}\nDo those parts now, or, if one cannot be done, call done again with outcome partial and say exactly which part and why. (This check is made once.)`,
+        };
+      }
+    }
     // Giving up is checked once: stopping after one or two failed attempts, with other methods untried, is the usual way a capable run ends early.
     // The challenge never blocks a genuine stop (a login, a CAPTCHA, an approval, missing information): the second `done` is accepted as it is.
     if (outcomeArg !== 'success' && !this.#giveUpChallenged && !this.#recoveryReadOnly) {
@@ -2312,10 +2330,13 @@ ${renderSkill(top)}`);
       const result = await this.#time('tool.layer', () => this.options.layer.call('web_search', { query: found.query, engine: found.engine, intent: `Search for ${found.query}` }, signal));
       outcome = {
         call, kind: 'read', isError: !result.ok, result,
-        text: `${result.text}\nThe results page was read for you in a background tab that was closed again, so no tab of the task changed. Open a result with navigate. To look at the search page itself, navigate to the same address once more.`,
+        text: `${result.text}\nThese are the results of that search, read for you in a background tab that was closed again: the search page itself needs no visit. Open a result with navigate, or search again with other words.`,
       };
     } else if (call.toolName === 'macro') {
       outcome = await this.#macroTool(call, kind, args);
+    } else if (call.toolName === 'browser_data') {
+      const r = await runBrowserData(args);
+      outcome = { call, kind, isError: r.isError, text: this.options.layer.wrap(r.text, { site: 'browser data' }) };
     } else if (call.toolName === 'record_demo') {
       outcome = await this.#recordDemo(call, kind, args);
     } else if (call.toolName === 'plan') {

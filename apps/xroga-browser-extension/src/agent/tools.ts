@@ -232,6 +232,7 @@ export function kindOf(tool: string, args: Record<string, unknown>): ToolKind {
   if (tool === 'batch' || tool === 'run_script_console' || tool === 'menu_path' || tool === 'site_action') return 'mutate';
   if (tool === 'start_parallel_tasks') return 'mutate';
   if (tool === 'plan') return 'read';
+  if (tool === 'browser_data') return ['history_search', 'bookmarks_search', 'tabs_all', 'tabs_duplicates'].includes(String(args.action)) ? 'read' : 'mutate';
   if (tool === 'save_file') return 'state';
   if (tool === 'read_attachment' || tool === 'find_color' || tool === 'find_skill' || tool === 'read_skill' || tool === 'confirm_download' || tool === 'plugin_search' || tool === 'plugin_action_search' || tool === 'http_get' || tool === 'plugin_connect' || tool === 'run_repository' || tool === 'change_repository') return 'read';
   // An approved connected read can transmit private arguments. Fence it like a dispatched effect on recovery.

@@ -92,7 +92,7 @@ async function runOne(
   // which is not what the product does and made visual tasks time out in the evaluation only.
   if (task.searchFixture) {
     const page = (name: string) => (q: string) => `${FIXTURE_ORIGIN}/${name}?q=${encodeURIComponent(q)}`;
-    engineOverride.duckduckgo = page('c-search-ddg.html');
+    engineOverride.duckduckgo = page('c-search-seo-ddg.html');
     engineOverride.bing = page('c-search-seo-bing.html');
     engineOverride.google = page('c-search-seo-google.html');
   } else {

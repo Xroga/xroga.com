@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Layout check</title>
+  <style>
+    body { font-family: sans-serif; margin: 16px; }
+    #print-only { display: none; }
+    @media print { #print-only { display: block; } #screen-only { display: none; } }
+  </style>
+</head>
+<body>
+  <h1>Layout check</h1>
+  <p id="state">starting</p>
+  <p id="screen-only">Screen version</p>
+  <p id="print-only">Print version</p>
+  <button id="ping" type="button">Check connection</button>
+  <p id="net">connection not checked</p>
+  <script>
+    const q = s => matchMedia(s).matches;
+    function render() {
+      document.getElementById('state').textContent =
+        'width ' + innerWidth + ' · layout ' + (q('(max-width: 500px)') ? 'narrow' : 'wide') + ' · scheme ' + (q('(prefers-color-scheme: dark)') ? 'dark' : 'light') +
+        ' · motion ' + (q('(prefers-reduced-motion: reduce)') ? 'reduced' : 'normal') +
+        ' · zone ' + Intl.DateTimeFormat().resolvedOptions().timeZone + ' · language ' + Intl.DateTimeFormat().resolvedOptions().locale;
+    }
+    addEventListener('resize', render);
+    setInterval(render, 250);
+    for (const s of ['(prefers-color-scheme: dark)', '(prefers-reduced-motion: reduce)']) matchMedia(s).addEventListener('change', render);
+    render();
+    document.getElementById('ping').addEventListener('click', async () => {
+      const el = document.getElementById('net');
+      el.textContent = 'checking';
+      try { await fetch('/c-emulate.html?ping=' + Date.now(), { cache: 'no-store' }); el.textContent = 'connection ok'; }
+      catch (e) { el.textContent = 'connection failed'; }
+    });
+  </script>
+</body>
+</html>

@@ -13,6 +13,8 @@ import { upload } from './upload';
 import { diagnostics } from './diagnostics';
 import { extractRows } from './extract-rows';
 import { formModel } from './form-model';
+import { auditPage } from './audit-page';
+import { emulate } from './emulate';
 import { webSearch } from './web-search';
 import { demo } from './demo';
 
@@ -35,6 +37,8 @@ export const TOOL_HANDLERS: Record<string, ToolHandler> = {
   wait: (ctx, args) => wait(ctx, args as never),
   diagnostics: (ctx, args) => diagnostics(ctx, args as never),
   form_model: (ctx, args) => formModel(ctx, args as never),
+  audit_page: (ctx, args) => auditPage(ctx, args as never),
+  emulate: (ctx, args) => emulate(ctx, args as never),
   extract_rows: (ctx, args) => extractRows(ctx, args as never),
   web_search: (ctx, args) => webSearch(ctx, args as never),
   demo: (ctx, args) => demo(ctx, args as never),

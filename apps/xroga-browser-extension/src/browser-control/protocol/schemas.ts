@@ -235,9 +235,30 @@ export const FormModelArgsSchema = z.strictObject({
   scope: z.string().max(120).optional().describe('Only the form, dialog or group with this name (a substring of its accessible name or legend); default: the whole page'),
 });
 
+export const EmulateArgsSchema = z.strictObject({
+  ...readCommon,
+  device: z.enum(['iphone-15', 'pixel-8', 'ipad', 'laptop', 'desktop']).optional().describe('A device size preset'),
+  width: z.number().int().min(100).max(10000).optional(),
+  height: z.number().int().min(100).max(10000).optional(),
+  scale: z.number().min(0.5).max(5).optional().describe('Device pixel ratio'),
+  mobile: z.boolean().optional(),
+  colorScheme: z.enum(['light', 'dark']).optional(),
+  reducedMotion: z.boolean().optional(),
+  media: z.enum(['print', 'screen']).optional().describe('print shows the print layout'),
+  network: z.enum(['offline', 'slow-3g', 'fast-3g', 'none']).optional().describe('none removes throttling'),
+  cpuSlowdown: z.number().min(1).max(20).optional().describe('1 is full speed; 4 is four times slower'),
+  timezone: z.string().max(60).optional().describe('IANA name such as Asia/Tokyo; empty restores the system'),
+  locale: z.string().max(20).optional().describe('Language tag such as de-DE; empty restores the system'),
+  reset: z.boolean().optional().describe('Undo every setting above'),
+});
+
+export const AuditPageArgsSchema = z.strictObject({
+  ...readCommon,
+});
+
 export const DiagnosticsArgsSchema = z.strictObject({
   ...readCommon,
-  kind: z.enum(['both', 'console', 'network']).optional(),
+  kind: z.enum(['both', 'console', 'network', 'endpoints']).optional().describe('endpoints: the page’s API calls grouped by method and path (no bodies)'),
   onlyProblems: z.boolean().optional().describe('Errors, and requests that failed or got 400+'),
   urlPattern: z.string().optional(),
   limit: z.number().int().min(1).max(100).optional(),
@@ -313,6 +334,8 @@ export type WaitArgs = z.infer<typeof WaitArgsSchema>;
 export type NavigateArgs = z.infer<typeof NavigateArgsSchema>;
 export type DiagnosticsArgs = z.infer<typeof DiagnosticsArgsSchema>;
 export type FormModelArgs = z.infer<typeof FormModelArgsSchema>;
+export type AuditPageArgs = z.infer<typeof AuditPageArgsSchema>;
+export type EmulateArgs = z.infer<typeof EmulateArgsSchema>;
 export type WebSearchArgs = z.infer<typeof WebSearchArgsSchema>;
 export type ExtractRowsArgs = z.infer<typeof ExtractRowsArgsSchema>;
 export type DemoArgs = z.infer<typeof DemoArgsSchema>;

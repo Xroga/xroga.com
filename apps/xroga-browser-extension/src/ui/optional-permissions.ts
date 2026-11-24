@@ -1,19 +1,23 @@
 // The optional Chrome permissions on the extension's pages: which ones the user has allowed, and one request for all
 // four, made only from a user's click.
 import { useEffect, useState } from 'react';
-import { OPTIONAL_PERMISSIONS } from './manifest-permissions';
+import { OPTIONAL_PERMISSIONS, XROGA_DATA_PERMISSIONS } from './manifest-permissions';
 import type { OptionalPermission } from './manifest-permissions';
 
 export { OPTIONAL_PERMISSIONS };
 export type { OptionalPermission };
 
-export type GrantedPermissions = Record<OptionalPermission, boolean>;
+/** The four, and Xroga's two for browser_data (history, bookmarks). */
+export type TrackedPermission = OptionalPermission | (typeof XROGA_DATA_PERMISSIONS)[number];
+const TRACKED: readonly TrackedPermission[] = [...OPTIONAL_PERMISSIONS, ...XROGA_DATA_PERMISSIONS];
+
+export type GrantedPermissions = Record<TrackedPermission, boolean>;
 
 /** Which of the four are allowed now. */
 export async function grantedPermissions(): Promise<GrantedPermissions> {
   const entries = await Promise.all(
-    OPTIONAL_PERMISSIONS.map(
-      async p => [p, await chrome.permissions.contains({ permissions: [p] }).catch(() => false)] as const,
+    TRACKED.map(
+      async p => [p, await chrome.permissions.contains({ permissions: [p] as chrome.runtime.ManifestPermission[] }).catch(() => false)] as const,
     ),
   );
   return Object.fromEntries(entries) as GrantedPermissions;
@@ -51,10 +55,10 @@ export function allGranted(granted: GrantedPermissions | null): boolean {
  * allowed; a refusal by the user or by Chrome resolves to false.
  */
 export function requestOptionalPermissions(
-  permissions: readonly OptionalPermission[] = OPTIONAL_PERMISSIONS,
+  permissions: readonly TrackedPermission[] = OPTIONAL_PERMISSIONS,
 ): Promise<boolean> {
   try {
-    return chrome.permissions.request({ permissions: [...permissions] }).catch(() => false);
+    return chrome.permissions.request({ permissions: [...permissions] as chrome.runtime.ManifestOptionalPermission[] }).catch(() => false);
   } catch {
     return Promise.resolve(false);
   }

@@ -259,6 +259,21 @@ export const SKILLS: Skill[] = [
     ].join('\n'),
   },
   {
+    // The method of agent-browser's dogfood skill (Apache-2.0), rewritten for Xroga's own tools.
+    id: 'site-qa',
+    when: has(/\b(?:qa|dogfood|bug hunt|exploratory test(?:ing)?|find (?:the )?(?:bugs|issues|problems)|(?:test|audit|review|check|inspect) (?:my|our|this|the) (?:site|website|web app|app|page|landing page|store|shop)|site audit|website audit|ux review)\b/i),
+    body: [
+      'Testing or auditing a site (exploratory QA):',
+      '- Orient first: open the start page, take one snapshot, list the sections and the main flows (sign up, search, buy, contact, account). Decide what a user came to do; test those flows first and the periphery last.',
+      '- For each page: audit_page (title, description, headings, alt text, structured data, speed), diagnostics (console errors and failed requests; the first call starts recording, so call it, act, call again), and one screenshot. form_model lists a form’s fields and rules in one call.',
+      '- Try each flow like a person: fill a form with valid values, with an empty required field, with a wrong format; open each menu, dialog and tab; follow the main links and look for 404s and wrong destinations; check empty states and what happens after a refresh or the back button.',
+      '- Look at the page on a phone (emulate device iphone-15), in dark mode (emulate colorScheme dark) and in print (emulate media print), then emulate reset. Check slow and offline behaviour only when the task asks for it.',
+      '- Record each finding when you meet it, not at the end, with: a title, a severity (critical: blocks a core flow or loses data; high: a major feature broken with no workaround; medium: works with a noticeable problem; low: cosmetic), the page address, the exact steps, what happened and what should have happened, and the evidence (the console or request line, the screenshot).',
+      '- Confirm every finding by repeating its steps once. A problem you could not repeat goes in the report marked as seen once. Do not report a thing you did not see. Never submit real purchases, messages or payments to test them; stop at the last step and say so.',
+      '- End with a report: counts by severity, then the findings worst first, then what you did not test. Keep it a table or a short list, not prose.',
+    ].join('\n'),
+  },
+  {
     id: 'debugging',
     when: has(/\b(?:debug|debugging|broken|not working|doesn.t work|isn.t working|error|errors|failing|fails|failed|crash|bug|issue|problem|why (?:is|does|did)|timeout)\b/i),
     body: [

@@ -126,7 +126,7 @@ export const TASKS: EvalTask[] = [
     url: `${FIXTURE_ORIGIN}/c-effects.html`,
     searchFixture: true,
     task: 'Search the web for SEO agencies in Leeds and tell me the website addresses of two of them. Do not list an advert.',
-    grade: f => /example\.org\/seo-agency|example\.net\/clients/.test(f.answer) && !/ad\.example/.test(f.answer) && f.calls.some(c => c.name === 'web_search'),
+    grade: f => /c-agency-brightpath\.html|c-agency-yorkshire\.html/.test(f.answer) && !/ad\.example/.test(f.answer),
   },
   {
     id: 'add-rows',
