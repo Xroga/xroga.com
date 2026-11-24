@@ -597,6 +597,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                 activity={operationRows}
                 run={currentTurn ? terminalRun : undefined}
                 pending={showPending}
+                todos={currentTurn ? swarmTodos : undefined}
                 pendingReply={currentTurn && pendingReply?.messageId === msg.id ? pendingReply.kind : undefined}
               />
             ) : undefined;

@@ -12,6 +12,8 @@ import {
 } from '@/lib/terminal/activityTimeline';
 import styles from './activity.module.css';
 import { BlackHoleIndicator } from './BlackHoleIndicator';
+import { ProcessingSurface } from './ProcessingSurface';
+import type { ProcessingView } from '@/lib/terminal/processingView';
 
 const FAMILY_ICON: Record<TimelineFamily, LucideIcon> = {
   command: SquareTerminal, verify: ShieldCheck, read: FileSearch, research: Search, write: FilePen,
@@ -95,9 +97,11 @@ export interface ActivityTimelineProps {
   pendingLabel?: string;
   /** A measured, truthful note such as how long nothing new has arrived. */
   note?: string;
+  /** Heading, paragraph and optional checklist derived from the same real rows. */
+  processing?: ProcessingView;
 }
 
-export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel = 'Starting request', note }: ActivityTimelineProps) {
+export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel = 'Starting request', note, processing }: ActivityTimelineProps) {
   const [open, setOpen] = useState(false);
   const [showAll, setShowAll] = useState(false);
   const [liveOpen, setLiveOpen] = useState(false);
@@ -162,6 +166,7 @@ export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel
           </span>
           {hasDetails ? <ChevronDown className={styles.chevron} aria-hidden="true" /> : null}
         </button>
+        {processing ? <ProcessingSurface view={processing} /> : null}
         {liveOpen && hasDetails ? <div className={styles.workingDetails}>
           {hidden > 0 ? <button type="button" className={styles.earlier} onClick={() => {
             if (showAll) setHistoryCount(count => count + HISTORY_PAGE_SIZE);
