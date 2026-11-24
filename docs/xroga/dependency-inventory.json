@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "2d73431328bae1d54d2b6fdea1ef3baded7407fd",
+  "source_sha": "c1ee46d9ac20703f29e72e6d1e75cf4675abb974",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17330,7 +17330,7 @@
     },
     {
       "path": "backend/src/ai/prompts.ts",
-      "sha256": "a86626b8a60ff31bcb17ba0a7f21b0389d280ef9f317bd14b04b435aef549a19"
+      "sha256": "bef2e1e9c88666a97ca09a2812119b41e08066557175b4f1ea6cf015bd7b114b"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -17382,7 +17382,7 @@
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "sha256": "9163bfa5719d756916994478fef42bf44faafb7488f8d897f85bd1f58e4e5921"
+      "sha256": "c3e80fbc5a3a01ce0c646981ed018d0c985228a18a99ee91f732c4172dcdd450"
     },
     {
       "path": "backend/src/ai/researchPublicationEvidence.ts",
@@ -17654,7 +17654,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "5f328cb932ae5030ef4a625ec6f6e4355a825d8e726e18dee8df165041bc3a89"
+      "sha256": "3559ca76cdec97bf90e5ab0d511215d0d2b8265bea47e0fac21be78be984673e"
     },
     {
       "path": "backend/src/ai/usageAccounting.ts",
@@ -34116,14 +34116,14 @@
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "line": 173,
+      "line": 183,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "line": 174,
+      "line": 184,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

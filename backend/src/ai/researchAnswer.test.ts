@@ -26,6 +26,28 @@ test('public research flags a fixed night budget that conflicts with its complet
   }
 });
 
+test('a titled stay counts nights from destination arrival after an overnight flight', () => {
+  const sources = [{ url: 'https://travel.example/rates' }];
+  const response = [
+    '# A 5-night plan with transport and lodging', '',
+    'Hotel estimates come from the published rate [1].', '', '## The 5-night plan', '',
+    '1. **Day 1 — evening flight from home.**',
+    '2. **Day 2 — arrive at the destination.** Check in.',
+    '3. **Day 3 — visit the gallery.**',
+    '4. **Day 6 — transfer and fly home.**', '',
+    '## Other offers', '', 'The 2-night package is priced separately [1].',
+  ].join('\n');
+
+  const result = presentPublicResearchAnswer(response, { status: 'complete' }, sources, 'Plan a trip and estimate the costs.');
+  assert.deepEqual(result.completion, { status: 'partial', reason: 'factual_review' });
+  assert.equal(result.requiresReadableFallback, true);
+  assert.match(result.response, /^The itinerary runs from Day 2 to Day 6, which is 4 nights\. The itinerary heading says 5 nights\./);
+  assert.ok(result.response.endsWith(response));
+
+  const aligned = response.replaceAll('5-night plan', '4-night plan');
+  assert.equal(presentPublicResearchAnswer(aligned, { status: 'complete' }, sources, 'Plan a trip.').response, aligned);
+});
+
 test('public research withholds positions based on incompatible financing figures', () => {
   const sources = [{ url: 'https://finance.example/rounds' }];
   const prose = [
