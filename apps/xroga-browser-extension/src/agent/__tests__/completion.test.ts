@@ -241,14 +241,15 @@ describe('guards', () => {
     expect(texts.d).toBeDefined();
   });
 
-  it('nudges a change of method after five errors in a row and keeps running; only twenty in a row stop the run', async () => {
+  it('nudges a change of method after five errors in a row and keeps running; nothing stops the run', async () => {
     const layer = new FakeLayer({ click: () => failed('NOT_VISIBLE') });
     const err = (id: string) => ({ toolCalls: [call('click', { target: { ref: id } }, id)] });
     const five = await run([err('a'), err('b'), err('c'), err('d'), err('e'), doneCall('partial', 's', 'ok'), doneCall('partial', 's2', 'ok')], layer);
     expect(five.texts.e).toMatch(/5 calls in a row failed[\s\S]*materially different method/);
     expect(five.end.outcome).toBe('partial');
-    const many = await run([...Array.from({ length: 20 }, (_, i) => err(`x${i}`)), { text: 'Giving up.' }], new FakeLayer({ click: () => failed('NOT_VISIBLE') }));
-    expect(many.end).toMatchObject({ status: 'failed', outcome: 'failed', reason: '20 calls in a row failed.' });
+    const many = await run([...Array.from({ length: 20 }, (_, i) => err(`x${i}`)), doneCall('failed', 'fin', 'blocked')], new FakeLayer({ click: () => failed('NOT_VISIBLE') }));
+    expect(many.end.outcome).toBe('failed');
+    expect(many.end.reason ?? '').not.toMatch(/calls in a row failed\.$/);
   });
 
   it('rechecks the current tab after a stale control and leaves the next action to the model', async () => {

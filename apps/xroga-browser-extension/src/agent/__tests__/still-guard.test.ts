@@ -5,16 +5,16 @@ const look = (i: number) => ({ ok: true, text: `look ${i}`, page: { tabId: 1, ur
 const changed = { ok: true, text: 'x', page: { tabId: 1, url: 'https://a.test/' }, receipt: { effect: { verdict: 'changed', signals: [] } } } as never;
 
 describe('calls on one page that change nothing', () => {
-  it('nudge at the nudge count and stop at the stop count', () => {
+  it('nudges at the nudge count and never stops', () => {
     const g = new Guards();
     let nudged = 0, stopped = '';
     for (let i = 1; i <= STILL_STOP; i++) {
       const v = g.record(i % 2 ? 'find' : 'screenshot', { role: `r${i}` }, look(i), false);
-      if (v.nudge && /changed nothing on it/.test(v.nudge)) nudged = i;
+      if (v.nudge && /changed nothing on it/.test(v.nudge) && !/Nothing stops you/.test(v.nudge)) nudged = i;
       if (v.stop) { stopped = v.stop; break; }
     }
     expect(nudged).toBe(STILL_NUDGE);
-    expect(stopped).toMatch(/not reachable there/);
+    expect(stopped).toBe('');
   });
   it('an action that changes the page starts the count again', () => {
     const g = new Guards();
@@ -41,7 +41,7 @@ describe('calls on one page that change nothing', () => {
       const v = i % 3 === 0 ? g.record('press', { keys: 'Tab' }, tab, false) : i % 3 === 1 ? g.record('find', { role: `r${i}` }, look(i), false) : g.record('click', { target: { role: `x${i}` } }, fail, true);
       if (v.stop) stopped = i;
     }
-    expect(stopped).toBe(STILL_STOP);
+    expect(stopped).toBe(0);
   });
   it('a detour to another page and back does not restart the count', () => {
     const g = new Guards();
@@ -51,8 +51,7 @@ describe('calls on one page that change nothing', () => {
       const v = i % 5 === 0 ? g.record('find', { role: `d${i}` }, away(i), false) : g.record('find', { role: `r${i}` }, look(i), false);
       if (v.stop) stopped = i;
     }
-    expect(stopped).toBeGreaterThan(0);
-    expect(stopped).toBeLessThanOrEqual(STILL_STOP + 6);
+    expect(stopped).toBe(0);
   });
   it('says the next call must be done once the first reminder was ignored', () => {
     const g = new Guards();

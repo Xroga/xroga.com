@@ -13,16 +13,15 @@ function callsUntilStop(g: Guards, calls: Array<() => ReturnType<Guards['record'
 }
 
 describe('the cycle guard', () => {
-  it('stops an agent that alternates between two pages with nothing changing, after a bounded number of calls', () => {
+  it('never stops an agent that alternates between two pages; it keeps being told to change approach', () => {
     const g = new Guards();
-    const n = callsUntilStop(g, [() => nav(g, 'https://a.test/'), () => nav(g, 'https://b.test/')]);
-    expect(n).toBe(REPEAT_WINDOW + CYCLE_STOP - 1);
+    expect(callsUntilStop(g, [() => nav(g, 'https://a.test/'), () => nav(g, 'https://b.test/')], 80)).toBeNull();
   });
 
-  it('stops an agent that repeats one failing click', () => {
+  it('never stops an agent that repeats one failing click', () => {
     const g = new Guards();
     const fail = () => g.record('click', { target: { ref: 'a1' } }, { ok: false, text: '', error: { code: 'OBSCURED', message: 'x', delivered: false, hint: '' } } as unknown as Result, true);
-    expect(callsUntilStop(g, [fail])).not.toBeNull();
+    expect(callsUntilStop(g, [fail], 80)).toBeNull();
   });
 
   it('does not stop repeated clicks that really change the page (add ten rows, next page)', () => {

@@ -187,13 +187,13 @@ export class Guards {
       s.still = still;
     }
     s.errorsInRow = isError ? s.errorsInRow + 1 : 0;
-    if (s.errorsInRow >= ERROR_STOP) return { stop: `${ERROR_STOP} calls in a row failed.`, guard: 'errors' };
+    if (s.errorsInRow >= ERROR_STOP && s.errorsInRow % ERROR_STOP === 0) return { nudge: `${s.errorsInRow} calls in a row failed. Nothing stops you; use a completely different route to the goal, or finish with what you have and say what blocked you.`, reobserve: true };
     if (s.errorsInRow >= ERROR_NUDGE && s.errorsInRow % ERROR_NUDGE === 0) {
       return { nudge: `${s.errorsInRow} calls in a row failed. Read the exact error of the last one, say what it means, and switch to a materially different method (a different tool, the screenshot and a pointer action, a keyboard shortcut, the application's own command or script console, a connected API). Keep the work already done.`, reobserve: true };
     }
 
     if (still && !POLLING_TOOLS.has(tool)) {
-      if (still.calls >= STILL_STOP) return { stop: `${still.calls} calls on this page in a row changed nothing on it: what was asked for is not reachable there with the controls the page shows.`, guard: 'no_effect' };
+      if (still.calls >= STILL_STOP && still.calls % STILL_STOP === 0) return { nudge: `${still.calls} calls on this page in a row changed nothing on it. Nothing stops you; try another page, tool or route, or finish with what you found.`, reobserve: true };
       if (still.calls === STILL_FINAL) return { nudge: `${still.calls} calls on this page changed nothing and the last reminder was not followed. Your next call must be done: say what you found and what is not there, with outcome partial or failed. Do not try another variation.`, reobserve: false };
       if (still.calls === STILL_NUDGE) return { nudge: `${still.calls} calls on this page in a row changed nothing on it. If what you are looking for is not on this page, say so now with what you found (done with outcome partial or failed and the evidence); otherwise take an action that changes something.` };
     }
@@ -210,8 +210,8 @@ export class Guards {
     ) {
       const count = (s.noEffect[key] ?? 0) + 1;
       s.noEffect[key] = count;
-      if (count >= NO_EFFECT_STOP)
-        return { stop: `${tool} on the same target had no effect ${count} times.`, guard: 'no_effect' };
+      if (count >= NO_EFFECT_STOP && count % NO_EFFECT_STOP === 0)
+        return { nudge: `${tool} on the same target had no effect ${count} times. Nothing stops you; use a different element, tool or route.`, reobserve: true };
       if (count >= NO_EFFECT_STRONG) {
         const signals = result.receipt.effect.signals.join(' · ') || 'no signal';
         return { nudge: `${tool} on this target had no effect ${count} times (${signals}). Stop repeating it: observe the page again and use a different way to reach the goal (another element, a pointer action from a screenshot, a keyboard path, the application's command interface).`, reobserve: true };
@@ -229,14 +229,11 @@ export class Guards {
       new Set(s.recent).size <= 2 &&
       !s.recent.some(r => r.endsWith('→ changed') || POLLING_TOOLS.has(r.split(' ')[0]));
     s.cycle = cycling ? (s.cycle ?? 0) + 1 : 0;
-    if (s.cycle >= CYCLE_NUDGE && s.cycle < CYCLE_STOP && s.cycle % 2 === 0) {
+    if (s.cycle >= CYCLE_NUDGE && s.cycle % 2 === 0) {
       return { nudge: 'You are repeating the same calls and nothing on the page changes. Diagnose why, then take a materially different approach; do not repeat these calls.', reobserve: true };
     }
-    if (s.cycle >= CYCLE_STOP) {
-      return {
-        stop: `the last ${REPEAT_WINDOW + s.cycle - 1} calls were only ${new Set(s.recent).size === 1 ? 'the same call' : 'two calls repeated'} and none changed the page.`,
-        guard: 'no_effect',
-      };
+    if (s.cycle >= CYCLE_STOP && s.cycle % CYCLE_STOP === 0) {
+      return { nudge: 'You have repeated the same calls many times and nothing changed. Nothing stops you; take a completely different approach or finish with what you have.', reobserve: true };
     }
     const repeats = s.recent.filter(r => r === sig).length;
     if (
