@@ -5,7 +5,7 @@
 export type Row = Record<string, string | number | boolean | null>;
 
 export interface DataStep {
-  op: 'dedupe' | 'filter' | 'sort' | 'pick' | 'template' | 'group' | 'limit';
+  op: 'dedupe' | 'filter' | 'sort' | 'pick' | 'template' | 'group' | 'limit' | 'validate';
   /** dedupe / sort / group: the field or fields to look at. */
   by?: string | string[];
   /** dedupe: also ignore case, punctuation, a leading www. or protocol, a trailing slash and +tags in an email. */
@@ -23,11 +23,29 @@ export interface DataStep {
   text?: string;
   /** limit */
   n?: number;
+  /** validate: what the field must look like, and whether the rows that fail are removed (default: only reported). */
+  kind?: 'email' | 'url' | 'phone' | 'number' | 'notempty';
+  drop?: boolean;
 }
 
 export const MAX_ROWS = 100_000;
 const MAX_STEPS = 200;
-const OPS = new Set(['dedupe', 'filter', 'sort', 'pick', 'template', 'group', 'limit']);
+const OPS = new Set(['dedupe', 'filter', 'sort', 'pick', 'template', 'group', 'limit', 'validate']);
+
+const SHAPES: Record<NonNullable<DataStep['kind']>, (v: string) => boolean> = {
+  email: v => /^[^\s@<>()]+@[^\s@<>()]+\.[A-Za-z]{2,}$/.test(v),
+  url: v => {
+    try {
+      const u = new URL(/^[a-z][a-z0-9+.-]*:/i.test(v) ? v : `https://${v}`);
+      return /^https?:$/.test(u.protocol) && /\.[A-Za-z]{2,}$/.test(u.hostname);
+    } catch {
+      return false;
+    }
+  },
+  phone: v => { const d = v.replace(/[^\d]/g, ''); return /^[+()\d][\d\s().+-]*$/.test(v) && d.length >= 7 && d.length <= 15; },
+  number: v => v !== '' && Number.isFinite(Number(v.replace(/[,\s]/g, '').replace(/^[$£€]/, ''))),
+  notempty: v => v !== '',
+};
 
 const keysOf = (by: unknown): string[] => (Array.isArray(by) ? by : typeof by === 'string' ? [by] : []).map(String).filter(Boolean);
 const text = (v: unknown) => (v === null || v === undefined ? '' : String(v));
@@ -131,6 +149,17 @@ export function runDataOps(input: Row[], steps: DataStep[]): DataResult {
       }
       groups = [...counts.values()].sort((a, b) => b.n - a.n).map(g => ({ ...(g.key as Record<string, string | number>), count: g.n }));
       notes.push(`${at}: ${groups.length} group(s) by ${by.join('+')}`);
+    } else if (s.op === 'validate') {
+      const fields = [...keysOf(s.fields), ...(s.field ? [s.field] : [])];
+      if (!fields.length || !s.kind || !SHAPES[s.kind]) throw new Error(`${at}: field (or fields) and kind (email, url, phone, number or notempty) are required`);
+      const bad: string[] = [];
+      const ok = rows.filter((r, k) => {
+        const failing = fields.filter(f => !SHAPES[s.kind!](text(r[f]).trim()));
+        if (failing.length) bad.push(`row ${k + 1} ${failing.map(f => `${f}=${JSON.stringify(text(r[f]).slice(0, 40))}`).join(', ')}`);
+        return !failing.length;
+      });
+      if (s.drop) rows = ok;
+      notes.push(`${at}: ${before - ok.length} of ${before} rows have a ${fields.join('/')} that is not a valid ${s.kind}${s.drop ? ' and were dropped' : ' (kept; add drop true to remove them)'}${bad.length ? `: ${bad.slice(0, 15).join('; ')}${bad.length > 15 ? `; and ${bad.length - 15} more` : ''}` : ''}`);
     } else if (s.op === 'limit') {
       const n = Math.floor(Number(s.n));
       if (!(n >= 0)) throw new Error(`${at}: n is a number of rows to keep`);
@@ -146,7 +175,7 @@ export const DATA_OPS_TOOL = {
   source: 'agent' as const,
   group: 'working' as const,
   description:
-    'Exact list work on rows you collected: dedupe, filter, sort, pick, template, group, limit; it reports every row it drops. steps run in order, e.g. [{"op":"dedupe","by":"email","loose":true},{"op":"filter","field":"country","test":"eq","value":"UK"},{"op":"sort","by":"score","order":"desc"}]; template needs as and text with {field}.',
+    'Exact list work on rows you collected: dedupe, filter, sort, pick, template, group, limit, validate (field, kind email|url|phone|number|notempty, optional drop); it reports every row it drops. steps run in order, e.g. [{"op":"dedupe","by":"email","loose":true},{"op":"filter","field":"country","test":"eq","value":"UK"},{"op":"sort","by":"score","order":"desc"}]; template needs as and text with {field}.',
   parameters: {
     type: 'object',
     properties: {

@@ -59,6 +59,37 @@ export function detectChallenge(page: { title?: string; text?: string }): Challe
   return null;
 }
 
+/**
+ * Sites that asked for a person or refused the visit during a run, one entry per site. They are told to the person at the end, so one blocked site does not stop the
+ * others: the agent carries on with the work that does not need it, and the person unlocks (or skips) the listed sites afterwards. Nothing here solves or bypasses a check.
+ */
+export class BlockedQueue {
+  readonly #sites = new Map<string, { vendor: string; kind: ChallengeKind; url: string }>();
+
+  /** True the first time a site is added (the agent is told the queue grew), false for one already listed or a clearing interstitial. */
+  add(url: string | undefined, challenge: Challenge): boolean {
+    if (challenge.kind === 'wait' || !url) return false;
+    let host = '';
+    try {
+      host = new URL(url).hostname.replace(/^www\./, '');
+    } catch {
+      return false;
+    }
+    if (!host || this.#sites.has(host)) return false;
+    this.#sites.set(host, { vendor: challenge.vendor, kind: challenge.kind, url: `${new URL(url).origin}${new URL(url).pathname}` });
+    return true;
+  }
+
+  get size(): number {
+    return this.#sites.size;
+  }
+
+  /** The lines for the end of the run's summary. */
+  lines(): string[] {
+    return [...this.#sites].map(([host, s]) => `- ${host}: ${s.kind === 'person' ? `${s.vendor} wants a person to pass its check; open ${s.url} yourself, pass it, then ask me to continue with this site` : `${s.vendor} refused the visit; another source was needed`}`);
+  }
+}
+
 /** The sentence the agent is given with the result that showed the challenge. */
 export function challengeNote(challenge: Challenge): string {
   const what = `${challenge.vendor} ${challenge.kind === 'block' ? 'refused this visit' : 'is checking whether a person is here'} (${challenge.signal})`;
@@ -66,7 +97,7 @@ export function challengeNote(challenge: Challenge): string {
     return `NOTE: this page is an interstitial: ${what}. It normally clears by itself. Wait a few seconds and read the page once more; if it is still there, treat it as a block.`;
   }
   if (challenge.kind === 'person') {
-    return `NOTE: this page needs a person: ${what}. Do not try to solve, bypass or repeat it. Use ask_user so the person can complete it in the tab, or use a different source.`;
+    return `NOTE: this page needs a person: ${what}. Do not try to solve, bypass or repeat it. If this site is the whole task, use ask_user (kind takeover) so the person can complete the check in the tab. If other work remains, carry on with it or with another source: the site is listed for the person in the final summary.`;
   }
   return `NOTE: this site blocked the visit: ${what}. Retrying will not help. Use a different source and tell the user which site refused.`;
 }

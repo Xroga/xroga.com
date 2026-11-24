@@ -37,6 +37,7 @@ import './click-bench';
 import './panel-shot';
 import './model-outage';
 import './optional-permissions';
+import './browser-data';
 import './voice';
 import './panel-selection';
 import './panel-shortcuts';

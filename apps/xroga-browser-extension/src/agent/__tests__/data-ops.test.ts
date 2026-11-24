@@ -42,3 +42,30 @@ describe('data_ops', () => {
     expect(normalise('Ana+x@Mail.test', true)).toBe('ana@mail.test');
   });
 });
+
+describe('data_ops validate', () => {
+  const messy = [
+    { email: 'ana@mail.test', site: 'ana.test', phone: '+44 113 555 0142', score: '1,200' },
+    { email: 'not-an-email', site: 'localhost', phone: '12', score: 'n/a' },
+    { email: '', site: 'https://b.test/x', phone: '0113 555 0177', score: '$30' },
+  ];
+  it('reports rows that fail, keeps them by default, and names the offending values', () => {
+    const r = runDataOps(messy, [{ op: 'validate', field: 'email', kind: 'email' }]);
+    expect(r.rows).toHaveLength(3);
+    expect(r.notes.at(-1)).toContain('2 of 3 rows have a email that is not a valid email');
+    expect(r.notes.at(-1)).toContain('row 2 email="not-an-email"');
+    expect(r.notes.at(-1)).toContain('add drop true');
+  });
+  it('drops failing rows when asked', () => {
+    const r = runDataOps(messy, [{ op: 'validate', field: 'email', kind: 'email', drop: true }]);
+    expect(r.rows).toEqual([messy[0]]);
+  });
+  it('checks url, phone and number shapes', () => {
+    expect(runDataOps(messy, [{ op: 'validate', field: 'site', kind: 'url', drop: true }]).rows.map(r => r.site)).toEqual(['ana.test', 'https://b.test/x']);
+    expect(runDataOps(messy, [{ op: 'validate', field: 'phone', kind: 'phone', drop: true }]).rows).toHaveLength(2);
+    expect(runDataOps(messy, [{ op: 'validate', field: 'score', kind: 'number', drop: true }]).rows.map(r => r.score)).toEqual(['1,200', '$30']);
+  });
+  it('needs a field and a kind', () => {
+    expect(() => runDataOps(messy, [{ op: 'validate', field: 'email' }])).toThrow(/kind/);
+  });
+});

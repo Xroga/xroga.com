@@ -25,7 +25,7 @@ import { namedTabCandidates } from './tab-intent';
 import { answerDirect, directRead } from './direct-read';
 import { APPS_FIRST_NOTE, APPS_FIRST_SEARCHED_NOTE, RESEARCH_FIRST_NOTE, appActionQuery, appSearchQuery, isAppsFirstRequest, isChangeRequest, isResearchRequest, needsReadTools, researchPlan } from './routing';
 import { runSubagents } from './subagents';
-import { challengeNote, detectChallenge } from './challenge';
+import { BlockedQueue, challengeNote, detectChallenge } from './challenge';
 import { BATCH_TOOLS, runPlan, type Condition, type Step } from './batch-plan';
 import { progressLedger } from './progress';
 import { browserState } from './header';
@@ -265,6 +265,8 @@ export class AgentLoop {
   #doneRefusals = 0;
   /** The task-level check of a claimed success runs once per run. */
   #taskJudged = false;
+  /** Sites that wanted a person or refused the visit, for the end of the summary. */
+  #blocked = new BlockedQueue();
   /** The session's current tab, as the header last read it. */
   #activeTab: number | null = null;
   /** Until this turn the ratio is not applied: the cooldown after a compaction. */
@@ -1242,6 +1244,7 @@ ${ledger}` : ''),
     }
     const lost = unverifiedLines(this.#debt);
     if (lost.length) summary = `${summary}\n\n${lost.map(l => `- ${l}`).join('\n')}`;
+    if (this.#blocked.size) summary = `${summary}\n\nSites that need you:\n${this.#blocked.lines().join('\n')}`;
     return { call, kind, text: 'done: the run ends.', isError: false, done: { outcome: outcomeArg, summary } };
   }
 
@@ -1977,7 +1980,10 @@ ${ledger}` : ''),
         if (result.ok && ['read', 'snapshot', 'navigate', 'tabs', 'click', 'wait'].includes(tool)) {
           const title = result.page?.title ?? /«([^»]{0,120})»/.exec(result.text)?.[1];
           const challenge = detectChallenge({ title, text: result.text });
-          if (challenge) outcome.text = `${result.text}\n${challengeNote(challenge)}`;
+          if (challenge) {
+            this.#blocked.add(result.page?.url, challenge);
+            outcome.text = `${result.text}\n${challengeNote(challenge)}`;
+          }
         }
       }
       outcome = await this.afterToolCall(outcome);
@@ -2365,7 +2371,10 @@ ${renderSkill(top)}`);
       if (result.ok && ['read', 'snapshot', 'navigate', 'tabs', 'click', 'wait'].includes(call.toolName)) {
         const title = result.page?.title ?? /«([^»]{0,120})»/.exec(result.text)?.[1];
         const challenge = detectChallenge({ title, text: result.text });
-        if (challenge) outcome.text = `${result.text}\n${challengeNote(challenge)}`;
+        if (challenge) {
+          this.#blocked.add(result.page?.url, challenge);
+          outcome.text = `${result.text}\n${challengeNote(challenge)}`;
+        }
       }
     }
     return this.#time('tool.after', () => this.afterToolCall(outcome));
