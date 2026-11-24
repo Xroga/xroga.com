@@ -1,5 +1,6 @@
 // The RunManager: one run per active conversation, the panel commands, run records and statuses. The worker owns the
 // run; panels are views that can close and reopen.
+import { clearCutOff, markCutOff, takeToResume } from './auto-resume';
 import { CALCULATE_TOOL } from '@src/agent/calculate';
 import { DATA_OPS_TOOL } from '@src/agent/data-ops';
 import { MACRO_TOOL } from '@src/agent/macro-tool';
@@ -424,6 +425,11 @@ export class RunManager {
       .filter(run => run.canonicalBrowserRunId)
       .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0];
     if (saved) postWorkspace({ type: 'checkpoint', runId: saved.canonicalBrowserRunId });
+    // Runs cut off by a lost connection go on from their checkpoint now that the Workspace is back (see auto-resume.ts).
+    for (const conversationId of await takeToResume().catch(() => [] as string[])) {
+      const run = (await listRuns()).find(r => r.conversationId === conversationId && r.canonicalBrowserRunId);
+      if (run?.canonicalBrowserRunId && ['interrupted', 'capped'].includes(run.status)) await this.controlCanonical('resume-task', run.canonicalBrowserRunId).catch(() => undefined);
+    }
   }
 
   async reportCanonicalActivity(runId: string): Promise<void> {
@@ -2002,6 +2008,8 @@ The name ${asked} was not offered in this task. Do not search again: call one of
         this.broker.withdrawAll(conversationId);
         const connectionLost = this.#connectionLost.delete(conversationId);
         const pausedByUser = this.#pauseRequested.delete(conversationId) && end?.status !== 'done';
+        if (connectionLost && !pausedByUser && end?.status !== 'done') void markCutOff(conversationId).catch(() => undefined);
+        else void clearCutOff(conversationId).catch(() => undefined);
         if (canonical) {
           const finishedRunId = canonical.runId;
           const branch = await activeBranch(conversationId).catch(() => []);
