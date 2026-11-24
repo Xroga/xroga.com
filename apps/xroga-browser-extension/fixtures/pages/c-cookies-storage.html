@@ -1,0 +1,14 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Cookies and storage fixture</title></head>
+<body>
+  <h1>Settings</h1>
+  <p>This page sets a cookie a script can read, and two storage keys.</p>
+  <script>
+    document.cookie = 'session_id=abc123secretvalue; path=/';
+    document.cookie = 'theme=dark; path=/; max-age=2592000';
+    localStorage.setItem('auth_token', 'x'.repeat(120));
+    sessionStorage.setItem('draft', 'hello');
+  </script>
+</body>
+</html>

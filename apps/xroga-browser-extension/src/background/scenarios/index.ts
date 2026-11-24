@@ -49,4 +49,5 @@ import './audit-page';
 import './emulate';
 import './full-page-lazy';
 import './extract-rows';
+import './cookies-storage-pdf';
 import './web-search';
