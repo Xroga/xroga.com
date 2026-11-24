@@ -94,7 +94,7 @@ type Block =
   | { kind: "table"; head: string[]; rows: string[][] };
 
 export const VisibleMarkdownTables = createContext<ReadonlySet<string> | null>(null);
-export const NativeVisualContent = createContext<Pick<MarkdownMatches, "tables" | "sectionTables" | "headingTitles" | "titles" | "markdownSectionHeadings" | "checklists" | "inlineReplacements" | "liveReadouts"> | undefined>(undefined);
+export const NativeVisualContent = createContext<Pick<MarkdownMatches, "tables" | "sectionTables" | "headingTitles" | "titles" | "markdownSectionHeadings" | "checklists" | "inlineReplacements" | "liveReadouts" | "orderedChecklist"> | undefined>(undefined);
 export const NativeSectionTitle = createContext<string | undefined>(undefined);
 type InlineSectionContent = {
   nodes: ReadonlyMap<number, ReactNode>;
@@ -186,7 +186,28 @@ type MarkdownMatches = {
   listItems: ReadonlySet<string>;
   liveReadouts: ReadonlySet<string>;
   inlineReplacements: ReadonlyMap<string, number>;
+  orderedChecklist?: { markdownIndex: number; blockIndex: number; firstCheckbox: number; start: number };
 };
+
+function placeOrderedChecklist(children: readonly unknown[], readInitial: (value: unknown) => unknown): MarkdownMatches["orderedChecklist"] {
+  const documents = children.filter(isElementNode).filter(node => node.typeName === "Markdown");
+  if (documents.length !== 1 || documents[0].hasDynamicProps || typeof documents[0].props.text !== "string") return;
+  const markdownIndex = children.indexOf(documents[0]);
+  const firstCheckbox = markdownIndex + 1;
+  const checkboxes = children.slice(firstCheckbox);
+  if (!checkboxes.length || !checkboxes.every(isElementNode)) return;
+  const labels: string[] = [];
+  for (const checkbox of checkboxes) {
+    if (checkbox.typeName !== "Checkbox" || checkbox.partial || readInitial(checkbox.props.checked) !== false
+      || typeof checkbox.props.label !== "string") return;
+    labels.push(textKey(checkbox.props.label));
+  }
+  const matches = blocks(documents[0].props.text).flatMap((block, blockIndex) =>
+    block.kind === "list" && block.ordered && block.items.length === labels.length
+      && block.items.every((item, index) => !/\[\d{1,3}\]|\]\(/.test(item) && textKey(item) === labels[index])
+      ? [{ markdownIndex, blockIndex, firstCheckbox, start: block.start }] : []);
+  if (matches.length === 1) return matches[0];
+}
 
 type ChecklistItem = { label: string; checked: boolean };
 
@@ -334,10 +355,12 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
         }
       }
     }
-    if (typeName === "Chart" && !node.hasDynamicProps) {
-      const table = staticChartTable(props);
-      const key = table && tableContentKey(table.headings, table.rows);
-      if (key) tables.add(key);
+    if (typeName === "Chart" && !hidden) {
+      const table = staticChartTable(props, node.hasDynamicProps ? readInitial : undefined);
+      for (const rows of [table?.rows, table?.displayRows]) {
+        const key = table && rows && tableContentKey(table.headings, rows);
+        if (key) tables.add(key);
+      }
       if (table?.title) paragraphs.add(citationTextKey(table.title));
       if (table?.note) paragraphs.add(citationTextKey(table.note));
     }
@@ -369,7 +392,9 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
   // Capture the original controls before the renderer evaluates them against
   // live state. Toggling a checkbox must not bring its Markdown copy back.
   const inlineReplacements = new Map<string, number>();
+  let orderedChecklist: MarkdownMatches["orderedChecklist"];
   if (isElementNode(root) && root.typeName === "Col" && Array.isArray(root.props.children)) {
+    orderedChecklist = placeOrderedChecklist(root.props.children, readInitial);
     const plan = placeNativeSections(root.props.children, readInitial);
     if (plan) for (const index of plan.replacedBlocks) {
       const node = plan.placements.get(index);
@@ -377,7 +402,7 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
       if (typeof title === "string") inlineReplacements.set(title, index);
     }
   }
-  return { documents, paragraphs, titles, headingTitles, markdownSectionHeadings, sectionTables, code, tables, relationships, checklists, listItems, liveReadouts, inlineReplacements };
+  return { documents, paragraphs, titles, headingTitles, markdownSectionHeadings, sectionTables, code, tables, relationships, checklists, listItems, liveReadouts, inlineReplacements, orderedChecklist };
 }
 
 /** Only remove a complete verbatim document already visible in native Markdown.

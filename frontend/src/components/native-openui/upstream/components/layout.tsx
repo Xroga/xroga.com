@@ -96,19 +96,29 @@ export const Col = defineComponent({
     const settled = useContext(NativeVisualContent);
     const preservedTables = useContext(VisibleMarkdownTables);
     const inline = settled && statementId === "root" ? placeNativeSections(props.children, undefined, preservedTables ?? undefined) : undefined;
+    const ordered = statementId === "root" ? settled?.orderedChecklist : undefined;
     let contents: ReactNode;
-    if (inline) {
-      const moved = new Set<unknown>(inline.placements.values());
+    if (inline || ordered) {
+      const markdownIndex = inline?.markdownIndex ?? ordered?.markdownIndex;
+      const moved = new Set<unknown>(inline?.placements.values());
       const sections = new Map<number, ReactNode>();
-      const replacedBlocks = new Set(inline.replacedBlocks);
-      for (const [index, section] of inline.placements) {
+      const replacedBlocks = new Set(inline?.replacedBlocks);
+      for (const [index, section] of inline?.placements ?? []) {
         const title = section.typeName === "Section" ? section.props.title : undefined;
         const replacement = typeof title === "string" ? settled?.inlineReplacements.get(title) : undefined;
         sections.set(replacement ?? index, <InlineNativeSections.Provider value={undefined}>{renderNode(section)}</InlineNativeSections.Provider>);
         if (replacement !== undefined) replacedBlocks.add(replacement);
       }
+      if (ordered) {
+        const checkboxes = props.children.slice(ordered.firstCheckbox);
+        checkboxes.forEach(child => moved.add(child));
+        replacedBlocks.add(ordered.blockIndex);
+        sections.set(ordered.blockIndex, <ol start={ordered.start}>
+          {checkboxes.map((child, index) => <li key={index}>{renderNode(child)}</li>)}
+        </ol>);
+      }
       contents = props.children.map((child, index) => moved.has(child) ? null : (
-        <InlineNativeSections.Provider key={index} value={index === inline.markdownIndex ? { nodes: sections, replacedBlocks } : undefined}>
+        <InlineNativeSections.Provider key={index} value={index === markdownIndex ? { nodes: sections, replacedBlocks } : undefined}>
           {renderNode(child)}
         </InlineNativeSections.Provider>
       ));
