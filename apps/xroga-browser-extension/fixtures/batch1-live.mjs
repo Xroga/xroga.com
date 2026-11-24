@@ -145,6 +145,7 @@ async function main() {
       paired = String((await panelOp('read').catch(() => null))?.body ?? '').includes('Signed in to Xroga');
     }
     report.steps.paired = paired;
+    if (!paired) report.steps.connection = await evalIn(operator.sid, `chrome.runtime.sendMessage({ type: 'xroga.browser.connection.v1' }).then(r => JSON.stringify(r))`).catch(e => String(e));
     if (!paired) report.steps.panelWhenNotPaired = String((await panelOp('read').catch(() => null))?.body ?? '').replace(/\s+/g, ' ').slice(0, 400);
     if (!paired) { report.steps.workerConsole = (cdp.events ?? []).slice(-15); report.steps.workerNetwork = (cdp.net ?? []).slice(-20); report.steps.workspaceTabs = (await targets()).filter(t => t.type === 'page').map(t => t.url.slice(0, 160)); }
     if (!paired) {
