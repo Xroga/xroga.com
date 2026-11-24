@@ -266,6 +266,7 @@ export const SKILLS: Skill[] = [
     body: [
       'Testing or auditing a site (exploratory QA):',
       '- Orient first: open the start page, take one snapshot, list the sections and the main flows (sign up, search, buy, contact, account). Decide what a user came to do; test those flows first and the periphery last.',
+      '- For a scored view of a page use lighthouse (performance, accessibility, best practices, SEO scores with the worst audits and savings).',
       '- For a whole site, start with site_scan: it finds the pages (robots.txt, sitemap, links), reads each one over HTTP and lists the problems across the site (duplicate titles, missing descriptions, broken pages, noindex), and names the pages that need the browser. Then audit_page the important ones for speed.',
       '- For each page: audit_page (title, description, headings, alt text, structured data, speed), diagnostics (console errors and failed requests; the first call starts recording, so call it, act, call again), and one screenshot. form_model lists a form’s fields and rules in one call. For the home page and the page that matters most also use diagnostics kind cookies (names and flags, never values), kind issues (the browser’s own problem list; call it, reload the page, call it again) and kind weight (biggest and slowest requests, after a reload); they are quick and need no model to read the page.',
       '- Try each flow like a person: fill a form with valid values, with an empty required field, with a wrong format; open each menu, dialog and tab; follow the main links and look for 404s and wrong destinations; check empty states and what happens after a refresh or the back button.',
@@ -281,6 +282,7 @@ export const SKILLS: Skill[] = [
     when: has(/\b(?:accessib\w*|a11y|screen reader|wcag|aria|colou?r contrast|keyboard (?:navigation|access)|tap targets?|focus (?:order|states?))\b/i),
     body: [
       'Accessibility check:',
+      '- lighthouse with categories accessibility runs Google’s rule set (axe) over the page and names the failing elements: start there, then check by hand what it cannot (keyboard order, meaning of labels).',
       '- The accessibility tree is what assistive technology sees, so snapshot first: every control needs a role and a name; an unnamed button or link, an image with no alt text, a field with no label and a heading that skips a level are findings. audit_page counts several of these; form_model lists unlabelled fields.',
       '- Keyboard: press Tab through the page and watch the focus move (each press reports where focus went). Every control must be reachable, the order must follow the visual order, focus must stay visible, and a dialog must trap focus and close on Escape.',
       '- Hidden is not one thing: display none and aria-hidden remove an element for screen readers; opacity 0 does not. Check that decorative things are hidden and real content is not.',
@@ -293,6 +295,7 @@ export const SKILLS: Skill[] = [
     when: has(/\b(?:lcp|largest contentful paint|core web vitals?|cwv|page ?speed|site speed|slow (?:page|site|website|load\w*)|load(?:ing)? time|why is .{0,30} slow)\b/i),
     body: [
       'Page speed:',
+      '- For a scored, repeatable measurement run lighthouse on the address (30 to 90 seconds; mobile by default, desktop when asked): its performance score, load metrics, biggest savings and worst audits are the numbers to quote. audit_page is the quick one.',
       '- Measure before advising: audit_page gives time to first byte, first and largest paint, layout shift, elements, requests and weight. Good is LCP 2.5 s or less, CLS 0.1 or less; 4 s and 0.25 are poor. Measure the page as it loads: navigate again, then audit_page.',
       '- Find which part is late. A slow first byte is the server or a redirect chain; a late largest paint with a fast first byte is the hero image or font (large, not preloaded, lazy-loaded by mistake) or render-blocking scripts and styles; layout shift is images and embeds without size, late banners and web fonts swapping.',
       '- diagnostics kind weight lists the requests by type with the biggest and the slowest first (call it once, reload, call it again); those are the first suspects, and diagnostics network shows what failed. Check on a phone with emulate (device, network slow-3g) because most visitors are not on your connection.',
