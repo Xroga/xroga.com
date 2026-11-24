@@ -1897,22 +1897,22 @@ ${outcome.text.toLowerCase()}`.slice(-600_000);
   }
 
   /** What the task is about, decided once from the person's first message: which helpers are run for the model after a page opens. */
-  #intent?: { audit: boolean; rows: boolean };
+  #intent?: { audit: boolean; rows: boolean; cookies: boolean };
   #autoDone = new Set<string>();
   #httpHinted = new Set<string>();
   /** Test builds only: what was decided about the last http_get, shown in its result so a live run can be explained. */
   #decidedNote = '';
 
-  async #intents(): Promise<{ audit: boolean; rows: boolean }> {
+  async #intents(): Promise<{ audit: boolean; rows: boolean; cookies: boolean }> {
     if (this.#intent) return this.#intent;
     const branch = await activeBranch(this.options.conversationId);
     const first = branch.find((e): e is EntryOf<'message'> => e.type === 'message' && e.message.role === 'user' && !e.appOwned);
     const task = first?.message.parts.map(p => (p.type === 'text' ? p.text : '')).join('\n') ?? '';
     // Every playbook that fits the words, not only the few put into the prompt: the prompt keeps four, this decides what the extension does for the model.
     // At the start of a run the page outline is captured before the person's message is stored: nothing is decided, and nothing is remembered, until the task text exists.
-    if (!task.trim()) return { audit: false, rows: false };
+    if (!task.trim()) return { audit: false, rows: false, cookies: false };
     const ids = new Set(SKILLS.filter(k => k.when(task)).map(k => k.id));
-    this.#intent = { audit: ids.has('seo') || ids.has('site-qa'), rows: ids.has('lead-generation') || ids.has('research') };
+    this.#intent = { audit: ids.has('seo') || ids.has('site-qa'), rows: ids.has('lead-generation') || ids.has('research'), cookies: ids.has('cookie-debug') };
     return this.#intent;
   }
 
@@ -1928,14 +1928,20 @@ ${outcome.text.toLowerCase()}`.slice(-600_000);
     if (this.#autoDone.has(key)) return '';
     this.#autoDone.add(key);
     const intent = await this.#intents();
-    if (!intent.audit && !intent.rows) return '';
+    if (!intent.audit && !intent.rows && !intent.cookies) return '';
     const signal = this.options.signal;
-    const [audit, rows] = await Promise.all([
+    const [audit, rows, cookies, storage] = await Promise.all([
       intent.audit ? this.options.layer.call('audit_page', {}, signal).catch(() => undefined) : undefined,
       intent.rows ? this.options.layer.call('extract_rows', {}, signal).catch(() => undefined) : undefined,
+      intent.cookies ? this.options.layer.call('diagnostics', { kind: 'cookies' }, signal).catch(() => undefined) : undefined,
+      intent.cookies ? this.options.layer.call('diagnostics', { kind: 'storage' }, signal).catch(() => undefined) : undefined,
     ]);
     const parts: string[] = [];
     if (audit?.ok && audit.text) parts.push(`audit_page, run for you because this task audits sites:\n${audit.text.slice(0, 2500)}`);
+    if (cookies?.ok && cookies.text) parts.push(`diagnostics kind cookies, run for you because this task is about cookies (names and flags, never values):
+${cookies.text.slice(0, 2000)}`);
+    if (storage?.ok && storage.text) parts.push(`diagnostics kind storage, run for you:
+${storage.text.slice(0, 1200)}`);
     if (rows?.ok) {
       const tables = (rows.data as { tables?: ExtractedTable[] } | undefined)?.tables;
       if (Array.isArray(tables) && tables.some(t => (t.rows?.length ?? 0) >= 4)) {
