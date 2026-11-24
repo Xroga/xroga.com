@@ -11,6 +11,7 @@ import { useWorkspaceAuthGate } from '@/components/workspace/WorkspaceAuthGate';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { MessageShareModal } from './MessageShareModal';
 import styles from './WorkspacePeopleControls.module.css';
+import './teamPanelPush.css';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { publicAnswerExportText } from '@/lib/publicAnswerText';
 import { UsersRoundIcon } from '@/components/icons/animated/UsersRoundIcon';

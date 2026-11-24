@@ -1,0 +1,4 @@
+/* While the Team panel is open the workspace column makes room for it, like the left sidebar. */
+@media (min-width: 1024px) {
+  body[data-team-panel='open'] .terminal-layout { padding-right: 440px; transition: padding-right .26s cubic-bezier(.2, .8, .2, 1); }
+}

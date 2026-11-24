@@ -87,3 +87,8 @@
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .muted { color: var(--t-mute); font-size: 13px; }
+
+.timeline { list-style: none; margin: 0; padding: 0 0 0 4px; display: flex; flex-direction: column; gap: 2px; position: relative; }
+.event { display: flex; align-items: flex-start; gap: 12px; padding: 9px 0; position: relative; }
+.event:not(:last-child)::before { content: ''; position: absolute; left: 16px; top: 44px; bottom: -6px; width: 2px; background: var(--t-line); }
+.event .who span { white-space: normal; }

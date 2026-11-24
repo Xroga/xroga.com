@@ -29,6 +29,7 @@ export const teamsApi = {
   inbox: () => apiFetch<TeamInbox>('/api/teams'),
   create: (name: string) => apiFetch<{ id: string; name: string }>('/api/teams', { method: 'POST', ...json({ name }) }),
   overview: (teamId: string) => apiFetch<TeamOverview>(`/api/teams/${teamId}`),
+  activity: (teamId: string) => apiFetch<TeamActivityItem[]>(`/api/teams/${teamId}/activity`),
   search: (teamId: string, q: string) => apiFetch<FoundUser[]>(`/api/teams/${teamId}/search?q=${encodeURIComponent(q)}`),
   invite: (teamId: string, userId: string, role: InviteRole) =>
     apiFetch(`/api/teams/${teamId}/invitations`, { method: 'POST', ...json({ userId, role }) }),
@@ -51,4 +52,38 @@ export function inviteUrl(path: string): string {
 
 export function errorText(error: unknown): string {
   return error instanceof Error && error.message ? error.message : 'Something went wrong. Try again.';
+}
+
+export interface TeamActivityItem {
+  id: number;
+  action: string;
+  at: string;
+  detail: { role?: string; maxUses?: number; hours?: number; kind?: string; canInvite?: boolean };
+  actor: { userId: string | null; username: string | null; displayName: string | null; avatarUrl: string | null };
+  target: { username: string | null; displayName: string | null } | null;
+}
+
+/** Tell every mounted Team surface (panel, page, invitation popup) to reload. */
+export const TEAM_CHANGED_EVENT = 'xroga:team-changed';
+export function announceTeamChange(): void {
+  if (typeof window !== 'undefined') window.dispatchEvent(new Event(TEAM_CHANGED_EVENT));
+}
+
+/** One plain sentence for an audit row, from the viewer's point of view. */
+export function describeActivity(item: TeamActivityItem, myId?: string | null): string {
+  const who = item.actor.userId && item.actor.userId === myId ? 'You' : (item.actor.displayName || item.actor.username || 'Someone');
+  const target = item.target ? (item.target.displayName || item.target.username || 'a member') : 'a member';
+  switch (item.action) {
+    case 'team_created': return `${who} created the team`;
+    case 'invite_user': return `${who} invited ${target}${item.detail.role ? ` as ${item.detail.role}` : ''}`;
+    case 'accept': return `${who} accepted the invitation and joined`;
+    case 'decline': return `${who} declined the invitation`;
+    case 'create_link': return `${who} created an invite link${item.detail.role ? ` for ${item.detail.role}s` : ''}`;
+    case 'accept_link': return `${who} joined with an invite link`;
+    case 'revoke': return `${who} cancelled ${item.detail.kind === 'link' ? 'an invite link' : 'an invitation'}`;
+    case 'remove_member': return `${who} removed ${target}`;
+    case 'leave': return `${who} left the team`;
+    case 'set_member': return `${who} changed ${target}'s access${item.detail.role ? ` to ${item.detail.role}` : ''}`;
+    default: return `${who} updated the team`;
+  }
 }

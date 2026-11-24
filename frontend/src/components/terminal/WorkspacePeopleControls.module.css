@@ -19,7 +19,4 @@
 .divider { height:1px; background:color-mix(in srgb,currentColor 14%,transparent); flex:none; }
 @keyframes teamSlide { from { transform:translateX(100%); } to { transform:none; } }
 @media (prefers-reduced-motion:reduce) { .teamPanel { animation:none; } }
-@media (min-width:1024px) {
-  :global(body[data-team-panel='open']) :global(.terminal-layout) { padding-right:var(--team-panel-w,440px); transition:padding-right .26s cubic-bezier(.2,.8,.2,1); }
-}
 @media (max-width:1023px) { .teamPanel { width:min(440px,100vw); z-index:2147483000; } }
