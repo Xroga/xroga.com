@@ -98,6 +98,7 @@ export const ReadArgsSchema = z.strictObject({
   offset: z.number().int().min(0).optional().describe('Character offset to continue from'),
   match: z.string().max(200).optional().describe('Only the lines matching this word or pattern, with context'),
   context: z.number().int().min(0).max(10).optional(),
+  styles: z.boolean().optional().describe('With ref: its computed styles and what covers it'),
 });
 
 export const ScreenshotArgsSchema = z.strictObject({

@@ -246,6 +246,15 @@ export async function read(
     if (!node) throw new LayerError('NODE_DETACHED', `Ref ${args.ref} is no longer in the page`);
     roots = [node];
   }
+  if (args.styles && args.ref) {
+    const record = lookupRef(ctx.controller.registry, ctx.session.known, args.ref, tab.tabId);
+    const attachment = await ctx.attach();
+    const frame = (await attachment.topology.frames()).find(f => f.frameId === record.frameId);
+    if (!frame) throw new LayerError('FRAME_DETACHED', `The frame of ${args.ref} is gone`);
+    const objectId = await tab.probe!.resolve(frame, record.backendNodeId);
+    const lines = await tab.probe!.call<string[]>(frame, objectId, 'styles');
+    return { data: { content: lines.join('\n'), offset: 0, remaining: 0 }, lines: [`read · ${args.ref} · computed styles`], pageText: lines.join('\n'), notices: [] };
+  }
   const content = renderContent(roots, args.format ?? 'markdown');
   if (args.match) {
     const g = grepContent(content, args.match, args.context ?? 2);

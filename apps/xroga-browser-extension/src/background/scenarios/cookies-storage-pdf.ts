@@ -79,3 +79,23 @@ defineScenario({
     );
   },
 });
+
+defineScenario({
+  id: 'S3-read-styles',
+  set: 'C',
+  title: 'read with styles shows an element\'s computed look and what covers it',
+  covers: 'styles: display, colour, size, box in the viewport, and the element on top of its centre',
+  async run(ctx) {
+    await ctx.open(`${FIXTURE_ORIGIN}/c-styles.html`);
+    await ctx.call('snapshot');
+    const found = await ctx.call('find', { role: 'button', name: 'Buy plan' });
+    const ref = /\[(\w+)\]/.exec(found.text)?.[1];
+    const r = ref ? await ctx.call('read', { ref, styles: true }) : undefined;
+    const t = r?.text ?? '';
+    return outcome(
+      'the button is reported as covered by the backdrop div at its centre, with its box and styles',
+      t.slice(0, 600) || found.text.slice(0, 300),
+      !!r?.ok && /display: inline-block/.test(t) && /box: \d+x\d+ at/.test(t) && /covered at its centre by <div#cover\.modal-backdrop>/.test(t),
+    );
+  },
+});

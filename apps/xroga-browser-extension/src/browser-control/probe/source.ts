@@ -250,6 +250,8 @@ export interface ProbeApi {
   stopDemo(): Array<{ t: number; kind: 'mouse' | 'key'; x?: number; y?: number; step: 'click' | 'set' | 'press'; role: string; name: string; value?: string; row?: string }>;
   /** What the element reads: a form control's value, otherwise its visible text (at most 400 characters). */
   reading(el: Element): string;
+  /** The element's computed look and position, and what is on top of its centre: why it cannot be seen or clicked. */
+  styles(el: Element): string[];
   /** The value of an attribute (aria-expanded, aria-selected, data-state), or null when it is not set (at most 200 characters). */
   attribute(el: Element, name: string): string | null;
   recentInput(ms: number): Array<{ t: number; kind: 'mouse' | 'key' | 'wheel' | 'touch'; x?: number; y?: number }>;
@@ -1318,6 +1320,37 @@ export function probeMain(): void {
     },
 
     /** Whether the page's visible text contains `text` (whitespace collapsed, case ignored: a model paraphrasing the capitalisation of a status must not read as a failed action). */
+    styles(el: Element) {
+      const cs = getComputedStyle(el);
+      const r = el.getBoundingClientRect();
+      const pick = (...names: string[]) => names.map(n => `${n}: ${cs.getPropertyValue(n)}`).join(' · ');
+      const lines = [
+        pick('display', 'visibility', 'opacity', 'position', 'z-index', 'pointer-events'),
+        pick('color', 'background-color', 'font-size', 'font-weight', 'overflow'),
+        `box: ${Math.round(r.width)}x${Math.round(r.height)} at ${Math.round(r.left)},${Math.round(r.top)} in the viewport (${innerWidth}x${innerHeight})`,
+      ];
+      if (r.width && r.height) {
+        const cx = Math.min(Math.max(r.left + r.width / 2, 0), innerWidth - 1);
+        const cy = Math.min(Math.max(r.top + r.height / 2, 0), innerHeight - 1);
+        const top = document.elementFromPoint(cx, cy);
+        if (top && top !== el && !el.contains(top)) {
+          const id = top.id ? '#' + top.id : '';
+          const cls = typeof (top as HTMLElement).className === 'string' && (top as HTMLElement).className ? '.' + (top as HTMLElement).className.trim().split(/\s+/).slice(0, 2).join('.') : '';
+          lines.push(`covered at its centre by <${top.tagName.toLowerCase()}${id}${cls}>`);
+        } else lines.push('nothing covers its centre');
+      } else lines.push('it has no size: it cannot be seen or clicked');
+      const hiddenBy: string[] = [];
+      for (let n: Element | null = el; n; n = n.parentElement) {
+        const c = getComputedStyle(n);
+        if (c.display === 'none') hiddenBy.push(`display none on <${n.tagName.toLowerCase()}>`);
+        else if (c.visibility === 'hidden') hiddenBy.push(`visibility hidden on <${n.tagName.toLowerCase()}>`);
+        else if (Number(c.opacity) === 0) hiddenBy.push(`opacity 0 on <${n.tagName.toLowerCase()}>`);
+        if (hiddenBy.length >= 2) break;
+      }
+      if (hiddenBy.length) lines.push(`hidden by: ${hiddenBy.join(', ')}`);
+      return lines;
+    },
+
     reading(el: Element) {
       const v = (el as HTMLInputElement).value;
       if (typeof v === 'string' && ['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName)) return v.slice(0, 400);
