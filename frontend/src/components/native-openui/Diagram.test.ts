@@ -1,6 +1,9 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { layoutDiagram } from './Diagram';
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { Diagram, layoutDiagram } from './Diagram';
+import { NativeSectionTitle } from './upstream/components/markdown';
 
 function layout(rows: string[][], links: Array<[string, string]>, compact: boolean) {
   const result = layoutDiagram({
@@ -36,6 +39,22 @@ test('a bypass clears wider intermediate rows and keeps adjacent and same-row ha
     [null, null, undefined],
     ['right', 'left', undefined],
   ]);
+});
+
+test('a diagram with a visible section heading keeps its accessible name without repeating the caption title', () => {
+  const title = 'Review handoff';
+  const diagram = createElement(Diagram.component, { renderNode: () => null, props: {
+    title, description: 'Review before handoff.',
+    nodes: [{ id: 'draft', label: 'Draft', level: 0 }, { id: 'review', label: 'Review', level: 1 }],
+    links: [{ from: 'draft', to: 'review' }],
+  } });
+  const inSection = renderToStaticMarkup(createElement(NativeSectionTitle.Provider, { value: title }, diagram));
+  assert.match(inSection, /aria-label="Review handoff"/);
+  assert.match(inSection, /Review before handoff\./);
+  assert.doesNotMatch(inSection, /<strong[^>]*>Review handoff<\/strong>/);
+  assert.match(renderToStaticMarkup(diagram), /<strong[^>]*>Review handoff<\/strong>/);
+  const separate = renderToStaticMarkup(createElement(NativeSectionTitle.Provider, { value: 'Release steps' }, diagram));
+  assert.match(separate, /<strong[^>]*>Review handoff<\/strong>/);
 });
 
 test('plain chains retain their handles and reciprocal bypasses take different open sides', () => {

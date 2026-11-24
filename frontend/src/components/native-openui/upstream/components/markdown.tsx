@@ -95,6 +95,7 @@ type Block =
 
 export const VisibleMarkdownTables = createContext<ReadonlySet<string> | null>(null);
 export const NativeVisualContent = createContext<Pick<MarkdownMatches, "tables" | "sectionTables" | "headingTitles" | "titles" | "markdownSectionHeadings" | "checklists" | "inlineReplacements" | "liveReadouts"> | undefined>(undefined);
+export const NativeSectionTitle = createContext<string | undefined>(undefined);
 type InlineSectionContent = {
   nodes: ReadonlyMap<number, ReactNode>;
   replacedBlocks: ReadonlySet<number>;

@@ -394,6 +394,19 @@ test('a native checklist does not duplicate the exact numbered steps in its own 
   assert.equal(supplementNativeProse(complete, bindNativeAnswerText(program, prose), true), complete);
 });
 
+test('a scoped diagram contributes its relationships without repeating the section title', () => {
+  const diagram = 'Diagram("Approval path", [{id:"draft",label:"Draft",level:0},{id:"review",label:"Review",level:1}], '
+    + '[{from:"draft",to:"review",label:"Ready for review"}], "Review the draft before publishing.")';
+  const prose = '## Approval path\n\nThe editor prepares the draft.';
+  const program = 'root = Col([Markdown(_xroga_answer), Section("Approval path", [' + diagram + '])])';
+  const readable = supplementNativeProse(prose, bindNativeAnswerText(program, prose), true);
+  assert.equal(readable.match(/Approval path/g)?.length, 1);
+  assert.match(readable, /Review the draft before publishing\./);
+  assert.match(readable, /Draft → Review: Ready for review/);
+  const separate = program.replace('Section("Approval path"', 'Section("Decision details"');
+  assert.match(supplementNativeProse('', bindNativeAnswerText(separate, prose), true), /\n\nApproval path\n\n/);
+});
+
 test('the authoritative response preserves one matching scoped table with code, escapes and exact citations', () => {
   const head = ['Example', 'Meaning'];
   const rows = [

@@ -5222,7 +5222,7 @@
       ],
       "callers": [
         "backend/src/ai/nativeOpenUi.ts:3",
-        "frontend/src/components/native-openui/Diagram.tsx:9"
+        "frontend/src/components/native-openui/Diagram.tsx:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -5553,7 +5553,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "7146ec73adc3f9d2287709cd82476a34c3cb0c6373854f795b132c113fe20c08",
+      "sha256": "54382d7232460261b7a69b5272bae7fc4b122553a3b9fc80b09dcd7bbe305e0b",
       "symbols": [
         "EditorialContext",
         "MAX_EXPANDED_EXPRESSION_DEPTH",
@@ -5803,6 +5803,7 @@
         "task",
         "tasks",
         "text",
+        "title",
         "to",
         "token",
         "tokens",
@@ -5866,6 +5867,7 @@
         "backend/src/routes/nativeOpenUiEvaluation.ts:13",
         "backend/src/services/integrations/researchResult.ts:8",
         "frontend/src/app/share/[token]/page.tsx:2",
+        "frontend/src/components/native-openui/Diagram.tsx:11",
         "frontend/src/components/native-openui/Editorial.tsx:11",
         "frontend/src/components/native-openui/NativeSurface.tsx:9",
         "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:14",
@@ -6384,7 +6386,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "6ee4c888acfd43707c01d0a70cb8a0bef9d56a03f859067b50b2c3ccf606f961",
+      "sha256": "67f2fd972dcc2f3d68fe989bc62f534e56be09aaa57119c5dc429e6b46381023",
       "symbols": [
         "accessibilityRule",
         "answerScopeRule",
@@ -8754,7 +8756,7 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "8fdb9d6e34e883351d3377d4dc07c167fe512278a5621d236bdde5f71156fcf4",
+      "sha256": "a86626b8a60ff31bcb17ba0a7f21b0389d280ef9f317bd14b04b435aef549a19",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
@@ -89196,7 +89198,7 @@
       "id": "surface:92ce2788e7a639e6a608",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/Diagram.tsx",
-      "sha256": "b996a9d4d13670c432f09243255086b06d9cb67deea2a342a4c61a750e8820b4",
+      "sha256": "ec5c76205ec7df3a35d297584d192e1d8841ab48c5882c65a133f138b1ad6652",
       "symbols": [
         "AnswerDiagramNode",
         "AnswerNode",
@@ -89233,18 +89235,22 @@
         "rowSides",
         "rowSpacing",
         "rows",
+        "sectionTitle",
         "separateRelationships",
         "sides",
         "style",
         "title",
+        "titleAlreadyVisible",
         "to",
         "upward",
         "width"
       ],
       "imports": [
         "../../../../backend/src/ai/nativeDiagramTopology",
+        "../../../../backend/src/ai/nativeOpenUi",
         "./Resources",
         "./upstream/components/glyph",
+        "./upstream/components/markdown",
         "@openuidev/react-lang",
         "@xyflow/react",
         "react",
@@ -89252,8 +89258,10 @@
       ],
       "runtimeImports": [
         "backend/src/ai/nativeDiagramTopology.ts",
+        "backend/src/ai/nativeOpenUi.ts",
         "frontend/src/components/native-openui/Resources.tsx",
-        "frontend/src/components/native-openui/upstream/components/glyph.tsx"
+        "frontend/src/components/native-openui/upstream/components/glyph.tsx",
+        "frontend/src/components/native-openui/upstream/components/markdown.tsx"
       ],
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx",
@@ -89261,7 +89269,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/Diagram.test.ts:3",
+        "frontend/src/components/native-openui/Diagram.test.ts:5",
         "frontend/src/components/native-openui/library.tsx:16"
       ],
       "reachable": true,
@@ -89291,7 +89299,7 @@
       "id": "surface:e67e2018c5fc720f5a55",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/Editorial.tsx",
-      "sha256": "128a0ef52f919dc61bbb5138cc1da8fe8f4f1afd306ae39041f88520068b3f5a",
+      "sha256": "dd313a5e401dd1011aed8640f9c9b3202116833389d70d4c4149599945b28729",
       "symbols": [
         "Controls",
         "Metric",
@@ -90444,7 +90452,7 @@
       "id": "surface:0fef6875af5860e2f4b4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "30cb9eff5ec49ab3893e449e1247c1b83ae28c0cbb0510d642eb0810392c8671",
+      "sha256": "cb1ce647d1194ca41473b0b53b7bfa4d10efcd14d9266d8225a70afe84f9a80b",
       "symbols": [
         "Block",
         "ChecklistItem",
@@ -90455,6 +90463,7 @@
         "MarkdownBlocks",
         "MarkdownMatches",
         "MathExpression",
+        "NativeSectionTitle",
         "NativeVisualContent",
         "VisibleMarkdownTables",
         "after",
@@ -90607,6 +90616,8 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
+        "frontend/src/components/native-openui/Diagram.test.ts:6",
+        "frontend/src/components/native-openui/Diagram.tsx:9",
         "frontend/src/components/native-openui/Editorial.tsx:9",
         "frontend/src/components/native-openui/Evaluation.tsx:7",
         "frontend/src/components/native-openui/NativeSurface.tsx:11",
@@ -90634,6 +90645,7 @@
         "frontend/src/components/native-openui/upstream/components/markdown.tsx#RenderEvidenceCitation"
       ],
       "testCoverage": [
+        "frontend/src/components/native-openui/Diagram.test.ts",
         "frontend/src/components/native-openui/upstream/components/chart.test.ts",
         "frontend/src/components/native-openui/upstream/components/markdown.test.ts"
       ],
@@ -146642,9 +146654,9 @@
   ],
   "findings": [
     {
-      "id": "finding:428cba4d71de7f05d74a",
+      "id": "finding:f796f1d1946339135c26",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "line": 80,
+      "line": 81,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -154716,7 +154728,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 91,
+      "declaredTests": 92,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -160015,7 +160027,7 @@
     {
       "id": "test-suite:c09f2cd7f24582bedd44",
       "sourcePath": "frontend/src/components/native-openui/Diagram.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

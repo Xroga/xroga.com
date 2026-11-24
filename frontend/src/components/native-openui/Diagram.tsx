@@ -2,11 +2,13 @@
 
 import { defineComponent } from '@openuidev/react-lang';
 import { Background, Controls, Handle, MarkerType, Position, ReactFlow, ReactFlowProvider, type BuiltInEdge, type Node, type NodeProps } from '@xyflow/react';
-import { useId, useLayoutEffect, useRef, useState } from 'react';
+import React, { useContext, useId, useLayoutEffect, useRef, useState } from 'react';
 import { z } from 'zod/v4';
 import { Glyph } from './upstream/components/glyph';
 import { DiagramResourceMark } from './Resources';
+import { NativeSectionTitle } from './upstream/components/markdown';
 import { DIAGRAM_NODE_TONES, hasRenderableDiagramTopology } from '../../../../backend/src/ai/nativeDiagramTopology';
+import { nativeReadableTextKey } from '../../../../backend/src/ai/nativeOpenUi';
 
 const diagramNode = z.object({
   id: z.string().regex(/^[a-z][a-z0-9-]{0,31}$/),
@@ -105,6 +107,7 @@ export const Diagram = defineComponent({
   description: 'Connected technical diagram with labeled relationships and a concise text equivalent. Group peers on the same level (up to three per level); use increasing levels for downstream components. Choose role-specific tones and meaningful links, not a duplicate list.',
   component: function DiagramView({ props }) {
     const title = useId();
+    const sectionTitle = useContext(NativeSectionTitle);
     const diagramId = 'diagram-' + title.replace(/[^a-zA-Z0-9-]/g, '');
     const diagram = useRef<HTMLElement>(null);
     const [compact, setCompact] = useState<boolean>();
@@ -132,10 +135,12 @@ export const Diagram = defineComponent({
     const height = compact
       ? Math.min(900, Math.max(224, result.rowCount * 145 - 24))
       : Math.min(500, Math.max(216, result.rowCount * 92 + 32));
+    const titleAlreadyVisible = sectionTitle !== undefined && nativeReadableTextKey(sectionTitle) === nativeReadableTextKey(props.title);
     return (
-      <figure ref={diagram} className="native-diagram" aria-labelledby={title}>
+      <figure ref={diagram} className="native-diagram" aria-labelledby={titleAlreadyVisible ? undefined : title}
+        aria-label={titleAlreadyVisible ? props.title : undefined}>
         <figcaption>
-          <strong id={title}>{props.title}</strong>
+          {!titleAlreadyVisible && <strong id={title}>{props.title}</strong>}
           <p>{props.description}</p>
         </figcaption>
         {compact !== undefined && <ReactFlowProvider key={graphKey}>

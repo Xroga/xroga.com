@@ -6,7 +6,7 @@ import { useContext, useRef, useState, type CSSProperties } from 'react';
 import { z } from 'zod/v4';
 import { children } from './upstream/components/style';
 import { Glyph } from './upstream/components/glyph';
-import { inline, NativeVisualContent } from './upstream/components/markdown';
+import { inline, NativeSectionTitle, NativeVisualContent } from './upstream/components/markdown';
 import { useRenderEvidenceCitation } from './evidence';
 import { nativeReadableTextKey } from '../../../../backend/src/ai/nativeOpenUi';
 
@@ -21,7 +21,9 @@ export const Section = defineComponent({
     return <section className="native-answer-section" aria-label={hasHeadingInAnswer ? props.title : undefined}>
       {!hasHeadingInAnswer && <h2>{props.icon && <Glyph name={props.icon} size={18} />}{inline(props.title, 'section-title', renderCitation)}</h2>}
       {props.introduction && <p>{inline(props.introduction, 'section-introduction', renderCitation)}</p>}
-      <div className="iui-col iui-flow">{renderNode(props.children)}</div>
+      <div className="iui-col iui-flow">
+        <NativeSectionTitle.Provider value={props.title}>{renderNode(props.children)}</NativeSectionTitle.Provider>
+      </div>
     </section>;
   },
 });

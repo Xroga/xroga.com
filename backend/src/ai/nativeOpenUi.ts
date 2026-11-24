@@ -483,7 +483,8 @@ export function supplementNativeProse(prose: string, program: string, includeAll
       }
       add(scalar(presentation.note));
     } else if (node.typeName === 'Diagram') {
-      add(scalar(props.title));
+      const title = scalar(props.title);
+      if (scope.at(-1) !== scopeLabel(title)) add(title);
       add(scalar(props.description));
       const names = new Map(array(props.nodes).map(item => {
         const node = record(item);
