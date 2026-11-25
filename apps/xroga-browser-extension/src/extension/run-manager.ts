@@ -13,6 +13,7 @@ import { MEMORY_TOOL } from '@src/agent/memory';
 import { LIGHTHOUSE_TOOL } from '@src/agent/lighthouse-tool';
 import { runLighthouse } from './lighthouse';
 import { installTabTidy, trackAgentTab } from './tab-tidy';
+import { startHeartbeat } from './heartbeat';
 import { onLayerTabOpened } from '@src/browser-control/host/chrome-host';
 import { MEMORY_KEY, memoryForRun, runMemoryTool } from './memory-store';
 import { FREE_TIMES_TOOL } from '@src/agent/free-times';
@@ -196,6 +197,8 @@ export class RunManager {
           signal?.addEventListener('abort', () => { clearTimeout(timer); resolve(); }, { once: true });
         }),
     });
+    // While a run is in progress the worker is poked every 20 seconds so Chrome does not suspend it mid-task (agent-webbridge's keepalive).
+    startHeartbeat(() => this.#runs.size > 0, () => void chrome.runtime.getPlatformInfo?.(() => undefined));
     // Tabs the agent opens are muted when opened in the background and closed after a long idle time; the person's own tabs are never touched.
     onLayerTabOpened((tabId, background) => void trackAgentTab(tabId, background).catch(() => undefined));
     installTabTidy(async tabId => {
