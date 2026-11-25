@@ -90743,7 +90743,7 @@
       "id": "surface:0fef6875af5860e2f4b4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "77ecfeb5fe7057f462a4a9b1bd69a3a07b992fa99eba028fed1c4b262fad3ca5",
+      "sha256": "7ae50c67770853ffb4c877dce6d68107a2d6e79f70a725d8b5e2f362f63cab05",
       "symbols": [
         "Block",
         "ChecklistItem",
@@ -160765,7 +160765,7 @@
     {
       "id": "test-suite:4ce9d7bbf578638998f1",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
-      "declaredTests": 38,
+      "declaredTests": 39,
       "skipLocations": [],
       "focusLocations": []
     },

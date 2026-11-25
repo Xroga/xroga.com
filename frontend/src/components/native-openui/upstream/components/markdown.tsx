@@ -329,7 +329,11 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
     if (typeName === "Code" && typeof props.code === "string" && !isPresentationLanguage(typeof props.language === "string" ? props.language : undefined)) {
       code.add(props.code.trimEnd());
     }
-    const markdown = typeName === "Markdown" ? readInitial(props.text) : undefined;
+    // Literal prose is already available from the parser, even if evaluating
+    // a preceding interactive component exhausted the initial-value budget.
+    const markdown = typeName === "Markdown"
+      ? typeof props.text === "string" ? props.text : readInitial(props.text)
+      : undefined;
     if (typeof markdown === "string") {
       documents.add(markdown);
       const items = blocks(markdown);

@@ -328,6 +328,23 @@ test('upstream parser resolves the canonical answer and rich table without dupli
   assert.match(fallback, /Read the terms/);
 });
 
+test('restored literal equations remain single when an interactive snapshot is unavailable', () => {
+  const text = '## Formula\n\n$$S = a + b$$\n\n## Example\n\n$$S = 3 + 5 = 8$$';
+  const before = 'The results were corrected.';
+  const after = 'Apply the formula to the next period.';
+  const complete = [before, text, after].join('\n\n');
+  const root = { type: 'element', typeName: 'Col', props: { children: [
+    { type: 'element', typeName: 'Chart', hasDynamicProps: true, props: {} },
+    { type: 'element', typeName: 'Markdown', props: { text } },
+  ] } };
+  const matches = nativeMarkdownMatches(root, () => undefined);
+  const outside = proseOutsideNativeDocuments(complete, matches);
+  assert.equal(outside, before + '\n\n' + after);
+  assert.doesNotMatch(renderToStaticMarkup(createElement(MarkdownBlocks, { text: outside })), /class="katex"/);
+  const fallback = renderToStaticMarkup(createElement(MarkdownBlocks, { text: complete }));
+  assert.equal((fallback.match(/class="katex"/g) ?? []).length, 2);
+});
+
 test('native paragraphs match emphasis-only prose and unordered items without hiding distinct content', () => {
   const matches = nativeMarkdownMatches({ type: 'element', typeName: 'Col', props: { children: [
     { type: 'element', typeName: 'Text', props: { text: 'Basic costs $10/month.' } },

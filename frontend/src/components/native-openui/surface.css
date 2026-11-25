@@ -273,6 +273,8 @@
 .native-diagram-toolbar .react-flow__controls-button:hover { background: var(--iui-surface-hover); }
 .native-diagram-relationships ul { margin: .35rem 0 0; padding-inline-start: 1.2rem; color: var(--iui-muted); font-size: .875rem; }
 @media (max-width: 540px) {
+  .native-answer-controls-grid { align-items: start; }
+  .native-answer-controls-grid > .iui-radio-pills { grid-column: 1 / -1; }
   .xroga-native-openui .iui-table :is(td,th) { padding: .5rem .625rem; }
   .xroga-native-openui .iui-table:has(> thead > tr > :nth-child(3):last-child) :is(td,th) { padding-inline: .4rem; }
   .xroga-native-openui .iui-markdown > .iui-table-scroll > .iui-table:not(:has(> thead > tr > :nth-child(4))) th {
