@@ -43,7 +43,8 @@ export function routeReadOnlyConversation(
   modelSelectedWorkspaceSearch = false,
 ): RouteDecision {
   const inferred = routePrompt(prompt);
-  const researchDisabled = modelSelectedWorkspaceSearch ? workspaceSearchOptOut(prompt) : explicitlyDisablesResearch(prompt);
+  const researchDisabled = modelSelectedWorkspaceSearch || explicitWorkspaceSearch
+    ? workspaceSearchOptOut(prompt) : explicitlyDisablesResearch(prompt);
   if (!goal && !explicitWorkspaceSearch && (!inferred.useResearch || !researchDisabled)) return inferred;
   const research = !researchDisabled && (explicitWorkspaceSearch || Boolean(goal
     && (goal.requiredCapabilities.includes('research.public-web')

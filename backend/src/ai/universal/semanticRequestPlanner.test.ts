@@ -49,10 +49,18 @@ it('keeps translated public queries and excludes unrelated workspace identifiers
     const contract = goalContractSchema.parse(normalizePlannerDecisionCandidate({ ...decision, publicWebQuery: query }, input));
     assert.equal(contract.publicWebQuery, query);
   }
-  for (const query of [null, '𠀀'.repeat(129), 'Norway rail fares Internal itinerary.txt', 'rail fares synthetic-org/internal-project']) {
+  for (const query of [null, 'Norway rail fares Internal itinerary.txt', 'rail fares synthetic-org/internal-project',
+    'Norway rail fares '.repeat(10) + 'Internal itinerary.txt',
+    'Norway rail fares '.repeat(10) + ' SYNTHETIC_TEST_TOKEN']) {
     const contract = goalContractSchema.parse(normalizePlannerDecisionCandidate({ ...decision, publicWebQuery: query }, input));
     assert.equal(contract.publicWebQuery, null);
   }
+  const long = 'Norway rail fares trip planning high season transport '.repeat(4) + 'site:vy.no after:2026-01-01';
+  const contract = goalContractSchema.parse(normalizePlannerDecisionCandidate({ ...decision, publicWebQuery: long }, input));
+  assert.ok(contract.publicWebQuery);
+  assert.ok([...contract.publicWebQuery].length <= 128);
+  assert.match(contract.publicWebQuery, /^Norway rail fares.*after:2026-01-01.*site:vy\.no$/u);
+  assert.equal(goalContractSchema.parse(normalizePlannerDecisionCandidate({ ...decision, publicWebQuery: '𠀀'.repeat(129) }, input)).publicWebQuery, '𠀀'.repeat(128));
 });
 
 function goal(overrides: Partial<GoalContract> = {}): GoalContract {

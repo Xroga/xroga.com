@@ -324,8 +324,11 @@ test('one exact research approval completes its original rich answer, saves evid
    searches++;assert.equal(init?.redirect,'manual');assert.ok(!JSON.stringify(body).includes('answerRequest'));
    if(mode.startsWith('automatic')){
     if(mode==='automatic-official'){
-      assert.deepEqual(Object.keys(body).sort(),['count','query']);
-      assert.equal(body.count,10);
+      assert.deepEqual(Object.keys(body).sort(),['count','need_content','ori_question','query']);
+      assert.equal(body.count,12);
+      assert.equal(body.need_content,true);
+      assert.match(body.ori_question,/difference between solar and lunar eclipses/);
+      assert.doesNotMatch(body.ori_question,/site:/);
       assert.match(body.query,/difference between solar and lunar eclipses/);
       assert.match(body.query,/ site:nasa\.gov$/);
       assert.ok([...body.query].length<=128);
@@ -341,12 +344,13 @@ test('one exact research approval completes its original rich answer, saves evid
    }
    const results=mode==='automatic-no-sources'?[]:[
     ...(mode==='automatic-official'?[{title:'NASA Eclipses',url:'https://science.nasa.gov/eclipses/',summary:'Public source excerpt',
+      content:'Public source excerpt. A solar eclipse occurs when the Moon passes between the Sun and Earth.',
       site_name:'NASA Science',site_icon:'https://cdn.deepseek.com/site-icons/science.nasa.gov'}]:[]),
     {title:'Public documentation',url:'https://example.com/docs',summary:'Public source excerpt',
      site_name:'Example Exchange',site_icon:'https://cdn.deepseek.com/site-icons/example.com'},
     {title:'Same page',url:'https://example.com/docs#section',summary:'Public source excerpt'},
     ...(mode==='automatic'?[{title:'Archived quote',url:'https://example.org/archive',summary:'Old valuation snapshot',date:'2023-01-01T12:00:00Z'}]:[]),
-    ...(mode==='automatic-ranking-expanded-evidence'?Array.from({length:9},(_,index)=>({
+    ...(mode==='automatic-ranking-expanded-evidence'?Array.from({length:14},(_,index)=>({
      title:`Independent public report ${index+1}`,url:`https://example.org/report/${index+1}`,
      summary:`Public source excerpt for report ${index+1}. `+'Présentation comparative des capacités et résultats vérifiés. '.repeat(28),
     })):[]),
@@ -372,6 +376,7 @@ test('one exact research approval completes its original rich answer, saves evid
     assert.match(JSON.stringify(body.messages),/UNRELATED_PRIOR_NASA_TURN/);
     assert.equal(body.messages.length,3);
     assert.equal(body.reasoning_effort,undefined);
+    if(mode==='automatic-official')assert.match(JSON.stringify(body.messages),/Moon passes between the Sun and Earth/);
     if(mode==='automatic'){
      assert.equal(body.max_tokens,16_384);
      assert.match(body.messages[0].content,/Return only the answer, without an OpenUI program/);
@@ -380,7 +385,7 @@ test('one exact research approval completes its original rich answer, saves evid
      assert.match(body.messages[2].content,/Never average or combine stale/);
     }else if(mode==='automatic-ranking-expanded-evidence'){
      assert.ok(body.max_tokens>20_480,'Keep the planned output budget for a detailed sourced answer');
-     assert.match(JSON.stringify(body.messages),/Independent public report 9/);
+     assert.match(JSON.stringify(body.messages),/Independent public report 14/);
      assert.match(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>/);
     }else if(mode!=='automatic-parity'){
      assert.equal(body.max_tokens,20_480);
@@ -616,7 +621,7 @@ test('one exact research approval completes its original rich answer, saves evid
  assert.equal(expanded.publicWebRetrieved,true);
  assert.deepEqual(expanded.completion,{status:'partial',reason:'source_coverage'},
   'Having enough retrieved pages does not deliver the official links requested for each row');
- assert.equal(expanded.webSources?.length,10);
+ assert.equal(expanded.webSources?.length,15);
  assert.equal(searches,13);
  assert.equal(models,10,'A full public source set reaches exactly one synthesis call');
  assert.equal(confirmation.row,lastConfirmation);
@@ -712,6 +717,11 @@ test('planner queries support translation, public identifiers and DeepSeek opera
 
 test('planned Search honors offline requests, credential boundaries and explicit publisher scope', () => {
  assert.equal(workspacePublicSearchQuery('Research public airline fares. Do not browse.',false,'airline fares'),undefined);
+ assert.equal(workspacePublicSearchQuery('Do not browse. Explain what owl pellets reveal.',false,'owl pellets'),undefined);
+ assert.equal(workspacePublicSearchQuery('Busca sobre rapaces. Sin buscar en internet.',false,'rapaces'),undefined);
+ assert.deepEqual(workspacePublicSearchQuery('Search the web for what “no web search” means in browser settings.'), {
+  query:'what “no web search” means in browser settings',officialDomains:[],
+ });
  for (const credentialQuery of ['travel fares SYNTHETIC_TEST_TOKEN', 'read https://example.org/info?token=abcdef',
    'read https://viewer:password@example.org/info']) {
   assert.equal(workspacePublicSearchQuery('Compare public fares.',false,credentialQuery),undefined);

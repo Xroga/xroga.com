@@ -2094,7 +2094,7 @@
       "id": "surface:0e78a2534aef2dadd6c0",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "b3dc5f4a46dc5c86bcd6964dd0740c103b9a322ad161bd67b5188f340da899e7",
+      "sha256": "1dc6c0ef9be8280f4534e83baa0bf2b72bd50a7f3480284d8ee4c5dd3c2b40e8",
       "symbols": [
         "ACTIONS",
         "WebAction",
@@ -6399,7 +6399,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "67f2fd972dcc2f3d68fe989bc62f534e56be09aaa57119c5dc429e6b46381023",
+      "sha256": "bc1fd5f9a880bc456526b79b4b0ed5e74613ee1f300acfe51adca7b27354c845",
       "symbols": [
         "accessibilityRule",
         "answerScopeRule",
@@ -7131,7 +7131,7 @@
       "id": "surface:7d07dd00cd58533729b5",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/parallelApproval.ts",
-      "sha256": "f095255885a8740c93c4117030e99f54467850fe3ae5f8684b3277c32af6c1b0",
+      "sha256": "df2d93e2135f15fca2fca57a59aa2194f8ae9ade9e4c04b4f402365a9b82ab31",
       "symbols": [
         "Operation",
         "ParallelAdmission",
@@ -7160,6 +7160,7 @@
         "finish",
         "identity",
         "issuedAt",
+        "lookupTopic",
         "modelScope",
         "nonce",
         "officialLinkCoverage",
@@ -7270,8 +7271,8 @@
         "backend/src/ai/parallelApproval.ts#identity"
       ],
       "tenantBoundary": [
-        "backend/src/ai/parallelApproval.ts:156 (user_id)",
-        "backend/src/ai/parallelApproval.ts:159 (user_id)"
+        "backend/src/ai/parallelApproval.ts:157 (user_id)",
+        "backend/src/ai/parallelApproval.ts:160 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/ai/parallelApproval.ts#actionPlanDigest",
@@ -7380,8 +7381,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/parallelApproval.ts:104",
-        "backend/src/ai/parallelApproval.ts:190",
+        "backend/src/ai/parallelApproval.ts:105",
+        "backend/src/ai/parallelApproval.ts:191",
         "backend/src/ai/parallelWeb.security.test.ts:15",
         "backend/src/ai/parallelWeb.ts:1"
       ],
@@ -8775,7 +8776,7 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "2fc40a9032022c173f7f184f9affb3819f0b27f0b69986aa98e0e3eff6bec069",
+      "sha256": "2883e9a82abef87188a4c807047e2563f29870da3955f8854343ab13adafdf1d",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
@@ -10502,7 +10503,7 @@
       "id": "surface:5f676989c84806ca6213",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/researchSearchProvider.ts",
-      "sha256": "e197584bc6cabe2aae16308db4ccae17b5b2a6766920c90aa56a044d447e8e5f",
+      "sha256": "93246a9585337ff3653565f0283fcc7dae3f84818e5d1cd3751a05b1a9596f10",
       "symbols": [
         "DEEPSEEK_DISCOVERY_RESULTS",
         "DEEPSEEK_PRIMARY_PAGE_EXCERPT",
@@ -10513,7 +10514,9 @@
         "DEEPSEEK_SEARCH_URL",
         "DeepseekResult",
         "SearchResult",
+        "available",
         "best",
+        "capacity",
         "date",
         "deepseekSearchBody",
         "deepseekSearchCredential",
@@ -10521,11 +10524,16 @@
         "domain",
         "end",
         "excerpt",
-        "focus",
-        "focusMatches",
+        "filter",
+        "filters",
+        "fitDeepseekSearchQuery",
+        "foundIdentifiers",
         "host",
         "iconDomain",
+        "identifiers",
         "limit",
+        "matchedIdentifiers",
+        "matchedTerms",
         "matches",
         "matchesOfficialResearchDomain",
         "matchingPageParagraphs",
@@ -10536,11 +10544,13 @@
         "passage",
         "passageWords",
         "primaryText",
+        "qualifiers",
         "query",
         "question",
         "r",
         "relevant",
         "researchSearchMicroUsd",
+        "result",
         "results",
         "retrievalWords",
         "scopeOfficialSearchQuery",
@@ -10548,10 +10558,15 @@
         "score",
         "siteName",
         "sites",
+        "size",
         "start",
         "summary",
+        "term",
         "terms",
         "text",
+        "tokens",
+        "topic",
+        "unsegmented",
         "words"
       ],
       "imports": [
@@ -11029,7 +11044,7 @@
       "id": "surface:8c4623b66cfe2703b5ad",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/router.ts",
-      "sha256": "aad22a1958337fa8b0aa0d89d41944d158956c8eedb1d8e75cc9a6457f7e8b59",
+      "sha256": "51062fb23a42c1702c27d7239d539ba7e08d41460fab04a8ccdee53ec3bb2c19",
       "symbols": [
         "EXPLICIT_RESEARCH_RE",
         "FILE_RE",
@@ -14617,7 +14632,7 @@
       "id": "surface:d0118051183ee3a6c3fe",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/universal/goalContract.ts",
-      "sha256": "14c67d696b14d8131f227cef263bd5bf032b2dc47dc8db19716df28ebc7e775b",
+      "sha256": "78d446f5fcfd23758fe0fb23c78e035a0b5b5a3bd407d5e10c24eeca59d7ec26",
       "symbols": [
         "FRESHNESS_REQUIREMENTS",
         "FreshnessRequirement",
@@ -14660,11 +14675,13 @@
       "imports": [
         "../researchSearchProvider.js",
         "../responsePresentation.js",
+        "../workspacePublicSearch.js",
         "zod"
       ],
       "runtimeImports": [
         "backend/src/ai/researchSearchProvider.ts",
-        "backend/src/ai/responsePresentation.ts"
+        "backend/src/ai/responsePresentation.ts",
+        "backend/src/ai/workspacePublicSearch.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts",
@@ -15806,7 +15823,7 @@
       "id": "surface:82ff96c046038933cdb9",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/workspacePublicSearch.ts",
-      "sha256": "af3ec907ac14fe26707c6c4a8df1edb06710b753293030ac0150f05db15c120d",
+      "sha256": "8873328bfaad1ca18ac8439df1eda665804fc8d7e4f46a108b1ee2aa4643e67f",
       "symbols": [
         "answerOnlySuffix",
         "asksForOfficial",
@@ -15849,6 +15866,7 @@
         "officialLookup",
         "officialSourceRequest",
         "officialVerificationFooter",
+        "offline",
         "originalSource",
         "originalSourceRequest",
         "personLocationLookup",
@@ -15896,11 +15914,14 @@
         "sourcePreface",
         "sourceSelectionStart",
         "specificIdentityOrUrl",
+        "standalone",
         "subject",
         "terms",
+        "text",
         "topic",
         "topicLead",
         "topicLimit",
+        "trailing",
         "unavailableDomain",
         "url",
         "versionedWork",
@@ -15931,6 +15952,7 @@
         "backend/src/ai/researchAnswer.ts:8",
         "backend/src/ai/researchPublicationEvidence.ts:3",
         "backend/src/ai/router.ts:11",
+        "backend/src/ai/universal/goalContract.ts:4",
         "backend/src/ai/universal/semanticRequestPlanner.ts:15"
       ],
       "reachable": true,
@@ -147369,9 +147391,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:b306041e8d648374f1dc",
+      "id": "finding:349202c1a2872a33291b",
       "sourcePath": "backend/src/ai/router.ts",
-      "line": 74,
+      "line": 75,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -155563,7 +155585,7 @@
     {
       "id": "test-suite:dd88a5c540273ff6039e",
       "sourcePath": "backend/src/ai/prompts.test.ts",
-      "declaredTests": 8,
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -155731,7 +155753,7 @@
     {
       "id": "test-suite:fc958963f2b7e8b93a94",
       "sourcePath": "backend/src/ai/researchSearchProvider.test.ts",
-      "declaredTests": 7,
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -155794,7 +155816,7 @@
     {
       "id": "test-suite:08eeb4ff17d279c137e4",
       "sourcePath": "backend/src/ai/router.test.ts",
-      "declaredTests": 18,
+      "declaredTests": 19,
       "skipLocations": [],
       "focusLocations": []
     },

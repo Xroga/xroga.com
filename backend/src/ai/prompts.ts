@@ -327,7 +327,7 @@ export function researchSynthesisPrompt(query: string, gathered: string, directL
 ${query}
 
 Research materials:
-${gathered.slice(0, 40000)}
+${gathered}
 
 Requirements:
 - Follow the user's requested length, format, and number of items as far as the supplied evidence supports. For a ranking, state the basis, give each supported item once, and explain any evidence gap. Link an official website only when the supplied evidence establishes it.

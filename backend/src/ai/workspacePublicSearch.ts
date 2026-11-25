@@ -1,7 +1,7 @@
 import { explicitlyDisablesResearch } from '../lib/taskClassifier.js';
 import { containsCredentialSecretText } from '../security/egress/dataClassification.js';
 import { publicHttpsUrl } from '../security/egress/urlPolicy.js';
-import { DEEPSEEK_QUERY_MAX, scopeOfficialSearchQuery } from './researchSearchProvider.js';
+import { DEEPSEEK_QUERY_MAX, fitDeepseekSearchQuery, scopeOfficialSearchQuery } from './researchSearchProvider.js';
 
 const publicOfficeLookup = /^who\s+(?:is|was)\s+(?:the\s+)?(?:current\s+)?(?:president|prime minister|governor|mayor|chief executive officer|ceo)\s+of\s+\p{L}[\p{L}\p{M} .,'’-]{1,75}[?!]?$/iu;
 const publicInstitutionLeadership = /^[Ww]ho (?:currently )?(?:leads|heads) (?:the )?[A-Z][A-Z0-9]{1,15}[?!]?$/u;
@@ -123,13 +123,16 @@ export function requestsOfficialLinkCoverage(prompt: string): boolean {
 }
 
 export function explicitlyRequestsWorkspaceWebSearch(prompt: string): boolean {
-  return explicitWebLookup.test(prompt.trim()) && !explicitlyDisablesResearch(prompt);
+  return explicitWebLookup.test(prompt.trim()) && !workspaceSearchOptOut(prompt);
 }
 
 /** Preserve a direct offline instruction without treating mentions of search
  * settings, quoted UI copy or filter expressions as instructions. */
 export function workspaceSearchOptOut(prompt: string): boolean {
-  return /(?:^|[.!?;\n]\s*)(?:(?:please\s+)?(?:do not|don['’]t|skip)\s+(?:(?:use|run)\s+)?(?:(?:the\s+)?(?:web|internet)\s+)?(?:search(?:ing)?|brows(?:e|ing)|research)(?:\s+(?:the\s+)?(?:web|internet|online))?|no web search|offline only)\s*[.!?]?\s*$/iu.test(prompt);
+  const text = prompt.trim();
+  const standalone = /(?:^|[,.!?;，。！？\n]\s*)(?:(?:please\s+)?(?:do not|don['’]t|skip)\s+(?:(?:use|run)\s+)?(?:(?:the\s+)?(?:web|internet)\s+)?(?:search(?:ing)?|brows(?:e|ing)|research)(?:\s+(?:the\s+)?(?:web|internet|online))?|no web(?: search)?|offline only|sin (?:buscar|búsqueda) en (?:la web|internet)|sans recherche web|بدون بحث|لا تبحث|बिना वेब खोज|वेब पर खोज न|不要搜索|不要联网)(?:\s+for this)?[^\S\n]*(?=$|[.!?;。！？\n])/iu;
+  const trailing = /\s+without\s+(?:searching\s+(?:the\s+)?(?:web|internet)|browsing(?:\s+online)?|using\s+web search)[^\S\n]*(?=$|[.!?;。！？\n])/iu;
+  return standalone.test(text) || trailing.test(text);
 }
 
 function isAmbiguousPersonalLookup(topic: string): boolean {
@@ -142,9 +145,9 @@ function publicOfficeTopic(prompt: string): string | undefined {
   if (publicOfficeLookup.test(topic) || publicInstitutionLeadership.test(topic)) return topic;
 }
 
-function plannedPublicQuery(query: string) {
+export function plannedPublicQuery(query: string) {
   const topic = query.trim();
-  if (!topic || [...topic].length > DEEPSEEK_QUERY_MAX || containsCredentialSecretText(topic)) return;
+  if (!topic || containsCredentialSecretText(topic)) return;
   for (const [value] of topic.matchAll(/https?:\/\/[^\s"'<>]+/giu)) {
     if (containsCredentialSecretText(value)) return;
     try {
@@ -152,7 +155,7 @@ function plannedPublicQuery(query: string) {
       if (url.username || url.password) return;
     } catch { /* Search treats query text as text. */ }
   }
-  return topic;
+  return fitDeepseekSearchQuery(topic);
 }
 
 /** Public lookup terms must be self-contained and safe to send to Search. */
@@ -203,7 +206,8 @@ export function workspacePublicSearchQuery(prompt: string, officialOnly = false,
   const officialLookup = requestsOfficialLinkCoverage(request) || publicSourceLookup.test(request);
   const { namedSource, publisherDomains, asksForOfficial, isSoftwareName, explicitDomains } = publisherScope(request);
   if (namedSource && /\b(?:only|exclusively)\b/iu.test(namedSource[0]) && !publisherDomains.length && !namedSource[0].includes('(')) return;
-  if (explicitlyDisablesResearch(message)
+  const offline = explicitWebLookup.test(message) ? workspaceSearchOptOut(message) : explicitlyDisablesResearch(message);
+  if (offline
     || hasNonPublicSearchTerms(prompt) || specificIdentityOrUrl.test(message) || rawSearchOperator.test(message)
     || !searchText.test(request)) return;
 

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {deepseekSearchCredential,researchSearchMicroUsd,deepseekSearchBody,normaliseDeepseekSearch,scopeOfficialSearchQuery,DEEPSEEK_SEARCH_MICRO_USD} from './researchSearchProvider.js';
+import {deepseekSearchCredential,researchSearchMicroUsd,deepseekSearchBody,fitDeepseekSearchQuery,matchingPageParagraphs,normaliseDeepseekSearch,scopeOfficialSearchQuery,DEEPSEEK_SEARCH_MICRO_USD} from './researchSearchProvider.js';
 
 test('search uses only the dedicated DeepSeek credential; without it search is unavailable, never rerouted', () => {
   const saved = process.env.DEEPSEEK_WEBSEARCH_FETCH_API;
@@ -80,4 +80,24 @@ test('primary evidence uses relevant text from the retrieved page and preserves 
   assert.ok((original.results[0]?.excerpts[0]?.length ?? 0) < result.content.length);
   const empty = normaliseDeepseekSearch({ results: [{ ...result, content: '' }] }, trace, question);
   assert.deepEqual(empty.results[0]?.excerpts, [summary]);
+});
+
+test('a long provider query retains complete terms and all publisher and date filters', () => {
+  const long = '"Climate Data Guide" station calibration adjustments for measured precipitation published monthly in ' +
+    'public weather archives including technical annexes and instrument maintenance guidance after:2025-01-01 ' +
+    'site:example.org OR site:example.net lang:en';
+  const fitted = fitDeepseekSearchQuery(long);
+  assert.ok(fitted && [...fitted].length <= 128);
+  assert.match(fitted, /^"Climate Data Guide" station calibration adjustments\b/);
+  assert.match(fitted, /after:2025-01-01 lang:en site:example\.org OR site:example\.net$/);
+});
+
+test('a standard excerpt favors exact clause coverage over a repeated last query word', () => {
+  const navigation = 'Latest information. Browse this site for news. '.repeat(150);
+  const noisy = 'Coverage metrics overview ' + 'overview '.repeat(150);
+  const primary = '4.1.8 Switch layout\n\nA fixed dock must allow the active switch to stay visible.' +
+    '\n\n4.1.9 Target spacing\n\nThe individual target or an equivalent control must have enough space.';
+  const result = matchingPageParagraphs(navigation + primary + '\n\n' + navigation + noisy,
+    'connector standard 4.1.8 and 4.1.9 switch layout overview');
+  assert.match(result, /4\.1\.8.*4\.1\.9.*equivalent control/);
 });

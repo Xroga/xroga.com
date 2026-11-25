@@ -24,6 +24,36 @@ export const DEEPSEEK_DISCOVERY_RESULTS = 25;
 export const DEEPSEEK_PRIMARY_PAGE_RESULTS = 12;
 export const DEEPSEEK_PRIMARY_PAGE_EXCERPT = 3_200;
 
+/** Fit the provider request without dropping trailing domain, language or date filters. */
+export function fitDeepseekSearchQuery(query: string): string | undefined {
+  const text = query.trim();
+  if (!text) return;
+  if ([...text].length <= DEEPSEEK_QUERY_MAX) return text;
+  const tokens = text.match(/-?"[^"]*"|\S+/gu) ?? [];
+  const filter = /^-?(?:site|lang|after|before):\S+$/iu;
+  const filters = tokens.filter(token => filter.test(token));
+  const sites = filters.filter(token => /^site:/iu.test(token));
+  const qualifiers = [...filters.filter(token => !/^site:/iu.test(token)), sites.join(' OR ')].filter(Boolean).join(' ');
+  const capacity = DEEPSEEK_QUERY_MAX - (qualifiers ? [...qualifiers].length + 1 : 0);
+  if (capacity < 1) return;
+  const terms = tokens.filter((token, index) => !filter.test(token)
+    && !(token === 'OR' && /^site:/iu.test(tokens[index - 1] ?? '') && /^site:/iu.test(tokens[index + 1] ?? '')));
+  const result: string[] = [];
+  let available = capacity;
+  for (const term of terms) {
+    const size = [...term].length;
+    if (size > available) break;
+    result.push(term);
+    available -= size + 1;
+  }
+  if (result.at(-1) === 'OR') result.pop();
+  // Unsegmented writing has no word boundary to cut at.
+  const unsegmented = terms.length === 1 && !terms[0].includes('"') && !qualifiers
+    ? [...terms[0]].slice(0, capacity).join('') : '';
+  const topic = result.join(' ') || unsegmented;
+  return topic ? [topic, qualifiers].filter(Boolean).join(' ') : undefined;
+}
+
 export function officialResearchDomains(domains: readonly string[]): string[] {
   return [...new Set(domains.map(domain => domain.trim().toLowerCase().replace(/^www\./, '').replace(/\.$/, ''))
     .filter(domain => /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z][a-z0-9-]{1,62}$/.test(domain)))];
@@ -78,8 +108,8 @@ export function matchingPageParagraphs(content: string, question: string): strin
   const words = (text: string) => (text.toLowerCase().match(/[\p{L}\p{N}]{4,}/gu) ?? [])
     .map(word => word.length > 4 ? word.replace(/s$/u, '') : word);
   const terms = [...new Set(words(question).filter(word => !retrievalWords.test(word)))];
-  const focus = terms.at(-1);
-  if (!focus) return '';
+  const identifiers = [...new Set(question.match(/\b\d+(?:\.\d+)+\b/g) ?? [])];
+  if (!terms.length && !identifiers.length) return '';
   let best = '', score = 0;
   const text = content.trim().replace(/[^\S\r\n]+/gu, ' ');
   for (let start = 0; start < text.length; start += 400) {
@@ -88,11 +118,13 @@ export function matchingPageParagraphs(content: string, question: string): strin
       .replace(start ? /^\S*\s+/u : /^$/u, '').replace(end < text.length ? /\s+\S*$/u : /^$/u, '');
     const passageWords = words(passage);
     const matches = new Set(passageWords);
-    const focusMatches = passageWords.filter(word => word === focus).length;
-    if (!focusMatches) continue;
+    const matchedTerms = terms.filter(word => matches.has(word)).length;
+    const foundIdentifiers = new Set(passage.match(/\b\d+(?:\.\d+)+\b/g) ?? []);
+    const matchedIdentifiers = identifiers.filter(id => foundIdentifiers.has(id)).length;
+    if (matchedTerms === 0 && matchedIdentifiers === 0) continue;
     const definitions = passage.match(/(?:^|\s)[•▪◦]\s+\p{L}[\p{L}\p{N}\s()[\]_-]{0,55}?(?:\s[–—]\s|:\s)/gu)?.length ?? 0;
-    const relevant = terms.filter(word => matches.has(word)).length + Math.min(8, focusMatches) + 4 * definitions;
-    if (relevant > score) {
+    const relevant = matchedTerms + 6 * matchedIdentifiers + Math.min(3, definitions);
+    if (relevant > score || (relevant === score && passage.length < best.length)) {
       score = relevant;
       best = passage;
     }

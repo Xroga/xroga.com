@@ -886,11 +886,11 @@
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
-      "sourceSha256": "f095255885a8740c93c4117030e99f54467850fe3ae5f8684b3277c32af6c1b0",
+      "sourceSha256": "df2d93e2135f15fca2fca57a59aa2194f8ae9ade9e4c04b4f402365a9b82ab31",
       "callIds": [
-        "e4a9a8b78f7e7f9d8315",
-        "fa1775440dfc8cc815c7",
-        "c9d6856f1d74389902e9"
+        "69b83cc17815965b1253",
+        "282537c07bfc406ac7e1",
+        "5b7a284a3ac0e14709a3"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The original context comes only from the canonical native permit. Exact user_id predicates scope the executing grant and current run/worker generation. Grant, owner, immutable digest, expiry and effect receipt are rechecked before and after provider waits and immediately after DNS before any public connection.",
@@ -29401,9 +29401,9 @@
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
-      "sourceSha256": "f095255885a8740c93c4117030e99f54467850fe3ae5f8684b3277c32af6c1b0",
+      "sourceSha256": "df2d93e2135f15fca2fca57a59aa2194f8ae9ade9e4c04b4f402365a9b82ab31",
       "callIds": [
-        "c4abf84689946c25e169"
+        "484368aaf4fffe73b282"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in executeParallelNativeAction. This specific call uses the built-in Uint8Array.from conversion of already fetched public document bytes for the PDF parser, not the adjacent database, object storage or provider transport.",

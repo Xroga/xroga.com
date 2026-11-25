@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "4d78b3e37b50d880658330a91173f060e4249f1e",
+  "source_sha": "c7af87f28065c9dd0b8c3888bba94c6c75b3b15b",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17088,7 +17088,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "b3dc5f4a46dc5c86bcd6964dd0740c103b9a322ad161bd67b5188f340da899e7"
+      "sha256": "1dc6c0ef9be8280f4534e83baa0bf2b72bd50a7f3480284d8ee4c5dd3c2b40e8"
     },
     {
       "path": "backend/src/ai/buildImprovementMemory.ts",
@@ -17280,7 +17280,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "67f2fd972dcc2f3d68fe989bc62f534e56be09aaa57119c5dc429e6b46381023"
+      "sha256": "bc1fd5f9a880bc456526b79b4b0ed5e74613ee1f300acfe51adca7b27354c845"
     },
     {
       "path": "backend/src/ai/nativeOpenUiRecovery.ts",
@@ -17308,7 +17308,7 @@
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
-      "sha256": "f095255885a8740c93c4117030e99f54467850fe3ae5f8684b3277c32af6c1b0"
+      "sha256": "df2d93e2135f15fca2fca57a59aa2194f8ae9ade9e4c04b4f402365a9b82ab31"
     },
     {
       "path": "backend/src/ai/parallelDispatch.ts",
@@ -17352,7 +17352,7 @@
     },
     {
       "path": "backend/src/ai/prompts.ts",
-      "sha256": "2fc40a9032022c173f7f184f9affb3819f0b27f0b69986aa98e0e3eff6bec069"
+      "sha256": "2883e9a82abef87188a4c807047e2563f29870da3955f8854343ab13adafdf1d"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -17420,7 +17420,7 @@
     },
     {
       "path": "backend/src/ai/researchSearchProvider.ts",
-      "sha256": "e197584bc6cabe2aae16308db4ccae17b5b2a6766920c90aa56a044d447e8e5f"
+      "sha256": "93246a9585337ff3653565f0283fcc7dae3f84818e5d1cd3751a05b1a9596f10"
     },
     {
       "path": "backend/src/ai/researchWebsiteEvidence.ts",
@@ -17444,7 +17444,7 @@
     },
     {
       "path": "backend/src/ai/router.ts",
-      "sha256": "aad22a1958337fa8b0aa0d89d41944d158956c8eedb1d8e75cc9a6457f7e8b59"
+      "sha256": "51062fb23a42c1702c27d7239d539ba7e08d41460fab04a8ccdee53ec3bb2c19"
     },
     {
       "path": "backend/src/ai/routerConfig.ts",
@@ -17640,7 +17640,7 @@
     },
     {
       "path": "backend/src/ai/universal/goalContract.ts",
-      "sha256": "14c67d696b14d8131f227cef263bd5bf032b2dc47dc8db19716df28ebc7e775b"
+      "sha256": "78d446f5fcfd23758fe0fb23c78e035a0b5b5a3bd407d5e10c24eeca59d7ec26"
     },
     {
       "path": "backend/src/ai/universal/modelRequirements.ts",
@@ -17712,7 +17712,7 @@
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "sha256": "af3ec907ac14fe26707c6c4a8df1edb06710b753293030ac0150f05db15c120d"
+      "sha256": "8873328bfaad1ca18ac8439df1eda665804fc8d7e4f46a108b1ee2aa4643e67f"
     },
     {
       "path": "backend/src/ai/zurelayWire.ts",
@@ -26003,7 +26003,7 @@
       "hostname": "cdn.deepseek.com",
       "protocol": "https:",
       "path": "backend/src/ai/researchSearchProvider.ts",
-      "line": 107,
+      "line": 139,
       "credentialsInUrl": false
     },
     {
@@ -34235,21 +34235,35 @@
     },
     {
       "path": "backend/src/ai/researchSearchProvider.ts",
-      "line": 28,
+      "line": 58,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/researchSearchProvider.ts",
-      "line": 80,
+      "line": 110,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/researchSearchProvider.ts",
-      "line": 90,
+      "line": 111,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/researchSearchProvider.ts",
+      "line": 120,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/researchSearchProvider.ts",
+      "line": 122,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -34361,7 +34375,7 @@
     },
     {
       "path": "backend/src/ai/router.ts",
-      "line": 80,
+      "line": 81,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -34711,7 +34725,7 @@
     },
     {
       "path": "backend/src/ai/universal/goalContract.ts",
-      "line": 302,
+      "line": 303,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -34858,7 +34872,7 @@
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
-      "line": 244,
+      "line": 248,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

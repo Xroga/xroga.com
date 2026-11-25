@@ -625,7 +625,9 @@ export async function runWebIntelligence(
         query: input.prompt,
         officialDomains: publicSources ? automaticOfficialDomains
           : decision.officialDomains.length ? decision.officialDomains : input.officialDomains,
-        maxSources: 12,
+        // Public Search already requests a bounded provider result set. Keep
+        // every qualifying page so official links and citations stay usable.
+        maxSources: publicSources?.length ?? 12,
         preferDistinctHosts,
         evidenceExcerptLimit,
       },
