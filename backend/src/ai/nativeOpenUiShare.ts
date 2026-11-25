@@ -1,9 +1,9 @@
 import { z } from 'zod';
+import { MAX_SHARED_RESPONSE_CHARS } from '../lib/messageShareLimits.js';
 import { MAX_PROGRAM_CHARS, NATIVE_UI_FORMAT, splitNativeOpenUiAnswer, validateNativeOpenUi } from './nativeOpenUi.js';
 import { nativeDocumentDelivery, nativeDocumentFormats, type NativeDocumentFormat } from './nativeDocumentDownload.js';
 
 export const NATIVE_SHARE_PREFIX = 'XROGA_OPENUI_SHARE_V1\n';
-const shareLimit = 100_000;
 const shareSource = z.object({
   title: z.string().min(1).max(400),
   url: z.string().url().max(2048),
@@ -12,14 +12,14 @@ const shareSource = z.object({
 }).strict();
 const snapshot = z.object({
   format: z.literal(NATIVE_UI_FORMAT),
-  text: z.string().min(1).max(60_000),
+  text: z.string().min(1).max(MAX_SHARED_RESPONSE_CHARS),
   program: z.string().max(MAX_PROGRAM_CHARS),
   sources: z.array(shareSource).max(30),
   documentDownload: z.enum(nativeDocumentFormats).optional(),
 }).strict();
 
 function decodeNativeOpenUiShare(value: string) {
-  if (!value.startsWith(NATIVE_SHARE_PREFIX) || value.length > shareLimit) return;
+  if (!value.startsWith(NATIVE_SHARE_PREFIX) || value.length > MAX_SHARED_RESPONSE_CHARS) return;
   try {
     return JSON.parse(value.slice(NATIVE_SHARE_PREFIX.length)) as unknown;
   } catch { /* The share envelope is not readable prose. */ }
@@ -28,7 +28,7 @@ function decodeNativeOpenUiShare(value: string) {
 export function readNativeOpenUiShareText(value: string) {
   const decoded = decodeNativeOpenUiShare(value);
   if (!decoded || typeof decoded !== 'object' || !('format' in decoded) || decoded.format !== NATIVE_UI_FORMAT ||
-      !('text' in decoded) || typeof decoded.text !== 'string' || decoded.text.length > 60_000) return;
+      !('text' in decoded) || typeof decoded.text !== 'string') return;
   return splitNativeOpenUiAnswer(decoded.text).text || undefined;
 }
 

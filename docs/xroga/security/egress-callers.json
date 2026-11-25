@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "30552fd86038e5277626b1ffcafb41a0aaf6e94ae4eb4bfc17fc0b19f731cb8c",
+  "sourceTreeDigest": "b0b54ead71f30dc22439d0654ce87e0c5912e63fef69b21a71546d5606129ce6",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -11,7 +11,7 @@
     {
       "id": "0e0e3527ad05d7405c68",
       "file": "backend/src/ai/attachments.ts",
-      "line": 108,
+      "line": 109,
       "entryPoint": "fetchAsBuffer",
       "transport": "boundedPublicGet",
       "callee": "boundedPublicGet",
@@ -61,7 +61,7 @@
         {
           "path": "backend/src/ai/openaiCompat.egress.test.ts",
           "marker": "real SDK completion and streaming use only the approved endpoint and refuse redirects",
-          "sha256": "34bd84f5aacee796d3dfa2ff83cfd227a24c41d19fc50c4c51abf88fd6e80a46",
+          "sha256": "93218ae8d9afe1fcad18e81ccde3773f09ce1f1ccdda936f7551d44d1aa6d9c0",
           "reboundOnBranch": {
             "previousSha256": "0622d56b1885aad11d4f284da5aa055690e20d3661533aa59d0c9dd1c78cd499",
             "note": "Re-bound 2026-11-05: the file gained single-response transport regression tests and a streaming-verified guard in the existing redirect test; the reviewed redirect-refusal assertions are unchanged."
@@ -141,7 +141,7 @@
     {
       "id": "9c345e07b723c086440e",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 435,
+      "line": 437,
       "entryPoint": "chatCompletionStream",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",

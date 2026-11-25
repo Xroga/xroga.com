@@ -395,6 +395,8 @@ export async function chatCompletionStream(
     onActivity?: (answerCharacters?:number) => void;
     /** Provider-specific reasoning control. Used only by direct-output workloads. */
     reasoningMode?: ReasoningMode;
+    /** In-process buffer guard owned by the calling attempt. */
+    maxOutputChars?: number;
     /** Ask the compatible endpoint to constrain the response to one JSON object. */
     json?: boolean;
     responseFormat?: PresentationResponseFormat;
@@ -449,6 +451,7 @@ export async function chatCompletionStream(
     );
 
     let text = '';
+    const maximumOutputChars = opts.maxOutputChars ?? DEFAULT_BUILDER_BUDGET.maxOutputChars;
     const diagnostics = new CompletionDiagnostics();
     let finishReason: string | null = null;
     let usage: OpenAI.Chat.Completions.ChatCompletionChunk['usage'];
@@ -478,7 +481,9 @@ export async function chatCompletionStream(
       }
       finishReason = choice?.finish_reason ?? finishReason;
       if (delta) {
-        if(text.length+delta.length>DEFAULT_BUILDER_BUDGET.maxOutputChars)throw Object.assign(Error('Provider exceeded the bounded output buffer'),{code:'BUILDER_OUTPUT_LIMIT'});
+        if (text.length + delta.length > maximumOutputChars) {
+          throw Object.assign(Error('Provider exceeded the bounded output buffer'), { code: 'BUILDER_OUTPUT_LIMIT' });
+        }
         text += delta;
       }
 

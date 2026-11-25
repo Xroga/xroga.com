@@ -13,6 +13,7 @@ import { getRouterAdminConfig } from '../routerConfig.js';
 import { PRESENTATION_PLAN_INSTRUCTIONS } from '../responsePresentation.js';
 import { nativeDocumentRequiresAttachment, nativeDocumentRequiresPriorAnswer, requestedNativeDocumentFormat } from '../nativeDocumentDownload.js';
 import { usesNativeWorkspacePresentation } from '../nativeOpenUiWorkspace.js';
+import { workspaceHistoryCapacity } from '../workspaceConversation.js';
 import { explicitlyRequestsWorkspaceWebSearch } from '../workspacePublicSearch.js';
 import { explicitlyDisablesResearch } from '../../lib/taskClassifier.js';
 import {prepareSonnetConversation,requestedSonnetReason} from '../sonnetApproval.js';
@@ -51,6 +52,7 @@ import {
   type GoalContract,
   type GoalInterpretationInput,
 } from './goalContract.js';
+import { semanticHistoryForPlanner, semanticHistorySnapshot } from './semanticHistory.js';
 
 import {
   planCapabilities,
@@ -1417,14 +1419,12 @@ export async function planSemanticRequest(
       availableSummary,
     )}\n\n${PRESENTATION_PLAN_INSTRUCTIONS}${documentDelivery}${publicWebPlanning}`;
 
-  const interpretationInput:
+  const currentTurn:
     GoalInterpretationInput = {
       message:
         input.message,
 
-      history:
-        input.history ??
-        [],
+      history: [],
 
       attachments:
         input.attachments ??
@@ -1438,28 +1438,18 @@ export async function planSemanticRequest(
         input.projectState,
     };
 
-  const messages:
-    ChatMessage[] = [
-      {
-        role:
-          'system',
-
-        content:
-          system,
-      },
-
-      {
-        role:
-          'user',
-
-        content:
-          JSON.stringify(
-            interpretationInput,
-          ),
-      },
-    ];
-
   const maximumOutputTokens = SEMANTIC_PLANNER_MAX_OUTPUT_TOKENS;
+  const systemMessage: ChatMessage = { role: 'system', content: system };
+  const context = semanticHistoryForPlanner(input.history ?? [], workspaceHistoryCapacity(models[0]!, maximumOutputTokens, [
+    systemMessage, { role: 'user', content: JSON.stringify(currentTurn) },
+  ]));
+  const interpretationInput: GoalInterpretationInput = { ...currentTurn, history: context.entries };
+  const contractInput: GoalInterpretationInput = { ...interpretationInput, history: semanticHistorySnapshot(context.entries) };
+  const messages: ChatMessage[] = [
+    systemMessage,
+    { role: 'user', content: JSON.stringify({ ...interpretationInput,
+      ...(context.omitted ? { earlierHistoryOmitted: true } : {}) }) },
+  ];
 
   const configuredTotalMs =
     Number(
@@ -1611,7 +1601,7 @@ export async function planSemanticRequest(
                     normalizePlannerDecisionCandidate(
                       value,
 
-                      interpretationInput,
+                      contractInput,
                     ),
                 )
                   .catch(

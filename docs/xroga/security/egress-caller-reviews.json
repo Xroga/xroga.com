@@ -195,7 +195,7 @@
     {
       "id": "038ced12b0f74e8d5e0f",
       "callSha256": "bbbf26a58be8e30ace8fcfaac921075adab2a85ca44b5d5b7c9f48a7ec48c8f3",
-      "sourceFileSha256": "c68442eb8d29d7aaa6d1ccbbfbff9c33e3d40701cd2254e689fee0d40fee2d4d",
+      "sourceFileSha256": "7d12d2d3228381d13417bf67f32a31af2bb6fc28e372b5d322896af08d214eda",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "FIXED_PROVIDER_ENDPOINT_AND_NO_REDIRECT_ONLY_NOT_DNS_OR_FULL_EGRESS_CERTIFICATION",
       "tenantAuthority": "THREE_UPSTREAM_SDK_TENANT_ACCOUNT_AUTHORITY_AND_DATA_OBLIGATIONS_REMAIN_PENDING",
@@ -211,7 +211,7 @@
         {
           "path": "backend/src/ai/openaiCompat.egress.test.ts",
           "marker": "real SDK completion and streaming use only the approved endpoint and refuse redirects",
-          "sha256": "34bd84f5aacee796d3dfa2ff83cfd227a24c41d19fc50c4c51abf88fd6e80a46",
+          "sha256": "93218ae8d9afe1fcad18e81ccde3773f09ce1f1ccdda936f7551d44d1aa6d9c0",
           "reboundOnBranch": {
             "previousSha256": "0622d56b1885aad11d4f284da5aa055690e20d3661533aa59d0c9dd1c78cd499",
             "note": "Re-bound 2026-11-05: the file gained single-response transport regression tests and a streaming-verified guard in the existing redirect test; the reviewed redirect-refusal assertions are unchanged."
@@ -308,7 +308,7 @@
     {
       "id": "0e0e3527ad05d7405c68",
       "callSha256": "e3c3def0a39603c733ecb26163e672be02388db71ca7cd804feb8390d9b4afc1",
-      "sourceFileSha256": "b1c7911aa41d59bfcc1e57f6925a4c705548787cdb81aba14100e78fe5432f45",
+      "sourceFileSha256": "1ef2126f5419e5a1b68c153efaa9a15b30f7e1d20d1211f2c1714517bfe0fb9a",
       "disposition": "VERIFIED_GUARD",
       "trust": "URL_TRANSPORT_BOUNDARY_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
       "tenantAuthority": "EXISTING_CALLER_REQUIREMENTS_RETAINED_NOT_CERTIFIED_BY_URL_TEST",
@@ -639,7 +639,7 @@
     {
       "id": "31380a8d5b9454a98a98",
       "callSha256": "8e82b633686ef353d4c6db063a70a5772fcf9350245bec5da9d8d86dc9cc769a",
-      "sourceFileSha256": "c68442eb8d29d7aaa6d1ccbbfbff9c33e3d40701cd2254e689fee0d40fee2d4d",
+      "sourceFileSha256": "7d12d2d3228381d13417bf67f32a31af2bb6fc28e372b5d322896af08d214eda",
       "disposition": "VERIFIED_GUARD",
       "trust": "SHARED_JSON_SDK_DISPATCH_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_OR_EXISTING_BOUNDED_ANONYMOUS_GUEST_LEASE_EACH_WIRE_RECHECKS_CURRENT_BINDING_COMPLETION_REQUIRES_SETTLEMENT_AND_ATOMIC_RECEIPT_OR_VERIFIED_CONSERVATIVE_GUEST_BUDGET_NO_RAW_ID_OR_CALLBACK_AUTHORITY",
@@ -732,7 +732,7 @@
     {
       "id": "9c345e07b723c086440e",
       "callSha256": "6eb08ff947aaf655cbb9fac9f4af25c6e8fcb622517fc4343327edaf39a6eca9",
-      "sourceFileSha256": "c68442eb8d29d7aaa6d1ccbbfbff9c33e3d40701cd2254e689fee0d40fee2d4d",
+      "sourceFileSha256": "7d12d2d3228381d13417bf67f32a31af2bb6fc28e372b5d322896af08d214eda",
       "disposition": "VERIFIED_GUARD",
       "trust": "SHARED_SSE_SDK_DISPATCH_AND_DEFERRED_ACCOUNTED_PUBLICATION_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_EACH_WIRE_RECHECKS_CURRENT_OWNER_PROJECT_RUN_CREDENTIAL_AUTHORITY_BINDING_NO_PUBLIC_DELTAS_UNTIL_SETTLEMENT_AND_EXACT_ATOMIC_RECEIPT_CANCELLATION_REVOCATION_AND_PUBLICATION_FAILURE_CANNOT_RETRY_MODEL",

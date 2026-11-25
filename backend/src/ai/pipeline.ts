@@ -1,6 +1,5 @@
 import {AuthorityError} from '../security/authority/enforce.js';
 import {EgressDenied} from '../security/egress/egressPolicy.js';
-import { containsCredentialSecretText } from '../security/egress/dataClassification.js';
 import { randomUUID } from 'crypto';
 import {requireTenantContext,requireResourceOwner,type TenantContext} from '../security/tenantContext.js';
 import {requireOptionalOwnedDatabaseProject} from '../security/ownership.js';
@@ -24,13 +23,16 @@ import { analyzeTask } from './black-hole/taskClass.js';
 import { assessBlackHoleComplexity } from './black-hole/complexity.js';
 import { MODELS, type ModelId } from './models.js';
 import { publicCompletionState } from './completionDiagnostics.js';
+import { continueWorkspaceAnswer } from './workspaceAnswerContinuation.js';
+import { workspaceAnswerOutputChars, workspaceAnswerOutputTokens } from './workspaceAnswerBudget.js';
+import { readWorkspaceHistory, withWorkspaceHistory, workspaceHistoryCapacity } from './workspaceConversation.js';
 import { NATIVE_UI_FORMAT } from './nativeOpenUi.js';
 import { nativeDocumentDelivery, nativeDocumentPrompt, nativeDocumentRequiresAttachment, nativeDocumentRequiresPriorAnswer, plannedNativeDocument, requestedNativeDocumentFormat, type NativeDocumentFormat } from './nativeDocumentDownload.js';
 import { completeNativeWorkspaceAnswer, requestsNativeTableControls, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
 import { presentPublicResearchAnswer } from './researchAnswer.js';
 import { explicitlyRequestsWorkspaceWebSearch } from './workspacePublicSearch.js';
 import { nativeOpenUiPlainPrompt, workspaceNativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
-import { assessPresentationCoverage, createPresentationProjection, nativePresentedAnswerMaxTokens, NATIVE_WORKSPACE_REASONING_RESERVE_TOKENS, presentationRequestInstructions, presentationResponseFormat, presentedAnswerMaxTokens, type PresentationResponseFormat } from './responsePresentation.js';
+import { assessPresentationCoverage, createPresentationProjection, presentationRequestInstructions, presentationResponseFormat, presentedAnswerMaxTokens, type PresentationResponseFormat } from './responsePresentation.js';
 import { prepareAnswerCoverage, requiredNativeFormats } from './answerCoverage.js';
 import { formatUnadornedAnswer, requestedUnadornedBulletCount, requestsUnadornedAnswer, unadornedAnswerInstruction } from './answerFormat.js';
 import {prepareSonnetConversation,requestedSonnetReason} from './sonnetApproval.js';
@@ -53,6 +55,7 @@ import {
 } from './validationVerdict.js';
 import {
   classifyBuilderFailure,
+  DEFAULT_BUILDER_BUDGET,
   isRetryableBuilderFailure,
   runBuilderAttempt,
   type BuilderAttemptBudget,
@@ -792,6 +795,7 @@ export async function callBuilderStream(
           async ({ signal, onActivity }) => {
             const completion = await chatCompletionStream(modelId, dispatch.payload.messages as ChatMessage[], {
               maxTokens: opts.maxTokens,
+              maxOutputChars: opts.budget?.maxOutputChars,
               temperature: opts.temperature,
               reasoningMode: opts.reasoningMode,
               responseFormat: opts.responseFormat,
@@ -850,6 +854,40 @@ export async function callBuilderStream(
     }
   }
   throw lastErr ?? new Error('All AI models failed');
+}
+
+async function callWorkspaceAnswer(
+  modelId: ModelId,
+  messages: ChatMessage[],
+  options: Parameters<typeof callBuilderStream>[2],
+  continuation?: { signal?: AbortSignal; evidenceIds?: ReadonlySet<string> },
+): Promise<ChatResult> {
+  const deadline = Date.now() + DEFAULT_BUILDER_BUDGET.generationMs;
+  const budget = options.maxTokens ? { ...options.budget, maxOutputChars: workspaceAnswerOutputChars(modelId, options.maxTokens) } : options.budget;
+  const initial = await callBuilderStream(modelId, messages, { ...options, budget });
+  const model = MODELS[initial.modelId];
+  const remainingMs = deadline - Date.now();
+  if (!continuation || initial.finishReason !== 'length' || !model.maximumOutputTokens ||
+      remainingMs <= 0 || continuation.signal?.aborted) return initial;
+
+  const deadlineSignal = AbortSignal.timeout(remainingMs);
+  const signal = continuation.signal ? AbortSignal.any([deadlineSignal, continuation.signal]) : deadlineSignal;
+  return continueWorkspaceAnswer({
+    initial, messages, signal,
+    maximumOutputTokens: model.maximumOutputTokens,
+    preferredChunkTokens: options.maxTokens ?? 8192,
+    evidenceIds: continuation.evidenceIds,
+    dispatch: (nextMessages, maxTokens) => {
+      const contextRoom = workspaceHistoryCapacity(initial.modelId, 0, nextMessages);
+      const generationMs = deadline - Date.now();
+      if (contextRoom <= 0 || generationMs <= 0 || signal.aborted) return Promise.resolve(undefined);
+      return callBuilderStream(initial.modelId, nextMessages, {
+        ...options, maxTokens: Math.min(maxTokens, contextRoom), signal, onDelta: undefined,
+        budget: { ...budget, generationMs },
+      });
+    },
+    onFailure: error => console.warn('[pipeline] Workspace continuation stopped:', normalizeProviderError(error).safeMessage),
+  });
 }
 
 type ResearchTodoState = 'omit' | 'pending' | 'active' | 'done' | 'skipped';
@@ -987,7 +1025,19 @@ export async function runChatPipeline(opts: {
   const checkQuotaBeforePreparation = () => preflightUsage ??= assertHasQuota(opts.userId);
   if (opts.attachments?.length) await checkQuotaBeforePreparation();
 
-  const prepared = await prepareAttachments(opts.attachments);
+  // Allocate document evidence from the same configured provider context as
+  // the answer. The existing document count, file size, and fetch limits apply.
+  const documentModel = 'deepseek_v4_1_flash_1017' as const;
+  const documentContext = opts.attachments?.length ? workspaceHistoryCapacity(
+    documentModel, MODELS[documentModel].maximumOutputTokens ?? 6144, [
+      { role: 'system', content: DOC_SYSTEM + VISION_SYSTEM + workspaceNativeOpenUiPrompt([], false) },
+      { role: 'user', content: opts.prompt },
+    ],
+  ) : undefined;
+  const prepared = await prepareAttachments(opts.attachments, documentContext === undefined ? undefined : {
+    // Each image consumes context too. Reserve the existing per-image estimate.
+    maxDocumentUtf8Bytes: Math.max(0, documentContext - 4 * 1200) * 3,
+  });
   const hasAttachments = prepared.hasImages || prepared.hasDocuments;
   const answerGoal = opts.goalContract?.semanticIntent;
   const plannedDownload = answerGoal === 'ANSWER' || answerGoal === 'INVESTIGATE'
@@ -995,7 +1045,7 @@ export async function runChatPipeline(opts: {
   const requestedDownload = opts.approvedResearch ? undefined : requestedNativeDocumentFormat(opts.prompt) ?? plannedDownload?.format;
   const downloadSource = requestedDownload === plannedDownload?.format ? plannedDownload?.source : undefined;
   const missingDownloadAttachment = Boolean(requestedDownload && (downloadSource === 'attachment' || nativeDocumentRequiresAttachment(opts.prompt)) &&
-    ((!prepared.images.length && !prepared.documents.length) || !prepared.documents.every(document =>
+    (prepared.documentContextPartial || (!prepared.images.length && !prepared.documents.length) || !prepared.documents.every(document =>
       document.chars > 0 && document.text.trim() && !document.text.startsWith('[DOCX received'))));
   const missingDownloadHistory = Boolean(requestedDownload && (downloadSource === 'conversation' || nativeDocumentRequiresPriorAnswer(opts.prompt))
     && !opts.history?.some(message => message.content.trim()));
@@ -1011,7 +1061,8 @@ export async function runChatPipeline(opts: {
     const prompt = defaultAttachmentPrompt(prepared, opts.prompt);
     const pick = pickAttachmentModel(prompt, prepared);
     const native = usesNativeWorkspacePresentation(pick.modelId);
-    const attachmentSystem = prepared.hasImages ? VISION_SYSTEM : DOC_SYSTEM;
+    const attachmentSystem = (prepared.hasImages ? VISION_SYSTEM : DOC_SYSTEM)
+      + (prepared.documentContextPartial ? '\n\nOnly excerpts of the source documents fit. If missing content affects the request, explain which conclusions are supported and what is unavailable. Do not claim to have read the complete documents.' : '');
     const attachmentPlan = native ? prepareAnswerCoverage(opts.prompt, opts.goalContract?.presentation, opts.goalContract?.answerObligations).plan : [];
     const formats = native ? requiredNativeFormats(opts.prompt) : [];
     const attachmentInstructions = native ? attachmentSystem + '\n\n' + workspaceNativeOpenUiPrompt([...attachmentPlan.map(section => section.kind), ...formats], false)
@@ -1034,16 +1085,21 @@ export async function runChatPipeline(opts: {
         }
       : { role: 'user', content: userText };
 
-    const historyMsgs: ChatMessage[] = (opts.history ?? [])
-      .slice(-8)
-      .map((h) => ({ role: h.role, content: h.content.slice(0, 4000) }));
-
-    const result = await callBuilderStream(
+    const attachmentBudget = {
+      modelId: pick.modelId, prompt: opts.prompt, plan: attachmentPlan,
+      reasoning: 'default' as const, complexity: opts.goalContract?.contextComplexity, requestedDocument: Boolean(requestedDownload),
+      evidenceText: prepared.documentBlock, maximumCostMicroUsd: opts.modelScope?.maximumCostMicroUsd,
+    };
+    const desiredTokens = native
+      ? workspaceAnswerOutputTokens({ ...attachmentBudget, messages: [{ role: 'system', content: system }, userMessage] }) : 6144;
+    const modelMessages = withWorkspaceHistory(readWorkspaceHistory(opts.history), pick.modelId, desiredTokens, system, userMessage);
+    const result = await callWorkspaceAnswer(
       pick.modelId,
-      [{ role: 'system', content: system }, ...historyMsgs, userMessage],
+      modelMessages,
       {
         userId: opts.userId,
-        maxTokens: native ? nativePresentedAnswerMaxTokens(attachmentPlan) : 6144,
+        maxTokens: native ? workspaceAnswerOutputTokens({ ...attachmentBudget, messages: modelMessages }) : desiredTokens,
+        reasoningMode: native ? 'default' : undefined,
         tenantContext:opts.tenantContext,
         databaseProjectId:opts.modelScope?.projectId,modelRunAttempt:opts.modelScope?.runAttempt,modelRepository:opts.modelScope?.repository,
         temperature: 0.35,
@@ -1052,6 +1108,8 @@ export async function runChatPipeline(opts: {
         // The native program is presentation data. Send only settled prose as a text event.
         onDelta: native || unadornedAnswer ? undefined : opts.onDelta,
       },
+      native && !opts.approvedResearch && opts.modelScope?.maximumCostMicroUsd === undefined
+        ? { signal: opts.workspaceSearch?.signal } : undefined,
     );
 
     const usage = await getUsage(opts.userId);
@@ -1121,8 +1179,14 @@ export async function runChatPipeline(opts: {
       const web = await runWebIntelligence({
         userId: opts.userId,
         dispatchScope:{...opts.modelScope!,context:requireTenantContext(opts.tenantContext),userId:opts.userId,connectedAccountId:'platform',
-          researchAnswer:{prompt:opts.prompt,...(opts.history?{history:opts.history.slice(-12).map(h=>({role:h.role,content:h.content.slice(0,8000)}))}:{}),
-            ...(opts.goalContract?{goalContract:opts.goalContract}:{}),...(opts.projectEvidence?{projectEvidence:opts.projectEvidence}:{} )}},
+          researchAnswer:{prompt:opts.prompt,
+            // This snapshot is required only for the one-use legacy research approval.
+            // Automatic Search sends a derived public query and uses full history for synthesis.
+            ...(!opts.workspaceSearch && opts.history
+              ? {history:readWorkspaceHistory(opts.history).slice(-12).map(h=>({role:h.role,content:h.content.slice(0,8000)}))}
+              : {}),
+            ...(opts.goalContract?{goalContract:opts.goalContract}:{}),
+            ...(!opts.workspaceSearch && opts.projectEvidence?{projectEvidence:opts.projectEvidence}:{} )}},
         prompt: opts.prompt,
         workspaceSearch: opts.workspaceSearch,
         decision,
@@ -1176,10 +1240,7 @@ export async function runChatPipeline(opts: {
     };
   }
 
-  const historyMsgs: ChatMessage[] = (opts.history ?? [])
-    .slice(-12)
-    .filter(message => !publicWebRetrieved || !containsCredentialSecretText(message.content))
-    .map((h) => ({ role: h.role, content: h.content.slice(0, 8000) }));
+  const history = readWorkspaceHistory(opts.history);
 
   const promptWithProjectEvidence = opts.projectEvidence
     ? `${opts.prompt}\n\nAuthorized read-only repository evidence:\n${opts.projectEvidence}`
@@ -1234,19 +1295,24 @@ export async function runChatPipeline(opts: {
   const system = currentPublicProductTruth(truthAuthorities) + '\n\n' + instructions
     + (native && unadornedAnswer ? '\n\n' + unadornedAnswerInstruction : '')
     + (native ? downloadInstruction : '');
-  const nativeAnswerBudget = plainNative || directPublicLookup
-    ? Math.max(NATIVE_WORKSPACE_REASONING_RESERVE_TOKENS, presentedAnswerMaxTokens(answerContract.plan))
-    : nativePresentedAnswerMaxTokens(answerContract.plan);
-  const result = await callBuilderStream(
+  const userMessage: ChatMessage = { role: 'user', content: userContent };
+  const answerBudget = {
+    modelId: route.builder, prompt: opts.prompt, plan: answerContract.plan,
+    reasoning: 'default' as const, brief: plainNative || directPublicLookup, complexity: opts.goalContract?.contextComplexity,
+    requestedDocument: Boolean(requestedDownload), evidenceText: researchBlock,
+    maximumCostMicroUsd: opts.modelScope?.maximumCostMicroUsd,
+  };
+  const desiredTokens = native
+    ? workspaceAnswerOutputTokens({ ...answerBudget, messages: [{ role: 'system', content: system }, userMessage] })
+    : opts.approvedResearch ? 4096 : route.kind === 'research' ? researchAnswerMaxTokens(opts.prompt) : presentedAnswerMaxTokens(answerContract.plan);
+  const modelMessages = withWorkspaceHistory(history, route.builder, desiredTokens, system, userMessage);
+  const maxTokens = native ? workspaceAnswerOutputTokens({ ...answerBudget, messages: modelMessages }) : desiredTokens;
+  const result = await callWorkspaceAnswer(
     route.builder,
-    [{ role: 'system', content: system }, ...historyMsgs, { role: 'user', content: userContent }],
+    modelMessages,
     {
       userId: opts.userId,
-      // Detailed Workspace answers need room for both reasoning and finished content.
-      maxTokens: native ? nativeAnswerBudget
-        : opts.approvedResearch ? 4096 : route.kind === 'research'
-        ? researchAnswerMaxTokens(opts.prompt)
-        : presentedAnswerMaxTokens(answerContract.plan),
+      maxTokens,
       reasoningMode: native ? 'default' : 'none',
       responseFormat: format,
       tenantContext:opts.tenantContext,
@@ -1264,6 +1330,8 @@ export async function runChatPipeline(opts: {
         : projection ? delta => { const visible = projection.append(delta); if (visible) opts.onDelta?.(visible); }
         : unadornedAnswer ? undefined : opts.onDelta,
     },
+    native && !opts.approvedResearch && opts.modelScope?.maximumCostMicroUsd === undefined
+      ? { signal: opts.workspaceSearch?.signal, evidenceIds } : undefined,
   ).catch(error => {
     if (!publicWebRetrieved || isTerminalModelFailure(error)) throw error;
     console.warn('[pipeline] public research answer unavailable:', normalizeProviderError(error).safeMessage);

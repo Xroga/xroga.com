@@ -290,7 +290,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.egress.test.ts",
-      "sha256": "34bd84f5aacee796d3dfa2ff83cfd227a24c41d19fc50c4c51abf88fd6e80a46",
+      "sha256": "93218ae8d9afe1fcad18e81ccde3773f09ce1f1ccdda936f7551d44d1aa6d9c0",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/openaiCompat.egress.test.ts",
         "sha256": "649092d8bd97b3fed5a12305399a7d577b2c1b4a35ac3e952149cf6a5f834e0a"
@@ -302,7 +302,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "c68442eb8d29d7aaa6d1ccbbfbff9c33e3d40701cd2254e689fee0d40fee2d4d",
+      "sha256": "7d12d2d3228381d13417bf67f32a31af2bb6fc28e372b5d322896af08d214eda",
       "previousGenericSdkBinding": {
         "sha256": "0a418cef1bdbdadb77f14288c4298990900a111fbc0def0050756a9b146914ca",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -322,7 +322,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "0e677977a9694594593757dbe07d775d8758f2086712db66a84b04afb536603e",
+      "sha256": "7dffb027f1d7515746c18fdf89142c6d741abe9e0e8ac11f301863d47163664a",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -745,7 +745,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "ff905aa7ee83ab5e01e852d9e845ea3e437113d48b74cafd422e5c957a0f4015",
+      "sha256": "374cd50c687e90cc0035cd985da340336a2cd05cbd35dbf728170c386feeeff3",
       "beforeTxtDownloadRoutingSha256": "450d77c6f89e9334ef2345d316895580732bda5b614ad3d87d42f4d4643f75fa",
       "beforeInlineCalculatorRoutingSha256": "58e3fa0ea9ec46ed2aa0be0c7aa6ca0777c213059c12f3cd6ecf04a6a2ab6e29",
       "beforePlannerCompletionDiagnosticsSha256": "6ca81b0c9234195e6159d1e03735a21ce50d50cf1e8f71b53cb62199bf95cb26",

@@ -1,4 +1,5 @@
 import { NATIVE_SHARE_PREFIX, readNativeOpenUiShare, readNativeOpenUiShareText } from '../ai/nativeOpenUiShare.js';
+import { MAX_SHARED_RESPONSE_CHARS } from './messageShareLimits.js';
 
 const PREFIX = 'XROGA_RESPONSE_V2\n';
 
@@ -11,7 +12,7 @@ export function projectRichShare(value: string): { response: string; richRespons
     return native ? { response: native.text, richResponse: value }
       : { response: readNativeOpenUiShareText(value) ?? 'The shared answer has no readable text.', richUnavailable: true };
   }
-  if (!value.startsWith(PREFIX) || value.length > 100_000) return { response: value };
+  if (!value.startsWith(PREFIX) || value.length > MAX_SHARED_RESPONSE_CHARS) return { response: value };
   try {
     const data = JSON.parse(value.slice(PREFIX.length));
     if (data?.version === 2 && typeof data.text === 'string' && data.text.length > 0 && data.document?.version === 2 && Array.isArray(data.document.nodes)) {

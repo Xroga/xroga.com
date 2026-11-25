@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a0d010af707b41d051b31a28508c707375406ac7",
+  "source_sha": "7eac1d713544758b0cf4eede5df60ca953670128",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17004,7 +17004,7 @@
     },
     {
       "path": "backend/src/ai/attachments.ts",
-      "sha256": "b1c7911aa41d59bfcc1e57f6925a4c705548787cdb81aba14100e78fe5432f45"
+      "sha256": "1ef2126f5419e5a1b68c153efaa9a15b30f7e1d20d1211f2c1714517bfe0fb9a"
     },
     {
       "path": "backend/src/ai/benchmarkExecutor.ts",
@@ -17248,7 +17248,7 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "sha256": "901a9eaf9253a042659bc440edb8c79cfe7d1b4b30ae9d7ce839c09c74ae3645"
+      "sha256": "b739c16d4125b99526b8712ef3e7ac93bae7f6132180dbbec55d7008708a63a3"
     },
     {
       "path": "backend/src/ai/nativeDiagramTopology.ts",
@@ -17256,7 +17256,7 @@
     },
     {
       "path": "backend/src/ai/nativeDocumentDownload.ts",
-      "sha256": "6409db7b4cff4d88eb57088c0133d47b3a60a33c351358d56abfa6940ed7af76"
+      "sha256": "b2d0bd0336ca69884b0f374f718a888ae806c1bfa579105a5a7b98289bf29ade"
     },
     {
       "path": "backend/src/ai/nativeMarkdown.ts",
@@ -17296,7 +17296,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiShare.ts",
-      "sha256": "cb215e4f78f8984ac8ac31f0812724a0a859e9bbef65b24348cbcb3966ca9e12"
+      "sha256": "18777a104a3e21588618f8461a79e91aca54c32de7e4e043089f4cb18c4ffd82"
     },
     {
       "path": "backend/src/ai/nativeOpenUiValues.ts",
@@ -17308,7 +17308,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "c68442eb8d29d7aaa6d1ccbbfbff9c33e3d40701cd2254e689fee0d40fee2d4d"
+      "sha256": "7d12d2d3228381d13417bf67f32a31af2bb6fc28e372b5d322896af08d214eda"
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
@@ -17336,7 +17336,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "0e677977a9694594593757dbe07d775d8758f2086712db66a84b04afb536603e"
+      "sha256": "7dffb027f1d7515746c18fdf89142c6d741abe9e0e8ac11f301863d47163664a"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -17680,11 +17680,11 @@
     },
     {
       "path": "backend/src/ai/universal/semanticHistory.ts",
-      "sha256": "7d31d0a9d9d3b6a7eee25b0e8b4fe8f7bf6c620b0a07b6d3a9798a6ff21ea903"
+      "sha256": "60bcabd9fb155c36db8c6e9ee5d8a4413cdfd4512654d4c3cf7baaa5cbe11e70"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "ff905aa7ee83ab5e01e852d9e845ea3e437113d48b74cafd422e5c957a0f4015"
+      "sha256": "374cd50c687e90cc0035cd985da340336a2cd05cbd35dbf728170c386feeeff3"
     },
     {
       "path": "backend/src/ai/usageAccounting.ts",
@@ -17713,6 +17713,18 @@
     {
       "path": "backend/src/ai/webBudget.ts",
       "sha256": "0970dd0edfcf52dfd97e0ce6b7397d8be00777491d2dcffb29a0baf864738d2d"
+    },
+    {
+      "path": "backend/src/ai/workspaceAnswerBudget.ts",
+      "sha256": "dc32690215a56c2cf18edc1675197b7c7655ec15a0d16611362eb41d25c16c7f"
+    },
+    {
+      "path": "backend/src/ai/workspaceAnswerContinuation.ts",
+      "sha256": "cfd6674d4cffd27ac8f02ba229c425e82de53bc716fa803f293fc816feedfd5c"
+    },
+    {
+      "path": "backend/src/ai/workspaceConversation.ts",
+      "sha256": "c58391773aad383db2fac2add4e4ce8c799b1bc2124fe461937a71ee773ce65b"
     },
     {
       "path": "backend/src/ai/workspacePublicSearch.ts",
@@ -18343,6 +18355,10 @@
       "sha256": "c9f93d413f86935e669ab5934337e708af8d10a08c52eb7606ddebf901b3d391"
     },
     {
+      "path": "backend/src/lib/messageShareLimits.ts",
+      "sha256": "8c6acccdb08f260dedabb782abe47ee35517bb460fa6dced693fb00d955a0524"
+    },
+    {
       "path": "backend/src/lib/messageShareText.ts",
       "sha256": "e443e6f1bc83a8b4f2bf8b95a1f91bc260439145dc6164277620e5d63f0d05e8"
     },
@@ -18416,7 +18432,7 @@
     },
     {
       "path": "backend/src/lib/richShareSnapshot.ts",
-      "sha256": "7a3d0ab309cb6ab6e0340fc0e1a51737f0315b50620c67e2c1deedda8f657e76"
+      "sha256": "e6c07e79e6b756afb78d1162c5f7adee8c56dfcb128873ab2cf9f07feb323d3d"
     },
     {
       "path": "backend/src/lib/runway.ts",
@@ -18804,7 +18820,7 @@
     },
     {
       "path": "backend/src/routes/messageShares.ts",
-      "sha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1"
+      "sha256": "1a4a4f088a831a511bd81d1f117f24f738c73b2dec0f8ca2e41b49127227a954"
     },
     {
       "path": "backend/src/routes/nativeOpenUiEvaluation.ts",
@@ -18820,7 +18836,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sha256": "6f3c8a5367b3c97fc86685492ba3fc7e0b1424f1b61bec8cfd7d453711c01bfe"
+      "sha256": "91f74671061715c1c154a7ca1ad308fe30ab40d80fc6c4cb545f39ba74442c9b"
     },
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
@@ -20908,7 +20924,7 @@
     },
     {
       "path": "frontend/src/app/share/[token]/page.tsx",
-      "sha256": "e3b120e75bfa476fb753973446dc0150c1607cb86ddb9e7b0a3e50f45d7ac294"
+      "sha256": "e887643e9b160af5ec7c83358136498ed1794c59443f7f863800a4425f46e56d"
     },
     {
       "path": "frontend/src/app/showcase/[slug]/page.tsx",
@@ -22856,7 +22872,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/shareSnapshot.ts",
-      "sha256": "0e12591dd36b84dfa2dabf3364775d8b3d9994448be95876a687e06928324f6b"
+      "sha256": "6faa40952a57fbe7a1fe64864fa309d83e8256629a47726244dc1a4b555c8eb7"
     },
     {
       "path": "frontend/src/components/response-experience-v2/sourceRegistry.ts",
@@ -23612,7 +23628,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "62fb9c922f434f413d8d71456a3de6eeb4083a4a0c89f14e8ca13cdeacc069d6"
+      "sha256": "0a7ef8e4de121bcd6beb203b6c8e004ad103dac4aadaa2da28455c72c76032ab"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -23752,7 +23768,7 @@
     },
     {
       "path": "frontend/src/lib/chatHistory.ts",
-      "sha256": "19f55a10d724e737a8c65de8906bb6466b1b5a092e5b984d34a93352b6edfe18"
+      "sha256": "afc45d8d680f1156af25c095eff2c2ada41e26c8c142cb1acab3cbf8d6d0c96e"
     },
     {
       "path": "frontend/src/lib/chatMemory.ts",
@@ -24416,7 +24432,7 @@
     },
     {
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "sha256": "82d805caf300911a8cc4b30603510069d83f351c14e9682f48c25d4da3468c63"
+      "sha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
       "path": "frontend/src/lib/sidebarProjectTask.ts",
@@ -24890,51 +24906,7 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "line": 331,
-      "expression": "keys.modelId",
-      "status": "RESOLVED_FINITE_CATALOG",
-      "names": [
-        "DEEPSEEK_FLASH_CONTEXT_WINDOW",
-        "DEEPSEEK_FLASH_INPUT_USD_PER_1M",
-        "DEEPSEEK_FLASH_MODEL_ID",
-        "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
-        "GLM_5_3_CONTEXT_WINDOW",
-        "GLM_5_3_FLASH_CONTEXT_WINDOW",
-        "GLM_5_3_FLASH_INPUT_USD_PER_1M",
-        "GLM_5_3_FLASH_MODEL_ID",
-        "GLM_5_3_FLASH_OUTPUT_USD_PER_1M",
-        "GLM_5_3_INPUT_USD_PER_1M",
-        "GLM_5_3_MODEL_ID",
-        "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
-        "KIMI_API_KEY",
-        "KIMI_CONTEXT_WINDOW",
-        "KIMI_INPUT_USD_PER_1M",
-        "KIMI_MODEL_ID",
-        "KIMI_OUTPUT_USD_PER_1M",
-        "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY",
-        "ZURELAY_API_KEY",
-        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
-        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
-        "ZURELAY_DEEPSEEK_MODEL_ID",
-        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M",
-        "ZURELAY_DEEPSEEK_VISION_VERIFIED",
-        "ZURELAY_SONNET_CONTEXT_WINDOW",
-        "ZURELAY_SONNET_INPUT_USD_PER_1M",
-        "ZURELAY_SONNET_MODEL_ID",
-        "ZURELAY_SONNET_OUTPUT_USD_PER_1M",
-        "ZURELAY_SONNET_VISION_VERIFIED"
-      ],
-      "evidence_sources": [
-        "backend/src/ai/models.ts",
-        "backend/src/ai/providerCostTiers.ts"
-      ],
-      "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
-    },
-    {
-      "path": "backend/src/ai/models.ts",
-      "line": 331,
+      "line": 334,
       "expression": "keys.modelId",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -25022,183 +24994,7 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "line": 335,
-      "expression": "keys.inputPrice",
-      "status": "RESOLVED_FINITE_CATALOG",
-      "names": [
-        "DEEPSEEK_FLASH_CONTEXT_WINDOW",
-        "DEEPSEEK_FLASH_INPUT_USD_PER_1M",
-        "DEEPSEEK_FLASH_MODEL_ID",
-        "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
-        "GLM_5_3_CONTEXT_WINDOW",
-        "GLM_5_3_FLASH_CONTEXT_WINDOW",
-        "GLM_5_3_FLASH_INPUT_USD_PER_1M",
-        "GLM_5_3_FLASH_MODEL_ID",
-        "GLM_5_3_FLASH_OUTPUT_USD_PER_1M",
-        "GLM_5_3_INPUT_USD_PER_1M",
-        "GLM_5_3_MODEL_ID",
-        "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
-        "KIMI_API_KEY",
-        "KIMI_CONTEXT_WINDOW",
-        "KIMI_INPUT_USD_PER_1M",
-        "KIMI_MODEL_ID",
-        "KIMI_OUTPUT_USD_PER_1M",
-        "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY",
-        "ZURELAY_API_KEY",
-        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
-        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
-        "ZURELAY_DEEPSEEK_MODEL_ID",
-        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M",
-        "ZURELAY_DEEPSEEK_VISION_VERIFIED",
-        "ZURELAY_SONNET_CONTEXT_WINDOW",
-        "ZURELAY_SONNET_INPUT_USD_PER_1M",
-        "ZURELAY_SONNET_MODEL_ID",
-        "ZURELAY_SONNET_OUTPUT_USD_PER_1M",
-        "ZURELAY_SONNET_VISION_VERIFIED"
-      ],
-      "evidence_sources": [
-        "backend/src/ai/models.ts",
-        "backend/src/ai/providerCostTiers.ts"
-      ],
-      "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
-    },
-    {
-      "path": "backend/src/ai/models.ts",
-      "line": 336,
-      "expression": "keys.outputPrice",
-      "status": "RESOLVED_FINITE_CATALOG",
-      "names": [
-        "DEEPSEEK_FLASH_CONTEXT_WINDOW",
-        "DEEPSEEK_FLASH_INPUT_USD_PER_1M",
-        "DEEPSEEK_FLASH_MODEL_ID",
-        "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
-        "GLM_5_3_CONTEXT_WINDOW",
-        "GLM_5_3_FLASH_CONTEXT_WINDOW",
-        "GLM_5_3_FLASH_INPUT_USD_PER_1M",
-        "GLM_5_3_FLASH_MODEL_ID",
-        "GLM_5_3_FLASH_OUTPUT_USD_PER_1M",
-        "GLM_5_3_INPUT_USD_PER_1M",
-        "GLM_5_3_MODEL_ID",
-        "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
-        "KIMI_API_KEY",
-        "KIMI_CONTEXT_WINDOW",
-        "KIMI_INPUT_USD_PER_1M",
-        "KIMI_MODEL_ID",
-        "KIMI_OUTPUT_USD_PER_1M",
-        "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY",
-        "ZURELAY_API_KEY",
-        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
-        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
-        "ZURELAY_DEEPSEEK_MODEL_ID",
-        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M",
-        "ZURELAY_DEEPSEEK_VISION_VERIFIED",
-        "ZURELAY_SONNET_CONTEXT_WINDOW",
-        "ZURELAY_SONNET_INPUT_USD_PER_1M",
-        "ZURELAY_SONNET_MODEL_ID",
-        "ZURELAY_SONNET_OUTPUT_USD_PER_1M",
-        "ZURELAY_SONNET_VISION_VERIFIED"
-      ],
-      "evidence_sources": [
-        "backend/src/ai/models.ts",
-        "backend/src/ai/providerCostTiers.ts"
-      ],
-      "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
-    },
-    {
-      "path": "backend/src/ai/models.ts",
-      "line": 338,
-      "expression": "keys.contextWindow",
-      "status": "RESOLVED_FINITE_CATALOG",
-      "names": [
-        "DEEPSEEK_FLASH_CONTEXT_WINDOW",
-        "DEEPSEEK_FLASH_INPUT_USD_PER_1M",
-        "DEEPSEEK_FLASH_MODEL_ID",
-        "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
-        "GLM_5_3_CONTEXT_WINDOW",
-        "GLM_5_3_FLASH_CONTEXT_WINDOW",
-        "GLM_5_3_FLASH_INPUT_USD_PER_1M",
-        "GLM_5_3_FLASH_MODEL_ID",
-        "GLM_5_3_FLASH_OUTPUT_USD_PER_1M",
-        "GLM_5_3_INPUT_USD_PER_1M",
-        "GLM_5_3_MODEL_ID",
-        "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
-        "KIMI_API_KEY",
-        "KIMI_CONTEXT_WINDOW",
-        "KIMI_INPUT_USD_PER_1M",
-        "KIMI_MODEL_ID",
-        "KIMI_OUTPUT_USD_PER_1M",
-        "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY",
-        "ZURELAY_API_KEY",
-        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
-        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
-        "ZURELAY_DEEPSEEK_MODEL_ID",
-        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M",
-        "ZURELAY_DEEPSEEK_VISION_VERIFIED",
-        "ZURELAY_SONNET_CONTEXT_WINDOW",
-        "ZURELAY_SONNET_INPUT_USD_PER_1M",
-        "ZURELAY_SONNET_MODEL_ID",
-        "ZURELAY_SONNET_OUTPUT_USD_PER_1M",
-        "ZURELAY_SONNET_VISION_VERIFIED"
-      ],
-      "evidence_sources": [
-        "backend/src/ai/models.ts",
-        "backend/src/ai/providerCostTiers.ts"
-      ],
-      "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
-    },
-    {
-      "path": "backend/src/ai/models.ts",
-      "line": 348,
-      "expression": "def.imagesEnv",
-      "status": "RESOLVED_FINITE_CATALOG",
-      "names": [
-        "DEEPSEEK_FLASH_CONTEXT_WINDOW",
-        "DEEPSEEK_FLASH_INPUT_USD_PER_1M",
-        "DEEPSEEK_FLASH_MODEL_ID",
-        "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
-        "GLM_5_3_CONTEXT_WINDOW",
-        "GLM_5_3_FLASH_CONTEXT_WINDOW",
-        "GLM_5_3_FLASH_INPUT_USD_PER_1M",
-        "GLM_5_3_FLASH_MODEL_ID",
-        "GLM_5_3_FLASH_OUTPUT_USD_PER_1M",
-        "GLM_5_3_INPUT_USD_PER_1M",
-        "GLM_5_3_MODEL_ID",
-        "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
-        "KIMI_API_KEY",
-        "KIMI_CONTEXT_WINDOW",
-        "KIMI_INPUT_USD_PER_1M",
-        "KIMI_MODEL_ID",
-        "KIMI_OUTPUT_USD_PER_1M",
-        "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY",
-        "ZURELAY_API_KEY",
-        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
-        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
-        "ZURELAY_DEEPSEEK_MODEL_ID",
-        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M",
-        "ZURELAY_DEEPSEEK_VISION_VERIFIED",
-        "ZURELAY_SONNET_CONTEXT_WINDOW",
-        "ZURELAY_SONNET_INPUT_USD_PER_1M",
-        "ZURELAY_SONNET_MODEL_ID",
-        "ZURELAY_SONNET_OUTPUT_USD_PER_1M",
-        "ZURELAY_SONNET_VISION_VERIFIED"
-      ],
-      "evidence_sources": [
-        "backend/src/ai/models.ts",
-        "backend/src/ai/providerCostTiers.ts"
-      ],
-      "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
-    },
-    {
-      "path": "backend/src/ai/models.ts",
-      "line": 363,
+      "line": 337,
       "expression": "keys.modelId",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -25242,7 +25038,7 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "line": 367,
+      "line": 338,
       "expression": "keys.inputPrice",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -25286,7 +25082,7 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "line": 368,
+      "line": 339,
       "expression": "keys.outputPrice",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -25330,7 +25126,227 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "line": 369,
+      "line": 341,
+      "expression": "keys.contextWindow",
+      "status": "RESOLVED_FINITE_CATALOG",
+      "names": [
+        "DEEPSEEK_FLASH_CONTEXT_WINDOW",
+        "DEEPSEEK_FLASH_INPUT_USD_PER_1M",
+        "DEEPSEEK_FLASH_MODEL_ID",
+        "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_INPUT_USD_PER_1M",
+        "GLM_5_3_FLASH_MODEL_ID",
+        "GLM_5_3_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_INPUT_USD_PER_1M",
+        "GLM_5_3_MODEL_ID",
+        "GLM_5_3_OUTPUT_USD_PER_1M",
+        "GLM_API_KEY",
+        "KIMI_API_KEY",
+        "KIMI_CONTEXT_WINDOW",
+        "KIMI_INPUT_USD_PER_1M",
+        "KIMI_MODEL_ID",
+        "KIMI_OUTPUT_USD_PER_1M",
+        "KIMI_VISION_ENABLED",
+        "OPENROUTER_API_KEY",
+        "ZURELAY_API_KEY",
+        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
+        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_MODEL_ID",
+        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_VISION_VERIFIED",
+        "ZURELAY_SONNET_CONTEXT_WINDOW",
+        "ZURELAY_SONNET_INPUT_USD_PER_1M",
+        "ZURELAY_SONNET_MODEL_ID",
+        "ZURELAY_SONNET_OUTPUT_USD_PER_1M",
+        "ZURELAY_SONNET_VISION_VERIFIED"
+      ],
+      "evidence_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerCostTiers.ts"
+      ],
+      "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
+    },
+    {
+      "path": "backend/src/ai/models.ts",
+      "line": 351,
+      "expression": "def.imagesEnv",
+      "status": "RESOLVED_FINITE_CATALOG",
+      "names": [
+        "DEEPSEEK_FLASH_CONTEXT_WINDOW",
+        "DEEPSEEK_FLASH_INPUT_USD_PER_1M",
+        "DEEPSEEK_FLASH_MODEL_ID",
+        "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_INPUT_USD_PER_1M",
+        "GLM_5_3_FLASH_MODEL_ID",
+        "GLM_5_3_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_INPUT_USD_PER_1M",
+        "GLM_5_3_MODEL_ID",
+        "GLM_5_3_OUTPUT_USD_PER_1M",
+        "GLM_API_KEY",
+        "KIMI_API_KEY",
+        "KIMI_CONTEXT_WINDOW",
+        "KIMI_INPUT_USD_PER_1M",
+        "KIMI_MODEL_ID",
+        "KIMI_OUTPUT_USD_PER_1M",
+        "KIMI_VISION_ENABLED",
+        "OPENROUTER_API_KEY",
+        "ZURELAY_API_KEY",
+        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
+        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_MODEL_ID",
+        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_VISION_VERIFIED",
+        "ZURELAY_SONNET_CONTEXT_WINDOW",
+        "ZURELAY_SONNET_INPUT_USD_PER_1M",
+        "ZURELAY_SONNET_MODEL_ID",
+        "ZURELAY_SONNET_OUTPUT_USD_PER_1M",
+        "ZURELAY_SONNET_VISION_VERIFIED"
+      ],
+      "evidence_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerCostTiers.ts"
+      ],
+      "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
+    },
+    {
+      "path": "backend/src/ai/models.ts",
+      "line": 366,
+      "expression": "keys.modelId",
+      "status": "RESOLVED_FINITE_CATALOG",
+      "names": [
+        "DEEPSEEK_FLASH_CONTEXT_WINDOW",
+        "DEEPSEEK_FLASH_INPUT_USD_PER_1M",
+        "DEEPSEEK_FLASH_MODEL_ID",
+        "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_INPUT_USD_PER_1M",
+        "GLM_5_3_FLASH_MODEL_ID",
+        "GLM_5_3_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_INPUT_USD_PER_1M",
+        "GLM_5_3_MODEL_ID",
+        "GLM_5_3_OUTPUT_USD_PER_1M",
+        "GLM_API_KEY",
+        "KIMI_API_KEY",
+        "KIMI_CONTEXT_WINDOW",
+        "KIMI_INPUT_USD_PER_1M",
+        "KIMI_MODEL_ID",
+        "KIMI_OUTPUT_USD_PER_1M",
+        "KIMI_VISION_ENABLED",
+        "OPENROUTER_API_KEY",
+        "ZURELAY_API_KEY",
+        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
+        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_MODEL_ID",
+        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_VISION_VERIFIED",
+        "ZURELAY_SONNET_CONTEXT_WINDOW",
+        "ZURELAY_SONNET_INPUT_USD_PER_1M",
+        "ZURELAY_SONNET_MODEL_ID",
+        "ZURELAY_SONNET_OUTPUT_USD_PER_1M",
+        "ZURELAY_SONNET_VISION_VERIFIED"
+      ],
+      "evidence_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerCostTiers.ts"
+      ],
+      "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
+    },
+    {
+      "path": "backend/src/ai/models.ts",
+      "line": 370,
+      "expression": "keys.inputPrice",
+      "status": "RESOLVED_FINITE_CATALOG",
+      "names": [
+        "DEEPSEEK_FLASH_CONTEXT_WINDOW",
+        "DEEPSEEK_FLASH_INPUT_USD_PER_1M",
+        "DEEPSEEK_FLASH_MODEL_ID",
+        "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_INPUT_USD_PER_1M",
+        "GLM_5_3_FLASH_MODEL_ID",
+        "GLM_5_3_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_INPUT_USD_PER_1M",
+        "GLM_5_3_MODEL_ID",
+        "GLM_5_3_OUTPUT_USD_PER_1M",
+        "GLM_API_KEY",
+        "KIMI_API_KEY",
+        "KIMI_CONTEXT_WINDOW",
+        "KIMI_INPUT_USD_PER_1M",
+        "KIMI_MODEL_ID",
+        "KIMI_OUTPUT_USD_PER_1M",
+        "KIMI_VISION_ENABLED",
+        "OPENROUTER_API_KEY",
+        "ZURELAY_API_KEY",
+        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
+        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_MODEL_ID",
+        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_VISION_VERIFIED",
+        "ZURELAY_SONNET_CONTEXT_WINDOW",
+        "ZURELAY_SONNET_INPUT_USD_PER_1M",
+        "ZURELAY_SONNET_MODEL_ID",
+        "ZURELAY_SONNET_OUTPUT_USD_PER_1M",
+        "ZURELAY_SONNET_VISION_VERIFIED"
+      ],
+      "evidence_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerCostTiers.ts"
+      ],
+      "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
+    },
+    {
+      "path": "backend/src/ai/models.ts",
+      "line": 371,
+      "expression": "keys.outputPrice",
+      "status": "RESOLVED_FINITE_CATALOG",
+      "names": [
+        "DEEPSEEK_FLASH_CONTEXT_WINDOW",
+        "DEEPSEEK_FLASH_INPUT_USD_PER_1M",
+        "DEEPSEEK_FLASH_MODEL_ID",
+        "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_INPUT_USD_PER_1M",
+        "GLM_5_3_FLASH_MODEL_ID",
+        "GLM_5_3_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_INPUT_USD_PER_1M",
+        "GLM_5_3_MODEL_ID",
+        "GLM_5_3_OUTPUT_USD_PER_1M",
+        "GLM_API_KEY",
+        "KIMI_API_KEY",
+        "KIMI_CONTEXT_WINDOW",
+        "KIMI_INPUT_USD_PER_1M",
+        "KIMI_MODEL_ID",
+        "KIMI_OUTPUT_USD_PER_1M",
+        "KIMI_VISION_ENABLED",
+        "OPENROUTER_API_KEY",
+        "ZURELAY_API_KEY",
+        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
+        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_MODEL_ID",
+        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_VISION_VERIFIED",
+        "ZURELAY_SONNET_CONTEXT_WINDOW",
+        "ZURELAY_SONNET_INPUT_USD_PER_1M",
+        "ZURELAY_SONNET_MODEL_ID",
+        "ZURELAY_SONNET_OUTPUT_USD_PER_1M",
+        "ZURELAY_SONNET_VISION_VERIFIED"
+      ],
+      "evidence_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerCostTiers.ts"
+      ],
+      "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
+    },
+    {
+      "path": "backend/src/ai/models.ts",
+      "line": 372,
       "expression": "keys.contextWindow",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -25973,35 +25989,35 @@
       "hostname": "openrouter.ai",
       "protocol": "https:",
       "path": "backend/src/ai/models.ts",
-      "line": 76,
+      "line": 78,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.moonshot.ai",
       "protocol": "https:",
       "path": "backend/src/ai/models.ts",
-      "line": 111,
+      "line": 114,
       "credentialsInUrl": false
     },
     {
       "hostname": "open.bigmodel.cn",
       "protocol": "https:",
       "path": "backend/src/ai/models.ts",
-      "line": 134,
+      "line": 137,
       "credentialsInUrl": false
     },
     {
       "hostname": "open.bigmodel.cn",
       "protocol": "https:",
       "path": "backend/src/ai/models.ts",
-      "line": 165,
+      "line": 168,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4239,
+      "line": 4307,
       "credentialsInUrl": false
     },
     {
@@ -26799,7 +26815,7 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/phase1.ts",
-      "line": 180,
+      "line": 179,
       "credentialsInUrl": false
     },
     {
@@ -30796,7 +30812,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4096,
+      "line": 4080,
       "credentialsInUrl": false
     },
     {
@@ -33197,14 +33213,14 @@
     },
     {
       "path": "backend/src/ai/nativeDocumentDownload.ts",
-      "line": 136,
+      "line": 155,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/nativeDocumentDownload.ts",
-      "line": 140,
+      "line": 159,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -33911,70 +33927,70 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 544,
+      "line": 547,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 574,
+      "line": 577,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 769,
+      "line": 772,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1205,
+      "line": 1266,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1209,
+      "line": 1270,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1694,
+      "line": 1762,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2446,
+      "line": 2514,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4005,
+      "line": 4073,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4189,
+      "line": 4257,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4968,
+      "line": 5036,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -34786,70 +34802,84 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 172,
+      "line": 174,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 194,
+      "line": 196,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 279,
+      "line": 281,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 296,
+      "line": 298,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 339,
+      "line": 341,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 352,
+      "line": 354,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1192,
+      "line": 1194,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1251,
+      "line": 1253,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1329,
+      "line": 1331,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1658,
+      "line": 1648,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/workspaceConversation.ts",
+      "line": 70,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/workspaceConversation.ts",
+      "line": 71,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

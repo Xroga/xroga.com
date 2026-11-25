@@ -15,14 +15,14 @@ export interface CompletedChatHistoryTurn {
  */
 export function buildCompletedChatHistory(
   messages: ChatHistoryMessage[],
-  limit = 10,
+  limit?: number,
 ): CompletedChatHistoryTurn[] {
   const completed: CompletedChatHistoryTurn[] = [];
   let pendingUser: CompletedChatHistoryTurn | null = null;
 
   for (const message of messages) {
-    const content = message.content?.trim();
-    if (!content) continue;
+    const content = message.content;
+    if (!content?.trim()) continue;
     if (message.role === 'user') {
       pendingUser = { role: 'user', content };
       continue;
@@ -33,5 +33,7 @@ export function buildCompletedChatHistory(
     }
   }
 
-  return completed.slice(-Math.max(0, limit));
+  if (limit === undefined) return completed;
+  const pairedLimit = Math.max(0, Math.floor(limit / 2) * 2);
+  return pairedLimit ? completed.slice(-pairedLimit) : [];
 }

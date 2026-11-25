@@ -1,17 +1,17 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "0f6e9a3b19a50d495c97a06c5987bbf6e415ca4d764a34d00c2e7ee542c89e47",
+  "reviewRegistrySha256": "be75532ccf76111bbb1a9d3dbc30520429ec0bf3c9898c1094aea58bbac1cd19",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 231,
-    "persistenceCandidates": 1032,
+    "persistenceCandidates": 1033,
     "ownerPredicateCandidates": 275,
     "reviewRequired": 174,
-    "reviewedCandidates": 858,
+    "reviewedCandidates": 859,
     "unresolvedSafetyCandidates": 224,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
@@ -20,7 +20,7 @@
     "REVIEW_REQUIRED": 174,
     "SCOPED_BOUNDARY": 547,
     "NARROW_EXCEPTION": 52,
-    "NOT_PERSISTENCE": 209,
+    "NOT_PERSISTENCE": 210,
     "REVIEWED_GAP": 50
   },
   "acceptance": {
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 78,
-    "unresolvedCandidateBoundaries": 954,
+    "unresolvedCandidateBoundaries": 955,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3836,15 +3836,19 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "097f3b056977288927ab"
+        "id": "d937b1aa189d5483adad"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a014c3fc158d8544965e"
+        "id": "c376d98ecbfc71d8162f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6dad3dd6bb66b6180fa5"
+        "id": "3285e905ea4ed30d80e9"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "6e8a63b59e7b39a8416b"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3936,11 +3940,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "495ab85f04a68bc33426"
+        "id": "6c6507960ba2878b2964"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "7706648756b244b0e84c"
+        "id": "8c5d1b1d7152566f1597"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4876,27 +4880,27 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "c9a009f6baa9e3a3bbad"
+        "id": "8818c8c645ed42bdfcbd"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "000d28d21ea7dba70f24"
+        "id": "fa1aab99a735dd6afc1d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "db7f2c7b53d05936f3da"
+        "id": "7428c9a89d68c23b5ba1"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ea4d7ecf3043636a2883"
+        "id": "f7eea7c47f4cea00af8d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "2f60349dbbab02755103"
+        "id": "c0f7d9498ea3443e4221"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "c4dcd4d97035ff02f08f"
+        "id": "087a268e5f0ee8649cdc"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4968,7 +4972,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "dbf2b5a720f5ae54b672"
+        "id": "ff119993d08c76a18c1b"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6536,7 +6540,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "79e341a43e965b1352ab"
+        "id": "0b45ceb87eaba1f8e1e0"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6668,51 +6672,51 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "8973121161d19ea3c172"
+        "id": "6b27200f9f128b123f15"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "8326e8adee7d06a2cd43"
+        "id": "87c71cabcdec8938fafd"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "2bbe88d275cb477736b5"
+        "id": "ba2c766fc88f5cf799ab"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "9de9b81bc83c876cda99"
+        "id": "9c51456d8b54db3a797a"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "de73d726c79e251139de"
+        "id": "2fe7d6185df0d5da8fac"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "1f258da9b98396dc7ed5"
+        "id": "a87d571c0816bf6f485e"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "89525cd22beb8d9aa178"
+        "id": "15381d9f908267a47734"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6975135e78feae6bbd05"
+        "id": "1e36d1014c0261f853dc"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "4a923ee6933ccb1d9913"
+        "id": "54bdc8896efa58ffef15"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "8401a3bc03f971f9dd2a"
+        "id": "c3c90fe76d5abf1a3cf7"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "fe517ddbbf4d776a0639"
+        "id": "3dfd497409a274a2b4a3"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "7dc518b5b8c8ae925d9b"
+        "id": "1d3e01a9bd429bf29ed5"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7484,7 +7488,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "79e341a43e965b1352ab"
+        "id": "0b45ceb87eaba1f8e1e0"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7572,51 +7576,51 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "8973121161d19ea3c172"
+        "id": "6b27200f9f128b123f15"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "8326e8adee7d06a2cd43"
+        "id": "87c71cabcdec8938fafd"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "2bbe88d275cb477736b5"
+        "id": "ba2c766fc88f5cf799ab"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "9de9b81bc83c876cda99"
+        "id": "9c51456d8b54db3a797a"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "de73d726c79e251139de"
+        "id": "2fe7d6185df0d5da8fac"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "1f258da9b98396dc7ed5"
+        "id": "a87d571c0816bf6f485e"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "89525cd22beb8d9aa178"
+        "id": "15381d9f908267a47734"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "6975135e78feae6bbd05"
+        "id": "1e36d1014c0261f853dc"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "4a923ee6933ccb1d9913"
+        "id": "54bdc8896efa58ffef15"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "8401a3bc03f971f9dd2a"
+        "id": "c3c90fe76d5abf1a3cf7"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "fe517ddbbf4d776a0639"
+        "id": "3dfd497409a274a2b4a3"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "7dc518b5b8c8ae925d9b"
+        "id": "1d3e01a9bd429bf29ed5"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7660,15 +7664,19 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "097f3b056977288927ab"
+        "id": "d937b1aa189d5483adad"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "a014c3fc158d8544965e"
+        "id": "c376d98ecbfc71d8162f"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "6dad3dd6bb66b6180fa5"
+        "id": "3285e905ea4ed30d80e9"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "6e8a63b59e7b39a8416b"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -7780,11 +7788,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "495ab85f04a68bc33426"
+        "id": "6c6507960ba2878b2964"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "7706648756b244b0e84c"
+        "id": "8c5d1b1d7152566f1597"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -8984,27 +8992,27 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "c9a009f6baa9e3a3bbad"
+        "id": "8818c8c645ed42bdfcbd"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "000d28d21ea7dba70f24"
+        "id": "fa1aab99a735dd6afc1d"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "db7f2c7b53d05936f3da"
+        "id": "7428c9a89d68c23b5ba1"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "ea4d7ecf3043636a2883"
+        "id": "f7eea7c47f4cea00af8d"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "2f60349dbbab02755103"
+        "id": "c0f7d9498ea3443e4221"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "c4dcd4d97035ff02f08f"
+        "id": "087a268e5f0ee8649cdc"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -9056,7 +9064,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "dbf2b5a720f5ae54b672"
+        "id": "ff119993d08c76a18c1b"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10581,38 +10589,17 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 1032,
+    "currentCallers": 1033,
     "structuredVerified": 78,
-    "structuredUnproven": 954,
+    "structuredUnproven": 955,
     "manualUnresolved": 224,
-    "manualUnsupported": 730,
+    "manualUnsupported": 731,
     "agreedVerified": 78,
     "proofAwaitingManualReconciliation": 0
   },
   "callers": [
     {
-      "id": "097f3b056977288927ab",
-      "path": "backend/src/ai/attachments.ts",
-      "line": 103,
-      "enclosing": "fetchAsBuffer",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "NOT_PERSISTENCE",
-      "sourceSha256": "b1c7911aa41d59bfcc1e57f6925a4c705548787cdb81aba14100e78fe5432f45",
-      "semanticReview": {
-        "authority": "Re-traced all listed expressions to the native unshadowed Buffer.from implementation. Each performs local stream, body snapshot, data-URL or DOCX byte conversion. None is a database, storage bucket or service-role receiver.",
-        "reason": "Current-source conversion-only review. The removed Buffer.from(ab) is preserved with the exact original review in PROVENANCE-REPAIR.json. Network effects, ownership, approval, data classification and complete Command010 acceptance remain separate open obligations.",
-        "evidence": [
-          {
-            "path": "backend/src/ai/attachments.ts",
-            "marker": "if (/;base64/i.test(meta)) return Buffer.from(data, 'base64');"
-          }
-        ]
-      }
-    },
-    {
-      "id": "a014c3fc158d8544965e",
+      "id": "d937b1aa189d5483adad",
       "path": "backend/src/ai/attachments.ts",
       "line": 104,
       "enclosing": "fetchAsBuffer",
@@ -10620,7 +10607,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "b1c7911aa41d59bfcc1e57f6925a4c705548787cdb81aba14100e78fe5432f45",
+      "sourceSha256": "1ef2126f5419e5a1b68c153efaa9a15b30f7e1d20d1211f2c1714517bfe0fb9a",
       "semanticReview": {
         "authority": "Re-traced all listed expressions to the native unshadowed Buffer.from implementation. Each performs local stream, body snapshot, data-URL or DOCX byte conversion. None is a database, storage bucket or service-role receiver.",
         "reason": "Current-source conversion-only review. The removed Buffer.from(ab) is preserved with the exact original review in PROVENANCE-REPAIR.json. Network effects, ownership, approval, data classification and complete Command010 acceptance remain separate open obligations.",
@@ -10633,15 +10620,15 @@
       }
     },
     {
-      "id": "6dad3dd6bb66b6180fa5",
+      "id": "c376d98ecbfc71d8162f",
       "path": "backend/src/ai/attachments.ts",
-      "line": 154,
-      "enclosing": "extractDocxText",
+      "line": 105,
+      "enclosing": "fetchAsBuffer",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "b1c7911aa41d59bfcc1e57f6925a4c705548787cdb81aba14100e78fe5432f45",
+      "sourceSha256": "1ef2126f5419e5a1b68c153efaa9a15b30f7e1d20d1211f2c1714517bfe0fb9a",
       "semanticReview": {
         "authority": "Re-traced all listed expressions to the native unshadowed Buffer.from implementation. Each performs local stream, body snapshot, data-URL or DOCX byte conversion. None is a database, storage bucket or service-role receiver.",
         "reason": "Current-source conversion-only review. The removed Buffer.from(ab) is preserved with the exact original review in PROVENANCE-REPAIR.json. Network effects, ownership, approval, data classification and complete Command010 acceptance remain separate open obligations.",
@@ -10649,6 +10636,52 @@
           {
             "path": "backend/src/ai/attachments.ts",
             "marker": "if (/;base64/i.test(meta)) return Buffer.from(data, 'base64');"
+          }
+        ]
+      }
+    },
+    {
+      "id": "3285e905ea4ed30d80e9",
+      "path": "backend/src/ai/attachments.ts",
+      "line": 155,
+      "enclosing": "extractDocxText",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "1ef2126f5419e5a1b68c153efaa9a15b30f7e1d20d1211f2c1714517bfe0fb9a",
+      "semanticReview": {
+        "authority": "Re-traced all listed expressions to the native unshadowed Buffer.from implementation. Each performs local stream, body snapshot, data-URL or DOCX byte conversion. None is a database, storage bucket or service-role receiver.",
+        "reason": "Current-source conversion-only review. The removed Buffer.from(ab) is preserved with the exact original review in PROVENANCE-REPAIR.json. Network effects, ownership, approval, data classification and complete Command010 acceptance remain separate open obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/attachments.ts",
+            "marker": "if (/;base64/i.test(meta)) return Buffer.from(data, 'base64');"
+          }
+        ]
+      }
+    },
+    {
+      "id": "6e8a63b59e7b39a8416b",
+      "path": "backend/src/ai/attachments.ts",
+      "line": 267,
+      "enclosing": "utf8Prefix",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "1ef2126f5419e5a1b68c153efaa9a15b30f7e1d20d1211f2c1714517bfe0fb9a",
+      "semanticReview": {
+        "authority": "This exact built-in Buffer.from call converts the already extracted attachment text to an in-memory UTF-8 byte buffer. It has no storage, network or privileged client",
+        "reason": "The source scanner detects any from method. utf8Prefix bounds the local bytes without splitting a UTF-8 character, then returns the decoded prefix",
+        "evidence": [
+          {
+            "path": "backend/src/ai/attachments.ts",
+            "marker": "const bytes = Buffer.from(text)"
+          },
+          {
+            "path": "backend/src/ai/attachments.test.ts",
+            "marker": "marks limited document evidence without splitting a UTF-8 character"
           }
         ]
       }
@@ -11533,15 +11566,15 @@
       }
     },
     {
-      "id": "495ab85f04a68bc33426",
+      "id": "6c6507960ba2878b2964",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4007,
+      "line": 4075,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0e677977a9694594593757dbe07d775d8758f2086712db66a84b04afb536603e",
+      "sourceSha256": "7dffb027f1d7515746c18fdf89142c6d741abe9e0e8ac11f301863d47163664a",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Native reasoning alignment changes only answer options and their canonical output reservation. These two in-memory conversion expressions remain byte-identical. No new persistence call, authority or security certification is inferred. The tenant dispatch test verifies reservation and wire maxima match.",
@@ -11554,15 +11587,15 @@
       }
     },
     {
-      "id": "7706648756b244b0e84c",
+      "id": "8c5d1b1d7152566f1597",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4191,
+      "line": 4259,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0e677977a9694594593757dbe07d775d8758f2086712db66a84b04afb536603e",
+      "sourceSha256": "7dffb027f1d7515746c18fdf89142c6d741abe9e0e8ac11f301863d47163664a",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Native reasoning alignment changes only answer options and their canonical output reservation. These two in-memory conversion expressions remain byte-identical. No new persistence call, authority or security certification is inferred. The tenant dispatch test verifies reservation and wire maxima match.",
@@ -19953,15 +19986,15 @@
       }
     },
     {
-      "id": "c9a009f6baa9e3a3bbad",
+      "id": "8818c8c645ed42bdfcbd",
       "path": "backend/src/routes/messageShares.ts",
-      "line": 70,
+      "line": 71,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "message_shares",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
+      "sourceSha256": "1a4a4f088a831a511bd81d1f117f24f738c73b2dec0f8ca2e41b49127227a954",
       "semanticReview": {
         "authority": "Create/revoke use authMiddleware and issued context. Create stores server req.userId; revoke constrains token, owner_id and unrevoked state. Submitted content grants no authority over other resources.",
         "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance.",
@@ -19978,15 +20011,15 @@
       }
     },
     {
-      "id": "000d28d21ea7dba70f24",
+      "id": "fa1aab99a735dd6afc1d",
       "path": "backend/src/routes/messageShares.ts",
-      "line": 70,
+      "line": 71,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
+      "sourceSha256": "1a4a4f088a831a511bd81d1f117f24f738c73b2dec0f8ca2e41b49127227a954",
       "semanticReview": {
         "authority": "Create/revoke use authMiddleware and issued context. Create stores server req.userId; revoke constrains token, owner_id and unrevoked state. Submitted content grants no authority over other resources.",
         "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance.",
@@ -20003,15 +20036,15 @@
       }
     },
     {
-      "id": "db7f2c7b53d05936f3da",
+      "id": "7428c9a89d68c23b5ba1",
       "path": "backend/src/routes/messageShares.ts",
-      "line": 98,
+      "line": 99,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "message_shares",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
+      "sourceSha256": "1a4a4f088a831a511bd81d1f117f24f738c73b2dec0f8ca2e41b49127227a954",
       "semanticReview": {
         "authority": "Validated random token and unrevoked row identify the share. Named message_share_resolution exception is followed by verified viewer equality for private visibility; public access is explicit owner opt-in.",
         "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance.",
@@ -20028,15 +20061,15 @@
       }
     },
     {
-      "id": "ea4d7ecf3043636a2883",
+      "id": "f7eea7c47f4cea00af8d",
       "path": "backend/src/routes/messageShares.ts",
-      "line": 98,
+      "line": 99,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
+      "sourceSha256": "1a4a4f088a831a511bd81d1f117f24f738c73b2dec0f8ca2e41b49127227a954",
       "semanticReview": {
         "authority": "Validated random token and unrevoked row identify the share. Named message_share_resolution exception is followed by verified viewer equality for private visibility; public access is explicit owner opt-in.",
         "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance.",
@@ -20053,15 +20086,15 @@
       }
     },
     {
-      "id": "2f60349dbbab02755103",
+      "id": "c0f7d9498ea3443e4221",
       "path": "backend/src/routes/messageShares.ts",
-      "line": 147,
+      "line": 148,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "message_shares",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
+      "sourceSha256": "1a4a4f088a831a511bd81d1f117f24f738c73b2dec0f8ca2e41b49127227a954",
       "semanticReview": {
         "authority": "Create/revoke use authMiddleware and issued context. Create stores server req.userId; revoke constrains token, owner_id and unrevoked state. Submitted content grants no authority over other resources.",
         "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance.",
@@ -20078,15 +20111,15 @@
       }
     },
     {
-      "id": "c4dcd4d97035ff02f08f",
+      "id": "087a268e5f0ee8649cdc",
       "path": "backend/src/routes/messageShares.ts",
-      "line": 147,
+      "line": 148,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
+      "sourceSha256": "1a4a4f088a831a511bd81d1f117f24f738c73b2dec0f8ca2e41b49127227a954",
       "semanticReview": {
         "authority": "Create/revoke use authMiddleware and issued context. Create stores server req.userId; revoke constrains token, owner_id and unrevoked state. Submitted content grants no authority over other resources.",
         "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance.",
@@ -20492,15 +20525,15 @@
       }
     },
     {
-      "id": "dbf2b5a720f5ae54b672",
+      "id": "ff119993d08c76a18c1b",
       "path": "backend/src/routes/phase1.ts",
-      "line": 196,
+      "line": 195,
       "enclosing": "toolUiLink",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "6f3c8a5367b3c97fc86685492ba3fc7e0b1424f1b61bec8cfd7d453711c01bfe",
+      "sourceSha256": "91f74671061715c1c154a7ca1ad308fe30ab40d80fc6c4cb545f39ba74442c9b",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in toolUiLink. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -31561,15 +31594,15 @@
       }
     },
     {
-      "id": "79e341a43e965b1352ab",
+      "id": "0b45ceb87eaba1f8e1e0",
       "path": "frontend/src/app/share/[token]/page.tsx",
-      "line": 127,
+      "line": 128,
       "enclosing": "canPresentRichShare",
       "kind": "RPC_CANDIDATE",
       "target": "current_community_role",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e3b120e75bfa476fb753973446dc0150c1607cb86ddb9e7b0a3e50f45d7ac294"
+      "sourceSha256": "e887643e9b160af5ec7c83358136498ed1794c59443f7f863800a4425f46e56d"
     },
     {
       "id": "19620b924bbcbab333b0",
@@ -32956,7 +32989,7 @@
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "82d805caf300911a8cc4b30603510069d83f351c14e9682f48c25d4da3468c63"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
       "id": "0743ae28756bf5310e7e",
@@ -32967,7 +33000,7 @@
       "target": "xroga_sidebar_sections",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "82d805caf300911a8cc4b30603510069d83f351c14e9682f48c25d4da3468c63"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
       "id": "dadf7a230b3f9a28b790",
@@ -32978,7 +33011,7 @@
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "82d805caf300911a8cc4b30603510069d83f351c14e9682f48c25d4da3468c63"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
       "id": "8cd1403d84e0add9911d",
@@ -32989,7 +33022,7 @@
       "target": "xroga_sidebar_chats",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "82d805caf300911a8cc4b30603510069d83f351c14e9682f48c25d4da3468c63"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
       "id": "ea37c0d6dae47edcea79",
@@ -33000,10 +33033,10 @@
       "target": "xroga_sidebar_chats",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "82d805caf300911a8cc4b30603510069d83f351c14e9682f48c25d4da3468c63"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "8973121161d19ea3c172",
+      "id": "6b27200f9f128b123f15",
       "path": "frontend/src/lib/sidebarOrganization.ts",
       "line": 56,
       "enclosing": "saveSidebarChat",
@@ -33011,10 +33044,10 @@
       "target": "xroga_sidebar_chats",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "82d805caf300911a8cc4b30603510069d83f351c14e9682f48c25d4da3468c63"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "8326e8adee7d06a2cd43",
+      "id": "87c71cabcdec8938fafd",
       "path": "frontend/src/lib/sidebarOrganization.ts",
       "line": 67,
       "enclosing": "changeSidebarMeta",
@@ -33022,10 +33055,10 @@
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "82d805caf300911a8cc4b30603510069d83f351c14e9682f48c25d4da3468c63"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "2bbe88d275cb477736b5",
+      "id": "ba2c766fc88f5cf799ab",
       "path": "frontend/src/lib/sidebarOrganization.ts",
       "line": 71,
       "enclosing": "changeSidebarMeta",
@@ -33033,10 +33066,10 @@
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "82d805caf300911a8cc4b30603510069d83f351c14e9682f48c25d4da3468c63"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "9de9b81bc83c876cda99",
+      "id": "9c51456d8b54db3a797a",
       "path": "frontend/src/lib/sidebarOrganization.ts",
       "line": 75,
       "enclosing": "changeSidebarMeta",
@@ -33044,10 +33077,10 @@
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "82d805caf300911a8cc4b30603510069d83f351c14e9682f48c25d4da3468c63"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "de73d726c79e251139de",
+      "id": "2fe7d6185df0d5da8fac",
       "path": "frontend/src/lib/sidebarOrganization.ts",
       "line": 87,
       "enclosing": "deleteSidebarMeta",
@@ -33055,10 +33088,10 @@
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "82d805caf300911a8cc4b30603510069d83f351c14e9682f48c25d4da3468c63"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "1f258da9b98396dc7ed5",
+      "id": "a87d571c0816bf6f485e",
       "path": "frontend/src/lib/sidebarOrganization.ts",
       "line": 91,
       "enclosing": "createSidebarSection",
@@ -33066,10 +33099,10 @@
       "target": "xroga_sidebar_sections",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "82d805caf300911a8cc4b30603510069d83f351c14e9682f48c25d4da3468c63"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "89525cd22beb8d9aa178",
+      "id": "15381d9f908267a47734",
       "path": "frontend/src/lib/sidebarOrganization.ts",
       "line": 95,
       "enclosing": "removeSidebarSection",
@@ -33077,10 +33110,10 @@
       "target": "xroga_sidebar_sections",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "82d805caf300911a8cc4b30603510069d83f351c14e9682f48c25d4da3468c63"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "6975135e78feae6bbd05",
+      "id": "1e36d1014c0261f853dc",
       "path": "frontend/src/lib/sidebarOrganization.ts",
       "line": 99,
       "enclosing": "deleteSidebarChat",
@@ -33088,10 +33121,10 @@
       "target": "xroga_sidebar_chats",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "82d805caf300911a8cc4b30603510069d83f351c14e9682f48c25d4da3468c63"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "4a923ee6933ccb1d9913",
+      "id": "54bdc8896efa58ffef15",
       "path": "frontend/src/lib/sidebarOrganization.ts",
       "line": 133,
       "enclosing": "swapSidebarPins",
@@ -33099,10 +33132,10 @@
       "target": "xroga_swap_sidebar_pins",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "82d805caf300911a8cc4b30603510069d83f351c14e9682f48c25d4da3468c63"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "8401a3bc03f971f9dd2a",
+      "id": "c3c90fe76d5abf1a3cf7",
       "path": "frontend/src/lib/sidebarOrganization.ts",
       "line": 147,
       "enclosing": "loadPinnedSidebarRecords",
@@ -33110,10 +33143,10 @@
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "82d805caf300911a8cc4b30603510069d83f351c14e9682f48c25d4da3468c63"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "fe517ddbbf4d776a0639",
+      "id": "3dfd497409a274a2b4a3",
       "path": "frontend/src/lib/sidebarOrganization.ts",
       "line": 149,
       "enclosing": "loadPinnedSidebarRecords",
@@ -33121,10 +33154,10 @@
       "target": "terminal_sessions",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "82d805caf300911a8cc4b30603510069d83f351c14e9682f48c25d4da3468c63"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "7dc518b5b8c8ae925d9b",
+      "id": "1d3e01a9bd429bf29ed5",
       "path": "frontend/src/lib/sidebarOrganization.ts",
       "line": 151,
       "enclosing": "loadPinnedSidebarRecords",
@@ -33132,7 +33165,7 @@
       "target": "xroga_sidebar_chats",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "82d805caf300911a8cc4b30603510069d83f351c14e9682f48c25d4da3468c63"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
       "id": "66603d4f9153d6ce36e1",

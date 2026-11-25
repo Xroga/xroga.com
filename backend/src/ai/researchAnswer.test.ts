@@ -392,11 +392,24 @@ test('one exact research approval completes its original rich answer, saves evid
      assert.match(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>/);
      assert.doesNotMatch(body.messages[2].content,/one or two short paragraphs/);
     }
-   }else{
+   }else if(mode!=='automatic-continuation'){
     assert.equal(body.max_tokens,4096);
     assert.ok(['json_object','json_schema'].includes(body.response_format.type));
    }
    if(mode==='drop')throw Object.assign(Error('Synthetic dispatch uncertainty'),{name:'AbortError'});
+   if(mode==='automatic-continuation'){
+    assert.match(JSON.stringify(body.messages),/Public source excerpt/);
+    assert.equal(body.max_tokens,16_384);
+    const continuing=body.messages.at(-1).content.includes('generation stopped at its output boundary');
+    if(continuing)assert.equal(body.messages.at(-2).content,'The public page documents the answer [1].');
+    const content=continuing
+      ? 'The public page documents the answer [1].\n\nThe publication describes its reference methodology [1].'
+      : 'The public page documents the answer [1].';
+    const answer='data: '+JSON.stringify({id:'synthetic-answer-'+models,model:body.model,
+      choices:[{index:0,delta:{content},finish_reason:continuing?'stop':'length'}],
+      usage:{prompt_tokens:100,completion_tokens:40,total_tokens:140}})+'\n\ndata: [DONE]\n\n';
+    return new Response(answer,{headers:{'content-type':'text/event-stream','x-request-id':'synthetic-answer-'+models,'x-zurelay-model':body.model}});
+   }
    if(mode.startsWith('automatic-ranking'))assert.ok(body.messages[2].content.includes(rankingPrompt));
    const content=mode==='automatic-ranking-status'?'Web search finished.'
      :mode.startsWith('automatic')?'The public page documents the answer [1](https://wrong.example/page).':raw;
@@ -682,6 +695,20 @@ test('one exact research approval completes its original rich answer, saves evid
  });
  assert.equal(noPublicSubject.intent,'research_unavailable');
  assert.equal(searches,17,'An explicit null query never falls back to raw text');
+ assert.equal(confirmation.row,lastConfirmation);
+
+ mode='automatic-continuation';
+ const resumed=await runChatPipeline(automaticRequest);
+ assert.equal(resumed.publicWebRetrieved,true);
+ assert.deepEqual(resumed.completion,{status:'complete'});
+ assert.equal(resumed.response.match(/The public page documents the answer/g)?.length,1);
+ assert.match(resumed.response,/The publication describes its reference methodology/);
+ assert.equal(resumed.response.match(/\[1\]/g)?.length,2);
+ assert.equal(publicWorkspaceResearchAnswer(resumed).webSources?.[0]?.url,'https://example.com/docs');
+ assert.equal(searches,18,'Output continuation reuses the original retrieval');
+ assert.equal(models,16,'Each answer segment has its own metered synthesis call');
+ assert.equal([...reservations.values()].filter(row=>row.status==='settled' &&
+   ['synthetic-answer-15','synthetic-answer-16'].includes(row.provider_request_id)).length,2);
  assert.equal(confirmation.row,lastConfirmation);
 });
 

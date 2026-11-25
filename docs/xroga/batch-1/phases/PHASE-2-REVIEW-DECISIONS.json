@@ -2762,7 +2762,7 @@
       "relatedSourceBindings": [
         {
           "path": "backend/src/ai/pipeline.ts",
-          "sha256": "0e677977a9694594593757dbe07d775d8758f2086712db66a84b04afb536603e",
+          "sha256": "7dffb027f1d7515746c18fdf89142c6d741abe9e0e8ac11f301863d47163664a",
           "plainReasoningSourceBinding": {
             "previousSha256": "5c37c7d2bbc96fc8c4ddf1f294c9b1f2bde5385048847400a5bcbd69a3582e06",
             "finding": "Verified the full runBuildPipeline function and subsequent source are byte-identical. The chat change retains default model reasoning and uses the existing native output reservation. Worker admission evidence and acceptance state are unchanged."

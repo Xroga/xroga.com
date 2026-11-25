@@ -35,3 +35,13 @@ test('keeps bounded complete pairs in chronological order', () => {
     ],
   );
 });
+
+test('preserves older pairs and long text for signed-in requests', () => {
+  const messages = Array.from({ length: 30 }, (_, index) => ({
+    role: index % 2 ? 'assistant' : 'user',
+    content: `  turn-${index}\n` + 'Long text. '.repeat(1_500) + '\n  final constraint  ',
+  }));
+  assert.deepEqual(buildCompletedChatHistory(messages), messages);
+  assert.deepEqual(buildCompletedChatHistory(messages, 3), messages.slice(-2));
+  assert.deepEqual(buildCompletedChatHistory(messages, 0), []);
+});

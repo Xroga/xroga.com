@@ -3,11 +3,11 @@
   "reviews": [
     {
       "path": "backend/src/ai/attachments.ts",
-      "sourceSha256": "b1c7911aa41d59bfcc1e57f6925a4c705548787cdb81aba14100e78fe5432f45",
+      "sourceSha256": "1ef2126f5419e5a1b68c153efaa9a15b30f7e1d20d1211f2c1714517bfe0fb9a",
       "callIds": [
-        "097f3b056977288927ab",
-        "a014c3fc158d8544965e",
-        "6dad3dd6bb66b6180fa5"
+        "d937b1aa189d5483adad",
+        "c376d98ecbfc71d8162f",
+        "3285e905ea4ed30d80e9"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Re-traced all listed expressions to the native unshadowed Buffer.from implementation. Each performs local stream, body snapshot, data-URL or DOCX byte conversion. None is a database, storage bucket or service-role receiver.",
@@ -1121,9 +1121,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "0e677977a9694594593757dbe07d775d8758f2086712db66a84b04afb536603e",
+      "sourceSha256": "7dffb027f1d7515746c18fdf89142c6d741abe9e0e8ac11f301863d47163664a",
       "callIds": [
-        "495ab85f04a68bc33426"
+        "6c6507960ba2878b2964"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2711,9 +2711,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "0e677977a9694594593757dbe07d775d8758f2086712db66a84b04afb536603e",
+      "sourceSha256": "7dffb027f1d7515746c18fdf89142c6d741abe9e0e8ac11f301863d47163664a",
       "callIds": [
-        "7706648756b244b0e84c"
+        "8c5d1b1d7152566f1597"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -15648,12 +15648,12 @@
     },
     {
       "path": "backend/src/routes/messageShares.ts",
-      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
+      "sourceSha256": "1a4a4f088a831a511bd81d1f117f24f738c73b2dec0f8ca2e41b49127227a954",
       "callIds": [
-        "c9a009f6baa9e3a3bbad",
-        "000d28d21ea7dba70f24",
-        "2f60349dbbab02755103",
-        "c4dcd4d97035ff02f08f"
+        "8818c8c645ed42bdfcbd",
+        "fa1aab99a735dd6afc1d",
+        "c0f7d9498ea3443e4221",
+        "087a268e5f0ee8649cdc"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Create/revoke use authMiddleware and issued context. Create stores server req.userId; revoke constrains token, owner_id and unrevoked state. Submitted content grants no authority over other resources.",
@@ -15696,10 +15696,10 @@
     },
     {
       "path": "backend/src/routes/messageShares.ts",
-      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
+      "sourceSha256": "1a4a4f088a831a511bd81d1f117f24f738c73b2dec0f8ca2e41b49127227a954",
       "callIds": [
-        "db7f2c7b53d05936f3da",
-        "ea4d7ecf3043636a2883"
+        "7428c9a89d68c23b5ba1",
+        "f7eea7c47f4cea00af8d"
       ],
       "disposition": "NARROW_EXCEPTION",
       "authority": "Validated random token and unrevoked row identify the share. Named message_share_resolution exception is followed by verified viewer equality for private visibility; public access is explicit owner opt-in.",
@@ -15877,9 +15877,9 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sourceSha256": "6f3c8a5367b3c97fc86685492ba3fc7e0b1424f1b61bec8cfd7d453711c01bfe",
+      "sourceSha256": "91f74671061715c1c154a7ca1ad308fe30ab40d80fc6c4cb545f39ba74442c9b",
       "callIds": [
-        "dbf2b5a720f5ae54b672"
+        "ff119993d08c76a18c1b"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in toolUiLink. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -29523,6 +29523,26 @@
         {
           "path": "frontend/src/lib/clipboard.test.ts",
           "marker": "missing or rejected Async Clipboard API falls back and restores focus and selection"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/attachments.ts",
+      "sourceSha256": "1ef2126f5419e5a1b68c153efaa9a15b30f7e1d20d1211f2c1714517bfe0fb9a",
+      "callIds": [
+        "6e8a63b59e7b39a8416b"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "This exact built-in Buffer.from call converts the already extracted attachment text to an in-memory UTF-8 byte buffer. It has no storage, network or privileged client",
+      "reason": "The source scanner detects any from method. utf8Prefix bounds the local bytes without splitting a UTF-8 character, then returns the decoded prefix",
+      "evidence": [
+        {
+          "path": "backend/src/ai/attachments.ts",
+          "marker": "const bytes = Buffer.from(text)"
+        },
+        {
+          "path": "backend/src/ai/attachments.test.ts",
+          "marker": "marks limited document evidence without splitting a UTF-8 character"
         }
       ]
     }

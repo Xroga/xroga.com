@@ -2327,7 +2327,8 @@ const stopRequestedRunIdRef =
               ? `${(message.content ?? '').slice(0, 1_200)}…`
               : (message.content ?? ''),
         })),
-      ).slice(-8);
+        8,
+      );
 
       const controller = new AbortController();
       lightAbortRef.current = controller;
@@ -2423,15 +2424,7 @@ const stopRequestedRunIdRef =
         { id: assistantId, role: 'assistant', content: '', createdAt: Date.now(), agent: 'Xroga AI Brain' },
       ]);
 
-      const history = buildCompletedChatHistory(
-        messages.map((m) => ({
-          role: m.role,
-          content:
-            (m.content ?? '').length > 1200
-              ? `${(m.content ?? '').slice(0, 1200)}…`
-              : (m.content ?? ''),
-        })),
-      );
+      const history = buildCompletedChatHistory(messages);
 
       try {
         const activeContext = useProjectWorkspaceStore.getState().activeProjectContext;
@@ -2840,26 +2833,17 @@ const stopRequestedRunIdRef =
           if (!priorSite && best) priorSite = { html: best.html, css: best.css, js: best.js, projectName: best.projectName };
         }
 
-        // Never send prior build essays with "hi"/thanks — that burns tokens and continues the blog guide.
-        let history = isTrivialPrompt(displayPrompt)
-          ? ([] as Array<{ role: 'user' | 'assistant'; content: string }>)
-          : buildCompletedChatHistory(
-              messages.map((m) => {
-                let content = m.content?.trim() ?? '';
-                if (!content && m.featureOutput && typeof m.featureOutput === 'object') {
-                  const output = m.featureOutput as {
-                    type?: string;
-                    summary?: string;
-                    deployUrl?: string;
-                  };
-                  if (output.type === 'landing_page') {
-                    content = output.summary ?? `Built website: ${output.deployUrl ?? 'preview ready'}`;
-                  }
-                }
-                if (content.length > 1200) content = `${content.slice(0, 1200)}…`;
-                return { role: m.role, content };
-              }),
-            );
+        const buildOrChatHistory = messages.map((m) => {
+          let content = m.content ?? '';
+          if (!content.trim() && m.featureOutput && typeof m.featureOutput === 'object') {
+            const output = m.featureOutput as { type?: string; summary?: string; deployUrl?: string };
+            if (output.type === 'landing_page') {
+              content = output.summary ?? `Built website: ${output.deployUrl ?? 'preview ready'}`;
+            }
+          }
+          return { role: m.role, content };
+        });
+        let history = buildCompletedChatHistory(buildOrChatHistory);
         if (buildSession && isBuildAnswer) {
           const hasPhase1 = history.some((h) => isPhase1BuildQuestion(h.content));
           if (!hasPhase1) {
