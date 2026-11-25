@@ -57,7 +57,7 @@ class Cdp {
 async function main() {
   const server = await startServer();
   const profile = 'C:/Users/hp/xr-live-profile'; // kept between runs so one sign-in serves them all; removed by hand at the end
-  const outDir = join(root, '.output', 'autorun-product');
+  const outDir = join(root, '.output', process.env.LIVE_OUT || 'autorun-product');
   // The profile is kept so one sign-in serves every run, but Chrome keeps the extension's old background script in its caches and can keep running it after a rebuild:
   // the caches and the extension's own stored state go, the browser's logins stay.
   const { rmSync: rm } = await import('node:fs');
@@ -121,8 +121,8 @@ async function main() {
     const tabs = JSON.parse(await evalIn(operator.sid, `chrome.tabs.query({}).then(t => JSON.stringify(t.map(x => ({ id: x.id, url: x.url }))))`));
     const pageTab = tabs.find(t => t.url.startsWith('http://localhost:8787'));
     if (!pageTab) throw new Error('the page tab was not found');
+    await evalIn(operator.sid, `(async () => { const s = (await chrome.storage.local.get('nb.settings'))['nb.settings'] ?? {}; await chrome.storage.local.set({ 'nb.settings': { ...s, defaultMode: '${process.env.LIVE_MODE || 'auto'}' } }); return true; })()`);
     const panelTarget = await open(`chrome-extension://${extId}/sidepanel.html#tab=${pageTab.id}`);
-    await evalIn(operator.sid, `(async () => { const s = (await chrome.storage.local.get('nb.settings'))['nb.settings'] ?? {}; await chrome.storage.local.set({ 'nb.settings': { ...s, defaultMode: 'auto' } }); return true; })()`);
     const panelOp = (op, extra = {}) =>
       evalIn(operator.sid, `chrome.runtime.sendMessage(${JSON.stringify({ nbTest: 'panel', tabId: pageTab.id, op, ...extra })})`);
     // The person's part, once: sign in to the staging Workspace in this window. Nothing is typed or read by this script.
@@ -166,6 +166,11 @@ async function main() {
     if (!paired) throw new Error('the extension did not pair with the Workspace');
     const allow = async read => {
       if (/\nAllow\n/.test(String(read?.body ?? ''))) await panelOp('click', { label: 'Allow' }).catch(() => undefined);
+      // The save card (a file the agent wants to put in Downloads): the person's click is Save.
+      if (/Save this file\?/.test(String(read?.body ?? '')) && process.env.LIVE_SAVE !== 'no') {
+        report.steps.saveCardSeen = true;
+        await panelOp('click', { label: 'Save' }).catch(() => undefined);
+      }
     };
     const working = r => /is working/.test(String(r?.body ?? ''));
     const settle = async (maxMs, label) => {

@@ -140,3 +140,32 @@ defineScenario({
     );
   },
 });
+
+defineScenario({
+  id: 'S3-tab-tidy',
+  set: 'C',
+  title: 'a tab the agent opened is closed after a long idle time; the active tab and the person\'s own tabs stay',
+  covers: 'the layer reports a tab it opens; tidyNow closes the idle agent tab, keeps the active one and a tab the person opened, mutes a background tab',
+  async run(ctx) {
+    const { tidyNow, IDLE_MS } = await import('../../extension/tab-tidy');
+    const base = await ctx.open(`${FIXTURE_ORIGIN}/c-text.html`);
+    const before = new Set((await chrome.tabs.query({})).map(t => t.id));
+    await ctx.call('tabs', { action: 'open', url: `${FIXTURE_ORIGIN}/c-audit-page.html` });
+    await new Promise(r => setTimeout(r, 600));
+    const agentTab = (await chrome.tabs.query({})).find(t => t.id !== undefined && !before.has(t.id));
+    // The person's own tab, opened by hand (not through the layer), and the first tab brought to the front again.
+    const mine = await chrome.tabs.create({ url: `${FIXTURE_ORIGIN}/c-text.html`, active: false });
+    await chrome.tabs.update(base, { active: true });
+    const tracked = ((await chrome.storage.session.get('xroga_agent_tabs')).xroga_agent_tabs ?? {}) as Record<string, unknown>;
+    const closed = await tidyNow(async () => false, Date.now() + IDLE_MS + 120_000);
+    await new Promise(r => setTimeout(r, 400));
+    const alive = async (id?: number) => (id === undefined ? false : !!(await chrome.tabs.get(id).catch(() => undefined)));
+    const result = { tracked: agentTab?.id !== undefined && String(agentTab.id) in tracked, agentClosed: closed.includes(agentTab?.id ?? -1) && !(await alive(agentTab?.id)), baseAlive: await alive(base), mineAlive: await alive(mine.id) };
+    if (mine.id !== undefined) await chrome.tabs.remove(mine.id).catch(() => undefined);
+    return outcome(
+      'the layer-opened tab was tracked and closed; the tab in front and the person\'s tab stayed',
+      JSON.stringify(result),
+      result.tracked && result.agentClosed && result.baseAlive && result.mineAlive,
+    );
+  },
+});

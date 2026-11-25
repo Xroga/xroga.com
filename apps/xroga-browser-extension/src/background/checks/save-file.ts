@@ -135,3 +135,52 @@ defineCheck({
     }
   },
 });
+
+defineCheck({
+  name: 'panel-save-pdf',
+  title: 'save_page_pdf in Ask mode, through the Save card',
+  description: 'The agent prints the open page: the Save card shows, Save is clicked, a real PDF (%PDF, A4) lands in Downloads.',
+  async run() {
+    await seedFixtureModel();
+    const page = await chrome.tabs.create({ url: `${FIXTURE_ORIGIN}/c-text.html`, active: false });
+    await waitForLoad(page.id!);
+    const view = await chrome.tabs.create({ url: chrome.runtime.getURL(`/sidepanel.html#tab=${page.id}`), active: true });
+    await waitForLoad(view.id!);
+    await sleep(600);
+    const id = page.id!;
+    const saved: number[] = [];
+    const listener = (item: chrome.downloads.DownloadItem) => saved.push(item.id);
+    chrome.downloads.onCreated.addListener(listener);
+    try {
+      await scriptReplies([
+        { toolCalls: [{ name: 'save_page_pdf', input: { filename: 'nb-check-page.pdf', paper: 'a4' } }] },
+        { text: 'Saved the page as a PDF.' },
+      ]);
+      await panel(id, 'type-send', { text: 'Save this page as a PDF' });
+      let card = '';
+      for (let i = 0; i < 60 && !card.includes('Save this file?'); i++) {
+        await sleep(150);
+        card = (await panel(id, 'read')).body;
+      }
+      await panel(id, 'click', { label: 'Save' });
+      const done = await waitForText(id, 'Saved the page as a PDF.');
+      for (let i = 0; i < 40 && !saved.length; i++) await sleep(150);
+      const item = saved.length ? await finish(saved[0]!) : undefined;
+      const report = {
+        cardShown: card.includes('Save this file?') && card.includes('nb-check-page.pdf'),
+        savedName: item?.filename.split(/[/\\]/).pop(),
+        mime: item?.mime,
+        bytes: item?.fileSize,
+        finished: /Saved/.test(done.transcript) || done.transcript.length > 0,
+      };
+      const ok = report.cardShown && report.savedName === 'nb-check-page.pdf' && (report.bytes ?? 0) > 1024;
+      if (!ok) throw new Error(JSON.stringify({ ...report, card: card.slice(0, 400) }));
+      return report;
+    } finally {
+      chrome.downloads.onCreated.removeListener(listener);
+      for (const d of saved) await remove(d);
+      await chrome.tabs.remove(view.id!).catch(() => undefined);
+      await chrome.tabs.remove(page.id!).catch(() => undefined);
+    }
+  },
+});

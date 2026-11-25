@@ -27,6 +27,7 @@ import './panel-attach';
 import './panel-screenshot-tab';
 import './upload-measure';
 import './save-file';
+import './tab-tidy-real';
 import './confirm-download';
 import './parallel-bench';
 import './parallel-real';
