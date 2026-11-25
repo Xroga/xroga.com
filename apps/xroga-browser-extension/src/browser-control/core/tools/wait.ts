@@ -87,7 +87,7 @@ async function unmet(ctx: ToolContext, args: WaitArgs, previous: { reading?: str
 
 export async function wait(ctx: ToolContext, args: WaitArgs): Promise<ToolOutcome> {
   if (args.reading && !args.target) throw new LayerError('INVALID_ARGUMENT', 'wait with reading needs a target');
-  const conditions = [args.text, args.textGone, args.url, args.target].filter(c => c !== undefined).length;
+  const conditions = [args.text, args.textGone, args.url, args.target, args.networkIdle ? true : undefined].filter(c => c !== undefined).length;
   const previous: { reading?: string } = {};
   const start = performance.now();
   if (!conditions) {
