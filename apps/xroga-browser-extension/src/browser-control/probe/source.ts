@@ -1389,7 +1389,29 @@ export function probeMain(): void {
       const has = (w: string) => hay.includes(w) || hay.replace(/\s+/g, '').includes(w.replace(/\s+/g, ''));
       // A value split across separate elements (a name and its phone number in two cells) reads run together to a model: also compare with all whitespace removed (Browser Agent verify.ts textPresentIn).
       // A model quoting a value out of a sentence often keeps the sentence's full stop or comma ("write to hello@x.test."): the value is there without it.
-      return has(want) || (/[.,;:!?]$/.test(want) && has(want.replace(/[.,;:!?]+$/, '')));
+      const found = has(want) || (/[.,;:!?]$/.test(want) && has(want.replace(/[.,;:!?]+$/, '')));
+      if (!found) return false;
+      // innerText still holds text that is fully transparent (a pre-rendered "Success" banner waiting for a script): a person sees nothing there, so it is not proof (browser-use ax.py VISIBLE_JS idea).
+      // Re-read the match from the text nodes that are really visible, checkOpacity included; only when the first read found it, so the usual page costs nothing extra.
+      const roots: Node[] = [document.body];
+      let seen = '';
+      const cache = new Map<Element, boolean>();
+      for (const root of roots) {
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          const parent = node.parentElement;
+          if (!parent) continue;
+          let visible = cache.get(parent);
+          if (visible === undefined) {
+            visible = typeof parent.checkVisibility === 'function' ? parent.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }) : true;
+            cache.set(parent, visible);
+          }
+          if (visible) seen += ' ' + (node.nodeValue ?? '');
+        }
+      }
+      const visibleHay = norm(seen) + (fields ? hay.slice(norm(document.body?.innerText ?? '').length) : '');
+      const hasVisible = (w: string) => visibleHay.includes(w) || visibleHay.replace(/\s+/g, '').includes(w.replace(/\s+/g, ''));
+      return hasVisible(want) || (/[.,;:!?]$/.test(want) && hasVisible(want.replace(/[.,;:!?]+$/, '')));
     },
 
     /** Selects the whole content of a focused field or editor, so the next insertion replaces it. */

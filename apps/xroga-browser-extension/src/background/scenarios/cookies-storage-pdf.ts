@@ -169,3 +169,22 @@ defineScenario({
     );
   },
 });
+
+defineScenario({
+  id: 'S3-ghost-text',
+  set: 'C',
+  title: 'fully transparent text is not proof that something is on the page',
+  covers: 'wait text finds the visible sentence and does not accept a pre-rendered success banner at opacity 0 (browser-use ax.py VISIBLE_JS)',
+  async run(ctx) {
+    await ctx.open(`${FIXTURE_ORIGIN}/c-ghost-text.html`);
+    const shown = await ctx.call('wait', { text: 'is being reviewed', timeoutMs: 800 });
+    const ghost = await ctx.call('wait', { text: 'Payment successful', timeoutMs: 600 });
+    const nested = await ctx.call('wait', { text: 'Order confirmed', timeoutMs: 600 });
+    const gone = await ctx.call('wait', { textGone: 'Payment successful', timeoutMs: 600 });
+    return outcome(
+      'the visible text is found; the two transparent texts are not found, and the transparent one counts as gone',
+      JSON.stringify({ shown: shown.ok, ghost: ghost.ok, nested: nested.ok, gone: gone.ok }),
+      shown.ok && !ghost.ok && !nested.ok && gone.ok,
+    );
+  },
+});

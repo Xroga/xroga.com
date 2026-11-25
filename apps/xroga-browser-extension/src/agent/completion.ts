@@ -78,3 +78,12 @@ export function refusal(open: DebtEntry[]): string {
 export function unverifiedLines(items: DebtEntry[]): string[] {
   return items.filter(d => d.state === 'unverifiable').map(d => `${d.label}: not verified, the tab closed.`);
 }
+
+/** An answer that says nothing: empty, or a template left unfilled. A success with such a summary tells the person nothing they can use.
+ *  Idea: browser-use loop.py check_delivery (MIT) and stagehand verifier gates (MIT), written fresh. Refused once, never a stop. */
+export function emptyAnswer(summary: string): string | undefined {
+  const text = summary.replace(/[`*_>#\-\s.!]+/g, ' ').trim();
+  if (!text) return 'the summary is empty';
+  if (/\b(?:TODO|TBD|lorem ipsum|insert [a-z ]+ here|your answer here)\b|<[a-z]+(?:[_ ][a-z]+)+>|\{\{[^}]+\}\}|\[(?:answer|result|summary|name|value)\]/i.test(summary)) return 'the summary still holds a placeholder';
+  return undefined;
+}

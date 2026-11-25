@@ -3,6 +3,7 @@
 // stop after 3 attempts. Once text has streamed, an error ends the turn with a message rather than retrying (pi-ai's
 // model). The model's reasoning parts are read and discarded: no reasoning is stored or sent back.
 import { jsonSchema, streamText, tool } from 'ai';
+import { repairToolInput } from './repair-input';
 import type { JSONSchema7, ModelMessage, ToolSet } from 'ai';
 import type { ChatModel } from './providers';
 import type { WireEffort } from './catalogue';
@@ -254,11 +255,20 @@ async function streamTurnNow(request: TurnRequest): Promise<TurnResult> {
             break;
           case 'tool-call': {
             started = true;
-            const invalid = 'invalid' in part && part.invalid ? errorText(part.error) : undefined;
+            let invalid = 'invalid' in part && part.invalid ? errorText(part.error) : undefined;
+            let input: unknown = part.input;
+            // Arguments that are almost JSON (fenced, stringified twice, trailing comma, empty for a no-argument tool) are repaired rather than costing a turn.
+            if (invalid && tools && part.toolName in tools) {
+              const repaired = repairToolInput(part.input);
+              if (repaired) {
+                input = repaired;
+                invalid = undefined;
+              }
+            }
             toolCalls.push({
               toolCallId: part.toolCallId,
               toolName: part.toolName,
-              input: part.input,
+              input,
               invalid,
               ...(part.providerMetadata ? { providerOptions: part.providerMetadata } : {}),
             });

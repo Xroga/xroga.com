@@ -35,8 +35,9 @@ import { browserState } from './header';
 import { assistantDisplay, userDisplay, userText } from './display';
 import type { HostPort, LayerPort } from './ports';
 import { note, RunWriter, storedResult } from './records';
-import { clearsDebt, createsDebt, debtLabel, deliveryUnknown, refusal, unverifiedLines } from './completion';
+import { clearsDebt, createsDebt, debtLabel, deliveryUnknown, emptyAnswer, refusal, unverifiedLines } from './completion';
 import type { DebtEntry } from './completion';
+import { claimContradicted, ungroundedValues } from './grounding';
 import { Guards } from './guards';
 import { contextThreshold, elisionChunk, hardLimit, planElision } from './elision';
 import { runCompaction, runShorten } from './compaction';
@@ -1212,6 +1213,8 @@ ${ledger}` : ''),
   }
 
   /** Accepts or refuses done: success is refused while debt is left. */
+  #emptyRefused = false;
+  #groundRefused = false;
   async #judgeDone(call: ToolCallRequest, kind: ToolKind, args: Record<string, unknown>): Promise<CallOutcome> {
     const requested = (['success', 'partial', 'failed'] as const).find(o => o === args.outcome) ?? 'partial';
     const outcomeArg = this.#recoveryReadOnly && requested === 'success' ? 'partial' : requested;
@@ -1244,6 +1247,26 @@ ${ledger}` : ''),
         return { call, kind, text, isError: true };
       }
       summary = `${summary}\n\n${this.#plan.ledgerSummary()}`;
+    }
+    // An empty or placeholder summary on a success is sent back once (never a stop): the person is owed the actual result.
+    const empty = outcomeArg === 'success' ? emptyAnswer(summary) : undefined;
+    if (empty && !this.#emptyRefused && !this.#recoveryReadOnly) {
+      this.#emptyRefused = true;
+      return { call, kind, isError: true, text: `Not accepted as success yet: ${empty}. Call done again with the real result in the summary: what was found or done, with the values the person asked for.` };
+    }
+    // An email, a web address or a phone number in the answer that nothing in the run showed is sent back once, with the values named.
+    if (outcomeArg === 'success' && !this.#groundRefused && !this.#recoveryReadOnly) {
+      const seen = (await activeBranch(this.options.conversationId)).filter((e): e is EntryOf<'message'> => e.type === 'message');
+      const refused = claimContradicted(summary, seen);
+      if (refused) {
+        this.#groundRefused = true;
+        return { call, kind, isError: true, text: `Not accepted as success yet: the answer says something was sent or saved, but the last page this run saw says "${refused}". Look at the page again: if it was refused, fix the fields and send it again, or call done with outcome partial or failed and say what the page showed.` };
+      }
+      const unseen = ungroundedValues(summary, seen);
+      if (unseen.length) {
+        this.#groundRefused = true;
+        return { call, kind, isError: true, text: `Not accepted as success yet: ${unseen.map(v => `"${v}"`).join(', ')} ${unseen.length === 1 ? 'does' : 'do'} not appear in anything this run read. Check ${unseen.length === 1 ? 'it' : 'each'} at its source on the page and correct the answer, or remove ${unseen.length === 1 ? 'it' : 'them'}; then call done again.` };
+      }
     }
     this.#doneRefusals = 0;
     // A long run's claim of success is read once by a separate call against the task and the trace: parts of the task that nothing shows were done send the agent back

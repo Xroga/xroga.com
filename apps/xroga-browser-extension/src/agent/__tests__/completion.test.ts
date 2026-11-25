@@ -320,3 +320,20 @@ describe('the hand-over', () => {
     expect(texts.c).toMatch(/hand-over: the user cancelled the step/);
   });
 });
+
+import { emptyAnswer } from '../completion';
+
+describe('emptyAnswer', () => {
+  it('flags an empty summary', () => {
+    expect(emptyAnswer('')).toMatch(/empty/);
+    expect(emptyAnswer(' . ')).toMatch(/empty/);
+  });
+  it('flags a placeholder left in the text', () => {
+    expect(emptyAnswer('The price is {{price}}')).toMatch(/placeholder/);
+    expect(emptyAnswer('Result: [answer]')).toMatch(/placeholder/);
+  });
+  it('lets a real answer through', () => {
+    expect(emptyAnswer('The kettle costs 49.90 and ships in 2 days.')).toBeUndefined();
+    expect(emptyAnswer('Saved the page as an A4 PDF.')).toBeUndefined();
+  });
+});
