@@ -195,7 +195,8 @@ export function buildProcessingView(options: BuildProcessingViewOptions): Proces
 
   const family = familyOf(active.kind);
   const heading = HEADING_BY_KIND[active.kind] ?? 'Working on your request';
-  const label = clean(active.label, 140);
+  // The "understand" row carries a short approach note, which is a sentence or two, not a status label.
+  const label = clean(active.label, active.kind === 'understand' ? 380 : 140);
   const detail = clean(active.detail, 120);
   const lead = detail && !label.toLowerCase().includes(detail.toLowerCase()) ? `${label}: ${detail}` : label;
   const parallel = otherActive > 0 ? `${otherActive} more ${otherActive === 1 ? 'step is' : 'steps are'} running alongside.` : '';

@@ -2,6 +2,8 @@ import { Router } from 'express';
 import { readIntent } from '../ai/intentReasoning.js';
 import { understandingProgress } from '../ai/startupProgress.js';
 import { publicAiPayload } from '../lib/publicAiIdentity.js';
+import { generateReasoningSummary, reasoningSummaryEnabled } from '../ai/reasoningSummary.js';
+import type { AuthRequest } from '../middleware/auth.js';
 
 /**
  * Optional live progress for the Workspace chat answer lane.
@@ -30,7 +32,7 @@ function wantsStream(accept: unknown): boolean {
   return typeof accept === 'string' && accept.toLowerCase().includes('text/event-stream');
 }
 
-router.post('/chat', (req, res, next) => {
+router.post('/chat', (req: AuthRequest, res, next) => {
   if (!wantsStream(req.headers.accept)) return next();
 
   const message = typeof req.body?.message === 'string' ? req.body.message
@@ -71,6 +73,27 @@ router.post('/chat', (req, res, next) => {
     }
   } catch {
     // The summary is optional. It must never prevent the answer.
+  }
+
+  // A short model-written note on the approach. It is a separate bounded call under the caller's own
+  // tenant reservation, runs alongside the answer, and is dropped if the answer finishes first.
+  if (message.trim() && req.userId && req.tenantContext && reasoningSummaryEnabled()) {
+    const controller = new AbortController();
+    res.once('close', () => controller.abort());
+    void generateReasoningSummary({
+      scope: { context: req.tenantContext, userId: req.userId },
+      message: message.trim(),
+      signal: controller.signal,
+    }).then((summary) => {
+      if (!summary || !open) return;
+      write('progress', publicAiPayload({
+        agent: 'session',
+        status: 'reasoning_summary',
+        message: summary,
+        swarmStatusLabel: 'Thinking',
+        swarmActivity: summary,
+      }));
+    });
   }
 
   // Relay the handler's one JSON body (and its status) as the final frame.
