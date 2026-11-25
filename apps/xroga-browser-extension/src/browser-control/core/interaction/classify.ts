@@ -145,6 +145,18 @@ export function enterSubmits(facts: FormFacts): boolean {
   return !form.hasSubmitButton && form.blockingFields <= 1;
 }
 
+/** Hosted payment pages and card-field frames: a submission made on one is a payment whatever its button says ("Continue", "Submit", "Place order"). webgenie PAYMENT_HOSTS idea, written fresh. */
+const PAYMENT_HOSTS = /(?:^|\.)(?:stripe\.com|stripe\.network|adyen\.com|braintreegateway\.com|braintree-api\.com|paypal\.com|paypalobjects\.com|checkout\.com|squareup\.com|squarecdn\.com|razorpay\.com|mollie\.com|klarna\.com|authorize\.net|worldpay\.com|2checkout\.com|paddle\.com|gocardless\.com|payfast\.co\.za|paytm\.com|tap\.company|tabby\.ai|network\.ae)$/i;
+
+export function onPaymentHost(url: string | undefined): boolean {
+  if (!url) return false;
+  try {
+    return PAYMENT_HOSTS.test(new URL(url).hostname);
+  } catch {
+    return false;
+  }
+}
+
 export function classify(input: ClassifyInput): Classification {
   const { facts } = input;
   const name = input.name.trim();
@@ -176,6 +188,8 @@ export function classify(input: ClassifyInput): Classification {
   }
   const named = byName(name, facts.money, input.url);
   if (named) return named;
+  if ((facts.submitter || SUBMIT_WORDS.test(name)) && (onPaymentHost(input.url) || onPaymentHost(facts.form?.action)))
+    return { category: 'pay', reason: `${quote(name)} submits on a hosted payment page (${quote(input.url ?? facts.form?.action ?? '', 60)})` };
   if (DELETE_CLASSES.test(facts.classes))
     return { category: 'delete', reason: `its class or test ID (${quote(facts.classes, 80)}) is destructive` };
   if (facts.submitter && facts.form && !facts.form.search) {

@@ -212,3 +212,18 @@ describe('a booking link is not a payment', () => {
     expect(activate('Complete booking')).toBe('pay');
   });
 });
+
+describe('hosted payment pages', () => {
+  const at = (name: string, url: string, facts: Partial<FormFacts> = {}) =>
+    classify({ mode: 'activate', name, role: 'button', url, facts: { ...plain, submitter: true, ...facts } }).category;
+  it('treats a submission on a payment provider page as a payment, whatever the button says', () => {
+    expect(at('Continue', 'https://checkout.stripe.com/c/pay/cs_test_1')).toBe('pay');
+    expect(at('Submit', 'https://pay.adyen.com/hpp')).toBe('pay');
+  });
+  it('treats a form that posts to a payment provider as a payment', () => {
+    expect(at('Continue', 'https://shop.test/cart', { form: form({ action: 'https://www.paypal.com/cgi-bin/webscr' }) })).toBe('pay');
+  });
+  it('leaves an ordinary shop page to the other rules', () => {
+    expect(at('Continue', 'https://shop.test/cart', { submitter: false })).toBeNull();
+  });
+});
