@@ -265,7 +265,7 @@ export const AuditPageArgsSchema = z.strictObject({
 
 export const DiagnosticsArgsSchema = z.strictObject({
   ...readCommon,
-  kind: z.enum(['both', 'console', 'network', 'endpoints', 'cookies', 'storage', 'issues', 'weight']).optional().describe('endpoints: API calls; cookies, storage: names and sizes only; issues: browser-reported problems; weight: biggest and slowest requests'),
+  kind: z.enum(['both', 'console', 'network', 'endpoints', 'cookies', 'storage', 'issues', 'weight', 'request', 'fetch']).optional().describe('fetch: GET urlPattern (a path or an address on this site) from inside the page with the signed-in session, body with secrets hidden; request: one request with response headers and body (secrets hidden), the newest whose address contains urlPattern; endpoints: API calls; cookies, storage: names and sizes only; issues: browser-reported problems; weight: biggest and slowest requests'),
   onlyProblems: z.boolean().optional().describe('Errors, and requests that failed or got 400+'),
   urlPattern: z.string().optional(),
   limit: z.number().int().min(1).max(100).optional(),

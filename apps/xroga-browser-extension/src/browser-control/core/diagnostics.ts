@@ -101,7 +101,7 @@ export class DiagnosticsLog {
 }
 
 export interface DiagnosticsQuery {
-  kind?: 'both' | 'console' | 'network' | 'endpoints' | 'cookies' | 'storage' | 'issues' | 'weight';
+  kind?: 'both' | 'console' | 'network' | 'endpoints' | 'cookies' | 'storage' | 'issues' | 'weight' | 'request' | 'fetch';
   onlyProblems?: boolean;
   urlPattern?: string;
   limit?: number;
@@ -285,4 +285,41 @@ export function weightReport(log: DiagnosticsLog): string[] {
     'slowest:',
     ...[...done].filter(e => typeof e.ms === 'number').sort((a, b) => (b.ms ?? 0) - (a.ms ?? 0)).slice(0, 8).map(row),
   ];
+}
+
+const SECRET_KEY = /token|secret|passw|authoriz|cookie|session|api[-_]?key|apikey|auth|jwt|csrf|xsrf|otp|signature|bearer|credential|ssn|card|cvv|iban/i;
+
+/** One response body for the model: JSON with secret-looking keys and opaque long strings hidden, anything else as flat text; cut at `limit`. Never the raw body (it can hold a login). */
+export function redactBody(body: string, mime = '', limit = 6000): string {
+  let out: string;
+  const looksJson = /json/i.test(mime) || /^\s*[[{]/.test(body);
+  if (looksJson) {
+    try {
+      const walk = (v: unknown, key = ''): unknown => {
+        if (v && typeof v === 'object') {
+          if (Array.isArray(v)) return v.slice(0, 50).map(x => walk(x, key));
+          return Object.fromEntries(Object.entries(v as Record<string, unknown>).slice(0, 80).map(([k, x]) => [k, walk(x, k)]));
+        }
+        if (typeof v === 'string') {
+          if (SECRET_KEY.test(key)) return '[hidden]';
+          return v.replace(/\b[A-Za-z0-9_\-+/=.]{32,}\b/g, '…');
+        }
+        return SECRET_KEY.test(key) && v !== null && v !== undefined ? '[hidden]' : v;
+      };
+      out = JSON.stringify(walk(JSON.parse(body)), null, 1);
+    } catch {
+      out = body.replace(/\b[A-Za-z0-9_\-+/=.]{32,}\b/g, '…');
+    }
+  } else out = body.replace(/\s+/g, ' ').replace(/\b[A-Za-z0-9_\-+/=.]{32,}\b/g, '…');
+  return out.length > limit ? `${out.slice(0, limit)}\n… [${out.length} characters]` : out;
+}
+
+const SHOWN_HEADERS = /^(?:content-type|content-length|content-encoding|cache-control|etag|last-modified|server|location|retry-after|x-ratelimit-[a-z-]+|access-control-allow-origin|www-authenticate)$/i;
+
+/** The response headers worth showing: what describes the answer, never cookies or credentials. */
+export function shownHeaders(headers: Record<string, string> | undefined): string[] {
+  return Object.entries(headers ?? {})
+    .filter(([k]) => SHOWN_HEADERS.test(k))
+    .slice(0, 16)
+    .map(([k, v]) => `  ${k.toLowerCase()}: ${v.replace(/\b[A-Za-z0-9_\-+/=.]{32,}\b/g, '…').slice(0, 160)}`);
 }

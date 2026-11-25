@@ -21,6 +21,9 @@ export function pngSize(base64: string): { width: number; height: number } {
   return { width: read(16), height: read(20) };
 }
 
+/** The longest side of a picture sent to the model, in pixels. */
+export const MAX_SIDE = 1800;
+
 export class PuppeteerPagePort implements PagePort {
   constructor(
     private readonly page: Page,
@@ -55,7 +58,23 @@ export class PuppeteerPagePort implements PagePort {
       if (!(error instanceof Error) || error.name !== 'CdpTimeoutError') throw error;
       ({ data } = await this.cdp.send<{ data: string }>(undefined, 'Page.captureScreenshot', params, 20_000));
     }
-    return { base64: data, ...pngSize(data) };
+    let size = pngSize(data);
+    // A picture with a side over MAX_SIDE costs far more model input and is refused by some providers (browser-harness caps at 1800, browser-use at 2048): take it again at a smaller scale, once, then once more if the first guess was off.
+    for (let attempt = 0; attempt < 2 && Math.max(size.width, size.height) > MAX_SIDE; attempt++) {
+      const ratio = (MAX_SIDE - 8) / Math.max(size.width, size.height);
+      let clip = params.clip as { x: number; y: number; width: number; height: number; scale: number } | undefined;
+      if (!clip) {
+        const m = await this.cdp.send<{ cssVisualViewport: { pageX: number; pageY: number; clientWidth: number; clientHeight: number } }>(undefined, 'Page.getLayoutMetrics');
+        clip = { x: m.cssVisualViewport.pageX, y: m.cssVisualViewport.pageY, width: m.cssVisualViewport.clientWidth, height: m.cssVisualViewport.clientHeight, scale: 1 };
+      }
+      const smaller = { ...params, clip: { ...clip, scale: clip.scale * ratio } };
+      const again = await this.cdp.send<{ data: string }>(undefined, 'Page.captureScreenshot', smaller, 20_000).catch(() => undefined);
+      if (!again) break;
+      data = again.data;
+      size = pngSize(data);
+      params.clip = smaller.clip;
+    }
+    return { base64: data, ...size };
   }
 
   /** A chord such as "Control+A": the same split as the gate's (core/interaction/keys.ts), modifiers mapped. */

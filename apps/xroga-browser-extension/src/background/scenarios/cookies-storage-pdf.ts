@@ -188,3 +188,45 @@ defineScenario({
     );
   },
 });
+
+defineScenario({
+  id: 'S3-request-detail',
+  set: 'C',
+  title: 'diagnostics request shows one API call with its headers and a body whose secrets are hidden',
+  covers: 'kind request: newest request matching urlPattern, content-type header, JSON body with token and password values hidden, query not shown',
+  async run(ctx) {
+    await ctx.open(`${FIXTURE_ORIGIN}/c-api.html`);
+    await ctx.call('diagnostics', { kind: 'network' });
+    await ctx.call('navigate', { url: `${FIXTURE_ORIGIN}/c-api.html` });
+    await ctx.call('wait', { text: 'kettle', timeoutMs: 5000 });
+    const r = await ctx.call('diagnostics', { kind: 'request', urlPattern: 'c-api.json' });
+    const t = r.text;
+    const f = await ctx.call('diagnostics', { kind: 'fetch', urlPattern: '/c-api.json' });
+    const other = await ctx.call('diagnostics', { kind: 'fetch', urlPattern: 'https://example.org/x.json' });
+    return outcome(
+      'status 200, a content-type header, the order in the body, neither the token, the password nor the query value; a page-made fetch of the same file reads it with secrets hidden; another site is refused',
+      JSON.stringify({ request: t.slice(0, 300), fetch: f.text.slice(0, 300), other: other.text.slice(0, 120) }),
+      r.ok && /→ 200/.test(t) && /content-type: application\/json/.test(t) && /kettle/.test(t) && /\[hidden\]/.test(t) && !/abcdef|hunter2|secretvalue/.test(t) &&
+        f.ok && /→ 200/.test(f.text) && /kettle/.test(f.text) && !/abcdef|hunter2/.test(f.text) && /not the own site/.test(other.text),
+    );
+  },
+});
+
+defineScenario({
+  id: 'S3-screenshot-cap',
+  set: 'C',
+  title: 'a picture is taken at a size a model can take: no side over 1800 px',
+  covers: 'a seven-thousand-pixel page, full page: re-taken at a smaller scale; the result reports its real size and scale',
+  async run(ctx) {
+    await ctx.open(`${FIXTURE_ORIGIN}/c-tall.html`);
+    const full = await ctx.call('screenshot', { fullPage: true });
+    const view = await ctx.call('screenshot', {});
+    const d = full.data as { width?: number; height?: number; scale?: number } | undefined;
+    const v = view.data as { width?: number; height?: number } | undefined;
+    return outcome(
+      'the full-page picture of a 7000 px page has no side over 1800 px and its scale is below 1; the viewport picture is also within the cap',
+      JSON.stringify({ full: [d?.width, d?.height, d?.scale], view: [v?.width, v?.height] }),
+      !!d?.width && !!d.height && Math.max(d.width, d.height) <= 1800 && (d.scale ?? 1) < 1 && !!v?.width && !!v.height && Math.max(v.width, v.height) <= 1800,
+    );
+  },
+});
