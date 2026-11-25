@@ -722,6 +722,7 @@ export async function callBuilderStream(
     maxTokens?: number;
     temperature?: number;
     reasoningMode?: import('./openaiCompat.js').ReasoningMode;
+    preserveLeadingWhitespace?: boolean;
     responseFormat?: PresentationResponseFormat;
     onDelta?: DeltaFn;
     userId?: string;
@@ -798,6 +799,7 @@ export async function callBuilderStream(
               maxOutputChars: opts.budget?.maxOutputChars,
               temperature: opts.temperature,
               reasoningMode: opts.reasoningMode,
+              preserveLeadingWhitespace: opts.preserveLeadingWhitespace,
               responseFormat: opts.responseFormat,
               onDelta: (delta) => {
                 opts.onStreamDelta?.(delta);
@@ -883,6 +885,7 @@ async function callWorkspaceAnswer(
       if (contextRoom <= 0 || generationMs <= 0 || signal.aborted) return Promise.resolve(undefined);
       return callBuilderStream(initial.modelId, nextMessages, {
         ...options, maxTokens: Math.min(maxTokens, contextRoom), signal, onDelta: undefined,
+          preserveLeadingWhitespace: true,
         budget: { ...budget, generationMs },
       });
     },

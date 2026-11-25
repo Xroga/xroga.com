@@ -290,7 +290,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.egress.test.ts",
-      "sha256": "93218ae8d9afe1fcad18e81ccde3773f09ce1f1ccdda936f7551d44d1aa6d9c0",
+      "sha256": "dfa82ee38d803b4e7838f617e288697f37cc38e3fec698dbdede9d869ac9e1e6",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/openaiCompat.egress.test.ts",
         "sha256": "649092d8bd97b3fed5a12305399a7d577b2c1b4a35ac3e952149cf6a5f834e0a"
@@ -302,7 +302,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "7d12d2d3228381d13417bf67f32a31af2bb6fc28e372b5d322896af08d214eda",
+      "sha256": "098a1911741a23bb6b688fc094481e23e464108965bd42e98c8384c62936c54a",
       "previousGenericSdkBinding": {
         "sha256": "0a418cef1bdbdadb77f14288c4298990900a111fbc0def0050756a9b146914ca",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -322,7 +322,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "7dffb027f1d7515746c18fdf89142c6d741abe9e0e8ac11f301863d47163664a",
+      "sha256": "8e8bedd7dacd8d6be6a8e0a2987f2b152a0418d0db5354003d7d9873bb9e9dd7",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"

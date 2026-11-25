@@ -13,6 +13,7 @@ import {
 } from '@/lib/engineeringArtifact';
 import { isRecoverableBuildOutput } from '@/lib/recoveredBuildOutput';
 import { reconcileAssistantText } from '@/lib/streamText';
+import { serializeWorkspaceRequest } from '@/lib/chatHistory';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -1656,7 +1657,7 @@ export async function phase1ChatWithProgress(
       Accept: 'text/event-stream, application/json;q=0.9',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
-    body: JSON.stringify(body),
+    body: serializeWorkspaceRequest(body),
   });
   const contentType = res.headers.get('content-type') ?? '';
   if (!contentType.includes('text/event-stream') || !res.body) {
@@ -5046,7 +5047,7 @@ concurrency:
               'POST',
 
             body:
-              JSON.stringify({
+              serializeWorkspaceRequest({
                 message,
                 history,
                 attachments,
@@ -5089,7 +5090,7 @@ concurrency:
               'POST',
 
             body:
-              JSON.stringify({
+              serializeWorkspaceRequest({
                 message,
                 history,
 

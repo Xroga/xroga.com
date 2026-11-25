@@ -34,7 +34,14 @@ const nativeAssignmentStart = /^\$?[a-z_]\w*[ \t]*=/iu;
 const nativeRootAssignment = /^ {0,3}root[ \t]*=[ \t]*[A-Z][A-Za-z0-9]*[ \t]*\(/;
 
 export function splitNativeOpenUiAnswer(raw: string, streaming = false) {
-  return scanNativeOpenUiAnswer(raw, streaming, true);
+  const { text, program } = scanNativeOpenUiAnswer(raw, streaming, true);
+  return { text, program };
+}
+
+export function splitNativeOpenUiContinuation(previous: string, addition: string) {
+  const draft = scanNativeOpenUiAnswer(previous, false, true);
+  const extension = scanNativeOpenUiAnswer(addition, false, true, draft.fence);
+  return { draft, extension, insideCodeBlock: Boolean(draft.fence) };
 }
 
 /** Bind Markdown to workspace prose. Keep large canonical prose out of the DSL
@@ -73,12 +80,14 @@ export function materializeNativeAnswerText(program: string, prose: string): str
   return program.slice(0, -2) + JSON.stringify(prose);
 }
 
-function scanNativeOpenUiAnswer(raw: string, streaming: boolean, allowJsonEnvelope: boolean): { text: string; program: string } {
+function scanNativeOpenUiAnswer(raw: string, streaming: boolean, allowJsonEnvelope: boolean, continuationFence?: string): {
+  text: string; program: string; fence?: string;
+} {
   const normalized = raw.replace(/\r\n/g, '\n');
   const marker = NATIVE_UI_MARKER.trim();
   const lines = normalized.split('\n');
   const prose: string[] = [];
-  let fence: string | undefined;
+  let fence = continuationFence;
   let fencedProgram: string | undefined;
   const envelope = (text: string, source: string) => {
     let program = source.trim().replace(deepSeekToolClosingSuffix, '').trimEnd().replace(strayPresentationClosingLines, '').trim();
@@ -88,15 +97,16 @@ function scanNativeOpenUiAnswer(raw: string, streaming: boolean, allowJsonEnvelo
       const close = new RegExp(`\\n[ \\t]*${wrapper[1]}${wrapper[1][0]}*[ \\t]*$`);
       program = program.replace(close, '').trim();
     }
-    return { text: text.trim(), program };
+    return { text: continuationFence ? text.trimEnd() : text.trim(), program, fence };
   };
-  if (allowJsonEnvelope && /^\s*\{/.test(normalized) && normalized.length <= 100_000) {
+  if (allowJsonEnvelope && !continuationFence && /^\s*\{/.test(normalized) && normalized.length <= 100_000) {
     try {
       const candidate: unknown = JSON.parse(normalized);
       if (candidate && typeof candidate === 'object' && 'format' in candidate && candidate.format === NATIVE_UI_FORMAT) {
         const text = 'text' in candidate && typeof candidate.text === 'string' ? candidate.text : '';
         const program = 'program' in candidate && typeof candidate.program === 'string' ? candidate.program : '';
         const readable = scanNativeOpenUiAnswer(text, streaming, false);
+        fence = readable.fence;
         return envelope(readable.text, program || readable.program);
       }
     } catch { /* Plain code or prose still goes through the line scanner. */ }

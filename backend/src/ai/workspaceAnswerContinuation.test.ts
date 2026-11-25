@@ -1,6 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { test } from 'node:test';
 import { NATIVE_UI_MARKER, splitNativeOpenUiAnswer } from './nativeOpenUi.js';
+import { completeNativeWorkspaceAnswer } from './nativeOpenUiWorkspace.js';
 import type { ChatMessage, ChatResult } from './openaiCompat.js';
 import { continueWorkspaceAnswer } from './workspaceAnswerContinuation.js';
 
@@ -55,6 +56,49 @@ test('replaces an incomplete line and carries forward a previously valid visual'
     onFailure: error => { throw error; },
   });
   assert.deepEqual(splitNativeOpenUiAnswer(result.text), { text: 'This line was still being written.', program: firstProgram });
+});
+
+test('keeps an accepted table when a valid continuation omits its rows', async () => {
+  const firstProgram = 'root = Col([Table(["ID", "Count"], [["001", "12"]])])';
+  const result = await continueWorkspaceAnswer({
+    initial: completion('Completed inventory.' + NATIVE_UI_MARKER + firstProgram, 'length'),
+    messages, maximumOutputTokens: 500, preferredChunkTokens: 100, signal: new AbortController().signal,
+    dispatch: async () => completion('Two locations were reviewed.' + NATIVE_UI_MARKER + 'root = Col([Text("Review complete")])', 'stop'),
+    onFailure: error => { throw error; },
+  });
+  const answer = completeNativeWorkspaceAnswer(result.text, result.finishReason, undefined, 'Show the inventory table.', undefined, ['table']);
+  assert.equal(answer.completion.status, 'complete');
+  assert.match(answer.response, /Two locations were reviewed\./u);
+  assert.match(answer.response, /\| 001 \| 12 \|/u);
+  assert.equal(answer.responseSource.text, firstProgram);
+  assert.equal(splitNativeOpenUiAnswer(result.text).program, firstProgram);
+});
+
+test('replaces an incomplete table with the validated program the continuation supplies', async () => {
+  const malformed = 'root = Col([Table(["ID", "Count"], [["001"]])])';
+  const repaired = 'root = Col([Table(["ID", "Count"], [["001", "12"]])])';
+  const result = await continueWorkspaceAnswer({
+    initial: completion('Inventory.' + NATIVE_UI_MARKER + malformed, 'length'),
+    messages, maximumOutputTokens: 500, preferredChunkTokens: 100, signal: new AbortController().signal,
+    dispatch: async () => completion(NATIVE_UI_MARKER + repaired, 'stop'),
+    onFailure: error => { throw error; },
+  });
+  assert.deepEqual(splitNativeOpenUiAnswer(result.text), { text: 'Inventory.', program: repaired });
+  assert.equal(result.finishReason, 'stop');
+});
+
+test('resumes a fenced code block verbatim and can parse the visual after its closing fence', async () => {
+  const codeStart = 'A Python example.\n\n```python\ndef example():\n    first = 1';
+  const codeEnd = '    second = 2\n    print(first + second)\n```';
+  const program = 'root = Col([Text("The example prints 3.")])';
+  const result = await continueWorkspaceAnswer({
+    initial: completion(codeStart, 'length'), messages, maximumOutputTokens: 500, preferredChunkTokens: 100,
+    signal: new AbortController().signal,
+    dispatch: async () => completion(codeEnd + NATIVE_UI_MARKER + program, 'stop'),
+    onFailure: error => { throw error; },
+  });
+  assert.deepEqual(splitNativeOpenUiAnswer(result.text), { text: codeStart + '\n' + codeEnd, program });
+  assert.equal(result.finishReason, 'stop');
 });
 
 test('preserves the first answer if follow-up is interrupted, refuses, or repeats the draft', async () => {

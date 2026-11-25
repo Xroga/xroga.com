@@ -310,6 +310,8 @@ export async function chatCompletion(
     responseFormat?: PresentationResponseFormat;
     /** Provider-specific reasoning control for compact structured workloads. */
     reasoningMode?: ReasoningMode;
+    /** A continuation may begin inside an indented code block. */
+    preserveLeadingWhitespace?: boolean;
     signal?: AbortSignal;
     /** Single-response transport only: visible text is released through the admission gate after the receipt is verified. */
     publishAfterVerification?: (text: string) => void;
@@ -354,7 +356,8 @@ export async function chatCompletion(
     diagnostics.observe(completion, false);
     const usage = completion.usage;
     if (!usage) throw new PostCompletionAccountingError();
-    const text = (completion.choices[0]?.message?.content ?? '').trim();
+    const content = completion.choices[0]?.message?.content ?? '';
+    const text = opts.preserveLeadingWhitespace ? content.trimEnd() : content.trim();
     const result:ChatResult = {
       text,
       finishReason: completion.choices[0]?.finish_reason ?? null,
@@ -395,6 +398,8 @@ export async function chatCompletionStream(
     onActivity?: (answerCharacters?:number) => void;
     /** Provider-specific reasoning control. Used only by direct-output workloads. */
     reasoningMode?: ReasoningMode;
+    /** A continuation may begin inside an indented code block. */
+    preserveLeadingWhitespace?: boolean;
     /** In-process buffer guard owned by the calling attempt. */
     maxOutputChars?: number;
     /** Ask the compatible endpoint to constrain the response to one JSON object. */
@@ -495,7 +500,7 @@ export async function chatCompletionStream(
     }
 
     if (!usage) throw new PostCompletionAccountingError();
-    text = text.trim();
+    text = opts.preserveLeadingWhitespace ? text.trimEnd() : text.trim();
     const result:ChatResult = {
       text,
       finishReason,

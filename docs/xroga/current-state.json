@@ -5629,7 +5629,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "929eedbe615a136a1619d773a28f6aa1b1f707592bc6a3980c0a54bd6ffc48e5",
+      "sha256": "dc1570898a80a9571708e1a844c91fd8e85e7980063f0ee331cf85678bf4b65e",
       "symbols": [
         "EditorialContext",
         "MAX_EXPANDED_EXPRESSION_DEPTH",
@@ -5700,6 +5700,7 @@
         "depth",
         "diagramField",
         "diagramTopology",
+        "draft",
         "editorialIssue",
         "element",
         "els",
@@ -5714,6 +5715,7 @@
         "expandedDepth",
         "explicit",
         "expression",
+        "extension",
         "factualRule",
         "fail",
         "fence",
@@ -5874,6 +5876,7 @@
         "showsProse",
         "sourceFor",
         "splitNativeOpenUiAnswer",
+        "splitNativeOpenUiContinuation",
         "stage",
         "start",
         "statement",
@@ -6980,7 +6983,8 @@
         "backend/src/ai/nativeOpenUiEditorial.test.ts:5",
         "backend/src/ai/nativeOpenUiValues.test.ts:5",
         "backend/src/ai/pipeline.ts:31",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:15"
+        "backend/src/ai/universal/semanticRequestPlanner.ts:15",
+        "backend/src/ai/workspaceAnswerContinuation.test.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -6999,7 +7003,8 @@
         "backend/src/ai/nativeDocumentDownload.test.ts",
         "backend/src/ai/nativeOpenUi.test.ts",
         "backend/src/ai/nativeOpenUiEditorial.test.ts",
-        "backend/src/ai/nativeOpenUiValues.test.ts"
+        "backend/src/ai/nativeOpenUiValues.test.ts",
+        "backend/src/ai/workspaceAnswerContinuation.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -7012,7 +7017,7 @@
       "id": "surface:29a1af5a79330a300ab2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/openaiCompat.ts",
-      "sha256": "7d12d2d3228381d13417bf67f32a31af2bb6fc28e372b5d322896af08d214eda",
+      "sha256": "098a1911741a23bb6b688fc094481e23e464108965bd42e98c8384c62936c54a",
       "symbols": [
         "ChatMessage",
         "ChatResult",
@@ -7038,6 +7043,7 @@
         "completion",
         "completionResponseMode",
         "configuredApiModel",
+        "content",
         "contentTokenEstimate",
         "cooldown",
         "createModelProviderClient",
@@ -7894,7 +7900,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "7dffb027f1d7515746c18fdf89142c6d741abe9e0e8ac11f301863d47163664a",
+      "sha256": "8e8bedd7dacd8d6be6a8e0a2987f2b152a0418d0db5354003d7d9873bb9e9dd7",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -16102,12 +16108,11 @@
       "id": "surface:bfc0e983d265508fba76",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/workspaceAnswerContinuation.ts",
-      "sha256": "cfd6674d4cffd27ac8f02ba229c425e82de53bc716fa803f293fc816feedfd5c",
+      "sha256": "5b68a915d536aaca88b369316b31b2a7aba82377124c72359eb4a31bda42e4b8",
       "symbols": [
         "answer",
         "consumed",
         "continueWorkspaceAnswer",
-        "draft",
         "error",
         "extendProse",
         "extension",
@@ -16146,7 +16151,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:26",
-        "backend/src/ai/workspaceAnswerContinuation.test.ts:5"
+        "backend/src/ai/workspaceAnswerContinuation.test.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -16445,7 +16450,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/openaiCompat.egress.test.ts:473",
+        "backend/src/ai/openaiCompat.egress.test.ts:503",
         "backend/src/ai/openaiCompat.test.ts:4",
         "backend/src/ai/openaiCompat.ts:22",
         "backend/src/ai/zurelayPolicy.test.ts:8"
@@ -44069,8 +44074,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:4084",
         "backend/src/ai/pipeline.ts:4087",
+        "backend/src/ai/pipeline.ts:4090",
         "backend/src/ai/projectMemory.ts:7",
         "backend/src/ai/sessionMemory.ts:7",
         "backend/src/builder/providerTransports.ts:10",
@@ -44343,7 +44348,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:139",
-        "backend/src/ai/pipeline.ts:4083",
+        "backend/src/ai/pipeline.ts:4086",
         "backend/src/ai/tenantModelDispatch.ts:6",
         "backend/src/config/supabaseTransport.security.test.ts:6",
         "backend/src/routes/integrations.ts:19",
@@ -108933,7 +108938,7 @@
       "id": "surface:fc0647beab64e4906eb6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/api.ts",
-      "sha256": "de2010a50b8f6e16f06858a8ed38769c8968673674d17eebdfac9847f15294ae",
+      "sha256": "36193f46ff1c904cf6b73a2685fea8f5d98bc9e9d7259865194a995eeea69a71",
       "symbols": [
         "API_URL",
         "ActivityLog",
@@ -109060,6 +109065,7 @@
         "waitForPersistedSwarmRun"
       ],
       "imports": [
+        "@/lib/chatHistory",
         "@/lib/engineeringArtifact",
         "@/lib/hackathonBrief",
         "@/lib/recoveredBuildOutput",
@@ -109071,6 +109077,7 @@
         "tailwind-merge"
       ],
       "runtimeImports": [
+        "frontend/src/lib/chatHistory.ts",
         "frontend/src/lib/engineeringArtifact.ts",
         "frontend/src/lib/recoveredBuildOutput.ts",
         "frontend/src/lib/streamText.ts",
@@ -110401,29 +110408,102 @@
       "id": "surface:d8724b39fe206c89fef3",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/chatHistory.ts",
-      "sha256": "afc45d8d680f1156af25c095eff2c2ada41e26c8c142cb1acab3cbf8d6d0c96e",
+      "sha256": "fe531d49c0e77f5e7b5c93687d5aedc66371284f65af5bf5fc6d23e6b876e7e4",
       "symbols": [
         "ChatHistoryMessage",
         "CompletedChatHistoryTurn",
+        "MAX_WORKSPACE_REQUEST_BYTES",
+        "assistant",
         "buildCompletedChatHistory",
+        "bytes",
+        "complete",
         "completed",
         "content",
+        "encoder",
+        "history",
+        "historyOmission",
+        "index",
         "message",
+        "original",
         "pairedLimit",
-        "pendingUser"
+        "pendingUser",
+        "remaining",
+        "selected",
+        "serializeWorkspaceRequest",
+        "size",
+        "user",
+        "withNotice"
       ],
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
+        "frontend/src/app/(shell)/admin/page.tsx",
+        "frontend/src/app/(shell)/dashboard/actions/confirm/[id]/page.tsx",
+        "frontend/src/app/(shell)/dashboard/analytics/page.tsx",
+        "frontend/src/app/(shell)/dashboard/automation/page.tsx",
         "frontend/src/app/(shell)/dashboard/automations/page.tsx",
+        "frontend/src/app/(shell)/dashboard/billing/page.tsx",
+        "frontend/src/app/(shell)/dashboard/community/page.tsx",
+        "frontend/src/app/(shell)/dashboard/error.tsx",
+        "frontend/src/app/(shell)/dashboard/existing-source/page.tsx",
+        "frontend/src/app/(shell)/dashboard/growth/page.tsx",
+        "frontend/src/app/(shell)/dashboard/integrations/[plugin]/page.tsx",
+        "frontend/src/app/(shell)/dashboard/integrations/github/callback/page.tsx",
+        "frontend/src/app/(shell)/dashboard/integrations/page.tsx",
+        "frontend/src/app/(shell)/dashboard/integrations/supabase/callback/page.tsx",
+        "frontend/src/app/(shell)/dashboard/integrations/vercel/callback/page.tsx",
+        "frontend/src/app/(shell)/dashboard/library/page.tsx",
+        "frontend/src/app/(shell)/dashboard/media/page.tsx",
+        "frontend/src/app/(shell)/dashboard/operations/page.tsx",
         "frontend/src/app/(shell)/dashboard/projects/page.tsx",
+        "frontend/src/app/(shell)/dashboard/publish/cws/callback/page.tsx",
+        "frontend/src/app/(shell)/dashboard/publish/page.tsx",
+        "frontend/src/app/(shell)/dashboard/referrals/page.tsx",
+        "frontend/src/app/(shell)/dashboard/tasks/page.tsx",
+        "frontend/src/app/(shell)/dashboard/upgrade/page.tsx",
+        "frontend/src/app/(shell)/dashboard/workflows/[id]/page.tsx",
+        "frontend/src/app/(shell)/drive/page.tsx",
+        "frontend/src/app/(shell)/error.tsx",
+        "frontend/src/app/(shell)/join/[token]/page.tsx",
         "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(shell)/settings/page.tsx",
+        "frontend/src/app/(shell)/team/page.tsx",
+        "frontend/src/app/(workspace)/dashboard/page.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
-        "frontend/src/app/share/[token]/page.tsx"
+        "frontend/src/app/admin/community/page.tsx",
+        "frontend/src/app/ai-app-builder/page.tsx",
+        "frontend/src/app/ai-coding-agent/page.tsx",
+        "frontend/src/app/auth/contact/page.tsx",
+        "frontend/src/app/auth/forgot-password/page.tsx",
+        "frontend/src/app/auth/github/callback/page.tsx",
+        "frontend/src/app/auth/login/page.tsx",
+        "frontend/src/app/auth/reset-password/page.tsx",
+        "frontend/src/app/auth/signup/page.tsx",
+        "frontend/src/app/build-saas-with-ai/page.tsx",
+        "frontend/src/app/community/[postId]/page.tsx",
+        "frontend/src/app/community/page.tsx",
+        "frontend/src/app/cybersecurity/page.tsx",
+        "frontend/src/app/game-builder/page.tsx",
+        "frontend/src/app/github-ai-coding-agent/page.tsx",
+        "frontend/src/app/image/page.tsx",
+        "frontend/src/app/integrations/page.tsx",
+        "frontend/src/app/layout.tsx",
+        "frontend/src/app/native-answer-evaluation/page.tsx",
+        "frontend/src/app/onboarding/page.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx",
+        "frontend/src/app/page.tsx",
+        "frontend/src/app/pricing/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx",
+        "frontend/src/app/showcase/[slug]/page.tsx",
+        "frontend/src/app/showcase/[slug]/preview/page.tsx",
+        "frontend/src/app/showcase/page.tsx",
+        "frontend/src/app/software/page.tsx",
+        "frontend/src/app/vercel-ai-deployment/page.tsx"
       ],
       "callers": [
         "frontend/src/context/TerminalChatContext.tsx:25",
+        "frontend/src/lib/api.ts:16",
         "frontend/src/lib/chatHistory.test.ts:3"
       ],
       "reachable": true,
@@ -155025,44 +155105,44 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:07fb624fbb0163d53845",
+      "id": "frontend-call:fbc154890b4d00f0e944",
       "sourcePath": "frontend/src/lib/api.ts",
-      "line": 431,
+      "line": 432,
       "callee": "fetchApiResponse",
       "reachable": true
     },
     {
-      "id": "frontend-call:4b8fab8cc8ced3a63ab1",
+      "id": "frontend-call:03e9288af97d111b1e8a",
       "sourcePath": "frontend/src/lib/api.ts",
-      "line": 744,
+      "line": 745,
       "callee": "fetchApiResponse",
       "reachable": true
     },
     {
-      "id": "frontend-call:2bdbf5b46891f567dba9",
+      "id": "frontend-call:fdbc769e7cf84a0379a7",
       "sourcePath": "frontend/src/lib/api.ts",
-      "line": 1448,
+      "line": 1449,
       "callee": "fetch",
       "reachable": true
     },
     {
-      "id": "frontend-call:f042554b33d79c1de06a",
+      "id": "frontend-call:fb55fd71b843e37468d7",
       "sourcePath": "frontend/src/lib/api.ts",
-      "line": 1651,
+      "line": 1652,
       "callee": "fetchApiResponse",
       "reachable": true
     },
     {
-      "id": "frontend-call:3d962eb1f5ede460f416",
+      "id": "frontend-call:9037e503334e0d50de3c",
       "sourcePath": "frontend/src/lib/api.ts",
-      "line": 1748,
+      "line": 1749,
       "callee": "fetchApiResponse",
       "reachable": true
     },
     {
-      "id": "frontend-call:cc57b3c779d3713506d3",
+      "id": "frontend-call:76840b74e8e6ee8dae65",
       "sourcePath": "frontend/src/lib/api.ts",
-      "line": 6782,
+      "line": 6783,
       "callee": "fetchApiResponse",
       "reachable": true
     },
@@ -156086,7 +156166,7 @@
     {
       "id": "test-suite:e560f40fdd60bae650a7",
       "sourcePath": "backend/src/ai/openaiCompat.egress.test.ts",
-      "declaredTests": 17,
+      "declaredTests": 18,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -156884,7 +156964,7 @@
     {
       "id": "test-suite:ac6b245129304e42ccfd",
       "sourcePath": "backend/src/ai/workspaceAnswerContinuation.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -161707,7 +161787,7 @@
     {
       "id": "test-suite:b4a41d023b02ea6e8dac",
       "sourcePath": "frontend/src/lib/chatHistory.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },

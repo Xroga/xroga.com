@@ -1,4 +1,4 @@
-import { bindNativeAnswerText, NATIVE_UI_MARKER, splitNativeOpenUiAnswer, validateNativeOpenUi } from './nativeOpenUi.js';
+import { bindNativeAnswerText, NATIVE_UI_MARKER, splitNativeOpenUiAnswer, splitNativeOpenUiContinuation, validateNativeWorkspaceProgram } from './nativeOpenUi.js';
 import type { ChatMessage, ChatResult } from './openaiCompat.js';
 
 function leadingLineOverlap(previous: string[], next: string[]): number {
@@ -26,28 +26,32 @@ function removeRepeatedTableHeader(previous: string[], next: string[]): string[]
 }
 
 
-function extendProse(previous: string, addition: string): string {
+function extendProse(previous: string, addition: string, insideCodeBlock: boolean): string {
   if (!previous || addition.startsWith(previous)) return addition || previous;
   if (!addition || previous.includes(addition)) return previous;
   const lines = previous.split('\n');
-  const nextLines = removeRepeatedTableHeader(lines, addition.split('\n'));
+  const extension = addition.split('\n');
+  const nextLines = insideCodeBlock ? extension : removeRepeatedTableHeader(lines, extension);
   const overlap = leadingLineOverlap(lines, nextLines);
   if (overlap) return [...lines, ...nextLines.slice(overlap)].join('\n');
   const last = lines.at(-1)!;
   if (last.trim().length >= 12 && nextLines[0].startsWith(last)) {
     return [...lines.slice(0, -1), ...nextLines].join('\n');
   }
+  if (insideCodeBlock) return previous + (addition.startsWith('\n') ? '' : '\n') + addition;
   const sameTable = last.trimStart().startsWith('|') && nextLines[0].trimStart().startsWith('|');
   return previous + (sameTable ? '\n' : '\n\n') + nextLines.join('\n');
 }
 
 function mergeContinuation(previous: string, addition: string, evidenceIds: ReadonlySet<string> | undefined): string {
-  const draft = splitNativeOpenUiAnswer(previous);
-  const extension = splitNativeOpenUiAnswer(addition);
-  const prose = extendProse(draft.text, extension.text);
+  const { draft, extension, insideCodeBlock } = splitNativeOpenUiContinuation(previous, addition);
+  const prose = extendProse(draft.text, extension.text, insideCodeBlock);
   let program = draft.program;
-  if (extension.program && (extension.program === program ||
-      validateNativeOpenUi(bindNativeAnswerText(extension.program, prose), evidenceIds, prose).ok)) {
+  // A second valid program may omit tables or controls already delivered in
+  // the first. Keep the validated original while extending canonical prose.
+  if (extension.program && extension.program !== program &&
+      !(program && validateNativeWorkspaceProgram(bindNativeAnswerText(program, draft.text), evidenceIds, draft.text).ok) &&
+      validateNativeWorkspaceProgram(bindNativeAnswerText(extension.program, prose), evidenceIds, prose).ok) {
     program = extension.program;
   }
   if (prose === draft.text && program === draft.program) return previous;
@@ -57,8 +61,9 @@ function mergeContinuation(previous: string, addition: string, evidenceIds: Read
 const instruction = 'Continue the preceding answer to the original request because generation stopped at its output boundary. '
   + 'Return only the remaining useful content. Preserve prior facts, numbers, citations and constraints. '
   + 'Do not repeat completed sections, tables or explanations. If a line ended midway, start with that line completed. '
-  + 'If a presentation program is needed, emit a full replacement program after the standard marker, never a program fragment. '
-  + 'If the readable draft already satisfies the request, provide any missing requested visual only.';
+  + 'Keep the existing presentation and continue in readable prose. If the draft has no complete presentation program '
+  + 'and the request needs one, emit the complete program after the standard marker. '
+  + 'Inside a code block, preserve exact indentation and close the existing fence before continuing in prose.';
 
 /** Continue settled, progressing output-limit results while the caller's original
  * generation deadline and the provider's output capacity still allow another call. */
