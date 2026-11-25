@@ -32,7 +32,8 @@ describe('compactSchema', () => {
     // 0.875 with the enabled and attribute postconditions (about 200 characters across the tools that take expect).
     // 0.89 with within taking `dialog "Name"` (a container named by role and part of its name, about 450 characters across the tools that take a semantic target).
     // 0.905 with extract_rows cards and fields, diagnostics cookies and storage, and save_page_pdf (about 450 characters, served from the prompt cache).
-    expect(size(tools)).toBeLessThan(32_064 * 0.905);
+    // 0.915 with the diagnostics description naming cookies, storage, issues and weight, and save_page_pdf's paper, landscape and scale (about 300 characters, served from the prompt cache).
+    expect(size(tools)).toBeLessThan(32_064 * 0.915);
   });
 
   it('offers the at option of click only to a run that asks for it', () => {

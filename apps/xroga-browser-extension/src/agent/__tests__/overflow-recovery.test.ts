@@ -292,9 +292,9 @@ describe('the context set', () => {
       message: { role: 'user', parts: [{ type: 'text', text: 'Pay my bills.' }] },
     });
     let asked = false;
-    // Xroga's system prompt is longer than upstream's, so the limit here is 8,000 where upstream uses 7,000.
+    // Xroga's system prompt is longer than upstream's, so the limit here is 9,500 where upstream uses 7,000 (it grew with the scope and completion rules).
     // The simulated server limit sits a little above the bare system prompt and tools. It was 6,300 before the prompt gained one sentence (about 62 tokens); the smallest limit at which compaction and overflow recovery still work was 6,900 until the prompt gained half a sentence about signed-in tabs (about 25 tokens); it is 7,000 now.
-    const { fn, refused: refusedAsk } = provider(8_000, (_call, i) => {
+    const { fn, refused: refusedAsk } = provider(9_500, (_call, i) => {
       if (i === 0)
         return {
           toolCalls: [{ name: 'ask_user', input: { kind: 'input', message: 'Which account should I use?' }, id: 'q' }],

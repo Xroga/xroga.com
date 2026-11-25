@@ -18,3 +18,12 @@ describe('page pdf', () => {
     expect(await printToBase64(async () => ({ data: big }))).toMatchObject({ ok: false });
   });
 });
+
+describe('pdf options', () => {
+  it('turns the options asked into print parameters', async () => {
+    const { pdfParams } = await import('../page-pdf');
+    expect(pdfParams()).toEqual({ printBackground: true, landscape: false, preferCSSPageSize: true });
+    expect(pdfParams({ paper: 'A4', landscape: true, scale: 0.8, background: false })).toEqual({ printBackground: false, landscape: true, paperWidth: 8.27, paperHeight: 11.7, preferCSSPageSize: false, scale: 0.8 });
+    expect(pdfParams({ paper: 'nonsense', scale: 9 })).toEqual({ printBackground: true, landscape: false, preferCSSPageSize: true });
+  });
+});

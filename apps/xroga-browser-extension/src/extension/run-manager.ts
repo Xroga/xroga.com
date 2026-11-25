@@ -1319,7 +1319,7 @@ export class RunManager {
         saveAs = answer === 'save-as';
       }
       if (!(await canSave())) return { text: "error SAVE_FAILED (not saved)\nSaving files needs Chrome's downloads permission, which the user has not allowed.", isError: true };
-      const printed = await printTab(tabId);
+      const printed = await printTab(tabId, { paper: typeof args.paper === 'string' ? args.paper : undefined, landscape: args.landscape === true, scale: typeof args.scale === 'number' ? args.scale : undefined });
       if (!printed.ok) return { text: `error SAVE_FAILED (not saved)\n${printed.reason}`, isError: true };
       const saved = await saveText({ filename, content: printed.base64, mimeType: 'application/pdf', base64: true }, saveAs).catch((error: Error) => ({ state: 'interrupted' as const, error: error.message, name: filename, downloadId: -1 }));
       if (saved.state !== 'complete') return { text: `error SAVE_FAILED (not saved)\nThe download did not complete: ${saved.error ?? 'interrupted'}.`, isError: true };

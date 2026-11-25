@@ -62,7 +62,7 @@ export const SAVE_PDF_TOOL: AgentTool = {
   description: 'Save the current tab as a PDF in Downloads. Asks first in Ask mode. Only when a PDF was asked for.',
   parameters: {
     type: 'object',
-    properties: { filename: { type: 'string' } },
+    properties: { filename: { type: 'string' }, paper: { type: 'string', enum: ['letter', 'a4', 'legal', 'a3', 'a5'] }, landscape: { type: 'boolean' }, scale: { type: 'number', minimum: 0.1, maximum: 2 } },
     additionalProperties: false,
   },
 };
