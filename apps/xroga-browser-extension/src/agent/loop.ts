@@ -42,7 +42,8 @@ import { Guards } from './guards';
 import { contextThreshold, elisionChunk, hardLimit, planElision } from './elision';
 import { runCompaction, runShorten } from './compaction';
 import { attachmentBytes, attachmentParts, readAttachment } from './attachments';
-import { describeOcr, OCR_TOOL } from './ocr-format';
+import { describeOcr, OCR_LANGUAGES, OCR_TOOL } from './ocr-format';
+import { describeImageHits, FIND_IMAGE_TOOL, findTemplate } from './template-match';
 import { decodeImage, describeHits, diffPictures, FIND_COLOR_TOOL, scanColor, viewOfChange } from './pixels';
 import { learnFrom, turnEffort } from './run';
 import { PaintedInputDeliveryGuard } from './painted-input-delivery';
@@ -2114,7 +2115,7 @@ Routine "${name}" did not run through: the site may have changed. Take a snapsho
   #offerCanvasTools(text: string | undefined): boolean {
     if (this.#canvasOffered || !text || !/\bcanvas\b/i.test(text) || text.split('\n').length > 40) return false;
     this.#canvasOffered = true;
-    this.#registerTools([FIND_COLOR_TOOL, OCR_TOOL]);
+    this.#registerTools([FIND_COLOR_TOOL, OCR_TOOL, FIND_IMAGE_TOOL]);
     return true;
   }
 
@@ -2519,6 +2520,27 @@ ${renderSkill(top)}`);
           outcome = { call, kind, text: `error: the page was captured (${data.width}×${data.height}) but could not be decoded here: ${error instanceof Error ? error.message : String(error)}`, isError: true };
         }
       }
+    } else if (call.toolName === 'find_image') {
+      const tabId = typeof args.tabId === 'number' ? args.tabId : this.#activeTab;
+      const tab = typeof tabId === 'number' ? { tabId } : {};
+      const threshold = typeof args.threshold === 'number' ? Math.max(0.5, Math.min(1, args.threshold)) : 0.9;
+      const [tplShot, pageShot] = await Promise.all([
+        this.options.layer.call('screenshot', { ...tab, ref: String(args.ref ?? '') }, signal).catch((error: unknown) => ({ ok: false as const, text: error instanceof Error ? error.message : String(error), data: undefined })),
+        this.options.layer.call('screenshot', tab, signal).catch((error: unknown) => ({ ok: false as const, text: error instanceof Error ? error.message : String(error), data: undefined })),
+      ]);
+      type Shot = { base64?: string; mimeType?: string; width?: number; height?: number };
+      const t = tplShot.ok ? (tplShot.data as Shot | undefined) : undefined;
+      const p = pageShot.ok ? (pageShot.data as Shot | undefined) : undefined;
+      if (!t?.base64 || !p?.base64) {
+        outcome = { call, kind, text: 'error: find_image could not capture ' + (!t?.base64 ? 'the element ' + String(args.ref ?? '') + ' (' + String(tplShot.text ?? 'no image').slice(0, 160) + ')' : 'the page') + '. Nothing was searched.', isError: true };
+      } else {
+        try {
+          const [template, page] = await Promise.all([decodeImage(t.base64, t.mimeType ?? 'image/png'), decodeImage(p.base64, p.mimeType ?? 'image/png')]);
+          outcome = { call, kind, text: describeImageHits(findTemplate(page, template, { threshold }), threshold), isError: false };
+        } catch (error) {
+          outcome = { call, kind, text: 'error: the pictures could not be decoded here: ' + (error instanceof Error ? error.message : String(error)), isError: true };
+        }
+      }
     } else if (call.toolName === 'ocr') {
       const tabId = typeof args.tabId === 'number' ? args.tabId : this.#activeTab;
       const region = Array.isArray(args.region) && args.region.length === 4 && args.region.every(n => typeof n === 'number') ? (args.region as [number, number, number, number]) : undefined;
@@ -2529,7 +2551,7 @@ ${renderSkill(top)}`);
       } else {
         try {
           const { recognizeImage } = await import('@src/extension/ocr');
-          const result = await recognizeImage(data.base64, data.mimeType ?? 'image/png');
+          const result = await recognizeImage(data.base64, data.mimeType ?? 'image/png', OCR_LANGUAGES[String(args.language ?? 'english')] ?? 'eng');
           outcome = { call, kind, text: this.options.layer.wrap(describeOcr(result, { width: data.width, height: data.height }, { find: typeof args.find === 'string' ? args.find : undefined, region }), { site: 'a picture of the page' }), isError: false };
         } catch (error) {
           outcome = { call, kind, text: 'error: text recognition failed (' + (error instanceof Error ? error.message : String(error)).slice(0, 200) + '). Read the picture with a screenshot instead.', isError: true };

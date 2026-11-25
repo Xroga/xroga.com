@@ -16,19 +16,23 @@ export interface OcrResult {
   lines: OcrLineBox[];
 }
 
+/** The languages whose recognition models ship with the extension (tessdata_fast), by the name the tool takes. */
+export const OCR_LANGUAGES: Record<string, string> = { english: 'eng', arabic: 'ara', urdu: 'urd', hindi: 'hin', spanish: 'spa', french: 'fra', german: 'deu', portuguese: 'por', russian: 'rus', chinese: 'chi_sim' };
+
 export const OCR_TOOL: AgentTool = {
   name: 'ocr',
   source: 'agent',
   group: 'working',
   description:
     'Read the text that is only in a picture (an image, a canvas, a chart, a painted or WebGL editor, a scanned page) with on-device text recognition, and say where each line is, as fractions that canvas at accepts. ' +
-    'Optional region [x0, y0, x1, y1] (fractions of the page) reads only that part, larger and clearer; find returns just the lines that contain that text. A word read with low confidence is marked with ?. English text. Nothing leaves the browser. ' +
+    'Optional region [x0, y0, x1, y1] (fractions of the page) reads only that part, larger and clearer; find returns just the lines that contain that text. A word read with low confidence is marked with ?. Language english (default), arabic, urdu, hindi, spanish, french, german, portuguese, russian or chinese. Nothing leaves the browser. ' +
     'Use it when the page outline and the painted text a screenshot lists do not name what you need; read normal page text with read.',
   parameters: {
     type: 'object',
     properties: {
       region: { type: 'array', items: { type: 'number' }, minItems: 4, maxItems: 4 },
       find: { type: 'string', maxLength: 120 },
+      language: { type: 'string', enum: ['english', 'arabic', 'urdu', 'hindi', 'spanish', 'french', 'german', 'portuguese', 'russian', 'chinese'] },
       tabId: { type: 'number' },
     },
     additionalProperties: false,

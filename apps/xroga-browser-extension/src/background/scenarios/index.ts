@@ -37,6 +37,7 @@ import './canvas-script-editor';
 import './canvas-libraries';
 import './find-by-query';
 import './ocr-picture';
+import './image-and-language';
 import './variants-form';
 import './timeline-editor';
 import './stale-and-slow';

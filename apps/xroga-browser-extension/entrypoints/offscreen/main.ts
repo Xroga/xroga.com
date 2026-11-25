@@ -18,7 +18,7 @@ interface OcrWorker {
 }
 
 const progress: string[] = [];
-let worker: Promise<OcrWorker> | undefined;
+const workers = new Map<string, Promise<OcrWorker>>();
 let idle: ReturnType<typeof setTimeout> | undefined;
 
 function loadScript(src: string): Promise<void> {
@@ -31,11 +31,11 @@ function loadScript(src: string): Promise<void> {
   });
 }
 
-async function startWorker(): Promise<OcrWorker> {
+async function startWorker(lang: string): Promise<OcrWorker> {
   const url = (path: string) => chrome.runtime.getURL(path);
   await loadScript(url('ocr/tesseract.min.js'));
   const T = (globalThis as unknown as { Tesseract: { createWorker(lang: string, oem: number, options: object): Promise<OcrWorker> } }).Tesseract;
-  return T.createWorker('eng', 1, {
+  return T.createWorker(lang, 1, {
     workerPath: url('ocr/worker.min.js'),
     corePath: url('ocr/core'),
     langPath: url('ocr/lang'),
@@ -47,11 +47,17 @@ async function startWorker(): Promise<OcrWorker> {
   });
 }
 
-async function recognize(base64: string, mimeType: string) {
-  worker ??= startWorker().catch(error => {
-    worker = undefined;
-    throw error;
-  });
+async function recognize(base64: string, mimeType: string, lang: string) {
+  if (!workers.has(lang)) {
+    workers.set(
+      lang,
+      startWorker(lang).catch(error => {
+        workers.delete(lang);
+        throw error;
+      }),
+    );
+  }
+  const worker = workers.get(lang)!;
   clearTimeout(idle);
   try {
     const timeout = new Promise<never>((_, reject) => setTimeout(() => reject(new Error('the engine did not answer in 90 seconds (' + progress.slice(-4).join('; ') + ')')), 90_000));
@@ -64,9 +70,9 @@ async function recognize(base64: string, mimeType: string) {
     };
   } finally {
     idle = setTimeout(() => {
-      const old = worker;
-      worker = undefined;
-      void old?.then(w => w.terminate()).catch(() => undefined);
+      const old = [...workers.values()];
+      workers.clear();
+      for (const w of old) void w.then(x => x.terminate()).catch(() => undefined);
     }, 60_000);
   }
 }
@@ -83,7 +89,7 @@ chrome.runtime.onMessage.addListener((message, _sender, reply) => {
     urls.delete(message.url as string);
     reply({ held: urls.size });
   } else if (message.type === 'ocr') {
-    recognize(String(message.base64), String(message.mimeType ?? 'image/png')).then(
+    recognize(String(message.base64), String(message.mimeType ?? 'image/png'), /^[a-z_]{3,8}$/.test(String(message.lang)) ? String(message.lang) : 'eng').then(
       result => reply({ ok: true, ...result }),
       error => reply({ ok: false, error: error instanceof Error ? error.message : String(error) }),
     );
