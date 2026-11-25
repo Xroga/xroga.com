@@ -341,12 +341,27 @@ function chartTable(spec: Spec, display = false) {
   };
 }
 
-export function staticChartTable(props: unknown) {
+export function staticChartTable(props: unknown, readInitial?: (value: unknown) => unknown) {
   if (!props || typeof props !== "object") return;
   // OpenUI uses null for omitted positional arguments.
-  const parsed = chartProps.safeParse(Object.fromEntries(Object.entries(props).filter(([, value]) => value !== null)));
+  const values = Object.fromEntries(Object.entries(props).filter(([, value]) => value !== null));
+  if (readInitial) {
+    const readRecord = (record: unknown) => record && typeof record === "object" && !Array.isArray(record)
+      ? Object.fromEntries(Object.entries(record).map(([name, value]) => [name, readInitial(value)]))
+      : readInitial(record);
+    for (const [key, value] of Object.entries(values)) {
+      values[key] = key === "data" && Array.isArray(value) ? value.map(readRecord)
+        : key === "presentation" ? readRecord(value) : readInitial(value);
+    }
+  }
+  const parsed = chartProps.safeParse(values);
   const spec = parsed.success && toSpec(parsed.data);
-  return spec ? { ...chartTable(spec), title: spec.presentation?.title, note: spec.presentation?.note } : undefined;
+  return spec ? {
+    ...chartTable(spec),
+    displayRows: spec.currency ? chartTable(spec, true).rows : undefined,
+    title: spec.presentation?.title,
+    note: spec.presentation?.note,
+  } : undefined;
 }
 
 export const Chart = defineComponent({

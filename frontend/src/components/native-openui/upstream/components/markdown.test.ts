@@ -177,6 +177,27 @@ test('a visible checklist replaces its exact same-section Markdown list only', (
   ]) assert.match(render(different, source).rich, /Turn off the tools.*Record the handoff|Record the handoff.*Turn off the tools/);
 });
 
+test('detached checkboxes preserve a single ordered checklist and its position in the saved answer', () => {
+  const text = '## Review\n\n4. Inspect the handoff.\n5. Record the result.\n\nKeep the receipt.';
+  const syntax = [
+    'root = Col([Markdown(_xroga_answer), Checkbox($inspect, "Inspect the handoff."), Checkbox($record, "Record the result.")])',
+    '$inspect = false',
+    '$record = false',
+  ].join('\n');
+  const parser = createParser(catalog.schema as LibraryJSONSchema, 'Col');
+  const placement = (answer: string, program = syntax) => {
+    const bound = bindNativeAnswerText(program, answer);
+    return nativeMarkdownMatches(parser.parse(bound).root, initialNativeValueReader(bound)).orderedChecklist;
+  };
+  assert.deepEqual(placement(text), { markdownIndex: 0, blockIndex: 1, firstCheckbox: 1, start: 4 });
+  assert.equal(supplementNativeProse(text, syntax, true), text);
+  assert.equal(placement(text.replace('Inspect the handoff.', 'Inspect the handoff. [1]')), undefined);
+  assert.equal(placement(text + '\n\n4. Inspect the handoff.\n5. Record the result.'), undefined);
+  assert.equal(placement(text, syntax.replace('$record = false', '$record = true')), undefined);
+  assert.equal(placement(text, syntax.replace('Record the result.', 'Keep the receipt.')), undefined);
+  assert.match(supplementNativeProse(text, syntax.replace('Record the result.', 'Notify the owner.'), true), /Notify the owner/);
+});
+
 test('a titled native introduction replaces a single equivalent Markdown paragraph and preserves distinct links', () => {
   const program = 'root = Col([Markdown(_xroga_answer), Section("Handoff", [Caption("Keep this detail.")], "Pass the notes to the coordinator.")])';
   for (const [paragraph, expected] of [
@@ -232,6 +253,31 @@ test('a calculated table with a dynamic header replaces its initial fallback tab
   const fallback=renderToStaticMarkup(createElement(MarkdownBlocks,{text}));
   assert.equal((fallback.match(/<table/g)??[]).length,1);
   assert.match(fallback,/Balance after 10 years/);
+});
+
+test('a visible interactive chart replaces its exact saved data table', () => {
+  const program = [
+    'root = Col([input, Markdown(_xroga_answer), chart])',
+    '$principal = 12500',
+    'input = Input($principal, "Principal (USD)", "number")',
+    'interest = $principal * 0.124864',
+    'rows = [{"part": "Principal", "usd": $principal}, {"part": "Interest earned", "usd": interest}]',
+    'chart = Chart("bar", rows, "part", ["usd"], "currency", "USD", false, 240, {"xLabel": "Component", "yLabel": "USD"})',
+  ].join('\n');
+  const text = supplementNativeProse('Edit the principal to update the chart.', program, true);
+  const parser = createParser(catalog.schema as LibraryJSONSchema, 'Col');
+  const withMatches = (source: string, markdown: string) => {
+    const bound = bindNativeAnswerText(source, text);
+    const matches = nativeMarkdownMatches(parser.parse(bound).root, initialNativeValueReader(bound));
+    return renderToStaticMarkup(createElement(MarkdownBlocks, { text: markdown, matches }));
+  };
+  assert.match(text, /\| Interest earned \| \$1,560.80 \|/);
+  assert.doesNotMatch(withMatches(program, text), /<table/);
+  assert.match(withMatches(program, text.replace('$1,560.80', '$1,560.81')), /<table/);
+  assert.match(withMatches(program, text.replace('$1,560.80', '$1,560.80 [1]')), /<table/);
+  const hidden = program.replace('Markdown(_xroga_answer), chart', 'Markdown(_xroga_answer), Popover("View chart", chart)');
+  assert.match(withMatches(hidden, text), /<table/);
+  assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, { text })), /<table.*12,500.00.*1,560.80/);
 });
 
 test('an opening Markdown title does not repeat its native display heading', () => {

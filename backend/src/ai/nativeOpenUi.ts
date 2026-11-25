@@ -419,8 +419,8 @@ export function supplementNativeProse(prose: string, program: string, includeAll
       const checked = initialValue(props.checked);
       const key = nativeReadableTextKey(label);
       const orderedScopes = authoredOrderedItems.get(key);
-      const alreadyOrdered = checked === false && orderedScopes && scope.length > 0
-        && isSingleScope(orderedScopes.values(), scope);
+      const alreadyOrdered = checked === false && orderedScopes && (scope.length
+        ? isSingleScope(orderedScopes.values(), scope) : orderedScopes.size === 1);
       if (label && !alreadyOrdered && !existingTasks.has(JSON.stringify([checked, key]))) add('- ' + label);
     } else if (node.typeName === 'Section') {
       const path = addHeading(scalar(props.title), scope);
