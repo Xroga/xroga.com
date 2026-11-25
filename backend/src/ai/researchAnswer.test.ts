@@ -888,6 +888,22 @@ test('combined research and presentation preserve publisher scope and precise re
   assert.equal(workspacePublicSearchQuery('Find published streamflow data. Use only Fictional Laboratory sources.', true), undefined);
 });
 
+test('a cited answer with a stated coverage gap is partial, while examples in code remain literal', () => {
+  const sources = [{ url: 'https://example.org/handbook' }];
+  const prompt = 'Use official sources to compare two named requirements.';
+  const answer = '| Requirement | Rule |\n| --- | --- |\n| One | The documented rule [1]. |\n'
+    + '| Two | **Not established by the retrieved excerpts.** |';
+  const presented = presentPublicResearchAnswer(answer, { status: 'complete' }, sources, prompt);
+  assert.deepEqual(presented.completion, { status: 'partial', reason: 'source_coverage' });
+  assert.match(presented.response, /Not established by the retrieved excerpts/);
+
+  const code = String.fromCharCode(96);
+  const literal = 'Here is the documented syntax [1].\n\n' + code.repeat(3) + 'txt\n'
+    + 'Not established by the retrieved excerpts.\n' + code.repeat(3);
+  assert.deepEqual(presentPublicResearchAnswer(literal, { status: 'complete' }, sources, prompt).completion,
+    { status: 'complete' });
+});
+
 test('a guide about a named publication cannot substitute for the requested original', () => {
   const prompt = 'Using only official NIST pages, look up the NIST Cybersecurity Framework 2.0 functions. Cite the primary source.';
   const guide = { title: 'NIST Cybersecurity Framework 2.0 Quick-Start Guide', url: 'https://www.nist.gov/publications/guide' };

@@ -101,3 +101,20 @@ test('a standard excerpt favors exact clause coverage over a repeated last query
     'connector standard 4.1.8 and 4.1.9 switch layout overview');
   assert.match(result, /4\.1\.8.*4\.1\.9.*equivalent control/);
 });
+
+test('official references use each requested section body instead of the shared contents list', () => {
+  const longBetween = 'Unrelated supporting examples. '.repeat(210);
+  const text = '## Contents\n4.1.7 Readable state\n4.1.9 Input limits\n6.3.8 Confirmation choices\n\n'
+    + '### 4.1.7 Readable state\n\nDisplay the current state alongside the active control.\n\n'
+    + '### 4.1.8 Unrelated topic\n\n' + longBetween + '\n\n'
+    + '### 4.1.9 Input limits\n\nShow the permitted range beside the field.\n\n'
+    + '### 4.2.1 Unrelated topic\n\n' + longBetween + '\n\n'
+    + '### 6.3.8 Confirmation choices\n\n' + longBetween + '\n\nNormative requirements:\n'
+    + 'Provide an alternative that does not rely on recalling a code.';
+  const result = matchingPageParagraphs(text, 'Requirements handbook 2.2 references 4.1.7, 4.1.9, and 6.3.8');
+  assert.match(result, /4\.1\.7 Readable state Display the current state/);
+  assert.match(result, /4\.1\.9 Input limits Show the permitted range/);
+  assert.match(result, /6\.3\.8 Confirmation choices Provide an alternative/);
+  assert.doesNotMatch(result, /Contents|Unrelated/);
+  assert.ok(result.length <= 3200);
+});

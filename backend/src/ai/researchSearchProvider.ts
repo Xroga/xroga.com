@@ -104,6 +104,32 @@ export interface SearchResult {
 }
 const retrievalWords = /^(?:find|original|primary|final|source|publication|standard|dataset|paper|report|rule|official)$/iu;
 
+function pageReferenceSections(content: string, identifiers: readonly string[]): string[] {
+  // A publisher index often repeats all its reference numbers in a table of
+  // contents. Prefer the actual headings and their bodies over that index.
+  const headings = [...content.matchAll(/^ {0,3}(?:(#{1,6})[ \t]+|(?=\d+(?:\.\d+){2,}[.:)]?\s+\p{L}))(.*)$/gmu)];
+  const sections = new Map<string, { prose: string; explicitHeading: boolean }>();
+  headings.forEach((heading, index) => {
+    const reference = /^(\d+(?:\.\d+)+)[.:)]?\s+/u.exec(heading[2])?.[1];
+    if (!reference || !identifiers.includes(reference)) return;
+    const level = heading[1]?.length ?? 1;
+    const nextHeading = headings.find((next, offset) => offset > index && (next[1]?.length ?? 1) <= level);
+    const contentEnd = nextHeading?.index ?? content.length;
+    const start = (heading.index ?? 0) + heading[0].length;
+    const body = content.slice(start, contentEnd).trim();
+    if (!body) return;
+    const rule = /^(?:(?:[\p{L}\p{N}-]+[ \t]+){0,2}success criteri(?:on|a)|normative (?:text|requirements?)):[ \t]*\r?$/imu.exec(body);
+    const prose = heading[2] + '\n' + (rule ? body.slice(rule.index + rule[0].length).trim() : body);
+    const previous = sections.get(reference);
+    const explicitHeading = Boolean(heading[1]);
+    if (!previous || (explicitHeading && !previous.explicitHeading)
+      || (explicitHeading === previous.explicitHeading && prose.length > previous.prose.length)) {
+      sections.set(reference, { prose, explicitHeading });
+    }
+  });
+  return identifiers.flatMap(reference => sections.get(reference)?.prose ?? []);
+}
+
 export function matchingPageParagraphs(content: string, question: string): string {
   const words = (text: string) => (text.toLowerCase().match(/[\p{L}\p{N}]{4,}/gu) ?? [])
     .map(word => word.length > 4 ? word.replace(/s$/u, '') : word);
@@ -112,6 +138,18 @@ export function matchingPageParagraphs(content: string, question: string): strin
   if (!terms.length && !identifiers.length) return '';
   let best = '', score = 0;
   const text = content.trim().replace(/[^\S\r\n]+/gu, ' ');
+  const sections = pageReferenceSections(text, identifiers);
+  if (sections.length >= 2 || (sections.length === 1 && identifiers.length === 1)) {
+    const separators = (sections.length - 1) * 2;
+    const excerpts = sections.map(section => section.replace(/\s+/gu, ' '));
+    const minimumShare = Math.floor((DEEPSEEK_PRIMARY_PAGE_EXCERPT - separators) / excerpts.length);
+    const spare = excerpts.reduce((available, prose) => available + Math.max(0, minimumShare - prose.length), 0);
+    const longSections = excerpts.filter(prose => prose.length > minimumShare).length;
+    const share = minimumShare + (longSections ? Math.floor(spare / longSections) : 0);
+    return excerpts.map(prose => {
+      return prose.length <= share ? prose : prose.slice(0, share).replace(/\s+\S*$/u, '');
+    }).join('\n\n');
+  }
   for (let start = 0; start < text.length; start += 400) {
     const end = start + DEEPSEEK_PRIMARY_PAGE_EXCERPT;
     const passage = text.slice(start, end)

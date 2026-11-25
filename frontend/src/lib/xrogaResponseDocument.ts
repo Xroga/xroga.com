@@ -280,7 +280,7 @@ export function enhanceAiResponse(content: string, documentId: string, completio
       : partialReason === 'source_attribution'
       ? 'Some numbered citations could not be matched to a retrieved source. Linked citations are verified; treat any unlinked number as unverified. No automatic retry was made.'
       : partialReason === 'source_coverage'
-      ? 'Some requested official links could not be verified from the retrieved sources.'
+      ? 'Some requested details could not be verified from the retrieved sources.'
       : partialReason === 'output_limit'
       ? 'This answer reached its output limit and is incomplete. The received content is preserved. No automatic retry was made.'
       : 'The provider did not confirm a complete answer. The received content is preserved. No automatic retry was made.' });

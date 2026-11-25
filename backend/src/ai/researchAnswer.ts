@@ -47,6 +47,7 @@ const inlineCodeSpans=/(?<!\x60)(\x60+)(?!\x60)[\s\S]*?(?<!\x60)\1(?!\x60)/g;
 const inlineMarkdownLinks=/\[([^\]\r\n]+)\]\([ \t]*(?:<([^<>\r\n]+)>|((?:[^\s()<>]|\([^()\r\n]*\))+))(?:[ \t]+(?:"[^"\r\n]*"|'[^'\r\n]*'|\([^()\r\n]*\)))?[ \t]*\)/g;
 const directUrls = /<?https?:\/\/[^\s<>"')\]]+>?/giu;
 const missingOfficialLinks = /\bofficial (?:site|link|website|url) (?:not verified|unverified|not found)\b/iu;
+const missingRequestedEvidence = /(?:^|[\n|])\s*(?:\*\*)?(?:not (?:established|verified|supported) by the (?:retrieved|supplied|available) (?:sources|evidence|excerpts)|I (?:couldn[’']t|could not) verify (?:all|every|the requested)[^\n|]{0,120} from the (?:retrieved|supplied|available) (?:sources|evidence|excerpts))(?=[.!?*\s|]|$)/iu;
 
 function sourceUrl(value: string): string {
   try {
@@ -206,6 +207,14 @@ function withholdCrossListingRoutes(text: string, sources: ReadonlyArray<{ snipp
 export function presentPublicResearchAnswer(response: string, completion: PublicCompletionState,
   sources: ReadonlyArray<{ url: string; title?: string; snippet?: string }>, prompt: string) {
   let text = bindCitationLinks(response, sources);
+  if (completion.status === 'complete') {
+    let explicitGap = false;
+    mapResearchProse(text, prose => {
+      explicitGap ||= missingRequestedEvidence.test(prose);
+      return prose;
+    });
+    if (explicitGap) completion = { status: 'partial', reason: 'source_coverage' };
+  }
   const evidenceOnlyAnswer = withholdIncomparableResearchRanking(text);
   const rankingWithheld = evidenceOnlyAnswer !== undefined;
   if (rankingWithheld) {
