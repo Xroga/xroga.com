@@ -101,12 +101,15 @@ export const SKILLSHUB: OnlineProvider = {
 /** Fetches one candidate's SKILL.md. Valid format required; the body is untrusted and unverified. */
 export async function loadCandidate(c: OnlineCandidate, fetchImpl: FetchLike): Promise<OnlineCandidate | null> {
   const u = new URL(c.fetchUrl);
-  const hosts = c.provider === 'aas' ? [POOL_HOST] : SKILLSHUB.hosts;
+  const hosts = c.provider === 'aas' || c.provider === 'harness' ? [POOL_HOST] : SKILLSHUB.hosts;
   // The pool's file must come from the pinned commit of its own repository (no redirect, no credentials).
   if (u.protocol !== 'https:' || !hosts.includes(u.hostname) || u.username || u.password) return null;
   if (c.provider === 'aas' && !/^\/sickn33\/agentic-awesome-skills\/[a-f0-9]{40}\/skills\/[A-Za-z0-9._-]+\/SKILL\.md$/.test(u.pathname)) return null;
+  // Browser Harness's guides are plain Markdown from its pinned commit (no SKILL.md front matter).
+  if (c.provider === 'harness' && !/^\/browser-use\/browser-harness\/[a-f0-9]{40}\/(?:agent-workspace\/domain-skills\/[A-Za-z0-9._%-]+\/[A-Za-z0-9._%-]+|interaction-skills\/[A-Za-z0-9._%-]+)\.md$/.test(u.pathname)) return null;
   const got = await getText(fetchImpl, c.fetchUrl, 'text/markdown, text/plain');
   if (!got.ok) return null;
+  if (c.provider === 'harness') return got.text.trim() ? { ...c, text: got.text.slice(0, 60_000) } : null;
   const parsed = parseSkillMd(got.text);
   if (!parsed.ok) return null;
   return { ...c, text: parsed.skill.body };
