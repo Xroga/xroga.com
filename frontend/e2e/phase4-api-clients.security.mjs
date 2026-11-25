@@ -48,9 +48,6 @@ test('each first-party client refuses API redirects without forwarding private r
     const {load}=loadClients(`http://127.0.0.1:${api.address().port}`),core=load('api');
     const cases=[['canonical API',()=>core.apiFetch('/api/fixture',{method:'POST',body:'private fixture'},'synthetic-browser-access')],
       ['stream submission',()=>core.streamSwarmExecute('private fixture',{accessToken:'synthetic-browser-access'})],
-      ['Workspace planning',()=>core.api.phase1.plan('private fixture',[])],
-      ['Workspace chat',()=>core.api.phase1.chat('private fixture',[])],
-      ['Workspace progress chat',()=>core.phase1ChatWithProgress({message:'private fixture',history:[]})],
       ['community',()=>load('community').communityApi.createPost({category:'feedback',title:'private fixture',body:'private body'})],
       ['runtime',()=>load('projectRuntimeApi').projectRuntimeApi.restart('owned-project')],
       ['Builder create',()=>load('builderApi').builderApi.create({prompt:'private fixture',requestKey:'fixture-request-key'})],
@@ -60,6 +57,13 @@ test('each first-party client refuses API redirects without forwarding private r
       ['voice',()=>load('voiceApi').transcribeVoiceAudio(new Blob([new Uint8Array(1024)],{type:'audio/webm'}))],
       ['guest',()=>load('runGuestLaneChat').runGuestLaneChat({prompt:'private fixture',history:[],signal:new AbortController().signal,onPartial(){}})]];
     for(const[name,invoke]of cases)await t.test(name,async()=>{forwarded=0;await assert.rejects(invoke());assert.equal(forwarded,0,'No private request follows an API redirect');});
+    const workspace=[['planning',()=>core.api.phase1.plan('private fixture',[])],
+      ['chat',()=>core.api.phase1.chat('private fixture',[])],
+      ['progress chat',()=>core.phase1ChatWithProgress({message:'private fixture',history:[]})]];
+    for(const[name,invoke]of workspace)await t.test(`Workspace ${name}`,async()=>{
+      forwarded=0;await assert.rejects(invoke(),error=>error.data?.code==='API_DESTINATION_DENIED');
+      assert.equal(forwarded,0,'No Workspace request follows an API redirect');
+    });
   }finally{api.closeAllConnections();sink.closeAllConnections();await Promise.all([new Promise(r=>api.close(r)),new Promise(r=>sink.close(r))]);}
 });
 test('API polling treats redirect refusal as terminal and authorized requests retain their contracts',async()=>{

@@ -152620,86 +152620,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:d2735ebe439099443684",
+      "id": "frontend-call:7b2a7bb0f50c85cb0a11",
       "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
-      "line": 63,
+      "line": 67,
       "callee": "api.closeAllConnections",
       "reachable": false
     },
     {
-      "id": "frontend-call:9044d64e1bf12a7f4f57",
+      "id": "frontend-call:3086f13b86b51086c172",
       "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
-      "line": 63,
+      "line": 67,
       "callee": "api.close",
       "reachable": false
     },
     {
-      "id": "frontend-call:7a1ba7dbdf17cef5c4e6",
+      "id": "frontend-call:4cddda152d55c1846437",
       "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
-      "line": 76,
+      "line": 80,
       "callee": "api.listen",
       "reachable": false
     },
     {
-      "id": "frontend-call:9fd898fb9df223536ba6",
+      "id": "frontend-call:520109b8683d4394e589",
       "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
-      "line": 78,
+      "line": 82,
       "callee": "api.address",
       "reachable": false
     },
     {
-      "id": "frontend-call:a3c1fd9667cbf700b4d6",
+      "id": "frontend-call:3eebb9126061f76b2aa0",
       "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
-      "line": 93,
+      "line": 97,
       "callee": "api.address",
       "reachable": false
     },
     {
-      "id": "frontend-call:ae2b7f553f5eb5db6268",
+      "id": "frontend-call:d7ca9ae00720e7f1aa71",
       "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
-      "line": 93,
+      "line": 97,
       "callee": "api.address",
       "reachable": false
     },
     {
-      "id": "frontend-call:9f6bad544e3d9f14e577",
+      "id": "frontend-call:0dafdcde8693fafb1089",
       "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
-      "line": 95,
+      "line": 99,
       "callee": "api.closeAllConnections",
       "reachable": false
     },
     {
-      "id": "frontend-call:fda300122002979f6c3f",
+      "id": "frontend-call:74db9901ad2b897773ac",
       "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
-      "line": 95,
+      "line": 99,
       "callee": "api.close",
       "reachable": false
     },
     {
-      "id": "frontend-call:51fb74a958dd24c6ef72",
-      "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
-      "line": 102,
-      "callee": "api.listen",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:bbbc8caa7cfd33da96dd",
+      "id": "frontend-call:6a199e923c849fa31f34",
       "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
       "line": 106,
+      "callee": "api.listen",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:f3e55b2df960853a9f26",
+      "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
+      "line": 110,
       "callee": "api.address",
       "reachable": false
     },
     {
-      "id": "frontend-call:f715481817184441f173",
+      "id": "frontend-call:7f40edfe5376827b47ce",
       "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
-      "line": 112,
+      "line": 116,
       "callee": "api.address",
       "reachable": false
     },
     {
-      "id": "frontend-call:d5bd562f1c0a0f5f617b",
+      "id": "frontend-call:9e5f771fdefdf7713f38",
       "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
-      "line": 114,
+      "line": 118,
       "callee": "api.closeAllConnections",
       "reachable": false
     },
