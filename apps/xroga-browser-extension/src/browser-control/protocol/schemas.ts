@@ -86,6 +86,8 @@ export const FindArgsSchema = z.strictObject({
   role: z.string().optional(),
   name: z.string().optional().describe('Substring of the accessible name, case-insensitive'),
   text: z.string().optional().describe('Substring of the element’s name or value, case-insensitive'),
+  xpath: z.string().min(1).max(400).optional().describe('XPath; returns refs of matching controls'),
+  css: z.string().min(1).max(400).optional().describe('CSS selector; returns refs'),
   within: ref.optional(),
   limit: z.number().int().min(1).max(200).optional(),
 });
@@ -93,7 +95,7 @@ export const FindArgsSchema = z.strictObject({
 export const ReadArgsSchema = z.strictObject({
   ...readCommon,
   ref: ref.optional().describe('Only the content of this element'),
-  format: z.enum(['markdown', 'text']).default('markdown'),
+  format: z.enum(['markdown', 'text', 'html']).default('markdown').describe('html: markup without scripts or field values'),
   maxChars: z.number().int().min(100).max(200_000).optional(),
   offset: z.number().int().min(0).optional().describe('Character offset to continue from'),
   match: z.string().max(200).optional().describe('Only the lines matching this word or pattern, with context'),

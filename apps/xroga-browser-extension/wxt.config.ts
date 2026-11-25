@@ -65,6 +65,8 @@ export default defineConfig({
           ...(process.env.WXT_XROGA_WORKSPACE_ORIGIN ? { externally_connectable: { matches: [`${workspaceOrigin}/workspace*`], ids: [] } } : {}),
           action: { default_icon: 'icon-32.png', default_title: '__MSG_actionTitle__' },
           icons: { 128: 'icon-128.png' },
+          // The text recognition engine is WebAssembly, which a Manifest V3 page may only compile when its policy says so (the product build carries the same word).
+          content_security_policy: { extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'" },
         }
       : {
           host_permissions: ['https://*/*'],
@@ -75,7 +77,7 @@ export default defineConfig({
           externally_connectable: { matches: [`${workspaceOrigin}/workspace*`], ids: [] },
           content_security_policy: {
             extension_pages:
-              `script-src 'self'; object-src 'self'; img-src 'self' data: https://logos.composio.dev; connect-src 'self' blob: https://raw.githubusercontent.com${apiOrigin ? ' ' + apiOrigin : ''}; base-uri 'none'; form-action 'none'`,
+              `script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; img-src 'self' data: https://logos.composio.dev; connect-src 'self' blob: https://raw.githubusercontent.com${apiOrigin ? ' ' + apiOrigin : ''}; base-uri 'none'; form-action 'none'`,
           },
         }),
     incognito: 'not_allowed',

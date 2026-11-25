@@ -35,6 +35,8 @@ import './blob-frames';
 import './canvas-point';
 import './canvas-script-editor';
 import './canvas-libraries';
+import './find-by-query';
+import './ocr-picture';
 import './variants-form';
 import './timeline-editor';
 import './stale-and-slow';

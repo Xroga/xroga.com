@@ -42,6 +42,7 @@ import { Guards } from './guards';
 import { contextThreshold, elisionChunk, hardLimit, planElision } from './elision';
 import { runCompaction, runShorten } from './compaction';
 import { attachmentBytes, attachmentParts, readAttachment } from './attachments';
+import { describeOcr, OCR_TOOL } from './ocr-format';
 import { decodeImage, describeHits, diffPictures, FIND_COLOR_TOOL, scanColor, viewOfChange } from './pixels';
 import { learnFrom, turnEffort } from './run';
 import { PaintedInputDeliveryGuard } from './painted-input-delivery';
@@ -976,7 +977,7 @@ ${ledger}` : ''),
     if (this.#offerCanvasTools(observation ?? outcome.text)) {
       notes.push(note(this.options.model.profile.vision
         ? 'This page paints its interface on a canvas, so its outline shows little. Use screenshot to see it, use canvas (click, drag, hover at fractions of the screenshot) to act on it, and check the result with another screenshot. find_color locates a colour.'
-        : 'This page paints its interface on a canvas, so its outline shows little. find_color locates a colour on the page; use at fractions of the canvas with click or drag, and check the result.'));
+        : 'This page paints its interface on a canvas, so its outline shows little. find_color locates a colour and ocr reads the text in the picture; find_color locates a colour on the page; use at fractions of the canvas with click or drag, and check the result.'));
     }
     // The same aim again and again: four canvas actions in the last six share their purpose (most of their words). The page may change a little each time
     // (other menus open), so no-change detection never fires; the purpose has not been reached. A different way in is the way out.
@@ -2113,7 +2114,7 @@ Routine "${name}" did not run through: the site may have changed. Take a snapsho
   #offerCanvasTools(text: string | undefined): boolean {
     if (this.#canvasOffered || !text || !/\bcanvas\b/i.test(text) || text.split('\n').length > 40) return false;
     this.#canvasOffered = true;
-    this.#registerTools([FIND_COLOR_TOOL]);
+    this.#registerTools([FIND_COLOR_TOOL, OCR_TOOL]);
     return true;
   }
 
@@ -2516,6 +2517,22 @@ ${renderSkill(top)}`);
           outcome = { call, kind, text: describeHits(hits, picture, color), isError: false };
         } catch (error) {
           outcome = { call, kind, text: `error: the page was captured (${data.width}×${data.height}) but could not be decoded here: ${error instanceof Error ? error.message : String(error)}`, isError: true };
+        }
+      }
+    } else if (call.toolName === 'ocr') {
+      const tabId = typeof args.tabId === 'number' ? args.tabId : this.#activeTab;
+      const region = Array.isArray(args.region) && args.region.length === 4 && args.region.every(n => typeof n === 'number') ? (args.region as [number, number, number, number]) : undefined;
+      const shot = await this.options.layer.call('screenshot', { ...(typeof tabId === 'number' ? { tabId } : {}), ...(region ? { region } : {}) }, signal).catch((error: unknown) => ({ ok: false as const, text: error instanceof Error ? error.message : String(error), data: undefined }));
+      const data = shot.ok ? (shot.data as { base64?: string; mimeType?: string; width?: number; height?: number } | undefined) : undefined;
+      if (!shot.ok || !data?.base64 || !data.width || !data.height) {
+        outcome = { call, kind, text: 'error: ocr could not capture the page (' + String(shot.text ?? 'no image returned').slice(0, 200) + '). Nothing was read.', isError: true };
+      } else {
+        try {
+          const { recognizeImage } = await import('@src/extension/ocr');
+          const result = await recognizeImage(data.base64, data.mimeType ?? 'image/png');
+          outcome = { call, kind, text: this.options.layer.wrap(describeOcr(result, { width: data.width, height: data.height }, { find: typeof args.find === 'string' ? args.find : undefined, region }), { site: 'a picture of the page' }), isError: false };
+        } catch (error) {
+          outcome = { call, kind, text: 'error: text recognition failed (' + (error instanceof Error ? error.message : String(error)).slice(0, 200) + '). Read the picture with a screenshot instead.', isError: true };
         }
       }
     } else if (call.toolName === 'batch') {

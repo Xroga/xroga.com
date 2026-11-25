@@ -58,7 +58,7 @@ export const TOOL_SPECS: ToolSpec[] = [
   {
     name: 'find',
     description:
-      'Find elements by role, name or text in the latest observation, without a model. Returns refs and their lines.',
+      'Find elements by role, name, text, xpath or css in the latest observation. Returns refs and their lines.',
     args: FindArgsSchema,
     readOnly: true,
     capability: 'core',

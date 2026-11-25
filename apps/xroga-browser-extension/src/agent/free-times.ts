@@ -121,7 +121,7 @@ export const FREE_TIMES_TOOL = {
   source: 'agent' as const,
   group: 'working' as const,
   description:
-    'Compute common free windows for people in different time zones instead of converting times in your head. Give each person their zone (IANA like "Asia/Karachi" or "UTC+5"), working hours ("09:00-17:00") and busy slots in their own zone ("2026-12-07 14:00-16:00"), the day range, the length in minutes and the zone the answer must use. Returns windows free for everyone. For one moment in several zones ("what is 3pm New York in Karachi and London") give only convert: {at, from, to}.',
+    'Compute common free windows for people in different time zones instead of converting times in your head. Give each person their zone (IANA like "Asia/Karachi" or "UTC+5"), working hours ("09:00-17:00") and busy slots in their own zone ("2026-12-07 14:00-16:00"), the day range, the length in minutes and the zone the answer must use. Returns windows free for everyone. For one moment in several zones give only convert.',
   parameters: {
     type: 'object',
     properties: {
@@ -135,7 +135,7 @@ export const FREE_TIMES_TOOL = {
       outputZone: { type: 'string' },
       weekdaysOnly: { type: 'boolean' },
       limit: { type: 'number' },
-      convert: { type: 'object', description: 'Instead of free windows: show ONE moment in other zones. at is "YYYY-MM-DD HH:MM" in the from zone', properties: { at: { type: 'string' }, from: { type: 'string' }, to: { type: 'array', maxItems: 12, items: { type: 'string' } } }, required: ['at', 'from', 'to'] },
+      convert: { type: 'object', description: 'at "YYYY-MM-DD HH:MM" in from, shown in to zones', properties: { at: { type: 'string' }, from: { type: 'string' }, to: { type: 'array', maxItems: 12, items: { type: 'string' } } }, required: ['at', 'from', 'to'] },
     },
     required: [] as string[],
     additionalProperties: false,

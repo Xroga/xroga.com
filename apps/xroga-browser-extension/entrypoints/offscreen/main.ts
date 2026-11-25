@@ -1,6 +1,75 @@
-// The offscreen document: it does the one thing the worker cannot, turning text into a Blob and a URL for
-// chrome.downloads, and revokes the URL when the worker says the download ended. It uses only the runtime API.
+// The offscreen document: it does the things the worker cannot.
+//  - Turn text into a Blob and a URL for chrome.downloads, and revoke the URL when the worker says the download ended (uses only the runtime API).
+//  - Recognise text in a picture (the `ocr` tool): the Tesseract engine and its English model are vendored in public/ocr and run in a Web Worker started from here,
+//    because a service worker cannot start workers. Nothing leaves the device. The engine is loaded on the first request and let go after a minute without one.
 const urls = new Set<string>();
+
+interface OcrWord {
+  text: string;
+  confidence: number;
+  bbox: { x0: number; y0: number; x1: number; y1: number };
+}
+interface OcrLine extends OcrWord {
+  words?: OcrWord[];
+}
+interface OcrWorker {
+  recognize(image: string): Promise<{ data: { text: string; lines?: OcrLine[]; words?: OcrWord[]; blocks?: Array<{ paragraphs: Array<{ lines: OcrLine[] }> }> } }>;
+  terminate(): Promise<void>;
+}
+
+const progress: string[] = [];
+let worker: Promise<OcrWorker> | undefined;
+let idle: ReturnType<typeof setTimeout> | undefined;
+
+function loadScript(src: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const el = document.createElement('script');
+    el.src = src;
+    el.onload = () => resolve();
+    el.onerror = () => reject(new Error('the text recognition engine could not be loaded'));
+    document.head.appendChild(el);
+  });
+}
+
+async function startWorker(): Promise<OcrWorker> {
+  const url = (path: string) => chrome.runtime.getURL(path);
+  await loadScript(url('ocr/tesseract.min.js'));
+  const T = (globalThis as unknown as { Tesseract: { createWorker(lang: string, oem: number, options: object): Promise<OcrWorker> } }).Tesseract;
+  return T.createWorker('eng', 1, {
+    workerPath: url('ocr/worker.min.js'),
+    corePath: url('ocr/core'),
+    langPath: url('ocr/lang'),
+    workerBlobURL: false,
+    gzip: true,
+    cacheMethod: 'none',
+    logger: (m: { status?: string; progress?: number }) => void progress.push(`${m.status ?? ''} ${Math.round((m.progress ?? 0) * 100)}%`),
+    errorHandler: (e: unknown) => void progress.push('error ' + String(e)),
+  });
+}
+
+async function recognize(base64: string, mimeType: string) {
+  worker ??= startWorker().catch(error => {
+    worker = undefined;
+    throw error;
+  });
+  clearTimeout(idle);
+  try {
+    const timeout = new Promise<never>((_, reject) => setTimeout(() => reject(new Error('the engine did not answer in 90 seconds (' + progress.slice(-4).join('; ') + ')')), 90_000));
+    const w = await Promise.race([worker, timeout]);
+    const { data } = await Promise.race([w.recognize(`data:${mimeType};base64,${base64}`), timeout]);
+    const lines: OcrLine[] = data.lines ?? (data.blocks ?? []).flatMap(b => b.paragraphs.flatMap(p => p.lines));
+    return {
+      text: data.text,
+      lines: lines.map(l => ({ text: l.text.trim(), confidence: l.confidence, bbox: l.bbox, words: (l.words ?? []).map(w => ({ text: w.text, confidence: w.confidence, bbox: w.bbox })) })),
+    };
+  } finally {
+    idle = setTimeout(() => {
+      const old = worker;
+      worker = undefined;
+      void old?.then(w => w.terminate()).catch(() => undefined);
+    }, 60_000);
+  }
+}
 
 chrome.runtime.onMessage.addListener((message, _sender, reply) => {
   if (message?.target !== 'offscreen') return;
@@ -13,5 +82,12 @@ chrome.runtime.onMessage.addListener((message, _sender, reply) => {
     URL.revokeObjectURL(message.url as string);
     urls.delete(message.url as string);
     reply({ held: urls.size });
+  } else if (message.type === 'ocr') {
+    recognize(String(message.base64), String(message.mimeType ?? 'image/png')).then(
+      result => reply({ ok: true, ...result }),
+      error => reply({ ok: false, error: error instanceof Error ? error.message : String(error) }),
+    );
+    return true;
   }
+  return undefined;
 });

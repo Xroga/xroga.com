@@ -1,0 +1,5 @@
+Text recognition (the `ocr` tool) runs on this device with:
+- tesseract.js 5.1.1 (Apache-2.0), https://github.com/naptha/tesseract.js
+- tesseract.js-core 5.1.1 (Apache-2.0), the Tesseract OCR engine compiled to WebAssembly, https://github.com/naptha/tesseract.js-core
+- eng.traineddata, the "fast" English model of tessdata_fast (Apache-2.0), https://github.com/tesseract-ocr/tessdata_fast
+Nothing is sent anywhere: the picture, the engine and the model all stay in the extension.

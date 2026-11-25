@@ -23,6 +23,7 @@ import { compactOps, diffLines, renderDiff } from '../perception/diff';
 import type { FrameRecord } from '../ports';
 import { rememberSecret } from '../redact';
 import { quote } from '../text';
+import { cleanSource } from '../page-source';
 
 /** A capture is reused by read-only helpers only right after it, with no action in between. */
 const REUSE_MS = 2_000;
@@ -182,9 +183,39 @@ function passiveNodes(nodes: ONode[], out: ONode[] = []): ONode[] {
   return out;
 }
 
+/**
+ * The elements a CSS selector or an XPath names in the top document, as backend node ids, so the controls among them can be given refs. Acting still goes through a ref and
+ * its guards: a query finds, it never acts. Idea: the XPath and CSS locators of Ui.Vision RPA (AGPL, idea only), written fresh.
+ */
+async function elementsByQuery(ctx: ToolContext, query: { xpath?: string; css?: string }): Promise<{ ids: Set<number>; count: number }> {
+  const { cdp } = await ctx.attach();
+  const expression = query.xpath
+    ? `(() => { const r = document.evaluate(${JSON.stringify(query.xpath)}, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null); const out = []; for (let i = 0; i < r.snapshotLength && out.length < 200; i++) { const n = r.snapshotItem(i); out.push(n && n.nodeType === 1 ? n : n && n.parentElement); } return out.filter(Boolean); })()`
+    : `Array.from(document.querySelectorAll(${JSON.stringify(query.css)})).slice(0, 200)`;
+  const evaluated = await cdp.send<{ result?: { objectId?: string }; exceptionDetails?: { exception?: { description?: string } } }>(undefined, 'Runtime.evaluate', { expression });
+  if (evaluated.exceptionDetails || !evaluated.result?.objectId) {
+    const why = (evaluated.exceptionDetails?.exception?.description ?? 'the query could not be run').split('\n')[0]!.slice(0, 160);
+    throw new LayerError('INVALID_ARGUMENT', `The ${query.xpath ? 'XPath' : 'CSS selector'} is not valid: ${why}`);
+  }
+  const props = await cdp.send<{ result: Array<{ name: string; value?: { objectId?: string } }> }>(undefined, 'Runtime.getProperties', { objectId: evaluated.result.objectId, ownProperties: true });
+  const ids = new Set<number>();
+  let count = 0;
+  for (const p of props.result) {
+    if (!/^\d+$/.test(p.name) || !p.value?.objectId) continue;
+    count++;
+    try {
+      const described = await cdp.send<{ node: { backendNodeId: number } }>(undefined, 'DOM.describeNode', { objectId: p.value.objectId });
+      ids.add(described.node.backendNodeId);
+    } catch {
+      /* an element that left the page meanwhile */
+    }
+  }
+  return { ids, count };
+}
+
 export async function find(ctx: ToolContext, args: FindArgs): Promise<ToolOutcome<FindMatch[]>> {
-  if (!args.role && !args.name && !args.text) {
-    throw new LayerError('INVALID_ARGUMENT', 'find needs at least one of role, name or text');
+  if (!args.role && !args.name && !args.text && !args.xpath && !args.css) {
+    throw new LayerError('INVALID_ARGUMENT', 'find needs at least one of role, name, text, xpath or css');
   }
   const tab = ctx.tab();
   const observation = await recentObservation(ctx);
@@ -198,8 +229,10 @@ export async function find(ctx: ToolContext, args: FindArgs): Promise<ToolOutcom
   const role = args.role?.toLowerCase();
   const name = args.name ? cleanText(args.name).toLowerCase() : undefined;
   const text = args.text ? cleanText(args.text).toLowerCase() : undefined;
+  const byQuery = args.xpath || args.css ? await elementsByQuery(ctx, args.xpath ? { xpath: args.xpath } : { css: args.css! }) : undefined;
   const matches = actionableNodes(roots).filter(
     n =>
+      (!byQuery || (n.backendNodeId !== undefined && byQuery.ids.has(n.backendNodeId))) &&
       (!role || n.role.toLowerCase() === role || n.rawRole.toLowerCase() === role) &&
       (!name || n.name.toLowerCase().includes(name)) &&
       (!text || n.name.toLowerCase().includes(text) || (!n.masked && (n.value ?? '').toLowerCase().includes(text))),
@@ -224,6 +257,9 @@ export async function find(ctx: ToolContext, args: FindArgs): Promise<ToolOutcom
         .slice(0, 10);
   const notices =
     matches.length > limit ? [`… ${matches.length - limit} more matches; raise limit or narrow the query.`] : [];
+  if (byQuery && !matches.length) {
+    notices.push(`The query matched ${byQuery.count} element${byQuery.count === 1 ? '' : 's'} in the top document${byQuery.count ? ', but none is a control with a ref (a wrapper, a text node or a hidden element): query the button, link or field itself, or find by name' : ''}.`);
+  }
   if (passive.length) notices.push(`No control matches, but the page shows ${passive.length} matching item${passive.length === 1 ? '' : 's'} that ${passive.length === 1 ? 'is' : 'are'} not a control (listed without a ref): ${passive.length === 1 ? 'it is' : 'they are'} content, not something to click.`);
   return {
     data,
@@ -255,7 +291,21 @@ export async function read(
     const lines = await tab.probe!.call<string[]>(frame, objectId, 'styles');
     return { data: { content: lines.join('\n'), offset: 0, remaining: 0 }, lines: [`read · ${args.ref} · computed styles`], pageText: lines.join('\n'), notices: [] };
   }
-  const content = renderContent(roots, args.format ?? 'markdown');
+  let content: string;
+  if (args.format === 'html') {
+    const { cdp } = await ctx.attach();
+    let objectId: string | undefined;
+    if (args.ref) {
+      const record = lookupRef(ctx.controller.registry, ctx.session.known, args.ref, tab.tabId);
+      const frame = (await (await ctx.attach()).topology.frames()).find(f => f.frameId === record.frameId);
+      if (!frame) throw new LayerError('FRAME_DETACHED', `The frame of ${args.ref} is gone`);
+      objectId = await tab.probe!.resolve(frame, record.backendNodeId);
+    }
+    const res = objectId
+      ? await cdp.send<{ result?: { value?: string } }>(undefined, 'Runtime.callFunctionOn', { objectId, functionDeclaration: 'function () { return this.outerHTML; }', returnByValue: true })
+      : await cdp.send<{ result?: { value?: string } }>(undefined, 'Runtime.evaluate', { expression: 'document.documentElement.outerHTML', returnByValue: true });
+    content = cleanSource(String(res.result?.value ?? ''));
+  } else content = renderContent(roots, args.format ?? 'markdown');
   if (args.match) {
     const g = grepContent(content, args.match, args.context ?? 2);
     return { data: { content: g.text, offset: 0, remaining: 0 }, lines: [`read · tab ${tab.tabId} · ${quote(observation.title)} · ${g.matches} matching lines of ${g.lines}`], pageText: g.text, notices: [] };

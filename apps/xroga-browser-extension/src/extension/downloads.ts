@@ -3,10 +3,15 @@
 // document when it holds none.
 const OFFSCREEN = 'offscreen.html';
 const held = new Set<string>();
+/** Requests the offscreen document is serving besides blob URLs (text recognition): it is not closed while one runs. */
+let busy = 0;
+export const offscreenBusy = (change: 1 | -1): void => {
+  busy += change;
+};
 /** The name asked for each blob URL being saved. */
 const naming = new Map<string, string>();
 
-async function ensureOffscreen(): Promise<void> {
+export async function ensureOffscreen(): Promise<void> {
   const url = chrome.runtime.getURL(OFFSCREEN);
   const contexts = await chrome.runtime.getContexts({
     contextTypes: [chrome.runtime.ContextType.OFFSCREEN_DOCUMENT],
@@ -15,8 +20,8 @@ async function ensureOffscreen(): Promise<void> {
   if (contexts.length) return;
   await chrome.offscreen.createDocument({
     url: OFFSCREEN,
-    reasons: [chrome.offscreen.Reason.BLOBS],
-    justification: 'Make blob URLs for files the agent saves',
+    reasons: [chrome.offscreen.Reason.BLOBS, chrome.offscreen.Reason.WORKERS],
+    justification: 'Make blob URLs for files the agent saves, and run the on-device text recognition worker',
   });
 }
 
@@ -25,7 +30,7 @@ async function revoke(url: string): Promise<void> {
   const answer = (await chrome.runtime.sendMessage({ target: 'offscreen', type: 'revoke', url }).catch(() => null)) as {
     held?: number;
   } | null;
-  if (!held.size && (answer?.held ?? 0) === 0) await chrome.offscreen.closeDocument().catch(() => undefined);
+  if (!held.size && busy === 0 && (answer?.held ?? 0) === 0) await chrome.offscreen.closeDocument().catch(() => undefined);
 }
 
 /** A blob URL for the content, made in the offscreen document. */
