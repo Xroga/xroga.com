@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Feed</title>
+<style>body{font-family:sans-serif;margin:0} .item{height:120px;border-bottom:1px solid #ccc;padding:20px;box-sizing:border-box} #status{padding:20px;color:#555}</style></head>
+<body><h1 style="padding:0 20px">Latest reports</h1><div id="list"></div><div id="status">loading</div><p id="count">count: 0</p>
+<script>
+const list=document.getElementById('list'),status=document.getElementById('status'),count=document.getElementById('count');let n=0,busy=false;const MAX=60;
+function more(){if(busy||n>=MAX)return;busy=true;status.textContent='loading more...';setTimeout(()=>{for(let i=0;i<10;i++){n++;const d=document.createElement('div');d.className='item';d.textContent='Report #'+n;list.appendChild(d);}count.textContent='count: '+n;status.textContent=n>=MAX?'end of feed':'scroll for more';busy=false;check();},350);}
+function check(){if(window.innerHeight+window.scrollY>=document.body.scrollHeight-200)more();}
+window.addEventListener('scroll',check);more();
+</script></body></html>

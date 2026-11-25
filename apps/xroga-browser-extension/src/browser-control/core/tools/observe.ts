@@ -24,6 +24,7 @@ import type { FrameRecord } from '../ports';
 import { rememberSecret } from '../redact';
 import { quote } from '../text';
 import { cleanSource, linkLine } from '../page-source';
+import { articleExpression, pageDataExpression, formatArticle, formatPageData, type RawArticle, type RawPageData } from '../page-data';
 
 /** A capture is reused by read-only helpers only right after it, with no action in between. */
 const REUSE_MS = 2_000;
@@ -308,6 +309,23 @@ export async function read(
       }
     }
     content = lines.length ? `${lines.length} links on this page:\n${lines.join('\n')}` : 'This page has no links with an address.';
+  } else if (args.format === 'article' || args.format === 'data') {
+    const { cdp } = await ctx.attach();
+    const res = await cdp.send<{ result?: { value?: unknown }; exceptionDetails?: { text?: string } }>(undefined, 'Runtime.evaluate', {
+      expression: args.format === 'article' ? articleExpression() : pageDataExpression(),
+      returnByValue: true,
+    });
+    const value = res.result?.value;
+    if (!value || typeof value !== 'object') {
+      throw new LayerError('INTERNAL', `The page did not return its ${args.format}${res.exceptionDetails?.text ? ` (${res.exceptionDetails.text})` : ''}.`);
+    }
+    if (args.format === 'data') content = formatPageData(value as RawPageData);
+    else {
+      const article = formatArticle(value as RawArticle, observation.title);
+      content = article.usable ? article.text : `${article.text}
+
+${renderContent(roots, 'markdown')}`;
+    }
   } else if (args.format === 'html') {
     const { cdp } = await ctx.attach();
     let objectId: string | undefined;

@@ -100,6 +100,8 @@ export interface ClickOptions {
   feedback?: 'click' | 'type';
   button?: 'left' | 'right' | 'middle';
   count?: number;
+  /** Milliseconds to keep the button down before the release of the last click (press and hold). */
+  holdMs?: number;
   modifiers?: string[];
   /**
    * The gate's result, for a click the gate judged: the click is then classified again before every press and release.
@@ -277,6 +279,19 @@ export async function dispatchClick(
         );
       }
       if (during) return hold(during);
+      if (options.holdMs && clickCount === count) {
+        // Press and hold: the button stays down, checked again at the end, then released.
+        const end = Date.now() + Math.min(options.holdMs, 10_000);
+        while (Date.now() < end) {
+          checkCancelled(ctx);
+          await new Promise(resolve => setTimeout(resolve, Math.min(200, Math.max(1, end - Date.now()))));
+        }
+        const after = await unlessDialog(stillJudged(ctx, target, options.gate), dialog.opened).catch(async error => {
+          await sendWithheld(tab, 'pointer', release).catch(() => false);
+          throw afterInput(error, true, 'The press was held; its release was withheld from the page.');
+        });
+        if (after) return hold(after);
+      }
       const released = await sendRaced(cdp, { ...base, type: 'mouseReleased', clickCount }, dialog.opened);
       if ('dialog' in released) return { dispatched, dialog: released.dialog };
     }

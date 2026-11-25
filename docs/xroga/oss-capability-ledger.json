@@ -974,7 +974,7 @@
       "priority": "P0",
       "default_treatment": "DOMAIN SKILLS ON DEMAND",
       "provenance": "N+W",
-      "status": "INSPECTED",
+      "status": "CODE INTEGRATED",
       "canonical_url": "https://github.com/Shopify/agent-skills",
       "resolved_slug": "Shopify/agent-skills",
       "default_branch": "main",
@@ -986,17 +986,21 @@
       "pushed_at": "2026-06-17T02:38:22Z",
       "language": "JavaScript",
       "stars": 112,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "README, the shopify-admin skill and its search and validate scripts, skill list read; deprecated copies and the skills-test folder not studied line by line",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
-      "xroga_file_paths": [],
-      "new_tests": [],
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/src/agent/skill-catalog.ts"
+      ],
+      "new_tests": [
+        "apps/xroga-browser-extension/src/agent/__tests__/skill-triggers.test.ts"
+      ],
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
-      "classification": "INVOKE ON DEMAND",
-      "rights_note": null
+      "adoption_or_rejection_reason": "Rebuilt, not copied: bundled skill shopify-admin-data-safely (read before write, cursor paging, query cost, bulk operations, API versions, userErrors, scopes, approvals). The schema-validation scripts need the Shopify CLI and a store; not built.",
+      "classification": "REJECT",
+      "rights_note": "no licence file in the repository: nothing copied; skill rebuilt in own words"
     },
     {
       "upstream_repo": "Shopify/Shopify-AI-Toolkit",
@@ -1004,7 +1008,7 @@
       "priority": "P0",
       "default_treatment": "DOMAIN SKILLS; REVIEW TELEMETRY",
       "provenance": "N+W",
-      "status": "INSPECTED",
+      "status": "CODE INTEGRATED",
       "canonical_url": "https://github.com/Shopify/Shopify-AI-Toolkit",
       "resolved_slug": "Shopify/Shopify-AI-Toolkit",
       "default_branch": "main",
@@ -1016,17 +1020,21 @@
       "pushed_at": "2026-11-17T19:17:39Z",
       "language": "JavaScript",
       "stars": 652,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "routing skill, UCP skill, references list and the merchant onboarding guide read; deprecated per-API skills listed",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
-      "xroga_file_paths": [],
-      "new_tests": [],
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/src/agent/skill-catalog.ts"
+      ],
+      "new_tests": [
+        "apps/xroga-browser-extension/src/agent/__tests__/skill-triggers.test.ts"
+      ],
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
-      "classification": "INVOKE ON DEMAND",
-      "rights_note": null
+      "adoption_or_rejection_reason": "Taken: skill shopify-new-store-and-test-data (mock.shop reference catalogs, preview store limits). Telemetry of the toolkit is not used.",
+      "classification": "ADAPT CODE",
+      "rights_note": "MIT"
     },
     {
       "upstream_repo": "googleads/google-ads-api-developer-assistant",
@@ -1034,7 +1042,7 @@
       "priority": "P0",
       "default_treatment": "DOMAIN KNOWLEDGE / SANDBOX PLUGIN",
       "provenance": "N+W",
-      "status": "INSPECTED",
+      "status": "CODE INTEGRATED",
       "canonical_url": "https://github.com/googleads/google-ads-api-developer-assistant",
       "resolved_slug": "googleads/google-ads-api-developer-assistant",
       "default_branch": "main",
@@ -1046,17 +1054,21 @@
       "pushed_at": "2026-11-19T20:22:45Z",
       "language": "Python",
       "stars": 105,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "README, rules, the ten skills, the conversion troubleshooting script header and the GAQL validation skill read",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
-      "xroga_file_paths": [],
-      "new_tests": [],
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/src/agent/skill-catalog.ts"
+      ],
+      "new_tests": [
+        "apps/xroga-browser-extension/src/agent/__tests__/skill-triggers.test.ts"
+      ],
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
-      "classification": "INVOKE ON DEMAND",
-      "rights_note": null
+      "adoption_or_rejection_reason": "Taken: skills google-ads-conversion-troubleshooting and google-ads-gaql-validation (four steps, no OR, no FROM in metadata queries, WHERE fields in SELECT, hour_of_day rename in v23). The live dry run needs an API token and is left to the person.",
+      "classification": "ADAPT CODE",
+      "rights_note": "Apache-2.0; attributed in the skill"
     },
     {
       "upstream_repo": "googleads/google-ads-python",
@@ -1064,7 +1076,7 @@
       "priority": "P0",
       "default_treatment": "ON-DEMAND API WORKER",
       "provenance": "N+W",
-      "status": "INSPECTED",
+      "status": "BEHAVIOR-COMPARED",
       "canonical_url": "https://github.com/googleads/google-ads-python",
       "resolved_slug": "googleads/google-ads-python",
       "default_branch": "main",
@@ -1076,17 +1088,19 @@
       "pushed_at": "2026-11-11T23:18:08Z",
       "language": "Python",
       "stars": 762,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "package layout, config and OAuth, interceptors, error types, util, versions v23 to v25, example folders read; generated service code not read line by line",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
-      "xroga_file_paths": [],
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/src/agent/skill-catalog.ts"
+      ],
       "new_tests": [],
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
-      "classification": "INVOKE ON DEMAND",
-      "rights_note": null
+      "adoption_or_rejection_reason": "The client is a Python API worker and the extension does not run Python. Its rules (micros, enum names, error text names the failed field, partial failure) are in the GAQL validation skill. Nothing else taken.",
+      "classification": "REJECT",
+      "rights_note": "Apache-2.0"
     },
     {
       "upstream_repo": "meta/facebook-python-business-sdk",
@@ -1094,7 +1108,7 @@
       "priority": "P0",
       "default_treatment": "ON-DEMAND API WORKER",
       "provenance": "N+W",
-      "status": "INSPECTED",
+      "status": "CODE INTEGRATED",
       "canonical_url": "https://github.com/meta/facebook-python-business-sdk",
       "resolved_slug": "meta/facebook-python-business-sdk",
       "default_branch": "main",
@@ -1106,17 +1120,21 @@
       "pushed_at": "2026-11-19T06:57:31Z",
       "language": "Python",
       "stars": 1624,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "api.py (response, error, Cursor paging, batch), session, exceptions, object layout (1,192 generated classes), examples; generated objects not read one by one",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
-      "xroga_file_paths": [],
-      "new_tests": [],
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/src/agent/skill-catalog.ts"
+      ],
+      "new_tests": [
+        "apps/xroga-browser-extension/src/agent/__tests__/skill-triggers.test.ts"
+      ],
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
-      "classification": "INVOKE ON DEMAND",
-      "rights_note": null
+      "adoption_or_rejection_reason": "Rebuilt as skill meta-ads-reporting-limits-and-paging: follow paging.next to the end, async reports, rate-limit headers, error code groups, attribution windows. The SDK itself is not run.",
+      "classification": "REJECT",
+      "rights_note": "custom Meta licence (use with Meta APIs only): no code copied; skill written in own words"
     },
     {
       "upstream_repo": "mozilla/readability",
@@ -1124,7 +1142,7 @@
       "priority": "P0",
       "default_treatment": "EMBED / PORT READER",
       "provenance": "H",
-      "status": "INSPECTED",
+      "status": "LIVE CHROMIUM VERIFIED",
       "canonical_url": "https://github.com/mozilla/readability",
       "resolved_slug": "mozilla/readability",
       "default_branch": "main",
@@ -1136,17 +1154,25 @@
       "pushed_at": "2026-08-04T00:16:05Z",
       "language": "JavaScript",
       "stars": 11558,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "Readability.js (2,812 lines), Readability-readerable.js, options, JSDOMParser, test fixture layout read",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
-      "xroga_file_paths": [],
-      "new_tests": [],
-      "chrome_check": null,
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/scripts/build-readability-source.mjs",
+        "apps/xroga-browser-extension/src/browser-control/core/vendor/readability-source.ts",
+        "apps/xroga-browser-extension/src/browser-control/core/page-data.ts",
+        "apps/xroga-browser-extension/src/browser-control/core/tools/observe.ts"
+      ],
+      "new_tests": [
+        "apps/xroga-browser-extension/src/browser-control/core/__tests__/page-data.test.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/article-data-hold.ts"
+      ],
+      "chrome_check": "S4-article-data-hold passes in Chromium: menu, sponsored box and trending list dropped, headings, list, table, link and code kept",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
+      "adoption_or_rejection_reason": "Taken: read format article runs Readability on a copy of the page and converts the result to Markdown with a DOM converter written here; a page that is not an article is said so plainly and falls back to the normal read.",
       "classification": "ADAPT CODE",
-      "rights_note": null
+      "rights_note": "Apache-2.0; vendored unmodified, generated module carries the notice"
     },
     {
       "upstream_repo": "apify/crawlee",
@@ -1154,7 +1180,7 @@
       "priority": "P1",
       "default_treatment": "BACKEND SANDBOX ON DEMAND",
       "provenance": "H",
-      "status": "INSPECTED",
+      "status": "LIVE CHROMIUM VERIFIED",
       "canonical_url": "https://github.com/apify/crawlee",
       "resolved_slug": "apify/crawlee",
       "default_branch": "master",
@@ -1166,17 +1192,25 @@
       "pushed_at": "2026-11-20T15:44:33Z",
       "language": "TypeScript",
       "stars": 26505,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "playwright-utils (infiniteScroll, blockRequests, saveSnapshot, parseWithCheerio), social and contact extraction, blocked-status handling, utils list read; request queue, sessions, proxies and storage not studied in depth",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
-      "xroga_file_paths": [],
-      "new_tests": [],
-      "chrome_check": null,
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/src/browser-control/core/tools/act.ts",
+        "apps/xroga-browser-extension/src/browser-control/core/page-data.ts",
+        "apps/xroga-browser-extension/src/browser-control/protocol/schemas.ts"
+      ],
+      "new_tests": [
+        "apps/xroga-browser-extension/src/background/scenarios/infinite-scroll.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/article-data-hold.ts",
+        "apps/xroga-browser-extension/src/browser-control/core/__tests__/page-data.test.ts"
+      ],
+      "chrome_check": "S4-infinite-scroll passes (feed of 60 loaded 10 at a time); S4-article-data-hold passes (data format)",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
-      "classification": "INVOKE ON DEMAND",
-      "rights_note": null
+      "adoption_or_rejection_reason": "Taken as ideas: scroll untilEnd (the idea of infiniteScroll: stop when the page stops growing) and read format data (contacts, social profiles, JSON-LD, microdata). blockRequests not built: the operator works in the person's own browser, where blocking images or fonts breaks pages. Queue, sessions, proxies and sitemap crawling belong to a backend crawler.",
+      "classification": "ADAPT CODE",
+      "rights_note": "Apache-2.0; ideas, code written fresh"
     },
     {
       "upstream_repo": "microsoft/markitdown",
@@ -1184,7 +1218,7 @@
       "priority": "P1",
       "default_treatment": "BACKEND PARSER",
       "provenance": "H",
-      "status": "INSPECTED",
+      "status": "LIVE CHROMIUM VERIFIED",
       "canonical_url": "https://github.com/microsoft/markitdown",
       "resolved_slug": "microsoft/markitdown",
       "default_branch": "main",
@@ -1196,17 +1230,27 @@
       "pushed_at": "2026-11-07T00:14:01Z",
       "language": "Python",
       "stars": 197214,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "converter list, docx, xlsx, pptx, csv, epub, zip, rss, html, pdf converters, plugin and MCP package layout read",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
-      "xroga_file_paths": [],
-      "new_tests": [],
-      "chrome_check": null,
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/src/agent/file-format.ts",
+        "apps/xroga-browser-extension/src/agent/office-read.ts",
+        "apps/xroga-browser-extension/src/agent/zip-read.ts",
+        "apps/xroga-browser-extension/src/extension/file-read.ts",
+        "apps/xroga-browser-extension/src/agent/loop.ts",
+        "apps/xroga-browser-extension/src/extension/run-manager.ts"
+      ],
+      "new_tests": [
+        "apps/xroga-browser-extension/src/agent/__tests__/file-format.test.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/read-file.ts"
+      ],
+      "chrome_check": "S4-read-file passes: docx, xlsx (sheets, dates, row numbers), pptx, epub chapter, csv profile and paging, zip member, 404 and PDF named plainly",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
-      "classification": "INVOKE ON DEMAND",
-      "rights_note": null
+      "adoption_or_rejection_reason": "Taken: the set of formats and the idea of one text form for all of them, built as read_file without any library (zip reader on DecompressionStream, own XML reader). Added beyond it: real spreadsheet row numbers, column profiles, find and offset. Audio, video and image captioning not built.",
+      "classification": "ADAPT CODE",
+      "rights_note": "MIT; ideas, code written fresh, no Python library used"
     },
     {
       "upstream_repo": "docling-project/docling",
@@ -1214,7 +1258,7 @@
       "priority": "P1",
       "default_treatment": "BACKEND PARSER",
       "provenance": "H",
-      "status": "INSPECTED",
+      "status": "CODE INTEGRATED",
       "canonical_url": "https://github.com/docling-project/docling",
       "resolved_slug": "docling-project/docling",
       "default_branch": "main",
@@ -1226,17 +1270,23 @@
       "pushed_at": "2026-11-20T14:59:17Z",
       "language": "Python",
       "stars": 70818,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "backend list, CSV backend (dialect sniffing), EPUB backend (archive limits), heading hierarchy stage, PDF outline extraction, pipeline and model stage layout read; the layout, table and VLM models and the service client not studied in depth",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
-      "xroga_file_paths": [],
-      "new_tests": [],
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/src/agent/zip-read.ts",
+        "apps/xroga-browser-extension/src/agent/file-format.ts",
+        "apps/xroga-browser-extension/src/agent/office-read.ts"
+      ],
+      "new_tests": [
+        "apps/xroga-browser-extension/src/agent/__tests__/file-format.test.ts"
+      ],
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
-      "classification": "INVOKE ON DEMAND",
-      "rights_note": null
+      "adoption_or_rejection_reason": "Taken as ideas: archive limits before inflating, CSV dialect sniffing (sep= line, quotes, BOM), EPUB spine order, heading levels from style names. The layout and table-structure models need model downloads and are not built; PDF text and OCR already exist.",
+      "classification": "ADAPT CODE",
+      "rights_note": "MIT; ideas, code written fresh"
     },
     {
       "upstream_repo": "ServiceNow/BrowserGym",
@@ -1244,7 +1294,7 @@
       "priority": "P0",
       "default_treatment": "EVALUATION HARNESS",
       "provenance": "H",
-      "status": "INSPECTED",
+      "status": "LIVE CHROMIUM VERIFIED",
       "canonical_url": "https://github.com/ServiceNow/BrowserGym",
       "resolved_slug": "ServiceNow/BrowserGym",
       "default_branch": "main",
@@ -1256,17 +1306,27 @@
       "pushed_at": "2026-11-18T05:00:33Z",
       "language": "Python",
       "stars": 1445,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "observation, action functions, env flow, task validate pattern, AssistantBench scorer and evaluator read; WebArena and MiniWoB task folders listed",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
-      "xroga_file_paths": [],
-      "new_tests": [],
-      "chrome_check": null,
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/src/browser-control/core/interaction/pointer.ts",
+        "apps/xroga-browser-extension/src/browser-control/core/tools/act.ts",
+        "apps/xroga-browser-extension/src/browser-control/protocol/schemas.ts",
+        "apps/xroga-browser-extension/fixtures/acceptance/scorers.mjs",
+        "apps/xroga-browser-extension/fixtures/acceptance/tasks.json",
+        "apps/xroga-browser-extension/fixtures/acceptance/score.mjs"
+      ],
+      "new_tests": [
+        "apps/xroga-browser-extension/src/agent/__tests__/acceptance-scorers.test.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/article-data-hold.ts"
+      ],
+      "chrome_check": "S4-article-data-hold passes: a quick click releases early, click with holdMs 1400 reveals the code",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
-      "classification": "TEST REFERENCE",
-      "rights_note": null
+      "adoption_or_rejection_reason": "Taken: press and hold (click holdMs; the action space has mouse_down/up and keyboard_down/up) and the scored task idea (goal, validate, scorers for numbers, lists and strings, written fresh). The environment itself (gym loop, Python tasks) is not run.",
+      "classification": "ADAPT CODE",
+      "rights_note": "LICENSE file is Apache-2.0 (GitHub reports no SPDX)"
     },
     {
       "upstream_repo": "ServiceNow/AgentLab",

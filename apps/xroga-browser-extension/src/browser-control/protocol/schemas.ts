@@ -95,7 +95,7 @@ export const FindArgsSchema = z.strictObject({
 export const ReadArgsSchema = z.strictObject({
   ...readCommon,
   ref: ref.optional().describe('Only the content of this element'),
-  format: z.enum(['markdown', 'text', 'html', 'links']).default('markdown').describe('html: markup without scripts or field values; links: every link with its address'),
+  format: z.enum(['markdown', 'text', 'html', 'links', 'article', 'data']).default('markdown').describe('html: markup; links: every link; article: main text only; data: JSON-LD, meta, contacts, socials'),
   maxChars: z.number().int().min(100).max(200_000).optional(),
   offset: z.number().int().min(0).optional().describe('Character offset to continue from'),
   match: z.string().max(200).optional().describe('Only the lines matching this word or pattern, with context'),
@@ -113,7 +113,7 @@ export const ScreenshotArgsSchema = z.strictObject({
   mark: z.tuple([z.number().min(0).max(1), z.number().min(0).max(1)]).optional().describe('[x, y] fractions: draw a red crosshair where a pointer action landed'),
   marks: z.boolean().optional().describe('Number the labels, icons and controls the picture shows (set of marks): act on one with canvas mark N, no coordinates to estimate'),
   region: z.tuple([z.number().min(0).max(1), z.number().min(0).max(1), z.number().min(0).max(1), z.number().min(0).max(1)]).optional()
-    .describe('[x0, y0, x1, y1] fractions of the visible page: capture only this area, enlarged, with a fine grid labelled in whole-page fractions (for aiming at small painted controls)'),
+    .describe('[x0, y0, x1, y1] fractions of the page: capture only this area, enlarged, with a fine grid (for small painted controls)'),
 });
 
 export const ClickArgsSchema = z.strictObject({
@@ -121,6 +121,7 @@ export const ClickArgsSchema = z.strictObject({
   target: TargetSchema,
   button: z.enum(['left', 'right', 'middle']).optional(),
   count: z.number().int().min(1).max(3).optional(),
+  holdMs: z.number().int().min(50).max(10000).optional().describe('press and hold this long (ms)'),
   modifiers: z.array(z.enum(['Alt', 'Control', 'Meta', 'Shift'])).optional(),
   at: z.tuple([z.number().min(0).max(1), z.number().min(0).max(1)]).optional(),
 });
@@ -193,6 +194,8 @@ export const ScrollArgsSchema = z.strictObject({
   target: TargetSchema.optional().describe('The container to scroll; default: the page'),
   to: z.union([z.enum(['top', 'bottom']), TargetSchema]).optional(),
   by: z.strictObject({ pages: z.number().optional(), px: z.number().optional() }).optional(),
+  untilEnd: z.boolean().optional().describe('with to bottom: repeat while the page loads more'),
+  maxRounds: z.number().int().min(1).max(100).optional().describe('untilEnd: round limit, default 30'),
 });
 
 export const WaitArgsSchema = z.strictObject({
@@ -267,7 +270,7 @@ export const AuditPageArgsSchema = z.strictObject({
 
 export const DiagnosticsArgsSchema = z.strictObject({
   ...readCommon,
-  kind: z.enum(['both', 'console', 'network', 'endpoints', 'cookies', 'storage', 'issues', 'weight', 'request', 'fetch']).optional().describe('fetch: GET urlPattern (a path or an address on this site) from inside the page with the signed-in session, body with secrets hidden; request: one request with response headers and body (secrets hidden), the newest whose address contains urlPattern; endpoints: API calls; cookies, storage: names and sizes only; issues: browser-reported problems; weight: biggest and slowest requests'),
+  kind: z.enum(['both', 'console', 'network', 'endpoints', 'cookies', 'storage', 'issues', 'weight', 'request', 'fetch']).optional().describe('fetch: GET urlPattern with the signed-in session, secrets hidden; request: newest request whose address contains urlPattern, with headers and body; endpoints: API calls; cookies, storage: names and sizes; issues: browser problems; weight: biggest, slowest requests'),
   onlyProblems: z.boolean().optional().describe('Errors, and requests that failed or got 400+'),
   urlPattern: z.string().optional(),
   limit: z.number().int().min(1).max(100).optional(),

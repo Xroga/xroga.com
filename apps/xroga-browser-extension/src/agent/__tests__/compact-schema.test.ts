@@ -34,7 +34,8 @@ describe('compactSchema', () => {
     // 0.905 with extract_rows cards and fields, diagnostics cookies and storage, and save_page_pdf (about 450 characters, served from the prompt cache).
     // 0.915 with the diagnostics description naming cookies, storage, issues and weight, and save_page_pdf's paper, landscape and scale (about 300 characters, served from the prompt cache).
     // 0.925 with find by xpath or css and read as html (two short arguments and an enum value: about 200 characters).
-    expect(size(tools)).toBeLessThan(32_064 * 0.925);
+    // 0.935 with read formats article and data, click holdMs and scroll untilEnd/maxRounds (about 300 characters of arguments).
+    expect(size(tools)).toBeLessThan(32_064 * 0.935);
   });
 
   it('offers the at option of click only to a run that asks for it', () => {

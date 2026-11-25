@@ -44,6 +44,7 @@ import { runCompaction, runShorten } from './compaction';
 import { attachmentBytes, attachmentParts, readAttachment } from './attachments';
 import { describeOcr, OCR_LANGUAGES, OCR_TOOL } from './ocr-format';
 import { describePdf, parsePages, pdfAddressIn } from './pdf-format';
+import { fileAddressIn } from './file-format';
 import { describeScreen, parseScreen, PARSE_SCREEN_TOOL, type MarkBox } from './screen-parse';
 import { checkUserSkill, describeUserSkill, listUserSkills, matchUserSkills, renderUserSkill, saveUserSkill } from './user-skills';
 import { describeImageHits, FIND_IMAGE_TOOL, findTemplate } from './template-match';
@@ -983,6 +984,11 @@ ${ledger}` : ''),
     if (pdfAt && !this.#pdfHinted.has(pdfAt)) {
       this.#pdfHinted.add(pdfAt);
       notes.push(note('This tab shows a PDF, so its text is not in the outline. read_pdf reads it on this device (pages, find; pages that are only pictures are read with text recognition).'));
+    }
+    const fileAt = typeof shown === 'string' ? fileAddressIn(shown) : undefined;
+    if (fileAt && !this.#pdfHinted.has(fileAt)) {
+      this.#pdfHinted.add(fileAt);
+      notes.push(note('This tab shows a document file (Word, Excel, PowerPoint, EPUB, CSV or JSON). read_file reads it on this device: sheets with real row numbers, slides, chapters, find and offset for long ones.'));
     }
     // A page whose outline is a canvas and very little else paints its own interface: offer the pixel search and say how to see it.
     if (this.#offerCanvasTools(observation ?? outcome.text)) {
@@ -2624,6 +2630,34 @@ ${renderSkill(top)}`);
           outcome = { call, kind, text: this.options.layer.wrap(describePdf(result, { find: typeof args.find === 'string' ? args.find : undefined, requested: parsePages(typeof args.pages === 'string' ? args.pages : undefined, result.pageCount) }), { site: host }), isError: false };
         } catch (error) {
           outcome = { call, kind, text: 'error: the PDF could not be read (' + (error instanceof Error ? error.message : String(error)).slice(0, 200) + '). If it needs a sign-in the person has not done in this browser, or is not a PDF, read the page another way.', isError: true };
+        }
+      }
+    } else if (call.toolName === 'read_file') {
+      let address = typeof args.url === 'string' ? args.url : '';
+      if (!address) {
+        try {
+          const tabs = await this.options.layer.tabs();
+          address = tabs?.tabs.find(t => t.tabId === (typeof args.tabId === 'number' ? args.tabId : (this.#boundTab ?? tabs.activeTabId)))?.url ?? '';
+        } catch { /* no page */ }
+      }
+      if (!/^https?:\/\//i.test(address)) {
+        outcome = { call, kind, text: 'error: read_file needs the address of a file on the web (https or http): open the file in a tab, or give its url. A file on this computer cannot be read this way.', isError: true };
+      } else {
+        try {
+          const { readFileAt } = await import('@src/extension/file-read');
+          const result = await readFileAt(address, {
+            sheet: typeof args.sheet === 'string' ? args.sheet : undefined,
+            rows: typeof args.rows === 'string' ? args.rows : undefined,
+            chapter: typeof args.chapter === 'number' ? args.chapter : undefined,
+            member: typeof args.member === 'string' ? args.member : undefined,
+            find: typeof args.find === 'string' ? args.find : undefined,
+            offset: typeof args.offset === 'number' ? args.offset : undefined,
+          });
+          let host = 'a file';
+          try { host = new URL(address).hostname; } catch { /* keep */ }
+          outcome = { call, kind, text: this.options.layer.wrap(result.text, { site: host }), isError: result.text.startsWith('error:') };
+        } catch (error) {
+          outcome = { call, kind, text: 'error: the file could not be read (' + (error instanceof Error ? error.message : String(error)).slice(0, 200) + '). If it needs a sign-in the person has not done in this browser, read the page another way.', isError: true };
         }
       }
     } else if (call.toolName === 'ocr') {

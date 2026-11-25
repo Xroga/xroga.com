@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { searchSkills } from '../skill-catalog';
+import { SKILL_CATALOG, searchSkills } from '../skill-catalog';
 
 // A trigger eval for the bundled skills, as the agentskills guide describes: realistic requests (formal, casual, with typos, with the domain unnamed) that should bring a skill
 // to the top, and near-misses that share words with a skill but need something else. It runs on the ranker alone, no model, so a change to a skill's words that breaks how it is
@@ -25,6 +25,11 @@ const SHOULD: Array<[string, string]> = [
   ['play this unfamiliar puzzle game and learn the controls', 'unfamiliar-interface-and-games'],
   ['my google ads conversions stopped recording, check the tag and gclid', 'google-ads-conversion-troubleshooting'],
   ['start a new shopify store and try the mock shop sample catalog', 'shopify-new-store-and-test-data'],
+  ['read this long news article and give me only the main text without the ads', 'reading-documents-articles-and-feeds'],
+  ['open the xlsx spreadsheet and the docx file and tell me what the sheets contain', 'reading-documents-articles-and-feeds'],
+  ['validate my gaql query before I run it, the select and where fields', 'google-ads-gaql-validation'],
+  ['pull meta ads insights with paging and avoid the rate limit error', 'meta-ads-reporting-limits-and-paging'],
+  ['export all products from the shopify admin graphql api with a bulk operation', 'shopify-admin-data-safely'],
 ];
 
 // Near-misses: the words overlap a skill, the need is another one. None of them should put the skill that shares its words first.
@@ -45,6 +50,6 @@ describe('bundled skill triggers', () => {
   });
   it('every bundled skill is the best answer to at least one request', () => {
     const covered = new Set(SHOULD.map(([, id]) => id));
-    expect(covered.size).toBe(19);
+    expect(covered.size).toBe(SKILL_CATALOG.length);
   });
 });

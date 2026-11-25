@@ -180,6 +180,7 @@ export async function click(ctx: ToolContext, args: ClickArgs): Promise<ToolOutc
         dispatchClick(ctx, target, actionable.point, {
           button: args.button,
           count: args.count,
+          holdMs: args.holdMs,
           modifiers: args.modifiers,
           gate,
         }),
@@ -340,10 +341,35 @@ export async function scroll(ctx: ToolContext, args: ScrollArgs): Promise<ToolOu
       after = await settleScroll(ctx, container, previous);
       if (after.top === previous.top) break;
     }
+    // Infinite scroll (the idea of Crawlee's infiniteScroll): at the bottom, wait for the page to load more and scroll
+    // again, until the height stops growing twice in a row, the round limit or one minute. Each round is a wheel scroll.
+    let rounds = 0;
+    const grew = { from: after.height, to: after.height };
+    if (args.untilEnd && args.to === 'bottom') {
+      const limit = Math.min(args.maxRounds ?? 30, 100);
+      const started = Date.now();
+      let stable = 0;
+      while (rounds < limit && stable < 2 && Date.now() - started < 60_000) {
+        checkCancelled(ctx);
+        rounds++;
+        await new Promise(resolve => setTimeout(resolve, 700));
+        const current = await scrollState(ctx, container);
+        if (current.height > after.height + 1) stable = 0;
+        else stable++;
+        grew.to = Math.max(grew.to, current.height);
+        if (stable >= 2) {
+          after = current;
+          break;
+        }
+        outcome = await dispatchWheel(ctx, point, 0, Math.max(current.height - current.top, 1));
+        after = await settleScroll(ctx, container, current);
+      }
+    }
     const moved = after.top - before.top;
     const atEnd = after.top + after.clientHeight >= after.height - 1;
     const atStart = after.top <= 0;
     const signals = [`offset ${Math.round(before.top)} → ${Math.round(after.top)} px`];
+    if (rounds) signals.push(`${rounds} more rounds, page height ${Math.round(grew.from)} → ${Math.round(grew.to)} px${atEnd ? ', no more content appeared' : ''}`);
     if (deltaY > 0 && atEnd) signals.push('end reached');
     if (deltaY < 0 && atStart) signals.push('top reached');
     const receipt: ActionReceipt = {

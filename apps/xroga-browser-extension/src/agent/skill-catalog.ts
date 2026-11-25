@@ -363,6 +363,98 @@ Approvals: creating a store account, entering payment or plan details, publishin
   {
     verified: 'curated',
     md: `---
+name: reading-documents-articles-and-feeds
+description: Pick the right reader for what is in front of you: a long article, a page's hidden data and contacts, a Word, Excel, PowerPoint, EPUB, CSV or JSON file, a PDF, an endless feed, or a hold-to-confirm button.
+license: Xroga-internal
+metadata:
+  domain: general
+  hosts: ""
+  keywords: read article news blog long page main text data json-ld structured contacts email phone social docx xlsx pptx epub csv spreadsheet document file pdf endless infinite scroll feed hold press
+  requires: browser
+  risk: read
+  docs: ""
+---
+- A long news or blog page: read with format article returns only the story as Markdown (title, author, date, headings, lists, tables, links) without menus, ads or related boxes. If it says the page is not an article, use read markdown.
+- Facts a page publishes about itself (price, rating, address, opening hours, author, date, company, phone, email, social profiles, feeds): read with format data lists the JSON-LD, Open Graph and microdata, the mail and phone links and the social profiles. Prefer it to scrolling a page for contact details.
+- A file at an address (Word, Excel, PowerPoint, OpenDocument, EPUB, CSV, JSON, text, RSS, zip): read_file. A spreadsheet lists the sheets with their real row numbers; ask for another sheet with sheet, another range with rows, one EPUB chapter with chapter, a file inside a zip with member. find returns only matching lines. PDFs use read_pdf. Old binary doc, xls and ppt files cannot be read: ask for them saved in the new format.
+- A table file gives a column profile first (type, range, sum, distinct values): use it to check what you compute, and quote row numbers when you answer.
+- An endless feed or a list that loads more as you scroll: scroll to bottom with untilEnd true repeats until nothing more loads; then read. Do not claim a count from the first screen of an endless list.
+- A control that needs the button held (hold to confirm, press and hold to reveal): click with holdMs set to a little more than the page says (for example 1400 for one second). A plain click does nothing there.
+Verify: say which reader you used and quote one value back with its row, page, slide or chapter.
+Approvals: reading is free; downloading or sending a file somewhere else needs the person's approval.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
+name: google-ads-gaql-validation
+description: Before running or showing a Google Ads Query Language (GAQL) query, validate it in four steps so it does not fail: fields exist, are compatible, follow the syntax rules, and dry-run cleanly.
+license: Apache-2.0
+metadata:
+  domain: advertising
+  hosts: ads.google.com developers.google.com
+  keywords: google ads api gaql query select from where segments metrics resource field compatibility validate error report campaign ad group
+  requires: browser
+  risk: read
+  docs: https://developers.google.com/google-ads/api/docs/query/overview https://developers.google.com/google-ads/api/fields/v23/overview
+---
+- Step 1, the fields exist: look every field up in the field reference (the Query Builder or the field overview page for the API version in use) and confirm it is selectable, filterable or sortable as the query uses it.
+- Step 2, they belong together: fields from different resources or segments may not be combined; the reference page of the main resource lists what is compatible with it.
+- Step 3, the syntax rules: a field in WHERE must also be in SELECT unless it is a date segment; there is no OR (use IN, or run two queries); the metadata service takes no FROM clause; segment names change between API versions (hour became hour_of_day in v23), so use the names of the version in use.
+- Step 4, a dry run: run the query on one account with a small date range or LIMIT, and read the error text, which names the exact field that failed.
+- Money fields are in micros (divide by one million); status and enum fields are names, not numbers; dates are YYYY-MM-DD.
+Verify: the query returned rows, the row count is plausible for the date range, and the totals match the same view in the Google Ads interface.
+Approvals: this skill only reads. Any mutation (budgets, bids, statuses, uploads) needs the person's approval with the exact change shown first.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
+name: meta-ads-reporting-limits-and-paging
+description: Pull Meta (Facebook and Instagram) ads data without hitting limits or losing rows: pages, field choices, batching, rate-limit signals, error codes, and reports that run asynchronously.
+license: Xroga-internal
+metadata:
+  domain: advertising
+  hosts: business.facebook.com developers.facebook.com adsmanager.facebook.com
+  keywords: meta facebook instagram ads graph api insights report paging cursor rate limit error batch async marketing api ad account campaign breakdown
+  requires: browser
+  risk: read
+  docs: https://developers.facebook.com/docs/marketing-api/insights https://developers.facebook.com/docs/graph-api/overview/rate-limiting
+---
+- Ask only for the fields the question needs and set a level (account, campaign, ad set, ad) and a date range; wide requests over long ranges are what time out. A breakdown multiplies the rows.
+- A list answers one page at a time: a response with paging.next has more rows; follow that address until it is gone, and count rows only after the last page. Do not read a first page as the total.
+- Large insights jobs run asynchronously: start the report, poll its status until completed, then read the result; do not repeat the start while it runs.
+- Rate-limit signals travel in response headers (x-app-usage, x-business-use-case-usage) as percentages; slow down well before 100 and wait for the time the header gives. Error code 4 or 17 or 32 or 613 means too many calls: wait, then retry once.
+- Error code 190 is an expired or invalid sign-in token, 200 or 10 is a missing permission, 100 is a bad parameter (read its message for the field): these are not retried; tell the person which one it is.
+- Numbers in the API and in Ads Manager can differ by attribution window, time zone and delay of up to a day; state the window and date range next to every figure.
+Verify: the sum of the rows equals the totals row of the same view in Ads Manager for the same range and window, or say plainly why it differs.
+Approvals: reading only. Creating, editing, pausing or deleting campaigns, ads or audiences, and sharing a token or report outside the account, need the person's approval.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
+name: shopify-admin-data-safely
+description: Read or change a Shopify store through its admin and GraphQL Admin API without losing data: scopes, pagination, query cost, bulk operations, API versions, and which writes need approval.
+license: Xroga-internal
+metadata:
+  domain: commerce
+  hosts: admin.shopify.com shopify.dev myshopify.com
+  keywords: shopify admin graphql api products orders customers inventory metafields bulk operation pagination cost throttle scopes version webhook store data export
+  requires: browser
+  risk: write
+  docs: https://shopify.dev/docs/api/admin-graphql
+---
+- Read before write: query the exact product, order or customer first and show what is there; confirm the id (a gid like gid://shopify/Product/123) matches the one the person named.
+- Lists come in pages: ask for first N with the cursor (pageInfo hasNextPage and endCursor) and follow it to the end before counting. Anything over a few thousand records is a bulk operation (a query run as a file job), not a loop of pages.
+- Every query has a cost against a bucket that refills each second: ask for few fields and small pages; if the response reports throttled, wait for the refill and retry once rather than repeating at once.
+- Use the API version the app or docs name; a field that does not exist is usually a version difference, not a typo.
+- A write (mutation) returns userErrors: always read that list, an HTTP 200 with userErrors means nothing was changed. Metafields need a namespace, key and type that match their definition.
+- Scopes limit what an app token may touch: a missing access scope is fixed by the person in the app settings, never by guessing.
+- Prices, inventory counts and customer data are real: never change them in bulk without a preview of the first few changes and the person's approval.
+Verify: after a write, read the same object again and quote the new value; for a bulk change compare a count before and after.
+Approvals: any mutation, deleting anything, refunds, price or inventory changes, sending customer email, and sharing customer data outside the store need the person's explicit approval with the exact change shown.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
 name: pictures-and-painted-interfaces
 description: Read and act on an interface that is only pixels (a canvas, a WebGL editor, a chart, an image, a scanned page) where the outline names nothing: which tool to try in which order and how to check the result.
 license: Xroga-internal
