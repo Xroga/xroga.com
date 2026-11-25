@@ -2,6 +2,7 @@ import { publicAnswerExportText } from './publicAnswerText';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import type { Nodes } from 'mdast';
+import { readNativeMarkdownTable } from '../../../backend/src/ai/nativeMarkdown';
 
 const inlineMarkdown = unified().use(remarkParse);
 
@@ -20,13 +21,20 @@ function inlineLabel(node: Nodes): string {
   return 'children' in node ? node.children.map(inlineLabel).join('') : '';
 }
 
+function visitInlineMarkdown(value: string, visit: (node: Nodes) => boolean) {
+  function walk(node: Nodes) {
+    if (!visit(node) && 'children' in node) node.children.forEach(walk);
+  }
+  walk(inlineMarkdown.parse(value));
+}
+
 function cleanInline(value: string): string {
   if (!value.includes('`') && !value.includes('](')) return removeEmphasis(value);
   const output: string[] = [];
   const prose = value.trimStart();
   const indent = value.length - prose.length;
   let cursor = 0;
-  const visit = (node: Nodes) => {
+  visitInlineMarkdown(prose, node => {
     const start = node.position?.start.offset;
     const end = node.position?.end.offset;
     if (start !== undefined && end !== undefined && ['inlineCode', 'image', 'link'].includes(node.type)) {
@@ -35,19 +43,33 @@ function cleanInline(value: string): string {
       output.push(node.type === 'link' && /^https?:\/\//i.test(node.url) && node.url !== label
         ? label + ' (' + node.url + ')' : label);
       cursor = indent + end;
-      return;
+      return true;
     }
-    if ('children' in node) node.children.forEach(visit);
-  };
-  visit(inlineMarkdown.parse(prose));
+    return false;
+  });
   return output.join('') + removeEmphasis(value.slice(cursor));
 }
 
 function tableCells(line: string): string[] {
   const row = line.trim().replace(/^\|/, '');
+  const codeSpans = new Map<number, number>();
+  if (row.includes('`')) {
+    visitInlineMarkdown(row, node => {
+      if (node.type !== 'inlineCode' || !node.position) return false;
+      const { start, end } = node.position;
+      if (start.offset !== undefined && end.offset !== undefined) codeSpans.set(start.offset, end.offset);
+      return true;
+    });
+  }
   const cells: string[] = [];
   let cell = '';
   for (let index = 0; index < row.length; index += 1) {
+    const codeEnd = codeSpans.get(index);
+    if (codeEnd !== undefined) {
+      cell += row.slice(index, codeEnd);
+      index = codeEnd - 1;
+      continue;
+    }
     const character = row[index];
     if (character === '\\' && (row[index + 1] === '|' || row[index + 1] === '\\')) cell += row[++index];
     else if (character === '|') {
@@ -84,14 +106,10 @@ export function serializeAssistantCopy(markdown: string, { collapseDuplicateTabl
       continue;
     }
 
-    const next = lines[index + 1] ?? '';
-    if (/^\s*\|?.+\|.+\|?\s*$/.test(line) && /^\s*\|?\s*:?-{3,}/.test(next)) {
-      const rows = [tableCells(line)];
-      index += 1;
-      while (index + 1 < lines.length && /\|/.test(lines[index + 1] ?? '')) {
-        rows.push(tableCells(lines[index + 1] ?? ''));
-        index += 1;
-      }
+    const table = readNativeMarkdownTable(lines, index);
+    if (table?.rows.length) {
+      const rows = [tableCells(line), ...lines.slice(index + 2, table.end).map(tableCells)];
+      index = table.end - 1;
       if (seenTables) {
         const key = JSON.stringify(rows);
         if (seenTables.has(key)) continue;

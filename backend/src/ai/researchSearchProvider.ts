@@ -24,12 +24,15 @@ export const DEEPSEEK_DISCOVERY_RESULTS = 25;
 export const DEEPSEEK_PRIMARY_PAGE_RESULTS = 12;
 export const DEEPSEEK_PRIMARY_PAGE_EXCERPT = 3_200;
 
+const searchQueryTerms = (query: string) => query.match(/(?:[^\s"]|"[^"]*"|"[^"]*$)+/gu) ?? [];
+const positiveSiteFilter = /^\(*site:[^\s)]+\)*$/iu;
+
 /** Fit the provider request without dropping trailing domain, language or date filters. */
 export function fitDeepseekSearchQuery(query: string): string | undefined {
   const text = query.trim();
   if (!text) return;
   if ([...text].length <= DEEPSEEK_QUERY_MAX) return text;
-  const tokens = text.match(/-?"[^"]*"|\S+/gu) ?? [];
+  const tokens = searchQueryTerms(text);
   const filter = /^-?(?:site|lang|after|before):\S+$/iu;
   const filters = tokens.filter(token => filter.test(token));
   const sites = filters.filter(token => /^site:/iu.test(token));
@@ -38,19 +41,25 @@ export function fitDeepseekSearchQuery(query: string): string | undefined {
   if (capacity < 1) return;
   const terms = tokens.filter((token, index) => !filter.test(token)
     && !(token === 'OR' && /^site:/iu.test(tokens[index - 1] ?? '') && /^site:/iu.test(tokens[index + 1] ?? '')));
-  const result: string[] = [];
-  let available = capacity;
-  for (const term of terms) {
-    const size = [...term].length;
+  // Preserve complete quoted phrases, exclusions and their explicit alternatives
+  // before filling the remaining space with ordinary topic words.
+  const selected = terms.map((term, index) => term.includes('"') || term.startsWith('-')
+    || term === 'OR' || terms[index - 1] === 'OR' || terms[index + 1] === 'OR');
+  const sizes = terms.map(term => [...term].length + 1);
+  let available = capacity + 1 - sizes.reduce((sum, size, index) => sum + (selected[index] ? size : 0), 0);
+  if (available < 0) return;
+  for (const [index, size] of sizes.entries()) {
+    if (selected[index]) continue;
     if (size > available) break;
-    result.push(term);
-    available -= size + 1;
+    selected[index] = true;
+    available -= size;
   }
+  const result = terms.filter((_, index) => selected[index]);
   if (result.at(-1) === 'OR') result.pop();
   // Unsegmented writing has no word boundary to cut at.
-  const unsegmented = terms.length === 1 && !terms[0].includes('"') && !qualifiers
+  const unsegmented = terms.length === 1 && !selected[0]
     ? [...terms[0]].slice(0, capacity).join('') : '';
-  const topic = result.join(' ') || unsegmented;
+  const topic = result.some(term => term !== 'OR' && !term.startsWith('-')) ? result.join(' ') : unsegmented;
   return topic ? [topic, qualifiers].filter(Boolean).join(' ') : undefined;
 }
 
@@ -75,9 +84,11 @@ export function scopeOfficialSearchQuery(query: string, domains: readonly string
   }
   if (!sites.length) return;
   const operators = sites.join(' OR ');
-  const terms = query.replace(/-?site:\S+/gi, '').replace(/\bOR\b/gi, ' ').replace(/["()]/g, ' ').replace(/\s+/g, ' ').trim();
-  const scopedTerms = [...terms].slice(0, limit - operators.length - 1).join('').trimEnd();
-  return scopedTerms ? `${scopedTerms} ${operators}` : operators;
+  const tokens = searchQueryTerms(query);
+  const topic = tokens.filter((term, index) => !positiveSiteFilter.test(term)
+    && !(term === 'OR' && (positiveSiteFilter.test(tokens[index - 1] ?? '')
+      || positiveSiteFilter.test(tokens[index + 1] ?? '')))).join(' ');
+  return topic ? fitDeepseekSearchQuery(`${topic} ${operators}`) : operators;
 }
 
 /** The dedicated server-side search credential, or undefined when research search is unavailable. */

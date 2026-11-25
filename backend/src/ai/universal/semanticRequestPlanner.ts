@@ -11,7 +11,8 @@ import {
 } from '../models.js';
 import { getRouterAdminConfig } from '../routerConfig.js';
 import { PRESENTATION_PLAN_INSTRUCTIONS } from '../responsePresentation.js';
-import { requestedNativeDocumentFormat } from '../nativeDocumentDownload.js';
+import { nativeDocumentRequiresAttachment, nativeDocumentRequiresPriorAnswer, requestedNativeDocumentFormat } from '../nativeDocumentDownload.js';
+import { usesNativeWorkspacePresentation } from '../nativeOpenUiWorkspace.js';
 import { explicitlyRequestsWorkspaceWebSearch } from '../workspacePublicSearch.js';
 import { explicitlyDisablesResearch } from '../../lib/taskClassifier.js';
 import {prepareSonnetConversation,requestedSonnetReason} from '../sonnetApproval.js';
@@ -125,7 +126,9 @@ export function enforceInlineAnswerIntent(
   const structuredData = /\b(?:charts?|tables?|tabulate)\b/i.test(message);
   const projectOrAction = /\b(?:apps?|websites?|webpages?|repos?|repositor(?:y|ies)|projects?|codebases?|files?|pull requests?|preview|deploy\w*|publish\w*|install\w*|integrate\w*|save|send|email|upload|delete|commit|run\s+(?:the\s+)?tests?|execute)\b/i;
   const snippet = /\b(?:write|show|provide|give|draft|generate)\b[^.!?\n]{0,55}\b(?:functions?|snippets?|examples?|queries|regex|regular expressions?)\b/i;
-  const calculator = /\bcalculator\b/i.test(message) && adjustable && (inAnswer || (attachments.length > 0 && structuredData)) &&
+  const calculatorName = /\bcalculat(?:or|[ \t]+or)\b/i;
+  const explicitlyInteractive = /\b(?:interactive|editable)\s+(?:[\p{L}\p{N}-]+\s+){0,4}calculat(?:or|[ \t]+or)\b/iu.test(message);
+  const calculator = (explicitlyInteractive || (calculatorName.test(message) && adjustable && (inAnswer || (attachments.length > 0 && structuredData)))) &&
     !/\b(?:code|react|next\.js|html|css|javascript|typescript|apps?|websites?|webpages?|repos?|repositor(?:y|ies)|pull requests?|preview|deploy\w*|publish\w*|install\w*|integrate\w*|save|send|email|upload|delete|commit)\b/i.test(message);
   const localDocument = requestedNativeDocumentFormat(message) &&
     !projectOrAction.test(message.replace(/\b(?:downloadable|docx|pdf|xlsx|pptx|txt|word|excel|powerpoint)\s+files?\b/gi, 'document'));
@@ -1225,6 +1228,35 @@ export async function resolveRequestAuthorities(
   return authorities;
 }
 
+// A single artifact with supplied literal content has no execution or source
+// decision to make. Other file requests still use the semantic planner.
+const literalDocumentOpening = /^(?:please\s+)?(?:create|draft|generate|make|prepare|write)\s+(?:a|an|one)\s+(?:(?:editable|printable)\s+){0,2}downloadable\s+(?:(?:editable|printable)\s+){0,2}\.?(?:docx|pdf|xlsx|pptx|txt)\s+(?:document|handout|checklist|report|guide|brief|memo|worksheet|spreadsheet|deck|presentation)(?:\s+for\s+(?:a|an|the)\s+(?:fictional|sample)\s+[\p{L}\p{N}'’ -]+)?$/iu;
+const literalContentFields = [
+  /^Title:[ \t]+\S.*$/iu,
+  /^(?:Body|Content|Include\s+(?:(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+)?(?:unchecked\s+)?(?:checklist\s+)?(?:items|bullets)):[ \t]+\S.*$/iu,
+  /^(?:Add\s+)?(?:this\s+exact\s+)?Subtitle:[ \t]+\S.*$/iu,
+  /^(?:Add\s+)?(?:this\s+exact\s+)?Closing line:[ \t]+\S.*$/iu,
+];
+const documentNeedsSourceDecision = /https?:\/\/|(?:@|\bwww\.)[^\s]+|\b(?:latest|newest|current|recent|today|this (?:week|month|year)|real[- ]time|as of|look up|research|search|browse|retrieve|fetch|from|using|based on|connected|(?:previous|earlier|last) (?:answer|response|report|document))\b/iu;
+const documentNeedsActionDecision = /\b(?:send|email|share|upload|publish|post|deploy|execute|run|save|edit|update|open|delete|schedule|book|purchase|invite|notify|forward|sync|commit|then|sign (?:this|the) (?:file|document|report|handout))\b/iu;
+
+function selfContainedDocumentFormat(message: string) {
+  const text = message.trim();
+  const format = requestedNativeDocumentFormat(text);
+  if (!format || nativeDocumentRequiresAttachment(text) || nativeDocumentRequiresPriorAnswer(text)
+    || documentNeedsSourceDecision.test(text) || documentNeedsActionDecision.test(text)) return;
+
+  const [opening, ...fields] = text.split(/(?<=[.!?])\s+|\r?\n+/u).map(part => part.trim());
+  if (!literalDocumentOpening.test(opening.replace(/\.$/u, ''))) return;
+  const present = new Set<number>();
+  for (const field of fields) {
+    const kind = literalContentFields.findIndex(label => label.test(field));
+    if (kind === -1 || present.has(kind)) return;
+    present.add(kind);
+  }
+  if (present.has(0) && present.has(1)) return format;
+}
+
 export async function planSemanticRequest(
   input: {
     userId: string;
@@ -1307,19 +1339,22 @@ export async function planSemanticRequest(
         ),
     );
 
-  // This protocol supplies the complete answer format without requiring an
-  // intent or source decision. The ordinary chat route still generates it.
-  if (input.message.length <= 128 && !input.history?.length && !input.attachments?.length && !input.projectContext
+  // These requests establish the complete local output and need no source or
+  // action decision. The normal chat route still generates and meters it.
+  const isolatedAnswer = !input.history?.length && !input.attachments?.length && !input.projectContext
     && !Array.isArray(input.projectState)
     && Object.entries(input.projectState ?? {}).every(([key, value]) =>
       (key === 'hasExistingPreview' || key === 'isUpdate') && value === false)
-    && /^(?:please[ \t]+)?(?:reply|respond|answer)[ \t]+with[ \t]+only[ \t]+the[ \t]+word[ \t]+\p{L}[\p{L}\p{M}]{0,39}[.!]?$/iu
-      .test(input.message.trim())
-    && readiness.get('conversation.respond')?.state === 'READY') {
+    && readiness.get('conversation.respond')?.state === 'READY';
+  const literalWord = isolatedAnswer && input.message.length <= 128
+    && /^(?:please[ \t]+)?(?:reply|respond|answer)[ \t]+with[ \t]+only[ \t]+the[ \t]+word[ \t]+\p{L}[\p{L}\p{M}]{0,39}[.!]?$/iu.test(input.message.trim());
+  const documentFormat = isolatedAnswer && usesNativeWorkspacePresentation('deepseek_v4_1_flash_1017')
+    ? selfContainedDocumentFormat(input.message) : undefined;
+  if (literalWord || documentFormat) {
     const goalContract = goalContractSchema.parse({
       version: '1.0',
       goal: input.message,
-      desiredOutcome: 'Respond with exactly the requested word.',
+      desiredOutcome: documentFormat ? `Create the requested ${documentFormat.toUpperCase()} download.` : 'Respond with exactly the requested word.',
       semanticIntent: 'ANSWER',
       requiredCapabilities: ['conversation.respond'],
       requiredAuthorities: universalCapabilityRegistry.get('conversation.respond')?.requiredAuthorities,
@@ -1330,7 +1365,8 @@ export async function planSemanticRequest(
       goalContract,
       dispatch: 'chat',
       capabilityIds: goalContract.requiredCapabilities,
-      rationale: 'The request specifies a single literal word for an ordinary conversation response.',
+      rationale: documentFormat ? 'The request specifies a single local download with supplied content.'
+        : 'The request specifies a single literal word for an ordinary conversation response.',
       blockers: [],
       usage: usageToTokenUsage(await getUsage(actor.userId)),
     };

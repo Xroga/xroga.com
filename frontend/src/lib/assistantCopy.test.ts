@@ -33,6 +33,21 @@ test('assistant copy converts markdown tables into readable tab-separated text',
   );
 });
 
+test('copy preserves literal pipes in inline code and one-column table cells', () => {
+  const source = [
+    '| Example | Result |',
+    '| --- | --- |',
+    '| `MASK | FLAG` | kept |',
+    '| ``text `name` | tail`` | kept too |',
+    '',
+    '| Identifier |',
+    '| --- |',
+    '| `layer | scope` |',
+  ].join('\n');
+  assert.equal(serializeAssistantCopy(source),
+    'Example\tResult\nMASK | FLAG\tkept\ntext `name` | tail\tkept too\n\nIdentifier\nlayer | scope');
+});
+
 test('native copy collapses equivalent tables but keeps unique figures and source URLs', () => {
   const table = '| Plan | Cost | Evidence |\n|---|---:|---|\n| Basic | $10 | [Terms](https://example.org/current) |';
   const duplicate = table.replace('|---|---:|---|', '| --- | --- | --- |');

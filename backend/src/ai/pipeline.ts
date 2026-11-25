@@ -26,12 +26,13 @@ import { MODELS, type ModelId } from './models.js';
 import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT } from './nativeOpenUi.js';
 import { nativeDocumentDelivery, nativeDocumentPrompt, nativeDocumentRequiresAttachment, nativeDocumentRequiresPriorAnswer, plannedNativeDocument, requestedNativeDocumentFormat, type NativeDocumentFormat } from './nativeDocumentDownload.js';
-import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
+import { completeNativeWorkspaceAnswer, requestsNativeTableControls, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
 import { presentPublicResearchAnswer } from './researchAnswer.js';
 import { explicitlyRequestsWorkspaceWebSearch } from './workspacePublicSearch.js';
 import { nativeOpenUiPlainPrompt, workspaceNativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
 import { assessPresentationCoverage, createPresentationProjection, nativePresentedAnswerMaxTokens, NATIVE_WORKSPACE_REASONING_RESERVE_TOKENS, presentationRequestInstructions, presentationResponseFormat, presentedAnswerMaxTokens, type PresentationResponseFormat } from './responsePresentation.js';
 import { prepareAnswerCoverage, requiredNativeFormats } from './answerCoverage.js';
+import { formatUnadornedAnswer, requestedUnadornedBulletCount, requestsUnadornedAnswer, unadornedAnswerInstruction } from './answerFormat.js';
 import {prepareSonnetConversation,requestedSonnetReason} from './sonnetApproval.js';
 import {
   buildVisionUserContent,
@@ -999,6 +1000,8 @@ export async function runChatPipeline(opts: {
   const missingDownloadHistory = Boolean(requestedDownload && (downloadSource === 'conversation' || nativeDocumentRequiresPriorAnswer(opts.prompt))
     && !opts.history?.some(message => message.content.trim()));
   const missingDownloadSource = missingDownloadAttachment || missingDownloadHistory;
+  const unadornedAnswer = requestsUnadornedAnswer(opts.prompt);
+  const bulletCount = unadornedAnswer ? requestedUnadornedBulletCount(opts.prompt) : undefined;
   const downloadInstruction = !requestedDownload ? '' : missingDownloadHistory
     ? '\n\nThe referenced earlier content is unavailable in this conversation. Ask the user to paste it here. Do not draft a substitute or claim a file was created.'
     : nativeDocumentPrompt(requestedDownload, missingDownloadAttachment, opts.prompt);
@@ -1011,8 +1014,9 @@ export async function runChatPipeline(opts: {
     const attachmentSystem = prepared.hasImages ? VISION_SYSTEM : DOC_SYSTEM;
     const attachmentPlan = native ? prepareAnswerCoverage(opts.prompt, opts.goalContract?.presentation, opts.goalContract?.answerObligations).plan : [];
     const formats = native ? requiredNativeFormats(opts.prompt) : [];
-    const system = native ? attachmentSystem + '\n\n' + workspaceNativeOpenUiPrompt([...attachmentPlan.map(section => section.kind), ...formats], false)
+    const attachmentInstructions = native ? attachmentSystem + '\n\n' + workspaceNativeOpenUiPrompt([...attachmentPlan.map(section => section.kind), ...formats], false)
       + downloadInstruction : attachmentSystem;
+    const system = unadornedAnswer ? attachmentInstructions + '\n\n' + unadornedAnswerInstruction : attachmentInstructions;
 
     let userText = prompt;
     if (prepared.documentBlock) {
@@ -1046,17 +1050,17 @@ export async function runChatPipeline(opts: {
         modelConnectedAccountId:opts.modelScope?.connectedAccountId,modelMaximumCostMicroUsd:opts.modelScope?.maximumCostMicroUsd,
         modelRevalidateBeforeDispatch:opts.modelScope?.revalidateBeforeDispatch,
         // The native program is presentation data. Send only settled prose as a text event.
-        onDelta: native ? undefined : opts.onDelta,
+        onDelta: native || unadornedAnswer ? undefined : opts.onDelta,
       },
     );
 
     const usage = await getUsage(opts.userId);
 
     const answer = native ? completeNativeWorkspaceAnswer(result.text, result.finishReason, undefined, opts.prompt, diagnostic =>
-      console.warn('[native-openui-validation]', diagnostic), formats) : undefined;
-    const response = answer?.response ?? result.text;
+      console.warn('[native-openui-validation]', diagnostic), formats, { unadornedAnswer, bulletCount }) : undefined;
+    const response = answer?.response ?? (unadornedAnswer ? formatUnadornedAnswer(result.text, bulletCount) : result.text);
     const delivery = answer && nativeDocumentDelivery(requestedDownload, missingDownloadSource, opts.prompt, response, answer.completion);
-    if (native) opts.onDelta?.(response);
+    if (native || unadornedAnswer) opts.onDelta?.(response);
     return {
       ...answer,
       response,
@@ -1182,7 +1186,8 @@ export async function runChatPipeline(opts: {
     : opts.prompt;
   const answerContract = prepareAnswerCoverage(opts.prompt, opts.goalContract?.presentation, opts.goalContract?.answerObligations);
   const native = usesNativeWorkspacePresentation(route.builder);
-  const formats = native ? requiredNativeFormats(opts.prompt) : [];
+  const requestedFormats = requiredNativeFormats(opts.prompt);
+  const formats = native ? requestedFormats : [];
   // An already authorized, single-fact public lookup needs only citation-ready
   // prose. Keep the same model and its default reasoning mode.
   const directPublicLookup = native && publicWebRetrieved === true
@@ -1206,20 +1211,28 @@ export async function runChatPipeline(opts: {
     ? '\n\nVerified research references available for Source(id):\n' + JSON.stringify(
       sources.map((source, index) => ({ id: 'source-' + (index + 1), title: source.title })),
     ) : '';
-  const presentation = native ? undefined : answerContract.plan;
-  const projection = presentation?.length ? createPresentationProjection(presentation) : undefined;
+  const needsStructuredAnswer = Boolean(requestedDownload || requestedFormats.length ||
+    answerContract.requirements.some(item => item.formats.some(format => format !== 'prose')));
+  const strictProse = unadornedAnswer && !needsStructuredAnswer;
+  const invalidOutline = opts.goalContract?.presentationIssue === 'invalid' || !answerContract.coverage.complete;
+  // An optional outline can fail independently of the answer. For a prose-only
+  // request, generate one readable body and respect its actual completion status.
+  const fallbackToProse = !native && !needsStructuredAnswer && invalidOutline;
+  const presentation = native || strictProse || fallbackToProse ? undefined : answerContract.plan;
+  const projection = presentation?.length ? createPresentationProjection(presentation, { unadornedAnswer, bulletCount }) : undefined;
   const format = presentation?.length ? presentationResponseFormat(presentation) : undefined;
   // Only brief turns without an outline or a specific deliverable can skip the
   // registry. A prose obligation can still describe an artifact with controls.
   const plainNative = native && route.kind !== 'research' && !researchBlock && !opts.projectEvidence
     && !formats.length
-    && opts.goalContract?.semanticIntent === 'ANSWER' && opts.goalContract.contextComplexity === 'low'
+    && (strictProse || (opts.goalContract?.semanticIntent === 'ANSWER' && opts.goalContract.contextComplexity === 'low'
     && opts.goalContract.confidence >= 0.8 && !opts.goalContract.presentationIssue && answerContract.coverage.complete
-    && answerContract.plan.length === 0 && answerContract.requirements.length === 0;
+    && answerContract.plan.length === 0 && answerContract.requirements.length === 0));
   const instructions = directPublicLookup ? DIRECT_RESEARCH_SYSTEM : native
     ? plainNative ? nativeOpenUiPlainPrompt : workspaceNativeOpenUiPrompt([...answerContract.plan.map(section => section.kind), ...formats], Boolean(evidenceIds.size)) + sourceManifest
     : chatPresentationSystem(opts.prompt) + (presentation?.length ? '\n\n' + presentationRequestInstructions(presentation) : '');
   const system = currentPublicProductTruth(truthAuthorities) + '\n\n' + instructions
+    + (native && unadornedAnswer ? '\n\n' + unadornedAnswerInstruction : '')
     + (native ? downloadInstruction : '');
   const nativeAnswerBudget = plainNative || directPublicLookup
     ? Math.max(NATIVE_WORKSPACE_REASONING_RESERVE_TOKENS, presentedAnswerMaxTokens(answerContract.plan))
@@ -1248,7 +1261,8 @@ export async function runChatPipeline(opts: {
       temperature: 0.5,
       // The provider adapter publishes only after canonical usage settlement.
       onDelta: native || publicWebRetrieved ? undefined
-        : projection ? delta => { const visible = projection.append(delta); if (visible) opts.onDelta?.(visible); } : opts.onDelta,
+        : projection ? delta => { const visible = projection.append(delta); if (visible) opts.onDelta?.(visible); }
+        : unadornedAnswer ? undefined : opts.onDelta,
     },
   ).catch(error => {
     if (!publicWebRetrieved || isTerminalModelFailure(error)) throw error;
@@ -1276,9 +1290,12 @@ export async function runChatPipeline(opts: {
   }
 
   if (native) {
+    // Keep the user’s presentation intent without passing research into the
+    // factual recovery paths for an ordinary typed answer.
     const answer = completeNativeWorkspaceAnswer(result.text, result.finishReason, evidenceIds,
       route.kind !== 'research' && !researchBlock && !opts.projectEvidence ? opts.prompt : undefined,
-      diagnostic => console.warn('[native-openui-validation]', diagnostic), formats);
+      diagnostic => console.warn('[native-openui-validation]', diagnostic), formats,
+      { unadornedAnswer, bulletCount, requiresTableControls: formats.includes('table') && requestsNativeTableControls(typedWorkspacePrompt ?? opts.prompt) });
     const researchPresentation = publicWebRetrieved
       ? presentPublicResearchAnswer(answer.response, answer.completion, sources, opts.prompt) : undefined;
     const { response, completion } = researchPresentation ?? answer;
@@ -1298,16 +1315,16 @@ export async function runChatPipeline(opts: {
   }
 
   const document = projection?.finish(result.text);
-  const prose = document ? document.response || "Xroga couldn't finish the requested structured answer." : result.text;
+  const prose = document ? document.response || "Xroga couldn't finish the requested structured answer."
+    : unadornedAnswer ? formatUnadornedAnswer(result.text, bulletCount) : result.text;
   const reportedCompletion = publicCompletionState(result.finishReason, document?.reviewText ?? prose);
   const researchPresentation = publicWebRetrieved
     ? presentPublicResearchAnswer(prose, reportedCompletion, sources, opts.prompt) : undefined;
   const { response, completion } = researchPresentation ?? { response: prose, completion: reportedCompletion };
-  if (publicWebRetrieved) opts.onDelta?.(response);
+  if (publicWebRetrieved || (unadornedAnswer && !projection)) opts.onDelta?.(response);
   // A valid semantic decision with invalid display metadata, or an incomplete
   // document, is preserved as partial. Never repair it with another model call.
-  const presentationIncomplete = (document && !document.ok) || opts.goalContract?.presentationIssue === 'invalid'
-    || !answerContract.coverage.complete;
+  const presentationIncomplete = (document && !document.ok) || (needsStructuredAnswer && invalidOutline);
 
   return {
     response,

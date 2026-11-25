@@ -8,6 +8,7 @@ import { bindNativeAnswerText, removeRepeatedCalculatorFormulas } from './native
 import { reviewEditorialProse } from './nativeOpenUiEditorial.js';
 import { nativeMarkdownTables } from './nativeMarkdown.js';
 import { compactNativeDocumentProse, requestedNativeDocumentFormat } from './nativeDocumentDownload.js';
+import { formatUnadornedAnswer } from './answerFormat.js';
 
 const outputLimitNote = 'This answer reached the provider output limit. The available answer is shown below.';
 const promisesControls = (text: string) => /\b(?:controls?|sliders?|input fields?)\s+(?:above|below)\b|\b(?:above|below)\s+(?:calculator|controls?)\b/i.test(text);
@@ -42,7 +43,7 @@ const tableControlRequests = [
 const tableRequestClauses = /[.!?;,\n]+|\b(?:but|instead)\b|\band\b(?=\s+(?:add|include|show|provide|make|let|allow|enable)\b)/i;
 const negatedTableControl = /\b(?:no|without|avoid|skip|omit|exclude|do\s+not|don['’]t)\s+(?:(?:add|include|show|provide|make|create|build|use|enable|allow|let|to|me|users?|readers?|a|an|the|any)\s+)*$/i;
 
-function requestsNativeTableControls(prompt: string): boolean {
+export function requestsNativeTableControls(prompt: string): boolean {
   return prompt.split(tableRequestClauses).some(clause => tableControlRequests.some(pattern => {
     const match = pattern.exec(clause);
     return match && !negatedTableControl.test(clause.slice(0, match.index));
@@ -76,8 +77,10 @@ export function completeNativeWorkspaceAnswer(
   diagnose?: (event: NativeUiDiagnostic | { stage: 'assembly'; reason: 'missing_prose'; programLength: number }
     | { stage: 'assembly'; reason: 'missing_formats'; formats: RequiredNativeFormat[] }) => void,
   requiredFormats: readonly RequiredNativeFormat[] = [],
+  presentation?: { requiresTableControls?: boolean; unadornedAnswer?: boolean; bulletCount?: number },
 ) {
-  const { text: prose, program: generatedProgram } = splitNativeOpenUiAnswer(raw);
+  const { text: generatedProse, program: generatedProgram } = splitNativeOpenUiAnswer(raw);
+  const prose = presentation?.unadornedAnswer ? formatUnadornedAnswer(generatedProse, presentation.bulletCount) : generatedProse;
   const reviewedProcedure = reviewEditorialProse(prose, prompt);
   if (reviewedProcedure !== undefined) {
     diagnose?.({ stage: 'accuracy', reason: 'factual_review', editorialIssue: 'prose_conflict', programLength: generatedProgram.length, shape: [] });
@@ -155,7 +158,8 @@ export function completeNativeWorkspaceAnswer(
   const program = deduplicated !== candidate && validateNativeWorkspaceProgram(deduplicated, evidenceIds, prose,
     undefined, { request: prompt }).ok ? deduplicated : candidate;
   const missing = missingNativeFormats(validation?.ok ? program : '', requiredFormats).filter(format =>
-    format !== 'table' || requestsNativeTableControls(prompt ?? '') || !nativeMarkdownTables(prose).length);
+    format !== 'table' || (presentation?.requiresTableControls ?? requestsNativeTableControls(prompt ?? ''))
+      || !nativeMarkdownTables(prose).length);
   // The model can promise controls even when its program was rejected and
   // the original wording did not match an explicit calculator obligation.
   const promisesInlineControls = promisesControls(prose);

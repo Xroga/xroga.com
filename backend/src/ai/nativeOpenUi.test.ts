@@ -1,8 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { NATIVE_UI_MARKER, PARTIAL_NATIVE_PRESENTATION_NOTE, missingNativeFormats, splitNativeOpenUiAnswer, validateNativeOpenUi, validateNativeWorkspaceProgram, type NativeUiDiagnostic } from './nativeOpenUi.js';
+import { createParser, type LibraryJSONSchema } from '@openuidev/lang-core';
+import { MAX_PROGRAM_CHARS, NATIVE_UI_MARKER, PARTIAL_NATIVE_PRESENTATION_NOTE, materializeNativeAnswerText, missingNativeFormats, splitNativeOpenUiAnswer, validateNativeOpenUi, validateNativeWorkspaceProgram, type NativeUiDiagnostic } from './nativeOpenUi.js';
 import { nativeOpenUiPlainPrompt, nativeOpenUiPrompt, workspaceNativeOpenUiPrompt } from './nativeOpenUiPrompt.js';
 import { buildNativeOpenUiShare, readNativeOpenUiShare } from './nativeOpenUiShare.js';
+import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
 import { readNativeOpenUiRun } from './nativeOpenUiRun.js';
 import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
 import { requiredNativeFormats } from './answerCoverage.js';
@@ -48,8 +50,50 @@ test('long bound Markdown survives validation and Share without expanding other 
   }
   const unsafe = bindNativeAnswerText(program + '\nunreachable = Fetch("https://example.invalid")', prose);
   assert.deepEqual(validateNativeOpenUi(unsafe), { ok: false, reason: 'authority' });
-  assert.deepEqual(validateNativeOpenUi(bindNativeAnswerText(program, prose.repeat(2))),
-    { ok: false, reason: 'budget' });
+});
+
+test('saved and shared native tables survive canonical prose larger than the DSL budget', () => {
+  const prose = Array.from({ length: 155 }, (_, index) =>
+    `## Section ${index + 1}\n\nDocument the activities performed and note changes in instructions beside their corresponding steps. ` +
+    'Preserve the unique source material needed for an independent reader to verify the final outcome.').join('\n\n')
+    + '\n\n| Tool | Use |\n| --- | --- |\n| Spade | Digging |'
+    + '\n\n```text\nroot = Col([Source("literal example")])\n```\n\nKeep this closing sentence.';
+  const program = 'root = Col([Markdown(_xroga_answer), Table(["Tool", "Use"], [["Spade", "Digging"]])])';
+  assert.ok(prose.length > MAX_PROGRAM_CHARS);
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop', undefined, undefined, undefined, ['table']);
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  assert.equal(answer.response, prose);
+  assert.equal(answer.responseSource.text, program + '\n_xroga_answer = ""');
+  assert.deepEqual(validateNativeOpenUi(answer.responseSource.text, undefined, answer.response), { ok: true });
+
+  const snapshot = buildNativeOpenUiShare(answer.response, answer.responseSource.text);
+  assert.ok(snapshot);
+  const reopened = readNativeOpenUiShare(snapshot);
+  assert.equal(reopened?.text, prose);
+  assert.equal(reopened?.program, answer.responseSource.text);
+  const restored = materializeNativeAnswerText(reopened!.program, reopened!.text);
+  const parsed = createParser(catalog.schema as LibraryJSONSchema, 'Col').parse(restored);
+  assert.deepEqual(parsed.meta.errors, []);
+  assert.deepEqual(parsed.meta.unresolved, []);
+  const children = parsed.root?.props.children;
+  assert.ok(Array.isArray(children));
+  assert.equal(children[0].typeName, 'Markdown');
+  assert.equal(children[0].props.text, prose);
+  assert.equal(children[1].typeName, 'Table');
+  assert.deepEqual(children[1].props.rows, [['Spade', 'Digging']]);
+});
+
+test('compact prose binding remains one Markdown argument and never expands the authored DSL budget', () => {
+  const prose = 'Verified textual subject is retained. '.repeat(800);
+  for (const program of [
+    'root = Col([Text(_xroga_answer)])',
+    'root = Col([Markdown(alias)])\nalias = _xroga_answer',
+    'root = Col([Markdown(_xroga_answer), Markdown(_xroga_answer)])',
+    'root = Col([answer, answer])\nanswer = Markdown(_xroga_answer)',
+  ]) assert.deepEqual(validateNativeOpenUi(bindNativeAnswerText(program, prose), undefined, prose), { ok: false, reason: 'authority' });
+
+  const oversized = 'root = Col([Markdown(_xroga_answer), Code(' + JSON.stringify('a'.repeat(MAX_PROGRAM_CHARS)) + ')])';
+  assert.deepEqual(validateNativeOpenUi(bindNativeAnswerText(oversized, prose), undefined, prose), { ok: false, reason: 'budget' });
 });
 
 test('readable snapshots do not repeat native text because emphasis differs', () => {

@@ -306,18 +306,16 @@
       "id": "surface:65cb0aba3b036f66089f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/answerCoverage.ts",
-      "sha256": "10c2d26f6794533243f1214f8e5ebb7e97da344ff13cac67adea874058e3ebeb",
+      "sha256": "6c6f0205bcb01c84004795585c87af27a0aed0dc838bb5e7fbbc2d247c9017d7",
       "symbols": [
         "boundary",
         "branching",
         "carrier",
         "collision",
         "coverage",
-        "declines",
         "drifting",
         "evidence",
         "existing",
-        "figures",
         "formats",
         "item",
         "items",
@@ -330,8 +328,6 @@
         "persistent",
         "plan",
         "prepareAnswerCoverage",
-        "proseIds",
-        "quantitativeScenarioSupport",
         "quoteIssues",
         "quoted",
         "relevance",
@@ -342,12 +338,10 @@
         "requiredNativeFormats",
         "requirements",
         "result",
-        "scenario",
         "sentence",
         "sentences",
         "suffix",
         "system",
-        "text",
         "topic"
       ],
       "imports": [
@@ -367,7 +361,7 @@
       ],
       "callers": [
         "backend/src/ai/answerCoverage.test.ts:3",
-        "backend/src/ai/nativeOpenUi.test.ts:8",
+        "backend/src/ai/nativeOpenUi.test.ts:10",
         "backend/src/ai/pipeline.ts:34",
         "backend/src/ai/presentationRelevance.test.ts:4",
         "backend/src/ai/tenantModelDispatch.test.ts:11"
@@ -387,6 +381,64 @@
         "backend/src/ai/nativeOpenUi.test.ts",
         "backend/src/ai/presentationRelevance.test.ts",
         "backend/src/ai/tenantModelDispatch.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:1d464b7b5d1f1d94cefa",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/answerFormat.ts",
+      "sha256": "c67fe2320a03bf68e542256071233a5ae3ede9cc905b030c3d47b768b0e6948a",
+      "symbols": [
+        "answer",
+        "answerOnly",
+        "blocks",
+        "boundedReply",
+        "count",
+        "counts",
+        "exactBullets",
+        "explicitHeading",
+        "formatUnadornedAnswer",
+        "framing",
+        "heading",
+        "instructions",
+        "opening",
+        "requestedUnadornedBulletCount",
+        "requestsUnadornedAnswer",
+        "structured",
+        "unadornedAnswerInstruction",
+        "value",
+        "withoutInlineLiterals",
+        "withoutLeadingAnswerHeading"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/ai/nativeOpenUiWorkspace.ts:11",
+        "backend/src/ai/pipeline.ts:35",
+        "backend/src/ai/prompts.ts:3",
+        "backend/src/ai/responsePresentation.test.ts:5",
+        "backend/src/ai/responsePresentation.ts:4"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/ai/responsePresentation.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -436,7 +488,7 @@
       ],
       "callers": [
         "backend/src/ai/compileValidate.test.ts:9",
-        "backend/src/ai/pipeline.ts:219",
+        "backend/src/ai/pipeline.ts:220",
         "backend/src/ai/tenantModelDispatch.test.ts:12"
       ],
       "reachable": true,
@@ -532,7 +584,7 @@
       "callers": [
         "backend/src/ai/attachments.docx.test.ts:6",
         "backend/src/ai/attachments.test.ts:7",
-        "backend/src/ai/pipeline.ts:72"
+        "backend/src/ai/pipeline.ts:73"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -1837,7 +1889,7 @@
       "callers": [
         "backend/src/ai/black-hole/structuredOutput.test.ts:4",
         "backend/src/ai/qa.ts:7",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:41",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:42",
         "backend/src/services/integrations/businessAccounting.failure.test.ts:5",
         "backend/src/services/integrations/businessAction.ts:22",
         "backend/src/services/integrations/businessRead.ts:13",
@@ -2301,7 +2353,7 @@
       ],
       "callers": [
         "backend/src/ai/buildImprovementMemory.test.ts:12",
-        "backend/src/ai/pipeline.ts:245",
+        "backend/src/ai/pipeline.ts:246",
         "backend/src/security/learningOwnerReads.local.integration.ts:5",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:34",
         "backend/src/synthesis/universalEntrypoint.ts:89"
@@ -2593,7 +2645,7 @@
       ],
       "callers": [
         "backend/src/ai/buildOutcomeRoutingMemory.test.ts:8",
-        "backend/src/ai/pipeline.ts:244",
+        "backend/src/ai/pipeline.ts:245",
         "backend/src/security/learningOwnerReads.local.integration.ts:6",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:29",
         "backend/src/synthesis/universalEntrypoint.ts:84"
@@ -2647,7 +2699,7 @@
       ],
       "callers": [
         "backend/src/ai/buildOutputValidation.test.ts:3",
-        "backend/src/ai/pipeline.ts:45"
+        "backend/src/ai/pipeline.ts:46"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -2741,7 +2793,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:246",
+        "backend/src/ai/pipeline.ts:247",
         "backend/src/ai/step7LearningStrategy.test.ts:21",
         "backend/src/security/learningOwnerReads.local.integration.ts:7",
         "backend/src/synthesis/productIntelligence.ts:18",
@@ -2800,7 +2852,7 @@
       ],
       "callers": [
         "backend/src/ai/buildStreamNarrator.test.ts:3",
-        "backend/src/ai/pipeline.ts:117"
+        "backend/src/ai/pipeline.ts:118"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -2873,7 +2925,7 @@
         "backend/src/ai/builderAttempt.test.ts:3",
         "backend/src/ai/openaiCompat.egress.test.ts:6",
         "backend/src/ai/openaiCompat.ts:18",
-        "backend/src/ai/pipeline.ts:53",
+        "backend/src/ai/pipeline.ts:54",
         "backend/src/ai/tenantModelDispatch.test.ts:19",
         "backend/src/synthesis/coherentImplementation.ts:6"
       ],
@@ -3090,7 +3142,7 @@
       ],
       "callers": [
         "backend/src/ai/compileBlockerMessage.test.ts:4",
-        "backend/src/ai/pipeline.ts:46",
+        "backend/src/ai/pipeline.ts:47",
         "backend/src/ai/validationVerdict.ts:2"
       ],
       "reachable": true,
@@ -3249,7 +3301,7 @@
       "callers": [
         "backend/src/ai/compileBlockerMessage.ts:3",
         "backend/src/ai/compileValidate.test.ts:3",
-        "backend/src/ai/pipeline.ts:214",
+        "backend/src/ai/pipeline.ts:215",
         "backend/src/ai/validationVerdict.ts:3",
         "backend/src/sandbox/sandboxIsolation.test.ts:11"
       ],
@@ -3398,7 +3450,7 @@
       ],
       "callers": [
         "backend/src/ai/contextPreparation.test.ts:3",
-        "backend/src/ai/pipeline.ts:248",
+        "backend/src/ai/pipeline.ts:249",
         "backend/src/ai/repositoryTools.ts:23",
         "backend/src/existingSource/change/delivery.ts:15",
         "backend/src/existingSource/change/testRunner.ts:12",
@@ -3722,7 +3774,7 @@
       ],
       "callers": [
         "backend/src/ai/engineeringTasks.test.ts:3",
-        "backend/src/ai/pipeline.ts:261"
+        "backend/src/ai/pipeline.ts:262"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -3928,7 +3980,7 @@
         "backend/src/ai/executionRuntime.owner.test.ts:3",
         "backend/src/ai/executionRuntime.sandboxAdmission.test.ts:3",
         "backend/src/ai/executionRuntime.test.ts:3",
-        "backend/src/ai/pipeline.ts:249",
+        "backend/src/ai/pipeline.ts:250",
         "backend/src/ai/universal/resumeProjectContext.test.ts:5",
         "backend/src/existingSource/change/canonical.ts:51",
         "backend/src/existingSource/change/canonical.ts:67",
@@ -4052,7 +4104,7 @@
       ],
       "callers": [
         "backend/src/ai/fileSelector.test.ts:3",
-        "backend/src/ai/pipeline.ts:199"
+        "backend/src/ai/pipeline.ts:200"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -4093,7 +4145,7 @@
       ],
       "callers": [
         "backend/src/ai/githubShippingPlan.test.ts:3",
-        "backend/src/ai/pipeline.ts:229"
+        "backend/src/ai/pipeline.ts:230"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -4408,7 +4460,7 @@
         "backend/src/ai/executionRuntime.owner.test.ts:4",
         "backend/src/ai/executionRuntime.test.ts:13",
         "backend/src/ai/intelligentRouter.test.ts:3",
-        "backend/src/ai/pipeline.ts:235",
+        "backend/src/ai/pipeline.ts:236",
         "backend/src/routes/capabilities.ts:22"
       ],
       "reachable": true,
@@ -4664,7 +4716,7 @@
       ],
       "callers": [
         "backend/src/ai/legacyBuilderAdapter.test.ts:3",
-        "backend/src/ai/pipeline.ts:109"
+        "backend/src/ai/pipeline.ts:110"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -4963,7 +5015,7 @@
         "backend/src/ai/executionRuntime.test.ts:14",
         "backend/src/ai/intelligentRouter.test.ts:10",
         "backend/src/ai/intelligentRouter.ts:3",
-        "backend/src/ai/pipeline.ts:247",
+        "backend/src/ai/pipeline.ts:248",
         "backend/src/ai/providerPolicy.test.ts:6",
         "backend/src/routes/capabilities.ts:26",
         "backend/src/synthesis/universalEntrypoint.ts:67"
@@ -5431,7 +5483,8 @@
         "backend/src/ai/researchAnswer.ts:12",
         "backend/src/ai/researchRankingEvidence.ts:1",
         "backend/src/ai/researchWebsiteEvidence.ts:2",
-        "frontend/src/components/native-openui/upstream/components/markdown.tsx:10",
+        "frontend/src/components/native-openui/upstream/components/markdown.tsx:11",
+        "frontend/src/lib/assistantCopy.ts:5",
         "frontend/src/lib/xrogaFileExports.ts:7"
       ],
       "reachable": true,
@@ -5558,10 +5611,11 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "a22a1cc879afec9598bd2f1b316a8aa50724b9ddd0dc51a5476091e988ff0c31",
+      "sha256": "929eedbe615a136a1619d773a28f6aa1b1f707592bc6a3980c0a54bd6ffc48e5",
       "symbols": [
         "EditorialContext",
         "MAX_EXPANDED_EXPRESSION_DEPTH",
+        "MAX_NATIVE_ANSWER_PROSE_CHARS",
         "MAX_PROGRAM_CHARS",
         "NATIVE_UI_FORMAT",
         "NATIVE_UI_LIBRARY",
@@ -5609,6 +5663,9 @@
         "code",
         "collect",
         "columns",
+        "compactAnswer",
+        "compactNativeAnswerBinding",
+        "compactReferences",
         "component",
         "componentFacts",
         "components",
@@ -5691,6 +5748,7 @@
         "marker",
         "matched",
         "matchingMetricFormula",
+        "materializeNativeAnswerText",
         "metricHasReadableValue",
         "middle",
         "missingNativeFormats",
@@ -5698,6 +5756,7 @@
         "name",
         "names",
         "narrative",
+        "nativeAnswerBinding",
         "nativeAssignmentStart",
         "nativeElements",
         "nativeFence",
@@ -5868,8 +5927,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/nativeOpenUi.test.ts:3",
-        "backend/src/ai/nativeOpenUi.test.ts:9",
+        "backend/src/ai/nativeOpenUi.test.ts:11",
+        "backend/src/ai/nativeOpenUi.test.ts:4",
         "backend/src/ai/nativeOpenUiEditorial.test.ts:3",
         "backend/src/ai/nativeOpenUiShare.ts:2",
         "backend/src/ai/nativeOpenUiValues.test.ts:6",
@@ -5881,12 +5940,12 @@
         "backend/src/services/integrations/researchResult.ts:8",
         "frontend/src/app/share/[token]/page.tsx:2",
         "frontend/src/components/native-openui/Diagram.tsx:11",
-        "frontend/src/components/native-openui/Editorial.tsx:11",
+        "frontend/src/components/native-openui/Editorial.tsx:12",
         "frontend/src/components/native-openui/NativeSurface.tsx:9",
         "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:14",
         "frontend/src/components/native-openui/upstream/components/chart.tsx:8",
-        "frontend/src/components/native-openui/upstream/components/markdown.test.ts:8",
-        "frontend/src/components/native-openui/upstream/components/markdown.tsx:9",
+        "frontend/src/components/native-openui/upstream/components/markdown.test.ts:10",
+        "frontend/src/components/native-openui/upstream/components/markdown.tsx:10",
         "frontend/src/lib/publicAnswerText.ts:1"
       ],
       "reachable": true,
@@ -6399,7 +6458,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "bc1fd5f9a880bc456526b79b4b0ed5e74613ee1f300acfe51adca7b27354c845",
+      "sha256": "ad3956d53764643e90ee4ab070cbbaee9e598dcfe4f41ae8e3361bee0a1891cb",
       "symbols": [
         "accessibilityRule",
         "answerScopeRule",
@@ -6435,7 +6494,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/nativeOpenUi.test.ts:4",
+        "backend/src/ai/nativeOpenUi.test.ts:5",
         "backend/src/ai/pipeline.ts:32",
         "backend/src/routes/nativeOpenUiEvaluation.ts:14"
       ],
@@ -6532,7 +6591,7 @@
         "frontend/src/app/native-answer-evaluation/page.tsx"
       ],
       "callers": [
-        "backend/src/ai/nativeOpenUi.test.ts:6",
+        "backend/src/ai/nativeOpenUi.test.ts:8",
         "backend/src/routes/nativeOpenUiEvaluation.ts:15",
         "frontend/src/app/native-answer-evaluation/page.tsx:4"
       ],
@@ -6594,14 +6653,14 @@
       ],
       "callers": [
         "backend/src/ai/nativeDocumentDownload.test.ts:30",
-        "backend/src/ai/nativeOpenUi.test.ts:5",
+        "backend/src/ai/nativeOpenUi.test.ts:6",
         "backend/src/ai/nativeOpenUiValues.test.ts:8",
         "backend/src/lib/richShareSnapshot.test.ts:4",
         "backend/src/lib/richShareSnapshot.ts:1",
         "frontend/src/app/share/[token]/page.tsx:1",
         "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:16",
-        "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx:10",
-        "frontend/src/components/terminal/MessageBubbleActions.tsx:19"
+        "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx:11",
+        "frontend/src/components/terminal/MessageBubbleActions.tsx:20"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -6757,7 +6816,7 @@
         "backend/src/ai/nativeOpenUiValues.test.ts:3",
         "backend/src/ai/nativeOpenUiWorkspace.ts:5",
         "frontend/src/components/native-openui/NativeSurface.tsx:10",
-        "frontend/src/components/native-openui/upstream/components/markdown.test.ts:9"
+        "frontend/src/components/native-openui/upstream/components/markdown.test.ts:11"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -6786,7 +6845,7 @@
       "id": "surface:93911e9946fd4b21d50d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiWorkspace.ts",
-      "sha256": "d821c962ffaf8f87b8f121b0aff6ff55c83315b408b779807b51d7087d778a5f",
+      "sha256": "bea3625eac494049581abb80a6743311385e51aea5ce984ebb58c424383c4fd4",
       "symbols": [
         "authorityIssue",
         "calculatorUnavailable",
@@ -6829,6 +6888,7 @@
         "projection",
         "promisesControls",
         "promisesInlineControls",
+        "prose",
         "proseMultipleConflict",
         "proseReadoutConflict",
         "proseReview",
@@ -6865,6 +6925,7 @@
         "withoutControlClaims"
       ],
       "imports": [
+        "./answerFormat.js",
         "./completionDiagnostics.js",
         "./nativeDocumentDownload.js",
         "./nativeMarkdown.js",
@@ -6875,6 +6936,7 @@
         "./nativeOpenUiValues.js"
       ],
       "runtimeImports": [
+        "backend/src/ai/answerFormat.ts",
         "backend/src/ai/completionDiagnostics.ts",
         "backend/src/ai/nativeDocumentDownload.ts",
         "backend/src/ai/nativeMarkdown.ts",
@@ -6890,10 +6952,11 @@
       ],
       "callers": [
         "backend/src/ai/nativeDocumentDownload.test.ts:31",
-        "backend/src/ai/nativeOpenUi.test.ts:7",
+        "backend/src/ai/nativeOpenUi.test.ts:9",
         "backend/src/ai/nativeOpenUiEditorial.test.ts:5",
         "backend/src/ai/nativeOpenUiValues.test.ts:5",
-        "backend/src/ai/pipeline.ts:29"
+        "backend/src/ai/pipeline.ts:29",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:15"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -7060,7 +7123,7 @@
         "backend/src/ai/openaiCompat.egress.test.ts:5",
         "backend/src/ai/openaiCompat.test.ts:3",
         "backend/src/ai/operationsSdkAdmission.test.ts:5",
-        "backend/src/ai/pipeline.ts:36",
+        "backend/src/ai/pipeline.ts:37",
         "backend/src/ai/providerPacingTransport.test.ts:3",
         "backend/src/ai/qa.ts:1",
         "backend/src/ai/reasoningSummary.ts:1",
@@ -7741,7 +7804,7 @@
         "backend/src/ai/fileSelector.test.ts:4",
         "backend/src/ai/patchSafety.test.ts:3",
         "backend/src/ai/patches.test.ts:3",
-        "backend/src/ai/pipeline.ts:92",
+        "backend/src/ai/pipeline.ts:93",
         "backend/src/builder/canonical.ts:1",
         "backend/src/synthesis/universalExecution.ts:32"
       ],
@@ -7803,7 +7866,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "b598c509dacca47546033b195b3d7618cde4bc634f60aa88106c07797c968cd5",
+      "sha256": "0e677977a9694594593757dbe07d775d8758f2086712db66a84b04afb536603e",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -7825,6 +7888,7 @@
         "applied",
         "architectBlock",
         "architectPlanSummary",
+        "attachmentInstructions",
         "attachmentOnlyAnalyze",
         "attachmentPlan",
         "attachmentSystem",
@@ -7845,6 +7909,7 @@
         "buildSelection",
         "builderProviderFailure",
         "builderUser",
+        "bulletCount",
         "bullets",
         "bundle",
         "byPath",
@@ -7941,6 +8006,7 @@
         "f",
         "failure",
         "failureText",
+        "fallbackToProse",
         "featureBits",
         "features",
         "fileTrail",
@@ -7982,6 +8048,7 @@
         "instructions",
         "integrity",
         "intelligentPlan",
+        "invalidOutline",
         "isFrameworkOut",
         "isNonWebProduct",
         "isUpdate",
@@ -8016,6 +8083,7 @@
         "nativeAnswerBudget",
         "nativePublicationPending",
         "needResearch",
+        "needsStructuredAnswer",
         "needsVercelEarly",
         "negotiationPhaseForAgent",
         "nextFiles",
@@ -8093,6 +8161,7 @@
         "repo",
         "reportedCompletion",
         "requestedDownload",
+        "requestedFormats",
         "research",
         "researchBlock",
         "researchPresentation",
@@ -8150,6 +8219,7 @@
         "statusMessage",
         "steps",
         "stickyDefault",
+        "strictProse",
         "structureFinal",
         "summaryLines",
         "supabaseNote",
@@ -8165,6 +8235,7 @@
         "trace",
         "truthAuthorities",
         "typedWorkspacePrompt",
+        "unadornedAnswer",
         "unavailableMessage",
         "universal",
         "universalCommit",
@@ -8238,6 +8309,7 @@
         "../synthesis/universalEntrypoint.js",
         "../synthesis/universalShadow.js",
         "./answerCoverage.js",
+        "./answerFormat.js",
         "./architect.js",
         "./attachments.js",
         "./black-hole/complexity.js",
@@ -8310,6 +8382,7 @@
       ],
       "runtimeImports": [
         "backend/src/ai/answerCoverage.ts",
+        "backend/src/ai/answerFormat.ts",
         "backend/src/ai/architect.ts",
         "backend/src/ai/attachments.ts",
         "backend/src/ai/black-hole/complexity.ts",
@@ -8647,7 +8720,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:122",
+        "backend/src/ai/pipeline.ts:123",
         "backend/src/ai/progressHeartbeat.test.ts:3"
       ],
       "reachable": true,
@@ -8739,7 +8812,7 @@
       "callers": [
         "backend/src/ai/memoryReadAuthority.test.ts:4",
         "backend/src/ai/modelContext.security.test.ts:6",
-        "backend/src/ai/pipeline.ts:200",
+        "backend/src/ai/pipeline.ts:201",
         "backend/src/ai/projectMemoryCommit.test.ts:4",
         "backend/src/ai/repoSummarize.ts:26",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:7",
@@ -8776,7 +8849,7 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "85da380acfd7ec8b50bf0a60011e7788e12d0713a0e21d7bda8e22468001cf85",
+      "sha256": "b0e978aa6d926e7fd7b6b4f0084796a806b7ceeb8fdd19058223a08766c9c2bc",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
@@ -8797,6 +8870,7 @@
         "core",
         "deleteHint",
         "example",
+        "formatInstruction",
         "incrementalUpdateContext",
         "isDirectCurrentFactLookup",
         "lines",
@@ -8815,15 +8889,19 @@
         "summaryBlock",
         "truncated"
       ],
-      "imports": [],
-      "runtimeImports": [],
+      "imports": [
+        "./answerFormat.js"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/answerFormat.ts"
+      ],
       "entryPoints": [
         "backend/src/index.ts",
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/converter.ts:4",
-        "backend/src/ai/pipeline.ts:61",
+        "backend/src/ai/pipeline.ts:62",
         "backend/src/ai/prompts.test.ts:4",
         "backend/src/ai/richResponsePrompt.test.ts:4",
         "backend/src/routes/guestChat.ts:20"
@@ -9466,7 +9544,7 @@
         "backend/src/ai/modelRedirectFallback.security.test.ts:8",
         "backend/src/ai/openaiCompat.ts:12",
         "backend/src/ai/parallelWeb.security.test.ts:10",
-        "backend/src/ai/pipeline.ts:240",
+        "backend/src/ai/pipeline.ts:241",
         "backend/src/ai/postCompletionAccounting.test.ts:4",
         "backend/src/ai/providerBudget.settlement.test.ts:5",
         "backend/src/ai/providerBudget.ts:6",
@@ -9480,7 +9558,7 @@
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:16",
         "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts:5",
         "backend/src/ai/tenantModelDispatch.test.ts:15",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:24",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:25",
         "backend/src/index.ts:73",
         "backend/src/lib/resilience/callWithFallback.ts:4",
         "backend/src/lib/resilience/retry.test.ts:3",
@@ -9627,7 +9705,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:100",
+        "backend/src/ai/pipeline.ts:101",
         "backend/src/ai/qa.test.ts:3",
         "backend/src/ai/reviewerRouting.test.ts:3",
         "backend/src/synthesis/productionAdapters.ts:25"
@@ -9744,13 +9822,13 @@
       ],
       "callers": [
         "backend/src/ai/budgetOwnerBoundary.test.ts:5",
-        "backend/src/ai/pipeline.ts:78",
+        "backend/src/ai/pipeline.ts:79",
         "backend/src/ai/postCompletionAccounting.ts:2",
         "backend/src/ai/quota.failure.test.ts:3",
         "backend/src/ai/quota.test.ts:18",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:27",
         "backend/src/ai/tenantModelDispatch.ts:13",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:32",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:33",
         "backend/src/routes/nativeOpenUiEvaluation.ts:8",
         "backend/src/routes/phase1.ts:22",
         "backend/src/routes/phase1BusinessPreflight.ts:5",
@@ -9962,7 +10040,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:207",
+        "backend/src/ai/pipeline.ts:208",
         "backend/src/ai/repoSummarize.security.test.ts:5"
       ],
       "reachable": true,
@@ -10506,7 +10584,7 @@
       "id": "surface:5f676989c84806ca6213",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/researchSearchProvider.ts",
-      "sha256": "2c7de237c12271c91090e8ceeeb726fa5e1a9b8f626ae79f01851343c1d97b21",
+      "sha256": "d3d52c10cbc57ae3c79576c8e0735b9050a00903ac7cfdcd319b7e02644a5e96",
       "symbols": [
         "DEEPSEEK_DISCOVERY_RESULTS",
         "DEEPSEEK_PRIMARY_PAGE_EXCERPT",
@@ -10556,6 +10634,7 @@
         "pageReferenceSections",
         "passage",
         "passageWords",
+        "positiveSiteFilter",
         "previous",
         "primaryText",
         "prose",
@@ -10571,18 +10650,18 @@
         "retrievalWords",
         "rule",
         "scopeOfficialSearchQuery",
-        "scopedTerms",
         "score",
+        "searchQueryTerms",
         "sections",
+        "selected",
         "separators",
         "share",
         "siteName",
         "sites",
-        "size",
+        "sizes",
         "spare",
         "start",
         "summary",
-        "term",
         "terms",
         "text",
         "tokens",
@@ -10913,7 +10992,7 @@
       "id": "surface:74760a8c78ac888599fd",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/responsePresentation.ts",
-      "sha256": "d1dde66cc1bbe2a0f523db68db294f5c4f26640c89fef46270493c228651588e",
+      "sha256": "3f7b82341b325743179c746fe6bae145f40769960fdc25a1751dcc024eeeb195",
       "symbols": [
         "AnswerObligations",
         "GENERIC_HEADING",
@@ -10923,6 +11002,7 @@
         "PRESENTATION_PLAN_INSTRUCTIONS",
         "PresentationPlan",
         "PresentationResponseFormat",
+        "TABLE_MAX_ROWS",
         "addition",
         "answerObligationsSchema",
         "array",
@@ -10954,6 +11034,7 @@
         "format",
         "genericHeading",
         "graph",
+        "heading",
         "i",
         "id",
         "idLabel",
@@ -10991,6 +11072,7 @@
         "readablePartial",
         "record",
         "recoverable",
+        "requestedBullets",
         "response",
         "rows",
         "section",
@@ -11003,14 +11085,17 @@
         "validateSection",
         "validators",
         "value",
+        "visible",
         "wanted"
       ],
       "imports": [
+        "./answerFormat.js",
         "./nativeDocumentDownload.js",
         "./responseIcons.js",
         "zod"
       ],
       "runtimeImports": [
+        "backend/src/ai/answerFormat.ts",
         "backend/src/ai/nativeDocumentDownload.ts",
         "backend/src/ai/responseIcons.ts"
       ],
@@ -11026,7 +11111,7 @@
         "backend/src/ai/pipeline.ts:33",
         "backend/src/ai/responseCoverage.test.ts:3",
         "backend/src/ai/responsePresentation.limits.test.ts:3",
-        "backend/src/ai/responsePresentation.test.ts:125",
+        "backend/src/ai/responsePresentation.test.ts:196",
         "backend/src/ai/responsePresentation.test.ts:3",
         "backend/src/ai/tenantModelDispatch.test.ts:10",
         "backend/src/ai/universal/goalContract.ts:2",
@@ -11104,7 +11189,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:86",
+        "backend/src/ai/pipeline.ts:87",
         "backend/src/ai/router.test.ts:7",
         "backend/src/lib/adaptiveOrchestrator.ts:10"
       ],
@@ -11241,7 +11326,7 @@
         "backend/src/ai/black-hole/router.ts:47",
         "backend/src/ai/buildOutcomeMemory.ts:5",
         "backend/src/ai/intelligentRouter.ts:11",
-        "backend/src/ai/pipeline.ts:243",
+        "backend/src/ai/pipeline.ts:244",
         "backend/src/ai/routingOutcomes.receipt.test.ts:5",
         "backend/src/ai/routingPersistence.test.ts:3",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts:9"
@@ -11494,7 +11579,7 @@
         "backend/src/ai/parallelApproval.ts:16",
         "backend/src/ai/parallelDispatch.ts:9",
         "backend/src/ai/parallelWeb.security.test.ts:20",
-        "backend/src/ai/pipeline.ts:101",
+        "backend/src/ai/pipeline.ts:102",
         "backend/src/ai/repoSummarize.security.test.ts:8",
         "backend/src/ai/runReconciler.test.ts:12",
         "backend/src/ai/runStore.authority.test.ts:5",
@@ -11658,7 +11743,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:225",
+        "backend/src/ai/pipeline.ts:226",
         "backend/src/ai/runTrace.attempt.test.ts:4",
         "backend/src/security/runTraceAttempt.local.integration.ts:8"
       ],
@@ -11710,7 +11795,7 @@
       ],
       "callers": [
         "backend/src/ai/benchmarkExecutor.ts:29",
-        "backend/src/ai/pipeline.ts:208",
+        "backend/src/ai/pipeline.ts:209",
         "backend/src/ai/securityScan.test.ts:3",
         "backend/src/existingSource/change/delivery.ts:16",
         "backend/src/synthesis/coherentImplementation.ts:12"
@@ -11774,7 +11859,7 @@
       "callers": [
         "backend/src/ai/memoryReadAuthority.test.ts:5",
         "backend/src/ai/modelContext.security.test.ts:7",
-        "backend/src/ai/pipeline.ts:220",
+        "backend/src/ai/pipeline.ts:221",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:8",
         "backend/src/security/recoveryMemoryRead.local.integration.ts:8"
       ],
@@ -11834,7 +11919,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:228",
+        "backend/src/ai/pipeline.ts:229",
         "backend/src/ai/shipOutcome.test.ts:3"
       ],
       "reachable": true,
@@ -11903,7 +11988,7 @@
         "backend/src/ai/buildOutputValidation.ts:5",
         "backend/src/ai/buildStreamNarrator.test.ts:8",
         "backend/src/ai/patches.test.ts:10",
-        "backend/src/ai/pipeline.ts:87"
+        "backend/src/ai/pipeline.ts:88"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -13400,7 +13485,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:270",
+        "backend/src/ai/pipeline.ts:271",
         "backend/src/ai/softwareAgent/swarmRunSoftwareEventSink.test.ts:19",
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts:50"
       ],
@@ -13969,9 +14054,9 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:35",
+        "backend/src/ai/pipeline.ts:36",
         "backend/src/ai/sonnetApproval.test.ts:4",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:17",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:18",
         "backend/src/services/integrations/businessAction.ts:1450"
       ],
       "reachable": true,
@@ -14036,7 +14121,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:110",
+        "backend/src/ai/pipeline.ts:111",
         "backend/src/ai/startupProgress.test.ts:107",
         "backend/src/ai/startupProgress.test.ts:3",
         "backend/src/routes/phase1ChatProgress.ts:3",
@@ -14109,7 +14194,7 @@
       ],
       "callers": [
         "backend/src/ai/htmlTruncation.test.ts:4",
-        "backend/src/ai/pipeline.ts:209",
+        "backend/src/ai/pipeline.ts:210",
         "backend/src/ai/qa.ts:5",
         "backend/src/ai/securityScan.test.ts:4"
       ],
@@ -14414,7 +14499,7 @@
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:4",
         "backend/src/ai/sonnetApproval.ts:12",
         "backend/src/ai/tenantModelDispatch.test.ts:6",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:19",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:20",
         "backend/src/routes/nativeOpenUiEvaluation.ts:7",
         "backend/src/security/genericSdk.local.integration.ts:6",
         "backend/src/services/integrations/businessAction.ts:16",
@@ -14710,14 +14795,14 @@
       ],
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.test.ts:6",
-        "backend/src/ai/pipeline.ts:173",
+        "backend/src/ai/pipeline.ts:174",
         "backend/src/ai/researchAnswer.test.ts:172",
         "backend/src/ai/researchAnswer.ts:2",
         "backend/src/ai/responseCoverage.test.ts:4",
         "backend/src/ai/tenantModelDispatch.test.ts:9",
         "backend/src/ai/universal/goalContract.test.ts:3",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:24",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:45",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:46",
         "backend/src/ai/universal/universalContracts.test.ts:4",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:16",
         "backend/src/routes/phase1.ts:44",
@@ -14872,7 +14957,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/universal/semanticRequestPlanner.ts:54",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:55",
         "backend/src/ai/universal/universalContracts.test.ts:13",
         "backend/src/synthesis/universalEntrypoint.ts:123"
       ],
@@ -14920,9 +15005,9 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:174",
+        "backend/src/ai/pipeline.ts:175",
         "backend/src/ai/universal/capabilityReadiness.test.ts:4",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:58",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:59",
         "backend/src/lib/xrogaCapabilities.ts:1"
       ],
       "reachable": true,
@@ -14972,7 +15057,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:171",
+        "backend/src/ai/pipeline.ts:172",
         "backend/src/ai/universal/resumeProjectContext.test.ts:4",
         "backend/src/ai/universal/universalContracts.test.ts:7",
         "backend/src/synthesis/universalEntrypoint.ts:107"
@@ -15081,11 +15166,11 @@
       ],
       "callers": [
         "backend/src/ai/black-hole/gateway.test.ts:16",
-        "backend/src/ai/pipeline.ts:175",
+        "backend/src/ai/pipeline.ts:176",
         "backend/src/ai/providerRuntime.ts:12",
         "backend/src/ai/universal/runtimeFailure.test.ts:3",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:33",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:62",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:63",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:19",
         "backend/src/routes/nativeOpenUiEvaluation.ts:12",
         "backend/src/routes/phase1.ts:53"
@@ -15204,7 +15289,7 @@
       "id": "surface:2caccad5e3c57290edad",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "3559ca76cdec97bf90e5ab0d511215d0d2b8265bea47e0fac21be78be984673e",
+      "sha256": "ff905aa7ee83ab5e01e852d9e845ea3e437113d48b74cafd422e5c957a0f4015",
       "symbols": [
         "SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS",
         "SEMANTIC_PLANNER_HEDGE_DELAY_MS",
@@ -15226,6 +15311,7 @@
         "availableSummary",
         "blockers",
         "calculator",
+        "calculatorName",
         "callable",
         "capabilities",
         "capabilityIds",
@@ -15240,6 +15326,9 @@
         "directResponse",
         "dispatchForGoal",
         "documentDelivery",
+        "documentFormat",
+        "documentNeedsActionDecision",
+        "documentNeedsSourceDecision",
         "effectiveGoal",
         "enforceExplicitBusinessWorkflowControls",
         "enforceExplicitExecutionControls",
@@ -15248,9 +15337,12 @@
         "error",
         "executeHedgedPlannerFallback",
         "explicitSearch",
+        "explicitlyInteractive",
         "failures",
+        "field",
         "finalModelId",
         "followedByAppAction",
+        "format",
         "generated",
         "goal",
         "goalContract",
@@ -15262,7 +15354,12 @@
         "interpretationInput",
         "interpretedGoal",
         "interpreterModelOrder",
+        "isolatedAnswer",
+        "kind",
         "lastStructuredFailure",
+        "literalContentFields",
+        "literalDocumentOpening",
+        "literalWord",
         "localDocument",
         "maximumOutputTokens",
         "messages",
@@ -15277,6 +15374,7 @@
         "planned",
         "plannerContractCoherenceError",
         "policy",
+        "present",
         "primary",
         "projectOrAction",
         "protocolSocialResponse",
@@ -15291,12 +15389,14 @@
         "routes",
         "schemaFailure",
         "selectPlannerRoutes",
+        "selfContainedDocumentFormat",
         "semanticPlannerCompletionOptions",
         "snippet",
         "social",
         "steps",
         "structuredData",
         "system",
+        "text",
         "totalController",
         "totalTimeoutMs",
         "totalTimer",
@@ -15313,6 +15413,7 @@
         "../black-hole/structuredOutput.js",
         "../models.js",
         "../nativeDocumentDownload.js",
+        "../nativeOpenUiWorkspace.js",
         "../openaiCompat.js",
         "../providerRuntime.js",
         "../quota.js",
@@ -15330,6 +15431,7 @@
         "backend/src/ai/black-hole/structuredOutput.ts",
         "backend/src/ai/models.ts",
         "backend/src/ai/nativeDocumentDownload.ts",
+        "backend/src/ai/nativeOpenUiWorkspace.ts",
         "backend/src/ai/openaiCompat.ts",
         "backend/src/ai/providerRuntime.ts",
         "backend/src/ai/quota.ts",
@@ -15353,7 +15455,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:176",
+        "backend/src/ai/pipeline.ts:177",
         "backend/src/ai/postCompletionAccounting.test.ts:5",
         "backend/src/ai/sonnetApproval.test.ts:10",
         "backend/src/ai/universal/capabilityReadiness.test.ts:5",
@@ -15479,7 +15581,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:48",
+        "backend/src/ai/pipeline.ts:49",
         "backend/src/ai/validationVerdict.test.ts:4",
         "backend/src/sandbox/sandboxIsolation.test.ts:12"
       ],
@@ -15598,7 +15700,7 @@
       ],
       "callers": [
         "backend/src/ai/intentReasoning.ts:25",
-        "backend/src/ai/pipeline.ts:260",
+        "backend/src/ai/pipeline.ts:261",
         "backend/src/ai/previewNotVerified.test.ts:21",
         "backend/src/ai/verificationLifecycle.test.ts:12"
       ],
@@ -15974,7 +16076,7 @@
         "backend/src/ai/researchPublicationEvidence.ts:3",
         "backend/src/ai/router.ts:11",
         "backend/src/ai/universal/goalContract.ts:4",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:15"
+        "backend/src/ai/universal/semanticRequestPlanner.ts:16"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -19928,7 +20030,7 @@
         "backend/src/ai/universal/capabilityReadiness.test.ts:3",
         "backend/src/ai/universal/productTruth.ts:1",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:3",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:37",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:38",
         "backend/src/synthesis/universalEntrypoint.ts:119"
       ],
       "reachable": true,
@@ -21128,7 +21230,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:172",
+        "backend/src/ai/pipeline.ts:173",
         "backend/src/ai/softwareAgent/agentV2LaunchGate.test.ts:9",
         "backend/src/config/universalAgentFlags.test.ts:12",
         "backend/src/synthesis/browserGateVerification.test.ts:18",
@@ -26571,7 +26673,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:241",
+        "backend/src/ai/pipeline.ts:242",
         "backend/src/lib/adaptiveEngine.test.ts:7"
       ],
       "reachable": true,
@@ -26994,7 +27096,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:226"
+        "backend/src/ai/pipeline.ts:227"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -27257,9 +27359,9 @@
         "backend/src/ai/black-hole/webIntelligence.ts:2",
         "backend/src/ai/blackBoxExecution.test.ts:3",
         "backend/src/ai/intelligentRouter.ts:9",
-        "backend/src/ai/pipeline.ts:242",
+        "backend/src/ai/pipeline.ts:243",
         "backend/src/ai/router.ts:5",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:16",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:17",
         "backend/src/ai/workspacePublicSearch.ts:1",
         "backend/src/lib/adaptiveOrchestrator.ts:30",
         "backend/src/lib/taskClassifier.test.ts:3"
@@ -27323,7 +27425,7 @@
         "backend/src/ai/executionRuntime.ts:2",
         "backend/src/ai/parallelApproval.ts:18",
         "backend/src/ai/parallelWeb.ts:3",
-        "backend/src/ai/pipeline.ts:230",
+        "backend/src/ai/pipeline.ts:231",
         "backend/src/ai/reasoningSummary.ts:4",
         "backend/src/ai/research.ts:5",
         "backend/src/ai/runTrace.ts:7",
@@ -27459,7 +27561,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:47",
+        "backend/src/ai/pipeline.ts:48",
         "backend/src/lib/vercelAuthError.test.ts:3"
       ],
       "reachable": true,
@@ -37785,7 +37887,7 @@
         "backend/src/ai/tenantModelDispatch.ts:3",
         "backend/src/ai/universal/resumeProjectContext.test.ts:6",
         "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts:4",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:22",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:23",
         "backend/src/ai/usageAccounting.test.ts:4",
         "backend/src/ai/voiceBudget.ts:3",
         "backend/src/ai/zurelayEscalation.test.ts:3",
@@ -39636,7 +39738,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/universal/semanticRequestPlanner.ts:70",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:71",
         "backend/src/routes/phase1.ts:75",
         "backend/src/services/integrations/businessAutomations.ts:6",
         "backend/src/services/integrations/businessWorkflow.test.ts:4"
@@ -41220,9 +41322,9 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:179",
+        "backend/src/ai/pipeline.ts:180",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:13",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:66",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:67",
         "backend/src/builder/providerTransports.ts:6",
         "backend/src/existingSource/change/production.ts:53",
         "backend/src/routes/existingSource.ts:36",
@@ -41662,7 +41764,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:123",
+        "backend/src/ai/pipeline.ts:124",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:17",
         "backend/src/ai/softwareAgent/xrogaProductionAdapters.ts:2",
         "backend/src/builder/github/restPort.ts:7",
@@ -43625,8 +43727,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:3999",
-        "backend/src/ai/pipeline.ts:4002",
+        "backend/src/ai/pipeline.ts:4016",
+        "backend/src/ai/pipeline.ts:4019",
         "backend/src/ai/projectMemory.ts:7",
         "backend/src/ai/sessionMemory.ts:7",
         "backend/src/builder/providerTransports.ts:10",
@@ -43898,8 +44000,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:135",
-        "backend/src/ai/pipeline.ts:3998",
+        "backend/src/ai/pipeline.ts:136",
+        "backend/src/ai/pipeline.ts:4015",
         "backend/src/ai/tenantModelDispatch.ts:6",
         "backend/src/config/supabaseTransport.security.test.ts:6",
         "backend/src/routes/integrations.ts:19",
@@ -44130,7 +44232,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:134",
+        "backend/src/ai/pipeline.ts:135",
         "backend/src/builder/hosting/authority.ts:5",
         "backend/src/lib/platformReady.ts:7",
         "backend/src/routes/integrations.ts:30",
@@ -44549,7 +44651,7 @@
       ],
       "callers": [
         "backend/src/ai/builderScaffoldFallback.test.ts:3",
-        "backend/src/ai/pipeline.ts:140",
+        "backend/src/ai/pipeline.ts:141",
         "backend/src/builder/starters.ts:2",
         "backend/src/routes/github.ts:628",
         "backend/src/routes/swarm.ts:14",
@@ -44784,7 +44886,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:196",
+        "backend/src/ai/pipeline.ts:197",
         "backend/src/routes/publish.ts:224",
         "backend/src/routes/publish.ts:268",
         "backend/src/routes/publish.ts:305",
@@ -45272,7 +45374,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:191",
+        "backend/src/ai/pipeline.ts:192",
         "backend/src/routes/publish.ts:12",
         "backend/src/routes/publish.ts:70",
         "backend/src/services/integrations/businessAction.ts:1508",
@@ -45413,7 +45515,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:197",
+        "backend/src/ai/pipeline.ts:198",
         "backend/src/routes/publish.ts:382",
         "backend/src/services/integrations/businessAction.ts:1462",
         "backend/src/services/publish/electronSecrets.authority.test.ts:4",
@@ -46324,7 +46426,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:185",
+        "backend/src/ai/pipeline.ts:186",
         "backend/src/services/integrations/businessAction.ts:1477",
         "backend/src/services/publish/desktopWorkflow.security.test.ts:3",
         "backend/src/services/publish/desktopWorkflow.security.test.ts:4",
@@ -46658,7 +46760,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:180",
+        "backend/src/ai/pipeline.ts:181",
         "backend/src/builder/spec.ts:3",
         "backend/src/services/projectScaffold.ts:11",
         "backend/src/services/projectScaffold.ts:5",
@@ -47043,7 +47145,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:198",
+        "backend/src/ai/pipeline.ts:199",
         "backend/src/services/scaffolds/scaffoldIntegrity.test.ts:3"
       ],
       "reachable": true,
@@ -51084,7 +51186,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:164",
+        "backend/src/ai/pipeline.ts:165",
         "backend/src/routes/delivery.ts:17",
         "backend/src/synthesis/delivery/projectDelivery.test.ts:25",
         "backend/src/synthesis/delivery/projectDeliveryService.ts:27"
@@ -51483,7 +51585,7 @@
       ],
       "callers": [
         "backend/src/ai/executionRuntime.attempt.test.ts:6",
-        "backend/src/ai/pipeline.ts:262",
+        "backend/src/ai/pipeline.ts:263",
         "backend/src/synthesis/foundation.fixture.test.ts:4"
       ],
       "reachable": true,
@@ -52477,7 +52579,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:167",
+        "backend/src/ai/pipeline.ts:168",
         "backend/src/builder/canonical.ts:5",
         "backend/src/builder/phase2Bridge.ts:7",
         "backend/src/routes/projectRuntime.ts:18",
@@ -53206,7 +53308,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:111",
+        "backend/src/ai/pipeline.ts:112",
         "backend/src/synthesis/productBlueprints.test.ts:3"
       ],
       "reachable": true,
@@ -53599,7 +53701,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:152",
+        "backend/src/ai/pipeline.ts:153",
         "backend/src/builder/canonical.ts:4",
         "backend/src/security/deliveryEvidenceRead.local.integration.ts:7",
         "backend/src/synthesis/canonicalFoundation.test.ts:13",
@@ -54549,7 +54651,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:160",
+        "backend/src/ai/pipeline.ts:161",
         "backend/src/sandbox/google/googleSandbox.test.ts:4",
         "backend/src/sandbox/google/googleSandbox.ts:5",
         "backend/src/sandbox/registryNetwork.test.ts:9",
@@ -54767,7 +54869,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:256",
+        "backend/src/ai/pipeline.ts:257",
         "backend/src/synthesis/reliability/canonicalResume.test.ts:9",
         "backend/src/synthesis/universalCanonicalTasks.ts:47",
         "backend/src/workers/resumeRecovery.ts:14"
@@ -56190,7 +56292,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:157",
+        "backend/src/ai/pipeline.ts:158",
         "backend/src/builder/canonical.ts:3",
         "backend/src/builder/phase2Bridge.ts:9",
         "backend/src/security/deliveryEvidenceRead.local.integration.ts:8",
@@ -56429,7 +56531,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:177",
+        "backend/src/ai/pipeline.ts:178",
         "backend/src/synthesis/universalCommit.test.ts:3"
       ],
       "reachable": true,
@@ -56548,7 +56650,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:151",
+        "backend/src/ai/pipeline.ts:152",
         "backend/src/ai/providerPolicy.test.ts:5",
         "backend/src/builder/canonical.ts:2",
         "backend/src/existingSource/change/production.ts:41",
@@ -57090,7 +57192,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:147",
+        "backend/src/ai/pipeline.ts:148",
         "backend/src/synthesis/universalShadow.test.ts:13"
       ],
       "reachable": true,
@@ -80270,7 +80372,7 @@
         "frontend/src/components/terminal/DevWorkspacePanel.tsx:34",
         "frontend/src/components/terminal/FullscreenPreviewModal.tsx:7",
         "frontend/src/components/terminal/MessageBubbleActions.tsx:9",
-        "frontend/src/components/terminal/MessageShareModal.tsx:20",
+        "frontend/src/components/terminal/MessageShareModal.tsx:21",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:57",
         "frontend/src/components/terminal/TerminalSkinPicker.tsx:7",
         "frontend/src/components/terminal/WorkspaceLauncher.tsx:3",
@@ -81239,7 +81341,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/WorkspaceStarterIdeas.tsx:12",
-        "frontend/src/components/terminal/MessageShareModal.tsx:19"
+        "frontend/src/components/terminal/MessageShareModal.tsx:20"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -81820,7 +81922,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/MessageShareModal.tsx:18",
+        "frontend/src/components/terminal/MessageShareModal.tsx:19",
         "frontend/src/components/ui/ProfileQuickMenu.tsx:17"
       ],
       "reachable": true,
@@ -82589,7 +82691,7 @@
       ],
       "callers": [
         "frontend/src/components/terminal/MessageBubbleActions.tsx:13",
-        "frontend/src/components/terminal/MessageShareModal.tsx:17",
+        "frontend/src/components/terminal/MessageShareModal.tsx:18",
         "frontend/src/components/terminal/WorkspacePeopleControls.tsx:18"
       ],
       "reachable": true,
@@ -89607,11 +89709,12 @@
       "id": "surface:e67e2018c5fc720f5a55",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/Editorial.tsx",
-      "sha256": "dd313a5e401dd1011aed8640f9c9b3202116833389d70d4c4149599945b28729",
+      "sha256": "f1e73ecf1a7bdf1df79f956456b652e8788d10d15ed3751a0b1aa292bc5aad49",
       "symbols": [
         "Controls",
         "Metric",
         "Section",
+        "copied",
         "copyDraft",
         "draft",
         "field",
@@ -89635,6 +89738,7 @@
         "./upstream/components/glyph",
         "./upstream/components/markdown",
         "./upstream/components/style",
+        "@/lib/clipboard",
         "@openuidev/lang-core",
         "@openuidev/react-lang",
         "react",
@@ -89645,7 +89749,8 @@
         "frontend/src/components/native-openui/evidence.tsx",
         "frontend/src/components/native-openui/upstream/components/glyph.tsx",
         "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-        "frontend/src/components/native-openui/upstream/components/style.ts"
+        "frontend/src/components/native-openui/upstream/components/style.ts",
+        "frontend/src/lib/clipboard.ts"
       ],
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx",
@@ -89759,7 +89864,7 @@
       "id": "surface:169100c09d49c9650f7a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/NativeSurface.tsx",
-      "sha256": "3184ccfbd653173f476122b6de239df87134b6fc8310c5b0da5798d95c3808d9",
+      "sha256": "ac95eb93602d4b06d7f6cdb07af3b18a48df1a7c5595f1e3069dcca9523cc8fa",
       "symbols": [
         "NativeAnswer",
         "NativeSurface",
@@ -89778,6 +89883,7 @@
         "prose",
         "recovered",
         "renderCitation",
+        "renderedProgram",
         "summary",
         "verified",
         "visibleTables"
@@ -90051,7 +90157,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/Editorial.tsx:10",
+        "frontend/src/components/native-openui/Editorial.tsx:11",
         "frontend/src/components/native-openui/NativeSurface.tsx:8",
         "frontend/src/components/native-openui/library.tsx:18",
         "frontend/src/components/native-openui/upstream/components/extra.tsx:9",
@@ -90397,25 +90503,29 @@
       "id": "surface:bcecd3dfe5eeca969aaf",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/code-panel.tsx",
-      "sha256": "8da391c425beb98c19b7688514cf06dbc70b727fe9e3017616538b16effb4c5f",
+      "sha256": "e858c09abc8655abc33d2bfd96b057b0b6e36bf09c11df1a80727697e2006a4f",
       "symbols": [
         "CodePanel",
         "colored",
         "copy",
         "copyLabel",
+        "copyStatus",
         "current",
         "internal",
         "key",
         "label",
-        "languageLabels"
+        "languageLabels",
+        "timer"
       ],
       "imports": [
+        "@/lib/clipboard",
         "@/lib/codeHighlight",
         "@/lib/publicAnswerText",
         "lucide-react",
         "react"
       ],
       "runtimeImports": [
+        "frontend/src/lib/clipboard.ts",
         "frontend/src/lib/codeHighlight.ts",
         "frontend/src/lib/publicAnswerText.ts"
       ],
@@ -90655,7 +90765,7 @@
       ],
       "callers": [
         "frontend/src/components/native-openui/Diagram.tsx:7",
-        "frontend/src/components/native-openui/Editorial.tsx:8",
+        "frontend/src/components/native-openui/Editorial.tsx:9",
         "frontend/src/components/native-openui/library.tsx:11",
         "frontend/src/components/native-openui/upstream/components/controls.tsx:14",
         "frontend/src/components/native-openui/upstream/components/text.tsx:8"
@@ -90764,7 +90874,7 @@
       "id": "surface:0fef6875af5860e2f4b4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "7ae50c67770853ffb4c877dce6d68107a2d6e79f70a725d8b5e2f362f63cab05",
+      "sha256": "3cec8dad592adab89ca5ccc974f0603912ad87f0cf2a815604c04691cf2914bb",
       "symbols": [
         "Block",
         "ChecklistItem",
@@ -90834,6 +90944,7 @@
         "line",
         "lines",
         "link",
+        "linked",
         "list",
         "listIndices",
         "listItems",
@@ -90887,6 +90998,7 @@
         "sections",
         "seenTables",
         "siblings",
+        "sortableTables",
         "start",
         "staticMarkdownBlocks",
         "tab",
@@ -90914,6 +91026,7 @@
         "./chart",
         "./code-panel",
         "./style",
+        "./table-view",
         "@/lib/publicAnswerText",
         "@openuidev/lang-core",
         "katex",
@@ -90925,6 +91038,7 @@
         "frontend/src/components/native-openui/upstream/components/chart.tsx",
         "frontend/src/components/native-openui/upstream/components/code-panel.tsx",
         "frontend/src/components/native-openui/upstream/components/style.ts",
+        "frontend/src/components/native-openui/upstream/components/table-view.tsx",
         "frontend/src/lib/publicAnswerText.ts"
       ],
       "entryPoints": [
@@ -90935,7 +91049,7 @@
       "callers": [
         "frontend/src/components/native-openui/Diagram.test.ts:6",
         "frontend/src/components/native-openui/Diagram.tsx:9",
-        "frontend/src/components/native-openui/Editorial.tsx:9",
+        "frontend/src/components/native-openui/Editorial.tsx:10",
         "frontend/src/components/native-openui/Evaluation.tsx:7",
         "frontend/src/components/native-openui/NativeSurface.tsx:11",
         "frontend/src/components/native-openui/upstream/components/chart.test.ts:6",
@@ -90943,7 +91057,7 @@
         "frontend/src/components/native-openui/upstream/components/controls.tsx:15",
         "frontend/src/components/native-openui/upstream/components/extra.tsx:7",
         "frontend/src/components/native-openui/upstream/components/layout.tsx:7",
-        "frontend/src/components/native-openui/upstream/components/markdown.test.ts:10",
+        "frontend/src/components/native-openui/upstream/components/markdown.test.ts:12",
         "frontend/src/components/native-openui/upstream/components/table.tsx:7",
         "frontend/src/components/native-openui/upstream/components/text.tsx:9"
       ],
@@ -91026,7 +91140,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/Editorial.tsx:7",
+        "frontend/src/components/native-openui/Editorial.tsx:8",
         "frontend/src/components/native-openui/Tabs.tsx:7",
         "frontend/src/components/native-openui/library.tsx:12",
         "frontend/src/components/native-openui/upstream/components/controls.tsx:16",
@@ -91034,7 +91148,7 @@
         "frontend/src/components/native-openui/upstream/components/layout.tsx:8",
         "frontend/src/components/native-openui/upstream/components/markdown.tsx:5",
         "frontend/src/components/native-openui/upstream/components/svg.tsx:5",
-        "frontend/src/components/native-openui/upstream/components/table.tsx:8",
+        "frontend/src/components/native-openui/upstream/components/table-view.tsx:4",
         "frontend/src/components/native-openui/upstream/components/text.tsx:11"
       ],
       "reachable": true,
@@ -91127,40 +91241,88 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
-      "id": "surface:3f7c2c965ea05381e7ac",
+      "id": "surface:cc2277541036ed041ef2",
       "subsystem": "frontend",
-      "sourcePath": "frontend/src/components/native-openui/upstream/components/table.tsx",
-      "sha256": "cbfcb12415bf5a1f1b8416dba05c063185fed4556a0e6cc4a4cc9ca2c85ea476",
+      "sourcePath": "frontend/src/components/native-openui/upstream/components/table-view.tsx",
+      "sha256": "570262bd04ef5299660fa93cbdfbea4c94b961fdbcfa029abdf2c5d94b5eb419",
       "symbols": [
         "MAGNITUDE",
         "NUMERIC",
-        "Table",
+        "SortableTableView",
         "a",
         "amount",
         "b",
-        "cell",
         "cells",
-        "citation",
-        "citations",
-        "columns",
-        "isElement",
-        "key",
+        "isNumericColumn",
         "label",
         "leftNumber",
+        "linked",
         "match",
         "numeric",
         "numericValue",
         "order",
+        "rightNumber",
+        "sortAnswerTableRows",
+        "sortLabel",
+        "tableCellHasLinks",
+        "tableCellText"
+      ],
+      "imports": [
+        "./style",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/native-openui/upstream/components/style.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/native-answer-evaluation/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/native-openui/upstream/components/markdown.test.ts:13",
+        "frontend/src/components/native-openui/upstream/components/markdown.tsx:8",
+        "frontend/src/components/native-openui/upstream/components/table.tsx:8"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/components/native-openui/upstream/components/markdown.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:3f7c2c965ea05381e7ac",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/native-openui/upstream/components/table.tsx",
+      "sha256": "df5480e0caf4f44abdbcfe37019c45dddac34d7f77792afb230e077500efa86e",
+      "symbols": [
+        "Table",
+        "columns",
+        "isElement",
+        "key",
         "proseTables",
         "renderCitation",
-        "rightNumber",
-        "rows",
-        "visibleRows"
+        "renderText",
+        "rows"
       ],
       "imports": [
         "../../evidence",
         "./markdown",
-        "./style",
+        "./table-view",
         "@openuidev/react-lang",
         "react",
         "zod/v4"
@@ -91168,7 +91330,7 @@
       "runtimeImports": [
         "frontend/src/components/native-openui/evidence.tsx",
         "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-        "frontend/src/components/native-openui/upstream/components/style.ts"
+        "frontend/src/components/native-openui/upstream/components/table-view.tsx"
       ],
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx",
@@ -94011,7 +94173,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ProseV2.tsx:19",
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:20",
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:18"
       ],
       "reachable": true,
@@ -94110,7 +94272,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ProseV2.tsx:15"
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:16"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -94134,13 +94296,14 @@
       "id": "surface:25cc0a5b860692abe56d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx",
-      "sha256": "7e44b28c90e2c7f0dd07a63fea08615c94e5fcde87575bc6efe922be93c869ba",
+      "sha256": "bae1b14b4915a7fd8ee385a1913ef44c44aa46458452e936f30f9869c8f81f6f",
       "symbols": [
         "ConversationTurnV2",
         "TurnActions",
         "copiedText",
         "copy",
         "snapshot",
+        "success",
         "timer"
       ],
       "imports": [
@@ -94150,6 +94313,7 @@
         "./shareSnapshot",
         "@/components/terminal/MessageShareModal",
         "@/lib/assistantCopy",
+        "@/lib/clipboard",
         "@/lib/publicAnswerText",
         "lucide-react",
         "react"
@@ -94160,6 +94324,7 @@
         "frontend/src/components/response-experience-v2/shareSnapshot.ts",
         "frontend/src/components/terminal/MessageShareModal.tsx",
         "frontend/src/lib/assistantCopy.ts",
+        "frontend/src/lib/clipboard.ts",
         "frontend/src/lib/publicAnswerText.ts"
       ],
       "entryPoints": [
@@ -94405,7 +94570,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ProseV2.tsx:18"
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:19"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -94430,7 +94595,7 @@
       "id": "surface:c37a54594bd9bc390b5b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ProseV2.tsx",
-      "sha256": "bcd4d4319c43a9e19b4614be5f46ce6069b6f712e9b8d206b058c214687993e8",
+      "sha256": "754e534caa7b8c2076f41b20035fd73e42575afcb9a566c3dff8c05e5faced4c",
       "symbols": [
         "ArchitectureV2",
         "CodeV2",
@@ -94439,8 +94604,10 @@
         "ProseV2",
         "cancelled",
         "citation",
+        "copied",
         "data",
         "diagram",
+        "failed",
         "figure",
         "id",
         "label",
@@ -94457,6 +94624,7 @@
         "./mathSyntax",
         "./response-v2.module.css",
         "./sourceRegistry",
+        "@/lib/clipboard",
         "@/lib/codeHighlight",
         "@/lib/xrogaCitations",
         "lucide-react",
@@ -94476,6 +94644,7 @@
         "frontend/src/components/response-experience-v2/mathSyntax.ts",
         "frontend/src/components/response-experience-v2/response-v2.module.css",
         "frontend/src/components/response-experience-v2/sourceRegistry.ts",
+        "frontend/src/lib/clipboard.ts",
         "frontend/src/lib/codeHighlight.ts",
         "frontend/src/lib/xrogaCitations.ts"
       ],
@@ -94797,7 +94966,7 @@
         "frontend/src/components/response-experience-v2/ArchitectureV2.tsx:8",
         "frontend/src/components/response-experience-v2/DataV2.tsx:10",
         "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx:5",
-        "frontend/src/components/response-experience-v2/ProseV2.tsx:10",
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:11",
         "frontend/src/components/response-experience-v2/ResourcesV2.tsx:5",
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:6"
       ],
@@ -95161,7 +95330,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ProseV2.tsx:17",
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:18",
         "frontend/src/components/response-experience-v2/diagramSyntax.test.ts:3"
       ],
       "reachable": true,
@@ -95242,7 +95411,7 @@
         "frontend/src/components/response-experience-v2/DataV2.tsx:4",
         "frontend/src/components/response-experience-v2/DataV2.tsx:8",
         "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx:3",
-        "frontend/src/components/response-experience-v2/ProseV2.tsx:13",
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:14",
         "frontend/src/components/response-experience-v2/ResourcesV2.tsx:4",
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:3",
         "frontend/src/components/response-experience-v2/ResponseExperienceGate.tsx:4",
@@ -95325,7 +95494,7 @@
         "frontend/src/components/response-experience-v2/ArchitectureV2.tsx:7",
         "frontend/src/components/response-experience-v2/DataV2.tsx:9",
         "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx:4",
-        "frontend/src/components/response-experience-v2/ProseV2.tsx:16",
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:17",
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:13",
         "frontend/src/components/response-experience-v2/composition.ts:7",
         "frontend/src/components/response-experience-v2/document.test.ts:10",
@@ -95759,7 +95928,7 @@
       ],
       "callers": [
         "frontend/src/app/share/[token]/page.tsx:15",
-        "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx:9",
+        "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx:10",
         "frontend/src/components/response-experience-v2/SharedResponseV2.tsx:4",
         "frontend/src/components/response-experience-v2/document.test.ts:11",
         "frontend/src/components/response-experience-v2/shareSnapshot.test.ts:4",
@@ -95823,7 +95992,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ProseV2.tsx:12",
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:13",
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:7",
         "frontend/src/components/response-experience-v2/SourceV2.tsx:4",
         "frontend/src/components/response-experience-v2/composition.ts:6",
@@ -100548,14 +100717,16 @@
       "id": "surface:168f67bf841915e38e2e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/MessageBubbleActions.tsx",
-      "sha256": "4a7750a29f7bab8f15001c60f83a6c036479d7bc22695cfba022fa276d90738f",
+      "sha256": "18f2e3e54266854e0293fd77068abced7062a81825be8e5f69de5ac186795b4c",
       "symbols": [
         "MessageBubbleActions",
         "MessageBubbleActionsProps",
         "btnClass",
         "handleCopy",
         "handleLike",
-        "shareResponse"
+        "shareResponse",
+        "success",
+        "text"
       ],
       "imports": [
         "../../../../backend/src/ai/nativeOpenUiShare",
@@ -100566,6 +100737,7 @@
         "@/components/icons/animated/ShareIcon",
         "@/components/icons/animated/UpvoteIcon",
         "@/lib/assistantCopy",
+        "@/lib/clipboard",
         "@/lib/publicAnswerText",
         "@/lib/utils",
         "lucide-react",
@@ -100582,6 +100754,7 @@
         "frontend/src/components/icons/animated/UpvoteIcon.tsx",
         "frontend/src/components/terminal/MessageShareModal.tsx",
         "frontend/src/lib/assistantCopy.ts",
+        "frontend/src/lib/clipboard.ts",
         "frontend/src/lib/publicAnswerText.ts",
         "frontend/src/lib/utils.ts"
       ],
@@ -100616,7 +100789,7 @@
       "id": "surface:33d78a7d2ee718859b5a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/MessageShareModal.tsx",
-      "sha256": "310a157075941bdd5203b00dfaef8a60e614e87c0a9f930ad6ad67b00e0b814f",
+      "sha256": "8bb9c51feb77e42fec89849c394fbda86f417932c8b53815f6a76b5e4a7e8147",
       "symbols": [
         "BrandDefinition",
         "BrandIcon",
@@ -100637,6 +100810,7 @@
         "previousOverflow",
         "result",
         "revokeLink",
+        "success",
         "url"
       ],
       "imports": [
@@ -100645,6 +100819,7 @@
         "@/components/icons/animated/GlobeLockIcon",
         "@/components/icons/animated/ShareIcon",
         "@/lib/api",
+        "@/lib/clipboard",
         "@/lib/messageShare",
         "@/lib/utils",
         "lucide-react",
@@ -100659,6 +100834,7 @@
         "frontend/src/components/icons/animated/GlobeLockIcon.tsx",
         "frontend/src/components/icons/animated/ShareIcon.tsx",
         "frontend/src/lib/api.ts",
+        "frontend/src/lib/clipboard.ts",
         "frontend/src/lib/messageShare.ts",
         "frontend/src/lib/utils.ts"
       ],
@@ -101871,7 +102047,7 @@
       "id": "surface:9c57a6290c71522141f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "bd53987b93b3e6fa44e40ec17ec9d7afc1b256024c74e32fbd6b3595a48d645d",
+      "sha256": "8cf9454cc21ed5c6b8ef917f907552c8da1490e0b1b2c046ee045db56b5fcdbc",
       "symbols": [
         "AGENT_STYLES",
         "SwarmMessageLog",
@@ -101888,6 +102064,7 @@
         "chatTurns",
         "codeBuildActive",
         "conversationV2",
+        "copyContent",
         "currentTurn",
         "deferredTranscript",
         "discoveryBlock",
@@ -103881,7 +104058,7 @@
         "frontend/src/app/os-preview/rich-results/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/XrogaRichBlockView.tsx:17"
+        "frontend/src/components/terminal/XrogaRichBlockView.tsx:19"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -103908,7 +104085,7 @@
       "id": "surface:63ea43cd41638dbb68bc",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/XrogaRichBlockView.tsx",
-      "sha256": "4e574c2bfaef30a72cbacc1bd540cc238ea7ff85e57fb3a19ce9d7d768a42cf2",
+      "sha256": "d95a8e7d2c4e119b33d7627079b64d5b85b2b74737e25c7f8ee3c33f8e1cce7f",
       "symbols": [
         "BoardRenderer",
         "CHART_COLORS",
@@ -103994,6 +104171,7 @@
         "./XrogaOrganizerBlockView",
         "./XrogaStructuredBlockView",
         "./XrogaUtilityBlockView",
+        "@/lib/clipboard",
         "@/lib/universalOutput",
         "@/lib/xrogaArtifactContext",
         "@/lib/xrogaBlocks",
@@ -104004,6 +104182,7 @@
         "@tanstack/react-virtual",
         "lucide-react",
         "react",
+        "react-hot-toast",
         "react-markdown",
         "recharts",
         "remark-gfm"
@@ -104012,6 +104191,7 @@
         "frontend/src/components/terminal/XrogaOrganizerBlockView.tsx",
         "frontend/src/components/terminal/XrogaStructuredBlockView.tsx",
         "frontend/src/components/terminal/XrogaUtilityBlockView.tsx",
+        "frontend/src/lib/clipboard.ts",
         "frontend/src/lib/universalOutput.ts",
         "frontend/src/lib/xrogaArtifactContext.ts",
         "frontend/src/lib/xrogaCsv.ts",
@@ -104032,6 +104212,7 @@
         "@tanstack/react-virtual",
         "lucide-react",
         "react",
+        "react-hot-toast",
         "react-markdown",
         "recharts",
         "remark-gfm"
@@ -104260,7 +104441,7 @@
         "frontend/src/app/os-preview/rich-results/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/XrogaRichBlockView.tsx:18"
+        "frontend/src/components/terminal/XrogaRichBlockView.tsx:20"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -104331,7 +104512,7 @@
         "frontend/src/app/os-preview/rich-results/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/XrogaRichBlockView.tsx:19"
+        "frontend/src/components/terminal/XrogaRichBlockView.tsx:21"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -105542,7 +105723,7 @@
       "id": "surface:99d8b41d43bd9b678d71",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/ui/InlineCopyButton.tsx",
-      "sha256": "4a8e1a55c7ab1495f6f94834d31a7a93241bf16aaad63760feb4483f95832ff8",
+      "sha256": "5d40ed4b72e2d0dea638bef15e40abdbf6b64c2c0d5fc1d282de9bc45a18a502",
       "symbols": [
         "InlineCopyButton",
         "buttonLabel",
@@ -105550,10 +105731,13 @@
         "timer"
       ],
       "imports": [
+        "@/lib/clipboard",
         "lucide-react",
         "react"
       ],
-      "runtimeImports": [],
+      "runtimeImports": [
+        "frontend/src/lib/clipboard.ts"
+      ],
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/os-preview/rich-results/page.tsx"
@@ -108774,12 +108958,14 @@
       "id": "surface:de28da0ba53d843fc648",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/assistantCopy.ts",
-      "sha256": "77e9e3bc5d16beabb67d8c080becff1d7d2c4d7cc5736f55c4e041d3fd6ed752",
+      "sha256": "743cbe5c7f6a748e94d82ae69d6613b908d5bda2585f25fbcda7a15a6272b9d4",
       "symbols": [
         "cell",
         "cells",
         "character",
         "cleanInline",
+        "codeEnd",
+        "codeSpans",
         "cursor",
         "end",
         "fence",
@@ -108793,7 +108979,6 @@
         "line",
         "lines",
         "match",
-        "next",
         "normalized",
         "output",
         "prose",
@@ -108803,17 +108988,21 @@
         "seenTables",
         "serializeAssistantCopy",
         "start",
+        "table",
         "tableCells",
         "text",
-        "visit"
+        "visitInlineMarkdown",
+        "walk"
       ],
       "imports": [
+        "../../../backend/src/ai/nativeMarkdown",
         "./publicAnswerText",
         "mdast",
         "remark-parse",
         "unified"
       ],
       "runtimeImports": [
+        "backend/src/ai/nativeMarkdown.ts",
         "frontend/src/lib/publicAnswerText.ts"
       ],
       "entryPoints": [
@@ -110107,6 +110296,59 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:1ffe711026adc60eeb48",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/clipboard.ts",
+      "sha256": "ea08eff8a91e3336f46bc92a58eedd114859e9cc65d99052b848ef275b26bc17",
+      "symbols": [
+        "ClipboardContext",
+        "clipboard",
+        "copyTextToClipboard",
+        "doc",
+        "field",
+        "previousFocus",
+        "range",
+        "ranges",
+        "selection"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/native-answer-evaluation/page.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/native-openui/Editorial.tsx:7",
+        "frontend/src/components/native-openui/upstream/components/code-panel.tsx:6",
+        "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx:6",
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:10",
+        "frontend/src/components/terminal/MessageBubbleActions.tsx:18",
+        "frontend/src/components/terminal/MessageShareModal.tsx:17",
+        "frontend/src/components/terminal/XrogaRichBlockView.tsx:15",
+        "frontend/src/components/ui/InlineCopyButton.tsx:5",
+        "frontend/src/lib/clipboard.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/clipboard.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:b344e6be193f7fda6b24",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/cloudTerminalSessions.ts",
@@ -110290,7 +110532,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/upstream/components/code-panel.tsx:29",
+        "frontend/src/components/native-openui/upstream/components/code-panel.tsx:31",
         "frontend/src/components/response-experience-v2/ProseV2.tsx:9",
         "frontend/src/lib/codeHighlight.test.ts:3"
       ],
@@ -116744,11 +116986,11 @@
       "callers": [
         "frontend/src/app/share/[token]/page.tsx:4",
         "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:12",
-        "frontend/src/components/native-openui/upstream/components/code-panel.tsx:6",
+        "frontend/src/components/native-openui/upstream/components/code-panel.tsx:7",
         "frontend/src/components/native-openui/upstream/components/markdown.test.ts:5",
         "frontend/src/components/native-openui/upstream/components/markdown.tsx:4",
-        "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx:6",
-        "frontend/src/components/terminal/MessageBubbleActions.tsx:18",
+        "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx:7",
+        "frontend/src/components/terminal/MessageBubbleActions.tsx:19",
         "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:16",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:32",
         "frontend/src/components/terminal/WorkspacePeopleControls.tsx:16",
@@ -122612,7 +122854,7 @@
       ],
       "callers": [
         "frontend/src/components/terminal/XrogaBlockView.tsx:10",
-        "frontend/src/components/terminal/XrogaRichBlockView.tsx:11",
+        "frontend/src/components/terminal/XrogaRichBlockView.tsx:12",
         "frontend/src/components/terminal/XrogaStructuredBlockView.tsx:9",
         "frontend/src/lib/universalOutput.test.ts:3",
         "frontend/src/lib/xrogaOutputAdapters.ts:2"
@@ -124227,7 +124469,7 @@
       "callers": [
         "frontend/src/components/terminal/TerminalChatBar.tsx:34",
         "frontend/src/components/terminal/XrogaArtifactHeader.tsx:5",
-        "frontend/src/components/terminal/XrogaRichBlockView.tsx:15",
+        "frontend/src/components/terminal/XrogaRichBlockView.tsx:17",
         "frontend/src/lib/xrogaRichOutputs.test.ts:6"
       ],
       "reachable": true,
@@ -124368,6 +124610,7 @@
       ],
       "callers": [
         "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:4",
+        "frontend/src/components/native-openui/upstream/components/markdown.test.ts:6",
         "frontend/src/components/response-experience-v2/document.ts:2",
         "frontend/src/components/terminal/XrogaBlockView.tsx:11",
         "frontend/src/lib/goldenJourneyRendering.test.ts:7",
@@ -124406,6 +124649,7 @@
         "frontend/src/lib/xrogaBlocks.ts#xrogaReceiptSchema"
       ],
       "testCoverage": [
+        "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
         "frontend/src/lib/goldenJourneyRendering.test.ts",
         "frontend/src/lib/responseCoverageContract.test.ts",
         "frontend/src/lib/responsePresentation.integration.test.ts",
@@ -124615,7 +124859,7 @@
       ],
       "callers": [
         "frontend/src/components/native-openui/evidence.tsx:5",
-        "frontend/src/components/response-experience-v2/ProseV2.tsx:11",
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:12",
         "frontend/src/components/response-experience-v2/sourceRegistry.ts:1",
         "frontend/src/components/terminal/ResponseSources.tsx:4",
         "frontend/src/components/terminal/SourceCitation.tsx:6",
@@ -124756,7 +125000,7 @@
         "frontend/src/app/os-preview/rich-results/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/XrogaRichBlockView.tsx:13",
+        "frontend/src/components/terminal/XrogaRichBlockView.tsx:14",
         "frontend/src/lib/xrogaCsv.test.ts:3"
       ],
       "reachable": true,
@@ -125094,7 +125338,7 @@
       ],
       "callers": [
         "frontend/src/components/terminal/SharedAnswerDownloads.tsx:5",
-        "frontend/src/components/terminal/XrogaRichBlockView.tsx:14",
+        "frontend/src/components/terminal/XrogaRichBlockView.tsx:16",
         "frontend/src/lib/xrogaFileExports.test.ts:7"
       ],
       "reachable": true,
@@ -125205,7 +125449,7 @@
         "frontend/src/app/os-preview/rich-results/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/XrogaRichBlockView.tsx:12",
+        "frontend/src/components/terminal/XrogaRichBlockView.tsx:13",
         "frontend/src/lib/xrogaRichOutputs.test.ts:8"
       ],
       "reachable": true,
@@ -125334,6 +125578,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
+        "frontend/src/components/native-openui/upstream/components/markdown.test.ts:7",
         "frontend/src/components/response-experience-v2/derivedCalculations.test.ts:3",
         "frontend/src/components/response-experience-v2/document.test.ts:8",
         "frontend/src/components/response-experience-v2/exportText.test.ts:4",
@@ -125356,6 +125601,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
         "frontend/src/components/response-experience-v2/derivedCalculations.test.ts",
         "frontend/src/components/response-experience-v2/document.test.ts",
         "frontend/src/components/response-experience-v2/exportText.test.ts",
@@ -132160,7 +132406,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "f8581ff7139a7677c6efc933be5be6e9ad52ac04efd5cc1f89456d567e2fe715",
+      "sha256": "5af92519f8c0116ca83b5c11a584317e5f1f2c60513e2b361c593d86f2ea3203",
       "symbols": [
         "accessibility",
         "answer",
@@ -132181,6 +132427,9 @@
         "chipBounds",
         "choice",
         "citationContrast",
+        "citedRowNames",
+        "citedServiceWindows",
+        "citedTable",
         "code",
         "codeAccessibility",
         "codeBlocks",
@@ -132244,6 +132493,7 @@
         "name",
         "nextBalance",
         "nodes",
+        "north",
         "open",
         "origin",
         "output",
@@ -132259,6 +132509,7 @@
         "range",
         "recoveredEdge",
         "recoveredTable",
+        "reference",
         "region",
         "renderedEdge",
         "researchTable",
@@ -132279,6 +132530,7 @@
         "skin",
         "skinCss",
         "slider",
+        "sortDuration",
         "sourceList",
         "sourceUrl",
         "sprite",
@@ -147332,7 +147584,7 @@
   ],
   "findings": [
     {
-      "id": "finding:f796f1d1946339135c26",
+      "id": "finding:fb5b618da4e3023f20d2",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
       "line": 81,
       "kind": "PLACEHOLDER",
@@ -147342,9 +147594,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:ef66c73c60a6be41cf28",
+      "id": "finding:00375913e705cadbc7f2",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "line": 60,
+      "line": 62,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -147352,9 +147604,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:f68517b0981e58074459",
+      "id": "finding:edac54db7b2241083bd5",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "line": 63,
+      "line": 65,
       "kind": "MOCK",
       "reachable": true,
       "state": "PARTIAL",
@@ -147362,9 +147614,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:394dd8c92b67e7f6addc",
+      "id": "finding:1899321ce3874633137a",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "line": 64,
+      "line": 66,
       "kind": "MOCK",
       "reachable": true,
       "state": "PARTIAL",
@@ -147372,9 +147624,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:9685e025aeef002d1766",
+      "id": "finding:0bd07428b0eb808cff2d",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "line": 64,
+      "line": 66,
       "kind": "SIMULATED",
       "reachable": true,
       "state": "PARTIAL",
@@ -147382,9 +147634,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:f7bdab3e31c7925a7259",
+      "id": "finding:f5d5290e3615b72b8408",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "line": 64,
+      "line": 66,
       "kind": "SIMULATED",
       "reachable": true,
       "state": "PARTIAL",
@@ -147392,9 +147644,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:4ccec46a8907b1afe75a",
+      "id": "finding:a9fa596c9e95ce48ca37",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "line": 190,
+      "line": 192,
       "kind": "SIMULATED",
       "reachable": true,
       "state": "PARTIAL",
@@ -147402,9 +147654,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:bfb9cdd114dd546a1c0a",
+      "id": "finding:7ad00e22355a7aa3c5b2",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "line": 239,
+      "line": 241,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -150492,9 +150744,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:189175dae150a5239a3c",
+      "id": "finding:122af52fc0fb0c04805c",
       "sourcePath": "frontend/src/components/terminal/XrogaRichBlockView.tsx",
-      "line": 100,
+      "line": 105,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -153831,16 +154083,16 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:552dc2309fa87972a6f1",
+      "id": "frontend-call:bdcd5175a70853fae343",
       "sourcePath": "frontend/src/components/terminal/MessageShareModal.tsx",
-      "line": 112,
+      "line": 113,
       "callee": "api.messageShares.create",
       "reachable": true
     },
     {
-      "id": "frontend-call:5814bebe94d0928bdff3",
+      "id": "frontend-call:96a4c42216ee8edce204",
       "sourcePath": "frontend/src/components/terminal/MessageShareModal.tsx",
-      "line": 151,
+      "line": 156,
       "callee": "api.messageShares.revoke",
       "reachable": true
     },
@@ -155459,7 +155711,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 95,
+      "declaredTests": 97,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -155774,7 +156026,7 @@
     {
       "id": "test-suite:fc958963f2b7e8b93a94",
       "sourcePath": "backend/src/ai/researchSearchProvider.test.ts",
-      "declaredTests": 10,
+      "declaredTests": 13,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -155816,7 +156068,7 @@
     {
       "id": "test-suite:11a90210e320c1d28cb6",
       "sourcePath": "backend/src/ai/responsePresentation.test.ts",
-      "declaredTests": 18,
+      "declaredTests": 22,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -155830,7 +156082,7 @@
     {
       "id": "test-suite:de9619c7c3ade1d8da4c",
       "sourcePath": "backend/src/ai/richResponsePrompt.test.ts",
-      "declaredTests": 8,
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -160786,7 +161038,7 @@
     {
       "id": "test-suite:4ce9d7bbf578638998f1",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
-      "declaredTests": 39,
+      "declaredTests": 42,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -161017,7 +161269,7 @@
     {
       "id": "test-suite:0d9655cb673ddb25aff3",
       "sourcePath": "frontend/src/lib/assistantCopy.test.ts",
-      "declaredTests": 10,
+      "declaredTests": 11,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -161123,6 +161375,13 @@
       "id": "test-suite:8ee0fad3a562efad2070",
       "sourcePath": "frontend/src/lib/clientCrashRecovery.test.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:4046cf1144c1ac601fb5",
+      "sourcePath": "frontend/src/lib/clipboard.test.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

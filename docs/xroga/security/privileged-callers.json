@@ -1,17 +1,17 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "6501e77902bd4af951184be070f5958ea225d9854121b9b71feb02624f0f3347",
+  "reviewRegistrySha256": "0f6e9a3b19a50d495c97a06c5987bbf6e415ca4d764a34d00c2e7ee542c89e47",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 231,
-    "persistenceCandidates": 1031,
+    "persistenceCandidates": 1032,
     "ownerPredicateCandidates": 275,
     "reviewRequired": 174,
-    "reviewedCandidates": 857,
+    "reviewedCandidates": 858,
     "unresolvedSafetyCandidates": 224,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
@@ -20,7 +20,7 @@
     "REVIEW_REQUIRED": 174,
     "SCOPED_BOUNDARY": 547,
     "NARROW_EXCEPTION": 52,
-    "NOT_PERSISTENCE": 208,
+    "NOT_PERSISTENCE": 209,
     "REVIEWED_GAP": 50
   },
   "acceptance": {
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 78,
-    "unresolvedCandidateBoundaries": 953,
+    "unresolvedCandidateBoundaries": 954,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3936,11 +3936,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d231c120d15cdb303798"
+        "id": "495ab85f04a68bc33426"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a89bee68ee14df41ddd5"
+        "id": "7706648756b244b0e84c"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4100,7 +4100,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "1966e0b544fc8426dd7e"
+        "id": "bd2778a2cc0d479d0b04"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6628,6 +6628,10 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "e4cf22a404b1ba954649"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "fbaca63a90f679479d96"
       },
       {
@@ -6820,7 +6824,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "1966e0b544fc8426dd7e"
+        "id": "bd2778a2cc0d479d0b04"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7776,11 +7780,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "d231c120d15cdb303798"
+        "id": "495ab85f04a68bc33426"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "a89bee68ee14df41ddd5"
+        "id": "7706648756b244b0e84c"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10552,6 +10556,10 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "e4cf22a404b1ba954649"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "a68e53a94294615ebff8"
       },
       {
@@ -10573,11 +10581,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 1031,
+    "currentCallers": 1032,
     "structuredVerified": 78,
-    "structuredUnproven": 953,
+    "structuredUnproven": 954,
     "manualUnresolved": 224,
-    "manualUnsupported": 729,
+    "manualUnsupported": 730,
     "agreedVerified": 78,
     "proofAwaitingManualReconciliation": 0
   },
@@ -11525,15 +11533,15 @@
       }
     },
     {
-      "id": "d231c120d15cdb303798",
+      "id": "495ab85f04a68bc33426",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3990,
+      "line": 4007,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "b598c509dacca47546033b195b3d7618cde4bc634f60aa88106c07797c968cd5",
+      "sourceSha256": "0e677977a9694594593757dbe07d775d8758f2086712db66a84b04afb536603e",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Native reasoning alignment changes only answer options and their canonical output reservation. These two in-memory conversion expressions remain byte-identical. No new persistence call, authority or security certification is inferred. The tenant dispatch test verifies reservation and wire maxima match.",
@@ -11546,15 +11554,15 @@
       }
     },
     {
-      "id": "a89bee68ee14df41ddd5",
+      "id": "7706648756b244b0e84c",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4174,
+      "line": 4191,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "b598c509dacca47546033b195b3d7618cde4bc634f60aa88106c07797c968cd5",
+      "sourceSha256": "0e677977a9694594593757dbe07d775d8758f2086712db66a84b04afb536603e",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Native reasoning alignment changes only answer options and their canonical output reservation. These two in-memory conversion expressions remain byte-identical. No new persistence call, authority or security certification is inferred. The tenant dispatch test verifies reservation and wire maxima match.",
@@ -12775,15 +12783,15 @@
       }
     },
     {
-      "id": "1966e0b544fc8426dd7e",
+      "id": "bd2778a2cc0d479d0b04",
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 144,
+      "line": 149,
       "enclosing": "normalizeSectionData",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d1dde66cc1bbe2a0f523db68db294f5c4f26640c89fef46270493c228651588e"
+      "sourceSha256": "3f7b82341b325743179c746fe6bae145f40769960fdc25a1751dcc024eeeb195"
     },
     {
       "id": "64b99cfd7d4a42c04576",
@@ -32624,6 +32632,31 @@
           {
             "path": "frontend/src/lib/avatarPersistence.test.ts",
             "marker": "avatar authentication and upload failures never save a fallback profile"
+          }
+        ]
+      }
+    },
+    {
+      "id": "e4cf22a404b1ba954649",
+      "path": "frontend/src/lib/clipboard.ts",
+      "line": 23,
+      "enclosing": "copyTextToClipboard",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "ea08eff8a91e3336f46bc92a58eedd114859e9cc65d99052b848ef275b26bc17",
+      "semanticReview": {
+        "authority": "The built-in Array.from call copies in-memory browser DOM Range objects for local selection restoration. Its receiver has no persistence or privilege interface.",
+        "reason": "The scanner includes every from method. This exact call clones the current document selection and the local clipboard fallback restores those ranges after copying.",
+        "evidence": [
+          {
+            "path": "frontend/src/lib/clipboard.ts",
+            "marker": "Array.from({ length: selection.rangeCount }, (_, i) => selection.getRangeAt(i).cloneRange())"
+          },
+          {
+            "path": "frontend/src/lib/clipboard.test.ts",
+            "marker": "missing or rejected Async Clipboard API falls back and restores focus and selection"
           }
         ]
       }

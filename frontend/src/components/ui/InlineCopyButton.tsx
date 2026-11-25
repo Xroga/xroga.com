@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Check, Copy } from 'lucide-react';
+import { copyTextToClipboard } from '@/lib/clipboard';
 
 export function InlineCopyButton({ value, label = 'Copy' }: { value: string; label?: string }) {
   const [status, setStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
@@ -20,13 +21,9 @@ export function InlineCopyButton({ value, label = 'Copy' }: { value: string; lab
       type="button"
       className="inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2 text-xs text-[var(--muted)] transition-colors duration-100 hover:bg-[var(--foreground)]/[0.06] hover:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
       aria-label={buttonLabel}
+      title={status === 'failed' ? 'Select the text to copy it manually.' : undefined}
       onClick={async () => {
-        try {
-          await navigator.clipboard.writeText(value);
-          setStatus('copied');
-        } catch {
-          setStatus('failed');
-        }
+        setStatus(await copyTextToClipboard(value) ? 'copied' : 'failed');
       }}
     >
       {copied ? <Check className="h-3.5 w-3.5" aria-hidden="true" /> : <Copy className="h-3.5 w-3.5" aria-hidden="true" />}

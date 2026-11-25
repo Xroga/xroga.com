@@ -27,7 +27,7 @@ test('one bounded DeepSeek request respects the documented 128-character limits'
 test('official-only queries send the approved domains and fit the provider limit', () => {
   assert.equal(scopeOfficialSearchQuery('pathlib read_text OR site:forum.example (read_bytes)', [
     'WWW.DOCS.PYTHON.ORG.', 'docs.python.org', 'https://unrelated.example', 'python.org/path', 'developer.mozilla.org',
-  ]), 'pathlib read_text read_bytes site:docs.python.org OR site:developer.mozilla.org');
+  ]), 'pathlib read_text (read_bytes) site:docs.python.org OR site:developer.mozilla.org');
   const terms = '文件'.repeat(120) + '🌍';
   const query = scopeOfficialSearchQuery(terms, ['docs.python.org'])!;
   const body = deepseekSearchBody({ objective: '🌍'.repeat(150), search_queries: [query] });
@@ -36,6 +36,34 @@ test('official-only queries send the approved domains and fit the provider limit
   assert.equal(body.query, query);
   assert.ok(body.query.endsWith(' site:docs.python.org'));
   assert.equal(scopeOfficialSearchQuery('reserve no search', ['http://docs.python.org', 'local']), undefined);
+});
+
+test('official scoping preserves public phrases, alternatives, and exclusions while replacing unrelated sites', () => {
+  const terms = 'WCAG "focus not obscured" OR "target size" -"working draft" -deprecated lang:en';
+  const query = scopeOfficialSearchQuery(terms + ' (site:forums.example OR site:articles.example)', ['w3.org']);
+  assert.equal(query, terms + ' site:w3.org');
+  assert.equal(scopeOfficialSearchQuery('"weather or climate" -site:drafts.noaa.gov', ['noaa.gov']),
+    '"weather or climate" -site:drafts.noaa.gov site:noaa.gov');
+  assert.equal(scopeOfficialSearchQuery('"site: prefix" -"draft OR working copy"', ['example.org']),
+    '"site: prefix" -"draft OR working copy" site:example.org');
+});
+
+test('official scoping keeps constrained terms when adding the publisher pushes a query over the wire length', () => {
+  const unscoped = 'WCAG updates impact teams migrating interfaces "focus not obscured" OR "target size" -"working draft" -deprecated lang:en';
+  assert.ok([...unscoped].length <= 128 && [...unscoped, ...' site:w3.org'].length > 128);
+  const scoped = scopeOfficialSearchQuery(unscoped, ['w3.org']);
+  assert.ok(scoped && [...scoped].length <= 128);
+  assert.match(scoped, /^WCAG\b/);
+  assert.match(scoped, /"focus not obscured" OR "target size" -"working draft" -deprecated lang:en site:w3\.org$/);
+  assert.equal(deepseekSearchBody({ objective: 'WCAG scoped check', search_queries: [scoped] }).query, scoped);
+});
+
+test('official scoping fits unsegmented Unicode while preserving a language filter', () => {
+  const unscoped = 'アクセシビリティ'.repeat(20) + ' lang:ja';
+  const scoped = scopeOfficialSearchQuery(unscoped, ['w3.org']);
+  assert.ok(scoped && [...scoped].length === 128);
+  assert.match(scoped, /^アクセシビリティ.* lang:ja site:w3\.org$/u);
+  assert.match(fitDeepseekSearchQuery(unscoped) ?? '', /^アクセシビリティ.* lang:ja$/u);
 });
 
 test('DeepSeek results become the existing result shape with real URLs, dates and the trace receipt', () => {

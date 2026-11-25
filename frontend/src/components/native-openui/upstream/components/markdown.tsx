@@ -1,10 +1,11 @@
-import React, { createContext, Fragment, type ReactNode } from "react";
+import React, { createContext, Fragment, useContext, type ReactNode } from "react";
 import { isElementNode, type ElementNode } from "@openuidev/lang-core";
 import katex from "katex";
 import { isPresentationLanguage, publicAnswerText } from "@/lib/publicAnswerText";
 import { cx, isLongAnswerTable, webUrl } from "./style";
 import { staticChartTable } from "./chart";
 import { CodePanel } from "./code-panel";
+import { SortableTableView, tableCellHasLinks, tableCellText } from "./table-view";
 import type { RenderEvidenceCitation } from "../../evidence";
 import { nativeReadableTextKey } from "../../../../../../backend/src/ai/nativeOpenUi";
 import { nativeTableDecimalKey, readNativeMarkdownTable } from "../../../../../../backend/src/ai/nativeMarkdown";
@@ -94,7 +95,7 @@ type Block =
   | { kind: "table"; head: string[]; rows: string[][] };
 
 export const VisibleMarkdownTables = createContext<ReadonlySet<string> | null>(null);
-export const NativeVisualContent = createContext<Pick<MarkdownMatches, "tables" | "sectionTables" | "headingTitles" | "titles" | "markdownSectionHeadings" | "checklists" | "inlineReplacements" | "liveReadouts" | "orderedChecklist"> | undefined>(undefined);
+export const NativeVisualContent = createContext<Pick<MarkdownMatches, "tables" | "sortableTables" | "sectionTables" | "headingTitles" | "titles" | "markdownSectionHeadings" | "checklists" | "inlineReplacements" | "liveReadouts" | "orderedChecklist"> | undefined>(undefined);
 export const NativeSectionTitle = createContext<string | undefined>(undefined);
 type InlineSectionContent = {
   nodes: ReadonlyMap<number, ReactNode>;
@@ -110,16 +111,14 @@ function scalarTableKey(head: readonly string[], rows: readonly unknown[][], for
 
 // Only compare scalar cells. Retain distinct data and cells with components.
 export function tableContentKey(head: readonly string[], rows: readonly unknown[][]): string | undefined {
-  const plain = (cell: unknown) => String(cell).split(/(`[^`\n]+`)/g)
-    .map((part, index) => index % 2 ? part.slice(1, -1) : part.replace(/\[(\d{1,3})\](?:\([^\s)]+\))?/g, ""))
-    .join("").trim().replace(/\s+/g, " ")
+  const plain = (cell: unknown) => tableCellText(cell).replace(/\s+/g, " ")
     .replace(/^the (?=[a-z])/i, "")
     .replace(/^[A-Z](?=[a-z]+ )/, initial => initial.toLowerCase());
-  return scalarTableKey(head, rows, plain, cell => plain(nativeTableDecimalKey(String(cell))));
+  return scalarTableKey(head, rows, plain, cell => nativeTableDecimalKey(plain(cell)));
 }
 
 function tableHasLinks(head: string[], rows: string[][]): boolean {
-  return [head, ...rows].some(row => row.some(value => /\[\d{1,3}\]|\]\(/.test(value)));
+  return [head, ...rows].some(row => row.some(tableCellHasLinks));
 }
 
 function contextualMarkdownTableKeys(items: readonly Block[]): Set<string> {
@@ -182,6 +181,7 @@ type MarkdownMatches = {
   code: ReadonlySet<string>;
   relationships: ReadonlySet<string>;
   tables: ReadonlySet<string>;
+  sortableTables: ReadonlySet<string>;
   checklists: ReadonlySet<string>;
   listItems: ReadonlySet<string>;
   liveReadouts: ReadonlySet<string>;
@@ -247,13 +247,14 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
   const code = new Set<string>();
   const relationships = new Set<string>();
   const tables = new Set<string>();
+  const sortableTables = new Set<string>();
   const checklists = new Set<string>();
   const listItems = new Set<string>();
   const liveReadouts = new Set<string>();
   function visit(value: unknown, sectionTitle?: string, hidden = false): void {
     if (Array.isArray(value)) { value.forEach(child => visit(child, sectionTitle, hidden)); return; }
     if (!value || typeof value !== "object") return;
-    const node = value as { type?: string; typeName?: string; props?: Record<string, unknown>; hasDynamicProps?: boolean };
+    const node = value as { type?: string; typeName?: string; props?: Record<string, unknown>; hasDynamicProps?: boolean; partial?: boolean };
     if (node.type !== "element" || !node.props) {
       Object.values(value).forEach(child => visit(child, sectionTitle, hidden));
       return;
@@ -351,6 +352,7 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
         const key = tableContentKey(columns, rows);
         if (key) {
           tables.add(key);
+          if (!hidden && !node.hasDynamicProps && !node.partial) sortableTables.add(key);
           if (sectionTitle !== undefined) {
             const keys = sectionTables.get(sectionTitle) ?? new Set<string>();
             keys.add(key);
@@ -406,7 +408,7 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
       if (typeof title === "string") inlineReplacements.set(title, index);
     }
   }
-  return { documents, paragraphs, titles, headingTitles, markdownSectionHeadings, sectionTables, code, tables, relationships, checklists, listItems, liveReadouts, inlineReplacements, orderedChecklist };
+  return { documents, paragraphs, titles, headingTitles, markdownSectionHeadings, sectionTables, code, tables, sortableTables, relationships, checklists, listItems, liveReadouts, inlineReplacements, orderedChecklist };
 }
 
 /** Only remove a complete verbatim document already visible in native Markdown.
@@ -630,6 +632,7 @@ export function placeNativeSections(children: readonly unknown[], readInitial?: 
 }
 
 export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false, matches, nativeTables, nativeSectionTables, nativeHeadingTitles, nativeChecklists, nativeReadouts, inlineSections }: { text: string; renderCitation?: RenderEvidenceCitation; deduplicateTables?: boolean; matches?: MarkdownMatches; nativeTables?: ReadonlySet<string>; nativeSectionTables?: ReadonlyMap<string, ReadonlySet<string>>; nativeHeadingTitles?: ReadonlySet<string>; nativeChecklists?: ReadonlySet<string>; nativeReadouts?: ReadonlySet<string>; inlineSections?: InlineSectionContent }) {
+  const sortableTables = useContext(NativeVisualContent)?.sortableTables ?? matches?.sortableTables;
   const seenTables = new Set<string>();
   const items = blocks(text);
   const contextualTables = contextualMarkdownTableKeys(items);
@@ -693,10 +696,16 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
             );
           }
           case "table": {
-            const tableKey = deduplicateTables || matches || nativeTables ? tableContentKey(b.head, b.rows) : undefined;
-            if (tableKey && !contextualTables.has(tableKey) && !tableHasLinks(b.head, b.rows)
+            const tableKey = deduplicateTables || matches || nativeTables || sortableTables?.size ? tableContentKey(b.head, b.rows) : undefined;
+            const linked = tableHasLinks(b.head, b.rows);
+            if (tableKey && !contextualTables.has(tableKey) && !linked
               && (seenTables.has(tableKey) || matches?.tables.has(tableKey) || nativeTables?.has(tableKey))) return null;
             if (tableKey) seenTables.add(tableKey);
+            // The native duplicate is hidden to preserve these exact links.
+            // Keep its controls on the cited table at the authored position.
+            if (linked && tableKey && !contextualTables.has(tableKey) && sortableTables?.has(tableKey)) {
+              return <SortableTableView key={k} columns={b.head} rows={b.rows} renderText={value => inline(value, k, renderCitation)} />;
+            }
             return (
               <div key={k} className={cx("iui-table-scroll", isLongAnswerTable(b.rows.length) && "iui-table-bounded")} role="group" aria-label="Answer table" tabIndex={0}>
                 <table className="iui-table">

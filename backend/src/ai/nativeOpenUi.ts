@@ -11,6 +11,9 @@ export const NATIVE_UI_LIBRARY = 'xroga-native-v1' as const;
 export const NATIVE_UI_MARKER = '\n<<<XROGA_OPENUI_V1>>>\n';
 export const PARTIAL_NATIVE_PRESENTATION_NOTE = 'Some visuals could not be validated. The available explanation and verified visuals are shown below.';
 export const MAX_PROGRAM_CHARS = 24000;
+const MAX_NATIVE_ANSWER_PROSE_CHARS = 200_000;
+const nativeAnswerBinding = '\n_xroga_answer = ';
+const compactNativeAnswerBinding = nativeAnswerBinding + '""';
 // Expanded depth includes both layout nesting and shared formula references.
 // Keep it bounded for evaluation, without rejecting ordinary composed calculators
 // at the former 28-level limit. Node work, source size and cycles stay independent.
@@ -34,10 +37,10 @@ export function splitNativeOpenUiAnswer(raw: string, streaming = false) {
   return scanNativeOpenUiAnswer(raw, streaming, true);
 }
 
-/** Bind the existing Markdown component to the same complete readable answer.
- * The saved program stays self-contained. No model call or client-only state. */
+/** Bind Markdown to workspace prose. Keep large canonical prose out of the DSL
+ * budget: the response already stores it alongside the program. */
 export function bindNativeAnswerText(program: string, prose: string): string {
-  if (!prose || program.length > MAX_PROGRAM_CHARS) return program;
+  if (!prose || prose.length > MAX_NATIVE_ANSWER_PROSE_CHARS || program.length > MAX_PROGRAM_CHARS) return program;
   try {
     const tokens = tokenize(program);
     if (tokens.length > 4800) return program;
@@ -55,10 +58,19 @@ export function bindNativeAnswerText(program: string, prose: string): string {
     for (const statement of statements) walkAST(parseExpression(statement.tokens), node => {
       if (node.k === 'Ref' && node.n === '_xroga_answer') referenced = true;
     });
-    return referenced ? program + '\n_xroga_answer = ' + JSON.stringify(prose) : program;
+    if (!referenced) return program;
+    const binding = nativeAnswerBinding + JSON.stringify(prose);
+    return program + (program.length + binding.length > MAX_PROGRAM_CHARS ? compactNativeAnswerBinding : binding);
   } catch {
     return program; // Existing validation and readable recovery remain authoritative.
   }
+}
+
+/** Supply separately persisted prose after validating the compact program.
+ * This only replaces the exact reserved string literal with a JSON literal. */
+export function materializeNativeAnswerText(program: string, prose: string): string {
+  if (!program.endsWith(compactNativeAnswerBinding) || !prose || prose.length > MAX_NATIVE_ANSWER_PROSE_CHARS) return program;
+  return program.slice(0, -2) + JSON.stringify(prose);
 }
 
 function scanNativeOpenUiAnswer(raw: string, streaming: boolean, allowJsonEnvelope: boolean): { text: string; program: string } {
@@ -677,6 +689,8 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
     let budget = 6000;
     const reviewStrings = new Set<string>();
     const boundAnswer = symbols.get('_xroga_answer');
+    const compactAnswer = program.endsWith(compactNativeAnswerBinding) && boundAnswer?.k === 'Str' && boundAnswer.v === '';
+    let compactReferences = 0;
     let reason: Extract<NativeUiValidation, { ok: false }>['reason'] = 'authority';
     function visit(node: ASTNode, active: Set<string>, depth = 0, allowBoundAnswer = false): boolean {
       expandedDepth = Math.max(expandedDepth, depth);
@@ -712,6 +726,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
             referenceIssue = target ? 'cycle' : 'missing';
             return false;
           }
+          if (compactAnswer && target === boundAnswer && (!allowBoundAnswer || node.k !== 'Ref' || ++compactReferences > 1)) return false;
           return visit(target, new Set([...active, node.n]), depth + 1,
             allowBoundAnswer && node.k === 'Ref' && target === boundAnswer);
         }
@@ -739,6 +754,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
       // Re-auditing a shared dependency must not consume another declaration's
       // allowance. The statement count still bounds the total audit work.
       budget = 6000;
+      compactReferences = 0;
       if (key.startsWith('$') && !['Num', 'Str', 'Bool', 'Null'].includes(node.k)) {
         authorityIssue = 'non_scalar_state';
         return fail('authority');

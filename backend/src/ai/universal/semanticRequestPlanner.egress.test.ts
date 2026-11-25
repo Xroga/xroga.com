@@ -20,7 +20,9 @@ test('actual semantic planner carries issued actor, platform reservation and exa
   const suppliedHistory = ['user: Prior exchange snapshots', 'assistant: The prior quote was an estimate.'];
   const suppliedProjectState = { hasExistingPreview: false, isUpdate: false };
   const literalPrompt = 'Reply with only the word Yes.';
-  let contextualLiteral: Parameters<typeof planSemanticRequest>[0] | undefined;
+  const documentPrompt = 'Create one downloadable editable DOCX handout for a fictional community repair club. Title: Tool Return Checklist. Include three unchecked items: wipe tools, count bits, and sign the return log. Add this exact closing line: Bring damaged tools to the desk.';
+  const documentBody = '# Tool Return Checklist\n\n- [ ] wipe tools\n- [ ] count bits\n- [ ] sign the return log\n\nBring damaged tools to the desk.';
+  let contextualRequest: Parameters<typeof planSemanticRequest>[0] | undefined;
   const warnings: unknown[][] = [];
   t.mock.method(console, 'warn', (...args: unknown[]) => { warnings.push(args); });
   const held = new Map<string, Record<string, unknown>>();
@@ -34,15 +36,17 @@ test('actual semantic planner carries issued actor, platform reservation and exa
       assert.equal(reservations, settlements + 1);
       assert.equal(new Headers(init?.headers).get('authorization'), 'Bearer ' + env.ZURELAY_API_KEY);
       assert.equal(init?.redirect, 'manual');
-      if (mode === 'literal-answer') {
+      if (mode === 'literal-answer' || mode === 'local-document-answer') {
+        const document = mode === 'local-document-answer';
         assert.equal(body.model, 'deepseek-v4.1-flash-1017');
-        assert.equal(body.messages.at(-1).content, literalPrompt);
+        assert.equal(body.messages.at(-1).content, document ? documentPrompt : literalPrompt);
         assert.equal(body.reasoning_effort, undefined);
         assert.ok(body.max_tokens >= 16384);
         assert.equal(body.response_format, undefined);
+        if (document) assert.match(body.messages[0].content, /Write the complete requested DOCX artifact/);
         const response = {
-          id: 'synthetic-literal-answer', model: body.model,
-          choices: [{ delta: { content: 'Yes' }, finish_reason: 'stop' }],
+          id: 'synthetic-' + mode, model: body.model,
+          choices: [{ delta: { content: document ? documentBody : 'Yes' }, finish_reason: 'stop' }],
           usage: { prompt_tokens: 2, completion_tokens: 1, total_tokens: 3 },
         };
         assert.equal(body.stream, true);
@@ -50,7 +54,7 @@ test('actual semantic planner carries issued actor, platform reservation and exa
           headers: { 'content-type': 'text/event-stream', 'x-request-id': response.id, 'x-zurelay-model': response.model },
         });
       }
-      const expectedPrompt = contextualLiteral?.message ??
+      const expectedPrompt = contextualRequest?.message ??
         (mode === 'misrouted-calculator' ? 'build an interactive calculator' : 'Explain a safe local parser');
       const system = body.messages[0].content as string;
       assert.equal(system.split('Retrieve current public evidence through the configured provider adapter.').length, 2,
@@ -59,8 +63,8 @@ test('actual semantic planner carries issued actor, platform reservation and exa
       assert.match(system, /"id":"research\.public-web"[^{}]*"readiness":"(?:READY|PROVIDER_UNAVAILABLE)"/);
       const suppliedContext = JSON.parse(body.messages[1].content);
       assert.ok(suppliedContext.message.includes(expectedPrompt));
-      assert.deepEqual(suppliedContext.history, contextualLiteral ? contextualLiteral.history : suppliedHistory);
-      assert.deepEqual(suppliedContext.projectState, contextualLiteral ? contextualLiteral.projectState : suppliedProjectState);
+      assert.deepEqual(suppliedContext.history, contextualRequest ? contextualRequest.history : suppliedHistory);
+      assert.deepEqual(suppliedContext.projectState, contextualRequest ? contextualRequest.projectState : suppliedProjectState);
       assert.doesNotMatch(JSON.stringify(body), /synthetic-platform-credential/);
       assert.equal(new Headers(init?.headers).get('x-zurelay-fallback'),'off');assert.equal(body.model,'deepseek-v4.1-flash-1017');assert.equal(body.reasoning_effort,'none');
       assert.equal(body.max_tokens, 2200);
@@ -72,12 +76,16 @@ test('actual semantic planner carries issued actor, platform reservation and exa
         }], usage: { prompt_tokens: 3348, completion_tokens: 2200, total_tokens: 5548 } },
         { headers: { 'x-request-id': 'synthetic-truncated', 'x-zurelay-model': 'deepseek-v4.1-flash-1017' } });
       }
-      const decision = mode === 'misrouted-calculator'
-        ? { semanticIntent: 'MODIFY', requiredCapabilities: ['software.implement', 'validation.run'] }
-        : { semanticIntent: 'ANSWER', requiredCapabilities: ['conversation.respond'] };
+      const decisions = {
+        'misrouted-calculator': { semanticIntent: 'MODIFY', requiredCapabilities: ['software.implement', 'validation.run'] },
+        'mixed-document-action': { semanticIntent: 'MIXED', requiredCapabilities: ['business.action', 'conversation.respond'] },
+        'mixed-document-research': { semanticIntent: 'INVESTIGATE', requiredCapabilities: ['research.public-web', 'conversation.respond'],
+          freshnessRequirement: 'CURRENT_REQUIRED', publicWebQuery: 'latest W3C accessibility policy' },
+      } as Record<string, object>;
+      const decision = decisions[mode] ?? { semanticIntent: 'ANSWER', requiredCapabilities: ['conversation.respond'] };
       const id = 'synthetic-planner-' + mode;
       return Response.json({ id,model:'deepseek-v4.1-flash-1017', choices: [{ message: { content: JSON.stringify({
-        ...decision, freshnessRequirement: 'NONE', confidence: 0.9,
+        freshnessRequirement: 'NONE', ...decision, confidence: 0.9,
       }) }, finish_reason: 'stop' }], usage: { prompt_tokens: 2, completion_tokens: 2,total_tokens:4 } },{headers:{'x-request-id':id,'x-zurelay-model':'deepseek-v4.1-flash-1017'}});
     }
     assert.equal(url.origin, env.SUPABASE_URL, 'No unlisted transport is allowed');
@@ -92,7 +100,7 @@ test('actual semantic planner carries issued actor, platform reservation and exa
     if (url.pathname === '/rest/v1/model_provider_health') return Response.json(null);
     if (url.pathname.endsWith('/reserve_xroga_provider_budget')) {
       assert.equal(body.p_user_id, owner); reservations++;
-      if (mode === 'literal-answer') assert.ok(body.p_maximum_output_tokens >= 16384);
+      if (mode === 'literal-answer' || mode === 'local-document-answer') assert.ok(body.p_maximum_output_tokens >= 16384);
       else assert.equal(body.p_maximum_output_tokens, 2200);
       const row = { id: randomUUID(), user_id: mode === 'foreign-reservation' ? foreign : owner, status: 'reserved',
         idempotency_key: body.p_idempotency_key, internal_route: body.p_internal_route, purpose: body.p_purpose,
@@ -163,6 +171,23 @@ test('actual semantic planner carries issued actor, platform reservation and exa
   assert.deepEqual(answer.responseSource, { format: 'xroga-openui-v1', text: '' });
   assert.deepEqual([effects, reservations, settlements, receipts], [4, 4, 4, 4], 'Only the DeepSeek answer is admitted and settled');
 
+  mode = 'local-document-answer';
+  const documentRequest = { ...literalRequest, message: documentPrompt };
+  const documentPlan = await planSemanticRequest(documentRequest);
+  assert.equal(documentPlan.dispatch, 'chat');
+  assert.equal(documentPlan.directResponse, undefined);
+  assert.equal(documentPlan.goalContract.freshnessRequirement, 'NONE');
+  assert.deepEqual(documentPlan.goalContract.requiredAuthorities, ['model:execute']);
+  assert.deepEqual(documentPlan.capabilityIds, ['conversation.respond']);
+  assert.deepEqual([effects, reservations, settlements, receipts], [4, 4, 4, 4], 'A supplied local document needs no separate planner dispatch');
+  const documentAnswer = await runChatPipeline({ ...documentRequest, prompt: documentPrompt,
+    goalContract: documentPlan.goalContract, workspaceSearch: { prompt: documentPrompt } });
+  assert.equal(documentAnswer.response, documentBody);
+  assert.equal(documentAnswer.route.useResearch, false);
+  assert.deepEqual(documentAnswer.completion, { status: 'complete' });
+  assert.deepEqual(documentAnswer.responseSource, { format: 'xroga-openui-v1', text: '', downloadFormat: 'docx' });
+  assert.deepEqual([effects, reservations, settlements, receipts], [5, 5, 5, 5], 'The answer still gets one metered dispatch');
+
   mode = 'contextual-literal';
   for (const context of [
     { message: 'Reply with only the word Yes, then send the report.' },
@@ -175,12 +200,46 @@ test('actual semantic planner carries issued actor, platform reservation and exa
     { projectState: { hasExistingPreview: true, isUpdate: false } },
     { projectState: { hasExistingPreview: false, isUpdate: false, unrelatedContext: 'fixture' } },
   ]) {
-    contextualLiteral = { ...literalRequest, ...context };
+    contextualRequest = { ...literalRequest, ...context };
     const before: number = effects;
-    await planSemanticRequest(contextualLiteral);
+    await planSemanticRequest(contextualRequest);
     assert.equal(effects, before + 1, 'Context and mixed requests still go through the semantic planner');
   }
-  contextualLiteral = undefined;
+
+  for (const contextualDocument of [
+    { history: suppliedHistory },
+    { attachments: [{ name: 'source.txt', mediaType: 'text/plain' }] },
+    { projectState: { hasExistingPreview: true, isUpdate: false } },
+    { message: 'Create a downloadable DOCX report using the attached notes. Title: Work plan. Content: Calendar.' },
+    { message: 'Create an editable DOCX report. Title: Work plan. Content: Calendar.' },
+    { message: 'Create a downloadable DOCX handout. Title: Work plan. Summarize the options and recommend a choice.' },
+    { message: 'Create a downloadable DOCX handout. Title: Work plan. Content: Schedule. Prepare a matching slide deck.' },
+  ]) {
+    contextualRequest = { ...documentRequest, ...contextualDocument };
+    const before: number = effects;
+    await planSemanticRequest(contextualRequest);
+    assert.equal(effects, before + 1, 'Dependent or ambiguous documents retain ordinary planning');
+  }
+  for (const [extra, plannerMode, capability] of [
+    [' Send it to my work channel.', 'mixed-document-action', 'business.action'],
+    [' Search the web for the latest W3C accessibility policy and include it.', 'mixed-document-research', 'research.public-web'],
+  ] as const) {
+    mode = plannerMode;
+    contextualRequest = { ...documentRequest, message: documentPrompt + extra };
+    const before: number = effects;
+    const mixed = await planSemanticRequest(contextualRequest);
+    assert.equal(effects, before + 1, 'Mixed document requests need a semantic decision');
+    assert.ok(mixed.goalContract.requiredCapabilities.includes(capability), 'The separate capability must remain visible');
+  }
+  mode = 'contextual-literal';
+  contextualRequest = documentRequest;
+  process.env.XROGA_NATIVE_OPENUI_WORKSPACE = '0';
+  const beforeDisabled: number = effects;
+  await planSemanticRequest(documentRequest);
+  assert.equal(effects, beforeDisabled + 1, 'The shortcut requires native document delivery');
+  process.env.XROGA_NATIVE_OPENUI_WORKSPACE = '1';
+
+  contextualRequest = undefined;
   mode = 'foreign-reservation';
   const beforeDenied = effects;
   await assert.rejects(planSemanticRequest(request), { code: 'PROVIDER_RESERVATION_DENIED' });

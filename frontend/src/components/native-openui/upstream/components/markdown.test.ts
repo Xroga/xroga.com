@@ -3,11 +3,14 @@ import { test } from 'node:test';
 import { createElement, Fragment } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { publicAnswerText } from '@/lib/publicAnswerText';
+import { parseXrogaOutput } from '@/lib/xrogaBlocks';
+import { enhanceAiResponse } from '@/lib/xrogaResponseDocument';
 import { createParser, type LibraryJSONSchema } from '@openuidev/lang-core';
 import catalog from '../../../../../../backend/src/ai/nativeOpenUiCatalog.json';
-import { bindNativeAnswerText, supplementNativeProse } from '../../../../../../backend/src/ai/nativeOpenUi';
+import { NATIVE_UI_FORMAT, bindNativeAnswerText, materializeNativeAnswerText, supplementNativeProse, validateNativeOpenUi } from '../../../../../../backend/src/ai/nativeOpenUi';
 import { initialNativeValueReader } from '../../../../../../backend/src/ai/nativeOpenUiValues';
-import { inline, MathExpression, MarkdownBlocks, nativeMarkdownMatches, placeNativeSections, preservedMarkdownTableKeys, proseOutsideNativeDocuments, tableContentKey } from './markdown';
+import { inline, MathExpression, MarkdownBlocks, nativeMarkdownMatches, NativeVisualContent, placeNativeSections, preservedMarkdownTableKeys, proseOutsideNativeDocuments, tableContentKey } from './markdown';
+import { SortableTableView, sortAnswerTableRows } from './table-view';
 
 test('saved and streamed answer text hides only the attached presentation delimiter', () => {
   const prose = 'The interest earned is $1,560.80.';
@@ -328,6 +331,37 @@ test('upstream parser resolves the canonical answer and rich table without dupli
   assert.match(fallback, /Read the terms/);
 });
 
+test('reopened long native prose retains a single table in reading order and a single copy source', () => {
+  const details = Array.from({ length: 170 }, (_, index) =>
+    `## Inspection detail ${index + 1}\n\nRecord only observations sufficient to demonstrate that the work complies with the published requirements. Keep independent notes on the changes made to the item.`);
+  const text = ['Start the inspection here.', ...details, '## Availability matrix',
+    '| Tag | Decision |\n| --- | --- |\n| Current | Release equipment |', 'Complete the inspection here.'].join('\n\n');
+  assert.ok(text.length > 25_000);
+  const program = bindNativeAnswerText('root = Col([Markdown(_xroga_answer), Table(["Tag", "Decision"], [["Current", "Release equipment"]])])', text);
+  const enhanced = enhanceAiResponse(text, 'long-native-table', { status: 'complete' }, { format: NATIVE_UI_FORMAT, text: program });
+  const saved = parseXrogaOutput(JSON.parse(JSON.stringify(enhanced.output)));
+  assert.equal(saved?.status, 'completed');
+  assert.equal(saved?.responseSource?.text, program);
+  assert.equal(saved?.sourceText, text);
+  assert.equal(publicAnswerText(saved!.sourceText!), text);
+  assert.equal(validateNativeOpenUi(program, undefined, text).ok, true);
+  const rendered = materializeNativeAnswerText(saved!.responseSource!.text, saved!.sourceText!);
+  const root = createParser(catalog.schema as LibraryJSONSchema, 'Col').parse(rendered).root;
+  const matches = nativeMarkdownMatches(root, initialNativeValueReader(rendered));
+  assert.equal(proseOutsideNativeDocuments(text, matches), '');
+  const placement = placeNativeSections(root!.props.children as unknown[]);
+  assert.equal(placement?.placements.size, 1);
+  const nodes = new Map([...placement!.placements].map(([index, node]) => [index,
+    createElement(SortableTableView, { columns: node.props.columns as string[], rows: node.props.rows as unknown[][], renderText: value => value }),
+  ]));
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, { text, nativeTables: matches.tables,
+    inlineSections: { nodes, replacedBlocks: placement!.replacedBlocks } }));
+  assert.match(html, /Start the inspection here.*Inspection detail 170.*Availability matrix.*<table.*Release equipment.*<\/table>.*Complete the inspection here/);
+  for (const visible of [/<table/g, /Start the inspection here/g, /Complete the inspection here/g, /Release equipment/g]) {
+    assert.equal(html.match(visible)?.length, 1);
+  }
+});
+
 test('restored literal equations remain single when an interactive snapshot is unavailable', () => {
   const text = '## Formula\n\n$$S = a + b$$\n\n## Example\n\n$$S = 3 + 5 = 8$$';
   const before = 'The results were corrected.';
@@ -438,6 +472,41 @@ test('partial answer collapse preserves the cited table and distinct data', () =
   assert.ok(keys.has(tableContentKey(headings, rows)!));
   assert.ok(!keys.has(tableContentKey(headings, [...rows].reverse())!));
   assert.equal(tableContentKey(headings, [[...rows[0].slice(0, 2), { type: 'element' }]]), undefined);
+});
+
+test('a cited Markdown table inherits sorting only from a matching visible native table', () => {
+  const cited = '| Window | Duration [2] |\n| --- | --- |\n| North | 195.0 [1] |\n| East | 50 [1] |\n| West | 230 [1] |\n| South | 0 [1] |';
+  const columns = ['Window', 'Duration'];
+  const rows = [['North', 195], ['East', 50], ['West', 230], ['South', 0]];
+  const table = { type: 'element', typeName: 'Table', props: { columns, rows } };
+  const text = '## Service windows\n\n' + cited + '\n\nCheck local time before scheduling.';
+  const renderCitation = (number: number) => createElement('a', { href: 'https://example.org/source-' + number }, 'Source ' + number);
+  const program = bindNativeAnswerText('root = Col([Markdown(_xroga_answer), Table(' +
+    JSON.stringify(columns) + ', ' + JSON.stringify(rows) + ')])', text);
+  const accepted = validateNativeOpenUi(program, new Set(['source-1', 'source-2']), text);
+  assert.equal(accepted.ok, true, JSON.stringify(accepted));
+  const root = createParser(catalog.schema as LibraryJSONSchema, 'Col').parse(program).root;
+  const matches = nativeMarkdownMatches(root, initialNativeValueReader(program));
+  const html = renderToStaticMarkup(createElement(NativeVisualContent.Provider, { value: matches },
+    createElement(MarkdownBlocks, { text, renderCitation })));
+  assert.equal(html.match(/<table/g)?.length, 1);
+  assert.match(html, /Service windows.*<table.*Check local time/);
+  assert.match(html, /<th[^>]+class="is-numeric"[^>]*>Duration <a href="https:\/\/example.org\/source-2">Source 2<\/a> <button[^>]+aria-label="Sort by Duration">Sort<\/button>/);
+  assert.match(html, /195\.0 <a href="https:\/\/example.org\/source-1">Source 1<\/a>/);
+  assert.doesNotMatch(html, /<button[^>]*>[^<]*<a/);
+  assert.ok(preservedMarkdownTableKeys(text).has(tableContentKey(columns, rows)!));
+  const hidden = { type: 'element', typeName: 'Tabs', props: { children: [table] } };
+  for (const node of [undefined, hidden, { ...table, hasDynamicProps: true }, { ...table, partial: true }]) {
+    const plain = renderToStaticMarkup(createElement(MarkdownBlocks, { text, renderCitation, matches: nativeMarkdownMatches(node) }));
+    assert.doesNotMatch(plain, /<button/);
+    assert.match(plain, /<a href="https:\/\/example.org\/source-1">Source 1<\/a>/);
+  }
+});
+
+test('numeric table sorting ignores citation labels and retains row identity', () => {
+  const rows = [['North', '195.0 [3]'], ['East', '50 [2]'], ['West', '`230` [1]'], ['South', '0 [4]'], ['Unknown', 'n/a [1]']];
+  assert.deepEqual(sortAnswerTableRows(rows, 1, false, true), [3, 1, 0, 2, 4]);
+  assert.deepEqual(sortAnswerTableRows(rows, 1, true, true), [2, 0, 1, 3, 4]);
 });
 
 test('inline answer keeps additional prose and requested code but strips presentation fences', () => {

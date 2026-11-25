@@ -15,6 +15,7 @@ import { MessageShareModal } from './MessageShareModal';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import { serializeAssistantCopy } from '@/lib/assistantCopy';
+import { copyTextToClipboard } from '@/lib/clipboard';
 import { publicAnswerExportText } from '@/lib/publicAnswerText';
 import { NATIVE_SHARE_PREFIX } from '../../../../backend/src/ai/nativeOpenUiShare';
 
@@ -43,18 +44,21 @@ export function MessageBubbleActions({
   const shareResponse = role === 'assistant' ? publicAnswerExportText(content) : content;
 
   async function handleCopy() {
-    try {
-      await navigator.clipboard.writeText(
-        role === 'assistant' ? serializeAssistantCopy(content, {
-          collapseDuplicateTables: richResponse?.startsWith(NATIVE_SHARE_PREFIX),
-        }) : content,
-      );
-      setCopied(true);
-      toast.success('Copied');
-      setTimeout(() => setCopied(false), 1500);
-    } catch {
-      toast.error('Copy failed');
+    const text = role === 'assistant' ? serializeAssistantCopy(content, {
+      collapseDuplicateTables: richResponse?.startsWith(NATIVE_SHARE_PREFIX),
+    }) : content;
+    if (!text) {
+      toast.error('There is no message text to copy.');
+      return;
     }
+    const success = await copyTextToClipboard(text);
+    setCopied(success);
+    if (!success) {
+      toast.error('Could not copy. Select the message text to copy it.');
+      return;
+    }
+    toast.success('Copied');
+    setTimeout(() => setCopied(false), 1500);
   }
 
   function handleLike(v: 'up' | 'down') {

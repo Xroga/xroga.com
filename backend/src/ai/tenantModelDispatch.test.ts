@@ -98,13 +98,16 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
         }
         if (request.includes('Attached document text:')) assert.match(request, /ticket,attendees\n25,40/);
       }
+      if (mode === 'plain-legacy') {
+        assert.equal(body.response_format, undefined, 'A broken optional outline cannot impose a response schema');
+      }
       if(mode==='missingUsage')return Response.json({model:body.model,choices:[{message:{content:'must remain unpublished'},finish_reason:'stop'}]},
         {headers:{'x-request-id':'synthetic-unknown-usage','x-zurelay-model':body.model}});
       if(mode==='wrongModel')return Response.json({model:'unapproved-model',usage:{prompt_tokens:2,completion_tokens:2,total_tokens:4},choices:[]},
         {headers:{'x-request-id':'synthetic-wrong-model','x-zurelay-model':body.model}});
       if(mode==='droppedStream')return new Response('data: '+JSON.stringify({model:body.model,choices:[{delta:{content:'unconfirmed bytes'},finish_reason:null}]})+'\n\n',
         {headers:{'content-type':'text/event-stream','x-request-id':'synthetic-drop','x-zurelay-model':body.model}});
-      if(body.stream)return new Response('data: '+JSON.stringify({id:'synthetic-provider-receipt',choices:[{delta:{content:['presentation','native','native-plain','native-document'].includes(mode)?receivedAnswer:'owned result'},finish_reason:'stop'}],model:'deepseek-v4.1-flash-1017',usage:{prompt_tokens:2,completion_tokens:2,total_tokens:4}})+'\n\ndata: [DONE]\n\n',{headers:{'content-type':'text/event-stream','x-request-id':'synthetic-provider-receipt','x-zurelay-model':'deepseek-v4.1-flash-1017'}});
+      if(body.stream)return new Response('data: '+JSON.stringify({id:'synthetic-provider-receipt',choices:[{delta:{content:['presentation','native','native-plain','native-document','plain-legacy'].includes(mode)?receivedAnswer:'owned result'},finish_reason:'stop'}],model:'deepseek-v4.1-flash-1017',usage:{prompt_tokens:2,completion_tokens:2,total_tokens:4}})+'\n\ndata: [DONE]\n\n',{headers:{'content-type':'text/event-stream','x-request-id':'synthetic-provider-receipt','x-zurelay-model':'deepseek-v4.1-flash-1017'}});
       return Response.json({id:'synthetic-provider-receipt',choices:[{message:{content:'{"stack":"static","files":[],"notes":[]}'},finish_reason:'stop'}],model:'deepseek-v4.1-flash-1017',usage:{prompt_tokens:2,completion_tokens:2,total_tokens:4}},{headers:{'x-request-id':'synthetic-provider-receipt','x-zurelay-model':'deepseek-v4.1-flash-1017'}});
     }
     assert.equal(url.origin,env.SUPABASE_URL,'Unexpected transport is never allowed');
@@ -329,6 +332,23 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
   assert.equal(atomicReceipts,receiptsCoverage+1);
   assert.equal(incomplete.responseSource?.text,receivedAnswer);assert.equal(incomplete.responseSource?.contract?.coverage.complete,false);
   assert.match(incomplete.response,/Keep `tenant_id` unchanged/);
+  reset('plain-legacy');resetModelRuntimeHealth();
+  const optionalOutline = goalContractSchema.parse({
+    ...semantic, presentation: [{ kind: 'prose', heading: 'Growth', instruction: 'Explain the result.' }],
+    answerObligations: undefined, presentationIssue: 'invalid',
+  });
+  const optionalPrompt = 'A business generated $12,500 last month and $15,000 this month. Calculate the growth percentage and explain the calculation briefly.';
+  const optionalAnswer = 'Revenue grew 20%, because $2,500 ÷ $12,500 = 0.20.';
+  receivedAnswer = optionalAnswer;
+  const beforeOptional: number = effects;
+  let optionalVisible = '';
+  const optional = await runChatPipeline({ userId: owner, tenantContext: context, modelScope: scope,
+    prompt: optionalPrompt, goalContract: optionalOutline, onDelta: text => { optionalVisible += text; } });
+  assert.equal(effects, beforeOptional + 1);
+  assert.deepEqual(optional.completion, { status: 'complete' });
+  assert.equal(optional.responseSource, undefined);
+  assert.equal(optional.response, optionalAnswer);
+  assert.equal(optionalVisible, optionalAnswer);
   reset('mutatedSchema');resetModelRuntimeHealth();
   const beforeSchemaDrift:number=effects;
   await assert.rejects(runChatPipeline({userId:owner,tenantContext:context,modelScope:scope,prompt:'Explain the supplied system.',goalContract:semantic}),
@@ -361,6 +381,25 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
     assert.deepEqual(result.completion,kind==='invalid-source'?{status:'partial',reason:'presentation_contract'}:{status:'complete'});
     if(kind==='file')assert.equal(result.intent,'file_analysis');
     else assert.deepEqual(result.webSources,[evidence]);
+  }
+  const citedTable = 'The workshop listing reports this price.\n\n| Event | Price |\n| --- | --- |\n| Workshop | $25 [1] |';
+  for (const [request, program, expected] of [
+    ['Present a comparison table.', '', { status: 'complete' }],
+    ['Present a sortable table.', '', { status: 'partial', reason: 'presentation_contract' }],
+    ['Present a sortable table.', '\n<<<XROGA_OPENUI_V1>>>\nroot = Col([Table(["Event", "Price"], [["Workshop", "$25 [1]"]])])',
+      { status: 'complete' }],
+  ] as const) {
+    reset('native');
+    resetModelRuntimeHealth();
+    receivedAnswer = citedTable + program;
+    const before: number = effects;
+    const answer = await runChatPipeline({ userId: owner, tenantContext: context, modelScope: scope,
+      prompt: request, approvedResearch: research });
+    assert.deepEqual(answer.completion, expected, request);
+    assert.equal(effects, before + 1, 'A missing control must not trigger another synthesis request');
+    assert.deepEqual(answer.webSources, [evidence]);
+    assert.match(answer.response, /\| Workshop \| \$25 \[1\] \|/);
+    assert.equal(answer.responseSource?.text, program.split('\n').at(-1));
   }
   reset('native');resetModelRuntimeHealth();
   receivedAnswer='Record the custodian and arrival time.\n\nIf the archive seal is broken, release the item.';

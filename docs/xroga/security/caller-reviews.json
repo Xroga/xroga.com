@@ -1121,9 +1121,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "b598c509dacca47546033b195b3d7618cde4bc634f60aa88106c07797c968cd5",
+      "sourceSha256": "0e677977a9694594593757dbe07d775d8758f2086712db66a84b04afb536603e",
       "callIds": [
-        "d231c120d15cdb303798"
+        "495ab85f04a68bc33426"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2711,9 +2711,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "b598c509dacca47546033b195b3d7618cde4bc634f60aa88106c07797c968cd5",
+      "sourceSha256": "0e677977a9694594593757dbe07d775d8758f2086712db66a84b04afb536603e",
       "callIds": [
-        "a89bee68ee14df41ddd5"
+        "7706648756b244b0e84c"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -29503,6 +29503,26 @@
         {
           "path": "backend/src/routes/browserDocuments.ts",
           "marker": "workbook.xlsx.load(Uint8Array.from(data).buffer)"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/lib/clipboard.ts",
+      "sourceSha256": "ea08eff8a91e3336f46bc92a58eedd114859e9cc65d99052b848ef275b26bc17",
+      "callIds": [
+        "e4cf22a404b1ba954649"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "The built-in Array.from call copies in-memory browser DOM Range objects for local selection restoration. Its receiver has no persistence or privilege interface.",
+      "reason": "The scanner includes every from method. This exact call clones the current document selection and the local clipboard fallback restores those ranges after copying.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/clipboard.ts",
+          "marker": "Array.from({ length: selection.rangeCount }, (_, i) => selection.getRangeAt(i).cloneRange())"
+        },
+        {
+          "path": "frontend/src/lib/clipboard.test.ts",
+          "marker": "missing or rejected Async Clipboard API falls back and restores focus and selection"
         }
       ]
     }

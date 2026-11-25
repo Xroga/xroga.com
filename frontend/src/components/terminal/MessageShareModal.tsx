@@ -14,6 +14,7 @@ import {
   type MessageShareVisibility,
 } from '@/lib/messageShare';
 import { cn } from '@/lib/utils';
+import { copyTextToClipboard } from '@/lib/clipboard';
 import { ShareIcon } from '@/components/icons/animated/ShareIcon';
 import { GlobeLockIcon } from '@/components/icons/animated/GlobeLockIcon';
 import { EarthIcon } from '@/components/icons/animated/EarthIcon';
@@ -126,8 +127,12 @@ export function MessageShareModal({ open, onClose, prompt = '', response, conten
   }
 
   async function copyLink() {
-    await navigator.clipboard.writeText(url);
-    setCopied(true);
+    const success = Boolean(url) && await copyTextToClipboard(url);
+    setCopied(success);
+    if (!success) {
+      toast.error('Could not copy. Select the displayed link to copy it.');
+      return;
+    }
     toast.success('Link copied');
     window.setTimeout(() => setCopied(false), 1400);
   }
@@ -212,7 +217,7 @@ export function MessageShareModal({ open, onClose, prompt = '', response, conten
           ) : (
             <div className="space-y-2.5">
               <div className="flex items-center gap-1.5 rounded-xl bg-[var(--surface-inset)] p-1.5">
-                <span className="min-w-0 flex-1 truncate px-2 text-[11px] text-[var(--text-secondary)]">{url}</span>
+                <span className="min-w-0 flex-1 select-all truncate px-2 text-[11px] text-[var(--text-secondary)]">{url}</span>
                 <button type="button" onClick={() => void copyLink()} className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[var(--surface-raised)] text-[var(--text-primary)]" aria-label="Copy share link">{copied ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}</button>
               </div>
               {created.visibility === 'private' ? (

@@ -1,5 +1,7 @@
 /** System prompts for Converter → Builder (no template catalogs). */
 
+import { requestsUnadornedAnswer, unadornedAnswerInstruction } from './answerFormat.js';
+
 export const CONVERTER_SYSTEM = `You are a prompt engineer for a senior full-stack developer AI.
 Convert ANY user request into one detailed, professional instruction.
 
@@ -263,6 +265,7 @@ Adapt to the requested outcome instead of forcing every request into coding.
 Never imply an external action happened unless the runtime supplied verification evidence.
 Describe Xroga capabilities in clear user language. Never expose internal capability IDs, authority IDs, provider routes, model names, tool-call IDs, runtime-session IDs, raw tool arguments, or hidden planning data.
 Be direct. Prefer concrete next steps over fluff.
+Honor requested length and format, including answer-only, code-only, and fixed counts. A direct result needs no title or framing. For a one-time calculation or conversion, give the result with only the working the user needs. Add a table for a real comparison or a calculator when changing inputs is useful.
 
 ${SAFE_RICH_OUTPUT_GUIDE}`;
 
@@ -281,7 +284,8 @@ export function chatPresentationSystem(request: string): string {
     seen.add(example.type);
     return true;
   });
-  return `${lines.join('\n')}
+  const formatInstruction = requestsUnadornedAnswer(request) ? '\n' + unadornedAnswerInstruction : '';
+  return `${lines.join('\n')}${formatInstruction}
 Before finishing this same answer, check that every explicitly requested visual is present at its reading position as a valid xroga-ui block. For a conceptual diagram, use the relationships described in your explanation, unique node IDs and edges whose source and target exist. Do not substitute ASCII, an empty heading or a promise. If the information is insufficient, explain that limitation instead of inventing connections.
 Calculators may include optional derivedResults: each has id, label, operation, operands (original input IDs, "$result", or finite constants), optional rounding (floor/ceil/round), unit and precision. Supported operations are sum, difference, product, quotient, average, percentage (first operand times second divided by 100), percentage-change, loan-payment, compound-growth, minimum and maximum. Derived results cannot reference each other. State each result's formula, units and assumptions. Never emit executable formula code. A calculator applies exactly ONE operation to its inputs: sum, difference, product, average, minimum and maximum accept any number of inputs, while quotient, percentage and percentage-change need exactly two. loan-payment takes exactly three inputs in this order: loan amount, annual interest rate in percent, term in years, and returns the monthly payment (standard amortization); compound-growth takes exactly three inputs in this order: starting amount, annual growth rate in percent, number of years, and returns the final amount with yearly compounding. Use these two for mortgages, loans, savings and investment growth instead of approximating them. A formula with several steps is not one operation, so put the earlier steps in as inputs that hold their computed values and apply one operation (for shares = (account x risk%) / (entry - stop), use inputs riskBudget = 100 and riskPerShare = 5 with operation quotient to get 20). If a formula cannot be expressed this way, explain it in text instead of emitting an invalid calculator.
 All example values are schema illustrations, not facts to reuse. Do not claim execution, source verification or secure implementation without evidence. Keep the substantive explanation complete and do not repeat it in each visual. No separate formatting request is needed.

@@ -6,7 +6,7 @@ import { Renderer } from '@openuidev/react-lang';
 import { useMemo, useState } from 'react';
 import { library } from './library';
 import { EvidenceContext, evidenceCitation, type AnswerSource, type RenderEvidenceCitation } from './evidence';
-import { MAX_PROGRAM_CHARS, PARTIAL_NATIVE_PRESENTATION_NOTE, validateNativeOpenUi } from '../../../../backend/src/ai/nativeOpenUi';
+import { MAX_PROGRAM_CHARS, PARTIAL_NATIVE_PRESENTATION_NOTE, materializeNativeAnswerText, validateNativeOpenUi } from '../../../../backend/src/ai/nativeOpenUi';
 import { initialNativeValueReader } from '../../../../backend/src/ai/nativeOpenUiValues';
 import { MarkdownBlocks, nativeMarkdownMatches, NativeVisualContent, preservedMarkdownTableKeys, proseOutsideNativeDocuments, VisibleMarkdownTables } from './upstream/components/markdown';
 import './upstream/components/theme.css';
@@ -47,9 +47,10 @@ export function NativeSurface({ answer, sources, isStreaming = false }: {
     return '';
   }, [answer.library, answer.program, answer.text, verified, isStreaming]);
   const recovered = answer.text.startsWith(PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n');
-  const matches = useMemo(() => accepted && !isStreaming
-    ? nativeMarkdownMatches(parser.parse(accepted).root, initialNativeValueReader(accepted))
-    : undefined, [accepted, isStreaming]);
+  const renderedProgram = useMemo(() => materializeNativeAnswerText(accepted, answer.text), [accepted, answer.text]);
+  const matches = useMemo(() => renderedProgram && !isStreaming
+    ? nativeMarkdownMatches(parser.parse(renderedProgram).root, initialNativeValueReader(renderedProgram))
+    : undefined, [renderedProgram, isStreaming]);
   const visibleTables = useMemo(() => preservedMarkdownTableKeys(answer.text), [answer.text]);
   const renderCitation: RenderEvidenceCitation = (number, href, cluster) => evidenceCitation(verified, number, href, cluster);
   // Keep the model's short introduction before its native answer. Additional
@@ -74,7 +75,7 @@ export function NativeSurface({ answer, sources, isStreaming = false }: {
             {!recovered && summary && <div className="iui-markdown native-answer-summary" dir="auto"><MarkdownBlocks text={summary} matches={matches} renderCitation={renderCitation} /></div>}
             <VisibleMarkdownTables.Provider value={visibleTables}>
               <NativeVisualContent.Provider value={matches}>
-              <Renderer response={accepted} isStreaming={isStreaming} library={library} publishObservability={false}
+              <Renderer response={renderedProgram} isStreaming={isStreaming} library={library} publishObservability={false}
                 onError={errors => { if (errors.some(error => error.severity !== 'warning')) setFailedProgram(accepted); }} />
               </NativeVisualContent.Provider>
             </VisibleMarkdownTables.Provider>

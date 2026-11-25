@@ -10,7 +10,12 @@ import { tsImport } from 'tsx/esm/api';
 import JSZip from 'jszip';
 import { PDFDocument } from 'pdf-lib';
 
+const citedServiceWindows = '| Window | Duration (min) [2] |\n| --- | --- |\n| North | 195.0 [1] |\n| East | 50 [1] |\n| West | 230 [1] |\n| South | 0 [1] |';
 const cases = {
+  citedSortableTable: {
+    text: citedServiceWindows,
+    program: 'root = Col([Markdown(' + JSON.stringify(citedServiceWindows) + '), Table(["Window", "Duration (min)"], [["North", 195], ["East", 50], ["West", 230], ["South", 0]])])',
+  },
   openingTitle: {
     raw: '**Sortable table — time by color**\n\nThree recorded times in seconds.\n\n| Color | Time (s) |\n| --- | --- |\n| Green | 1.15 |\n| Red | 9.2 |\n| Blue | 12.8 |\n<<<XROGA_OPENUI_V1>>>\nroot = Col([Title("Sortable table: time by color", "lg"), Markdown(_xroga_answer), Table(["Color", "Time (s)"], [["Green",1.15],["Red",9.2],["Blue",12.8]])])',
     completion: 'complete',
@@ -507,6 +512,23 @@ try {
       await page.getByRole('cell', { name: 'Meets every requirement', exact: true }).waitFor();
       assert.equal(await page.getByRole('table').count(), 1);
       assert.equal(await page.getByText('Birch has no spare seats.', { exact: true }).count(), 1);
+      await open('citedSortableTable');
+      const citedTable = page.getByRole('table');
+      const sortDuration = citedTable.getByRole('button', { name: 'Sort by Duration (min)' });
+      const citedRowNames = () => citedTable.locator('tbody tr td:first-child').allTextContents();
+      assert.deepEqual(await citedRowNames(), ['North', 'East', 'West', 'South']);
+      const reference = citedTable.getByRole('columnheader', { name: /Duration/ }).getByRole('link');
+      assert.equal(await reference.getAttribute('href'), 'https://www.w3.org/TR/');
+      assert.equal(await sortDuration.getByRole('link').count(), 0);
+      await sortDuration.press('Enter');
+      assert.deepEqual(await citedRowNames(), ['South', 'East', 'North', 'West']);
+      assert.equal(await citedTable.getByRole('columnheader', { name: /Duration/ }).getAttribute('aria-sort'), 'ascending');
+      await sortDuration.press('Enter');
+      assert.deepEqual(await citedRowNames(), ['West', 'North', 'East', 'South']);
+      assert.equal(await citedTable.getByRole('columnheader', { name: /Duration/ }).getAttribute('aria-sort'), 'descending');
+      const north = citedTable.getByRole('row', { name: /North/ });
+      assert.match(await north.textContent(), /195\.0/);
+      assert.equal(await north.getByRole('link').getAttribute('href'), 'https://www.postgresql.org/docs/current/ddl-rowsecurity.html');
       await open('compactEditableEstimate');
       const fields = page.getByRole('group', { name: 'Paint job inputs', exact: true });
       const initial = page.locator('.native-answer-metric-value').first();
