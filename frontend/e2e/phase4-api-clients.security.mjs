@@ -10,6 +10,7 @@ const require=createRequire(new URL('../../package.json',import.meta.url)),ts=re
 // Audio normalization has its own tests, this fixture verifies transport only.
 function loadClients(origin){
   const cache=new Map(),session={access_token:'synthetic-browser-access',expires_at:Math.floor(Date.now()/1000)+3600};
+  const modules=new Map([['@/lib/api','api'],['@/lib/builderApi','builderApi'],['@/lib/chatHistory','chatHistory'],['./voiceRequestPolicy','voiceRequestPolicy']]);
   const stubs={
     'clsx':{clsx:(...a)=>a.join(' ')},'tailwind-merge':{twMerge:a=>a},
     '@/lib/supabase/client':{createClient:()=>({auth:{getSession:async()=>({data:{session}}),onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}})}})},
@@ -25,7 +26,11 @@ function loadClients(origin){
     const path=new URL('../src/lib/'+name+'.ts',import.meta.url),source=readFileSync(path,'utf8');
     const text=ts.transpileModule(source+(name==='api'?'\nexport {waitForPersistedSwarmRun};':''),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
     const exports={};cache.set(name,exports);
-    const context={exports,require:id=>id==='@/lib/api'?load('api'):id==='@/lib/builderApi'?load('builderApi'):id==='./voiceRequestPolicy'?load('voiceRequestPolicy'):(stubs[id]??(()=>{throw Error('Unexpected fixture dependency '+id);})()),
+    const context={exports,require:id=>{
+      if(modules.has(id))return load(modules.get(id));
+      if(Object.hasOwn(stubs,id))return stubs[id];
+      throw Error('Unexpected fixture dependency '+id);
+    },
       process:{env:{NEXT_PUBLIC_API_URL:origin,NODE_ENV:'test'}},fetch,URL,URLSearchParams,Headers,Response,Request,Blob,AbortSignal,AbortController,DOMException,TextDecoder,TextEncoder,crypto:globalThis.crypto,console,
       setTimeout:(fn,ms)=>setTimeout(fn,Math.min(ms,5)),clearTimeout,
       window:{setTimeout:fn=>fn(),dispatchEvent(){}},CustomEvent:class{},
@@ -43,6 +48,9 @@ test('each first-party client refuses API redirects without forwarding private r
     const {load}=loadClients(`http://127.0.0.1:${api.address().port}`),core=load('api');
     const cases=[['canonical API',()=>core.apiFetch('/api/fixture',{method:'POST',body:'private fixture'},'synthetic-browser-access')],
       ['stream submission',()=>core.streamSwarmExecute('private fixture',{accessToken:'synthetic-browser-access'})],
+      ['Workspace planning',()=>core.api.phase1.plan('private fixture',[])],
+      ['Workspace chat',()=>core.api.phase1.chat('private fixture',[])],
+      ['Workspace progress chat',()=>core.phase1ChatWithProgress({message:'private fixture',history:[]})],
       ['community',()=>load('community').communityApi.createPost({category:'feedback',title:'private fixture',body:'private body'})],
       ['runtime',()=>load('projectRuntimeApi').projectRuntimeApi.restart('owned-project')],
       ['Builder create',()=>load('builderApi').builderApi.create({prompt:'private fixture',requestKey:'fixture-request-key'})],
