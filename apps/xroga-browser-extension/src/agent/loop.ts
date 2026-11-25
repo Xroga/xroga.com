@@ -43,6 +43,8 @@ import { contextThreshold, elisionChunk, hardLimit, planElision } from './elisio
 import { runCompaction, runShorten } from './compaction';
 import { attachmentBytes, attachmentParts, readAttachment } from './attachments';
 import { describeOcr, OCR_LANGUAGES, OCR_TOOL } from './ocr-format';
+import { describePdf, parsePages, pdfAddressIn } from './pdf-format';
+import { describeScreen, parseScreen, PARSE_SCREEN_TOOL, type MarkBox } from './screen-parse';
 import { checkUserSkill, describeUserSkill, listUserSkills, matchUserSkills, renderUserSkill, saveUserSkill } from './user-skills';
 import { describeImageHits, FIND_IMAGE_TOOL, findTemplate } from './template-match';
 import { decodeImage, describeHits, diffPictures, FIND_COLOR_TOOL, scanColor, viewOfChange } from './pixels';
@@ -975,6 +977,13 @@ ${ledger}` : ''),
         }
       }
     }
+    // A tab that shows a PDF has an empty outline (the viewer is a plugin): say once per file that read_pdf reads it.
+    const shown = observation ?? outcome.text;
+    const pdfAt = typeof shown === 'string' ? pdfAddressIn(shown) : undefined;
+    if (pdfAt && !this.#pdfHinted.has(pdfAt)) {
+      this.#pdfHinted.add(pdfAt);
+      notes.push(note('This tab shows a PDF, so its text is not in the outline. read_pdf reads it on this device (pages, find; pages that are only pictures are read with text recognition).'));
+    }
     // A page whose outline is a canvas and very little else paints its own interface: offer the pixel search and say how to see it.
     if (this.#offerCanvasTools(observation ?? outcome.text)) {
       notes.push(note(this.options.model.profile.vision
@@ -1278,7 +1287,15 @@ ${ledger}` : ''),
       this.#taskJudged = true;
       const branch = (await activeBranch(this.options.conversationId)).filter((e): e is EntryOf<'message'> => e.type === 'message');
       const task = branch.find(e => e.message.role === 'user' && !e.appOwned)?.message.parts.map(p => (p.type === 'text' ? p.text : '')).join('\n') ?? '';
-      const verdict = task ? await this.#time('tool.judge' as never, () => judgeTask(this.options.model, task, summary, branch, this.options.signal)) : null;
+      // A model that can see is also given the page as the run left it, so what only shows as a picture (a chart, a canvas, a value in an image) can be confirmed.
+      let picture: { data: string; mediaType: string } | undefined;
+      if (this.options.model.profile.vision) {
+        const tabId = this.#activeTab;
+        const shot = await this.options.layer.call('screenshot', typeof tabId === 'number' ? { tabId } : {}, this.options.signal).catch(() => undefined);
+        const d = shot?.ok ? (shot.data as { base64?: string; mimeType?: string } | undefined) : undefined;
+        if (d?.base64) picture = { data: d.base64, mediaType: d.mimeType ?? 'image/png' };
+      }
+      const verdict = task ? await this.#time('tool.judge' as never, () => judgeTask(this.options.model, task, summary, branch, this.options.signal, picture)) : null;
       if (verdict && !verdict.complete) {
         return {
           call, kind, isError: true,
@@ -2113,10 +2130,11 @@ Routine "${name}" did not run through: the site may have changed. Take a snapsho
   #scriptGateShown = false;
   #canvasOffered = false;
   /** Offers `find_color` once, when an observation shows a canvas with little else. Returns true the first time. */
+  #pdfHinted = new Set<string>();
   #offerCanvasTools(text: string | undefined): boolean {
     if (this.#canvasOffered || !text || !/\bcanvas\b/i.test(text) || text.split('\n').length > 40) return false;
     this.#canvasOffered = true;
-    this.#registerTools([FIND_COLOR_TOOL, OCR_TOOL, FIND_IMAGE_TOOL]);
+    this.#registerTools([FIND_COLOR_TOOL, OCR_TOOL, FIND_IMAGE_TOOL, PARSE_SCREEN_TOOL]);
     return true;
   }
 
@@ -2558,6 +2576,54 @@ ${renderSkill(top)}`);
           outcome = { call, kind, text: describeImageHits(findTemplate(page, template, { threshold }), threshold), isError: false };
         } catch (error) {
           outcome = { call, kind, text: 'error: the pictures could not be decoded here: ' + (error instanceof Error ? error.message : String(error)), isError: true };
+        }
+      }
+    } else if (call.toolName === 'parse_screen') {
+      // OmniParser's pipeline on Xroga's own parts: numbered regions drawn on the picture, the words of the picture read on the device, and each line given to the region that holds it.
+      const tabId = typeof args.tabId === 'number' ? args.tabId : this.#activeTab;
+      const region = Array.isArray(args.region) && args.region.length === 4 && args.region.every(n => typeof n === 'number') ? (args.region as [number, number, number, number]) : undefined;
+      const common = { ...(typeof tabId === 'number' ? { tabId } : {}), ...(region ? { region } : {}) };
+      const failed = (error: unknown) => ({ ok: false as const, text: error instanceof Error ? error.message : String(error), data: undefined });
+      const marked = await this.options.layer.call('screenshot', { ...common, marks: true }, signal).catch(failed);
+      const plain = marked.ok ? await this.options.layer.call('screenshot', common, signal).catch(failed) : marked;
+      type Shot = { base64?: string; mimeType?: string; width?: number; height?: number; marks?: MarkBox[] };
+      const m = marked.ok ? (marked.data as Shot | undefined) : undefined;
+      const p = plain.ok ? (plain.data as Shot | undefined) : undefined;
+      if (!m?.base64 || !p?.base64 || !p.width || !p.height) {
+        outcome = { call, kind, text: 'error: parse_screen could not capture the page (' + String(marked.text ?? plain.text ?? 'no image').slice(0, 200) + '). Nothing was parsed.', isError: true };
+      } else {
+        try {
+          const { recognizeImage } = await import('@src/extension/ocr');
+          const read = await recognizeImage(p.base64, p.mimeType ?? 'image/png', OCR_LANGUAGES[String(args.language ?? 'english')] ?? 'eng');
+          const entries = parseScreen(m.marks ?? [], read.lines, { width: p.width, height: p.height }, region);
+          outcome = {
+            call, kind, isError: false,
+            text: this.options.layer.wrap(describeScreen(entries), { site: 'a picture of the page' }),
+            ...(this.options.model.profile.vision ? { image: { data: m.base64, mediaType: m.mimeType ?? 'image/png', note: PAGE_IMAGE_LINE } } : {}),
+          };
+        } catch (error) {
+          outcome = { call, kind, text: 'error: parse_screen could not read the words (' + (error instanceof Error ? error.message : String(error)).slice(0, 200) + '). Use screenshot with marks instead.', isError: true };
+        }
+      }
+    } else if (call.toolName === 'read_pdf') {
+      let address = typeof args.url === 'string' ? args.url : '';
+      if (!address) {
+        try {
+          const tabs = await this.options.layer.tabs();
+          address = tabs?.tabs.find(t => t.tabId === (typeof args.tabId === 'number' ? args.tabId : (this.#boundTab ?? tabs.activeTabId)))?.url ?? '';
+        } catch { /* no page */ }
+      }
+      if (!/^https?:\/\//i.test(address)) {
+        outcome = { call, kind, text: 'error: read_pdf needs the address of a PDF on the web (https or http): open the PDF in a tab, or give its url. A PDF on this computer cannot be read this way.', isError: true };
+      } else {
+        try {
+          const { readPdfFile } = await import('@src/extension/pdf');
+          const result = await readPdfFile(address, { pages: typeof args.pages === 'string' ? args.pages : undefined, picture: args.ocr === true, lang: OCR_LANGUAGES[String(args.language ?? 'english')] ?? 'eng' });
+          let host = 'a PDF';
+          try { host = new URL(address).hostname; } catch { /* keep */ }
+          outcome = { call, kind, text: this.options.layer.wrap(describePdf(result, { find: typeof args.find === 'string' ? args.find : undefined, requested: parsePages(typeof args.pages === 'string' ? args.pages : undefined, result.pageCount) }), { site: host }), isError: false };
+        } catch (error) {
+          outcome = { call, kind, text: 'error: the PDF could not be read (' + (error instanceof Error ? error.message : String(error)).slice(0, 200) + '). If it needs a sign-in the person has not done in this browser, or is not a PDF, read the page another way.', isError: true };
         }
       }
     } else if (call.toolName === 'ocr') {

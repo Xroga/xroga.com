@@ -1,4 +1,4 @@
-// `ocr`: the words in a picture of the page, with where they are. The model route reads text, not pixels, so text inside an image, a canvas, a WebGL editor, a chart,
+// `ocr`: the words in a picture of the page, with where they are. A model that sees a picture still guesses at small or dense text, and a model that does not see reads none: text inside an image, a canvas, a WebGL editor, a chart,
 // a scanned page or a video frame has no element and no painted-text record; recognising it on the device gives it exact words and positions, as fractions of the
 // picture that `canvas at` accepts. Idea: the OCR search and extract commands of Ui.Vision RPA (AGPL, idea only) and the text boxes of OmniParser (MIT); written fresh, engine vendored.
 import type { AgentTool } from './tools';

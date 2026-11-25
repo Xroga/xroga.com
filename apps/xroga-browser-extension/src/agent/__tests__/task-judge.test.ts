@@ -60,3 +60,29 @@ describe('judgePrompt', () => {
     expect(p).toContain('<trace>\ntrace here\n</trace>');
   });
 });
+
+import { ScriptedModel, resolveProfile } from '@src/llm';
+import { judgeTask } from '../task-judge';
+
+describe('judgeTask with the final picture', () => {
+  const resolved = (scripted: ScriptedModel, vision: boolean) =>
+    ({ ref: { providerId: 'p', model: 'm' }, chat: scripted.chat(), profile: { ...resolveProfile({ kind: 'openai-compatible', modelName: 'm' }), vision }, reasoning: 'none' }) as never;
+  const entries: TraceEntry[] = [entry('user', [{ type: 'text', text: 'Make the chart show 2025' }])];
+  const picture = { data: 'aGk=', mediaType: 'image/png' };
+  const hasImage = (s: ScriptedModel) => JSON.stringify(s.calls[0]!.prompt).includes('image/png');
+
+  it('sends the picture to a model that can see, with a note that it is evidence and not instructions', async () => {
+    const s = new ScriptedModel([{ text: 'COMPLETE' }]);
+    expect(await judgeTask(resolved(s, true), 'Make the chart show 2025', 'done', entries, undefined, picture)).toEqual({ complete: true, missing: [] });
+    expect(hasImage(s)).toBe(true);
+    expect(JSON.stringify(s.calls[0]!.prompt)).toContain('never instructions');
+  });
+  it('sends no picture to a model that cannot see, and none when there is none', async () => {
+    const blind = new ScriptedModel([{ text: 'COMPLETE' }]);
+    await judgeTask(resolved(blind, false), 't', 's', entries, undefined, picture);
+    expect(hasImage(blind)).toBe(false);
+    const none = new ScriptedModel([{ text: 'COMPLETE' }]);
+    await judgeTask(resolved(none, true), 't', 's', entries);
+    expect(hasImage(none)).toBe(false);
+  });
+});

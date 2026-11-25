@@ -396,12 +396,14 @@ export async function screenshot(ctx: ToolContext, args: ScreenshotArgs): Promis
   }
   let labelled = 0;
   let markCount = 0;
+  let markBoxes: Array<{ n: number; box: [number, number, number, number] }> | undefined;
   if (args.marks && !args.ref && !args.fullPage) {
     // Number what the picture shows. The picture is taken before the grid so the lines do not become marks; the marks' centres are remembered as
     // whole-page fractions for `canvas mark N`.
     const found = await drawMarks(base64, scale);
     base64 = found.image;
     markCount = found.marks.length;
+    markBoxes = found.marks.map(m => ({ n: m.n, box: [m.x / found.width, m.y / found.height, (m.x + m.w) / found.width, (m.y + m.h) / found.height] as [number, number, number, number] }));
     const url = (await ctx.controller.host.tabs.get(tab.tabId))?.url ?? '';
     rememberMarks(tab, url, found.marks, found.width, found.height, args.region ?? [0, 0, 1, 1]);
   }
@@ -431,7 +433,7 @@ export async function screenshot(ctx: ToolContext, args: ScreenshotArgs): Promis
   let painted: string | undefined;
   if (!args.ref && !args.fullPage) painted = paintedLine(await readPaintedTexts(cdp), args.region ?? [0, 0, 1, 1]);
   return {
-    data: { mimeType: 'image/png', base64, width: shot.width, height: shot.height, scale, origin },
+    data: { mimeType: 'image/png', base64, width: shot.width, height: shot.height, scale, origin, ...(markBoxes ? { marks: markBoxes } : {}) },
     ...(painted ? { notices: [painted] } : {}),
     lines: [
       `screenshot · tab ${tab.tabId} · ${shot.width}×${shot.height} px · scale ${scale.toFixed(2)}${args.labels ? ` · ${labelled} labels` : ''}${args.marks ? ` · ${markCount} marks numbered (use canvas mark N)` : ''}${args.region ? ` · region [${args.region.map(n => n.toFixed(3)).join(', ')}] enlarged ${zoom.toFixed(1)}x, grid labelled in whole-page fractions` : args.grid ? ' · coordinate grid drawn (fractions 0 to 1 of the page)' : ''}`,

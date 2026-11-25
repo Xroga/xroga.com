@@ -1,5 +1,5 @@
 // `find_color`: a deterministic pixel search for pages that paint their interface on a canvas (vector, video and design editors).
-// The model route reads text, not pixels, so a painted palette swatch or a coloured object has no element to select. This tool takes a
+// A model reading a picture estimates colours and positions only roughly, and one that does not see reads none, so a painted palette swatch or a coloured object has no element to select. This tool takes a
 // screenshot through the layer and reports where a colour appears, as fractions of the page image, which `click` and `drag` accept as
 // `at` points on a canvas. It is not a second model: it compares pixel values, and it says so when nothing matches.
 import type { AgentTool } from './tools';

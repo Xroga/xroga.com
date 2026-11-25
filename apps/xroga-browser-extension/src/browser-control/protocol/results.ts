@@ -108,6 +108,8 @@ export interface ScreenshotData {
   origin: { x: number; y: number };
   /** With ifChanged: the picture is the same as the last one, and no image is returned (base64 is empty). */
   unchanged?: boolean;
+  /** With marks: each numbered region as [x0, y0, x1, y1] fractions of the picture. */
+  marks?: Array<{ n: number; box: [number, number, number, number] }>;
 }
 
 export interface TabInfo {

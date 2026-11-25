@@ -652,7 +652,7 @@
       "pushed_at": "2026-11-14T22:53:50Z",
       "language": "Jupyter Notebook",
       "stars": 25629,
-      "inspected_level": "source read whole (util, omnitool, eval, docs)",
+      "inspected_level": "util, omnitool agent and orchestrator, computer tool, server, eval read (second pass)",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
       "xroga_file_paths": [],
@@ -660,7 +660,7 @@
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Box-overlap removal (IoU and containment) is already how set-of-marks merges duplicates (core/tools/marks.ts). The icon detector needs a model download and a captioning model; not built. Possible later: icon_detect_v3 through onnxruntime-web in place of the edge heuristic.",
+      "adoption_or_rejection_reason": "No code taken. Overlap removal (IoU, containment) is how set-of-marks already merges duplicates; its text-box-first idea became on-device ocr (10 languages) and find_image. Its progress ledger and loop question are covered by Xroga progress-tracker and coach. The icon detector and captioner need a model download and are not built (decision recorded in BATCH-03).",
       "classification": "REJECT",
       "rights_note": "repo LICENSE is CC-BY-4.0; icon_detect_v3 weights are MIT (YOLOv9), older Ultralytics detectors AGPL; no code taken"
     },
@@ -690,7 +690,7 @@
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Vision-model coordinate format and smart_resize: Xroga uses a text model with refs and marks; screenshot size is already capped (1800 px). Action space (click, double, right, drag, hotkey, type, scroll, wait, finished) is covered by existing tools.",
+      "adoption_or_rejection_reason": "Vision-model coordinate format and smart_resize: Xroga already gives a model that can see screenshots, numbered marks, a grid and zoomed crops, and prefers marks and refs to raw coordinates, which are exact; screenshot size is already capped (1800 px). Action space (click, double, right, drag, hotkey, type, scroll, wait, finished) is covered by existing tools.",
       "classification": "REJECT",
       "rights_note": "archived upstream"
     },
@@ -700,7 +700,7 @@
       "priority": "P3",
       "default_treatment": "ARCHIVED REFERENCE",
       "provenance": "N",
-      "status": "BEHAVIOR-COMPARED",
+      "status": "CODE INTEGRATED",
       "canonical_url": "https://github.com/bytedance/UI-TARS-desktop",
       "resolved_slug": "bytedance/UI-TARS-desktop",
       "default_branch": "main",
@@ -712,15 +712,18 @@
       "pushed_at": "2026-10-09T01:29:53Z",
       "language": "TypeScript",
       "stars": 39605,
-      "inspected_level": "browser, agent-tars, gui-agent and browser-use packages read",
+      "inspected_level": "operator-browser, agent-tars, tarko runner, mcp-servers/browser, desktop app main process read (second pass); website, UI and benchmark packages not read",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
-      "xroga_file_paths": [],
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/src/browser-control/core/interaction/keys.ts",
+        "apps/xroga-browser-extension/src/browser-control/core/tools/observe.ts"
+      ],
       "new_tests": [],
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "agent-infra browser-use is a Nanobrowser derivative (nothing Xroga lacks). Paginated Readability content extractor: Xroga read has offset and match. Control-mode validation by provider: not needed. Hybrid DOM plus visual strategy is what snapshot, marks and canvas already do.",
+      "adoption_or_rejection_reason": "Taken: shortcut modifier that follows the operating system (Mod, ControlOrMeta), read as links (from browser_read_links). Compared: agent hooks, tool-call engines, snapshot replay, GUI operators (outside an extension).",
       "classification": "REJECT",
       "rights_note": "archived upstream"
     },
@@ -772,7 +775,7 @@
       "pushed_at": "2026-11-17T08:06:02Z",
       "language": "TypeScript",
       "stars": 31561,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "dom manager, instance access, real bundle used as a test target; the rest of the library not read",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
       "xroga_file_paths": [
@@ -808,11 +811,11 @@
       "pushed_at": "2026-11-20T02:23:32Z",
       "language": "TypeScript",
       "stars": 15003,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "stage list, node API, real bundle used as a test target; the rest of the library not read",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
       "xroga_file_paths": [
-        "apps/xroga-browser-extension/fixtures/pages/vendor/konva.min.js",
+        "apps/xroga-browser-extension/src/browser-control/core/painted-text.ts",
         "apps/xroga-browser-extension/fixtures/pages/konva-board.html"
       ],
       "new_tests": [
@@ -821,7 +824,7 @@
       "chrome_check": "S4-canvas-konva",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Real test target: label click, drag, and the consequential-intent refusal on a Konva stage. Passed with the existing tools.",
+      "adoption_or_rejection_reason": "Real test target. Its public stage list gave the scene readout: nodes with a name, id or text are listed with exact places beside the painted text.",
       "classification": "TEST REFERENCE",
       "rights_note": "MIT (LICENSE file); the bundle is konva 10.11.0 from npm, the version of the pinned commit"
     },
@@ -843,7 +846,7 @@
       "pushed_at": "2026-11-20T17:20:56Z",
       "language": "Rust",
       "stars": 798,
-      "inspected_level": "regression target only",
+      "inspected_level": "README, AGENTS, DESIGN, architecture and behaviour docs, visual drivers, web build run live; Rust source not read",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": "regression",
       "xroga_file_paths": [],
@@ -875,7 +878,7 @@
       "pushed_at": "2026-11-04T19:47:27Z",
       "language": "Python",
       "stars": 27479,
-      "inspected_level": "specification fields implemented",
+      "inspected_level": "specification, client guide, best practices, description optimising, evaluating skills, reference validator read",
       "xroga_current_equivalent": "src/agent/skills.ts playbooks (keyword regex, always in prompt when matched)",
       "chosen_reuse_method": "implement the SKILL.md frontmatter format for parsing and validation; bundled skills stored as SKILL.md",
       "xroga_file_paths": [
@@ -891,7 +894,7 @@
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Client-implementation guide applied: plain multi-line values and lists parse, lenient mode for third-party skills (name normalised, over-long text loads), and skills opened with read_skill are protected from compaction and the step-3 cut.",
+      "adoption_or_rejection_reason": "Applied: lenient loading, plain multi-line and left-edge list values, compaction protection, tier-three files (read_skill file), trigger eval over the bundled skills, rarity-weighted ranking.",
       "classification": "ADAPT CODE",
       "rights_note": null
     },
@@ -913,15 +916,17 @@
       "pushed_at": "2026-11-16T14:22:50Z",
       "language": "Python",
       "stars": 197969,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "skill-creator, mcp-builder, doc-coauthoring, webapp-testing, discernment-nudge read; docx, pdf, pptx, xlsx, canvas and design skills and their scripts not read",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
-      "xroga_file_paths": [],
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/src/agent/user-skills.ts"
+      ],
       "new_tests": [],
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Sixteen of its eighteen skills are already in the bundled discovery pool (agentic-awesome-skills index) and open through read_skill; its webapp-testing pattern (wait for the page to settle, then read, then act) is how snapshot already works.",
+      "adoption_or_rejection_reason": "Taken: skill-creator capture-intent as save_skill (the person own skills). The rest are in the bundled pool.",
       "classification": "ADAPT CODE",
       "rights_note": "each skill folder carries an Apache-2.0 LICENSE.txt (read)"
     },
@@ -943,7 +948,7 @@
       "pushed_at": "2026-11-19T16:41:29Z",
       "language": "TypeScript",
       "stars": 92134,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "fetch, time, memory, sequentialthinking in full; filesystem, git, everything tool lists and design notes",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
       "xroga_file_paths": [
