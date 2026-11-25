@@ -11,7 +11,9 @@ defineScenario({
     await ctx.open(`${FIXTURE_ORIGIN}/c-lazy-page.html`);
     const visible = await ctx.call('screenshot', {});
     const full = await ctx.call('screenshot', { fullPage: true });
-    const height = Number(/×(\d+) px/.exec(full.text)?.[1] ?? 0);
+    // The picture is taken at a smaller scale when a side would pass 1800 px: the page's height is the picture's height over its scale.
+    const scale = Number(/scale ([\d.]+)/.exec(full.text)?.[1] ?? 1) || 1;
+    const height = Math.round(Number(/×(\d+) px/.exec(full.text)?.[1] ?? 0) / scale);
     const viewH = Number(/×(\d+) px/.exec(visible.text)?.[1] ?? 0);
     return outcome(
       'the full-page picture is at least 3,500 px tall (eight sections of 480 px), far taller than the window',
