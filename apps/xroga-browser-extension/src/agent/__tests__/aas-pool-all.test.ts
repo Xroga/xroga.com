@@ -58,3 +58,22 @@ describe('the bundled pool', () => {
     expect(rate).toBeGreaterThan(0.98);
   }, 300_000);
 });
+
+describe('what else the pool knows', () => {
+  const extra = index as unknown as { bundles: Record<string, { skills: string[] }>; aliases: Record<string, string>; workflows: Array<{ id: string; steps: Array<{ skills: string[] }> }> };
+  it('an old id of a renamed skill still opens the skill it became', async () => {
+    const [old, now] = Object.entries(extra.aliases)[0]!;
+    const { resolvePoolId } = await import('../aas-skills');
+    expect(await resolvePoolId(old)).toBe(now);
+    const viaOld = await poolCandidate(old);
+    expect(viaOld?.id).toBe(`online:aas:${now}`);
+  });
+  it('skills of the same role bundles are named as related, and a workflow fits a plain request', async () => {
+    const { relatedSkills, searchWorkflows } = await import('../aas-skills');
+    const first = Object.values(extra.bundles)[0]!.skills[0]!;
+    expect((await relatedSkills(first)).length).toBeGreaterThan(0);
+    const wf = await searchWorkflows('qa test a web app with browser automation');
+    expect(wf[0]?.id).toBe('qa-browser-automation');
+    for (const w of extra.workflows) for (const st of w.steps) for (const id of st.skills) expect(rows.some(r => r[0] === id), `${w.id}: ${id}`).toBe(true);
+  });
+});

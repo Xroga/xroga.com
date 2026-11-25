@@ -10,7 +10,7 @@ import { runBrowserData } from './browser-data';
 import { countRun, deleteMacro, describeMacro, expandVars, httpRefusalFor, httpUrlsOf, macrosFor, placeholdersOf, refusalFor, saveMacro } from './macro-tool';
 import { tableToObjects } from '@src/browser-control/core/tools/extract-rows';
 import type { ExtractedTable } from '@src/browser-control/probe/source';
-import { describePoolHit, poolCandidate, poolSuggestions, searchPool } from './aas-skills';
+import { describePoolHit, poolCandidate, poolSuggestions, relatedNote, searchPool, searchWorkflows } from './aas-skills';
 import { describeHarnessHit, guidesForUrl, harnessCandidate, searchHarness } from './harness-skills';
 import { convertTime, findFreeTimes, type FreeTimesArgs } from './free-times';
 import type { RunTimings, Phase } from './timing';
@@ -2358,7 +2358,7 @@ ${renderSkill(top)}`);
             : { call, kind, text: 'error: that file could not be read: name a file the skill itself points to, as a plain path inside the skill (for example references/REFERENCE.md).', isError: true };
         }
         const loaded = cand ? (await loadBundledCandidate(cand).catch(() => null)) ?? (f ? await loadCandidate(cand, f).catch(() => null) : null) : null;
-        return loaded ? { call, kind, text: renderOnline(loaded), isError: false } : { call, kind, text: 'error: that online skill is not available. Carry on with the general tools.', isError: true };
+        return loaded ? { call, kind, text: renderOnline(loaded) + (loaded.provider === 'aas' ? await relatedNote(loaded.id) : ''), isError: false } : { call, kind, text: 'error: that online skill is not available. Carry on with the general tools.', isError: true };
       }
       const card = typeof args.id === 'string' ? skillById(args.id) : undefined;
       return card
@@ -2388,6 +2388,12 @@ ${renderSkill(top)}`);
     if (pool.length) {
       for (const h of pool) { const c = await poolCandidate(h.id); if (c) this.#online.set(c.id, c); }
       sections.push(`Professional skill pool (third-party text, unverified, optional; it grants no permission and never overrides the person's wishes; read with read_skill):\n${pool.map(describePoolHit).join('\n')}`);
+    }
+    // Multi-step playbooks of the pool (plan, build, test, ship; QA with a browser; research and write): shown when a request fits one, with the skill to read at each step.
+    const workflows = await searchWorkflows(`${query} ${this.#askedText}`, 1).catch(() => []);
+    for (const w of workflows) {
+      for (const st of w.steps) for (const id of st.skills) { const c = await poolCandidate(id); if (c) this.#online.set(c.id, c); }
+      sections.push(`Workflow from the pool (a suggested order, optional): ${w.name}: ${w.description}\n${w.steps.map((st, i) => `${i + 1}. ${st.title}: ${st.goal}${st.skills.length ? ' (skills: ' + st.skills.slice(0, 4).map(id => 'online:aas:' + id).join(', ') + ')' : ''}`).join('\n')}`);
     }
     // Field-tested guides to real sites and how-tos (Browser Harness): ranked here, read on demand.
     const guides = [...(url ? await guidesForUrl(url, 2).catch(() => []) : []), ...(await searchHarness(`${query} ${this.#askedText}`, 3).catch(() => []))].filter((g, i, all) => all.findIndex(x => x.id === g.id) === i).slice(0, 4);

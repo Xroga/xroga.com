@@ -12,6 +12,9 @@ interface Index {
   count: number;
   rows: Array<[string, string, string, string, number, string?, number?, number?]>;
   binBytes?: number;
+  bundles?: Record<string, { description: string; skills: string[] }>;
+  aliases?: Record<string, string>;
+  workflows?: Array<{ id: string; name: string; description: string; steps: Array<{ title: string; goal: string; skills: string[] }> }>;
 }
 
 /** Where a bundled skill sits in skills.bin: its offset and gzip length. */
@@ -39,8 +42,9 @@ async function gunzip(bytes: Uint8Array): Promise<string> {
 }
 
 /** The text of a skill from the bundle, or undefined when the skill is not bundled (its licence keeps it remote) or the bundle cannot be read. */
-export async function bundledSkillText(id: string): Promise<string | undefined> {
+export async function bundledSkillText(idIn: string): Promise<string | undefined> {
   const p = await ready();
+  const id = p.aliases[idIn] ?? idIn;
   const r = p.rows.find(x => x[0] === id);
   if (!r || r[6] === undefined || r[6] < 0 || !r[7]) return undefined;
   try {
@@ -105,6 +109,9 @@ interface Prepared {
   sha: string;
   postings: Map<string, Array<[number, number]>>; // token -> [row, weight]
   idf: Map<string, number>;
+  bundles: NonNullable<Index['bundles']>;
+  aliases: NonNullable<Index['aliases']>;
+  workflows: NonNullable<Index['workflows']>;
 }
 let prepared: Promise<Prepared> | undefined;
 
@@ -129,7 +136,7 @@ async function prepare(): Promise<Prepared> {
   const n = index.rows.length;
   const idf = new Map<string, number>();
   for (const [t, list] of postings) idf.set(t, Math.log(1 + n / list.length));
-  return { rows: index.rows, sha: index.sha, postings, idf };
+  return { rows: index.rows, sha: index.sha, postings, idf, bundles: index.bundles ?? {}, aliases: index.aliases ?? {}, workflows: index.workflows ?? [] };
 }
 const ready = () => (prepared ??= prepare());
 
@@ -184,9 +191,52 @@ export async function poolSuggestions(request: string, limit = 3): Promise<PoolH
 export const POOL_HOST = 'raw.githubusercontent.com';
 const ID = /^[a-zA-Z0-9][a-zA-Z0-9._-]{0,100}$/;
 
-export async function poolCandidate(id: string): Promise<OnlineCandidate | undefined> {
-  if (!ID.test(id)) return undefined;
+/** The pool renames skills now and then; an old id (from memory, a note, an earlier run) still opens the skill it became. */
+export async function resolvePoolId(id: string): Promise<string> {
   const p = await ready();
+  return p.aliases[id] ?? id;
+}
+
+/** Skills that belong with this one: the pool's role bundles that hold it, other members first by how many bundles they share with it. */
+export async function relatedSkills(id: string, limit = 6): Promise<string[]> {
+  const p = await ready();
+  const shared = new Map<string, number>();
+  for (const b of Object.values(p.bundles)) {
+    if (!b.skills.includes(id)) continue;
+    for (const other of b.skills) if (other !== id) shared.set(other, (shared.get(other) ?? 0) + 1);
+  }
+  return [...shared.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, limit).map(([k]) => k);
+}
+
+export interface WorkflowHit {
+  id: string;
+  name: string;
+  description: string;
+  steps: Array<{ title: string; goal: string; skills: string[] }>;
+}
+
+/** The pool's multi-step workflows (plan, build, test, ship; research, write, publish) that fit a request: a plain match on at least two of its words. */
+export async function searchWorkflows(query: string, limit = 1): Promise<WorkflowHit[]> {
+  const p = await ready();
+  const words = new Set(tokens(query));
+  if (words.size < 2) return [];
+  return p.workflows
+    .map(w => {
+      const have = new Set(tokens([w.name, w.description, ...w.steps.map(s => s.title + ' ' + s.goal)].join(' ')));
+      let n = 0;
+      for (const t of words) if (have.has(t)) n++;
+      return { w, n };
+    })
+    .filter(x => x.n >= 2)
+    .sort((a, b) => b.n - a.n)
+    .slice(0, limit)
+    .map(x => x.w);
+}
+
+export async function poolCandidate(idIn: string): Promise<OnlineCandidate | undefined> {
+  if (!ID.test(idIn)) return undefined;
+  const p = await ready();
+  const id = p.aliases[idIn] ?? idIn;
   const r = p.rows.find(x => x[0] === id);
   if (!r) return undefined;
   return {
@@ -215,4 +265,10 @@ export const AAS_PROVIDER: OnlineProvider = {
 
 export function describePoolHit(h: PoolHit): string {
   return `- online:aas:${h.id} (${h.category}${h.critical ? ', high-impact actions: approvals apply' : ''}, third-party, unverified): ${h.name}: ${h.description}`;
+}
+
+/** A line after a pool skill's text: other skills that belong with it, from the pool's own role bundles. Empty when there are none. */
+export async function relatedNote(candidateId: string): Promise<string> {
+  const related = await relatedSkills(candidateId.replace(/^online:aas:/, ''), 5).catch(() => []);
+  return related.length ? `\n\nRelated skills in the same pool bundles (read with read_skill if needed): ${related.map(id => 'online:aas:' + id).join(', ')}` : '';
 }

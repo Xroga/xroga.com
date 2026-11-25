@@ -50,12 +50,26 @@ for (const s of raw) {
   } else notBundled++;
   rows.push([s.id, clean(s.category).slice(0, 30), clean(s.name).slice(0, 80), clean(s.description).slice(0, 220), s.risk === 'critical' ? 1 : 0, headings, at, length]);
 }
+const known = new Set(rows.map(r => r[0]));
+// The pool's own groupings and renames, kept because they say how skills belong together: role bundles (skills often used together), multi-step workflows, and old ids of renamed skills.
+const readJson = name => { try { return JSON.parse(readFileSync(join(repo, 'data', name), 'utf8')); } catch { return undefined; } };
+const bundlesRaw = readJson('bundles.json')?.bundles ?? {};
+const bundles = {};
+for (const [name, b] of Object.entries(bundlesRaw)) {
+  const ids = (b.skills ?? []).filter(id => known.has(id));
+  if (ids.length > 1) bundles[name] = { description: clean(b.description).slice(0, 160), skills: ids };
+}
+const aliases = Object.fromEntries(Object.entries(readJson('aliases.json')?.aliases ?? {}).filter(([, to]) => known.has(to)));
+const workflows = (readJson('workflows.json')?.workflows ?? []).map(w => ({
+  id: String(w.id), name: clean(w.name), description: clean(w.description).slice(0, 200),
+  steps: (w.steps ?? []).map(s => ({ title: clean(s.title), goal: clean(s.goal).slice(0, 200), skills: (s.recommendedSkills ?? []).filter(id => known.has(id)) })),
+}));
 const bin = Buffer.concat(chunks);
 mkdirSync(resolve(here, '../public/pool'), { recursive: true });
 writeFileSync(resolve(here, '../public/pool/skills.bin'), bin);
 const digest = createHash('sha256').update(bin).digest('hex');
 writeFileSync(
   resolve(here, '../src/agent/data/aas-index.json'),
-  JSON.stringify({ repo: 'sickn33/agentic-awesome-skills', sha, licence: 'MIT (code), CC BY 4.0 (content); each skill keeps its upstream licence', count: rows.length, dropped, bundled: rows.length - notBundled, notBundled, binBytes: bin.length, binSha256: digest, rows }),
+  JSON.stringify({ repo: 'sickn33/agentic-awesome-skills', sha, licence: 'MIT (code), CC BY 4.0 (content); each skill keeps its upstream licence', count: rows.length, dropped, bundled: rows.length - notBundled, notBundled, binBytes: bin.length, binSha256: digest, bundles, aliases, workflows, rows }),
 );
 console.log(`${rows.length} skills (${dropped} left out); ${rows.length - notBundled} bundled in ${(bin.length / 1e6).toFixed(1)} MB; ${notBundled} stay remote because of their licence; pinned ${sha.slice(0, 10)}`);
