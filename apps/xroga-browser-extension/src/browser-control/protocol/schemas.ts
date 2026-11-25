@@ -198,6 +198,7 @@ export const WaitArgsSchema = z.strictObject({
   observe: ObserveSchema.optional(),
   text: z.string().optional(),
   textGone: z.string().optional(),
+  networkIdle: z.boolean().optional().describe('The page has finished loading and nothing arrived for half a second'),
   target: TargetSchema.optional(),
   state: z.enum(['visible', 'hidden', 'attached', 'detached', 'enabled']).optional(),
   reading: z

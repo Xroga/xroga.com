@@ -5,7 +5,7 @@
 export const BEAT_MS = 20_000;
 
 /** Starts the beat; returns what stops it. `busy` says whether a run is in progress, `poke` is the cheap call. */
-export function startHeartbeat(busy: () => boolean, poke: () => void, every = BEAT_MS, timers: { set: typeof setInterval; clear: typeof clearInterval } = { set: setInterval, clear: clearInterval }): () => void {
+export function startHeartbeat(busy: () => boolean, poke: () => void, every = BEAT_MS, timers: { set: (fn: () => void, ms: number) => unknown; clear: (id: unknown) => void } = { set: (fn, ms) => setInterval(fn, ms), clear: id => clearInterval(id as ReturnType<typeof setInterval>) }): () => void {
   const id = timers.set(() => {
     if (!busy()) return;
     try {

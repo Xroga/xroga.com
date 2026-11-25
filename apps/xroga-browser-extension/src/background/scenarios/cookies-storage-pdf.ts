@@ -120,3 +120,23 @@ defineScenario({
     );
   },
 });
+
+defineScenario({
+  id: 'S3-wait-network-idle',
+  set: 'C',
+  title: 'wait networkIdle holds until the page has stopped loading and receiving',
+  covers: 'a page that fetches five times 300 ms apart: not idle in the middle, idle after the last',
+  async run(ctx) {
+    await ctx.open(`${FIXTURE_ORIGIN}/c-idle.html`);
+    const early = await ctx.call('wait', { networkIdle: true, timeoutMs: 150 });
+    const started = Date.now();
+    const late = await ctx.call('wait', { networkIdle: true, timeoutMs: 8000 });
+    const waited = Date.now() - started;
+    const done = await ctx.call('read', {});
+    return outcome(
+      'too early it says the page is still receiving; given time it returns once five fetches have landed',
+      JSON.stringify({ early: early.ok, earlyText: early.text.slice(0, 160), late: late.ok, waited, count: /\b5\b/.test(done.text) }),
+      !early.ok && /still loading or still receiving/.test(early.text + JSON.stringify(early.error ?? '')) && late.ok && /\b5\b/.test(done.text),
+    );
+  },
+});

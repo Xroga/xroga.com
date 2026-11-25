@@ -250,6 +250,8 @@ export interface ProbeApi {
   stopDemo(): Array<{ t: number; kind: 'mouse' | 'key'; x?: number; y?: number; step: 'click' | 'set' | 'press'; role: string; name: string; value?: string; row?: string }>;
   /** What the element reads: a form control's value, otherwise its visible text (at most 400 characters). */
   reading(el: Element): string;
+  /** The page has loaded and no request finished in the last `idleMs`: it is quiet. */
+  networkIdle(idleMs: number): boolean;
   /** The element's computed look and position, and what is on top of its centre: why it cannot be seen or clicked. */
   styles(el: Element): string[];
   /** The value of an attribute (aria-expanded, aria-selected, data-state), or null when it is not set (at most 200 characters). */
@@ -1349,6 +1351,15 @@ export function probeMain(): void {
       }
       if (hiddenBy.length) lines.push(`hidden by: ${hiddenBy.join(', ')}`);
       return lines;
+    },
+
+    networkIdle(idleMs: number) {
+      if (document.readyState !== 'complete') return false;
+      let last = 0;
+      for (const r of performance.getEntriesByType('resource') as PerformanceResourceTiming[]) last = Math.max(last, r.responseEnd || r.startTime);
+      const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+      last = Math.max(last, nav?.loadEventEnd ?? 0);
+      return performance.now() - last >= idleMs;
     },
 
     reading(el: Element) {
