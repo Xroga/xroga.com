@@ -265,10 +265,21 @@ export async function navigate(ctx: ToolContext, args: NavigateArgs): Promise<To
           : page.reload(timeout),
     args.url ? parseUrl(args.url) : undefined,
   );
+  // A consent banner that offers a way to refuse is refused (never accepted: the private choice is the default), so it does not cover the page the agent reads next.
+  let declined: string | null = null;
+  if (args.url) {
+    try {
+      const probe = ctx.tab().probe;
+      const main = (await attachment.topology.frames())[0];
+      if (probe && main) declined = await Promise.race([probe.callGlobal<string | null>(main, 'rejectConsent'), new Promise<null>(r => setTimeout(() => r(null), 900))]);
+    } catch {
+      /* a banner step never fails a navigation */
+    }
+  }
   return withPageState(ctx, args.observe, {
-    data: { url: result.url, title: result.title, readiness: result.readiness },
+    data: { url: result.url, title: result.title, readiness: result.readiness, ...(declined ? { consentDeclined: declined } : {}) },
     page: { tabId: tab.tabId, url: result.url, title: result.title, rev: tab.rev, changed: 'none' },
-    lines: [`navigate · tab ${tab.tabId} · ${args.url ? 'url' : args.action} · ${result.readiness}`],
+    lines: [`navigate · tab ${tab.tabId} · ${args.url ? 'url' : args.action} · ${result.readiness}${declined ? ` · cookie banner refused ("${declined}")` : ''}`],
     pageText: `${result.title || '(untitled)'} · ${result.url}`,
   });
 }

@@ -234,6 +234,8 @@ export interface ProbeApi {
   watchBlock(el: Element): string;
   blockMutations(): number;
   hasText(text: string, fields?: boolean): boolean;
+  /** A cookie or consent banner that offers a way to refuse (Reject all, Necessary only): clicks that refusal and returns its label. Never an accept button. Null when there is none. */
+  rejectConsent(): string | null;
   /** Every visible field of the page or of the named form, dialog or group: what a form tool needs to fill it in one call. */
   formModel(scope?: string): FormField[];
   /** The organic results of a search engine's results page (title, address, snippet), or the reason the engine asked for a human check. */
@@ -1412,6 +1414,29 @@ export function probeMain(): void {
       const visibleHay = norm(seen) + (fields ? hay.slice(norm(document.body?.innerText ?? '').length) : '');
       const hasVisible = (w: string) => visibleHay.includes(w) || visibleHay.replace(/\s+/g, '').includes(w.replace(/\s+/g, ''));
       return hasVisible(want) || (/[.,;:!?]$/.test(want) && hasVisible(want.replace(/[.,;:!?]+$/, '')));
+    },
+
+    rejectConsent() {
+      const REFUSE = /^(?:reject(?: all| non-?essential| optional)?(?: cookies)?|decline(?: all| optional)?(?: cookies)?|deny(?: all)?|refuse(?: all)?|(?:only |use )?(?:strictly )?(?:necessary|essential)(?: cookies)?(?: only)?|no,? thanks|continue without accepting|disagree)$/i;
+      const BANNER = /cookie|consent|gdpr|privacy[-_ ]?(?:banner|notice|settings)|onetrust|cmp|didomi|usercentrics|cookiebot/i;
+      const shown = (el: Element) => {
+        const r = (el as HTMLElement).getBoundingClientRect();
+        return r.width > 0 && r.height > 0 && (el as HTMLElement).checkVisibility?.({ checkOpacity: true, checkVisibilityCSS: true }) !== false;
+      };
+      const boxes = Array.from(document.querySelectorAll<HTMLElement>('[id],[class],[aria-label],[role="dialog"]')).filter(el => {
+        if (!BANNER.test(`${el.id} ${typeof el.className === 'string' ? el.className : ''} ${el.getAttribute('aria-label') ?? ''}`) || !shown(el)) return false;
+        const pos = getComputedStyle(el).position;
+        return pos === 'fixed' || pos === 'sticky' || pos === 'absolute' || el.getAttribute('role') === 'dialog' || el.getAttribute('aria-modal') === 'true';
+      });
+      for (const box of boxes) {
+        for (const b of Array.from(box.querySelectorAll<HTMLElement>('button, [role="button"], a, input[type="button"], input[type="submit"]'))) {
+          const label = ((b as HTMLInputElement).value || b.textContent || b.getAttribute('aria-label') || '').replace(/\s+/g, ' ').trim();
+          if (label.length > 40 || !REFUSE.test(label) || !shown(b)) continue;
+          b.click();
+          return label;
+        }
+      }
+      return null;
     },
 
     /** Selects the whole content of a focused field or editor, so the next insertion replaces it. */

@@ -230,3 +230,21 @@ defineScenario({
     );
   },
 });
+
+defineScenario({
+  id: 'S3-consent-reject',
+  set: 'C',
+  title: 'navigate refuses a cookie banner that offers a refusal and never accepts one',
+  covers: 'rejectConsent: a fixed cookie banner with Accept all, Reject all and Settings: only Reject all is clicked; the banner without a refusal is left alone',
+  async run(ctx) {
+    await ctx.open(`${FIXTURE_ORIGIN}/c-text.html`);
+    const nav = await ctx.call('navigate', { url: `${FIXTURE_ORIGIN}/c-consent.html` });
+    const read = await ctx.call('read', {});
+    const only = await ctx.call('navigate', { url: `${FIXTURE_ORIGIN}/c-cookie-banner.html` });
+    return outcome(
+      'the banner with a refusal is refused (state rejected, never accepted) and the navigation says so; the banner with only a Dismiss button is not touched',
+      JSON.stringify({ nav: nav.text.slice(0, 200), read: read.text.slice(0, 200), only: only.text.slice(0, 160) }),
+      nav.ok && /cookie banner refused/.test(nav.text) && /rejected/.test(read.text) && !/accepted/.test(read.text) && !/cookie banner refused/.test(only.text),
+    );
+  },
+});
