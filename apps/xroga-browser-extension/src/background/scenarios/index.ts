@@ -34,6 +34,7 @@ import './native-inputs';
 import './blob-frames';
 import './canvas-point';
 import './canvas-script-editor';
+import './canvas-libraries';
 import './variants-form';
 import './timeline-editor';
 import './stale-and-slow';

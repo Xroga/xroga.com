@@ -22,7 +22,7 @@ function unquote(v: string): string {
 }
 
 /** Parses the small YAML subset the spec uses: `key: value`, a folded or literal block (`>` / `|`), and one level of nested `metadata:` keys. */
-export function parseSkillMd(source: string): SkillMdResult {
+export function parseSkillMd(source: string, options: { lenient?: boolean } = {}): SkillMdResult {
   const text = source.replace(/\r\n/g, '\n');
   if (!text.startsWith('---\n')) return { ok: false, error: 'SKILL.md must start with a --- frontmatter block' };
   const end = text.indexOf('\n---', 4);
@@ -48,16 +48,21 @@ export function parseSkillMd(source: string): SkillMdResult {
       while (i + 1 < lines.length && (/^\s+/.test(lines[i + 1]!) || lines[i + 1] === '')) parts.push(lines[++i]!.trim());
       fields[key!] = rest.startsWith('>') ? parts.filter(Boolean).join(' ') : parts.join('\n').trim();
     } else {
-      fields[key!] = unquote(rest!);
+      // A plain value that carries on over the next indented lines (valid YAML: the lines are folded with a space), or a list under the key (`- item`).
+      const parts = [unquote(rest!)];
+      while (i + 1 < lines.length && /^\s+\S/.test(lines[i + 1]!)) parts.push(lines[++i]!.trim().replace(/^-\s+/, ''));
+      fields[key!] = parts.filter(Boolean).join(' ');
     }
   }
-  const name = fields.name ?? '';
+  // Third-party skills were written for other clients: with `lenient` a name is read as the spec reads it (any language's letters and digits, normalised, lowercased) and over-long names or
+  // descriptions load anyway, as the agentskills client guide advises. A skill with no name or no description is still skipped. Default strict, which every verified source keeps.
+  const name = options.lenient ? (fields.name ?? '').normalize('NFKC').trim().toLowerCase() : (fields.name ?? '');
   const description = fields.description ?? '';
   if (!name) return { ok: false, error: 'name is required' };
-  if (name.length > 64 || !NAME.test(name)) return { ok: false, error: 'name must be 1-64 characters: lowercase letters, digits and single hyphens' };
+  if (options.lenient ? !/^[\p{L}\p{N}]+(?:-[\p{L}\p{N}]+)*$/u.test(name) : name.length > 64 || !NAME.test(name)) return { ok: false, error: 'name must be 1-64 characters: lowercase letters, digits and single hyphens' };
   if (!description) return { ok: false, error: 'description is required' };
-  if (description.length > 1024) return { ok: false, error: 'description is longer than 1024 characters' };
-  if (fields.compatibility && fields.compatibility.length > 500) return { ok: false, error: 'compatibility is longer than 500 characters' };
+  if (!options.lenient && description.length > 1024) return { ok: false, error: 'description is longer than 1024 characters' };
+  if (!options.lenient && fields.compatibility && fields.compatibility.length > 500) return { ok: false, error: 'compatibility is longer than 500 characters' };
   const allowed = (fields['allowed-tools'] ?? '').split(/\s+/).filter(Boolean);
   return {
     ok: true,

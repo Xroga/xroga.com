@@ -299,12 +299,41 @@ export function applyCompaction(
     message: { role: 'user', parts: [{ type: 'text', text: renderLedger(compaction.ledger, unverified) }] },
   });
   const recent = entries.slice(index);
+  const skills = protectedSkills(entries.slice(0, index));
+  const skillNote = skills.length
+    ? [synthetic(`${compaction.id}:skills`, { appOwned: { kind: 'notice' }, message: { role: 'user', parts: [{ type: 'text', text: skillsNotice(skills) }] } })]
+    : [];
   const cutEnd = compaction.cutUpTo ? recent.findIndex(e => e.id === compaction.cutUpTo) : -1;
-  return [...kept, ...summary, ledger, ...recent.map((e, i) => (i <= cutEnd ? cutResults(e) : e))];
+  return [...kept, ...summary, ledger, ...skillNote, ...recent.map((e, i) => (i <= cutEnd ? cutResults(e) : e))];
 }
 
 /** Step 3 cuts each remaining tool result, keeping the end marker of a page-content boundary. */
 export const SHORT_RESULT = 2_000;
+
+/** The note that carries the protected skills into the shortened context. */
+export function skillsNotice(skills: string[]): string {
+  const head = skills.length === 1 ? 'A skill you opened earlier, kept word for word because it still guides this task:' : 'Skills you opened earlier, kept word for word because they still guide this task:';
+  return head + String.fromCharCode(10, 10) + skills.join(String.fromCharCode(10, 10) + '---' + String.fromCharCode(10, 10));
+}
+
+/**
+ * The text of every skill the run opened (read_skill) in the part that leaves the context, newest of each kept, oldest first. A skill is durable guidance for the task:
+ * summarising it away would silently drop its method while the model carries on as if it still had it (agentskills client guide, "protect skill content from context compaction").
+ */
+export function protectedSkills(old: MessageEntry[]): string[] {
+  const seen = new Set<string>();
+  const found: string[] = [];
+  for (let i = old.length - 1; i >= 0; i--) {
+    const m = old[i]!.message;
+    if (m.role !== 'tool') continue;
+    for (const p of m.parts) {
+      if (p.type !== 'tool-result' || p.toolName !== 'read_skill' || p.isError || !p.text.trim() || seen.has(p.text)) continue;
+      seen.add(p.text);
+      found.push(p.text);
+    }
+  }
+  return found.reverse();
+}
 
 function cutResults(e: MessageEntry): MessageEntry {
   if (e.message.role !== 'tool') return e;
@@ -313,7 +342,7 @@ function cutResults(e: MessageEntry): MessageEntry {
     message: {
       ...e.message,
       parts: e.message.parts.map(p =>
-        p.type === 'tool-result' && p.text.length > SHORT_RESULT
+        p.type === 'tool-result' && p.toolName !== 'read_skill' && p.text.length > SHORT_RESULT
           ? { ...p, text: cutText(p.text, SHORT_RESULT, '… cut to fit the context; call the tool again to see more.') }
           : p,
       ),

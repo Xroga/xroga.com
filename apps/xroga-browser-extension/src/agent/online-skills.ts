@@ -110,7 +110,7 @@ export async function loadCandidate(c: OnlineCandidate, fetchImpl: FetchLike): P
   const got = await getText(fetchImpl, c.fetchUrl, 'text/markdown, text/plain');
   if (!got.ok) return null;
   if (c.provider === 'harness') return got.text.trim() ? { ...c, text: got.text.slice(0, 60_000) } : null;
-  const parsed = parseSkillMd(got.text);
+  const parsed = parseSkillMd(got.text, { lenient: true });
   if (!parsed.ok) return null;
   return { ...c, text: parsed.skill.body };
 }

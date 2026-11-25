@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { findFreeTimes, offsetMinutes } from '../free-times';
+import { convertTime, findFreeTimes, offsetMinutes } from '../free-times';
 
 describe('findFreeTimes', () => {
   it('finds windows free for Ana (Lisbon) and Bilal (Karachi), converting his busy slots and hours', () => {
@@ -36,5 +36,21 @@ describe('findFreeTimes', () => {
     expect(none.windows).toHaveLength(0);
     expect(none.text).toMatch(/No common/);
     expect(() => findFreeTimes({ participants: [{ timeZone: 'UTC', busy: ['tomorrow 9'] }], from: '2026-12-07', to: '2026-12-07', minutes: 30, outputZone: 'UTC' })).toThrow(/busy slot/);
+  });
+});
+
+describe('convertTime', () => {
+  it('shows one moment in other zones with the offsets in force that day, daylight saving included', () => {
+    const summer = convertTime({ at: '2026-07-15 15:00', from: 'America/New_York', to: ['Asia/Karachi', 'Europe/London'] });
+    expect(summer).toContain('America/New_York: 2026-07-15 15:00 (Wednesday, UTC-04:00)');
+    expect(summer).toContain('Asia/Karachi: 2026-07-16 00:00 (Thursday, UTC+05:00)');
+    expect(summer).toContain('Europe/London: 2026-07-15 20:00 (Wednesday, UTC+01:00)');
+    const winter = convertTime({ at: '2026-12-15 15:00', from: 'America/New_York', to: ['Europe/London'] });
+    expect(winter).toContain('Europe/London: 2026-12-15 20:00 (Tuesday, UTC+00:00)');
+  });
+  it('accepts fixed offsets and refuses a malformed moment or an empty target list', () => {
+    expect(convertTime({ at: '2026-12-07 09:30', from: 'UTC+5', to: ['UTC-03:30'] })).toContain('UTC-03:30: 2026-12-07 01:00');
+    expect(() => convertTime({ at: 'tomorrow 3pm', from: 'UTC', to: ['UTC+1'] })).toThrow(/at must look like/);
+    expect(() => convertTime({ at: '2026-12-07 09:30', from: 'UTC', to: [] })).toThrow(/at least one zone/);
   });
 });

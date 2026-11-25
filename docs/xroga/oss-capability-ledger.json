@@ -640,7 +640,7 @@
       "priority": "P2",
       "default_treatment": "REFERENCE; LICENSE + MODEL REVIEW",
       "provenance": "H",
-      "status": "INSPECTED",
+      "status": "BEHAVIOR-COMPARED",
       "canonical_url": "https://github.com/microsoft/OmniParser",
       "resolved_slug": "microsoft/OmniParser",
       "default_branch": "master",
@@ -652,7 +652,7 @@
       "pushed_at": "2026-11-14T22:53:50Z",
       "language": "Jupyter Notebook",
       "stars": 25629,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "source read whole (util, omnitool, eval, docs)",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
       "xroga_file_paths": [],
@@ -660,9 +660,9 @@
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
+      "adoption_or_rejection_reason": "Box-overlap removal (IoU and containment) is already how set-of-marks merges duplicates (core/tools/marks.ts). The icon detector needs a model download and a captioning model; not built. Possible later: icon_detect_v3 through onnxruntime-web in place of the edge heuristic.",
       "classification": "REJECT",
-      "rights_note": null
+      "rights_note": "repo LICENSE is CC-BY-4.0; icon_detect_v3 weights are MIT (YOLOv9), older Ultralytics detectors AGPL; no code taken"
     },
     {
       "upstream_repo": "bytedance/UI-TARS",
@@ -670,7 +670,7 @@
       "priority": "P2",
       "default_treatment": "RESEARCH ONLY",
       "provenance": "N",
-      "status": "INSPECTED",
+      "status": "BEHAVIOR-COMPARED",
       "canonical_url": "https://github.com/bytedance/UI-TARS",
       "resolved_slug": "bytedance/UI-TARS",
       "default_branch": "main",
@@ -682,7 +682,7 @@
       "pushed_at": "2026-01-27T04:57:26Z",
       "language": "Python",
       "stars": 11699,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "source read whole (action parser, prompts, coordinate notes)",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
       "xroga_file_paths": [],
@@ -690,7 +690,7 @@
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
+      "adoption_or_rejection_reason": "Vision-model coordinate format and smart_resize: Xroga uses a text model with refs and marks; screenshot size is already capped (1800 px). Action space (click, double, right, drag, hotkey, type, scroll, wait, finished) is covered by existing tools.",
       "classification": "REJECT",
       "rights_note": "archived upstream"
     },
@@ -700,7 +700,7 @@
       "priority": "P3",
       "default_treatment": "ARCHIVED REFERENCE",
       "provenance": "N",
-      "status": "INSPECTED",
+      "status": "BEHAVIOR-COMPARED",
       "canonical_url": "https://github.com/bytedance/UI-TARS-desktop",
       "resolved_slug": "bytedance/UI-TARS-desktop",
       "default_branch": "main",
@@ -712,7 +712,7 @@
       "pushed_at": "2026-10-09T01:29:53Z",
       "language": "TypeScript",
       "stars": 39605,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "browser, agent-tars, gui-agent and browser-use packages read",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
       "xroga_file_paths": [],
@@ -720,7 +720,7 @@
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
+      "adoption_or_rejection_reason": "agent-infra browser-use is a Nanobrowser derivative (nothing Xroga lacks). Paginated Readability content extractor: Xroga read has offset and match. Control-mode validation by provider: not needed. Hybrid DOM plus visual strategy is what snapshot, marks and canvas already do.",
       "classification": "REJECT",
       "rights_note": "archived upstream"
     },
@@ -730,19 +730,19 @@
       "priority": "P2",
       "default_treatment": "REFERENCE; GPL/AGPL REVIEW",
       "provenance": "N",
-      "status": "INSPECTED",
+      "status": "BEHAVIOR-COMPARED",
       "canonical_url": "https://github.com/A9T9/RPA",
       "resolved_slug": "A9T9/RPA",
       "default_branch": "master",
       "source_sha": "17b6302f1617b838efe2b26d3ef19c2face81350",
       "source_sha_date": "2026-09-21T21:23:28Z",
-      "license_spdx": "NOASSERTION",
+      "license_spdx": "AGPL-3.0",
       "license_name": "Other",
       "archived": false,
       "pushed_at": "2026-11-04T08:03:08Z",
       "language": "TypeScript",
       "stars": 2109,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "README, command map, MCP bridge and macro design read",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
       "xroga_file_paths": [],
@@ -750,9 +750,9 @@
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
+      "adoption_or_rejection_reason": "Ideas checked: optional steps need a short timeout (wait already returns instead of failing), read back what OCR saw before acting on it (screenshot lists painted text and marks), refuse to act when the editor changed under the agent (stale-ref checks). No code.",
       "classification": "REJECT",
-      "rights_note": null
+      "rights_note": "AGPL-3.0 (dual-licensed): no code taken, ideas only"
     },
     {
       "upstream_repo": "fabricjs/fabric.js",
@@ -760,7 +760,7 @@
       "priority": "P1",
       "default_treatment": "TEST FIXTURES",
       "provenance": "H",
-      "status": "INSPECTED",
+      "status": "CODE INTEGRATED",
       "canonical_url": "https://github.com/fabricjs/fabric.js",
       "resolved_slug": "fabricjs/fabric.js",
       "default_branch": "master",
@@ -775,14 +775,20 @@
       "inspected_level": "github-metadata-only",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
-      "xroga_file_paths": [],
-      "new_tests": [],
-      "chrome_check": null,
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/fixtures/pages/vendor/fabric.min.js",
+        "apps/xroga-browser-extension/fixtures/pages/fabric-board.html",
+        "apps/xroga-browser-extension/src/browser-control/core/painted-text.ts"
+      ],
+      "new_tests": [
+        "apps/xroga-browser-extension/src/background/scenarios/canvas-libraries.ts (S4-canvas-fabric)"
+      ],
+      "chrome_check": "S4-canvas-fabric",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
+      "adoption_or_rejection_reason": "Used as a real test target. It found a gap: Fabric paints each object into a cache canvas that is not on the page and copies it with drawImage, so the painted-text hook saw no text. Fixed in painted-text.ts (texts follow drawImage).",
       "classification": "TEST REFERENCE",
-      "rights_note": null
+      "rights_note": "MIT; the bundle is the 7.5.0-beta build of the pinned commit, licence beside it"
     },
     {
       "upstream_repo": "konvajs/konva",
@@ -790,13 +796,13 @@
       "priority": "P1",
       "default_treatment": "TEST FIXTURES",
       "provenance": "H",
-      "status": "INSPECTED",
+      "status": "CODE INTEGRATED",
       "canonical_url": "https://github.com/konvajs/konva",
       "resolved_slug": "konvajs/konva",
       "default_branch": "master",
       "source_sha": "bf1927c1cfec7f47eb608a470aff6ca99dd09aa9",
       "source_sha_date": "2026-11-20T02:23:29Z",
-      "license_spdx": "NOASSERTION",
+      "license_spdx": "MIT",
       "license_name": "Other",
       "archived": false,
       "pushed_at": "2026-11-20T02:23:32Z",
@@ -805,14 +811,19 @@
       "inspected_level": "github-metadata-only",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
-      "xroga_file_paths": [],
-      "new_tests": [],
-      "chrome_check": null,
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/fixtures/pages/vendor/konva.min.js",
+        "apps/xroga-browser-extension/fixtures/pages/konva-board.html"
+      ],
+      "new_tests": [
+        "apps/xroga-browser-extension/src/background/scenarios/canvas-libraries.ts (S4-canvas-konva)"
+      ],
+      "chrome_check": "S4-canvas-konva",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
+      "adoption_or_rejection_reason": "Real test target: label click, drag, and the consequential-intent refusal on a Konva stage. Passed with the existing tools.",
       "classification": "TEST REFERENCE",
-      "rights_note": null
+      "rights_note": "MIT (LICENSE file); the bundle is konva 10.11.0 from npm, the version of the pinned commit"
     },
     {
       "upstream_repo": "tracedraw/tracedraw",
@@ -820,13 +831,13 @@
       "priority": "TEST",
       "default_treatment": "REGRESSION ONLY",
       "provenance": "H",
-      "status": "LIVE DEEPSEEK VERIFIED",
+      "status": "LIVE CHROMIUM VERIFIED",
       "canonical_url": "https://github.com/tracedraw/tracedraw",
       "resolved_slug": "tracedraw/tracedraw",
       "default_branch": "main",
       "source_sha": "118f9657d6f6ad2283002750b8cc7df59c62b558",
       "source_sha_date": "2026-11-20T17:02:32Z",
-      "license_spdx": "NOASSERTION",
+      "license_spdx": "MIT OR Apache-2.0",
       "license_name": "Other",
       "archived": false,
       "pushed_at": "2026-11-20T17:20:56Z",
@@ -842,7 +853,7 @@
       "chrome_check": null,
       "deepseek_check": "trial 1 pass (about 4 min), trial 2 fail; see LIVE-TRIAL-20261120.md and LIVE-RUNS-20261120-B.md",
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "One regression case, not the product direction.",
+      "adoption_or_rejection_reason": "Its public web build is an egui/WebGL editor. Probe (2026-11-25): while its 41 MB module loads the overlay is correctly refused as a non-canvas target; after load 90 marks are numbered, the accessibility tree names the canvas and a textbox, and a canvas click dispatches. Kept as the A4 SVG regression case.",
       "classification": "TEST REFERENCE",
       "rights_note": null
     },
@@ -869,15 +880,18 @@
       "chosen_reuse_method": "implement the SKILL.md frontmatter format for parsing and validation; bundled skills stored as SKILL.md",
       "xroga_file_paths": [
         "apps/xroga-browser-extension/src/agent/skill-md.ts",
-        "apps/xroga-browser-extension/src/agent/skill-catalog.ts (find_skill, read_skill)"
+        "apps/xroga-browser-extension/src/agent/skill-catalog.ts",
+        "apps/xroga-browser-extension/src/agent/online-skills.ts",
+        "apps/xroga-browser-extension/src/agent/compaction.ts"
       ],
       "new_tests": [
-        "src/agent/__tests__/skill-catalog.test.ts"
+        "apps/xroga-browser-extension/src/agent/__tests__/skill-catalog.test.ts",
+        "apps/xroga-browser-extension/src/agent/__tests__/skill-lenient-and-protected.test.ts"
       ],
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Kept: on-demand discovery instead of prompt dumps. allowed-tools is recorded, never granted.",
+      "adoption_or_rejection_reason": "Client-implementation guide applied: plain multi-line values and lists parse, lenient mode for third-party skills (name normalised, over-long text loads), and skills opened with read_skill are protected from compaction and the step-3 cut.",
       "classification": "ADAPT CODE",
       "rights_note": null
     },
@@ -887,13 +901,13 @@
       "priority": "P1",
       "default_treatment": "ADAPT ELIGIBLE SKILLS",
       "provenance": "H+W",
-      "status": "INSPECTED",
+      "status": "BEHAVIOR-COMPARED",
       "canonical_url": "https://github.com/anthropics/skills",
       "resolved_slug": "anthropics/skills",
       "default_branch": "main",
       "source_sha": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba",
       "source_sha_date": "2026-11-16T14:22:47Z",
-      "license_spdx": null,
+      "license_spdx": "Apache-2.0",
       "license_name": null,
       "archived": false,
       "pushed_at": "2026-11-16T14:22:50Z",
@@ -907,9 +921,9 @@
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
+      "adoption_or_rejection_reason": "Sixteen of its eighteen skills are already in the bundled discovery pool (agentic-awesome-skills index) and open through read_skill; its webapp-testing pattern (wait for the page to settle, then read, then act) is how snapshot already works.",
       "classification": "ADAPT CODE",
-      "rights_note": "licence not machine-verified: read the LICENSE file before copying any code"
+      "rights_note": "each skill folder carries an Apache-2.0 LICENSE.txt (read)"
     },
     {
       "upstream_repo": "modelcontextprotocol/servers",
@@ -917,13 +931,13 @@
       "priority": "P0",
       "default_treatment": "COMPATIBLE MCP TOOL ADAPTER",
       "provenance": "H",
-      "status": "INSPECTED",
+      "status": "CODE INTEGRATED",
       "canonical_url": "https://github.com/modelcontextprotocol/servers",
       "resolved_slug": "modelcontextprotocol/servers",
       "default_branch": "main",
       "source_sha": "c799c8552b0f27b7a33a7b9233773da144dddcf5",
       "source_sha_date": "2026-11-18T09:06:40Z",
-      "license_spdx": "NOASSERTION",
+      "license_spdx": "Apache-2.0 (MIT for older contributions)",
       "license_name": "Other",
       "archived": false,
       "pushed_at": "2026-11-19T16:41:29Z",
@@ -932,14 +946,22 @@
       "inspected_level": "github-metadata-only",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
-      "xroga_file_paths": [],
-      "new_tests": [],
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/src/agent/free-times.ts (convertTime)",
+        "apps/xroga-browser-extension/src/xroga/plugins.ts",
+        "backend/src/security/publicBodyText.ts",
+        "backend/src/routes/localBrowser.ts"
+      ],
+      "new_tests": [
+        "apps/xroga-browser-extension/src/agent/__tests__/free-times.test.ts",
+        "backend/src/security/publicBodyText.test.ts"
+      ],
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
+      "adoption_or_rejection_reason": "From fetch: character-set decoding and paged reads (http_get offset; backend code-complete, not deployed). From time: convert one moment between zones (find_free_times convert). Memory server not taken: it writes without consent, Xroga memory is consent-first. Sequential thinking is the plan tool. Filesystem and git servers are not browser features.",
       "classification": "ADAPT CODE",
-      "rights_note": "licence not machine-verified: read the LICENSE file before copying any code"
+      "rights_note": "LICENSE read: transitioning MIT to Apache-2.0"
     },
     {
       "upstream_repo": "Shopify/agent-skills",

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Konva board fixture</title>
+<style>body{font:14px sans-serif;margin:0;padding:20px}#state{margin-top:10px}#stage{width:560px;height:360px;background:#f3f3f3}</style></head>
+<body>
+<h1>Konva board</h1>
+<div id="stage"></div>
+<p id="state" role="status">state: idle</p>
+<!-- Real Konva (MIT, vendor/KONVA-LICENSE.txt): a stage with a layer of shapes and text, pointer handled at the container. -->
+<script src="vendor/konva.min.js"></script>
+<script>
+const say = text => { document.getElementById('state').textContent = text; };
+const stage = new Konva.Stage({ container: 'stage', width: 560, height: 360 });
+const layer = new Konva.Layer();
+const button = new Konva.Group({ x: 60, y: 40 });
+button.add(new Konva.Rect({ width: 140, height: 42, fill: '#118a4a', cornerRadius: 6 }));
+button.add(new Konva.Text({ text: 'Publish post', fontSize: 18, fill: '#fff', width: 140, height: 42, align: 'center', verticalAlign: 'middle' }));
+button.on('click tap', () => say('state: published'));
+const card = new Konva.Rect({ x: 60, y: 160, width: 120, height: 80, fill: '#a03ac7', draggable: true });
+card.on('dragend', () => say('state: card at ' + Math.round(card.x()) + ',' + Math.round(card.y())));
+layer.add(button, card, new Konva.Text({ x: 60, y: 250, text: 'Drag the card', fontSize: 16, fill: '#333' }));
+stage.add(layer);
+</script>
+</body></html>

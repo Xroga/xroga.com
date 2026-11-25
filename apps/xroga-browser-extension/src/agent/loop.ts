@@ -12,7 +12,7 @@ import { tableToObjects } from '@src/browser-control/core/tools/extract-rows';
 import type { ExtractedTable } from '@src/browser-control/probe/source';
 import { describePoolHit, poolCandidate, poolSuggestions, searchPool } from './aas-skills';
 import { describeHarnessHit, guidesForUrl, harnessCandidate, searchHarness } from './harness-skills';
-import { findFreeTimes, type FreeTimesArgs } from './free-times';
+import { convertTime, findFreeTimes, type FreeTimesArgs } from './free-times';
 import type { RunTimings, Phase } from './timing';
 import { cutText, siteOf } from '@src/browser-control';
 import type { Result, UserStepDetails } from '@src/browser-control';
@@ -2533,7 +2533,7 @@ ${renderSkill(top)}`);
       outcome = { call, kind, isError: r.isError, text: r.text };
     } else if (call.toolName === 'find_free_times') {
       try {
-        outcome = { call, kind, isError: false, text: findFreeTimes(args as unknown as FreeTimesArgs).text };
+        outcome = { call, kind, isError: false, text: args.convert && typeof args.convert === 'object' ? convertTime(args.convert as { at: string; from: string; to: string[] }) : findFreeTimes(args as unknown as FreeTimesArgs).text };
       } catch (error) {
         outcome = { call, kind, isError: true, text: `error: ${error instanceof Error ? error.message : String(error)}` };
       }

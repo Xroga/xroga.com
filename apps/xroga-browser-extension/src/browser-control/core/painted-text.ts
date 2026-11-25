@@ -30,24 +30,57 @@ export const PAINT_HOOK_SOURCE = `(() => {
       if (!proto || typeof proto.fillText !== 'function') return;
       const origFill = proto.fillText;
       const origStroke = proto.strokeText;
+      const origDraw = proto.drawImage;
       const canvases = [];
       const state = { off: false, calls: 0, since: Date.now() };
-      const restore = () => { try { proto.fillText = origFill; proto.strokeText = origStroke; } catch (e) { /* kept */ } };
+      const restore = () => { try { proto.fillText = origFill; proto.strokeText = origStroke; proto.drawImage = origDraw; } catch (e) { /* kept */ } };
+      const recOf = (canvas, now) => {
+        let rec = canvas.__xrogaPaintRec;
+        if (!rec) {
+          rec = { items: [], last: 0 };
+          Object.defineProperty(canvas, '__xrogaPaintRec', { value: rec, enumerable: false, configurable: true });
+        }
+        if (canvas.isConnected && !rec.listed) {
+          rec.listed = true;
+          canvases.push(new WeakRef(canvas));
+        }
+        if (now - rec.last > 60) rec.items = [];
+        rec.last = now;
+        return rec;
+      };
+      // A cache canvas copied onto the page: its texts are placed where the copy lands (the copy's scale, then the page canvas transform).
+      const project = (ctx, img, a) => {
+        const src = img && img.__xrogaPaintRec;
+        const dest = ctx.canvas;
+        if (!src || !src.items.length || !dest || !dest.isConnected) return;
+        const now = Date.now();
+        if (state.off) return;
+        if (now - state.since > 1000) { state.since = now; state.calls = 0; }
+        if (++state.calls > ${MAX_CALLS_PER_SECOND}) { state.off = true; restore(); return; }
+        let sx = 0, sy = 0, sw = img.width, sh = img.height, dx, dy, dw, dh;
+        if (a.length >= 8) { sx = a[1]; sy = a[2]; sw = a[3]; sh = a[4]; dx = a[5]; dy = a[6]; dw = a[7]; dh = a[8]; }
+        else if (a.length >= 4) { dx = a[1]; dy = a[2]; dw = a[3]; dh = a[4]; }
+        else { dx = a[1]; dy = a[2]; dw = sw; dh = sh; }
+        if (!(sw > 0) || !(sh > 0) || !isFinite(dx + dy + dw + dh)) return;
+        const rec = recOf(dest, now);
+        const m = ctx.getTransform();
+        const kx = dw / sw, ky = dh / sh;
+        for (const it of src.items) {
+          if (rec.items.length >= ${MAX_PER_PASS}) return;
+          if (it.cx < sx || it.cy < sy || it.cx > sx + sw || it.cy > sy + sh) continue;
+          const px = dx + (it.cx - sx) * kx, py = dy + (it.cy - sy) * ky;
+          rec.items.push({ t: it.t, cx: m.a * px + m.c * py + m.e, cy: m.b * px + m.d * py + m.f, cw: it.cw * Math.abs(kx) * Math.hypot(m.a, m.b), ch: it.ch * Math.abs(ky) * Math.hypot(m.c, m.d) });
+        }
+      };
       const record = (ctx, text, x, y) => {
         if (state.off) return;
         const now = Date.now();
         if (now - state.since > 1000) { state.since = now; state.calls = 0; }
         if (++state.calls > ${MAX_CALLS_PER_SECOND}) { state.off = true; restore(); return; }
         const canvas = ctx.canvas;
-        if (!canvas || !canvas.isConnected) return;
-        let rec = canvas.__xrogaPaintRec;
-        if (!rec) {
-          rec = { items: [], last: 0 };
-          Object.defineProperty(canvas, '__xrogaPaintRec', { value: rec, enumerable: false, configurable: true });
-          canvases.push(new WeakRef(canvas));
-        }
-        if (now - rec.last > 60) rec.items = [];
-        rec.last = now;
+        if (!canvas) return;
+        // A canvas that is not on the page is a cache: libraries (Fabric, Konva, many editors) paint each object's text into one, then copy it onto the page canvas with drawImage.
+        const rec = recOf(canvas, now);
         if (rec.items.length >= ${MAX_PER_PASS}) return;
         const s = String(text).replace(/\\s+/g, ' ').trim();
         if (!s) return;
@@ -71,6 +104,7 @@ export const PAINT_HOOK_SOURCE = `(() => {
       const origMeasure = proto.measureText;
       proto.fillText = function (t, x, y) { try { record(this, t, x, y); } catch (e) { /* the page's call goes on */ } return origFill.apply(this, arguments); };
       proto.strokeText = function (t, x, y) { try { record(this, t, x, y); } catch (e) { /* the page's call goes on */ } return origStroke.apply(this, arguments); };
+      proto.drawImage = function (img) { try { project(this, img, arguments); } catch (e) { /* the page's call goes on */ } return origDraw.apply(this, arguments); };
       const read = () => {
         const out = [];
         const seen = new Set();

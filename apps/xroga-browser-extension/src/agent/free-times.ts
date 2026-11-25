@@ -57,6 +57,20 @@ function format(utcMs: number, zone: string): { date: string; time: string } {
   return { date: `${local.getUTCFullYear()}-${pad(local.getUTCMonth() + 1)}-${pad(local.getUTCDate())}`, time: `${pad(local.getUTCHours())}:${pad(local.getUTCMinutes())}` };
 }
 
+/** One moment in one zone, shown in other zones (idea: the `convert_time` tool of modelcontextprotocol/servers `time`, MIT, written fresh). `at` is "YYYY-MM-DD HH:MM" in `from`. */
+const NL = String.fromCharCode(10);
+
+export function convertTime(args: { at: string; from: string; to: string[] }): string {
+  const m = /^(\d{4}-\d{2}-\d{2})[ T](\d{1,2}:\d{2})$/.exec(String(args.at ?? '').trim());
+  if (!m) throw new Error('at must look like 2026-12-07 14:30, in the from zone');
+  if (!args.from || !Array.isArray(args.to) || !args.to.length) throw new Error('give the from zone and at least one zone in to');
+  const utc = localToUtc(m[1]!, hm(m[2]!), args.from);
+  const sign = (zone: string) => { const o = offsetMinutes(zone, utc); return `UTC${o < 0 ? '-' : '+'}${pad(Math.floor(Math.abs(o) / 60))}:${pad(Math.abs(o) % 60)}`; };
+  const day = (zone: string) => ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][new Date(utc + offsetMinutes(zone, utc) * 60_000).getUTCDay()];
+  const show = (zone: string) => { const f = format(utc, zone); return `${zone}: ${f.date} ${f.time} (${day(zone)}, ${sign(zone)})`; };
+  return `${m[1]} ${m[2]} in ${args.from} is, at that moment (offsets are the ones in force on that date, daylight saving included):${NL}${[args.from, ...args.to].map(show).join(NL)}`;
+}
+
 export function findFreeTimes(args: FreeTimesArgs): { windows: string[]; text: string } {
   if (!Array.isArray(args.participants) || !args.participants.length) throw new Error('participants is a non-empty list');
   if (!(args.minutes > 0 && args.minutes <= DAY)) throw new Error('minutes is the length of the call, such as 30');
@@ -107,7 +121,7 @@ export const FREE_TIMES_TOOL = {
   source: 'agent' as const,
   group: 'working' as const,
   description:
-    'Compute common free windows for people in different time zones instead of converting times in your head. Give each person their zone (IANA like "Asia/Karachi" or "UTC+5"), working hours ("09:00-17:00") and busy slots in their own zone ("2026-12-07 14:00-16:00"), the day range, the length in minutes and the zone the answer must use. Returns windows free for everyone.',
+    'Compute common free windows for people in different time zones instead of converting times in your head. Give each person their zone (IANA like "Asia/Karachi" or "UTC+5"), working hours ("09:00-17:00") and busy slots in their own zone ("2026-12-07 14:00-16:00"), the day range, the length in minutes and the zone the answer must use. Returns windows free for everyone. For one moment in several zones ("what is 3pm New York in Karachi and London") give only convert: {at, from, to}.',
   parameters: {
     type: 'object',
     properties: {
@@ -121,8 +135,9 @@ export const FREE_TIMES_TOOL = {
       outputZone: { type: 'string' },
       weekdaysOnly: { type: 'boolean' },
       limit: { type: 'number' },
+      convert: { type: 'object', description: 'Instead of free windows: show ONE moment in other zones. at is "YYYY-MM-DD HH:MM" in the from zone', properties: { at: { type: 'string' }, from: { type: 'string' }, to: { type: 'array', maxItems: 12, items: { type: 'string' } } }, required: ['at', 'from', 'to'] },
     },
-    required: ['participants', 'from', 'to', 'minutes', 'outputZone'],
+    required: [] as string[],
     additionalProperties: false,
   },
 };

@@ -8,6 +8,7 @@ import { resolveModelSpec } from '../ai/models.js';
 import { DIRECT_READ_MAX_AGE_MS, isPlainOpenAndRead, namesSite } from './localBrowserDirectRead.js';
 import { browserDeviceExtension, localBrowserAccountAllowed, type BrowserDeviceRequest } from './localBrowserDevice.js';
 import { boundedPublicGet, publicHttpsUrl } from '../security/boundedPublicGet.js';
+import { decodePublicBody, pageOfBody } from '../security/publicBodyText.js';
 import { RepoRunError, runRepository } from '../sandbox/repoRun.js';
 import { getUserPluginPermissionMode, type PluginPermissionMode } from '../services/integrations/pluginPermissionPolicy.js';
 import { classifyOutboundData } from '../security/egress/dataClassification.js';
@@ -635,7 +636,7 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     active(row);
     if (!req.revalidateBrowserDevice || !await req.revalidateBrowserDevice()) throw new BrowserRequestError(403, 'BROWSER_DEVICE_REVOKED');
     requireTenantContext(req.tenantContext);
-    const { url } = z.object({ url: z.string().trim().min(10).max(2_000) }).strict().parse(req.body);
+    const { url, offset } = z.object({ url: z.string().trim().min(10).max(2_000), offset: z.number().int().min(0).max(5_000_000).optional() }).strict().parse(req.body);
     checkData(url);
     try { publicHttpsUrl(url); } catch { throw new BrowserRequestError(403, 'BROWSER_POLICY_DENIED', { reason: ['public_https_only'] }); }
     const got = await boundedPublicGet(url, { maxBytes: 400_000, timeoutMs: 15_000, maxRedirects: 3, allowHttpErrors: true, signal: AbortSignal.timeout(20_000) })
@@ -644,9 +645,9 @@ export function createLocalBrowserRouter(resolve = configured, dispatch = dispat
     if (!/^(?:text\/|application\/(?:json|xml|[a-z.+-]*\+(?:json|xml)|csv|javascript|x-ndjson))/.test(type)) {
       return res.json({ status: got.statusCode, contentType: got.contentType.slice(0, 80), finalUrl: got.finalUrl, body: '', note: 'Not a text or data response; open it in the browser instead.' });
     }
-    const text = got.bytes.toString('utf8');
+    const text = decodePublicBody(got.bytes, got.contentType);
     return res.json({ status: got.statusCode, contentType: got.contentType.slice(0, 80), finalUrl: got.finalUrl,
-      body: text.slice(0, 40_000), ...(text.length > 40_000 ? { truncated: true, totalChars: text.length } : {}) });
+      ...pageOfBody(text, offset ?? 0) });
   }));
 
   // Runs a pinned public GitHub repository's code in the isolated sandbox worker (no network, no secrets, nothing kept) and returns the real
