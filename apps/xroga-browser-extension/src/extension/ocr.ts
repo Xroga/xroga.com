@@ -2,7 +2,15 @@
 import { ensureOffscreen, offscreenBusy } from './downloads';
 import type { OcrResult } from '@src/agent/ocr-format';
 
+/** Reads a picture. A read that finds no line at all is tried once more: a worker that has only just started, or one the machine is too busy to serve in time, can come back empty once. */
 export async function recognizeImage(base64: string, mimeType: string, lang = 'eng'): Promise<OcrResult> {
+  const first = await recognizeOnce(base64, mimeType, lang);
+  if (first.lines.length) return first;
+  await new Promise(resolve => setTimeout(resolve, 400));
+  return recognizeOnce(base64, mimeType, lang);
+}
+
+async function recognizeOnce(base64: string, mimeType: string, lang: string): Promise<OcrResult> {
   offscreenBusy(1);
   try {
     await ensureOffscreen();
