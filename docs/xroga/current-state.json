@@ -7063,6 +7063,7 @@
         "backend/src/ai/pipeline.ts:36",
         "backend/src/ai/providerPacingTransport.test.ts:3",
         "backend/src/ai/qa.ts:1",
+        "backend/src/ai/reasoningSummary.ts:1",
         "backend/src/ai/repoSummarize.ts:8",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:9",
         "backend/src/ai/sonnetApproval.ts:13",
@@ -9788,6 +9789,72 @@
         "backend/src/security/budgetOwner.local.integration.ts",
         "backend/src/security/quotaEvidence.local.integration.ts",
         "backend/src/services/BillingService.budget.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:6b6608aca0b309f1efdb",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/reasoningSummary.ts",
+      "sha256": "4420a54836e0cc01db6a7f4050fe5f7be485c23460f849d73dd6233d2c1e2b27",
+      "symbols": [
+        "REASONING_SUMMARY_MAX_CHARS",
+        "REASONING_SUMMARY_MAX_OUTPUT_TOKENS",
+        "REASONING_SUMMARY_MIN_MESSAGE_CHARS",
+        "REASONING_SUMMARY_MODEL",
+        "SYSTEM",
+        "cleanReasoningSummary",
+        "context",
+        "cut",
+        "end",
+        "execute",
+        "flag",
+        "generateReasoningSummary",
+        "message",
+        "messages",
+        "reasoningSummaryEnabled",
+        "result",
+        "scope",
+        "text"
+      ],
+      "imports": [
+        "../lib/publicAiIdentity.js",
+        "../lib/truthfulExecution.js",
+        "../security/tenantContext.js",
+        "./openaiCompat.js",
+        "./tenantModelDispatch.js"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/openaiCompat.ts",
+        "backend/src/ai/tenantModelDispatch.ts",
+        "backend/src/lib/publicAiIdentity.ts",
+        "backend/src/lib/truthfulExecution.ts",
+        "backend/src/security/tenantContext.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/ai/reasoningSummary.test.ts:3",
+        "backend/src/routes/phase1ChatProgress.ts:5"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [
+        "backend/src/ai/reasoningSummary.ts#withTenantModelReservation"
+      ],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/ai/reasoningSummary.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -14306,6 +14373,7 @@
         "backend/src/ai/parallelDispatch.ts:10",
         "backend/src/ai/pipeline.ts:7",
         "backend/src/ai/qa.ts:2",
+        "backend/src/ai/reasoningSummary.ts:2",
         "backend/src/ai/repoSummarize.ts:18",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:4",
         "backend/src/ai/sonnetApproval.ts:12",
@@ -14354,6 +14422,7 @@
         "backend/src/ai/modelContext.security.test.ts",
         "backend/src/ai/modelRedirectFallback.security.test.ts",
         "backend/src/ai/openaiCompat.egress.test.ts",
+        "backend/src/ai/reasoningSummary.test.ts",
         "backend/src/ai/tenantModelDispatch.test.ts",
         "backend/src/security/genericSdk.local.integration.ts",
         "backend/src/services/integrations/businessAccounting.failure.test.ts"
@@ -26266,6 +26335,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/ai/reasoningSummary.ts:5",
         "backend/src/lib/publicAiIdentity.test.ts:3",
         "backend/src/routes/phase1ChatProgress.ts:4",
         "backend/src/routes/swarm.ts:17",
@@ -27211,6 +27281,7 @@
         "backend/src/ai/parallelApproval.ts:18",
         "backend/src/ai/parallelWeb.ts:3",
         "backend/src/ai/pipeline.ts:230",
+        "backend/src/ai/reasoningSummary.ts:4",
         "backend/src/ai/research.ts:5",
         "backend/src/ai/runTrace.ts:7",
         "backend/src/ai/softwareAgent/softwareAgentProductionInfrastructure.ts:47",
@@ -33255,9 +33326,10 @@
       "id": "surface:a84cf17b2bc2287e5cc5",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
-      "sha256": "17b29bc05c805b7dee6f09ce70a08b78b527813116a5be7d520c224a8592faf6",
+      "sha256": "7d2c0a6bc1d1ae512fa90f76190ce492c3ee5d7c0f2658ec20239c859070ce29",
       "symbols": [
         "HEARTBEAT_MS",
+        "controller",
         "heartbeat",
         "line",
         "message",
@@ -33272,12 +33344,15 @@
       ],
       "imports": [
         "../ai/intentReasoning.js",
+        "../ai/reasoningSummary.js",
         "../ai/startupProgress.js",
         "../lib/publicAiIdentity.js",
+        "../middleware/auth.js",
         "express"
       ],
       "runtimeImports": [
         "backend/src/ai/intentReasoning.ts",
+        "backend/src/ai/reasoningSummary.ts",
         "backend/src/ai/startupProgress.ts",
         "backend/src/lib/publicAiIdentity.ts"
       ],
@@ -33293,7 +33368,9 @@
       "externalProviderDependencies": [
         "express"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/routes/phase1ChatProgress.ts#AuthRequest"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -37646,6 +37723,7 @@
         "backend/src/ai/providerBudget.ts:4",
         "backend/src/ai/quota.failure.test.ts:4",
         "backend/src/ai/quota.ts:2",
+        "backend/src/ai/reasoningSummary.ts:3",
         "backend/src/ai/repoSummarize.security.test.ts:6",
         "backend/src/ai/repoSummarize.ts:19",
         "backend/src/ai/researchAnswer.test.ts:176",
@@ -121538,7 +121616,7 @@
       "id": "surface:64d3429f35e151f27537",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/terminal/processingView.ts",
-      "sha256": "ae3c357b3cce71ebd0a0dd34170f9d73d7f12903ea2d7dc4b7a69b46e79777ad",
+      "sha256": "55ededce183826a7007fc508d3238bfc8c5a8e21189409b73e1977047a6f740e",
       "symbols": [
         "BuildProcessingViewOptions",
         "HEADING_BY_KIND",
@@ -138719,9 +138797,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a7cd8f4b7f4e660f32cb",
+      "id": "registration:3d057126c09dd6e46e00",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
-      "line": 33,
+      "line": 35,
       "receiver": "router",
       "method": "post",
       "path": "/chat",
@@ -140265,10 +140343,10 @@
       "reason": "Router factory invoked by an imported default export; terminal middleware traced, behavior must still be tested."
     },
     {
-      "id": "route:b8387ed099219967dd91",
-      "registrationId": "registration:a7cd8f4b7f4e660f32cb",
+      "id": "route:4804bae3509e3ea90016",
+      "registrationId": "registration:3d057126c09dd6e46e00",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
-      "line": 33,
+      "line": 35,
       "method": "POST",
       "path": "/api/phase1/chat",
       "mountChain": [
@@ -145576,9 +145654,9 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:71083ee0a5668589841f",
+      "id": "schedule:458aea97abf4241a4eec",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
-      "line": 52,
+      "line": 54,
       "kind": "setInterval",
       "symbol": "<module>",
       "reachable": true,
@@ -155577,6 +155655,13 @@
       "id": "test-suite:d43c5da35b596963efda",
       "sourcePath": "backend/src/ai/quota.test.ts",
       "declaredTests": 18,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:846cdb9ce4a867dd5520",
+      "sourcePath": "backend/src/ai/reasoningSummary.test.ts",
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "1c9e6193d34e66e75f3a924c071d4598ccbd1ab7",
+  "source_sha": "4d78b3e37b50d880658330a91173f060e4249f1e",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -8408,6 +8408,7 @@
         "backend/src/ai/legacyBuilderAdapter.ts",
         "backend/src/ai/nativeOpenUiWorkspace.ts",
         "backend/src/ai/providerRuntime.ts",
+        "backend/src/ai/reasoningSummary.ts",
         "backend/src/ai/resourceMeter.ts",
         "backend/src/ai/routerConfig.ts",
         "backend/src/ai/softwareAgent/softwareAgentFeatureFlags.ts",
@@ -8619,6 +8620,7 @@
         "XROGA_QA_HOST_ALLOWED_SUFFIXES",
         "XROGA_QA_HOST_MAX_CONCURRENT",
         "XROGA_QA_HOST_SECRET",
+        "XROGA_REASONING_SUMMARY",
         "XROGA_RELEASE_CANDIDATE",
         "XROGA_REQUIRE_HIGH_RISK_REVIEW",
         "XROGA_REQUIRE_MANAGED_CUSTODY",
@@ -8647,6 +8649,7 @@
         "backend/src/ai/legacyBuilderAdapter.ts",
         "backend/src/ai/nativeOpenUiWorkspace.ts",
         "backend/src/ai/providerRuntime.ts",
+        "backend/src/ai/reasoningSummary.ts",
         "backend/src/ai/resourceMeter.ts",
         "backend/src/ai/routerConfig.ts",
         "backend/src/ai/softwareAgent/softwareAgentFeatureFlags.ts",
@@ -15844,6 +15847,25 @@
       ]
     },
     {
+      "name": "XROGA_REASONING_SUMMARY",
+      "consuming_sources": [
+        "backend/src/ai/reasoningSummary.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_RELEASE_CANDIDATE",
       "consuming_sources": [
         "backend/src/runtime/startupPolicy.ts"
@@ -17365,6 +17387,10 @@
       "sha256": "33f0ab8cf98b74e9e1fcd3519c1a158cf20a3f0a6269a1128ea9a39e0c37e98d"
     },
     {
+      "path": "backend/src/ai/reasoningSummary.ts",
+      "sha256": "4420a54836e0cc01db6a7f4050fe5f7be485c23460f849d73dd6233d2c1e2b27"
+    },
+    {
       "path": "backend/src/ai/repairController.ts",
       "sha256": "202f7946c8181fd2a20492e2c848d01631542ef6c1d73b9c10d0900e74790df1"
     },
@@ -18798,7 +18824,7 @@
     },
     {
       "path": "backend/src/routes/phase1ChatProgress.ts",
-      "sha256": "17b29bc05c805b7dee6f09ce70a08b78b527813116a5be7d520c224a8592faf6"
+      "sha256": "7d2c0a6bc1d1ae512fa90f76190ce492c3ee5d7c0f2658ec20239c859070ce29"
     },
     {
       "path": "backend/src/routes/profile.ts",
@@ -24506,7 +24532,7 @@
     },
     {
       "path": "frontend/src/lib/terminal/processingView.ts",
-      "sha256": "ae3c357b3cce71ebd0a0dd34170f9d73d7f12903ea2d7dc4b7a69b46e79777ad"
+      "sha256": "55ededce183826a7007fc508d3238bfc8c5a8e21189409b73e1977047a6f740e"
     },
     {
       "path": "frontend/src/lib/terminal/requiredInteractions.ts",

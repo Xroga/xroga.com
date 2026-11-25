@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `1c9e6193d34e66e75f3a924c071d4598ccbd1ab7`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `4d78b3e37b50d880658330a91173f060e4249f1e`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -326,6 +326,7 @@ Values are forbidden. Source SHA: `1c9e6193d34e66e75f3a924c071d4598ccbd1ab7`. Na
 | XROGA_QA_HOST_ALLOWED_SUFFIXES | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_QA_HOST_MAX_CONCURRENT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_QA_HOST_SECRET | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
+| XROGA_REASONING_SUMMARY | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_RELEASE_CANDIDATE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_RELEASE_SHA | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | api, endpoint-127-0-0-1, endpoint-metadata-google-internal |
 | XROGA_REQUIRE_HIGH_RISK_REVIEW | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
