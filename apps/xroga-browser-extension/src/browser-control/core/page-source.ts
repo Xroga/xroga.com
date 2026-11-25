@@ -6,6 +6,14 @@
 const OPAQUE = /\b(?:eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}|[A-Za-z0-9_-]{40,})\b/g;
 const SECRET_NAME = /(?:csrf|xsrf|token|nonce|secret|session|auth|password|passwd|api[-_]?key)/i;
 
+/** One link of the page, as the model reads it: the words, then the address. javascript: and data: addresses are not links to anywhere and are left out; long opaque strings in an address are hidden. */
+export function linkLine(text: string, href: string): string | undefined {
+  if (!/^(?:https?:|mailto:|tel:)/i.test(href)) return undefined;
+  const shown = href.replace(OPAQUE, m => (/^[a-z-]+$/i.test(m) && m.includes('-') ? m : '…'));
+  const words = text.replace(/\s+/g, ' ').trim().slice(0, 100);
+  return `«${words || '(no text)'}» → ${shown.slice(0, 300)}`;
+}
+
 /** The markup with scripts, styles, drawings, comments and every field value removed, and credential-looking strings hidden. */
 export function cleanSource(html: string): string {
   let out = html

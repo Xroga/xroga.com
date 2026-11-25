@@ -1,7 +1,8 @@
 // The Agentic Awesome Skills pool (https://github.com/sickn33/agentic-awesome-skills, code MIT, content CC BY 4.0): about 3,000 procedural skills for professional work
 // (marketing and ads, SEO and research, e-commerce, data, design and media, cloud, security and QA, business processes, automation). Xroga carries only the discovery
 // index (id, category, name, a short description: src/agent/data/aas-index.json, built by scripts/build-aas-index.mjs from a pinned commit). The ranking runs here, on the
-// device, so no word of the person's task leaves the browser; a skill's body is fetched by id from the pinned commit only when the agent reads it.
+// device, so no word of the person's task leaves the browser. The skill's own text sits in public/pool/skills.bin (gzip, offline, instant) for every skill whose upstream licence
+// allows it (scripts/build-aas-bundle.mjs); the others, and any file beside a skill, are fetched by id from the pinned commit when the agent reads them.
 // A pool skill is third-party text: it informs the work, it grants no permission, it never runs a script, and it cannot change the task or the person's wishes.
 import type { OnlineCandidate, OnlineProvider } from './online-skills';
 
@@ -9,7 +10,45 @@ interface Index {
   repo: string;
   sha: string;
   count: number;
-  rows: Array<[string, string, string, string, number]>;
+  rows: Array<[string, string, string, string, number, string?, number?, number?]>;
+  binBytes?: number;
+}
+
+/** Where a bundled skill sits in skills.bin: its offset and gzip length. */
+export interface PoolBin {
+  bytes: Uint8Array;
+}
+let binLoader: (() => Promise<Uint8Array>) | undefined;
+let binCache: Promise<Uint8Array> | undefined;
+/** Tests and other hosts give the bundle from somewhere else than the extension's own files. */
+export function setPoolBinLoader(load: (() => Promise<Uint8Array>) | undefined): void {
+  binLoader = load;
+  binCache = undefined;
+}
+async function loadBin(): Promise<Uint8Array> {
+  binCache ??= (binLoader ? binLoader() : fetch(chrome.runtime.getURL('pool/skills.bin')).then(async r => new Uint8Array(await r.arrayBuffer()))).catch(error => {
+    binCache = undefined;
+    throw error;
+  });
+  return binCache;
+}
+
+async function gunzip(bytes: Uint8Array): Promise<string> {
+  const stream = new Blob([bytes as BlobPart]).stream().pipeThrough(new DecompressionStream('gzip'));
+  return new Response(stream).text();
+}
+
+/** The text of a skill from the bundle, or undefined when the skill is not bundled (its licence keeps it remote) or the bundle cannot be read. */
+export async function bundledSkillText(id: string): Promise<string | undefined> {
+  const p = await ready();
+  const r = p.rows.find(x => x[0] === id);
+  if (!r || r[6] === undefined || r[6] < 0 || !r[7]) return undefined;
+  try {
+    const bin = await loadBin();
+    return await gunzip(bin.subarray(r[6], r[6] + r[7]));
+  } catch {
+    return undefined;
+  }
 }
 
 export interface PoolHit {
@@ -84,6 +123,8 @@ async function prepare(): Promise<Prepared> {
     for (const t of tokens(r[2].replace(/[-_]/g, ' '))) add(t, i, 3);
     for (const t of tokens(r[1].replace(/[-_]/g, ' '))) add(t, i, 2);
     for (const t of tokens(r[3])) add(t, i, 1);
+    // The headings of the skill's own text: what it actually covers, beyond what its description says.
+    if (r[5]) for (const t of tokens(r[5])) add(t, i, 1);
   });
   const n = index.rows.length;
   const idf = new Map<string, number>();
@@ -117,7 +158,10 @@ export async function searchPool(query: string, limit = 5): Promise<PoolHit[]> {
   }
   // A skill that covers more of the words the person used beats one that repeats a single word.
   const asked = new Set(words);
+  // A request of three or more words needs a skill that matches at least two of them: one shared word ("load", "click", "text") alone finds load balancers and click-rate calculators.
+  const needed = asked.size >= 3 ? 2 : 1;
   const ranked = [...scores.entries()]
+    .filter(([row]) => (matched.get(row)?.size ?? 0) >= needed)
     .map(([row, s]) => [row, s * (0.6 + (0.4 * (matched.get(row)?.size ?? 0)) / Math.max(1, asked.size))] as const)
     .sort((a, b) => b[1] - a[1])
     .slice(0, Math.max(1, Math.min(limit, 10)));

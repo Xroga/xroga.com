@@ -38,6 +38,7 @@ import './canvas-libraries';
 import './find-by-query';
 import './ocr-picture';
 import './image-and-language';
+import './pool-bundle';
 import './variants-form';
 import './timeline-editor';
 import './stale-and-slow';

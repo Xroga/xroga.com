@@ -16,7 +16,7 @@ const button = new Konva.Group({ x: 60, y: 40 });
 button.add(new Konva.Rect({ width: 140, height: 42, fill: '#118a4a', cornerRadius: 6 }));
 button.add(new Konva.Text({ text: 'Publish post', fontSize: 18, fill: '#fff', width: 140, height: 42, align: 'center', verticalAlign: 'middle' }));
 button.on('click tap', () => say('state: published'));
-const card = new Konva.Rect({ x: 60, y: 160, width: 120, height: 80, fill: '#a03ac7', draggable: true });
+const card = new Konva.Rect({ x: 60, y: 160, width: 120, height: 80, fill: '#a03ac7', draggable: true, name: 'purple-card' });
 card.on('dragend', () => say('state: card at ' + Math.round(card.x()) + ',' + Math.round(card.y())));
 layer.add(button, card, new Konva.Text({ x: 60, y: 250, text: 'Drag the card', fontSize: 16, fill: '#333' }));
 stage.add(layer);

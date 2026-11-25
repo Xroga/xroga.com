@@ -9,13 +9,13 @@
 <!-- Real Fabric.js (MIT, vendor/FABRIC-LICENSE.txt): two stacked canvases, the top one takes the pointer. -->
 <script src="vendor/fabric.min.js"></script>
 <script>
-const canvas = new fabric.Canvas('c', { backgroundColor: '#f3f3f3', selection: false });
+const canvas = window.board = new fabric.Canvas('c', { backgroundColor: '#f3f3f3', selection: false });
 const say = text => { document.getElementById('state').textContent = text; };
 const label = new fabric.FabricText('Save draft', { fontSize: 18, fill: '#fff', originX: 'center', originY: 'center' });
 const box = new fabric.Rect({ width: 130, height: 42, fill: '#0a64c8', rx: 6, ry: 6, originX: 'center', originY: 'center' });
 const button = new fabric.Group([box, label], { left: 60, top: 40, selectable: false, hoverCursor: 'pointer' });
 button.on('mousedown', () => say('state: saved'));
-const card = new fabric.Rect({ left: 60, top: 160, width: 120, height: 80, fill: '#e07a1f', hasControls: false, hasBorders: false });
+const card = new fabric.Rect({ left: 60, top: 160, width: 120, height: 80, fill: '#e07a1f', hasControls: false, hasBorders: false, name: 'orange-card' });
 card.on('modified', () => say('state: card at ' + Math.round(card.left) + ',' + Math.round(card.top)));
 const tag = new fabric.FabricText('Drag the card', { left: 60, top: 250, fontSize: 16, fill: '#333', selectable: false, evented: false });
 canvas.add(button, card, tag);

@@ -23,7 +23,7 @@ import { compactOps, diffLines, renderDiff } from '../perception/diff';
 import type { FrameRecord } from '../ports';
 import { rememberSecret } from '../redact';
 import { quote } from '../text';
-import { cleanSource } from '../page-source';
+import { cleanSource, linkLine } from '../page-source';
 
 /** A capture is reused by read-only helpers only right after it, with no action in between. */
 const REUSE_MS = 2_000;
@@ -292,7 +292,23 @@ export async function read(
     return { data: { content: lines.join('\n'), offset: 0, remaining: 0 }, lines: [`read · ${args.ref} · computed styles`], pageText: lines.join('\n'), notices: [] };
   }
   let content: string;
-  if (args.format === 'html') {
+  if (args.format === 'links') {
+    const { cdp } = await ctx.attach();
+    const res = await cdp.send<{ result?: { value?: Array<[string, string]> } }>(undefined, 'Runtime.evaluate', {
+      expression: "Array.from(document.querySelectorAll('a[href]')).map(a => [a.innerText || a.getAttribute('aria-label') || a.title || (a.querySelector('img') && a.querySelector('img').alt) || '', a.href]).slice(0, 2000)",
+      returnByValue: true,
+    });
+    const seen = new Set<string>();
+    const lines: string[] = [];
+    for (const [text, href] of res.result?.value ?? []) {
+      const line = linkLine(String(text), String(href));
+      if (line && !seen.has(line)) {
+        seen.add(line);
+        lines.push(line);
+      }
+    }
+    content = lines.length ? `${lines.length} links on this page:\n${lines.join('\n')}` : 'This page has no links with an address.';
+  } else if (args.format === 'html') {
     const { cdp } = await ctx.attach();
     let objectId: string | undefined;
     if (args.ref) {

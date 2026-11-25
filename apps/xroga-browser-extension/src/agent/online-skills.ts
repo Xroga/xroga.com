@@ -98,6 +98,37 @@ export const SKILLSHUB: OnlineProvider = {
   },
 };
 
+/**
+ * The address of a file that sits beside a pool skill's SKILL.md (a reference, a template, a script to read): the third tier of the Agent Skills loading model, fetched only when the
+ * skill's own text points to it. Only a plain relative path of letters, digits, dots, dashes and slashes inside the skill's folder, of a text kind, from the same pinned commit.
+ */
+export function skillFileUrl(c: OnlineCandidate, file: string): string | null {
+  if (c.provider !== 'aas') return null;
+  if (!/^[A-Za-z0-9][A-Za-z0-9._\/-]{0,120}$/.test(file) || file.includes('..') || file.includes('//')) return null;
+  if (!/\.(?:md|markdown|txt|json|ya?ml|csv|html?|css|js|ts|py|sh|xml|toml)$/i.test(file)) return null;
+  const m = /^(https:\/\/raw\.githubusercontent\.com\/sickn33\/agentic-awesome-skills\/[a-f0-9]{40}\/skills\/[A-Za-z0-9._-]+\/)SKILL\.md$/.exec(c.fetchUrl);
+  return m ? m[1] + file : null;
+}
+
+/** One file beside a pool skill, as untrusted text (cut at 60,000 characters). */
+export async function loadSkillFile(c: OnlineCandidate, file: string, fetchImpl: FetchLike): Promise<string | null> {
+  const url = skillFileUrl(c, file);
+  if (!url) return null;
+  const got = await getText(fetchImpl, url, 'text/plain');
+  return got.ok && got.text.trim() ? got.text.slice(0, 60_000) : null;
+}
+
+/** A pool skill from the bundle in the extension: no network, the same format checks. Null when the skill is not bundled. */
+export async function loadBundledCandidate(c: OnlineCandidate): Promise<OnlineCandidate | null> {
+  if (c.provider !== 'aas') return null;
+  const id = c.id.replace(/^online:aas:/, '');
+  const { bundledSkillText } = await import('./aas-skills');
+  const text = await bundledSkillText(id);
+  if (!text) return null;
+  const parsed = parseSkillMd(text, { lenient: true });
+  return { ...c, text: parsed.ok ? parsed.skill.body : text.slice(0, 60_000) };
+}
+
 /** Fetches one candidate's SKILL.md. Valid format required; the body is untrusted and unverified. */
 export async function loadCandidate(c: OnlineCandidate, fetchImpl: FetchLike): Promise<OnlineCandidate | null> {
   const u = new URL(c.fetchUrl);

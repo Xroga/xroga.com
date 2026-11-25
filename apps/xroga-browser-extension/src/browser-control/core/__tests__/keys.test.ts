@@ -12,6 +12,9 @@ describe('keys the gate classifies', () => {
   it('splits a chord as the page port presses it', () => {
     expect(splitChord('Control+A')).toEqual({ modifiers: ['Control'], key: 'A' });
     expect(splitChord(' Shift + Enter ')).toEqual({ modifiers: ['Shift'], key: 'Enter' });
+    expect(splitChord('Mod+A', false)).toEqual({ modifiers: ['Control'], key: 'A' });
+    expect(splitChord('Mod+Shift+Z', true)).toEqual({ modifiers: ['Meta', 'Shift'], key: 'Z' });
+    expect(splitChord('CmdOrCtrl+C', true).modifiers).toEqual(['Meta']);
     expect(splitChord(' Enter')).toEqual({ modifiers: [], key: 'Enter' });
   });
 

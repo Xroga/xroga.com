@@ -11,12 +11,22 @@ export interface KeyElement {
   contentEditable?: boolean;
 }
 
-/** A chord split as the page port presses it: parts trimmed, empty parts dropped, the last part is the key. */
-export function splitChord(keys: string): { modifiers: string[]; key: string } {
+/** True on a Mac, where the shortcut modifier is Command (Meta), not Control. */
+export function onMac(): boolean {
+  const nav = (globalThis as { navigator?: { userAgentData?: { platform?: string }; platform?: string } }).navigator;
+  return /mac|iphone|ipad/i.test(nav?.userAgentData?.platform ?? nav?.platform ?? '');
+}
+
+/** The shortcut modifier under the names other tools use: Mod, ControlOrMeta, CmdOrCtrl, CommandOrControl. It is Meta on a Mac and Control elsewhere. */
+const SHORTCUT = /^(?:mod|controlormeta|cmdorctrl|commandorcontrol|ctrlorcmd|controlorcommand)$/i;
+
+/** A chord split as the page port presses it: parts trimmed, empty parts dropped, the last part is the key. A shortcut modifier name is turned into what this computer uses. */
+export function splitChord(keys: string, mac: boolean = onMac()): { modifiers: string[]; key: string } {
   const parts = keys
     .split('+')
     .map(p => p.trim())
-    .filter(Boolean);
+    .filter(Boolean)
+    .map(p => (SHORTCUT.test(p) ? (mac ? 'Meta' : 'Control') : p));
   const key = parts.pop() ?? '';
   return { modifiers: parts, key };
 }

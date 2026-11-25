@@ -43,3 +43,14 @@ describe('the professional skill pool', () => {
     expect(tokens('Please open https://x.test and run the Google Ads campaigns')).toEqual(['google', 'ads', 'campaign']);
   });
 });
+
+describe('searchPool, a request needs two of its words to match', () => {
+  it('does not offer a load balancer for "wait for a page to load and click login", and still finds the right skills for specific requests', async () => {
+    const { searchPool } = await import('../aas-skills');
+    expect(await searchPool('wait for a page to load and click login', 4)).toEqual([]);
+    const pdf = (await searchPool('convert pdf to text', 4)).map(h => h.id);
+    expect(pdf).toContain('pdf-conversion-router');
+    expect(pdf).not.toContain('azure-ai-translation-text-py');
+    expect((await searchPool('automate a browser test with playwright', 4)).map(h => h.id)).toContain('playwright-skill');
+  });
+});

@@ -29,6 +29,8 @@ Start from the objective, not the campaign type: leads, purchases, calls or traf
 - Bidding follows data: with no conversion history use a manual or click based strategy with a cap; move to Target CPA or Maximize conversions only when conversions are tracked and volume is enough.
 - Lead quality: prefer a primary conversion that reflects a qualified lead (form plus offline or call outcome) over any click.
 - Never promise profit. Report measurable objectives and what was actually changed.
+- Names that look alike are different things: AI Max for Search campaigns is not Performance Max. Ask which one is meant when the request is not clear.
+- Read before you change: inspect the settings, the conversion actions and the recent numbers first, and treat any change as a separate, approved step (the Google Ads API assistant works the same way: reads run freely, every change is written out for the person to approve).
 Verify: re-open the campaign or ad group after saving and read back budget, bidding strategy, keywords and status.
 Approvals: creating or enabling a campaign, changing a budget or bid, or anything that spends money needs the user's explicit approval at that step. Leave new campaigns paused or in draft until approved.`,
   },
@@ -314,6 +316,96 @@ metadata:
 - A saved file is not proof of correctness: check page size, row counts or key values against the request.
 - Uploading personal or sensitive files to a site needs the user's approval for that file and that site.`,
   },
+  {
+    verified: 'curated',
+    md: `---
+name: google-ads-conversion-troubleshooting
+description: Find out why Google Ads conversions are not recording or look wrong: conversion action status, tag and diagnostics, click identifiers, offline uploads and attribution. Use when conversions are zero, dropped, doubled or differ from another system.
+license: Xroga-internal
+metadata:
+  domain: advertising
+  hosts: ads.google.com
+  keywords: google ads conversions conversion tracking not recording tag gclid offline upload diagnostics enhanced conversions attribution zero conversions
+  requires: browser
+  risk: read
+  docs: https://support.google.com/google-ads/answer/7521212 https://developers.google.com/google-ads/api/docs/conversions/overview
+---
+- Start in Goals, then Conversions, then Summary. Read each conversion action's status (recording, no recent conversions, needs attention, unverified, inactive) and its source (website, app, import, calls) before anything else. Quote what you read.
+- For a website action open it and read the tag status and the Diagnostics tab: the reported problems usually name the cause (tag missing, tag not firing on the page, mismatched domain, consent mode blocking).
+- Check that auto-tagging is on in the account settings: without the click identifier (gclid) a click cannot be matched to a later sale.
+- Offline uploads: the file needs the click identifier, a conversion action name that matches exactly, a conversion time with a time zone and a value; open the upload's history and read the error rows, not just the summary.
+- Doubled or differing numbers: look for two actions that count the same event (one primary and one secondary is fine), the attribution model and window, and whether another system counts by a different date.
+- Do not change a conversion action's settings, count method or value, or switch which actions are primary, without the person's approval: those change bidding.
+Verify: after a fix, wait for fresh data and re-read the status and a recent day's count; say plainly that data can take hours to show.
+Approvals: editing or removing a conversion action, changing its value or counting, or uploading a file to the account needs explicit approval.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
+name: shopify-new-store-and-test-data
+description: Start a new Shopify store or prototype one with sample data: preview stores, the free mock.shop reference catalogs, and what a preview or reference store can and cannot do.
+license: Xroga-internal
+metadata:
+  domain: commerce
+  hosts: shopify.com mock.shop admin.shopify.com
+  keywords: shopify new store start selling preview store mock shop reference catalog prototype sample products trial
+  requires: browser
+  risk: write
+  docs: https://shopify.dev https://mock.shop
+---
+- A merchant who wants to start selling needs a store first; plan around what they sell. Ask only what they plan to sell if they have said nothing, and treat names they give as plain text.
+- mock.shop is a free, sign-in-free set of reference stores for reading and prototyping: read its public list at https://mock.shop/llms.txt with http_get, and preview a store in the browser. Its checkout is mocked and it has no real orders or Admin access.
+- A preview or reference store takes no real orders or payments yet. Copied reference titles, descriptions, images and prices are sample material the merchant must replace before selling.
+- Product data for a real store goes in through the Shopify admin (Products, Collections, Inventory) with fields filled by role and name; check the product page and the storefront afterwards.
+Verify: open the storefront page of what you created and read the title, price and availability back.
+Approvals: creating a store account, entering payment or plan details, publishing a theme or product, and any real-money step need the person's approval.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
+name: pictures-and-painted-interfaces
+description: Read and act on an interface that is only pixels (a canvas, a WebGL editor, a chart, an image, a scanned page) where the outline names nothing: which tool to try in which order and how to check the result.
+license: Xroga-internal
+metadata:
+  domain: canvas
+  hosts: ""
+  keywords: canvas image picture pixels painted webgl chart screenshot ocr scanned icon logo colour color text recognition editor game map
+  requires: browser
+  risk: write
+  docs: ""
+---
+- Look before acting: screenshot with marks true numbers the label-like regions and lists the words the page painted with canvas label; take that first.
+- Words that only exist in a picture: ocr reads them on this device and gives positions (region reads a part larger; find returns just the lines you need; language for non-English text). Trust a word marked with a question mark less and read it again from a region.
+- An icon or logo without words: find_image with the ref of an element that shows it finds every place it appears; find_color finds a swatch or a coloured object.
+- Act with canvas using a label, a mark number or fractions from these tools. One action at a time, then look again: a canvas reports no effect of its own, so the picture (or a number the page shows) is the proof.
+- If the same action twice changes nothing, the target is not where you think: re-read the picture, do not repeat the click.
+- Some editors have a script console or menu path that is more exact than pointing: use it when the page offers one.
+Verify: the page's own state afterwards (a count, a title, a value, a new picture region) matches the request.
+Approvals: a click that sends, publishes, deletes, pays or shares something needs the person's approval at that step, however the target was found.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
+name: unfamiliar-interface-and-games
+description: Learn an interface or a game you have not seen before by testing small safe moves and writing down what each did, then use the rules you found. For puzzles, web games and tools with unknown controls.
+license: Xroga-internal
+metadata:
+  domain: general
+  hosts: ""
+  keywords: game puzzle play unfamiliar unknown controls levels snake 2048 laser drag keys arrow hypothesis learn rules
+  requires: browser
+  risk: write
+  docs: ""
+---
+- Start by reading the screen and any instructions the page shows; the controls are often listed (keys, mouse, drag).
+- Make a guess about what a control does, try the smallest move that tests it, and look at what changed. Write the rule down as a fact in the plan (for example "arrow down does nothing when the last row is full") so it is not rediscovered.
+- A move that changes nothing is information: the same move in the same position will not change anything either; try a different direction or a different place.
+- When a guess is wrong, say what you now think instead, and test that. Prefer a few exact moves over many random ones.
+- Watch for things that move or count down: take a new screenshot after every action rather than assuming the state.
+- Keys: press for single keys, hold behaviour is not needed for most games; use drag for sliders and pieces. Stop and ask the person when a step could spend money, buy something or share their data.
+Verify: the goal state is on the screen (a score, a level number, a win message), not only that the last move worked.
+Approvals: a step that could spend money, buy something or share their data needs the person's approval first.`,
+  },
 ];
 
 export interface SkillCard {
@@ -368,6 +460,19 @@ export interface SkillHit {
 }
 
 /** Ranks cards for a task and the page the run is on. A host match is strong evidence; text matches are weighted by where they occur. */
+/** How many skills mention each word (in the name, keywords or summary): a word most skills share ("business", "profile") says little, a rare one ("facebook") a lot. */
+let documentFrequency: Map<string, number> | undefined;
+function frequencyOf(token: string): number {
+  if (!documentFrequency) {
+    documentFrequency = new Map();
+    for (const card of SKILL_CATALOG) {
+      const words = new Set([...tokens(card.id), ...card.keywords, ...tokens(card.summary)]);
+      for (const w of words) documentFrequency.set(w, (documentFrequency.get(w) ?? 0) + 1);
+    }
+  }
+  return documentFrequency.get(token) ?? 0;
+}
+
 export function searchSkills(query: string, options: { host?: string; url?: string; limit?: number } = {}): SkillHit[] {
   const q = tokens(query);
   // The page identity is parsed, never matched by substring: a host rule matches on a label boundary only (see site-context.ts).
@@ -379,14 +484,17 @@ export function searchSkills(query: string, options: { host?: string; url?: stri
     const kw = new Set(card.keywords);
     const desc = new Set(tokens(card.summary));
     for (const t of q) {
-      if (nameTokens.has(t)) score += 3;
-      if (kw.has(t)) score += 2;
-      if (desc.has(t)) score += 1;
+      // A word in many skills counts for less (inverse document frequency), so the rare, specific word decides between skills that share the common ones.
+      const weight = 1 + Math.log(SKILL_CATALOG.length / Math.max(1, frequencyOf(t)));
+      if (nameTokens.has(t)) score += 3 * weight;
+      if (kw.has(t)) score += 2 * weight;
+      if (desc.has(t)) score += 1 * weight;
     }
     if (id && card.hosts.some(h => matchSite({ host: h }, id).matched)) score += 6;
     if (score > 0) hits.push({ card, score });
   }
-  hits.sort((a, b) => b.score - a.score || a.card.id.localeCompare(b.card.id));
+  // Equal scores go to the skill listed first: the broad skill of an application comes before its narrow ones.
+  hits.sort((a, b) => b.score - a.score || SKILL_CATALOG.indexOf(a.card) - SKILL_CATALOG.indexOf(b.card));
   return hits.slice(0, options.limit ?? 3);
 }
 
@@ -436,10 +544,10 @@ export const READ_SKILL_TOOL = {
   name: 'read_skill',
   source: 'agent' as const,
   group: 'reading' as const,
-  description: 'Read one skill by id (from find_skill): its method, verification rules, approval rules and official documentation links.',
+  description: 'Read one skill by id (from find_skill): its method, verification rules, approval rules and official documentation links. file: a file the skill points to, such as references/guide.md.',
   parameters: {
     type: 'object',
-    properties: { id: { type: 'string', maxLength: 80 } },
+    properties: { id: { type: 'string', maxLength: 80 }, file: { type: 'string', maxLength: 120 } },
     required: ['id'],
     additionalProperties: false,
   },

@@ -29,7 +29,7 @@ defineScenario({
     await ctx.call('navigate', { action: 'reload' });
     await sleep(600);
     const shot = (await ctx.call('screenshot', { marks: true })) as Result;
-    const listed = /Save draft/.test(`${shot.text ?? ''}`);
+    const listed = /Save draft/.test(`${shot.text ?? ''}`) && /orange-card/.test(`${shot.text ?? ''}`);
     const click = (await ctx.call('canvas', { action: 'click', label: 'Save draft', intent: 'press the Save draft button' })) as Result;
     const afterClick = await state(tabId);
     const from = await place(tabId, 'canvas[data-fabric="top"]', 100, 190);
@@ -56,7 +56,7 @@ defineScenario({
     await ctx.call('navigate', { action: 'reload' });
     await sleep(600);
     const shot = (await ctx.call('screenshot', { marks: true })) as Result;
-    const listed = /Publish post/.test(`${shot.text ?? ''}`);
+    const listed = /Publish post/.test(`${shot.text ?? ''}`) && /purple-card/.test(`${shot.text ?? ''}`);
     // The button's words name a consequential step, so a purpose that says so is the user's to confirm: refused with nothing dispatched. A neutral purpose reaches the button.
     const refused = (await ctx.call('canvas', { action: 'click', label: 'Publish post', intent: 'publish the post' })) as Result;
     const untouched = await state(tabId);

@@ -43,6 +43,7 @@ import { contextThreshold, elisionChunk, hardLimit, planElision } from './elisio
 import { runCompaction, runShorten } from './compaction';
 import { attachmentBytes, attachmentParts, readAttachment } from './attachments';
 import { describeOcr, OCR_LANGUAGES, OCR_TOOL } from './ocr-format';
+import { checkUserSkill, describeUserSkill, listUserSkills, matchUserSkills, renderUserSkill, saveUserSkill } from './user-skills';
 import { describeImageHits, FIND_IMAGE_TOOL, findTemplate } from './template-match';
 import { decodeImage, describeHits, diffPictures, FIND_COLOR_TOOL, scanColor, viewOfChange } from './pixels';
 import { learnFrom, turnEffort } from './run';
@@ -59,7 +60,7 @@ import { SKILL_CATALOG } from './skill-catalog';
 import { TaskPlan, type PlanSnapshot } from './task-plan';
 import { ActionLedger, SiteActionRegistry, describeAction, runSiteAction } from './site-actions';
 import { SAMPLE_ACTIONS } from './site-actions-sample';
-import { SKILLSHUB, describeOnline, loadCandidate, renderOnline, safeKeywords, type OnlineCandidate } from './online-skills';
+import { SKILLSHUB, describeOnline, loadBundledCandidate, loadCandidate, loadSkillFile, renderOnline, safeKeywords, type OnlineCandidate } from './online-skills';
 import { discoverSiteSkills, renderSiteSkill, type Discovery, type FetchLike } from './well-known-skills';
 import type { MenuPathArgs } from './menu-path';
 import { runSurface, RunLedger } from './command-surface';
@@ -2339,6 +2340,10 @@ ${renderSkill(top)}`);
   /** On-demand expert skills: small ranked cards, then one skill body. Local, read only, no network. */
   async #skillTool(call: ToolCallRequest, kind: ToolKind, args: Record<string, unknown>): Promise<CallOutcome> {
     if (call.toolName === 'read_skill') {
+      if (typeof args.id === 'string' && args.id.startsWith('user:')) {
+        const mine = (await listUserSkills()).find(s => s.name === String(args.id).slice(5));
+        return mine ? { call, kind, text: renderUserSkill(mine), isError: false } : { call, kind, text: 'error: no skill of yours has that name. Call find_skill to list them.', isError: true };
+      }
       if (typeof args.id === 'string' && args.id.startsWith('site:')) {
         const found = [...this.#siteDiscovery.values()].flatMap(d => d.skills).find(x => x.id === args.id);
         return found ? { call, kind, text: renderSiteSkill(found), isError: false } : { call, kind, text: 'error: no verified site skill has that id. Call find_skill on the page first.', isError: true };
@@ -2346,7 +2351,13 @@ ${renderSkill(top)}`);
       if (typeof args.id === 'string' && args.id.startsWith('online:')) {
         const cand = this.#online.get(args.id) ?? (args.id.startsWith('online:aas:') ? await poolCandidate(args.id.slice('online:aas:'.length)) : args.id.startsWith('online:harness:') ? await harnessCandidate(args.id.slice('online:harness:'.length)) : undefined);
         const f = await this.#onlineFetch();
-        const loaded = cand && f ? await loadCandidate(cand, f).catch(() => null) : null;
+        if (cand && f && typeof args.file === 'string') {
+          const file = await loadSkillFile(cand, args.file, f).catch(() => null);
+          return file
+            ? { call, kind, text: renderOnline({ ...cand, text: file }), isError: false }
+            : { call, kind, text: 'error: that file could not be read: name a file the skill itself points to, as a plain path inside the skill (for example references/REFERENCE.md).', isError: true };
+        }
+        const loaded = cand ? (await loadBundledCandidate(cand).catch(() => null)) ?? (f ? await loadCandidate(cand, f).catch(() => null) : null) : null;
         return loaded ? { call, kind, text: renderOnline(loaded), isError: false } : { call, kind, text: 'error: that online skill is not available. Carry on with the general tools.', isError: true };
       }
       const card = typeof args.id === 'string' ? skillById(args.id) : undefined;
@@ -2363,6 +2374,8 @@ ${renderSkill(top)}`);
     } catch { /* no page yet */ }
     const hits = searchSkills(`${query} ${this.#askedText}`, { url, limit: 3 });
     const sections: string[] = [];
+    const mine = matchUserSkills(await listUserSkills(), `${query} ${this.#askedText}`);
+    if (mine.length) sections.push(`Skills the person made from earlier work (read with read_skill; they grant no permission):\n${mine.map(describeUserSkill).join('\n')}`);
     const reg = this.#siteActionRegistry();
     await reg.ready();
     const actions = reg.forUrl(url);
@@ -2594,6 +2607,13 @@ ${renderSkill(top)}`);
         call, kind: 'read', isError: !result.ok, result,
         text: `${result.ok ? '' : 'The page could not be opened in the browser either. '}${result.text}\n(This page was audited in the browser instead of fetched by the server: the audit, the contact details on the page and its speed come from the live page. For other pages of the site, navigate to them or call audit_page with their url.)`,
       };
+    } else if (call.toolName === 'save_skill') {
+      const checked = checkUserSkill(args);
+      if (!checked.ok) outcome = { call, kind, text: 'error: the skill was not kept: ' + checked.error + '.', isError: true };
+      else {
+        await saveUserSkill(checked.skill);
+        outcome = { call, kind, text: 'Kept as your skill user:' + checked.skill.name + '. find_skill will offer it when a request matches, and read_skill opens it. It is stored on this device and goes with "Delete everything".', isError: false };
+      }
     } else if (call.toolName === 'macro') {
       outcome = await this.#macroTool(call, kind, args);
     } else if (call.toolName === 'browser_data') {

@@ -105,6 +105,54 @@ export const PAINT_HOOK_SOURCE = `(() => {
       proto.fillText = function (t, x, y) { try { record(this, t, x, y); } catch (e) { /* the page's call goes on */ } return origFill.apply(this, arguments); };
       proto.strokeText = function (t, x, y) { try { record(this, t, x, y); } catch (e) { /* the page's call goes on */ } return origStroke.apply(this, arguments); };
       proto.drawImage = function (img) { try { project(this, img, arguments); } catch (e) { /* the page's call goes on */ } return origDraw.apply(this, arguments); };
+      let fabricCanvases;
+      const sceneItems = () => {
+        const items = [];
+        const label = v => String(v == null ? '' : v).split(String.fromCharCode(10)).join(' ').trim().slice(0, 80);
+        // Konva keeps every stage in a public list.
+        const K = w.Konva;
+        if (K && Array.isArray(K.stages)) {
+          for (const stage of K.stages) {
+            const box = stage.container().getBoundingClientRect();
+            const kx = box.width / (stage.width() || 1), ky = box.height / (stage.height() || 1);
+            for (const node of stage.find(() => true)) {
+              if (items.length >= 300) break;
+              if (!node.isVisible || !node.isVisible()) continue;
+              const text = node.getClassName && node.getClassName() === 'Text' ? label(node.text()) : '';
+              const name = label(node.name && node.name()) || label(node.id && node.id());
+              const t = text || name;
+              if (!t) continue;
+              const r = node.getClientRect();
+              items.push({ t, x: box.left + (r.x + r.width / 2) * kx, y: box.top + (r.y + r.height / 2) * ky, w: r.width * kx, h: r.height * ky });
+            }
+          }
+        }
+        // Fabric keeps no list: a canvas is found through the page's own variables the first time it is looked for, and again when none was found.
+        if (!fabricCanvases || !fabricCanvases.length) {
+          fabricCanvases = [];
+          if (w.document.querySelector('[data-fabric]')) {
+            for (const key of Object.keys(w)) {
+              let v; try { v = w[key]; } catch (e) { continue; }
+              if (v && typeof v === 'object' && typeof v.getObjects === 'function' && v.lowerCanvasEl) fabricCanvases.push(v);
+              if (fabricCanvases.length >= 6) break;
+            }
+          }
+        }
+        for (const c of fabricCanvases) {
+          const el = c.upperCanvasEl || c.lowerCanvasEl;
+          const box = el.getBoundingClientRect();
+          const kx = box.width / (c.getWidth ? c.getWidth() : c.width || 1), ky = box.height / (c.getHeight ? c.getHeight() : c.height || 1);
+          for (const obj of c.getObjects()) {
+            if (items.length >= 300) break;
+            if (obj.visible === false) continue;
+            const t = label(obj.text) || label(obj.name) || label(obj.id);
+            if (!t) continue;
+            const r = obj.getBoundingRect();
+            items.push({ t, x: box.left + (r.left + r.width / 2) * kx, y: box.top + (r.top + r.height / 2) * ky, w: r.width * kx, h: r.height * ky });
+          }
+        }
+        return items;
+      };
       const read = () => {
         const out = [];
         const seen = new Set();
@@ -124,6 +172,8 @@ export const PAINT_HOOK_SOURCE = `(() => {
             out.push({ t: it.t, x, y, w: bw, h: bh });
           }
         }
+        // Named things a drawing library knows about (a Konva node with a name or id, a Fabric object with text or a name): the library states where each is, so it needs no guess from pixels.
+        try { for (const it of sceneItems()) { const key = it.t + '|' + Math.round(it.x) + '|' + Math.round(it.y); if (!seen.has(key) && it.x >= 0 && it.y >= 0 && it.x <= vw && it.y <= vh) { seen.add(key); out.push(it); } } } catch (e) { /* a library that changes shape is left to the pixels */ }
         out.sort((a, b) => Math.round(a.y / 8) - Math.round(b.y / 8) || a.x - b.x);
         return { vw, vh, items: out.slice(0, 300), off: state.off };
       };

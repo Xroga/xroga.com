@@ -28,7 +28,7 @@ describe('parseSkillMd, lenient mode for skills written for other clients', () =
     const r = parseSkillMd(make('PDF-処理'), { lenient: true });
     expect(r.ok && r.skill.name).toBe('pdf-処理');
     expect(parseSkillMd('---\nname: fine\n---\nBody.', { lenient: true }).ok).toBe(false);
-    expect(parseSkillMd(make('bad_name'), { lenient: true }).ok).toBe(false);
+    expect(parseSkillMd(make('bad name!'), { lenient: true }).ok).toBe(false);
     expect(parseSkillMd(make('two--hyphens'), { lenient: true }).ok).toBe(false);
   });
 });
@@ -58,5 +58,20 @@ describe('skills opened earlier survive compaction', () => {
     expect(texts.some(t => t.includes('kept word for word') && t.includes(SKILL))).toBe(true);
     expect(texts.filter(t => t === SKILL).length).toBe(1);
     expect(texts.some(t => t.startsWith('yyyy') && t.length <= SHORT_RESULT + 200 && t.includes('cut to fit'))).toBe(true);
+  });
+});
+
+import { skillFileUrl } from '../online-skills';
+describe('skillFileUrl, files beside a pool skill', () => {
+  const cand = { id: 'online:aas:x', provider: 'aas', name: 'x', description: 'x', confidence: 1, fetchUrl: 'https://raw.githubusercontent.com/sickn33/agentic-awesome-skills/' + 'a'.repeat(40) + '/skills/pdf-forms/SKILL.md' };
+  it('builds an address inside the skill folder at the same commit, for a plain text file', () => {
+    expect(skillFileUrl(cand, 'references/REFERENCE.md')).toBe('https://raw.githubusercontent.com/sickn33/agentic-awesome-skills/' + 'a'.repeat(40) + '/skills/pdf-forms/references/REFERENCE.md');
+  });
+  it('refuses a path that leaves the folder, a binary, another provider and another host', () => {
+    expect(skillFileUrl(cand, '../other/SKILL.md')).toBeNull();
+    expect(skillFileUrl(cand, '/etc/passwd')).toBeNull();
+    expect(skillFileUrl(cand, 'assets/logo.png')).toBeNull();
+    expect(skillFileUrl({ ...cand, provider: 'skillshub' }, 'a.md')).toBeNull();
+    expect(skillFileUrl({ ...cand, fetchUrl: 'https://evil.test/sickn33/agentic-awesome-skills/' + 'a'.repeat(40) + '/skills/x/SKILL.md' }, 'a.md')).toBeNull();
   });
 });

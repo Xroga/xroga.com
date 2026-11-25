@@ -95,7 +95,7 @@ export const FindArgsSchema = z.strictObject({
 export const ReadArgsSchema = z.strictObject({
   ...readCommon,
   ref: ref.optional().describe('Only the content of this element'),
-  format: z.enum(['markdown', 'text', 'html']).default('markdown').describe('html: markup without scripts or field values'),
+  format: z.enum(['markdown', 'text', 'html', 'links']).default('markdown').describe('html: markup without scripts or field values; links: every link with its address'),
   maxChars: z.number().int().min(100).max(200_000).optional(),
   offset: z.number().int().min(0).optional().describe('Character offset to continue from'),
   match: z.string().max(200).optional().describe('Only the lines matching this word or pattern, with context'),
@@ -158,7 +158,7 @@ export const TypeArgsSchema = z.strictObject({
 
 export const PressArgsSchema = z.strictObject({
   ...actionCommon,
-  keys: z.string().min(1).describe('A key or chord, such as "Enter", "Escape" or "Control+A"'),
+  keys: z.string().min(1).describe('A key or chord: "Enter", "Escape", "Control+A"; Mod is Control, or Command on a Mac'),
   target: TargetSchema.optional(),
 });
 

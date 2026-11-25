@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { cleanSource } from '../page-source';
+import { cleanSource, linkLine } from '../page-source';
 
 describe('cleanSource', () => {
   const html = `<!-- note --><html><head><meta name="csrf-token" content="abcDEF123"><script>var secret = 1;</script><style>a{}</style></head>
@@ -23,5 +23,15 @@ describe('cleanSource', () => {
   });
   it('hides a bearer token and a long opaque string', () => {
     expect(out).not.toMatch(/eyJhbGci|a1a1a1a1a1a1a1a1a1a1a1a1a1a1/);
+  });
+});
+
+describe('linkLine', () => {
+  it('shows the words and the address, leaves out addresses that go nowhere, and hides long opaque strings', () => {
+    expect(linkLine('  Guide  (PDF) ', 'https://a.test/docs/guide.pdf')).toBe('«Guide (PDF)» → https://a.test/docs/guide.pdf');
+    expect(linkLine('x', 'javascript:void(0)')).toBeUndefined();
+    expect(linkLine('x', 'data:text/html,hi')).toBeUndefined();
+    expect(linkLine('Magic', 'https://a.test/login?token=' + 'k'.repeat(50))).toBe('«Magic» → https://a.test/login?token=…');
+    expect(linkLine('', 'mailto:a@b.test')).toBe('«(no text)» → mailto:a@b.test');
   });
 });
