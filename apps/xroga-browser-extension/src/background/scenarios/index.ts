@@ -48,6 +48,7 @@ import './webmcp';
 import './media';
 import './compose';
 import './compose-editly';
+import './compose-cutline';
 import './infinite-scroll';
 import './ocr-picture';
 import './image-and-language';

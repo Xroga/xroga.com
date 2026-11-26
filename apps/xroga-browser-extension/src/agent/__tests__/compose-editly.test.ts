@@ -194,3 +194,67 @@ describe('the tool', () => {
     for (const word of ['crosszoom', 'rainbow-colors', 'detached-audio', 'audioNorm', 'contain-blur', 'picture']) expect(COMPOSE_TOOL.description.includes(word) || word === 'picture').toBe(true);
   });
 });
+
+describe('more of the model: motion, captions, cuts, brand, templates and ducking', () => {
+  it('reads keyframes and entrance and exit presets on any layer', () => {
+    const spec = ok({ clips: [{ duration: 4, layers: [{ type: 'fill-color', keyframes: [{ at: 0, x: -0.2, opacity: 0 }, { at: 1, x: 0, opacity: 1, easing: 'ease-out' }], animationIn: 'slide-left', animationOut: { preset: 'zoom', duration: 0.7 } }] }] });
+    const l = layerOf(spec, 0, 0, 'fill-color');
+    expect(l.keyframes!.x!.map(k => k.value)).toEqual([-0.2, 0]);
+    expect(l.keyframes!.opacity![1]!.easing).toBe('ease-out');
+    expect(l.animIn).toEqual({ preset: 'slide-left', duration: 0.5 });
+    expect(l.animOut).toEqual({ preset: 'zoom', duration: 0.7 });
+    expect(layerOf(ok({ clips: [{ duration: 2, layers: [{ type: 'fill-color', animationIn: 'wobble' }] }] }), 0, 0, 'fill-color').animIn).toBeUndefined();
+  });
+
+  it('reads captions with words of their own or a source, and the styling', () => {
+    const spec = ok({ clips: [{ duration: 6, layers: [{ type: 'captions', words: [{ text: 'Hello', start: 0, end: 0.5 }, { text: 'world', start: 0.6, end: 1 }, { text: 5, start: 1, end: 2 }], highlightColor: '#ffd400', position: 'middle', fontSize: 0.08 }, { type: 'captions', source: { url: 'https://x.test/a.wav', from: 2, to: 8 } }, { type: 'captions' }] }] });
+    const a = layerOf(spec, 0, 0, 'captions');
+    expect(a.words!.map(w => w.text)).toEqual(['Hello', 'world']);
+    expect(a).toMatchObject({ highlightColor: '#ffd400', position: 'middle', fontSize: 0.08, background: 'rgba(0,0,0,0.7)' });
+    expect(layerOf(spec, 0, 1, 'captions').source).toEqual({ url: 'https://x.test/a.wav', from: 2, to: 8 });
+    expect(layerOf(spec, 0, 2, 'captions').source).toBeUndefined(); // listens to the clip's own video
+    const bad = normalizeSpec({ clips: [{ duration: 3, layers: [{ type: 'captions', source: { url: 'http://x.test/a.wav' } }] }] });
+    expect(bad.ok ? '' : bad.errors.join()).toContain('(captions) source needs an https address');
+  });
+
+  it('reads cuts, reverse and freeze on a video layer, and sizes a clip from them', () => {
+    const spec = ok({ clips: [{ layers: [{ type: 'video', url: 'https://x.test/v.mp4', cutFrom: 0, cutTo: 10, cuts: [{ from: 2, to: 4 }, { start: 6, end: 7 }, { from: 5 }], reverse: true, freeze: { at: 3, hold: 2 } }] }] });
+    const v = layerOf(spec, 0, 0, 'video');
+    expect(v.cuts).toEqual([{ start: 2, end: 4 }, { start: 6, end: 7 }]);
+    expect([v.reverse, v.freeze]).toEqual([true, { at: 3, hold: 2 }]);
+    // 10 s of the file less 3 s cut out is 7 s played, and the freeze adds 2 s: the clip lasts 9 s
+    expect(resolveDurations(spec, () => 60).clips[0]!.duration).toBe(9);
+    // a clip of a given length fits what is played to the time left after the freeze
+    const fixed = ok({ clips: [{ duration: 5, layers: [{ type: 'video', url: 'https://x.test/v.mp4', cutFrom: 0, cutTo: 9, freeze: { at: 1, hold: 2 } }] }] });
+    expect(layerOf(resolveDurations(fixed, () => 60), 0, 0, 'video').speed).toBeCloseTo(3, 5); // 9 s played in 5 - 2 s
+  });
+
+  it('puts a brand font, a logo on every clip, and expands templates into layers', () => {
+    const spec = ok({
+      brand: { colors: { primary: '#aa0000', text: '#eeeeee' }, font: 'serif', logo: { url: 'https://x.test/logo.png', position: 'bottom-right', width: 0.1, opacity: 0.8 } },
+      clips: [
+        { duration: 4, layers: [fill, { type: 'title', text: 'Hello' }, { type: 'template', template: 'lower-third', text: 'Ada', subtitle: 'Engineer', start: 1, duration: 2 }] },
+        { duration: 4, logo: false, layers: [fill] },
+      ],
+    });
+    expect(spec.brand?.font).toBe('serif');
+    const first = spec.clips[0]!.layers;
+    expect(layerOf(spec, 0, 1, 'text').font).toBe('serif');
+    // the template became a bar and two lines of text, timed from the template, then the logo came last
+    expect(first.map(l => l.type)).toEqual(['fill-color', 'text', 'shape', 'text', 'text', 'image-overlay']);
+    expect(first[2]).toMatchObject({ start: 1, stop: 3, color: '#aa0000e6' });
+    expect(first[5]).toMatchObject({ url: 'https://x.test/logo.png', opacity: 0.8, position: { ox: 'right', oy: 'bottom' } });
+    expect(spec.clips[1]!.layers.map(l => l.type)).toEqual(['fill-color']);
+    const bad = normalizeSpec({ clips: [{ duration: 3, layers: [{ type: 'template', template: 'lower-third' }] }] });
+    expect(bad.ok ? '' : bad.errors.join()).toContain('the lower-third template needs text');
+    const noLogo = normalizeSpec({ brand: { logo: { url: 'http://x.test/l.png' } }, clips: [{ duration: 3, layers: [fill] }] });
+    expect(noLogo.ok ? '' : noLogo.errors.join()).toContain('brand.logo needs an https address');
+  });
+
+  it('lets a track go down under speech, with settings or the defaults', () => {
+    const spec = ok({ audioTracks: [{ url: 'https://x.test/a.mp3', duck: true }, { url: 'https://x.test/b.mp3', duck: { amountDb: -20, attack: 0.5 } }, { url: 'https://x.test/c.mp3' }], clips: [{ duration: 3, layers: [fill] }] });
+    expect(spec.audioTracks[0]!.duck).toEqual({ thresholdDb: -42, amountDb: -14, attack: 0.25, release: 0.8, gap: 0.6 });
+    expect(spec.audioTracks[1]!.duck).toMatchObject({ amountDb: -20, attack: 0.5, release: 0.8 });
+    expect(spec.audioTracks[2]!.duck).toBeUndefined();
+  });
+});

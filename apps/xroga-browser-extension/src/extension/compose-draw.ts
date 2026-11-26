@@ -3,6 +3,10 @@
 // a title that zooms, a subtitle bar that eases in, a news bar that slides, text that wipes in); written fresh.
 import { FONTS, ease, layerActive, layerAlpha, layoutAt, transitionAt, type Background, type ComposeSpec, type Layer, type Position, type Rect, type ResizeMode, type ZoomDirection } from '@src/agent/compose-spec';
 import { hasRule, transitionColor, type Rgba } from '@src/agent/transitions';
+import { motionAt } from '@src/agent/compose-motion';
+import { buildPlayback, type Playback } from '@src/agent/compose-playback';
+import { activeWordAt, layoutWords } from '@src/agent/compose-extras';
+import { wordsToCues } from '@src/agent/transcript-tools';
 
 export type Picture = CanvasImageSource & { width: number; height: number };
 export interface Assets {
@@ -213,6 +217,71 @@ function drawText(ctx: Ctx, layer: Extract<Layer, { type: 'text' }>, progress: n
   ctx.restore();
 }
 
+const playbacks = new WeakMap<object, Playback>();
+/** How a video layer plays (its cuts, direction, speed and freeze), worked out once per layer. */
+export function playbackOf(layer: Extract<Layer, { type: 'video' }>): Playback {
+  let p = playbacks.get(layer);
+  if (!p) {
+    p = buildPlayback({ cutFrom: layer.cutFrom, cutTo: layer.cutTo ?? layer.cutFrom + 3600, cuts: layer.cuts, reverse: layer.reverse, speed: layer.speed ?? 1, ...(layer.freeze ? { freeze: layer.freeze } : {}) });
+    playbacks.set(layer, p);
+  }
+  return p;
+}
+
+const cueCache = new WeakMap<object, ReturnType<typeof wordsToCues>>();
+
+/** Captions: the line being said, wrapped and centred in a box, with the spoken word in the highlight colour when one is set. */
+function drawCaptions(ctx: Ctx, layer: Extract<Layer, { type: 'captions' }>, local: number, W: number, H: number): void {
+  const words = layer.words;
+  if (!words?.length) return;
+  let cues = cueCache.get(layer);
+  if (!cues) {
+    cues = wordsToCues(words, { maxChars: layer.maxChars });
+    cueCache.set(layer, cues);
+  }
+  const cue = cues.find(c => local >= c.start - 0.05 && local < c.end + 0.25);
+  if (!cue) return;
+  const size = Math.round(layer.fontSize * H);
+  ctx.save();
+  ctx.font = `700 ${size}px ${FONTS[layer.font]}`;
+  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'left';
+  const measure = (s: string) => ctx.measureText(s).width;
+  const lines = layoutWords(cue.words.map(w => w.text), measure, layer.maxWidth * W);
+  const lineHeight = size * 1.3;
+  const padding = size * 0.45;
+  const boxHeight = lines.length * lineHeight + padding * 2;
+  const widest = Math.max(...lines.map(l => l.width));
+  const margin = layer.margin * H;
+  const top = layer.position === 'top' ? margin : layer.position === 'middle' ? (H - boxHeight) / 2 : H - margin - boxHeight;
+  ctx.fillStyle = layer.background;
+  ctx.fillRect((W - widest) / 2 - padding, top, widest + padding * 2, boxHeight);
+  const active = activeWordAt(cue.words, local);
+  lines.forEach((line, i) => {
+    const x0 = (W - line.width) / 2;
+    for (const w of line.words) {
+      ctx.fillStyle = layer.highlightColor && w.index === active ? layer.highlightColor : layer.color;
+      ctx.fillText(w.text, x0 + w.x, top + padding + lineHeight * (i + 0.5));
+    }
+  });
+  ctx.restore();
+}
+
+/** The point a layer turns and grows around: the middle of its own box where it has one, else the middle of the frame. */
+function pivotOf(layer: Layer, W: number, H: number): { x: number; y: number } {
+  if (layer.type === 'image' || layer.type === 'video' || layer.type === 'shape') {
+    const b = boxOf(layer.rect, W, H);
+    return { x: b.x + b.w / 2, y: b.y + b.h / 2 };
+  }
+  if (layer.type === 'image-overlay') {
+    const w = layer.width * W;
+    const h = layer.height * H;
+    return { x: layer.position.x * W + (layer.position.ox === 'left' ? w / 2 : layer.position.ox === 'right' ? -w / 2 : 0), y: layer.position.y * H + (layer.position.oy === 'top' ? h / 2 : layer.position.oy === 'bottom' ? -h / 2 : 0) };
+  }
+  if (layer.type === 'text') return { x: layer.position.x * W, y: layer.position.y * H };
+  return { x: W / 2, y: H / 2 };
+}
+
 async function drawLayer(ctx: Ctx, layer: Layer, at: number, clipDuration: number, W: number, H: number, assets: Assets): Promise<void> {
   const local = at - layer.start;
   const span = Math.max(0.001, (layer.stop ?? clipDuration) - layer.start);
@@ -271,10 +340,13 @@ async function drawLayer(ctx: Ctx, layer: Layer, at: number, clipDuration: numbe
       return;
     }
     case 'video': {
-      const pic = await assets.frame(layer.url, layer.resizeMode, layer.cutFrom + Math.max(0, local) * (layer.speed ?? 1));
+      const pic = await assets.frame(layer.url, layer.resizeMode, playbackOf(layer).sourceAt(Math.max(0, local)));
       if (pic) drawPicture(ctx, pic, boxOf(layer.rect, W, H), layer.resizeMode);
       return;
     }
+    case 'captions':
+      drawCaptions(ctx, layer, at - layer.start, W, H);
+      return;
     default:
       return; // audio layers have no picture
   }
@@ -291,8 +363,18 @@ export async function drawClip(ctx: Ctx, spec: ComposeSpec, clipIndex: number, a
   for (const layer of clip.layers) {
     if (!layerActive(layer, at, clip.duration!)) continue;
     ctx.save();
-    ctx.globalAlpha *= layerAlpha(layer, at - layer.start, (layer.stop ?? clip.duration!) - layer.start);
+    const span = (layer.stop ?? clip.duration!) - layer.start;
+    ctx.globalAlpha *= layerAlpha(layer, at - layer.start, span);
     if (layer.filter) ctx.filter = layer.filter;
+    if (layer.keyframes || layer.animIn || layer.animOut) {
+      const m = motionAt(layer, at - layer.start, span);
+      const pivot = pivotOf(layer, W, H);
+      ctx.globalAlpha *= m.opacity;
+      ctx.translate(pivot.x + m.dx * W, pivot.y + m.dy * H);
+      ctx.rotate((m.rotation * Math.PI) / 180);
+      ctx.scale(m.scale, m.scale);
+      ctx.translate(-pivot.x, -pivot.y);
+    }
     await drawLayer(ctx, layer, at, clip.duration!, W, H, assets);
     ctx.restore();
   }

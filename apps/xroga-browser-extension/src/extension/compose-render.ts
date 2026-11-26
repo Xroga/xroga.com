@@ -6,6 +6,10 @@ import { normalizeSpec, resolveDurations, timeline, type ComposeSpec, type Layer
 import { drawFrame, type Assets, type Picture, type Scratch } from './compose-draw';
 import { ShaderRunner } from './compose-shader';
 import { fetchRetry } from './net';
+import { buildPlayback, layerTimeOf } from '@src/agent/compose-playback';
+import { duckCurve, speechRanges, wordsOnClipTime } from '@src/agent/compose-extras';
+import { computeEnvelope } from '@src/agent/media-analysis';
+import { transcribeUrl } from './speech';
 
 interface Track {
   codedWidth?: number;
@@ -130,6 +134,34 @@ async function prepare(raw: unknown, loadMb: () => Promise<unknown>): Promise<Pr
   const tl = timeline(spec);
   if (!tl) throw new Error('the length of the video could not be worked out');
   if (tl.total > 180) throw new Error(`the video would be ${tl.total.toFixed(1)} s; the limit is 180 s`);
+  // captions with no words: listen to the source (or to the first video of the clip) and put each word on the clip's time
+  for (const [ci, clip] of spec.clips.entries()) {
+    for (const layer of clip.layers) {
+      if (layer.type !== 'captions' || layer.words?.length) continue;
+      const video = clip.layers.find((l): l is Extract<Layer, { type: 'video' }> => l.type === 'video');
+      const src = layer.source ?? (video ? { url: video.url, from: video.cutFrom, to: video.cutTo } : undefined);
+      if (!src) {
+        notes.push(`clip ${ci + 1}: a captions layer has no words and no video to listen to, so it shows nothing`);
+        continue;
+      }
+      const to = src.to ?? videos.get(src.url)?.duration ?? src.from + 60;
+      const heard = await transcribeUrl(src.url, { from: src.from, seconds: Math.max(5, Math.min(1800, to - src.from)), words: true });
+      if (heard.wordsSpread) notes.push(`clip ${ci + 1}: the speech model gave no word times, so caption words are placed by spreading them over their lines`);
+      let words;
+      if (!layer.source && video) {
+        // through the video layer: its cuts, speed and freeze decide where each word falls
+        const pb = buildPlayback({ cutFrom: video.cutFrom, cutTo: video.cutTo ?? to, cuts: video.cuts, reverse: video.reverse, speed: video.speed ?? 1, ...(video.freeze ? { freeze: video.freeze } : {}) });
+        if (video.reverse) notes.push(`clip ${ci + 1}: the video plays backwards, so its speech cannot be captioned`);
+        words = heard.words!.flatMap(w => {
+          const a = layerTimeOf(pb, w.start, video.speed ?? 1, video.reverse, video.freeze);
+          const b = layerTimeOf(pb, Math.max(w.start, w.end - 0.001), video.speed ?? 1, video.reverse, video.freeze);
+          return a === null ? [] : [{ text: w.text, start: video.start + a - layer.start, end: video.start + Math.max(a + 0.05, b ?? a + 0.3) - layer.start }];
+        });
+      } else words = wordsOnClipTime(heard.words!, { from: src.from, to, offset: 0, speed: 1 });
+      layer.words = words.filter(w => w.end > 0);
+      if (!layer.words.length) notes.push(`clip ${ci + 1}: no speech was found to caption`);
+    }
+  }
   let shaders: ShaderRunner | undefined;
   const assets: Assets = {
     images,
@@ -164,6 +196,8 @@ interface Part {
   duration?: number;
   gain: number;
   loop?: { from: number; to: number };
+  /** Music that goes down under speech: the gain over the whole video. */
+  duck?: Float32Array;
   /** Cross-fade windows (seconds on the video's time line) for a clip's own sound. */
   fades?: Array<{ at: number; length: number; direction: 'in' | 'out'; curve: string }>;
 }
@@ -195,6 +229,69 @@ function stretched(buffer: AudioBuffer, rate: number): AudioBuffer {
   const result = new AudioBuffer({ length: Math.max(1, out[0]!.length), numberOfChannels: out.length, sampleRate: buffer.sampleRate });
   out.forEach((c, k) => result.copyToChannel(c as Float32Array<ArrayBuffer>, k));
   return result;
+}
+
+/** Puts one piece of sound into a context: its level, its fades and ducking, where it starts and how much of it plays. */
+function schedule(ctx: BaseAudioContext, into: AudioNode, part: Part, total: number): void {
+  const src = ctx.createBufferSource();
+  src.buffer = part.buffer;
+  const level = ctx.createGain();
+  level.gain.value = part.gain;
+  const fade = ctx.createGain();
+  for (const f of part.fades ?? []) {
+    const g = crossfadeGains(f.direction === 'out' ? f.curve : 'tri', f.direction === 'in' ? f.curve : 'tri', 128);
+    fade.gain.setValueCurveAtTime(f.direction === 'out' ? g.out : g.in, Math.max(0, f.at), Math.max(0.01, f.length));
+  }
+  let tail: AudioNode = src.connect(level).connect(fade);
+  if (part.duck) {
+    const duck = ctx.createGain();
+    duck.gain.setValueCurveAtTime(part.duck, 0, Math.max(0.1, total));
+    tail = tail.connect(duck);
+  }
+  tail.connect(into);
+  if (part.loop) {
+    src.loop = true;
+    src.loopStart = part.loop.from;
+    src.loopEnd = part.loop.to;
+    src.start(part.when, part.offset);
+    src.stop(total);
+  } else src.start(part.when, part.offset, part.duration);
+}
+
+/** The sound of a video layer as it plays: its kept pieces in order (each reversed when the video runs backwards), silence where the picture is held, then changed in speed without changing the pitch. */
+async function playbackAudio(mb: Mb, track: unknown, pb: ReturnType<typeof buildPlayback>, speed: number): Promise<AudioBuffer | undefined> {
+  const pieces: Array<{ buffer: AudioBuffer; at: number }> = [];
+  for (const piece of pb.pieces) {
+    const buffer = await decodeRange(mb, track, piece.from, piece.to);
+    if (!buffer) continue;
+    if (piece.reversed) for (let k = 0; k < buffer.numberOfChannels; k++) buffer.getChannelData(k).reverse();
+    pieces.push({ buffer, at: piece.at });
+  }
+  if (!pieces.length) return undefined;
+  const rate = pieces[0]!.buffer.sampleRate;
+  const channels = Math.max(...pieces.map(p => p.buffer.numberOfChannels));
+  const hold = pb.silence?.content ?? 0;
+  const length = Math.max(1, Math.round((pb.content + hold) * rate));
+  const data = Array.from({ length: channels }, () => new Float32Array(length));
+  for (const { buffer, at } of pieces) {
+    for (let k = 0; k < channels; k++) {
+      const src = buffer.getChannelData(Math.min(k, buffer.numberOfChannels - 1));
+      const freezeAt = pb.silence?.at;
+      // a piece that spans the freeze point is written in two parts, with the silence between
+      const start = Math.round(at * rate);
+      if (freezeAt !== undefined && at < freezeAt && at + buffer.duration > freezeAt) {
+        const first = Math.max(0, Math.round((freezeAt - at) * rate));
+        data[k]!.set(src.subarray(0, first), start);
+        data[k]!.set(src.subarray(first, Math.min(src.length, first + (length - start - first - Math.round(hold * rate)))), start + first + Math.round(hold * rate));
+      } else {
+        const shift = freezeAt !== undefined && at >= freezeAt ? Math.round(hold * rate) : 0;
+        data[k]!.set(src.subarray(0, Math.max(0, Math.min(src.length, length - start - shift))), start + shift);
+      }
+    }
+  }
+  const joined = new AudioBuffer({ length, numberOfChannels: channels, sampleRate: rate });
+  data.forEach((c, k) => joined.copyToChannel(c as Float32Array<ArrayBuffer>, k));
+  return Math.abs(speed - 1) > 0.01 ? stretched(joined, speed) : joined;
 }
 
 /** The sound of the whole video: tracks, clips' own sound, audio layers and detached audio, mixed with cross-fades at the transitions. */
@@ -237,41 +334,39 @@ async function mixSound(p: Prepared): Promise<AudioBuffer | undefined> {
         const v = videos.get(layer.url)!;
         const track = await v.input.getPrimaryAudioTrack();
         if (!track || layer.volume <= 0) continue;
-        const speed = (layer as Extract<Layer, { type: 'video' }>).speed ?? 1;
-        const to = Math.min(layer.cutTo ?? v.duration, layer.cutFrom + (clip.duration! - layer.start) * speed);
-        let buffer = await decodeRange(mb, track, layer.cutFrom, to);
+        const vid = layer as Extract<Layer, { type: 'video' }>;
+        const speed = vid.speed ?? 1;
+        const pb = buildPlayback({ cutFrom: vid.cutFrom, cutTo: Math.min(vid.cutTo ?? v.duration, vid.cutFrom + (clip.duration! - vid.start) * speed + 0.5 + vid.cuts.reduce((s, c) => s + (c.end - c.start), 0)), cuts: vid.cuts, reverse: vid.reverse, speed, ...(vid.freeze ? { freeze: vid.freeze } : {}) });
+        const buffer = await playbackAudio(mb, track, pb, speed);
         if (!buffer) continue;
-        if (Math.abs(speed - 1) > 0.01) buffer = stretched(buffer, speed);
-        parts.push({ buffer, when: clipStart + layer.start, offset: 0, duration: buffer.duration, gain: layer.volume * spec.clipsAudioVolume, fades: fadeWindows(ci) });
+        parts.push({ buffer, when: clipStart + vid.start, offset: 0, duration: Math.min(buffer.duration, clip.duration! - vid.start), gain: vid.volume * spec.clipsAudioVolume, fades: fadeWindows(ci) });
       }
     }
   }
   if (!parts.length) return undefined;
+  // music that ducks: the speech is what the other sounds add up to; its loudness over time decides how far the music goes down
+  const trackParts = parts.slice(0, spec.audioTracks.length);
+  if (trackParts.some((_, i) => spec.audioTracks[i]?.duck)) {
+    const speechParts = parts.slice(spec.audioTracks.length);
+    if (speechParts.length) {
+      const probe = new OfflineAudioContext(1, Math.ceil(total * 16000), 16000);
+      for (const part of speechParts) schedule(probe, probe.destination, part, total);
+      const speech = await probe.startRendering();
+      const env = computeEnvelope(speech.getChannelData(0), 16000, 0.05);
+      for (const [i, part] of trackParts.entries()) {
+        const d = spec.audioTracks[i]?.duck;
+        if (!d) continue;
+        part.duck = duckCurve(speechRanges(env.rms, env.windowSec, d), total, Math.min(4096, Math.max(64, Math.ceil(total * 20))), d);
+      }
+    } else p.notes.push('a track is set to go down under speech, but there is no speech in the video to go down for');
+  }
   const ctx = new OfflineAudioContext(2, Math.ceil(total * RATE), RATE);
   const master = ctx.createGain();
   master.gain.setValueAtTime(spec.outputVolume, 0);
   master.gain.setValueAtTime(spec.outputVolume, Math.max(0, total - 0.3));
   master.gain.linearRampToValueAtTime(0, total);
   master.connect(ctx.destination);
-  for (const part of parts) {
-    const src = ctx.createBufferSource();
-    src.buffer = part.buffer;
-    const level = ctx.createGain();
-    level.gain.value = part.gain;
-    const fade = ctx.createGain();
-    for (const f of part.fades ?? []) {
-      const g = crossfadeGains(f.direction === 'out' ? f.curve : 'tri', f.direction === 'in' ? f.curve : 'tri', 128);
-      fade.gain.setValueCurveAtTime(f.direction === 'out' ? g.out : g.in, Math.max(0, f.at), Math.max(0.01, f.length));
-    }
-    src.connect(level).connect(fade).connect(master);
-    if (part.loop) {
-      src.loop = true;
-      src.loopStart = part.loop.from;
-      src.loopEnd = part.loop.to;
-      src.start(part.when, part.offset);
-      src.stop(total);
-    } else src.start(part.when, part.offset, part.duration);
-  }
+  for (const part of parts) schedule(ctx, master, part, total);
   const mixed = await ctx.startRendering();
   if (spec.audioNorm) {
     const channels = Array.from({ length: mixed.numberOfChannels }, (_, k) => mixed.getChannelData(k));

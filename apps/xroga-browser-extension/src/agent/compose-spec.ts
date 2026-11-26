@@ -6,13 +6,17 @@
 import type { AgentTool } from './tools';
 import { FADE_CURVES } from './audio-mix';
 import { TRANSITION_NAMES, defaultEasing } from './transitions';
+import { keyframesFromList, PRESETS, type Keyframes, type Preset, type PresetUse } from './compose-motion';
+import { expandTemplate, type Brand, type DuckOptions } from './compose-extras';
+import { buildPlayback } from './compose-playback';
+import type { Range } from './transcript-tools';
 
 export const COMPOSE_TOOL: AgentTool = {
   name: 'compose_video',
   source: 'agent',
   group: 'files',
   description:
-    'Make a short video (MP4, or WebM when the browser has no H.264) from a spec and save it in Downloads; asks first in Ask mode. preview: [seconds…] instead shows a sheet of the video at those times, makes no file and asks nothing: use it to check a design first. spec: { width?, height? (default 1280x720, at most 1920x1080), fps? (30), fast? (small and quick), backgroundColor?, defaults?: { duration, transition, layer: {…every layer}, layerType: { video: {…} } }, clips: [{ duration?, backgroundColor?, transition?: { name, duration, easing?, audioOutCurve?, audioInCurve? }, layers: [...] }], audioTracks?: [{ url, start?, cutFrom?, cutTo?, volume?, loop? }], audioFilePath?, loopAudio?, keepSourceAudio?, clipsAudioVolume?, outputVolume?, audioNorm?: { enable, targetLufs?, maxGain? } }. transition.name: random, none, dummy (sound only) or one of fade, fadecolor, fadegrayscale, directional-left|right|up|down, wipeleft|right|up|down, softwipe, circleopen, circleclose, radial, angular, pixelize, squeeze, squeezeh, simplezoom, crosszoom, dreamy, dreamyzoom, swirl, windowslice, doorway, heart, crosswarp, directionalwarp, ripple, waterdrop, bowtiehorizontal|vertical, pinwheel, mosaic, hexagonalize, randomsquares, luminance. Layers (all take start, stop, opacity, fadeIn, fadeOut, effects: { brightness, contrast, saturation, blur, grayscale, sepia, hue }): fill-color|pause { color } · linear-gradient|radial-gradient { colors } · rainbow-colors · shader { fragment (GLSL body), speed } · shape { shape: rect|ellipse|line, color, stroke, x,y,width,height } · title|title-background|subtitle|news-title|slide-in-text { text, textColor, backgroundColor, background: { type, colors }, position: top|center|bottom|top-left|…|{x,y,originX,originY}, fontSize, font: sans|serif|mono|rounded, charSpacing, delay, speed, zoomDirection, zoomAmount } · image { url, resizeMode: contain-blur|contain|cover|stretch, zoomDirection: in|out|left|right, zoomAmount, x,y,width,height,originX,originY } · image-overlay { url, position, width, height } · video { url, cutFrom, cutTo, resizeMode, volume, speed, x,y,width,height,originX,originY } (a clip with a duration fits its video to it) · audio { url, cutFrom, cutTo, volume } · detached-audio { url, start (from the clip start), cutFrom, cutTo, volume }. Up to 3 minutes, 60 clips, https addresses only. Only when the person asked for a video.',
+    'Make a short video (MP4, or WebM when the browser has no H.264) from a spec and save it in Downloads; asks first in Ask mode. preview: [seconds…] instead shows a sheet of the video at those times, makes no file and asks nothing: use it to check a design first. spec: { width?, height? (default 1280x720, at most 1920x1080), fps? (30), fast? (small and quick), backgroundColor?, defaults?: { duration, transition, layer: {…every layer}, layerType: { video: {…} } }, clips: [{ duration?, backgroundColor?, transition?: { name, duration, easing?, audioOutCurve?, audioInCurve? }, layers: [...] }], audioTracks?: [{ url, start?, cutFrom?, cutTo?, volume?, loop? }], audioFilePath?, loopAudio?, keepSourceAudio?, clipsAudioVolume?, outputVolume?, audioNorm?: { enable, targetLufs?, maxGain? } }. transition.name: random, none, dummy (sound only) or one of fade, fadecolor, fadegrayscale, directional-left|right|up|down, wipeleft|right|up|down, softwipe, circleopen, circleclose, radial, angular, pixelize, squeeze, squeezeh, simplezoom, crosszoom, dreamy, dreamyzoom, swirl, windowslice, doorway, heart, crosswarp, directionalwarp, ripple, waterdrop, bowtiehorizontal|vertical, pinwheel, mosaic, hexagonalize, randomsquares, luminance. Layers (all take start, stop, opacity, fadeIn, fadeOut, effects: { brightness, contrast, saturation, blur, grayscale, sepia, hue }): fill-color|pause { color } · linear-gradient|radial-gradient { colors } · rainbow-colors · shader { fragment (GLSL body), speed } · shape { shape: rect|ellipse|line, color, stroke, x,y,width,height } · title|title-background|subtitle|news-title|slide-in-text { text, textColor, backgroundColor, background: { type, colors }, position: top|center|bottom|top-left|…|{x,y,originX,originY}, fontSize, font: sans|serif|mono|rounded, charSpacing, delay, speed, zoomDirection, zoomAmount } · image { url, resizeMode: contain-blur|contain|cover|stretch, zoomDirection: in|out|left|right, zoomAmount, x,y,width,height,originX,originY } · image-overlay { url, position, width, height } · video { url, cutFrom, cutTo, resizeMode, volume, speed, x,y,width,height,originX,originY } (a clip with a duration fits its video to it) · audio { url, cutFrom, cutTo, volume } · detached-audio { url, start (from the clip start), cutFrom, cutTo, volume } · captions { words: [{ text, start, end }] or source: { url, from?, to? } (the words are then found by listening), fontSize, color, highlightColor, backgroundColor, position: top|middle|bottom, maxWidth } · template { template: title|lower-third|banner|callout|logo, text, subtitle, start, duration, accentColor, textColor }. Every layer also takes keyframes: [{ at (seconds into the layer), x, y (fractions of the frame), scale, rotation (degrees), opacity, easing }] and animationIn / animationOut: { preset: fade|slide-left|slide-right|slide-up|slide-down|zoom|pop, duration }. A video layer also takes cuts: [{ from, to }] (seconds of the file to take out, as from transcribe fillers or media audio silences), reverse, freeze: { at, hold }. spec.brand: { colors: { primary, accent, text }, font, logo: { url, position, width, opacity } } (templates and a logo on every clip use it). An audio track takes duck: true or { amountDb, thresholdDb, attack, release } to go down under speech. Up to 3 minutes, 60 clips, https addresses only. Only when the person asked for a video.',
   parameters: {
     type: 'object',
     properties: {
@@ -51,6 +55,10 @@ export interface Timed {
   fadeIn: number;
   fadeOut: number;
   filter: string;
+  /** Keyframes on position, scale, rotation and opacity, and entrance and exit presets. */
+  keyframes?: Keyframes;
+  animIn?: PresetUse;
+  animOut?: PresetUse;
 }
 export const FONTS = { sans: '"Segoe UI", Arial, sans-serif', serif: 'Georgia, "Times New Roman", serif', mono: 'Consolas, "Courier New", monospace', rounded: '"Trebuchet MS", "Segoe UI", sans-serif' } as const;
 export type FontName = keyof typeof FONTS;
@@ -64,7 +72,8 @@ export type Layer =
   | ({ type: 'text'; style: 'title' | 'subtitle' | 'title-background' | 'news-title' | 'slide-in-text'; font: FontName; text: string; color: string; background: string; backgroundShape?: Background; position: Position; fontSize: number; charSpacing: number; delay: number; speed: number; zoom: ZoomDirection; zoomAmount: number } & Timed)
   | ({ type: 'image'; url: string; resizeMode: ResizeMode; zoom: ZoomDirection; zoomAmount: number; rect: Rect } & Timed)
   | ({ type: 'image-overlay'; url: string; position: Position; width: number; height: number; zoom: ZoomDirection; zoomAmount: number } & Timed)
-  | ({ type: 'video'; url: string; cutFrom: number; cutTo?: number; resizeMode: ResizeMode; volume: number; speed?: number; rect: Rect } & Timed)
+  | ({ type: 'captions'; words?: Array<{ text: string; start: number; end: number }>; source?: { url: string; from: number; to?: number }; font: FontName; fontSize: number; color: string; highlightColor?: string; background: string; position: 'top' | 'middle' | 'bottom'; margin: number; maxWidth: number; maxChars: number; wordsSpread?: boolean } & Timed)
+  | ({ type: 'video'; url: string; cutFrom: number; cutTo?: number; resizeMode: ResizeMode; volume: number; speed?: number; rect: Rect; cuts: Range[]; reverse: boolean; freeze?: { at: number; hold: number } } & Timed)
   | ({ type: 'audio'; url: string; cutFrom: number; cutTo?: number; volume: number } & Timed)
   | ({ type: 'detached-audio'; url: string; cutFrom: number; cutTo?: number; volume: number } & Timed);
 export interface Transition {
@@ -90,6 +99,8 @@ export interface AudioTrack {
   cutTo?: number;
   volume: number;
   loop: boolean;
+  /** Go down under speech: set when the track asked for it. */
+  duck?: Required<DuckOptions>;
 }
 export interface ComposeSpec {
   width: number;
@@ -102,6 +113,7 @@ export interface ComposeSpec {
   clipsAudioVolume: number;
   outputVolume: number;
   audioNorm?: { targetLufs: number; maxGain: number };
+  brand?: Brand;
 }
 
 export const TRANSITIONS = ['none', 'random', ...TRANSITION_NAMES] as const;
@@ -234,6 +246,16 @@ export function normalizeSpec(raw: unknown): Normalized {
   const baseTransition: Transition = { name: 'fade', duration: 0.5, easing: 'linear', audioOutCurve: 'tri', audioInCurve: 'tri' };
   // a random default stays random here: each clip picks its own
   const defaultTransition = transitionOf(defaults.transition, baseTransition, 'defaults', 0, false);
+  // the brand: colours, a font and a logo that templates and an everywhere logo use
+  const rawBrand = (r.brand && typeof r.brand === 'object' ? r.brand : undefined) as { colors?: Record<string, unknown>; font?: unknown; fontFamily?: unknown; logo?: Record<string, unknown> } | undefined;
+  const brand: Brand | undefined = rawBrand
+    ? {
+        colors: { ...(typeof rawBrand.colors?.primary === 'string' && COLOR.test(rawBrand.colors.primary) ? { primary: rawBrand.colors.primary } : {}), ...(typeof rawBrand.colors?.accent === 'string' && COLOR.test(rawBrand.colors.accent) ? { accent: rawBrand.colors.accent } : {}), ...(typeof rawBrand.colors?.text === 'string' && COLOR.test(rawBrand.colors.text) ? { text: rawBrand.colors.text } : {}) },
+        ...(str(rawBrand.font ?? rawBrand.fontFamily) in FONTS ? { font: str(rawBrand.font ?? rawBrand.fontFamily) } : {}),
+        ...(httpsOnly(rawBrand.logo?.url) ? { logo: { url: httpsOnly(rawBrand.logo?.url)!, position: str(rawBrand.logo?.position, 'top-right'), width: num(rawBrand.logo?.width, 0.14, 0.02, 0.6), opacity: num(rawBrand.logo?.opacity, 1, 0, 1), everywhere: rawBrand.logo?.everywhere !== false } } : {}),
+      }
+    : undefined;
+  if (rawBrand?.logo?.url !== undefined && !brand?.logo) errors.push('brand.logo needs an https address in url.');
   const rawClips = Array.isArray(r.clips) ? r.clips : [];
   if (!rawClips.length) errors.push('clips must be a list with at least one clip.');
   if (rawClips.length > LIMITS.maxClips) errors.push(`at most ${LIMITS.maxClips} clips (there are ${rawClips.length}).`);
@@ -241,7 +263,17 @@ export function normalizeSpec(raw: unknown): Normalized {
   rawClips.slice(0, LIMITS.maxClips).forEach((c, ci) => {
     const clip = (c ?? {}) as Record<string, unknown>;
     const where = `clip ${ci + 1}`;
-    const rawLayers = Array.isArray(clip.layers) ? clip.layers : [];
+    const writtenLayers = Array.isArray(clip.layers) ? clip.layers : [];
+    const rawLayers: unknown[] = [];
+    for (const l of writtenLayers) {
+      if ((l as { type?: unknown } | null)?.type === 'template') {
+        const out = expandTemplate(l as Record<string, unknown>, brand);
+        if ('error' in out) errors.push(`${where}: ${out.error}`);
+        else rawLayers.push(...out);
+      } else rawLayers.push(l);
+    }
+    // a logo on every clip, unless the brand or the clip says no
+    if (brand?.logo?.everywhere && clip.logo !== false && rawLayers.length) rawLayers.push({ type: 'image-overlay', url: brand.logo.url, position: brand.logo.position, width: brand.logo.width, height: brand.logo.width, opacity: brand.logo.opacity });
     if (!rawLayers.length) errors.push(`${where} needs layers.`);
     if (rawLayers.length > LIMITS.maxLayers) errors.push(`${where} has ${rawLayers.length} layers; at most ${LIMITS.maxLayers}.`);
     const layers: Layer[] = [];
@@ -249,9 +281,19 @@ export function normalizeSpec(raw: unknown): Normalized {
       const raw = (l ?? {}) as Record<string, unknown>;
       const type = str(raw.type);
       // defaults of the whole description, then of the layer type, then the layer itself
-      const L: Record<string, unknown> = { ...defaultLayer, ...(defaultByType[type] ?? {}), ...raw };
+      const L: Record<string, unknown> = { ...(brand?.font ? { font: brand.font } : {}), ...defaultLayer, ...(defaultByType[type] ?? {}), ...raw };
       const at = `${where} layer ${li + 1}`;
       const timing: Timed = { start: num(L.start, 0, 0, LIMITS.maxSeconds), ...(typeof L.stop === 'number' && Number.isFinite(L.stop) ? { stop: Math.max(0, L.stop) } : {}), opacity: num(L.opacity, 1, 0, 1), fadeIn: num(L.fadeIn, 0, 0, 30), fadeOut: num(L.fadeOut, 0, 0, 30), filter: filterOf(L.effects ?? L.filter) };
+      const kfs = keyframesFromList(L.keyframes, LIMITS.maxSeconds);
+      if (kfs) timing.keyframes = kfs;
+      const presetOf = (v: unknown): PresetUse | undefined => {
+        const p = (typeof v === 'string' ? { preset: v } : v) as { preset?: unknown; duration?: unknown } | undefined;
+        return p && (PRESETS as readonly string[]).includes(str(p.preset)) ? { preset: str(p.preset) as Preset, duration: num(p.duration, 0.5, 0.05, 10) } : undefined;
+      };
+      const pin = presetOf(L.animationIn ?? L.animIn);
+      const pout = presetOf(L.animationOut ?? L.animOut);
+      if (pin) timing.animIn = pin;
+      if (pout) timing.animOut = pout;
       const colorsOf = (v: unknown, seed: number): [string, string] => {
         const given = Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string' && COLOR.test(x.trim())).map(x => x.trim()) : [];
         const pair = RANDOM_PAIRS[(ci + seed) % RANDOM_PAIRS.length]!;
@@ -268,6 +310,13 @@ export function normalizeSpec(raw: unknown): Normalized {
       } else if (type === 'shape') {
         const shape = ['rect', 'ellipse', 'line'].includes(str(L.shape)) ? (str(L.shape) as 'rect') : 'rect';
         layers.push({ type: 'shape', shape, color: colorOf(L.color, '#ffffff'), stroke: num(L.stroke, 0, 0, 200), rect: rectOf({ width: 0.3, height: 0.3, ...L }), ...timing });
+      } else if (type === 'captions') {
+        const words = Array.isArray(L.words) ? L.words.filter((w): w is { text: string; start: number; end: number } => !!w && typeof (w as { text?: unknown }).text === 'string' && typeof (w as { start?: unknown }).start === 'number' && typeof (w as { end?: unknown }).end === 'number').slice(0, 2000).map(w => ({ text: w.text.trim(), start: Math.max(0, w.start), end: Math.max(w.start, w.end) })).filter(w => w.text) : undefined;
+        const src = (L.source && typeof L.source === 'object' ? L.source : undefined) as { url?: unknown; from?: unknown; to?: unknown } | undefined;
+        const url = src ? httpsOnly(src.url) : undefined;
+        if (src && !url) errors.push(`${at} (captions) source needs an https address in url.`);
+        // no words and no source: the words come from the first video layer of the clip, found by listening when the video is made
+        layers.push({ type: 'captions', ...(words?.length ? { words } : {}), ...(url ? { source: { url, from: num(src?.from, 0, 0, 36000), ...(typeof src?.to === 'number' && Number.isFinite(src.to) ? { to: Math.max(0, src.to) } : {}) } } : {}), font: (str(L.font ?? L.fontFamily) in FONTS ? str(L.font ?? L.fontFamily) : 'sans') as FontName, fontSize: num(L.fontSize, 0.06, 0.02, 0.2), color: colorOf(L.textColor ?? L.color, '#ffffff'), ...(typeof L.highlightColor === 'string' && COLOR.test(L.highlightColor.trim()) ? { highlightColor: L.highlightColor.trim() } : {}), background: colorOf(L.backgroundColor, 'rgba(0,0,0,0.7)'), position: (['top', 'middle', 'bottom'].includes(str(L.position)) ? str(L.position) : 'bottom') as 'bottom', margin: num(L.margin, 0.08, 0, 0.5), maxWidth: num(L.maxWidth, 0.85, 0.2, 1), maxChars: Math.round(num(L.maxChars, 42, 10, 120)), ...timing });
       } else if (['title', 'subtitle', 'title-background', 'news-title', 'slide-in-text'].includes(type)) {
         const text = str(L.text).trim();
         if (!text) errors.push(`${at} (${type}) needs text.`);
@@ -304,7 +353,11 @@ export function normalizeSpec(raw: unknown): Normalized {
       } else if (type === 'video') {
         const url = httpsOnly(L.url ?? L.path);
         if (!url) errors.push(`${at} (video) needs an https address in url.`);
-        layers.push({ type: 'video', url: url ?? '', cutFrom: num(L.cutFrom, 0, 0, 36000), ...(typeof L.cutTo === 'number' && Number.isFinite(L.cutTo) ? { cutTo: Math.max(0, L.cutTo) } : {}), resizeMode: resizeOf(L.resizeMode), volume: num(L.mixVolume ?? L.volume, 1, 0, 4), ...(typeof L.speed === 'number' && Number.isFinite(L.speed) ? { speed: num(L.speed, 1, 0.25, 4) } : {}), rect: rectOf(L), ...timing });
+        layers.push({ type: 'video', url: url ?? '', cutFrom: num(L.cutFrom, 0, 0, 36000), ...(typeof L.cutTo === 'number' && Number.isFinite(L.cutTo) ? { cutTo: Math.max(0, L.cutTo) } : {}), resizeMode: resizeOf(L.resizeMode), volume: num(L.mixVolume ?? L.volume, 1, 0, 4), ...(typeof L.speed === 'number' && Number.isFinite(L.speed) ? { speed: num(L.speed, 1, 0.25, 4) } : {}), rect: rectOf(L), cuts: (Array.isArray(L.cuts) ? L.cuts : []).slice(0, 300).flatMap((c: unknown) => {
+          const from = (c as { from?: unknown; start?: unknown })?.from ?? (c as { start?: unknown })?.start;
+          const to = (c as { to?: unknown; end?: unknown })?.to ?? (c as { end?: unknown })?.end;
+          return typeof from === 'number' && typeof to === 'number' && to > from ? [{ start: Math.max(0, from), end: to }] : [];
+        }), reverse: L.reverse === true, ...(L.freeze && typeof L.freeze === 'object' && typeof (L.freeze as { at?: unknown }).at === 'number' ? { freeze: { at: Math.max(0, (L.freeze as { at: number }).at), hold: num((L.freeze as { hold?: unknown }).hold, 2, 0.1, 30) } } : {}), ...timing });
       } else if (type === 'audio' || type === 'detached-audio') {
         const url = httpsOnly(L.url ?? L.path);
         if (!url) errors.push(`${at} (${type}) needs an https address in url.`);
@@ -325,7 +378,7 @@ export function normalizeSpec(raw: unknown): Normalized {
     const A = (a ?? {}) as Record<string, unknown>;
     const url = httpsOnly(A.url ?? A.path);
     if (!url) errors.push(`audio track ${i + 1} needs an https address in url.`);
-    audioTracks.push({ url: url ?? '', start: num(A.start, 0, 0, LIMITS.maxSeconds), cutFrom: num(A.cutFrom, 0, 0, 36000), ...(typeof A.cutTo === 'number' && Number.isFinite(A.cutTo) ? { cutTo: Math.max(0, A.cutTo) } : {}), volume: num(A.mixVolume ?? A.volume, 1, 0, 4), loop: A.loop === true });
+    audioTracks.push({ url: url ?? '', start: num(A.start, 0, 0, LIMITS.maxSeconds), cutFrom: num(A.cutFrom, 0, 0, 36000), ...(typeof A.cutTo === 'number' && Number.isFinite(A.cutTo) ? { cutTo: Math.max(0, A.cutTo) } : {}), volume: num(A.mixVolume ?? A.volume, 1, 0, 4), loop: A.loop === true, ...(A.duck ? { duck: { thresholdDb: num((A.duck as DuckOptions).thresholdDb, -42, -80, -10), amountDb: num((A.duck as DuckOptions).amountDb, -14, -40, 0), attack: num((A.duck as DuckOptions).attack, 0.25, 0.02, 3), release: num((A.duck as DuckOptions).release, 0.8, 0.05, 5), gap: num((A.duck as DuckOptions).gap, 0.6, 0, 3) } } : {}) });
   });
   if (errors.length) return { ok: false, errors };
   const an = (r.audioNorm ?? undefined) as { enable?: unknown; targetLufs?: unknown; maxGain?: unknown } | undefined;
@@ -339,6 +392,7 @@ export function normalizeSpec(raw: unknown): Normalized {
     keepSourceAudio: r.keepSourceAudio !== false,
     clipsAudioVolume: num(r.clipsAudioVolume, 1, 0, 4),
     outputVolume: num(r.outputVolume, 1, 0, 4),
+    ...(brand ? { brand } : {}),
     ...(an && an.enable === true ? { audioNorm: { targetLufs: num(an.targetLufs, -16, -40, -5), maxGain: num(an.maxGain, 30, 0, 40) } } : {}),
   };
   const known = totalSeconds(spec);
@@ -353,17 +407,25 @@ export function normalizeSpec(raw: unknown): Normalized {
 export function resolveDurations(spec: ComposeSpec, probe: (url: string) => number): ComposeSpec {
   const clips = spec.clips.map(c => {
     const videos = c.layers.filter((l): l is Extract<Layer, { type: 'video' }> => l.type === 'video');
-    const cut = (v: Extract<Layer, { type: 'video' }>) => Math.max(0.1, (v.cutTo ?? probe(v.url)) - v.cutFrom);
+    // seconds of the file that are played (after cuts) and the seconds a freeze holds, for one video layer at the speed 1
+    const base = (v: Extract<Layer, { type: 'video' }>) => buildPlayback({ cutFrom: v.cutFrom, cutTo: v.cutTo ?? probe(v.url), cuts: v.cuts, reverse: v.reverse, speed: 1, ...(v.freeze ? { freeze: v.freeze } : {}) });
     const first = videos[0];
     let duration = c.duration;
-    if (duration === undefined) duration = first ? Math.max(0.2, cut(first) / (first.speed ?? 1)) : 3;
+    if (duration === undefined) {
+      if (first) {
+        const pb = base(first);
+        duration = Math.max(0.2, pb.content / (first.speed ?? 1) + (first.freeze?.hold ?? 0));
+      } else duration = 3;
+    }
     duration = Math.min(duration, LIMITS.maxSeconds);
     const layers = c.layers.map(l => {
       if (l.type !== 'video') return l;
-      // the speed named wins; else a clip with a given length fits the video to it; else the video plays at its own speed
-      const own = (l.stop ?? duration!) - l.start;
-      const speed = l.speed ?? (c.fixed ? Math.min(10, Math.max(0.1, cut(l) / Math.max(0.2, own))) : 1);
-      return { ...l, speed };
+      const cutTo = l.cutTo ?? probe(l.url);
+      // the speed named wins; else a clip with a given length fits the video to it (what is played over the time left after a freeze); else the video plays at its own speed
+      const own = (l.stop ?? duration!) - l.start - (l.freeze?.hold ?? 0);
+      const pb = base(l);
+      const speed = l.speed ?? (c.fixed ? Math.min(10, Math.max(0.1, pb.content / Math.max(0.2, own))) : 1);
+      return { ...l, cutTo, speed };
     });
     return { ...c, duration, layers };
   });
