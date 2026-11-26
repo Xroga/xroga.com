@@ -1405,11 +1405,11 @@ export class RunManager {
     if (call.toolName === 'compose_video') {
       const normal = normalizeSpec(args.spec);
       if (!normal.ok) return { text: `error INVALID_ARGUMENT (nothing made)\n${normal.errors.join('\n')}`, isError: true };
-      const asked = composeFilename(args.filename);
+      const asked = composeFilename(args.filename, normal.spec.format === 'gif');
       const canSave = () => chrome.permissions.contains({ permissions: ['downloads'] }).catch(() => false);
       let saveAs = false;
       if ((this.#modes.get(conversationId) ?? 'ask') === 'ask' || !(await canSave())) {
-        const answer = await this.broker.open<'save' | 'save-as' | 'discard'>(conversationId, 'save-file', { filename: asked, mimeType: asked.endsWith('.webm') ? 'video/webm' : 'video/mp4', bytes: 0, preview: `A video made on this device: ${describeSpec(normal.spec)}` }, signal);
+        const answer = await this.broker.open<'save' | 'save-as' | 'discard'>(conversationId, 'save-file', { filename: asked, mimeType: asked.endsWith('.gif') ? 'image/gif' : asked.endsWith('.webm') ? 'video/webm' : 'video/mp4', bytes: 0, preview: `A video made on this device: ${describeSpec(normal.spec)}` }, signal);
         if (answer !== 'save' && answer !== 'save-as') return { text: 'compose_video · the user discarded the video; nothing was made.', isError: true };
         saveAs = answer === 'save-as';
       }
@@ -1422,7 +1422,7 @@ export class RunManager {
         return { text: `error COMPOSE_FAILED (nothing saved)\n${(error instanceof Error ? error.message : String(error)).slice(0, 400)}`, isError: true };
       }
       // the file keeps the name asked for, with the ending of what was really made
-      const filename = asked.replace(/\.(mp4|webm)$/i, '') + (made.container === 'webm' ? '.webm' : '.mp4');
+      const filename = asked.replace(/\.(mp4|webm|gif)$/i, '') + (made.container === 'gif' ? '.gif' : made.container === 'webm' ? '.webm' : '.mp4');
       const saved = await saveHeldUrl(made.url, filename, saveAs).catch((error: Error) => ({ state: 'interrupted' as const, error: error.message, name: filename, downloadId: -1 }));
       if (saved.state !== 'complete') return { text: `error SAVE_FAILED (not saved)\nThe download did not complete: ${saved.error ?? 'interrupted'}.`, isError: true };
       return { text: `compose_video · saved "${saved.name}" in Downloads: ${made.seconds.toFixed(1)} s, ${made.frames} frames, ${(made.bytes / 1048576).toFixed(1)} MB (${made.container.toUpperCase()}, ${made.videoCodec}${made.audioCodec ? ` and ${made.audioCodec}` : ', no sound'}), made in ${(made.renderMs / 1000).toFixed(1)} s.${made.notes.length ? ` Note: ${made.notes.join('; ')}.` : ''}`, isError: false };

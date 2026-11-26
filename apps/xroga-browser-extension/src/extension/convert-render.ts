@@ -60,6 +60,42 @@ const REASONS: Record<string, string> = {
   no_encodable_target_codec: 'this browser cannot encode a codec the format can hold',
 };
 
+/** A video as an animated GIF: pictures at a steady rate between the trim points, scaled to the width asked (default 480) with the aspect kept. Sound is not part of a GIF. */
+async function convertToGif(mb: Mb, input: Input, request: ConvertRequest, makeUrl: (blob: Blob) => string, started: number): Promise<ConvertResult> {
+  const { renderGif } = await import('./gif-render');
+  const withTracks = input as unknown as { getPrimaryVideoTrack(): Promise<{ getDisplayWidth?: () => Promise<number>; getDisplayHeight?: () => Promise<number>; codedWidth?: number; codedHeight?: number } | null> };
+  const track = await withTracks.getPrimaryVideoTrack();
+  if (!track) throw new Error('the file has no picture to make a GIF from');
+  const dw = (await track.getDisplayWidth?.().catch(() => undefined)) ?? track.codedWidth ?? 16;
+  const dh = (await track.getDisplayHeight?.().catch(() => undefined)) ?? track.codedHeight ?? 9;
+  const total = await input.computeDuration().catch(() => 0);
+  const start = Math.max(0, request.trim?.start ?? 0);
+  const end = Math.min(total || Infinity, request.trim?.end ?? Math.min(total || 15, start + 15));
+  if (end <= start) throw new Error('nothing is left after the trim');
+  const width = Math.max(16, Math.min(800, request.video.width ?? Math.min(480, dw)));
+  const height = Math.max(16, request.video.height ?? Math.round((width * dh) / dw));
+  const sinkMb = mb as unknown as { CanvasSink: new (track: unknown, o: { width: number; height: number; fit: string }) => { getCanvas(t: number): Promise<{ canvas: OffscreenCanvas } | null> } };
+  const sink = new sinkMb.CanvasSink(track, { width, height, fit: request.video.fit ?? 'fill' });
+  const canvas = new OffscreenCanvas(width, height);
+  const c = canvas.getContext('2d')!;
+  const made = await renderGif({
+    seconds: end - start,
+    fps: request.video.frameRate ?? 10,
+    width,
+    height,
+    canvas,
+    draw: async t => {
+      const got = await sink.getCanvas(Math.min(Math.max(0, start + t), Math.max(0, (total || end) - 0.04)));
+      c.fillStyle = '#000';
+      c.fillRect(0, 0, width, height);
+      if (got) c.drawImage(got.canvas, 0, 0, width, height);
+    },
+  });
+  input.dispose();
+  const blob = new Blob([made.bytes as Uint8Array<ArrayBuffer>], { type: 'image/gif' });
+  return { url: makeUrl(blob), bytes: blob.size, seconds: end - start, container: 'gif', ms: Math.round(performance.now() - started), notes: [...made.notes, 'a GIF has no sound, so the sound was left out'] };
+}
+
 export async function convertMedia(request: ConvertRequest, loadMb: () => Promise<unknown>, makeUrl: (blob: Blob) => string): Promise<ConvertResult> {
   const started = performance.now();
   const mb = (await loadMb()) as Mb;
@@ -79,6 +115,7 @@ export async function convertMedia(request: ConvertRequest, loadMb: () => Promis
     input = new mb.Input({ source: new mb.BlobSource(blob), formats });
     await input.getFormat();
   }
+  if (request.format === 'gif') return convertToGif(mb, input, request, makeUrl, started);
   const format = {
     mp4: () => new mb.Mp4OutputFormat({ fastStart: 'in-memory' }),
     m4a: () => new mb.Mp4OutputFormat({ fastStart: 'in-memory' }),
@@ -88,7 +125,7 @@ export async function convertMedia(request: ConvertRequest, loadMb: () => Promis
     ogg: () => new mb.OggOutputFormat(),
     wav: () => new mb.WavOutputFormat(),
     aac: () => new mb.AdtsOutputFormat(),
-  }[request.format]();
+  }[request.format as 'mp4']();
   const target = new mb.BufferTarget();
   const output = new mb.Output({ format, target });
   const q = { 'very-low': mb.QUALITY_VERY_LOW, low: mb.QUALITY_LOW, medium: mb.QUALITY_MEDIUM, high: mb.QUALITY_HIGH, 'very-high': mb.QUALITY_VERY_HIGH } as Record<string, unknown>;
@@ -115,7 +152,7 @@ export async function convertMedia(request: ConvertRequest, loadMb: () => Promis
   input.dispose();
   const start = request.trim?.start ?? 0;
   const end = request.trim?.end ?? total;
-  const mime = { mp4: 'video/mp4', mov: 'video/quicktime', webm: 'video/webm', mkv: 'video/x-matroska', ogg: 'audio/ogg', wav: 'audio/wav', m4a: 'audio/mp4', aac: 'audio/aac' }[request.format];
+  const mime = { mp4: 'video/mp4', mov: 'video/quicktime', webm: 'video/webm', mkv: 'video/x-matroska', ogg: 'audio/ogg', wav: 'audio/wav', m4a: 'audio/mp4', aac: 'audio/aac' }[request.format as 'mp4'];
   const blob = new Blob([buffer], { type: mime });
   return { url: makeUrl(blob), bytes: blob.size, seconds: Math.max(0, end - start), container: request.format, ms: Math.round(performance.now() - started), notes };
 }

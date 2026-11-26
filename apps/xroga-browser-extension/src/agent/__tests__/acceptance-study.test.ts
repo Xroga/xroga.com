@@ -95,3 +95,37 @@ describe('acceptance study', () => {
     expect(() => appendJournal(file, info, s)).toThrow(/other columns/);
   });
 });
+
+describe('acceptance study, more views', () => {
+  const scored = (list: Array<[string, number | null, string[]]>) => list.map(([name, score, used]) => ({ name, score, used, turns: 3, seconds: 5, answer: `answer of ${name} <b>`, error: score === 0 ? 'other' : null }));
+  it('gives a range for the mean', async () => {
+    const { interval95 } = await import('../../../fixtures/acceptance/study.mjs');
+    const [lo, hi] = interval95([1, 0, 1, 1, 0, 1]);
+    expect(lo).toBeLessThan(0.67);
+    expect(hi).toBeGreaterThan(0.67);
+    expect(hi).toBeLessThanOrEqual(1);
+  });
+  it('compares the tasks that used a tool with those that did not', async () => {
+    const { byTool } = await import('../../../fixtures/acceptance/study.mjs');
+    const r = byTool(scored([['a', 1, ['media', 'read']], ['b', 1, ['media']], ['c', 0, ['read']], ['d', 0.5, []], ['e', null, ['media']]]));
+    const media = r.find((t: { tool: string }) => t.tool === 'media');
+    expect(media).toMatchObject({ tasks: 2, meanWith: 1, meanWithout: 0.25 });
+    expect(r.find((t: { tool: string }) => t.tool === 'read')?.tasks).toBe(2);
+  });
+  it('finds the tasks that come out differently from run to run', async () => {
+    const { stability } = await import('../../../fixtures/acceptance/study.mjs');
+    const r = stability([scored([['a', 1, []], ['b', 1, []], ['only', 1, []]]), scored([['a', 1, []], ['b', 0, []]]), scored([['a', 1, []], ['b', 1, []]])]);
+    expect(r.map((x: { name: string }) => x.name)).toEqual(['b', 'a']);
+    expect(r[0]).toMatchObject({ flaky: true, spread: 1, runs: 3 });
+    expect(r[1]).toMatchObject({ flaky: false });
+  });
+  it('writes a page that escapes what it shows', async () => {
+    const { reportHtml, summarize } = await import('../../../fixtures/acceptance/study.mjs');
+    const rows = scored([['a', 1, ['media']], ['b', 0, []]]);
+    const html = reportHtml(summarize(rows), rows, 'Run <1>');
+    expect(html).toContain('<title>Run &lt;1&gt;</title>');
+    expect(html).toContain('answer of a &lt;b&gt;');
+    expect(html).not.toContain('answer of a <b>');
+    expect(html).toContain('width:100%');
+  });
+});

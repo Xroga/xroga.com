@@ -51,7 +51,7 @@ export interface ComposeResult {
   url: string;
   bytes: number;
   seconds: number;
-  container: 'mp4' | 'webm';
+  container: 'mp4' | 'webm' | 'gif';
   videoCodec: string;
   audioCodec?: string;
   frames: number;
@@ -462,6 +462,15 @@ export async function renderComposition(raw: unknown, loadMb: () => Promise<unkn
   const started = performance.now();
   const p = await prepare(raw, loadMb);
   const { spec, mb, total, notes } = p;
+  if (spec.format === 'gif') {
+    const { renderGif } = await import('./gif-render');
+    const canvas = new OffscreenCanvas(spec.width, spec.height);
+    const gctx = canvas.getContext('2d', { willReadFrequently: true }) as OffscreenCanvasRenderingContext2D;
+    const made = await renderGif({ seconds: total, fps: spec.gifFps ?? 12, width: spec.width, height: spec.height, canvas, draw: t => drawFrame(gctx, spec, Math.min(total, t), p.assets, p.scratch) });
+    for (const v of p.videos.values()) v.input.dispose();
+    const blob = new Blob([made.bytes as Uint8Array<ArrayBuffer>], { type: 'image/gif' });
+    return { url: makeUrl(blob), bytes: blob.size, seconds: total, container: 'gif', videoCodec: 'gif', frames: made.frames, renderMs: Math.round(performance.now() - started), notes: [...notes, ...made.notes, ...(spec.keepSourceAudio || spec.audioTracks.length ? ['a GIF has no sound, so the sound was left out'] : [])] };
+  }
   const mixed = await mixSound(p);
 
   // ---- encoders: MP4 (H.264, AAC) where the browser has them, else WebM (VP9 or VP8, Opus)

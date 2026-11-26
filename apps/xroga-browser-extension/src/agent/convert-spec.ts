@@ -4,7 +4,7 @@
 // mediabunny (MPL-2.0) offers; the request format and its checks are written here.
 import type { AgentTool } from './tools';
 
-export const CONVERT_FORMATS = ['mp4', 'mov', 'webm', 'mkv', 'ogg', 'wav', 'm4a', 'aac'] as const;
+export const CONVERT_FORMATS = ['mp4', 'mov', 'webm', 'mkv', 'gif', 'ogg', 'wav', 'm4a', 'aac'] as const;
 export type ConvertFormat = (typeof CONVERT_FORMATS)[number];
 export const VIDEO_CODECS = ['avc', 'hevc', 'vp9', 'av1', 'vp8'] as const;
 export const AUDIO_CODECS = ['aac', 'opus', 'vorbis', 'pcm-s16', 'pcm-f32'] as const;
@@ -15,7 +15,7 @@ export const CONVERT_TOOL: AgentTool = {
   source: 'agent',
   group: 'files',
   description:
-    'Convert an audio or video file at a web address into another format, on this device, and save it in Downloads (asks first in Ask mode, never overwrites). format: mp4, mov, webm, mkv (picture and sound), ogg, wav, m4a, aac (sound only: the picture is dropped). trim: { start, end } seconds to keep. Picture: width and/or height (one gives the other by the aspect), fit: contain|cover|fill, rotate: 90|180|270, flip, crop: { left, top, width, height }, fps, videoCodec: avc|hevc|vp9|av1|vp8, quality: very-low|low|medium|high|very-high. Sound: audioCodec: aac|opus|vorbis|pcm-s16|pcm-f32, channels, sampleRate, mute (no sound), noVideo. tags: { title, artist, album, genre, comment, date } written into the file. What the browser cannot encode is dropped or refused and said so. Only when the person asked for a converted file.',
+    'Convert an audio or video file at a web address into another format, on this device, and save it in Downloads (asks first in Ask mode, never overwrites). format: mp4, mov, webm, mkv (picture and sound), gif (an animated picture with no sound: fps default 10, width default 480, at most 400 pictures), ogg, wav, m4a, aac (sound only: the picture is dropped). trim: { start, end } seconds to keep. Picture: width and/or height (one gives the other by the aspect), fit: contain|cover|fill, rotate: 90|180|270, flip, crop: { left, top, width, height }, fps, videoCodec: avc|hevc|vp9|av1|vp8, quality: very-low|low|medium|high|very-high. Sound: audioCodec: aac|opus|vorbis|pcm-s16|pcm-f32, channels, sampleRate, mute (no sound), noVideo. tags: { title, artist, album, genre, comment, date } written into the file. What the browser cannot encode is dropped or refused and said so. Only when the person asked for a converted file.',
   parameters: {
     type: 'object',
     properties: {
@@ -121,8 +121,8 @@ export function normalizeConvert(args: Record<string, unknown>): Checked {
   return { ok: true, request };
 }
 
-const EXT: Record<ConvertFormat, string> = { mp4: 'mp4', mov: 'mov', webm: 'webm', mkv: 'mkv', ogg: 'ogg', wav: 'wav', m4a: 'm4a', aac: 'aac' };
-export const convertMime = (format: ConvertFormat): string => ({ mp4: 'video/mp4', mov: 'video/quicktime', webm: 'video/webm', mkv: 'video/x-matroska', ogg: 'audio/ogg', wav: 'audio/wav', m4a: 'audio/mp4', aac: 'audio/aac' })[format];
+const EXT: Record<ConvertFormat, string> = { mp4: 'mp4', mov: 'mov', webm: 'webm', mkv: 'mkv', gif: 'gif', ogg: 'ogg', wav: 'wav', m4a: 'm4a', aac: 'aac' };
+export const convertMime = (format: ConvertFormat): string => ({ mp4: 'video/mp4', mov: 'video/quicktime', webm: 'video/webm', mkv: 'video/x-matroska', gif: 'image/gif', ogg: 'audio/ogg', wav: 'audio/wav', m4a: 'audio/mp4', aac: 'audio/aac' })[format];
 
 /** A plain file name with the ending of the format; a name that asks for another ending is given the right one. */
 export function convertFilename(asked: unknown, format: ConvertFormat): string {

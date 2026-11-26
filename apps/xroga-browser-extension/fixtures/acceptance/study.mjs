@@ -101,6 +101,61 @@ export function compare(a, b) {
   };
 }
 
+/** 95 % interval of the mean, from the standard error (normal approximation: honest for the dozen tasks a run has only as a rough range). */
+export function interval95(v) {
+  const m = mean(v);
+  const e = stderr(v) * 1.96;
+  return [round(Math.max(0, m - e)), round(Math.min(1, m + e))];
+}
+
+/** For each tool: how many tasks used it and the mean score of those tasks against the others (AgentLab's ablation tables ask the same of a setting). Only tools used by at least two tasks. */
+export function byTool(scored) {
+  const rows = scored.filter(r => r.score !== null);
+  const tools = new Set(rows.flatMap(r => r.used));
+  return [...tools]
+    .map(tool => {
+      const withTool = rows.filter(r => r.used.includes(tool)).map(r => r.score);
+      const without = rows.filter(r => !r.used.includes(tool)).map(r => r.score);
+      return { tool, tasks: withTool.length, meanWith: round(mean(withTool)), meanWithout: without.length ? round(mean(without)) : null };
+    })
+    .filter(t => t.tasks >= 2)
+    .sort((a, b) => b.tasks - a.tasks);
+}
+
+/** Tasks that did not come out the same in every run (several runs of one setup): the flaky ones, with their scores in order. A task in only one run is not counted. */
+export function stability(runs) {
+  const names = new Set(runs.flatMap(r => r.map(x => x.name)));
+  const out = [];
+  for (const name of names) {
+    const scores = runs.map(r => r.find(x => x.name === name)?.score).filter(s => typeof s === 'number');
+    if (scores.length < 2) continue;
+    const spread = Math.max(...scores) - Math.min(...scores);
+    out.push({ name, runs: scores.length, scores: scores.map(s => round(s, 2)), spread: round(spread, 2), flaky: spread > 0.001 });
+  }
+  return out.sort((a, b) => b.spread - a.spread);
+}
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+
+/** One self-contained page for a run: the headline, a bar for every task, the not-finished classes, and each task's answer and tools (an episode report in the spirit of AgentLab's trace viewer, without the screenshots, which a run here does not keep). */
+export function reportHtml(summary, scored, title = 'Acceptance run') {
+  const [lo, hi] = interval95(scored.filter(r => r.score !== null).map(r => r.score));
+  const bar = r => (r.score === null ? '<span class="n">not scored</span>' : `<span class="bar"><i style="width:${Math.round(r.score * 100)}%"></i></span> ${r.score.toFixed(2)}`);
+  const rows = scored
+    .map(r => `<tr><td>${esc(r.name)}</td><td>${bar(r)}</td><td>${Number.isFinite(r.turns) ? r.turns : ''}</td><td>${Number.isFinite(r.seconds) ? r.seconds : ''}</td><td>${esc(r.used.join(', '))}</td><td>${esc(r.error ?? '')}</td><td class="a">${esc(r.answer.slice(0, 400))}</td></tr>`)
+    .join('\n');
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${esc(title)}</title><style>
+body{font:14px system-ui,sans-serif;margin:24px;color:#111;background:#fff}h1{font-size:20px}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid #ddd;padding:6px 8px;text-align:left;vertical-align:top}
+.bar{display:inline-block;width:120px;height:10px;background:#eee;border-radius:5px;overflow:hidden;vertical-align:middle}.bar i{display:block;height:100%;background:#2563eb}.n{color:#777}.a{max-width:420px;color:#444}
+@media (prefers-color-scheme:dark){body{background:#111;color:#eee}td,th{border-color:#333}.bar{background:#333}.a{color:#bbb}}</style></head><body>
+<h1>${esc(title)}</h1><p>${summary.tasks} tasks, ${summary.scored} scored: mean <b>${summary.meanScore}</b> ± ${summary.stderr} (95 % between ${lo} and ${hi}); ${summary.passed} full marks; ${summary.meanTurns} turns and ${summary.meanSeconds} s a task.</p>
+<p>Not finished well: ${esc(Object.entries(summary.errors).map(([k, v]) => `${k} ${v}`).join(', ') || 'none')}. Tools used: ${esc(Object.entries(summary.toolsUsed).map(([k, v]) => `${k} ${v}`).join(', ') || 'none')}.</p>
+<table><thead><tr><th>Task</th><th>Score</th><th>Turns</th><th>Seconds</th><th>Tools</th><th>Problem</th><th>Answer</th></tr></thead><tbody>
+${rows}
+</tbody></table></body></html>
+`;
+}
+
 /** What is needed to repeat a run. `git` may be unavailable: the field then says so rather than guessing. */
 export function reproInfo(options = {}) {
   const git = args => {
@@ -172,11 +227,20 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
       appendJournal(journal, reproInfo({ model: flag('model'), label: flag('label'), noSkills: rest.includes('--no-skills') }), summary);
       console.log(`added to ${journal}`);
     }
+  } else if (cmd === 'report' && rest[0]) {
+    const scored = scoreRows(tasks, loadRun(rest[0]));
+    const out = flag('out') ?? join(rest[0], 'report.html');
+    writeFileSync(out, reportHtml(summarize(scored), scored, flag('title') ?? 'Acceptance run'));
+    console.log('written ' + out);
+  } else if (cmd === 'tools' && rest[0]) {
+    console.log(JSON.stringify(byTool(scoreRows(tasks, loadRun(rest[0]))), null, 2));
+  } else if (cmd === 'stability' && rest.length >= 2) {
+    console.log(JSON.stringify(stability(rest.map(d => scoreRows(tasks, loadRun(d)))), null, 2));
   } else if (cmd === 'compare' && rest[0] && rest[1]) {
     const result = compare(scoreRows(tasks, loadRun(rest[0])), scoreRows(tasks, loadRun(rest[1])));
     console.log(JSON.stringify(result, null, 2));
   } else {
-    console.error('usage: study.mjs summarize <results dir> [--model m] [--label l] [--no-skills] [--journal] | compare <dir A> <dir B>');
+    console.error('usage: study.mjs summarize <results dir> [--model m] [--label l] [--no-skills] [--journal] | compare <dir A> <dir B> | report <dir> [--out file.html] [--title t] | tools <dir> | stability <dir> <dir> [<dir>…]');
     process.exit(2);
   }
 }
