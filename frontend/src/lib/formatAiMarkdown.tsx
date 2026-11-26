@@ -13,6 +13,7 @@ import { PluginPermissionControl } from '@/components/integrations/PluginPermiss
 
 import ReactMarkdown, {
   type Components,
+  type ExtraProps,
   type UrlTransform,
 } from 'react-markdown';
 
@@ -1398,6 +1399,13 @@ function XrogaConnectionCard({
   );
 }
 
+type MarkdownTableCellContent = NonNullable<ExtraProps['node']>['children'][number];
+
+function markdownTableCellText(node: MarkdownTableCellContent): string {
+  if (node.type === 'text') return node.value;
+  return 'children' in node ? node.children.map(markdownTableCellText).join('') : '';
+}
+
 const components:
   Components = {
     h1: ({
@@ -1621,7 +1629,7 @@ const components:
         tabIndex={0}
         role="group"
         aria-label="Answer table"
-        className="overflow-x-auto rounded-xl border border-[var(--card-border)]/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
+        className="xv-answer-table-scroll rounded-xl border border-[var(--card-border)]/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
       >
         <table className="w-full text-[13px] sm:text-[14px]">
           {children}
@@ -1640,18 +1648,22 @@ const components:
     th: ({
       children,
     }) => (
-      <th className="px-3 py-2 text-left font-semibold text-[var(--foreground)]">
+      <th scope="col" className="px-3 py-2 text-left font-semibold text-[var(--foreground)]">
         {children}
       </th>
     ),
 
-    td: ({
-      children,
-    }) => (
-      <td className="border-t border-[var(--card-border)]/30 px-3 py-2 text-[var(--foreground)]/90">
-        {children}
-      </td>
-    ),
+    td: ({ children, node }) => {
+      const text = node?.children.map(markdownTableCellText).join('').replace(/\s+/g, ' ').trim() ?? '';
+      return (
+        <td
+          data-answer-table-long-text={text.length >= 72 ? '' : undefined}
+          className="border-t border-[var(--card-border)]/30 px-3 py-2 text-[var(--foreground)]/90"
+        >
+          {children}
+        </td>
+      );
+    },
   };
 
 export function FormattedAiMarkdown({

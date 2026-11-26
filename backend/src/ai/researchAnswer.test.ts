@@ -376,7 +376,12 @@ test('one exact research approval completes its original rich answer, saves evid
     assert.match(JSON.stringify(body.messages),/UNRELATED_PRIOR_NASA_TURN/);
     assert.equal(body.messages.length,3);
     assert.equal(body.reasoning_effort,undefined);
-    if(mode==='automatic-official')assert.match(JSON.stringify(body.messages),/Moon passes between the Sun and Earth/);
+    if(mode==='automatic-official'){
+     assert.match(body.messages[2].content,/Moon passes between the Sun and Earth/);
+     assert.match(body.messages[2].content,/same subject, scope, thresholds, comparisons, and applicable exceptions as the rule/);
+     assert.match(body.messages[2].content,/same pass or fail decision that the cited rule requires/);
+     assert.match(body.messages[2].content,/Keep optional advice separate from the pass condition/);
+    }
     if(mode==='automatic'){
      assert.equal(body.max_tokens,16_384);
      assert.match(body.messages[0].content,/Return only the answer, without an OpenUI program/);

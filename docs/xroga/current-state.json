@@ -8978,7 +8978,7 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "b0e978aa6d926e7fd7b6b4f0084796a806b7ceeb8fdd19058223a08766c9c2bc",
+      "sha256": "3b80f9bc92f0912ce9e1a14607376f4cceffa3bfaf391556a92dce1c204ccc03",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
@@ -110504,7 +110504,7 @@
         "frontend/src/lib/community.ts:1",
         "frontend/src/lib/driveApi.ts:3",
         "frontend/src/lib/existingSourceApi.ts:3",
-        "frontend/src/lib/formatAiMarkdown.tsx:22",
+        "frontend/src/lib/formatAiMarkdown.tsx:23",
         "frontend/src/lib/githubConnect.ts:31",
         "frontend/src/lib/hydrateLandingOutput.ts:2",
         "frontend/src/lib/projectDeliveryApi.ts:3",
@@ -112630,7 +112630,7 @@
       ],
       "callers": [
         "frontend/src/lib/connectedAppResult.test.ts:3",
-        "frontend/src/lib/formatAiMarkdown.tsx:34",
+        "frontend/src/lib/formatAiMarkdown.tsx:35",
         "frontend/src/lib/messageHelpers.test.ts:4",
         "frontend/src/lib/messageHelpers.ts:2",
         "frontend/src/lib/publicAnswerText.ts:5"
@@ -113894,12 +113894,13 @@
       "id": "surface:015cc267f70323e72e46",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sha256": "270afdaf6708b7769263ef8a78ac8d157f86c0f41019779815e4490110a471ab",
+      "sha256": "0b6b7ba6e538e1a51872e7c41a21ed2227b49279b6f9534deecb516b5de18c05",
       "symbols": [
         "AppMark",
         "BusinessActionConfirmationInline",
         "ConfirmationStatus",
         "FormattedAiMarkdown",
+        "MarkdownTableCellContent",
         "SafeConfirmation",
         "ToolUiConnectionCandidate",
         "ToolUiDescriptor",
@@ -113938,6 +113939,7 @@
         "label",
         "language",
         "link",
+        "markdownTableCellText",
         "match",
         "maximumSpend",
         "message",
@@ -113961,6 +113963,7 @@
         "sourceComponents",
         "status",
         "statusMessage",
+        "text",
         "timer",
         "title",
         "toolUi",
@@ -116406,7 +116409,7 @@
         "frontend/src/components/integrations/SupabaseConnectPanel.tsx:6",
         "frontend/src/components/integrations/XrogaConnectPanel.tsx:26",
         "frontend/src/components/onboarding/OnboardingFlow.tsx:10",
-        "frontend/src/lib/formatAiMarkdown.tsx:28",
+        "frontend/src/lib/formatAiMarkdown.tsx:29",
         "frontend/src/lib/githubConnect.ts:1",
         "frontend/src/lib/supabaseConnect.ts:4",
         "frontend/src/lib/vercelConnect.ts:3"
@@ -119648,7 +119651,7 @@
       "callers": [
         "frontend/src/components/terminal/SwarmMessageLog.tsx:29",
         "frontend/src/context/TerminalChatContext.tsx:22",
-        "frontend/src/lib/formatAiMarkdown.tsx:35",
+        "frontend/src/lib/formatAiMarkdown.tsx:36",
         "frontend/src/lib/researchHandoff.test.ts:3",
         "frontend/src/lib/sanitizeChatMessages.ts:7"
       ],
@@ -126560,7 +126563,7 @@
         "frontend/src/components/terminal/SwarmMessageLog.tsx:13",
         "frontend/src/components/terminal/WebSourcesPanel.tsx:6",
         "frontend/src/lib/assistantCopy.test.ts:6",
-        "frontend/src/lib/formatAiMarkdown.tsx:20",
+        "frontend/src/lib/formatAiMarkdown.tsx:21",
         "frontend/src/lib/researchHandoff.ts:3",
         "frontend/src/lib/sanitizeChatMessages.ts:6",
         "frontend/src/lib/xrogaCitations.test.ts:6"
@@ -126644,7 +126647,7 @@
         "frontend/src/components/terminal/IntegrationsModal.tsx:11",
         "frontend/src/components/terminal/ModelAppPermissions.tsx:4",
         "frontend/src/lib/connectReview.security.test.ts:3",
-        "frontend/src/lib/formatAiMarkdown.tsx:33"
+        "frontend/src/lib/formatAiMarkdown.tsx:34"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -153667,9 +153670,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:c03cc6b4edb8dcbe8b99",
+      "id": "finding:9486154a0a271d7fe60a",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 1330,
+      "line": 1331,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -153677,9 +153680,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:0fc934f23a55f954503d",
+      "id": "finding:72a59c58ad2f37d2d4e8",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 1331,
+      "line": 1332,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -157490,16 +157493,16 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:92da0b3e776c93097817",
+      "id": "frontend-call:2ac746c06883b983fa9b",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 1000,
+      "line": 1001,
       "callee": "api.phase1.plan",
       "reachable": true
     },
     {
-      "id": "frontend-call:ae0a1e09f3491ea4671e",
+      "id": "frontend-call:e345944f5752b6d29755",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 1036,
+      "line": 1037,
       "callee": "api.phase1.chat",
       "reachable": true
     },

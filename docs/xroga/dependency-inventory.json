@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "c8364b1ef88b7773b119f97c2bf8314039cf66b9",
+  "source_sha": "a9b98fa3443cb368f4b5c8b9beec463681965f86",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17627,7 +17627,7 @@
     },
     {
       "path": "backend/src/ai/prompts.ts",
-      "sha256": "b0e978aa6d926e7fd7b6b4f0084796a806b7ceeb8fdd19058223a08766c9c2bc"
+      "sha256": "3b80f9bc92f0912ce9e1a14607376f4cceffa3bfaf391556a92dce1c204ccc03"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -24227,7 +24227,7 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sha256": "270afdaf6708b7769263ef8a78ac8d157f86c0f41019779815e4490110a471ab"
+      "sha256": "0b6b7ba6e538e1a51872e7c41a21ed2227b49279b6f9534deecb516b5de18c05"
     },
     {
       "path": "frontend/src/lib/gameBuilderContent.ts",
