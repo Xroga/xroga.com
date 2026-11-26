@@ -8,11 +8,12 @@ export type MediaAnswer =
   | { kind: 'audio'; from: number; report: AudioReport }
   | { kind: 'beats'; from: number; seconds: number; beats: Beats }
   | { kind: 'scenes'; from: number; seconds: number; sampled: number; cuts: number[] }
+  | { kind: 'cover'; base64: string; mimeType: string; bytes: number }
   | { kind: 'frames'; base64: string; width: number; height: number; times: number[]; decoded: number };
 
 export interface MediaRequest {
   url: string;
-  action: 'info' | 'audio' | 'beats' | 'scenes' | 'frames';
+  action: 'info' | 'audio' | 'beats' | 'scenes' | 'frames' | 'cover';
   seconds?: number;
   from?: number;
   count?: number;

@@ -24,6 +24,7 @@ import { CHAPTERS_TOOL, TRANSCRIBE_TOOL } from '@src/agent/transcript-format';
 import { WEBMCP_TOOL } from '@src/agent/webmcp';
 import { MEDIA_TOOL } from '@src/agent/media-tool';
 import { COMPOSE_TOOL, composeFilename, describeSpec, normalizeSpec } from '@src/agent/compose-spec';
+import { CONVERT_TOOL, convertMime, describeConvert, normalizeConvert } from '@src/agent/convert-spec';
 import { FREE_TIMES_TOOL } from '@src/agent/free-times';
 import { AgentLoop, REASONING_DROPPED, STOPPED_BY_USER, STOPPED_NOTE } from '@src/agent/loop';
 import type { LoopEnd } from '@src/agent/loop';
@@ -1337,6 +1338,29 @@ export class RunManager {
       if (saved.state !== 'complete') return { text: `error SAVE_FAILED (not saved)\nThe download did not complete: ${saved.error ?? 'interrupted'}.`, isError: true };
       return { text: `save_page_pdf · saved "${saved.name}" (${Math.round(printed.bytes / 1024)} KB) in Downloads.`, isError: false };
     }
+    if (call.toolName === 'convert_media') {
+      const checked = normalizeConvert(args);
+      if (!checked.ok) return { text: `error INVALID_ARGUMENT (nothing converted)\n${checked.errors.join('\n')}`, isError: true };
+      const wanted = checked.request;
+      const canSave = () => chrome.permissions.contains({ permissions: ['downloads'] }).catch(() => false);
+      let saveAs = false;
+      if ((this.#modes.get(conversationId) ?? 'ask') === 'ask' || !(await canSave())) {
+        const answer = await this.broker.open<'save' | 'save-as' | 'discard'>(conversationId, 'save-file', { filename: wanted.filename, mimeType: convertMime(wanted.format), bytes: 0, preview: `A converted file made on this device: ${describeConvert(wanted)}` }, signal);
+        if (answer !== 'save' && answer !== 'save-as') return { text: 'convert_media · the user discarded the file; nothing was converted.', isError: true };
+        saveAs = answer === 'save-as';
+      }
+      if (!(await canSave())) return { text: "error SAVE_FAILED (not saved)\nSaving files needs Chrome's downloads permission, which the user has not allowed.", isError: true };
+      let made;
+      try {
+        const { convertOnDevice } = await import('./compose');
+        made = await convertOnDevice(wanted);
+      } catch (error) {
+        return { text: `error CONVERT_FAILED (nothing saved)\n${(error instanceof Error ? error.message : String(error)).slice(0, 400)}`, isError: true };
+      }
+      const saved = await saveHeldUrl(made.url, wanted.filename, saveAs).catch((error: Error) => ({ state: 'interrupted' as const, error: error.message, name: wanted.filename, downloadId: -1 }));
+      if (saved.state !== 'complete') return { text: `error SAVE_FAILED (not saved)\nThe download did not complete: ${saved.error ?? 'interrupted'}.`, isError: true };
+      return { text: `convert_media · saved "${saved.name}" in Downloads: ${(made.bytes / 1048576).toFixed(1)} MB, ${made.container.toUpperCase()}, about ${made.seconds.toFixed(1)} s, converted in ${(made.ms / 1000).toFixed(1)} s.${made.notes.length ? ` Note: ${made.notes.join('; ')}.` : ''}`, isError: false };
+    }
     if (call.toolName === 'compose_video') {
       const normal = normalizeSpec(args.spec);
       if (!normal.ok) return { text: `error INVALID_ARGUMENT (nothing made)\n${normal.errors.join('\n')}`, isError: true };
@@ -1863,8 +1887,8 @@ export class RunManager {
           pointAt,
           vision: model.profile.vision, localScreenshots: !!canonical,
           agentTools: isWorker
-            ? [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, PLAN_TOOL, RECORD_DEMO_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL, DATA_OPS_TOOL, MACRO_TOOL, BROWSER_DATA_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, SAVE_SKILL_TOOL, READ_PDF_TOOL, READ_FILE_TOOL, SITE_MAP_TOOL, TRANSCRIBE_TOOL, CHAPTERS_TOOL, MEDIA_TOOL, COMPOSE_TOOL, WEBMCP_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, MEMORY_TOOL, LIGHTHOUSE_TOOL] : [])]
-            : [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, PLAN_TOOL, RECORD_DEMO_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL, DATA_OPS_TOOL, MACRO_TOOL, BROWSER_DATA_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, SAVE_SKILL_TOOL, READ_PDF_TOOL, READ_FILE_TOOL, SITE_MAP_TOOL, TRANSCRIBE_TOOL, CHAPTERS_TOOL, MEDIA_TOOL, COMPOSE_TOOL, WEBMCP_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, SITE_SCAN_TOOL, MEMORY_TOOL, LIGHTHOUSE_TOOL, REPO_RUN_TOOL, CHANGE_REPO_TOOL, PYTHON_REPL_TOOL] : []), ...(canonical?.plugins ? [...PLUGIN_TOOLS, PLUGIN_CHAIN_TOOL, PLUGIN_CONNECT_TOOL] : []), ...PARALLEL_TOOLS],
+            ? [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, PLAN_TOOL, RECORD_DEMO_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL, DATA_OPS_TOOL, MACRO_TOOL, BROWSER_DATA_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, SAVE_SKILL_TOOL, READ_PDF_TOOL, READ_FILE_TOOL, SITE_MAP_TOOL, TRANSCRIBE_TOOL, CHAPTERS_TOOL, MEDIA_TOOL, COMPOSE_TOOL, CONVERT_TOOL, WEBMCP_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, MEMORY_TOOL, LIGHTHOUSE_TOOL] : [])]
+            : [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, PLAN_TOOL, RECORD_DEMO_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL, DATA_OPS_TOOL, MACRO_TOOL, BROWSER_DATA_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, SAVE_SKILL_TOOL, READ_PDF_TOOL, READ_FILE_TOOL, SITE_MAP_TOOL, TRANSCRIBE_TOOL, CHAPTERS_TOOL, MEDIA_TOOL, COMPOSE_TOOL, CONVERT_TOOL, WEBMCP_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, SITE_SCAN_TOOL, MEMORY_TOOL, LIGHTHOUSE_TOOL, REPO_RUN_TOOL, CHANGE_REPO_TOOL, PYTHON_REPL_TOOL] : []), ...(canonical?.plugins ? [...PLUGIN_TOOLS, PLUGIN_CHAIN_TOOL, PLUGIN_CONNECT_TOOL] : []), ...PARALLEL_TOOLS],
         });
         const fullToolList = noSkills ? allTools.filter(t => !skillTool.has(t.name)) : allTools;
         // A request that only reads starts with the small tool list; the model switches to the full one if it needs to act.

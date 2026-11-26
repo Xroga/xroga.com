@@ -2664,8 +2664,8 @@ ${renderSkill(top)}`);
       const action = typeof args.action === 'string' ? args.action : '';
       if (!/^https?:\/\//i.test(address)) {
         outcome = { call, kind, text: 'error: media needs the address of an audio or video file on the web (https or http).', isError: true };
-      } else if (!['info', 'audio', 'beats', 'beatcuts', 'scenes', 'frames'].includes(action)) {
-        outcome = { call, kind, text: 'error: media action must be info, audio, beats, beatcuts, scenes or frames.', isError: true };
+      } else if (!['info', 'audio', 'beats', 'beatcuts', 'scenes', 'frames', 'cover'].includes(action)) {
+        outcome = { call, kind, text: 'error: media action must be info, audio, beats, beatcuts, scenes, frames or cover.', isError: true };
       } else {
         try {
           const [{ readMedia }, tool, analysis] = await Promise.all([import('@src/extension/media'), import('./media-tool'), import('./media-analysis')]);
@@ -2695,7 +2695,11 @@ ${renderSkill(top)}`);
             text = times.length ? 'Cut times on the beat (' + every + ' beats per clip, tempo about ' + answer.beats.bpm + ' BPM, regularity ' + answer.beats.confidence + '): ' + times.map(t => analysis.clock(t)).join(' ') + '. Clip lengths in seconds: ' + times.slice(1).map((t, i) => Math.round((t - times[i]!) * 1000) / 1000).join(', ') + '. Use these as the durations of clips in compose_video (the music must start at the first cut).' : 'No steady beat found to cut on (speech, ambience or too short).';
           } else if (answer.kind === 'beats') text = analysis.describeBeats(answer.beats, answer.seconds, answer.from);
           else if (answer.kind === 'scenes') text = analysis.describeScenes(answer.cuts, answer.seconds, answer.sampled, answer.from);
-          else {
+          else if (answer.kind === 'cover') {
+            text = 'The cover picture of the file (' + answer.mimeType + ', ' + Math.round(answer.bytes / 1024) + ' KB).';
+            if (this.options.model.profile.vision) image = { data: answer.base64, mediaType: answer.mimeType, note: 'The picture embedded in the file.' };
+            else text += ' This model cannot see pictures.';
+          } else {
             text = 'Contact sheet of ' + answer.times.length + ' pictures at ' + answer.times.map(analysis.clock).join(', ') + ' (numbered left to right, top to bottom)' + (answer.decoded < answer.times.length ? '; ' + (answer.times.length - answer.decoded) + ' could not be decoded.' : '.');
             if (this.options.model.profile.vision) image = { data: answer.base64, mediaType: 'image/jpeg', note: 'The sheet of pictures from the file, with the time of each on its label.' };
             else text += ' This model cannot see pictures: use scenes or info instead.';

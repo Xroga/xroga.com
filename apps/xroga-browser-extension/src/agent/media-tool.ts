@@ -9,12 +9,12 @@ export const MEDIA_TOOL: AgentTool = {
   source: 'agent',
   group: 'reading',
   description:
-    'Look at and listen to an audio or video file at a web address, on this device. action info: container, length, tracks, codecs, tags. audio: loudness, peak, level over time and the silences (thresholdDb, minSeconds). beats: tempo, beat times and the beats that start bars. beatcuts: cut times that fall on the beat, clips of them (default 8), each everyNBeats beats long (default 4). scenes: the cuts of the picture. frames: one sheet of pictures at times (list) or count of them spread over the file, width px each. seconds limits how much is read (default 300, at most 600) and from says where to start, so a long file is read in parts (from 600, from 1200, …). For the words spoken, use transcribe.',
+    'Look at and listen to an audio or video file at a web address, on this device. action info: container, length, tracks, codecs, tags. audio: loudness, peak, level over time and the silences (thresholdDb, minSeconds). beats: tempo, beat times and the beats that start bars. cover: the picture embedded in the file (album or poster). beatcuts: cut times that fall on the beat, clips of them (default 8), each everyNBeats beats long (default 4). scenes: the cuts of the picture. frames: one sheet of pictures at times (list) or count of them spread over the file, width px each. seconds limits how much is read (default 300, at most 600) and from says where to start, so a long file is read in parts (from 600, from 1200, …). For the words spoken, use transcribe.',
   parameters: {
     type: 'object',
     properties: {
       url: { type: 'string', maxLength: 2000 },
-      action: { type: 'string', enum: ['info', 'audio', 'beats', 'beatcuts', 'scenes', 'frames'] },
+      action: { type: 'string', enum: ['info', 'audio', 'beats', 'beatcuts', 'scenes', 'frames', 'cover'] },
       seconds: { type: 'number' },
       from: { type: 'number' },
       thresholdDb: { type: 'number' },
@@ -49,15 +49,20 @@ export interface MediaInfo {
   tags: Record<string, string>;
   tracks: MediaTrackInfo[];
   bytes?: number;
+  /** A stream with no end (a live HLS playlist). */
+  live?: boolean;
+  /** The file carries a cover picture (ask for it with action cover). */
+  cover?: boolean;
 }
 
 export function describeInfo(i: MediaInfo): string {
-  const out = [`${i.format} file (${i.mime}), ${clock(i.duration)} long${i.bytes ? `, ${(i.bytes / 1048576).toFixed(1)} MB` : ''}, ${i.tracks.length} track${i.tracks.length === 1 ? '' : 's'}.`];
+  const out = [`${i.format} ${/hls/i.test(i.format) ? 'stream' : 'file'} (${i.mime}), ${i.live ? 'live (no end)' : `${clock(i.duration)} long`}${i.bytes ? `, ${(i.bytes / 1048576).toFixed(1)} MB` : ''}, ${i.tracks.length} track${i.tracks.length === 1 ? '' : 's'}.`];
   for (const [n, t] of i.tracks.entries()) {
     if (t.type === 'video') out.push(`- track ${n + 1} picture: ${t.codec ?? 'unknown codec'}, ${t.width}×${t.height}${t.rotation ? `, turned ${t.rotation}°` : ''}${t.fps ? `, about ${t.fps} frames per second` : ''}${t.bitrate ? `, about ${Math.round(t.bitrate / 1000)} kbit/s` : ''}`);
     else if (t.type === 'audio') out.push(`- track ${n + 1} sound: ${t.codec ?? 'unknown codec'}, ${t.channels === 1 ? 'mono' : t.channels === 2 ? 'stereo' : `${t.channels} channels`}, ${t.sampleRate} Hz${t.bitrate ? `, about ${Math.round(t.bitrate / 1000)} kbit/s` : ''}${t.language && t.language !== 'und' ? `, language ${t.language}` : ''}`);
     else out.push(`- track ${n + 1} ${t.type}: ${t.codec ?? 'unknown codec'}`);
   }
+  if (i.cover) out.push('Has a cover picture: media action cover shows it.');
   const tags = Object.entries(i.tags);
   if (tags.length) out.push(`Tags: ${tags.map(([k, v]) => `${k} "${v}"`).join(', ')}`);
   return out.join('\n');

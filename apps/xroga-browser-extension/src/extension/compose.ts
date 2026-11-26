@@ -30,3 +30,18 @@ export async function previewOnDevice(spec: unknown, times: number[]): Promise<P
     offscreenBusy(-1);
   }
 }
+
+/** Converts a media file on the device; the result is held as a blob URL for the worker to save. */
+export async function convertOnDevice(request: unknown): Promise<import('./convert-render').ConvertResult> {
+  offscreenBusy(1);
+  try {
+    await ensureOffscreen();
+    const answer = (await chrome.runtime.sendMessage({ target: 'offscreen', type: 'convert', request })) as (({ ok: true } & import('./convert-render').ConvertResult) | { ok: false; error: string }) | undefined;
+    if (!answer) throw new Error('the converter did not answer');
+    if (!answer.ok) throw new Error(answer.error);
+    const { ok: _ok, ...rest } = answer;
+    return rest;
+  } finally {
+    offscreenBusy(-1);
+  }
+}

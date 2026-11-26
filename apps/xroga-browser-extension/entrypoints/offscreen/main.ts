@@ -343,6 +343,10 @@ interface MbTrack {
   codedWidth?: number;
   codedHeight?: number;
   rotation?: number;
+  getDisplayWidth?(): Promise<number>;
+  getDisplayHeight?(): Promise<number>;
+  getBitrate?(): Promise<number | null>;
+  getAverageBitrate?(): Promise<number | null>;
   numberOfChannels?: number;
   sampleRate?: number;
   computePacketStats(n?: number): Promise<{ packetCount: number; averagePacketRate: number; averageBitrate: number }>;
@@ -358,7 +362,8 @@ interface MbInput {
 }
 interface Mb {
   Input: new (o: { source: unknown; formats: unknown }) => MbInput;
-  ALL_FORMATS: unknown;
+  ALL_FORMATS: unknown[];
+  HLS_FORMATS: unknown[];
   UrlSource: new (url: string) => unknown;
   BlobSource: new (blob: Blob) => unknown;
   AudioBufferSink: new (track: MbTrack) => { buffers(start?: number, end?: number): AsyncGenerator<{ buffer: AudioBuffer; timestamp: number; duration: number }> };
@@ -370,9 +375,12 @@ interface Mb {
 const MAX_MEDIA_BYTES = 300 * 1024 * 1024;
 const MAX_ANALYSIS_SECONDS = 600;
 
+/** Every container the library reads, and the HLS playlists with the formats of their segments. */
+const allFormats = (mb: Mb): unknown[] => [...new Set([...mb.ALL_FORMATS, ...mb.HLS_FORMATS])];
+
 async function openMedia(mb: Mb, url: string): Promise<{ input: MbInput; bytes?: number }> {
   try {
-    const input = new mb.Input({ source: new mb.UrlSource(url), formats: mb.ALL_FORMATS });
+    const input = new mb.Input({ source: new mb.UrlSource(url), formats: allFormats(mb) });
     await input.getFormat();
     return { input };
   } catch {
@@ -383,7 +391,7 @@ async function openMedia(mb: Mb, url: string): Promise<{ input: MbInput; bytes?:
     if (declared > MAX_MEDIA_BYTES) throw new Error(`the file is ${Math.round(declared / 1048576)} MB; the limit is ${MAX_MEDIA_BYTES / 1048576} MB`);
     const blob = await response.blob();
     if (blob.size > MAX_MEDIA_BYTES) throw new Error(`the file is ${Math.round(blob.size / 1048576)} MB; the limit is ${MAX_MEDIA_BYTES / 1048576} MB`);
-    const input = new mb.Input({ source: new mb.BlobSource(blob), formats: mb.ALL_FORMATS });
+    const input = new mb.Input({ source: new mb.BlobSource(blob), formats: allFormats(mb) });
     await input.getFormat();
     return { input, bytes: blob.size };
   }
@@ -417,20 +425,33 @@ async function mediaWork(url: string, action: string, o: { from: number; seconds
   const A = await import('@src/agent/media-analysis');
   const { input, bytes } = await openMedia(mb, url);
   try {
-    const duration = await input.computeDuration();
+    // a live stream never ends: its length is not asked for twice, and it is said to be live
+    const duration = await Promise.race([input.computeDuration(), new Promise<number>(resolve => setTimeout(() => resolve(Infinity), 20_000))]);
     if (action === 'info') {
       const tags = await input.getMetadataTags();
+      const cover = Array.isArray((tags as { images?: unknown[] }).images) && (tags as { images: unknown[] }).images.length > 0;
       const clean: Record<string, string> = {};
       for (const [k, v] of Object.entries(tags)) if (['title', 'artist', 'album', 'albumArtist', 'genre', 'description', 'comment', 'date', 'creationTime', 'beatsPerMinute'].includes(k) && v) clean[k] = v instanceof Date ? v.toISOString().slice(0, 10) : String(v).slice(0, 200);
       const tracks = [];
       for (const t of await input.getTracks()) {
-        const stats = await t.computePacketStats(120).catch(() => undefined);
-        tracks.push({ type: t.type, codec: t.codec, language: t.languageCode, width: t.codedWidth, height: t.codedHeight, rotation: t.rotation, channels: t.numberOfChannels, sampleRate: t.sampleRate, fps: t.type === 'video' && stats ? Math.round(stats.averagePacketRate * 100) / 100 : undefined, bitrate: stats ? Math.round(stats.averageBitrate) : undefined });
+        const stream = /hls/i.test((await input.getFormat()).name);
+        // a stream's packets are many small downloads: its bitrate is taken from the playlist, not measured
+        const stats = stream ? undefined : await t.computePacketStats(120).catch(() => undefined);
+        const declared = stream ? ((await t.getAverageBitrate?.().catch(() => null)) ?? (await t.getBitrate?.().catch(() => null))) : null;
+        tracks.push({ type: t.type, codec: t.codec, language: t.languageCode, width: (await t.getDisplayWidth?.().catch(() => undefined)) ?? t.codedWidth, height: (await t.getDisplayHeight?.().catch(() => undefined)) ?? t.codedHeight, rotation: t.rotation, channels: t.numberOfChannels, sampleRate: t.sampleRate, fps: t.type === 'video' && stats ? Math.round(stats.averagePacketRate * 100) / 100 : undefined, bitrate: stats ? Math.round(stats.averageBitrate) : declared ? Math.round(declared) : undefined });
       }
       const format = await input.getFormat();
-      return { kind: 'info', format: format.name, mime: format.mimeType, duration, tags: clean, tracks, bytes };
+      return { kind: 'info', format: format.name, mime: format.mimeType, duration: Number.isFinite(duration) ? duration : 0, ...(Number.isFinite(duration) ? {} : { live: true }), tags: clean, tracks, bytes, ...(cover ? { cover: true } : {}) };
     }
     const from = Math.min(Math.max(0, o.from), Math.max(0, duration - 1));
+    if (action === 'cover') {
+      const tags = (await input.getMetadataTags()) as { images?: Array<{ data: Uint8Array; mimeType: string; kind: string }> };
+      const image = tags.images?.find(i => i.kind === 'coverFront') ?? tags.images?.[0];
+      if (!image) throw new Error('this file has no cover picture');
+      let binary = '';
+      for (let i = 0; i < image.data.length; i += 0x8000) binary += String.fromCharCode(...image.data.subarray(i, i + 0x8000));
+      return { kind: 'cover', base64: btoa(binary), mimeType: image.mimeType || 'image/jpeg', bytes: image.data.length };
+    }
     const span = Math.min(o.seconds, Math.max(1, (duration || o.seconds + from) - from), MAX_ANALYSIS_SECONDS);
     if (action === 'audio' || action === 'beats') {
       const track = await input.getPrimaryAudioTrack();
@@ -475,7 +496,9 @@ async function mediaWork(url: string, action: string, o: { from: number; seconds
     if (action === 'frames') {
       const stamps = o.times?.length ? o.times : Array.from({ length: o.count }, (_, i) => (duration * (i + 0.5)) / o.count);
       const w = o.width;
-      const ratio = (video.codedHeight ?? 9) / (video.codedWidth || 16);
+      const dw = (await video.getDisplayWidth?.().catch(() => undefined)) ?? video.codedWidth ?? 16;
+      const dh = (await video.getDisplayHeight?.().catch(() => undefined)) ?? video.codedHeight ?? 9;
+      const ratio = dh / (dw || 16);
       const h = Math.max(1, Math.round(w * ratio));
       const sink = new mb.CanvasSink(video, { width: w, height: h, fit: 'fill' });
       const cols = Math.min(4, stamps.length);
@@ -510,6 +533,26 @@ async function mediaWork(url: string, action: string, o: { from: number; seconds
 
 chrome.runtime.onMessage.addListener((message, _sender, reply) => {
   if (message?.target !== 'offscreen') return;
+  if (message.type === 'convert') {
+    Promise.race([
+      import('@src/extension/convert-render').then(m =>
+        m.convertMedia(
+          message.request,
+          () => import(/* @vite-ignore */ chrome.runtime.getURL('media/mediabunny.min.mjs')),
+          blob => {
+            const url = URL.createObjectURL(blob);
+            urls.add(url);
+            return url;
+          },
+        ),
+      ),
+      new Promise<never>((_, reject) => setTimeout(() => reject(new Error('the conversion was not finished in 10 minutes')), 600_000)),
+    ]).then(
+      result => reply({ ok: true, ...result }),
+      error => reply({ ok: false, error: error instanceof Error ? error.message : String(error) }),
+    );
+    return true;
+  }
   if (message.type === 'compose-preview') {
     Promise.race([
       import('@src/extension/compose-render').then(m => m.previewComposition(message.spec, Array.isArray(message.times) ? (message.times as unknown[]).filter((t): t is number => typeof t === 'number') : [], () => import(/* @vite-ignore */ chrome.runtime.getURL('media/mediabunny.min.mjs')))),

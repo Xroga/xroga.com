@@ -14,6 +14,8 @@ import { transcribeUrl } from './speech';
 interface Track {
   codedWidth?: number;
   codedHeight?: number;
+  getDisplayWidth?(): Promise<number>;
+  getDisplayHeight?(): Promise<number>;
 }
 interface Input {
   getPrimaryVideoTrack(): Promise<Track | null>;
@@ -24,10 +26,11 @@ interface Input {
 }
 interface Mb {
   Input: new (o: { source: unknown; formats: unknown }) => Input;
-  ALL_FORMATS: unknown;
+  ALL_FORMATS: unknown[];
+  HLS_FORMATS: unknown[];
   UrlSource: new (url: string) => unknown;
   BlobSource: new (blob: Blob) => unknown;
-  CanvasSink: new (track: Track, o: { width: number; height: number; fit: string }) => { getCanvas(t: number): Promise<{ canvas: OffscreenCanvas; timestamp: number } | null> };
+  CanvasSink: new (track: Track, o: { width: number; height: number; fit: string; alpha?: boolean }) => { getCanvas(t: number): Promise<{ canvas: OffscreenCanvas; timestamp: number } | null> };
   AudioBufferSink: new (track: unknown) => { buffers(start?: number, end?: number): AsyncGenerator<{ buffer: AudioBuffer }> };
   Output: new (o: { format: unknown; target: unknown }) => { addVideoTrack(s: unknown): void; addAudioTrack(s: unknown): void; start(): Promise<void>; finalize(): Promise<void> };
   BufferTarget: new () => { buffer: ArrayBuffer | null };
@@ -119,10 +122,10 @@ async function prepare(raw: unknown, loadMb: () => Promise<unknown>): Promise<Pr
   const openVideo = async (url: string) => {
     let input: Input;
     try {
-      input = new mb.Input({ source: new mb.UrlSource(url), formats: mb.ALL_FORMATS });
+      input = new mb.Input({ source: new mb.UrlSource(url), formats: [...new Set([...mb.ALL_FORMATS, ...mb.HLS_FORMATS])] });
       await input.getFormat();
     } catch {
-      input = new mb.Input({ source: new mb.BlobSource(new Blob([await bytesOf(url)])), formats: mb.ALL_FORMATS });
+      input = new mb.Input({ source: new mb.BlobSource(new Blob([await bytesOf(url)])), formats: [...new Set([...mb.ALL_FORMATS, ...mb.HLS_FORMATS])] });
       await input.getFormat();
     }
     const track = await input.getPrimaryVideoTrack();
@@ -171,9 +174,11 @@ async function prepare(raw: unknown, loadMb: () => Promise<unknown>): Promise<Pr
       const key = `${url}|${mode}`;
       let sink = sinks.get(key);
       if (!sink) {
-        const aspect = (v.track.codedWidth ?? 16) / (v.track.codedHeight ?? 9);
+        const dw = (await v.track.getDisplayWidth?.().catch(() => undefined)) ?? v.track.codedWidth ?? 16;
+        const dh = (await v.track.getDisplayHeight?.().catch(() => undefined)) ?? v.track.codedHeight ?? 9;
+        const aspect = dw / dh;
         const width = Math.min(1920, mode === 'cover' ? Math.max(spec.width, Math.ceil(spec.height * aspect)) : spec.width);
-        sink = new mb.CanvasSink(v.track, { width, height: Math.max(2, Math.round(width / aspect)), fit: 'fill' });
+        sink = new mb.CanvasSink(v.track, { width, height: Math.max(2, Math.round(width / aspect)), fit: 'fill', alpha: true });
         sinks.set(key, sink);
       }
       const got = await sink.getCanvas(Math.min(seconds, Math.max(0, v.duration - 0.04)));
