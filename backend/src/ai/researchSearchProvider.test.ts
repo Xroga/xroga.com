@@ -146,3 +146,26 @@ test('official references use each requested section body instead of the shared 
   assert.doesNotMatch(result, /Contents|Unrelated/);
   assert.ok(result.length <= 3200);
 });
+
+test('a dedicated reference page preserves the rule and its late scope note for a multi-rule lookup', () => {
+  const summary = 'General information about indicator testing.';
+  const repeatedNavigation = 'Release history and links to the test lab. '.repeat(95);
+  const note = 'This criterion evaluates the latch rather than the lamp next to it.';
+  const result = normaliseDeepseekSearch({ results: [{
+    title: 'Understanding SC 8.4.2 Cabinet latches',
+    url: 'https://example.org/handbook/latches',
+    summary,
+    content: '## Site contents\n' + repeatedNavigation
+      + '\n# Understanding SC 8.4.2 Cabinet latches\n'
+      + '\n## In brief\nCheck that cabinet controls can be identified.\n'
+      + '\n## Success Criterion (SC)\nThe active latch must remain visible when the cabinet is closed.\n'
+      + '\n## Informative examples\n' + 'Examples of cabinets and their inspection history. '.repeat(110)
+      + '\n\nNote\n' + note
+      + '\n\n# Clause 8.4.4 Emergency controls\nThis criterion applies only to a separate cabinet.',
+  }] }, 'e5a4d084bbd155ace992b62bcef1f796', 'Inspect standards 8.4.2, 9.5.1 and 9.5.4 in a simulated lab.');
+  const [excerpt] = result.results[0].excerpts;
+  assert.match(excerpt, /^Understanding SC 8\.4\.2 Cabinet latches The active latch must remain visible/u);
+  assert.ok(excerpt.includes(note));
+  assert.doesNotMatch(excerpt, /Site contents|In brief|separate cabinet/u);
+  assert.ok(excerpt.length <= 3200);
+});
