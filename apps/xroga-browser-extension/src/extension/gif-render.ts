@@ -2,7 +2,7 @@
 import { encodeGif, gifPlan, type GifFrame } from '@src/agent/gif';
 
 /** Most bytes of pictures kept at once while a GIF is made. */
-const BUDGET = 70 * 1024 * 1024;
+const BUDGET = 400 * 1024 * 1024;
 
 export interface GifRender {
   bytes: Uint8Array;
@@ -19,7 +19,7 @@ export async function renderGif(options: { seconds: number; fps?: number; width:
   const ctx = canvas.getContext('2d', { willReadFrequently: true }) as OffscreenCanvasRenderingContext2D;
   const notes: string[] = [];
   const room = Math.max(2, Math.floor(BUDGET / (width * height * 4)));
-  const plan = gifPlan(options.seconds, { fps: options.fps, maxFrames: Math.min(400, room) });
+  const plan = gifPlan(options.seconds, { fps: options.fps, maxFrames: Math.min(1200, room) });
   if (options.fps && plan.fps < Math.min(30, options.fps) - 0.5) notes.push(`the GIF has ${plan.fps.toFixed(1)} pictures a second, not ${options.fps}: more would not fit in memory at ${width}×${height}`);
   const frames: GifFrame[] = [];
   for (const t of plan.times) {

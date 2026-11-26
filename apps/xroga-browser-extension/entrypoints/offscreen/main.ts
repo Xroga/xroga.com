@@ -200,7 +200,7 @@ async function layoutPage(page: PdfPageLike, n: number, notes: string[], textIte
   return { text: out.markdown, source: hasText ? ('text' as const) : ('picture' as const) };
 }
 
-const MAX_PDF_BYTES = 60 * 1024 * 1024;
+const MAX_PDF_BYTES = 500 * 1024 * 1024;
 const pdfSteps: string[] = [];
 async function readPdf(url: string, spec: string | undefined, forcePicture: boolean, lang: string, structure = false, useLayout = false) {
   pdfSteps.length = 0;
@@ -372,8 +372,8 @@ interface Mb {
     canvases(start?: number, end?: number): AsyncGenerator<{ canvas: OffscreenCanvas; timestamp: number }>;
   };
 }
-const MAX_MEDIA_BYTES = 300 * 1024 * 1024;
-const MAX_ANALYSIS_SECONDS = 600;
+const MAX_MEDIA_BYTES = 2048 * 1024 * 1024;
+const MAX_ANALYSIS_SECONDS = 7200;
 
 /** Every container the library reads, and the HLS playlists with the formats of their segments. */
 const allFormats = (mb: Mb): unknown[] => [...new Set([...mb.ALL_FORMATS, ...mb.HLS_FORMATS])];

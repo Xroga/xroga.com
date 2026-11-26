@@ -52,7 +52,7 @@ export interface TranscriptResult {
 }
 
 export const DEFAULT_SECONDS = 300;
-export const MAX_SECONDS = 1800;
+export const MAX_SECONDS = 7200;
 
 export function clampSeconds(value: unknown): number {
   const n = typeof value === 'number' && Number.isFinite(value) ? Math.floor(value) : DEFAULT_SECONDS;

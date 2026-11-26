@@ -2,7 +2,7 @@
 // changes that keep the pitch, normalisation), and mediabunny (MPL-2.0, vendored unmodified in public/media) encodes with WebCodecs: MP4 with H.264 and AAC where the browser can
 // encode them, WebM with VP9 (or VP8) and Opus where it cannot. The audio model (clips' own sound, audio layers, detached audio, tracks, cross-fades, normalisation) follows editly's mixer.
 import { crossfadeGains, normalizationGain, applyGainSoftLimit, timeStretch } from '@src/agent/audio-mix';
-import { normalizeSpec, resolveDurations, timeline, type ComposeSpec, type Layer, type ResizeMode } from '@src/agent/compose-spec';
+import { LIMITS, normalizeSpec, resolveDurations, timeline, type ComposeSpec, type Layer, type ResizeMode } from '@src/agent/compose-spec';
 import { drawFrame, type Assets, type Picture, type Scratch } from './compose-draw';
 import { ShaderRunner } from './compose-shader';
 import { drawGrid } from './grid';
@@ -67,7 +67,7 @@ export interface PreviewResult {
   notes: string[];
 }
 
-const MAX_ASSET_BYTES = 150 * 1024 * 1024;
+const MAX_ASSET_BYTES = 1024 * 1024 * 1024;
 const RATE = 48000;
 
 async function bytesOf(url: string): Promise<ArrayBuffer> {
@@ -151,7 +151,7 @@ async function prepare(raw: unknown, loadMb: () => Promise<unknown>): Promise<Pr
   spec = resolveDurations(spec, url => videos.get(url)?.duration ?? 3);
   const tl = timeline(spec);
   if (!tl) throw new Error('the length of the video could not be worked out');
-  if (tl.total > 180) throw new Error(`the video would be ${tl.total.toFixed(1)} s; the limit is 180 s`);
+  if (tl.total > LIMITS.maxSeconds) throw new Error(`the video would be ${tl.total.toFixed(1)} s; the limit is ${LIMITS.maxSeconds} s`);
   // captions with no words: listen to the source (or to the first video of the clip) and put each word on the clip's time
   for (const [ci, clip] of spec.clips.entries()) {
     for (const layer of clip.layers) {

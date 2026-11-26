@@ -21,7 +21,7 @@ interface Recording {
 }
 
 const active = new Map<number, Recording>();
-const MAX_BYTES = 160 * 1024 * 1024;
+const MAX_BYTES = 1024 * 1024 * 1024;
 let listening = false;
 
 function onEvent(source: chrome.debugger.Debuggee, method: string, params?: object): void {

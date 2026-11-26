@@ -49,7 +49,7 @@ export interface ConvertResult {
   notes: string[];
 }
 
-const MAX_BYTES = 300 * 1024 * 1024;
+const MAX_BYTES = 2048 * 1024 * 1024;
 
 const REASONS: Record<string, string> = {
   discarded_by_user: 'left out as asked',

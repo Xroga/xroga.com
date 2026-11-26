@@ -8,7 +8,7 @@ export const RECORD_SCREEN_TOOL: AgentTool = {
   source: 'agent',
   group: 'files',
   description:
-    'Record the tab you work in as a video. action start begins (up to maxSeconds, default 90, at most 180); do the steps; action stop ends it, makes the MP4 and asks to save it in Downloads (in Ask mode), then lists your clicks as fractions of the picture, ready for compose_video: { type: video, url: "recording:last", zoomOnClicks: { clicks } } zooms in on each click. The recording stays available to compose_video and media as recording:last until the next recording. status says whether one is running. Only when the person asked for a recording or a demo video.',
+    'Record the tab you work in as a video. action start begins (up to maxSeconds, default 90, at most 3600); do the steps; action stop ends it, makes the MP4 and asks to save it in Downloads (in Ask mode), then lists your clicks as fractions of the picture, ready for compose_video: { type: video, url: "recording:last", zoomOnClicks: { clicks } } zooms in on each click. The recording stays available to compose_video and media as recording:last until the next recording. status says whether one is running. Only when the person asked for a recording or a demo video.',
   parameters: {
     type: 'object',
     properties: {

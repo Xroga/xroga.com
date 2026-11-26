@@ -101,7 +101,7 @@ describe('layers of every kind', () => {
     expect(layerOf(spec, 0, 2, 'shape')).toMatchObject({ shape: 'ellipse', stroke: 4, rect: { ox: 'center' } });
     const bad = normalizeSpec({ clips: [{ duration: 3, layers: [{ type: 'shader' }] }] });
     expect(bad.ok ? '' : bad.errors.join()).toContain('shader) needs fragment');
-    const long = normalizeSpec({ clips: [{ duration: 3, layers: [{ type: 'shader', fragment: 'x'.repeat(4001) }] }] });
+    const long = normalizeSpec({ clips: [{ duration: 3, layers: [{ type: 'shader', fragment: 'x'.repeat(20001) }] }] });
     expect(long.ok ? '' : long.errors.join()).toContain('shader is longer');
   });
 

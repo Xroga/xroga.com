@@ -1349,7 +1349,7 @@ export class RunManager {
         return { text: st.running ? `record_screen · recording this tab: ${st.seconds.toFixed(0)} s, ${st.frames} pictures so far.` : 'record_screen · no recording is running in this tab.', isError: false };
       }
       if (action === 'start') {
-        const seconds = Math.min(180, Math.max(5, typeof args.maxSeconds === 'number' ? args.maxSeconds : 90));
+        const seconds = Math.min(3600, Math.max(5, typeof args.maxSeconds === 'number' ? args.maxSeconds : 90));
         try {
           await startRecording(tabId, seconds);
         } catch (error) {

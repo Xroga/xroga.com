@@ -73,13 +73,13 @@ export const COMPOSE_TOOL: AgentTool = {
   source: 'agent',
   group: 'files',
   description:
-    'Make a short video (MP4, or WebM when the browser has no H.264; an animated GIF with format "gif") from a spec and save it in Downloads; asks first in Ask mode. spec: { width, height, fps, clips: [{ duration, transition: { name, duration }, layers: [...] }], audioTracks: [{ url, volume, loop, duck, fx }], brand }. A clip is layers drawn in order: fill-color, linear-gradient, radial-gradient, rainbow-colors, shader, shape, title, title-background, subtitle, news-title, slide-in-text, image, image-overlay, video (cutFrom, cutTo, speed, volume, cuts, reverse, freeze), audio, detached-audio, captions, adjustment, template. Every layer takes start, stop, opacity, fadeIn, fadeOut, effects, keyframes and animationIn/animationOut; images and videos take grade (colour: presets, wheels, curves, LUT, auto balance, green screen), mask, radius and shadow; videos also take speedRanges, speedPreset, zooms and zoomOnClicks; sounds take fx (noise reduction, equaliser, compressor, reverb). preview: [seconds…] shows a sheet of the video at those times and makes no file and asks nothing (check a design with it first; grid: true draws a labelled A1 to C3 grid). help: spec, layers, transitions, motion, speed, grade, sound, text, captions, output or all returns the full reference of that part: ask for it before using an option you are not sure of. Up to 3 minutes, 60 clips, https addresses only. Only when the person asked for a video.',
+    'Make a short video (MP4, or WebM when the browser has no H.264; an animated GIF with format "gif") from a spec and save it in Downloads; asks first in Ask mode. spec: { width, height, fps, clips: [{ duration, transition: { name, duration }, layers: [...] }], audioTracks: [{ url, volume, loop, duck, fx }], brand }. A clip is layers drawn in order: fill-color, linear-gradient, radial-gradient, rainbow-colors, shader, shape, title, title-background, subtitle, news-title, slide-in-text, image, image-overlay, video (cutFrom, cutTo, speed, volume, cuts, reverse, freeze), audio, detached-audio, captions, adjustment, template. Every layer takes start, stop, opacity, fadeIn, fadeOut, effects, keyframes and animationIn/animationOut; images and videos take grade (colour: presets, wheels, curves, LUT, auto balance, green screen), mask, radius and shadow; videos also take speedRanges, speedPreset, zooms and zoomOnClicks; sounds take fx (noise reduction, equaliser, compressor, reverb). preview: [seconds…] shows a sheet of the video at those times and makes no file and asks nothing (check a design with it first; grid: true draws a labelled A1 to C3 grid). help: spec, layers, transitions, motion, speed, grade, sound, text, captions, output or all returns the full reference of that part: ask for it before using an option you are not sure of. Up to an hour, 500 clips, https addresses only. Only when the person asked for a video.',
   parameters: {
     type: 'object',
     properties: {
       spec: { type: 'object' },
       filename: { type: 'string', maxLength: 110 },
-      preview: { type: 'array', items: { type: 'number' }, maxItems: 12 },
+      preview: { type: 'array', items: { type: 'number' }, maxItems: 60 },
       grid: { type: 'boolean' },
       help: { type: 'string', enum: ['spec', 'layers', 'transitions', 'motion', 'speed', 'grade', 'sound', 'text', 'captions', 'output', 'all'] },
     },
@@ -88,7 +88,7 @@ export const COMPOSE_TOOL: AgentTool = {
   },
 };
 
-export const LIMITS = { maxSeconds: 180, maxClips: 60, maxLayers: 12, maxTracks: 6, maxText: 300, maxPixels: 1920 * 1080, maxFps: 30, maxShader: 4000 };
+export const LIMITS = { maxSeconds: 3600, maxClips: 500, maxLayers: 100, maxTracks: 32, maxText: 5000, maxPixels: 3840 * 2160, maxFps: 60, maxShader: 20000 };
 
 export type ResizeMode = 'contain' | 'contain-blur' | 'cover' | 'stretch';
 export interface Position {
@@ -269,10 +269,10 @@ export function normalizeSpec(raw: unknown): Normalized {
   const errors: string[] = [];
   const r = (raw ?? {}) as Record<string, unknown>;
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return { ok: false, errors: ['spec must be an object with a clips list.'] };
-  let width = Math.round(num(r.width, 1280, 160, 1920) / 2) * 2;
-  let height = Math.round(num(r.height, 720, 160, 1920) / 2) * 2;
+  let width = Math.round(num(r.width, 1280, 160, 4096) / 2) * 2;
+  let height = Math.round(num(r.height, 720, 160, 4096) / 2) * 2;
   if (width * height > LIMITS.maxPixels) {
-    errors.push(`the size ${width}×${height} is larger than 1920×1080.`);
+    errors.push(`the size ${width}×${height} is larger than 3840×2160.`);
     width = 1920;
     height = 1080;
   }

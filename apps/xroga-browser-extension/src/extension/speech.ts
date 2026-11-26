@@ -49,7 +49,7 @@ function speechPipeline(multilingual: boolean, timestamped = false): Promise<Spe
   return pending;
 }
 
-const MAX_AUDIO_BYTES = 200 * 1024 * 1024;
+const MAX_AUDIO_BYTES = 1024 * 1024 * 1024;
 
 export interface SpokenWord {
   text: string;

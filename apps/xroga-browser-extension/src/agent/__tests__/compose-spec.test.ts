@@ -19,11 +19,11 @@ describe('normalizeSpec', () => {
     expect(spec.keepSourceAudio).toBe(true);
   });
 
-  it('keeps the size even, within 1920 by 1080, and the rate within 30', () => {
-    expect(ok({ width: 641, height: 361, fps: 60, clips: [{ duration: 1, layers: [{ type: 'fill-color' }] }] })).toMatchObject({ width: 642, height: 362, fps: 30 });
-    const big = normalizeSpec({ width: 1920, height: 1920, clips: [{ duration: 1, layers: [{ type: 'fill-color' }] }] });
+  it('keeps the size even, within the pixel limit, and the rate within its limit', () => {
+    expect(ok({ width: 641, height: 361, fps: 120, clips: [{ duration: 1, layers: [{ type: 'fill-color' }] }] })).toMatchObject({ width: 642, height: 362, fps: 60 });
+    const big = normalizeSpec({ width: 4096, height: 4096, clips: [{ duration: 1, layers: [{ type: 'fill-color' }] }] });
     expect(big.ok).toBe(false);
-    expect(big.ok ? [] : big.errors[0]).toContain('larger than 1920×1080');
+    expect(big.ok ? [] : big.errors[0]).toContain('larger than 3840×2160');
   });
 
   it('says what is wrong, part by part', () => {
@@ -40,15 +40,15 @@ describe('normalizeSpec', () => {
     expect(normalizeSpec({ clips: [] }).ok).toBe(false);
   });
 
-  it('refuses a video longer than three minutes, more than 60 clips, and too much text', () => {
-    const long = normalizeSpec({ clips: Array.from({ length: 5 }, () => ({ duration: 60, transition: { name: 'none' }, layers: [{ type: 'fill-color' }] })) });
+  it('refuses a video longer than an hour, more than 500 clips, and too much text', () => {
+    const long = normalizeSpec({ clips: Array.from({ length: 5 }, () => ({ duration: 1000, transition: { name: 'none' }, layers: [{ type: 'fill-color' }] })) });
     expect(long.ok).toBe(false);
-    expect(long.ok ? '' : long.errors[0]).toContain('limit is 180 s');
-    const many = normalizeSpec({ clips: Array.from({ length: 61 }, () => ({ duration: 1, layers: [{ type: 'fill-color' }] })) });
-    expect(many.ok ? '' : many.errors.join()).toContain('at most 60 clips');
-    const wordy = normalizeSpec({ clips: [{ duration: 1, layers: [title('x'.repeat(301))] }] });
-    expect(wordy.ok ? '' : wordy.errors.join()).toContain('longer than 300');
-    expect(LIMITS.maxSeconds).toBe(180);
+    expect(long.ok ? '' : long.errors[0]).toContain('limit is 3600 s');
+    const many = normalizeSpec({ clips: Array.from({ length: 501 }, () => ({ duration: 1, layers: [{ type: 'fill-color' }] })) });
+    expect(many.ok ? '' : many.errors.join()).toContain('at most 500 clips');
+    const wordy = normalizeSpec({ clips: [{ duration: 1, layers: [title('x'.repeat(5001))] }] });
+    expect(wordy.ok ? '' : wordy.errors.join()).toContain('longer than 5000');
+    expect(LIMITS.maxSeconds).toBe(3600);
   });
 
   it('speeds a video layer up or down, within 0.25 to 4, and its clip follows', () => {
