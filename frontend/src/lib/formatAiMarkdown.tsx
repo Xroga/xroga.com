@@ -31,7 +31,7 @@ import {
 } from './oauthPopupResult';
 
 import { xrogaConnect } from './xrogaConnect';
-import { compactConnectedAppConfirmationMarkdown, readableActionResult, readableActionSpend, workspaceReviewId } from './connectedAppResult';
+import { compactConnectedAppConfirmationMarkdown, readableActionResult, readableActionSpend, WEB_SEARCH_NOT_RUN, workspaceReviewId } from './connectedAppResult';
 import { RESEARCH_RECEIPT_AVAILABLE } from './researchHandoff';
 
 function joinClasses(
@@ -451,6 +451,19 @@ export function BusinessActionConfirmationInline({
     expired: 'This request expired.',
   };
 
+  // Wait for the owned record before showing review controls. A legacy
+  // research record without reviewable fields cannot authorize a request.
+  if (!confirmation) {
+    return <span role={failed ? 'alert' : 'status'} className="text-[var(--foreground)]/75">
+      {failed ? 'This saved request is unavailable. Try sending the prompt again.' : 'Loading action…'}
+    </span>;
+  }
+  if (savedSearch && (confirmation.status !== 'pending' || !confirmation.researchReview?.length)) {
+    return <span role="status" className="text-[var(--foreground)]/75">
+      {confirmation.status === 'pending' ? WEB_SEARCH_NOT_RUN : (notice || statusMessage[confirmation.status])}
+    </span>;
+  }
+
   return (
     <span aria-busy={Boolean(busy)} className="my-2 flex w-full max-w-xl flex-col gap-2 rounded-xl border border-[var(--card-border)]/70 bg-[var(--foreground)]/[0.025] p-3 align-top">
       <span className="flex min-w-0 flex-wrap items-start gap-2">
@@ -458,7 +471,7 @@ export function BusinessActionConfirmationInline({
           <PluginBrandLogo id={confirmation.toolkit} name={toolkitLabel(confirmation.toolkit)} toolkit={confirmation.toolkit} size="micro" />
         ) : null}
         <span className="min-w-0 flex-1 text-[13px] leading-relaxed text-[var(--foreground)]">
-          {confirmation ? (savedSearch ? 'Share a web research request' : confirmation.summary) : !failed ? 'Loading action…' : null}
+          {savedSearch ? 'Share a web research request' : confirmation.summary}
         </span>
         {status === 'pending' && confirmation && !confirmation.toolkit.startsWith('xroga-') ? (
           <PluginPermissionControl toolkit={confirmation.toolkit} pluginName={toolkitLabel(confirmation.toolkit)} buttonOnly compact />

@@ -10,6 +10,8 @@
   "risk": "high",
   "scope": "Validate explicit procedure decisions across representations, admit independently public Workspace research, preserve explicitly requested document downloads, and keep native answers responsive without changing model routing or execution boundaries.",
   "changedFiles": [
+    "backend/src/ai/answerCoverage.ts",
+    "backend/src/ai/answerFormat.ts",
     "backend/src/ai/black-hole/webIntelligence.ts",
     "backend/src/ai/nativeDocumentDownload.test.ts",
     "backend/src/ai/nativeDocumentDownload.ts",
@@ -31,6 +33,8 @@
     "frontend/e2e/command3-auth.spec.ts",
     "frontend/e2e/phase4-admin-share.security.mjs",
     "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
+    "frontend/src/components/native-openui/surface.css",
+    "frontend/src/components/native-openui/upstream/components/layout.tsx",
     "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
     "frontend/src/components/native-openui/upstream/components/markdown.tsx",
     "frontend/src/lib/formatAiMarkdown.tsx",
@@ -55,7 +59,10 @@
       "Keep calculator sensitivity and boundary examples distinct from the active result being checked.",
       "Keep a sensitivity chart's computed series separate from the calculator's selected value while still checking explicit labeled scalar rows.",
       "Apply a verified local factual correction in place when it resolves the only flagged issue in an ordinary plain answer.",
-      "Reuse an unchanged native answer tree during unrelated Workspace updates."
+      "Reuse an unchanged native answer tree during unrelated Workspace updates.",
+      "Keep native boxes within the reading column and let their contents determine height.",
+      "Respect explicit prose-only or excluded presentation formats in final response assembly.",
+      "Show a plain status when the owner’s saved research cannot be reviewed."
     ],
     "replace": [],
     "deprecate": []
@@ -117,9 +124,15 @@
     },
     {
       "command": "playwright test -c frontend/playwright.config.ts command3-auth.spec.ts",
-      "scope": "Verify signed-in rendered responses, Copy, Share revocation and Reopen on isolated accounts.",
+      "scope": "Verify signed-in rendered responses, Copy, Share revocation and Reopen, including obsolete and reviewable research records on isolated accounts.",
       "negative": true,
       "reference": "frontend/e2e/command3-auth.spec.ts"
+    },
+    {
+      "command": "node scripts/verify-native-openui-browser.mjs",
+      "scope": "Verify oversized boxes reflow, short model dimensions keep prose visible, and SVG geometry remains intact across viewport widths.",
+      "negative": true,
+      "reference": "scripts/verify-native-openui-browser.mjs"
     }
   ],
   "architecture": {

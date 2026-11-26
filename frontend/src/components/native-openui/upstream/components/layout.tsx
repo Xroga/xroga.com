@@ -47,6 +47,7 @@ export const Box = defineComponent({
   component: ({ props, renderNode }) => {
     const row = props.direction === "row";
     const padding = space(props.padding);
+    const height = size(props.height);
     return (
       <div
         className={cx("iui-box", row ? "iui-row" : "iui-col", !row && props.gap == null && "iui-flow")}
@@ -59,10 +60,8 @@ export const Box = defineComponent({
           overflow: props.radius !== undefined ? "clip" : undefined,
           border: props.border ? "1px solid var(--iui-border)" : undefined,
           width: size(props.width),
-          height: size(props.height),
-          // null, like an omitted argument, means no flex.
-          // A width in px is meant: a Row with long text beside it must not squeeze it.
-          flex: props.flex != null ? `${Math.max(0, props.flex)} 1 0%` : typeof props.width === "number" ? "0 0 auto" : undefined,
+          minHeight: height && height !== "auto" ? boundedSpace(height, "--iui-box-height-limit") : undefined,
+          flex: props.flex != null ? `${Math.max(0, props.flex)} 1 0%` : undefined,
         }}
       >
         {renderNode(props.children)}

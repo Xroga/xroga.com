@@ -349,7 +349,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const publicLookupProgram = 'root = Col([Text([' + JSON.stringify(publicLookupProse + ' ') + ', Source("source-1")])])';
   const legacyPublicLookup = 'Search public sources for accessibility requirements and present a comparison table.';
   const legacyPublicId = '22b77cb3-d903-45e2-b94d-48eb34c195fd';
-  const legacyPublicReply = 'Review the request before Xroga searches the web: [Review action](/dashboard/actions/confirm/' + legacyPublicId + ')';
+  const legacyPublicReply = 'Review the exact research request before it is sent: [Review action](/dashboard/actions/confirm/' + legacyPublicId + '). No live evidence has been retrieved.';
   const confirmation = { id: confirmationId, status: 'pending', summary: 'Review the information to send with this research request.',
     toolkit: 'xroga-native-research', risk: 'write', createdAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 900_000).toISOString(),
     researchReview: [{ label: 'Research objective', value: 'Compare the workshop notes with official evidence.' }] };
@@ -959,11 +959,13 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     expect((await readFile((await download.path())!)).subarray(0, 4).toString('hex')).toBe(header);
   }
   expect(chatCalls).toBe(13);
+  let obsoleteSearchReads = 0;
   await page.route('**/api/phase1/business-actions/confirmations/' + legacyPublicId + '**', async route => {
+    if (route.request().method() === 'OPTIONS') return route.fulfill({ status: 204, headers: { ...cors, 'access-control-allow-methods': 'GET, OPTIONS' } });
     expect(route.request().method()).toBe('GET');
+    obsoleteSearchReads += 1;
     await route.fulfill({ headers: cors, json: { confirmation: {
-      ...confirmation, id: legacyPublicId, summary: 'Search the public web', toolkit: 'legacy-web-search',
-      approval: { spendMaximumMicroUsd: '5750', currency: 'USD' }, researchReview: [],
+      ...confirmation, id: legacyPublicId, researchReview: [],
     } } });
   });
   await send(legacyPublicLookup);
@@ -972,10 +974,12 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   const checkSkippedSearch = async () => {
     await expect(skippedSearch).toBeVisible({ timeout: 20_000 });
     await expect(legacyPublicTurn.getByRole('button', { name: 'Confirm action' })).toHaveCount(0);
+    await expect(legacyPublicTurn.getByRole('button', { name: 'Cancel', exact: true })).toHaveCount(0);
     await expect(legacyPublicTurn.getByRole('link', { name: 'Review details' })).toHaveCount(0);
-    await expect(legacyPublicTurn).not.toContainText(/\$0\.00575|Web evidence/);
+    await expect(legacyPublicTurn).not.toContainText(/\$0\.00575|Web evidence|Share a web research request/);
   };
   await checkSkippedSearch();
+  expect(obsoleteSearchReads).toBeGreaterThan(0);
   await expect.poll(async () => JSON.stringify((await readSaved(architectureSession))?.messages ?? [])).toContain(legacyPublicReply);
   await page.reload();
   await expect(composer).toHaveAttribute('data-draft-session', architectureSession, { timeout: 20_000 });

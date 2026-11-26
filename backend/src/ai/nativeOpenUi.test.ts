@@ -901,6 +901,86 @@ test('saved readable comparison tables do not repeat solely because Markdown pad
   assert.match(changed.response, /\$30/);
 });
 
+test('strict plain answers leave optional native data out of the visible and canonical answer', () => {
+  const prompt = 'What is 125 multiplied by 48? Give me the answer and nothing else.';
+  const program = 'root = Col([Markdown(_xroga_answer), Table(["Calculation", "Value"], [["Multiply", 6000]])])';
+  const answer = completeNativeWorkspaceAnswer('## Product\n\n6000' + NATIVE_UI_MARKER + program, 'stop', undefined, prompt);
+  assert.equal(answer.response, '6000');
+  assert.equal(answer.responseSource.text, '');
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  const nativeOnly = completeNativeWorkspaceAnswer(NATIVE_UI_MARKER + program.replace('Markdown(_xroga_answer)', 'Text("6000")'),
+    'stop', undefined, prompt);
+  assert.deepEqual(nativeOnly, answer);
+});
+
+test('one-sentence comparisons with a chart exclusion do not synthesize a chart or a table', () => {
+  const prompt = 'Compare monthly USD revenue. Jan: 100; Feb: 200; Mar: 250. Identify the largest month-over-month gain in one sentence. Use only these values. Do not include a chart.';
+  const prose = 'February had the largest month-over-month gain at $100.';
+  const chart = 'root = Col([Chart("bar", [{month: "Jan", revenue: 100}, {month: "Feb", revenue: 200}, {month: "Mar", revenue: 250}], "month", ["revenue"], "currency", "USD")])';
+  assert.equal(validateNativeWorkspaceProgram(chart, undefined, prose).ok, true);
+  assert.deepEqual(requiredNativeFormats(prompt), []);
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + chart, 'stop', undefined, prompt);
+  assert.equal(answer.response, prose);
+  assert.equal(answer.responseSource.text, '');
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  const implicit = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + chart, 'stop', undefined,
+    prompt.replace(' Do not include a chart.', ''));
+  assert.deepEqual(implicit, answer);
+});
+
+test('layout exclusions retain the requested nested table and verified citation without copying omitted chart data', () => {
+  const prompt = 'Compare the verified plans in two sentences, then show a table. Do not include a chart.';
+  const prose = 'The lower-cost plan is Basic [1]. It has enough seats for two people.';
+  const program = [
+    'root = Col([Markdown(_xroga_answer), Section("Plans", blocks)])',
+    'blocks = [Table(["Plan", "Seats"], [["Basic", 2], ["Team", 5]]), Chart("bar", [{label: "Further detail", series: 999}], "label", ["series"]), Source("source-1")]',
+  ].join('\n');
+  const evidence = new Set(['source-1']);
+  assert.equal(validateNativeWorkspaceProgram(bindNativeAnswerText(program, prose), evidence, prose).ok, true);
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop', evidence, undefined, undefined,
+    requiredNativeFormats(prompt), { formatPrompt: prompt });
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  assert.match(answer.response, /The lower-cost plan is Basic \[1\]\.[\s\S]*\| Basic \| 2 \|/);
+  assert.match(answer.responseSource.text, /Table\([\s\S]*Source\("source-1"\)/u);
+  assert.doesNotMatch(answer.response + answer.responseSource.text, /Chart\(|Further detail|999/);
+});
+
+test('a source-backed direct answer retains valid Source citations when omitting a visual', () => {
+  const prompt = 'Summarize the finding in one sentence.';
+  const prose = 'The guide lists two options.';
+  const program = 'root = Col([Markdown(_xroga_answer), Table(["Name", "Seats"], [["Basic", 2]]), Source("source-1")])';
+  const evidence = new Set(['source-1']);
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop', evidence, undefined, undefined,
+    [], { formatPrompt: prompt });
+  assert.equal(answer.response, prose + ' [1]');
+  assert.equal(answer.responseSource.text, '');
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  const unavailable = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + program, 'stop', new Set(['source-2']),
+    undefined, undefined, [], { formatPrompt: prompt });
+  assert.equal(unavailable.response, prose);
+});
+
+test('format preferences do not remove requested visuals or visuals only mentioned in advice', () => {
+  const table = 'root = Col([Table(["Choice", "Count"], [["A", 4]])])';
+  const chart = 'root = Col([Chart("bar", [{label: "A", count: 4}], "label", ["count"])])';
+  const tableWithoutHeading = completeNativeWorkspaceAnswer('## Totals\n\nChoice A has four votes.' + NATIVE_UI_MARKER + table,
+    'stop', undefined, 'No headings, but include a table.', undefined, ['table']);
+  assert.equal(tableWithoutHeading.responseSource.text, table);
+  assert.doesNotMatch(tableWithoutHeading.response, /## Totals/u);
+  assert.match(tableWithoutHeading.response, /Choice A has four votes/u);
+  for (const [prompt, program] of [
+    ['Compare the two answers in two sentences, but include a chart.', chart],
+    ['Compare the two answers in two sentences followed by a chart.', chart],
+    ['Explain when to avoid charts and show a counterexample.', chart],
+    ['Explain how to answer without a chart and show a counterexample.', chart],
+    ["Explain what 'Do not include a chart' means and show a counterexample.", chart],
+  ]) {
+    const answer = completeNativeWorkspaceAnswer('Choice A has four votes.' + NATIVE_UI_MARKER + program,
+      'stop', undefined, prompt, undefined, requiredNativeFormats(prompt));
+    assert.equal(answer.responseSource.text, program, prompt);
+  }
+});
+
 test('a rejected visual preserves the complete readable answer without leaking UI syntax', () => {
   const prose = [
     'Team costs $25 per month for five seats, or $5 per included seat.',

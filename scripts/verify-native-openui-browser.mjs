@@ -41,6 +41,15 @@ const cases = {
     program: 'root = Col([Code(' + JSON.stringify('monthlyPayment = principal * monthlyRate * (1 + monthlyRate) ** paymentCount / ((1 + monthlyRate) ** paymentCount - 1)') + ', "text"), Markdown(' + JSON.stringify('```python\nmonthlyPayment = principal * monthlyRate * (1 + monthlyRate) ** paymentCount / ((1 + monthlyRate) ** paymentCount - 1)\n```') + ')])',
   },
   short: { text: 'Paris is the capital of France.' },
+  responsiveBoxes: {
+    text: 'Read the release notes and inspect the illustration.',
+    program: [
+      'root = Col([wide, notes, drawing])',
+      'wide = Box([Text("Check the release scope.")], "col", 1, 1, "surface", 10, true, 1600, 1800)',
+      'notes = Box([Text("Read the compatibility requirements and contact the maintainer if anything is unclear."), Text("Retain both review steps.")], "col", 1, 1, "surface", 10, true, 240, 1)',
+      'drawing = Box([Svg([Circle(40, 20, 10, "info")], "0 0 80 40", 240, 120, "Review illustration")], "col", 1, 1, "surface", 10, true, 1600, 600)',
+    ].join('\n'),
+  },
   metricGrid: {
     text: 'These supplied loan results stay readable inside a narrow answer.',
     program: 'root = Col([Grid([Metric("Monthly payment", "$405.53"), Metric("Total interest", "$4,331.67"), Metric("Total paid", "$24,331.67")], 3)])',
@@ -381,6 +390,33 @@ try {
       await open('short');
       await page.getByText(cases.short.text, { exact: true }).waitFor();
       assert.equal(await page.getByRole('slider').count(), 0);
+      await open('responsiveBoxes');
+      const boxes = page.locator('.xroga-native-openui .iui-box');
+      await boxes.nth(2).waitFor();
+      assert.equal(await boxes.count(), 3);
+      const boxGeometry = await boxes.evaluateAll(elements => elements.map(element => {
+        const frame = element.getBoundingClientRect();
+        const parent = element.parentElement.getBoundingClientRect();
+        const content = [...element.children].map(child => child.getBoundingClientRect());
+        return {
+          width: frame.width,
+          height: frame.height,
+          fitsWidth: frame.left >= parent.left - 1 && frame.right <= parent.right + 1,
+          contentVisible: content.every(child => child.height > 0 && child.top >= frame.top - 1 && child.bottom <= frame.bottom + 1),
+        };
+      }));
+      assert.ok(boxGeometry.every(box => box.fitsWidth && box.contentVisible), JSON.stringify(boxGeometry));
+      assert.ok(boxGeometry[0].height <= 80, 'One line must not reserve a tall authored panel');
+      assert.ok(boxGeometry[1].height > 40, 'A short authored height must not clip the notes');
+      const drawing = boxes.nth(2).getByRole('img', { name: 'Review illustration' });
+      assert.equal(await drawing.getAttribute('viewBox'), '0 0 80 40');
+      assert.equal(await drawing.locator('circle').getAttribute('r'), '10');
+      const drawingBounds = await drawing.boundingBox();
+      assert.ok(drawingBounds.width > 0 && drawingBounds.height > 0 && drawingBounds.width <= boxGeometry[2].width);
+      if ([390, 1440].includes(viewport.width)) {
+        await page.getByRole('region', { name: 'Answer', exact: true })
+          .screenshot({ path: resolve(output, channel + '-responsive-boxes-' + viewport.width + '-' + theme + '.png') });
+      }
       for (const name of ['themeControl','themeControlRight']) {
         await open(name);
         await page.waitForFunction(expected=>document.querySelector('output')?.textContent===expected,theme==='dark'?'black':'white');

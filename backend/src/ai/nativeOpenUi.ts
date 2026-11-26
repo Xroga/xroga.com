@@ -215,6 +215,16 @@ function* nativeElements(root: unknown) {
   }
 }
 
+/** The caller has already validated every Source against the current evidence. */
+export function nativeSourceMarkers(program: string): string[] {
+  const markers = new Set<string>();
+  for (const { typeName, props } of nativeElements(parseProgram.parse(program).root)) {
+    const id = typeName === 'Source' && typeof props?.id === 'string' ? /^source-(\d+)$/.exec(props.id)?.[1] : undefined;
+    if (id) markers.add('[' + id + ']');
+  }
+  return [...markers];
+}
+
 /** Inspect only the renderer tree, so unused declarations do not satisfy a request. */
 export function missingNativeFormats(program: string, formats: readonly RequiredNativeFormat[]) {
   if (!formats.length) return [];
@@ -961,7 +971,7 @@ export function recoverNativeReadoutExplanations(program: string, replaceExactRe
   return changed ? repaired : program;
 }
 
-function resolveRecoveryReference(node: ASTNode | undefined, symbols: ReadonlyMap<string, ASTNode>) {
+function resolveRecoveryReference(node: ASTNode | undefined, symbols: ReadonlyMap<string, ASTNode | undefined>) {
   const followed = new Set<string>();
   while (node?.k === 'Ref') {
     if (followed.has(node.n)) return;
@@ -1092,6 +1102,78 @@ export function recoverTruncatedNativeWorkspaceProgram(program: string, evidence
 }
 
 const layoutChildren = new Map([['Col', 0], ['Row', 0], ['Grid', 0], ['Card', 0], ['Box', 0], ['Controls', 0], ['Section', 1]]);
+
+/** Project an already validated program to the requested components. The caller
+ * validates the projected program again before displaying it or reading prose. */
+export function restrictNativeWorkspaceProgram(program: string, keep: (component: string) => boolean): string {
+  const statements = split(tokenize(program));
+  const original = new Map(statements.map(statement => [statement.id, parseExpression(statement.tokens)]));
+  const projected = new Map<string, ASTNode | undefined>();
+  const declaration = (name: string): ASTNode | undefined => {
+    if (!projected.has(name)) {
+      // The validated source is acyclic. Leave a defensive sentinel before
+      // following references and reject an incomplete projection downstream.
+      projected.set(name, undefined);
+      const value = original.get(name);
+      if (value) projected.set(name, project(value));
+    }
+    return projected.get(name);
+  };
+  function project(node: ASTNode): ASTNode | undefined {
+    if (node.k === 'Ref') return declaration(node.n) ? node : undefined;
+    if (node.k === 'Arr') {
+      const els = node.els.map(project).filter((item): item is ASTNode => item !== undefined);
+      return els.length === node.els.length && els.every((item, index) => item === node.els[index]) ? node : { ...node, els };
+    }
+    if (node.k === 'Obj') {
+      const entries = node.entries.flatMap(([key, item]): [string, ASTNode][] => {
+        const value = project(item);
+        return value ? [[key, value]] : [];
+      });
+      return entries.length === node.entries.length && entries.every(([, item], index) => item === node.entries[index][1])
+        ? node : { ...node, entries };
+    }
+    if (node.k === 'Comp') {
+      if (components.has(node.name) && !keep(node.name)) return;
+      const args = node.args.map(project);
+      if (!args.every((arg): arg is ASTNode => arg !== undefined)) return;
+      const index = layoutChildren.get(node.name);
+      const child = index === undefined ? undefined : resolveRecoveryReference(args[index], projected);
+      if (child?.k === 'Arr' && !child.els.length) return;
+      return args.every((arg, index) => arg === node.args[index]) ? node : { ...node, args };
+    }
+    if (node.k === 'Ternary') {
+      const then = project(node.then), otherwise = project(node.else);
+      if (!then || !otherwise) return;
+      return then === node.then && otherwise === node.else ? node : { ...node, then, else: otherwise };
+    }
+    return node;
+  }
+  if (!declaration('root')) return '';
+  const reachable = new Set<string>();
+  function visit(name: string) {
+    if (reachable.has(name)) return;
+    const node = declaration(name);
+    if (!node) return;
+    reachable.add(name);
+    // Walk retained expressions for references from formulas and state bindings.
+    walkAST(node, part => {
+      if (part.k === 'Ref' || part.k === 'StateRef') visit(part.n);
+    });
+  }
+  visit('root');
+  return statements.flatMap(statement => {
+    if (!reachable.has(statement.id)) return [];
+    const node = projected.get(statement.id);
+    if (!node) return [];
+    if (node === original.get(statement.id) && statement.start !== undefined && statement.end !== undefined) {
+      return [program.slice(statement.start, statement.end)];
+    }
+    const printed = printRecoveryExpression(node);
+    if (JSON.stringify(parseExpression(tokenize(printed))) !== JSON.stringify(node)) throw new Error('OpenUI projection changed expression semantics');
+    return [statement.id + ' = ' + printed];
+  }).join('\n');
+}
 
 /** Every recovered candidate passes the full authority, schema and data checks.
  * Reachable branches with unresolved references may be omitted from the view. */

@@ -1,16 +1,39 @@
 // The request can ask for a bounded, directly consumable reply. Keep this check
 // narrow so a model-planned heading never becomes an extra line in that reply.
 const explicitHeading = /(?<!\bnot )(?<!\bnever )(?<!\bdon['’]t )\b(?:with|under|add|include|use|start with|begin with)\s+(?:(?:a|an|one|the|this|these|markdown|section|level-[a-z\d]+)\s+){0,3}(?:headings?|titles?)\b/iu;
-const boundedReply = /\b(?:in|using)\s+(?:(?:exactly|at most|only)\s+)?(?:one|two|three|[123])\s+(?:sentences?|lines?)(?=\s*(?:[.!?;]|$))|\bexactly\s+(?:\d+|one|two|three|four|five)\s+words?(?=\s*(?:[.!?;]|$))/iu;
-const answerOnly = /\band nothing else(?=\s*(?:[.!?;]|$))|\b(?:give|return|output|show|provide|reply with)\s+(?:me\s+)?(?:only\s+(?:the\s+)?(?:answer|result|number|value|code)|(?:the\s+)?code only)(?=\s*(?:[.!?;,]|$))|\b(?:no|without)\s+(?:(?:a|an|any)\s+)?(?:explanations?|introductions?|headings?|titles?|extra text)(?=\s*(?:[.!?;]|$))/iu;
+const boundedReply = /\b(?:in|using)\s+(?:(?:exactly|at most|only)\s+)?(?:a single|one|two|three|[123])\s+(?:sentences?|lines?)(?=\s*(?:[.!?;,]|$))|\bexactly\s+(?:\d+|one|two|three|four|five)\s+words?(?=\s*(?:[.!?;,]|$))/iu;
+const answerOnly = /\band nothing else(?=\s*(?:[.!?;]|$))|\b(?:give|return|output|show|provide|reply with)\s+(?:me\s+)?(?:only\s+(?:the\s+)?(?:answer|result|number|value|code|plain text)|(?:the\s+)?(?:answer|result|number|value|code|plain text) only)(?=\s*(?:[.!?;,]|$))/iu;
+const noFraming = /\b(?:no|without)\s+(?:(?:a|an|any)\s+)?(?:explanations?|introductions?|headings?|titles?|extra text)(?=\s*(?:[.!?;,]|\b(?:but|and)\b|$))/iu;
 const exactBullets = /\bexactly\s+(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:bullet points?|bullets?)(?=\s*(?:[.!?;]|$))/iu;
 const counts: Readonly<Record<string, number>> = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10 };
-const withoutInlineLiterals = (prompt: string) => prompt.replace(/`[^`\n]*`|"[^"\n]*"|“[^”\n]*”/gu, '');
+const withoutInlineLiterals = (prompt: string) => prompt.replace(/`[^`\n]*`|"[^"\n]*"|“[^”\n]*”|(?<![\p{L}\p{N}])'[^'\n]+'(?![\p{L}\p{N}])/gu, '');
 
 export function requestsUnadornedAnswer(prompt: string): boolean {
   // Inline literals can describe a formatting rule without requesting it.
   const instructions = withoutInlineLiterals(prompt);
-  return !explicitHeading.test(instructions) && (boundedReply.test(instructions) || answerOnly.test(instructions) || exactBullets.test(instructions));
+  return !explicitHeading.test(instructions) && (boundedReply.test(instructions) || answerOnly.test(instructions) || exactBullets.test(instructions) || noFraming.test(instructions));
+}
+
+/** A bounded or exact answer can omit optional widgets. A request to omit a
+ * heading alone says nothing about the requested components. */
+export function requestsDirectAnswerContent(prompt: string): boolean {
+  const instructions = withoutInlineLiterals(prompt);
+  return boundedReply.test(instructions) || answerOnly.test(instructions) || exactBullets.test(instructions);
+}
+
+export type OmittedNativeFormat = 'chart' | 'table' | 'graph';
+const formatNoun = /(?:(?:a|an|any|the|bar|line|pie|scatter|data|comparison|markdown)\s+){0,3}(charts?|plots?|histograms?|tables?|diagrams?|flowcharts?)\b/iu;
+const clauseStart = '(?:^|[.!?;,\\n]\\s*|\\b(?:but|and)\\s+)(?:please\\s+)?';
+const omittedNativeFormat = new RegExp(clauseStart
+  + '(?:no|without|skip|omit|exclude|avoid|(?:do\\s+not|don[\'’]t|never)\\s+(?:add|include|show|make|create|draw|use|provide|render))\\s+'
+  + formatNoun.source, 'giu');
+const formatWithout = new RegExp(clauseStart + '(?:compare|answer|summarize|present|report)\\b[^.!?;\\n]{0,240}\\bwithout\\s+'
+  + '(?:(?:using|adding|including)\\s+)?' + formatNoun.source, 'giu');
+
+export function omittedNativeFormats(prompt: string): ReadonlySet<OmittedNativeFormat> {
+  const text = withoutInlineLiterals(prompt);
+  return new Set([...text.matchAll(omittedNativeFormat), ...text.matchAll(formatWithout)].map(([, noun]): OmittedNativeFormat =>
+    /^table/i.test(noun) ? 'table' : /^(?:diagram|flowchart)/i.test(noun) ? 'graph' : 'chart'));
 }
 
 export function requestedUnadornedBulletCount(prompt: string): number | undefined {

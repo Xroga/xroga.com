@@ -1053,8 +1053,9 @@ export async function runChatPipeline(opts: {
   const missingDownloadHistory = Boolean(requestedDownload && (downloadSource === 'conversation' || nativeDocumentRequiresPriorAnswer(opts.prompt))
     && !opts.history?.some(message => message.content.trim()));
   const missingDownloadSource = missingDownloadAttachment || missingDownloadHistory;
-  const unadornedAnswer = requestsUnadornedAnswer(opts.prompt);
-  const bulletCount = unadornedAnswer ? requestedUnadornedBulletCount(opts.prompt) : undefined;
+  const outputFormatPrompt = opts.workspaceSearch?.prompt ?? opts.prompt;
+  const unadornedAnswer = requestsUnadornedAnswer(outputFormatPrompt);
+  const bulletCount = unadornedAnswer ? requestedUnadornedBulletCount(outputFormatPrompt) : undefined;
   const downloadInstruction = !requestedDownload ? '' : missingDownloadHistory
     ? '\n\nThe referenced earlier content is unavailable in this conversation. Ask the user to paste it here. Do not draft a substitute or claim a file was created.'
     : nativeDocumentPrompt(requestedDownload, missingDownloadAttachment, opts.prompt);
@@ -1067,7 +1068,7 @@ export async function runChatPipeline(opts: {
     const attachmentSystem = (prepared.hasImages ? VISION_SYSTEM : DOC_SYSTEM)
       + (prepared.documentContextPartial ? '\n\nOnly excerpts of the source documents fit. If missing content affects the request, explain which conclusions are supported and what is unavailable. Do not claim to have read the complete documents.' : '');
     const attachmentPlan = native ? prepareAnswerCoverage(opts.prompt, opts.goalContract?.presentation, opts.goalContract?.answerObligations).plan : [];
-    const formats = native ? requiredNativeFormats(opts.prompt) : [];
+    const formats = native ? requiredNativeFormats(outputFormatPrompt) : [];
     const attachmentInstructions = native ? attachmentSystem + '\n\n' + workspaceNativeOpenUiPrompt([...attachmentPlan.map(section => section.kind), ...formats], false)
       + downloadInstruction : attachmentSystem;
     const system = unadornedAnswer ? attachmentInstructions + '\n\n' + unadornedAnswerInstruction : attachmentInstructions;
@@ -1118,7 +1119,7 @@ export async function runChatPipeline(opts: {
     const usage = await getUsage(opts.userId);
 
     const answer = native ? completeNativeWorkspaceAnswer(result.text, result.finishReason, undefined, opts.prompt, diagnostic =>
-      console.warn('[native-openui-validation]', diagnostic), formats, { unadornedAnswer, bulletCount }) : undefined;
+      console.warn('[native-openui-validation]', diagnostic), formats, { unadornedAnswer, bulletCount, formatPrompt: outputFormatPrompt }) : undefined;
     const response = answer?.response ?? (unadornedAnswer ? formatUnadornedAnswer(result.text, bulletCount) : result.text);
     const delivery = answer && nativeDocumentDelivery(requestedDownload, missingDownloadSource, opts.prompt, response, answer.completion);
     if (native || unadornedAnswer) opts.onDelta?.(response);
@@ -1250,7 +1251,7 @@ export async function runChatPipeline(opts: {
     : opts.prompt;
   const answerContract = prepareAnswerCoverage(opts.prompt, opts.goalContract?.presentation, opts.goalContract?.answerObligations);
   const native = usesNativeWorkspacePresentation(route.builder);
-  const requestedFormats = requiredNativeFormats(opts.prompt);
+  const requestedFormats = requiredNativeFormats(outputFormatPrompt);
   const formats = native ? requestedFormats : [];
   // An already authorized, single-fact public lookup needs only citation-ready
   // prose. Keep the same model and its default reasoning mode.
@@ -1366,7 +1367,8 @@ export async function runChatPipeline(opts: {
     const answer = completeNativeWorkspaceAnswer(result.text, result.finishReason, evidenceIds,
       route.kind !== 'research' && !researchBlock && !opts.projectEvidence ? opts.prompt : undefined,
       diagnostic => console.warn('[native-openui-validation]', diagnostic), formats,
-      { unadornedAnswer, bulletCount, requiresTableControls: formats.includes('table') && requestsNativeTableControls(typedWorkspacePrompt ?? opts.prompt) });
+      { unadornedAnswer, bulletCount, formatPrompt: outputFormatPrompt,
+        requiresTableControls: formats.includes('table') && requestsNativeTableControls(outputFormatPrompt) });
     const researchPresentation = publicWebRetrieved
       ? presentPublicResearchAnswer(answer.response, answer.completion, sources, opts.prompt) : undefined;
     const { response, completion } = researchPresentation ?? answer;

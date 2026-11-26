@@ -1,5 +1,5 @@
 import { publicCompletionState } from './completionDiagnostics.js';
-import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, missingNativeFormats, recoverNativeWorkspaceProgram, recoverNativeMonthlyChart, recoverTruncatedNativeWorkspaceProgram, splitNativeOpenUiAnswer, supplementNativeProse, validateNativeWorkspaceProgram, type NativeUiDiagnostic, type NativeUiValidation, type RequiredNativeFormat } from './nativeOpenUi.js';
+import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, missingNativeFormats, nativeSourceMarkers, recoverNativeWorkspaceProgram, recoverNativeMonthlyChart, recoverTruncatedNativeWorkspaceProgram, restrictNativeWorkspaceProgram, splitNativeOpenUiAnswer, supplementNativeProse, validateNativeWorkspaceProgram, type NativeUiDiagnostic, type NativeUiValidation, type RequiredNativeFormat } from './nativeOpenUi.js';
 import { nativeAnswerReviewReason, nativeFactualGuidance, nativeTechnicalCorrections, repairNativePlainAnswer, retainReviewedTechnicalProse, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import { checklistFromProse, requestsEditableChecklist, suppliedPeriodicSeries } from './nativeOpenUiRecovery.js';
 import { conflictingNativeReadouts, correctExplicitCurrencyReadouts, initialNativeReadouts, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
@@ -8,7 +8,7 @@ import { bindNativeAnswerText, removeRepeatedCalculatorFormulas } from './native
 import { reviewEditorialProse } from './nativeOpenUiEditorial.js';
 import { nativeMarkdownTables } from './nativeMarkdown.js';
 import { compactNativeDocumentProse, requestedNativeDocumentFormat } from './nativeDocumentDownload.js';
-import { formatUnadornedAnswer } from './answerFormat.js';
+import { formatUnadornedAnswer, omittedNativeFormats, requestedUnadornedBulletCount, requestsDirectAnswerContent, requestsUnadornedAnswer, type OmittedNativeFormat } from './answerFormat.js';
 
 const outputLimitNote = 'This answer reached the provider output limit. The available answer is shown below.';
 const promisesControls = (text: string) => /\b(?:controls?|sliders?|input fields?)\s+(?:above|below)\b|\b(?:above|below)\s+(?:calculator|controls?)\b/i.test(text);
@@ -69,6 +69,36 @@ export function usesNativeWorkspacePresentation(modelId: string, env = process.e
     && modelId === 'deepseek_v4_1_flash_1017';
 }
 
+const nativeVisualFormat = new Map<string, OmittedNativeFormat>([
+  ['Table', 'table'], ['Chart', 'chart'], ['Diagram', 'graph'], ['Svg', 'graph'],
+]);
+const nativeWrittenComponents = new Set([
+  'Col', 'Row', 'Grid', 'Card', 'Box', 'Controls', 'Section', 'Text', 'Markdown', 'Quote', 'Code', 'Math', 'List', 'ListItem', 'Source',
+]);
+
+function requestedNativeContent(raw: string, reviewPrompt: string | undefined, evidenceIds: ReadonlySet<string> | undefined,
+  excluded: ReadonlySet<OmittedNativeFormat>, directOnly: boolean) {
+  const generated = splitNativeOpenUiAnswer(raw);
+  if (!generated.program || (!directOnly && !excluded.size)) return generated;
+  if (directOnly && generated.text && !evidenceIds?.size) return { text: generated.text, program: '' };
+  const candidate = bindNativeAnswerText(generated.program, generated.text);
+  const review = validateNativeWorkspaceProgram(candidate, evidenceIds, generated.text, undefined, { request: reviewPrompt });
+  if (!review.ok && review.reason !== 'data_review' && review.reason !== 'schema') return { text: generated.text, program: '' };
+  try {
+    const projection = restrictNativeWorkspaceProgram(candidate, component => {
+      const format = nativeVisualFormat.get(component);
+      return directOnly ? nativeWrittenComponents.has(component) : !format || !excluded.has(format);
+    });
+    if (projection && validateNativeWorkspaceProgram(projection, evidenceIds, generated.text, undefined, { request: reviewPrompt }).ok) {
+      if (!directOnly) return { text: generated.text, program: projection };
+      if (!generated.text) return { text: supplementNativeProse('', projection, true), program: '' };
+      const citations = nativeSourceMarkers(projection).filter(marker => !generated.text.includes(marker));
+      return { text: [generated.text, ...citations].join(' '), program: '' };
+    }
+  } catch { /* The user's prose is independent of an unusable projection. */ }
+  return { text: generated.text, program: '' };
+}
+
 export function completeNativeWorkspaceAnswer(
   raw: string,
   finishReason: string | null | undefined,
@@ -76,11 +106,17 @@ export function completeNativeWorkspaceAnswer(
   prompt?: string,
   diagnose?: (event: NativeUiDiagnostic | { stage: 'assembly'; reason: 'missing_prose'; programLength: number }
     | { stage: 'assembly'; reason: 'missing_formats'; formats: RequiredNativeFormat[] }) => void,
-  requiredFormats: readonly RequiredNativeFormat[] = [],
-  presentation?: { requiresTableControls?: boolean; unadornedAnswer?: boolean; bulletCount?: number },
+  requestedFormats: readonly RequiredNativeFormat[] = [],
+  presentation?: { requiresTableControls?: boolean; unadornedAnswer?: boolean; bulletCount?: number; formatPrompt?: string },
 ) {
-  const { text: generatedProse, program: generatedProgram } = splitNativeOpenUiAnswer(raw);
-  const prose = presentation?.unadornedAnswer ? formatUnadornedAnswer(generatedProse, presentation.bulletCount) : generatedProse;
+  const formatPrompt = presentation?.formatPrompt ?? prompt ?? '';
+  const excluded = omittedNativeFormats(formatPrompt);
+  const requiredFormats = requestedFormats.filter(format => format === 'calculator' || format === 'checklist' || !excluded.has(format));
+  const boundedContent = requestsDirectAnswerContent(formatPrompt);
+  const directOnly = boundedContent && !requiredFormats.length;
+  const { text: generatedProse, program: generatedProgram } = requestedNativeContent(raw, prompt, evidenceIds, excluded, directOnly);
+  const prose = (presentation?.unadornedAnswer ?? requestsUnadornedAnswer(formatPrompt))
+    ? formatUnadornedAnswer(generatedProse, presentation?.bulletCount ?? requestedUnadornedBulletCount(formatPrompt)) : generatedProse;
   const reviewedProcedure = reviewEditorialProse(prose, prompt);
   if (reviewedProcedure !== undefined) {
     diagnose?.({ stage: 'accuracy', reason: 'factual_review', editorialIssue: 'prose_conflict', programLength: generatedProgram.length, shape: [] });
@@ -199,7 +235,8 @@ export function completeNativeWorkspaceAnswer(
     : hasDataConflict
       ? { status: 'partial' as const, reason: 'data_review' as const }
       : publicCompletionState(finishReason, response);
-  const supplied = prompt && !evidenceIds?.size ? suppliedMonthlyComparison(prompt) : undefined;
+  const permitsMonthlyChart = (!boundedContent || requiredFormats.includes('chart')) && !excluded.has('chart') && !excluded.has('table');
+  const supplied = permitsMonthlyChart && prompt && !evidenceIds?.size ? suppliedMonthlyComparison(prompt) : undefined;
   if (supplied && (finishReason === 'stop' || finishReason === 'length') &&
       (validation?.ok || validation?.reason === 'data_review')) {
     const reviewed = recoverNativeMonthlyChart(program, supplied, !validation.ok);
@@ -281,7 +318,7 @@ export function completeNativeWorkspaceAnswer(
     };
   }
   const verifiedBeforeLimit = validation?.ok === true && completion.status === 'partial' && completion.reason === 'output_limit';
-  const recovered = completion.status === 'partial' && completion.reason === 'data_review' ? recoverNativeMonthlyChart(program) : undefined;
+  const recovered = permitsMonthlyChart && completion.status === 'partial' && completion.reason === 'data_review' ? recoverNativeMonthlyChart(program) : undefined;
   if (completion.status === 'complete' && (validation?.ok === false || repair?.partial || missing.length)) {
     return {
       response: valid ? PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n' + supplementNativeProse(response, program, true)
