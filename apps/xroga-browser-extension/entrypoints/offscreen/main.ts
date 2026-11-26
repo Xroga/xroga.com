@@ -573,6 +573,26 @@ async function mediaWork(url: string, action: string, o: { seconds: number; coun
 
 chrome.runtime.onMessage.addListener((message, _sender, reply) => {
   if (message?.target !== 'offscreen') return;
+  if (message.type === 'compose') {
+    Promise.race([
+      import('@src/extension/compose-render').then(m =>
+        m.renderComposition(
+          message.spec,
+          () => import(/* @vite-ignore */ chrome.runtime.getURL('media/mediabunny.min.mjs')),
+          blob => {
+            const url = URL.createObjectURL(blob);
+            urls.add(url);
+            return url;
+          },
+        ),
+      ),
+      new Promise<never>((_, reject) => setTimeout(() => reject(new Error('the video was not finished in 10 minutes')), 600_000)),
+    ]).then(
+      result => reply({ ok: true, ...result }),
+      error => reply({ ok: false, error: error instanceof Error ? error.message : String(error) }),
+    );
+    return true;
+  }
   if (message.type === 'media') {
     const n = (v: unknown, d: number) => (typeof v === 'number' && Number.isFinite(v) ? v : d);
     Promise.race([

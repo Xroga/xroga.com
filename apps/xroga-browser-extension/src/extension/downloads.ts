@@ -45,6 +45,23 @@ export async function blobUrl(content: string, mimeType: string, base64 = false)
   return answer.url;
 }
 
+/** Saves a blob URL the offscreen document already holds (a video it made): the same naming, following and revoking as saveText. */
+export async function saveHeldUrl(url: string, filename: string, saveAs = false): Promise<SavedFile> {
+  held.add(url);
+  naming.set(url, filename);
+  chrome.downloads.onDeterminingFilename.addListener(suggestName);
+  try {
+    const downloadId = await chrome.downloads.download({ url, filename, conflictAction: 'uniquify', saveAs });
+    const end = await follow(downloadId);
+    const [item] = await chrome.downloads.search({ id: downloadId });
+    const name = item?.filename ? item.filename.split(/[/\\]/).pop()! : filename;
+    return { downloadId, name, ...end };
+  } finally {
+    stopNaming(url);
+    await revoke(url);
+  }
+}
+
 export interface SavedFile {
   downloadId: number;
   /** The name the file got: a number is added rather than overwrite a file. */
