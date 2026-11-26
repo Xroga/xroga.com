@@ -21,7 +21,7 @@ test('received structured source and incomplete-section state survive save and r
   assert.deepEqual(saved.responseSource, responseSource);
   assert.equal(saved.sourceText, projected);
   assert.equal(saved.blocks[0].type, 'notice');
-  assert.match(saved.blocks[0].text, /may not cover every part of your request/);
+  assert.match(saved.blocks[0].text, /Some requested details or formatting are unavailable/);
   assert.equal(saved.blocks[1].type, 'narrative');
   assert.equal(saved.blocks[1].text, projected.trim());
   assert.equal(result.content.includes('"s0"'), false);
@@ -42,7 +42,7 @@ test('a length-limited answer retains its exact source and partial warning throu
   assert.equal(result.output?.status,'partial');
   const saved=JSON.parse(JSON.stringify(result));
   assert.equal(saved.output.blocks[0].type,'notice');
-  assert.match(saved.output.blocks[0].text,/output limit.*incomplete/);
+  assert.equal(saved.output.blocks[0].text,'The answer stopped at its output limit.');
   assert.equal(saved.output.blocks[1].text,source);
   assert.equal(enhanceAiResponse(source,'complete',{status:'complete'}).output,undefined);
 });

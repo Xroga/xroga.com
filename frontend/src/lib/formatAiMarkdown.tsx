@@ -455,7 +455,7 @@ export function BusinessActionConfirmationInline({
   // research record without reviewable fields cannot authorize a request.
   if (!confirmation) {
     return <span role={failed ? 'alert' : 'status'} className="text-[var(--foreground)]/75">
-      {failed ? 'This saved request is unavailable. Try sending the prompt again.' : 'Loading action…'}
+      {failed ? 'The saved request details are unavailable.' : 'Loading action…'}
     </span>;
   }
   if (savedSearch && (confirmation.status !== 'pending' || !confirmation.researchReview?.length)) {

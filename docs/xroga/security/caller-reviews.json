@@ -1121,9 +1121,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "72aa53bdd0ed19fd5a951e82effb692fc05134c50ec9156f8fda542d9f9fb993",
+      "sourceSha256": "a1849efca55ecf29dca9453dea64fec3f657782ee286c1dd43ba73ad7ec07945",
       "callIds": [
-        "6256c578565c09528fcc"
+        "d2d4eae547457550a374"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2711,9 +2711,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "72aa53bdd0ed19fd5a951e82effb692fc05134c50ec9156f8fda542d9f9fb993",
+      "sourceSha256": "a1849efca55ecf29dca9453dea64fec3f657782ee286c1dd43ba73ad7ec07945",
       "callIds": [
-        "311f1eb4676ea129207a"
+        "1250e6c6c67f7c3829a9"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -28655,13 +28655,13 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sourceSha256": "200346a4061581752164d27f0dbe745972d56b6c922207a0e0464f482868eb95",
+      "sourceSha256": "270afdaf6708b7769263ef8a78ac8d157f86c0f41019779815e4490110a471ab",
       "callIds": [
-        "000d9bc3cc14cd954d16"
+        "aa3bb1130323a9c80b8a"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
-      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. Re-bound 2026-11-04: Diff from the reviewed source d80e1ce5489b is only `export` added to BusinessActionConfirmationInline so the V2 turn can render the existing confirmation review. The reviewed call (decodeBase64UrlUtf8 Array/Uint8Array conversion) is unchanged; no new call, receiver, persistence or egress was added. Re-bound 2026-11-15: reviewed diff adds keyboard focus, group semantics and focus outline only to the pre renderer. The Uint8Array.from call in decodeBase64UrlUtf8 and its source position are unchanged. No persistence, authentication or network behavior changed. This refresh does not certify production tenancy. Re-bound 2026-11-17: the research approval card presents the exact query and question as text and retains the full payload for inspection. The approval handler, network requests and the reviewed Uint8Array.from conversion are unchanged. The candidate ID moved because presentation lines precede that conversion. Re-bound 2026-11-18: removed the later automatic prose paragraph splitter. The entire reviewed in-memory Uint8Array conversion function and its call identity are unchanged, with no new persistence, authority or network operation. Re-bound 2026-11-18: removed the later synthesized introduction callout. The entire reviewed in-memory Uint8Array conversion function and its call identity are unchanged, with no new persistence, authority or network operation. Re-bound 2026-11-22: Marked retrieved citation evidence and made rendered table overflow keyboard-accessible. The complete decodeBase64UrlUtf8 function and its native Uint8Array.from candidate are byte-identical. Re-bound 2026-11-26: The Workspace renders an inline status for saved research without reviewable fields. The entire decodeBase64UrlUtf8 function and the existing API call expressions are unchanged.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. Re-bound 2026-11-04: Diff from the reviewed source d80e1ce5489b is only `export` added to BusinessActionConfirmationInline so the V2 turn can render the existing confirmation review. The reviewed call (decodeBase64UrlUtf8 Array/Uint8Array conversion) is unchanged; no new call, receiver, persistence or egress was added. Re-bound 2026-11-15: reviewed diff adds keyboard focus, group semantics and focus outline only to the pre renderer. The Uint8Array.from call in decodeBase64UrlUtf8 and its source position are unchanged. No persistence, authentication or network behavior changed. This refresh does not certify production tenancy. Re-bound 2026-11-17: the research approval card presents the exact query and question as text and retains the full payload for inspection. The approval handler, network requests and the reviewed Uint8Array.from conversion are unchanged. The candidate ID moved because presentation lines precede that conversion. Re-bound 2026-11-18: removed the later automatic prose paragraph splitter. The entire reviewed in-memory Uint8Array conversion function and its call identity are unchanged, with no new persistence, authority or network operation. Re-bound 2026-11-18: removed the later synthesized introduction callout. The entire reviewed in-memory Uint8Array conversion function and its call identity are unchanged, with no new persistence, authority or network operation. Re-bound 2026-11-22: Marked retrieved citation evidence and made rendered table overflow keyboard-accessible. The complete decodeBase64UrlUtf8 function and its native Uint8Array.from candidate are byte-identical. Re-bound 2026-11-26: The Workspace renders an inline status for saved research without reviewable fields. The entire decodeBase64UrlUtf8 function and the existing API call expressions are unchanged. The follow-up changes only the message displayed when saved request details cannot be loaded. The same seven API and in-memory conversion call expressions are unchanged.",
       "evidence": [
         {
           "path": "frontend/src/lib/formatAiMarkdown.tsx",

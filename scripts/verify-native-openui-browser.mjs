@@ -82,6 +82,19 @@ const cases = {
     text: 'Some visuals could not be validated. The available explanation and verified visuals are shown below.\n\nChoose Birch. It is the only room within budget with step-free access and 18 seats.\n\n| Room | Seats | Access | Cost | Decision |\n| --- | --- | --- | --- | --- |\n| Alder | 24 | Stairs | $50 | Fails accessibility |\n| Birch | 18 | Step-free | $65 | Meets every requirement |\n| Cedar | 30 | Step-free | $85 | Over budget |\n\nBirch has no spare seats.',
     program: 'root = Col([Markdown(body)])\nbody = "Choose Birch. It is the only room within budget with step-free access and 18 seats.\\n\\n| Room | Seats | Access | Cost | Decision |\\n| --- | --- | --- | --- | --- |\\n| Alder | 24 | Stairs | $50 | Fails accessibility |\\n| Birch | 18 | Step-free | $65 | Meets every requirement |\\n| Cedar | 30 | Step-free | $85 | Over budget |\\n\\nBirch has no spare seats."',
   },
+  recoveredCompactProse: {
+    raw: [
+      'Start the inspection here.',
+      ...Array.from({ length: 170 }, (_, index) =>
+        `## Inspection detail ${index + 1}\n\nRecord only observations sufficient to demonstrate that the work complies with the published requirements. Keep independent notes on the changes made to the item.`),
+      '1. Keep the marked draft.\n2. Hand it to the reviewer.',
+      '```typescript\nwriteReport()\n```',
+      '```javascript\nwriteReport()\n```',
+      '```bash\nshow-review-log\n```',
+      '```typescript\nreadArchivedReport()\n```',
+      'Complete the inspection here.',
+    ].join('\n\n') + '\n<<<XROGA_OPENUI_V1>>>\nroot = Col([Markdown(_xroga_answer), Table(["Decision"]), Code("writeReport()", "typescript"), Flashcard("Archive example", Code("readArchivedReport()", "typescript"))])',
+  },
   compactEditableEstimate: {
     text: 'At the initial values, the total is 9.60 L and four 2.5 L tins.',
     program: [
@@ -211,7 +224,7 @@ const cases = {
 const failedEquation='{'.repeat(3500)+'x'+'}'.repeat(3500)+'<img src=x onerror="window.__xrogaMathProbe=1">';
 cases.mathFailure={text:'$$'+failedEquation+'$$\n\nThe complete answer stays available.'};
 const { completeNativeWorkspaceAnswer } = await tsImport('../backend/src/ai/nativeOpenUiWorkspace.ts', import.meta.url);
-const { validateNativeOpenUi } = await tsImport('../backend/src/ai/nativeOpenUi.ts', import.meta.url);
+const { PARTIAL_NATIVE_PRESENTATION_NOTE, validateNativeOpenUi } = await tsImport('../backend/src/ai/nativeOpenUi.ts', import.meta.url);
 const { nativeDocumentDelivery, requestedNativeDocumentFormat } = await tsImport('../backend/src/ai/nativeDocumentDownload.ts', import.meta.url);
 const documentFixtures = {
   docx: { prompt: 'Draft a workshop proposal with editable sections. Provide it as a downloadable DOCX.', text: '# Workshop Proposal\n\n## Scope\n\nDiscuss the training plan.\n\n| Task | Evidence |\n| --- | --- |\n| User navigation | [Unverified claim](https://fake.example/report) |' },
@@ -237,6 +250,11 @@ for (const [name, fixture] of Object.entries(cases)) {
   if (!fixture.raw) continue;
   const answer = completeNativeWorkspaceAnswer(fixture.raw, fixture.finish ?? 'stop', undefined, fixture.prompt, undefined, fixture.requiredFormats);
   assert.equal(answer.completion.status, fixture.completion ?? 'partial', name + ' completion status');
+  if (name === 'recoveredCompactProse') {
+    assert.equal(answer.completion.reason, 'presentation_contract');
+    assert.ok(answer.response.startsWith(PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n'));
+    assert.ok(answer.responseSource.text.endsWith('\n_xroga_answer = ""'));
+  }
   cases[name] = { text: answer.response, program: answer.responseSource.text };
 }
 const captured = process.argv[3] ? JSON.parse(await readFile(resolve(process.argv[3]), "utf8")) : null;
@@ -548,6 +566,20 @@ try {
       await page.getByRole('cell', { name: 'Meets every requirement', exact: true }).waitFor();
       assert.equal(await page.getByRole('table').count(), 1);
       assert.equal(await page.getByText('Birch has no spare seats.', { exact: true }).count(), 1);
+      await open('recoveredCompactProse');
+      const nativeCode = page.locator('.iui-codeblock .language-typescript').filter({ hasText: 'writeReport()' });
+      await nativeCode.first().waitFor();
+      assert.equal(await nativeCode.count(), 1, 'The visible native Code renders once');
+      assert.equal(await page.locator('.iui-codeblock .language-javascript').filter({ hasText: 'writeReport()' }).count(), 1, 'The alternate language remains');
+      assert.equal(await page.locator('.iui-codeblock .language-bash').filter({ hasText: 'show-review-log' }).count(), 1, 'Markdown-only code remains');
+      assert.equal(await page.locator('.iui-markdown .language-typescript').filter({ hasText: 'readArchivedReport()' }).count(), 1, 'Hidden native code keeps its visible Markdown copy');
+      assert.equal(await page.locator('.iui-flashcard-face[aria-hidden="true"] .language-typescript').filter({ hasText: 'readArchivedReport()' }).count(), 1);
+      for (const paragraph of [PARTIAL_NATIVE_PRESENTATION_NOTE, 'Start the inspection here.', 'Complete the inspection here.']) {
+        assert.equal(await page.getByText(paragraph, { exact: true }).count(), 1, paragraph);
+      }
+      assert.equal(await page.getByRole('heading', { name: 'Inspection detail 170', exact: true }).count(), 1);
+      assert.equal(await page.getByText('Keep the marked draft.', { exact: true }).count(), 1);
+      assert.equal(await page.getByRole('table').count(), 0);
       await open('citedSortableTable');
       const citedTable = page.getByRole('table');
       const sortDuration = citedTable.getByRole('button', { name: 'Sort by Duration (min)' });

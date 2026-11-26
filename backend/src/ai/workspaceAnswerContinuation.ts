@@ -45,12 +45,22 @@ function extendProse(previous: string, addition: string, insideCodeBlock: boolea
 
 function mergeContinuation(previous: string, addition: string, evidenceIds: ReadonlySet<string> | undefined): string {
   const { draft, extension, insideCodeBlock } = splitNativeOpenUiContinuation(previous, addition);
+  const draftReview = draft.program && validateNativeWorkspaceProgram(
+    bindNativeAnswerText(draft.program, draft.text), evidenceIds, draft.text);
+  if (!extension.program && extension.text && draftReview && !draftReview.ok && draftReview.reason === 'syntax') {
+    // A continuation can resume directly inside the native program with no
+    // second marker. Validate the exact joined source before treating it as UI.
+    const joined = draft.program + addition;
+    const review = validateNativeWorkspaceProgram(bindNativeAnswerText(joined, draft.text), evidenceIds, draft.text);
+    if (review.ok) return draft.text + NATIVE_UI_MARKER + joined;
+    // Syntactically complete but rejected native source is never answer prose.
+    if (review.reason !== 'syntax' && review.reason !== 'budget') return previous;
+  }
   const prose = extendProse(draft.text, extension.text, insideCodeBlock);
   let program = draft.program;
   // A second valid program may omit tables or controls already delivered in
   // the first. Keep the validated original while extending canonical prose.
-  if (extension.program && extension.program !== program &&
-      !(program && validateNativeWorkspaceProgram(bindNativeAnswerText(program, draft.text), evidenceIds, draft.text).ok) &&
+  if (extension.program && extension.program !== program && !(draftReview && draftReview.ok) &&
       validateNativeWorkspaceProgram(bindNativeAnswerText(extension.program, prose), evidenceIds, prose).ok) {
     program = extension.program;
   }

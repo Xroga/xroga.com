@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { generateMessageSuggestions } from './messageHelpers';
-import { WEB_SEARCH_NOT_RUN } from './connectedAppResult';
+import { LEGACY_WEB_SEARCH_RETRY, WEB_SEARCH_NOT_RUN } from './connectedAppResult';
 
 test('an empty failed turn does not suggest explaining or acting on a nonexistent answer', () => {
   for (const answer of ['', ' \n\t']) {
@@ -16,7 +16,7 @@ test('an empty failed turn does not suggest explaining or acting on a nonexisten
 
 test('saved research without an answer has no unrelated project follow-ups', () => {
   const review = '[Review action](/dashboard/actions/confirm/221fe7f9-f0dd-4b12-b03a-bcb57a13f655)';
-  for (const answer of [WEB_SEARCH_NOT_RUN, `Review the request before Xroga searches the web: ${review}`,
+  for (const answer of [WEB_SEARCH_NOT_RUN, LEGACY_WEB_SEARCH_RETRY, `Review the request before Xroga searches the web: ${review}`,
     `Review the exact research request before it is sent: ${review}. No live evidence has been retrieved.`]) {
     const suggestions = generateMessageSuggestions('Search public sources and present a comparison table.', answer);
     assert.deepEqual(suggestions.followUps, []);

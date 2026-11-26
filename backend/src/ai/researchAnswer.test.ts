@@ -525,7 +525,12 @@ test('one exact research approval completes its original rich answer, saves evid
  assert.equal(searches,4);assert.equal(models,3);
 
  mode='automatic-no-sources';
- await assert.rejects(runChatPipeline(automaticRequest),{code:'TOOL_UNAVAILABLE'});
+ const emptyAnswer=publicWorkspaceResearchAnswer(await runChatPipeline(automaticRequest));
+ assert.equal(emptyAnswer.intent,'research_unavailable');
+ assert.equal(emptyAnswer.response,'The search returned no public sources that met your request.');
+ assert.deepEqual(emptyAnswer.webSources,[]);
+ assert.equal(emptyAnswer.publicWebRetrieved,undefined);
+ assert.deepEqual(emptyAnswer.responseSource,{format:'xroga-openui-v1',text:''});
  assert.equal(searches,5);assert.equal(models,3);assert.equal(automaticAuditCount,2);
  const emptySearch=[...reservations.values()].find(row=>row.provider_request_id==='synthetic-search-5');
  assert.equal(emptySearch?.settled_micro_usd,0);assert.equal(emptySearch?.search_calls,1);
@@ -579,8 +584,9 @@ test('one exact research approval completes its original rich answer, saves evid
  mode='automatic-ranking-status';
  const partial=await runChatPipeline(ranking);
  assert.equal(partial.completion?.status,'partial');
- assert.match(partial.response,/couldn’t finish the answer/);
- assert.doesNotMatch(partial.response,/Review action|Web search finished/);
+ assert.equal(partial.response,'I found these public sources for your question.');
+ assert.doesNotMatch(partial.response,/Review action|Web search finished|resend/i);
+ assert.deepEqual(partial.responseSource,{format:'xroga-openui-v1',text:''});
  assert.equal(partial.publicWebRetrieved,true);
  assert.ok(partial.webSources?.length);
  assert.equal(confirmation.row,lastConfirmation);

@@ -95,7 +95,7 @@ type Block =
   | { kind: "table"; head: string[]; rows: string[][] };
 
 export const VisibleMarkdownTables = createContext<ReadonlySet<string> | null>(null);
-export const NativeVisualContent = createContext<Pick<MarkdownMatches, "tables" | "sortableTables" | "sectionTables" | "headingTitles" | "titles" | "markdownSectionHeadings" | "checklists" | "inlineReplacements" | "liveReadouts" | "orderedChecklist"> | undefined>(undefined);
+export const NativeVisualContent = createContext<Pick<MarkdownMatches, "tables" | "sortableTables" | "sectionTables" | "headingTitles" | "titles" | "markdownSectionHeadings" | "checklists" | "inlineReplacements" | "liveReadouts" | "orderedChecklist" | "compactRecovery"> | undefined>(undefined);
 export const NativeSectionTitle = createContext<string | undefined>(undefined);
 type InlineSectionContent = {
   nodes: ReadonlyMap<number, ReactNode>;
@@ -187,7 +187,12 @@ type MarkdownMatches = {
   liveReadouts: ReadonlySet<string>;
   inlineReplacements: ReadonlyMap<string, number>;
   orderedChecklist?: { markdownIndex: number; blockIndex: number; firstCheckbox: number; start: number };
+  compactRecovery?: { text: string; visibleCode: ReadonlySet<string> };
 };
+
+function literalCodeKey(text: string, language: unknown): string {
+  return JSON.stringify([text, typeof language === "string" ? language.toLowerCase() : ""]);
+}
 
 function placeOrderedChecklist(children: readonly unknown[], readInitial: (value: unknown) => unknown): MarkdownMatches["orderedChecklist"] {
   const documents = children.filter(isElementNode).filter(node => node.typeName === "Markdown");
@@ -236,7 +241,8 @@ function replacesTableSection(
 }
 
 /** Match literal content only. Distinct wording and citation markers stay visible. */
-export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknown) => unknown = value => value): MarkdownMatches {
+export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknown) => unknown = value => value,
+  compactRecoveryText?: string): MarkdownMatches {
   const documents = new Set<string>();
   const staticMarkdownBlocks: Block[][] = [];
   const paragraphs = new Set<string>();
@@ -399,7 +405,19 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
   // live state. Toggling a checkbox must not bring its Markdown copy back.
   const inlineReplacements = new Map<string, number>();
   let orderedChecklist: MarkdownMatches["orderedChecklist"];
+  let compactRecovery: MarkdownMatches["compactRecovery"];
   if (isElementNode(root) && root.typeName === "Col" && Array.isArray(root.props.children)) {
+    // Only direct, static Code siblings are guaranteed visible. Code behind
+    // tabs, expandable content or other nested UI must keep its prose copy.
+    if (compactRecoveryText) {
+      const visibleCode = new Set<string>();
+      for (const node of root.props.children) {
+        if (!isElementNode(node) || node.typeName !== "Code" || node.hasDynamicProps || node.partial
+          || typeof node.props.code !== "string" || isPresentationLanguage(typeof node.props.language === "string" ? node.props.language : undefined)) continue;
+        visibleCode.add(literalCodeKey(node.props.code, node.props.language));
+      }
+      if (visibleCode.size) compactRecovery = { text: compactRecoveryText, visibleCode };
+    }
     orderedChecklist = placeOrderedChecklist(root.props.children, readInitial);
     const plan = placeNativeSections(root.props.children, readInitial);
     if (plan) for (const index of plan.replacedBlocks) {
@@ -408,7 +426,7 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
       if (typeof title === "string") inlineReplacements.set(title, index);
     }
   }
-  return { documents, paragraphs, titles, headingTitles, markdownSectionHeadings, sectionTables, code, tables, sortableTables, relationships, checklists, listItems, liveReadouts, inlineReplacements, orderedChecklist };
+  return { documents, paragraphs, titles, headingTitles, markdownSectionHeadings, sectionTables, code, tables, sortableTables, relationships, checklists, listItems, liveReadouts, inlineReplacements, orderedChecklist, compactRecovery };
 }
 
 /** Only remove a complete verbatim document already visible in native Markdown.
@@ -632,7 +650,10 @@ export function placeNativeSections(children: readonly unknown[], readInitial?: 
 }
 
 export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false, matches, nativeTables, nativeSectionTables, nativeHeadingTitles, nativeChecklists, nativeReadouts, inlineSections }: { text: string; renderCitation?: RenderEvidenceCitation; deduplicateTables?: boolean; matches?: MarkdownMatches; nativeTables?: ReadonlySet<string>; nativeSectionTables?: ReadonlyMap<string, ReadonlySet<string>>; nativeHeadingTitles?: ReadonlySet<string>; nativeChecklists?: ReadonlySet<string>; nativeReadouts?: ReadonlySet<string>; inlineSections?: InlineSectionContent }) {
-  const sortableTables = useContext(NativeVisualContent)?.sortableTables ?? matches?.sortableTables;
+  const nativeVisuals = useContext(NativeVisualContent);
+  const sortableTables = nativeVisuals?.sortableTables ?? matches?.sortableTables;
+  const compactRecovery = nativeVisuals?.compactRecovery;
+  const visibleCode = compactRecovery?.text === text ? compactRecovery.visibleCode : undefined;
   const seenTables = new Set<string>();
   const items = blocks(text);
   const contextualTables = contextualMarkdownTableKeys(items);
@@ -665,7 +686,7 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
             );
           }
           case "code":
-            if (matches?.code.has(b.text.trimEnd())) return null;
+            if (matches?.code.has(b.text.trimEnd()) || visibleCode?.has(literalCodeKey(b.text, b.language))) return null;
             return <CodePanel key={k} code={b.text} language={b.language} />;
           case "math":
             if (matches?.paragraphs.has(citationTextKey(b.text))) return null;

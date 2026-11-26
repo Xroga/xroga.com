@@ -1,5 +1,5 @@
 import { isTrivialConversation, isTrivialPrompt } from './promptClassifier';
-import { savedSearchReviewLink, WEB_SEARCH_NOT_RUN } from './connectedAppResult';
+import { isSavedSearchStatus, savedSearchReviewLink } from './connectedAppResult';
 import {
   analyzeCreation,
   hasDeployableCreation,
@@ -20,7 +20,7 @@ export interface MessageSuggestions {
 
 export function generateMessageSuggestions(userText: string, aiText: string): MessageSuggestions {
   const answer = aiText.trim();
-  if (!answer || answer === WEB_SEARCH_NOT_RUN || savedSearchReviewLink(answer)) {
+  if (!answer || isSavedSearchStatus(answer) || savedSearchReviewLink(answer)) {
     return { followUps: [], refine: [], deploy: [], creationType: 'chat', creationLabel: 'Chat' };
   }
   const analysis = analyzeCreation(userText, aiText);

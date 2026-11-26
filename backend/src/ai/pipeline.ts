@@ -1147,6 +1147,9 @@ export async function runChatPipeline(opts: {
   const modelSelectedWorkspaceSearch = !!typedWorkspacePrompt && !!opts.goalContract?.publicWebQuery
     && opts.goalContract.requiredCapabilities.includes('research.public-web');
   const route = routeReadOnlyConversation(typedWorkspacePrompt ?? opts.prompt, opts.goalContract, explicitWorkspaceSearch, modelSelectedWorkspaceSearch);
+  const native = usesNativeWorkspacePresentation(route.builder);
+  const readableResearchSource = native && opts.workspaceSearch
+    ? { responseSource: { format: NATIVE_UI_FORMAT, text: '' } } : {};
   if(requestedSonnetReason(opts.prompt)){
     const usage = await checkQuotaBeforePreparation();
     if(hasAttachments||route.kind==='research')throw new RuntimeFailure('CAPABILITY_UNSUPPORTED','The approved complex-model response supports text engineering work only. No alternate model or research request was made.');
@@ -1224,11 +1227,12 @@ export async function runChatPipeline(opts: {
     )
   ) {
     const unavailableMessage = publicQueryUnverified
-      ? 'I couldn’t identify a public topic to search. Send the topic or official domain you want me to look up.'
+      ? 'Which public topic or official source should I look up?'
       : researchProviderFailed
-        ? 'Current public-web evidence is temporarily unavailable. No unsourced current answer was generated.'
-        : 'No qualifying current sources were returned. No unsourced current answer was generated.';
-    if (opts.goalContract?.freshnessRequirement === 'CURRENT_REQUIRED' && !publicQueryUnverified) {
+        ? 'I couldn’t verify a current answer with public sources.'
+        : 'The search returned no public sources that met your request.';
+    if (opts.goalContract?.freshnessRequirement === 'CURRENT_REQUIRED' && !publicQueryUnverified
+      && (researchProviderFailed || !opts.workspaceSearch)) {
       throw new RuntimeFailure(
         researchProviderFailed ? 'PROVIDER_UNAVAILABLE' : 'TOOL_UNAVAILABLE',
         unavailableMessage,
@@ -1236,6 +1240,7 @@ export async function runChatPipeline(opts: {
     }
     return {
       response: unavailableMessage,
+      ...readableResearchSource,
       intent: 'research_unavailable',
       usage: usageToTokenUsage(await checkQuotaBeforePreparation()),
       webSources: [],
@@ -1250,7 +1255,6 @@ export async function runChatPipeline(opts: {
     ? `${opts.prompt}\n\nAuthorized read-only repository evidence:\n${opts.projectEvidence}`
     : opts.prompt;
   const answerContract = prepareAnswerCoverage(opts.prompt, opts.goalContract?.presentation, opts.goalContract?.answerObligations);
-  const native = usesNativeWorkspacePresentation(route.builder);
   const requestedFormats = requiredNativeFormats(outputFormatPrompt);
   const formats = native ? requestedFormats : [];
   // An already authorized, single-fact public lookup needs only citation-ready
@@ -1347,10 +1351,11 @@ export async function runChatPipeline(opts: {
     || /^(?:web\s+)?(?:search|research|retrieval)\s+(?:is\s+)?(?:complete[d]?|finished|done)[.!]?$/iu.test(result.text.trim())))) {
     // Retain real evidence if synthesis fails or returns only a tool status.
     // Neither provider is called a second time and the answer stays partial.
-    const response = 'I found public sources, but couldn’t finish the answer. You can open the sources below or resend your question.';
+    const response = 'I found these public sources for your question.';
     opts.onDelta?.(response);
     return {
       response,
+      ...readableResearchSource,
       completion: { status: 'partial', reason: 'unconfirmed_stop' },
       intent: route.kind,
       usage: usageToTokenUsage(usage),

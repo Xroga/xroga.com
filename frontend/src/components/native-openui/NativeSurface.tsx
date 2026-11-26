@@ -47,17 +47,19 @@ export function NativeSurface({ answer, sources, isStreaming = false }: {
     return '';
   }, [answer.library, answer.program, answer.text, verified, isStreaming]);
   const recovered = answer.text.startsWith(PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n');
-  const renderedProgram = useMemo(() => materializeNativeAnswerText(accepted, answer.text), [accepted, answer.text]);
+  // The recovery notice is rendered separately. Bind and match against the
+  // same prose so a compact Markdown binding cannot render the notice twice.
+  const body = recovered ? answer.text.slice(PARTIAL_NATIVE_PRESENTATION_NOTE.length + 2) : answer.text;
+  const renderedProgram = useMemo(() => materializeNativeAnswerText(accepted, body), [accepted, body]);
+  const compactRecoveryText = recovered && renderedProgram !== accepted ? body : undefined;
   const matches = useMemo(() => renderedProgram && !isStreaming
-    ? nativeMarkdownMatches(parser.parse(renderedProgram).root, initialNativeValueReader(renderedProgram))
-    : undefined, [renderedProgram, isStreaming]);
+    ? nativeMarkdownMatches(parser.parse(renderedProgram).root, initialNativeValueReader(renderedProgram), compactRecoveryText)
+    : undefined, [renderedProgram, isStreaming, compactRecoveryText]);
   const visibleTables = useMemo(() => preservedMarkdownTableKeys(answer.text), [answer.text]);
   const renderCitation: RenderEvidenceCitation = (number, href, cluster) => evidenceCitation(verified, number, href, cluster);
   // Keep the model's short introduction before its native answer. Additional
   // historical prose stays available below, with only exact duplicates removed.
-  const outside = proseOutsideNativeDocuments(recovered
-    ? answer.text.slice(PARTIAL_NATIVE_PRESENTATION_NOTE.length + 2)
-    : answer.text, matches);
+  const outside = proseOutsideNativeDocuments(body, matches);
   const boundary = outside.indexOf('\n\n');
   const first = boundary < 0 ? outside : outside.slice(0, boundary);
   const hasSummary = !/^(?:\s*#{1,6}\s|\s*[-*>|]\s|\s*\d+[.)]\s|\s*`{3}|\s*~{3})/.test(first);

@@ -969,7 +969,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     } } });
   });
   await send(legacyPublicLookup);
-  const skippedSearch = page.getByText('Web search didn’t run for this request. Try sending the prompt again.', { exact: true }).last();
+  const skippedSearch = page.getByText('This saved search has no sources.', { exact: true }).last();
   const legacyPublicTurn = page.locator('[data-turn-id]', { has: skippedSearch });
   const checkSkippedSearch = async () => {
     await expect(skippedSearch).toBeVisible({ timeout: 20_000 });

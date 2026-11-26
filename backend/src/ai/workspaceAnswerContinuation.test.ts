@@ -87,6 +87,60 @@ test('replaces an incomplete table with the validated program the continuation s
   assert.equal(result.finishReason, 'stop');
 });
 
+test('finishes a native table when the continuation starts inside the OpenUI program', async () => {
+  const prose = 'Inventory verified against the source [1].';
+  const draft = 'root = Col([Table(["ID", "Count"], [["00';
+  const suffix = '1", 12]]), Source("source-1")])';
+  const evidence = new Set(['source-1']);
+  let calls = 0;
+  const result = await continueWorkspaceAnswer({
+    initial: completion(prose + NATIVE_UI_MARKER + draft, 'length'),
+    messages, maximumOutputTokens: 500, preferredChunkTokens: 100, signal: new AbortController().signal,
+    evidenceIds: evidence,
+    dispatch: async () => { calls++; return completion(suffix, 'stop'); },
+    onFailure: error => { throw error; },
+  });
+  assert.equal(calls, 1);
+  assert.equal(result.finishReason, 'stop');
+  assert.deepEqual(splitNativeOpenUiAnswer(result.text), { text: prose, program: draft + suffix });
+  const answer = completeNativeWorkspaceAnswer(result.text, result.finishReason, evidence, undefined, undefined, ['table']);
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  assert.match(answer.response, /\| 001 \| 12 \|/u);
+  assert.match(answer.response, /source \[1\]/u);
+  assert.doesNotMatch(answer.response, /Source\(|root =|XROGA_OPENUI/u);
+});
+
+test('an unverified source in a resumed native tail does not become readable text or completion evidence', async () => {
+  const initial = completion('Known source [1].' + NATIVE_UI_MARKER + 'root = Col([Source("source-', 'length');
+  const result = await continueWorkspaceAnswer({
+    initial, messages, maximumOutputTokens: 500, preferredChunkTokens: 100, signal: new AbortController().signal,
+    evidenceIds: new Set(['source-1']),
+    dispatch: async () => completion('9")])', 'stop'),
+    onFailure: error => { throw error; },
+  });
+  assert.equal(result, initial);
+  const answer = completeNativeWorkspaceAnswer(result.text, result.finishReason, new Set(['source-1']));
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'output_limit' });
+  assert.match(answer.response, /Known source \[1\]/u);
+  assert.doesNotMatch(answer.response, /source-9|9"\)/u);
+});
+
+test('keeps a readable continuation when the provider moves past a malformed visual', async () => {
+  const draft = 'Inventory verified.';
+  const prose = 'Two locations were reviewed.';
+  const malformed = 'root = Col([Table(["ID", "Count"], [[';
+  const result = await continueWorkspaceAnswer({
+    initial: completion(draft + NATIVE_UI_MARKER + malformed, 'length'),
+    messages, maximumOutputTokens: 500, preferredChunkTokens: 100, signal: new AbortController().signal,
+    dispatch: async () => completion(prose, 'stop'),
+    onFailure: error => { throw error; },
+  });
+  assert.deepEqual(splitNativeOpenUiAnswer(result.text), { text: draft + '\n\n' + prose, program: malformed });
+  const answer = completeNativeWorkspaceAnswer(result.text, result.finishReason, undefined, undefined, undefined, ['table']);
+  assert.deepEqual(answer.completion, { status: 'partial', reason: 'presentation_contract' });
+  assert.match(answer.response, /Two locations were reviewed\./u);
+});
+
 test('resumes a fenced code block verbatim and can parse the visual after its closing fence', async () => {
   const codeStart = 'A Python example.\n\n```python\ndef example():\n    first = 1';
   const codeEnd = '    second = 2\n    print(first + second)\n```';

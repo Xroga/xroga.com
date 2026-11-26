@@ -7934,7 +7934,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "72aa53bdd0ed19fd5a951e82effb692fc05134c50ec9156f8fda542d9f9fb993",
+      "sha256": "a1849efca55ecf29dca9453dea64fec3f657782ee286c1dd43ba73ad7ec07945",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -8229,6 +8229,7 @@
         "qaOutage",
         "raw",
         "reQaSite",
+        "readableResearchSource",
         "readySite",
         "reauth",
         "recoveredSynthesisArtifacts",
@@ -15242,7 +15243,7 @@
       "id": "surface:83161f863865ef91f964",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/universal/runtimeFailure.ts",
-      "sha256": "1d922d44302e65f80d5a1bdfec913cd86f597363cc3926fd8f98b6555c0a6459",
+      "sha256": "ef391f16e3b7b323580be95bb352d30ca510340519b21d01c30ce85c738e6cc0",
       "symbols": [
         "RUNTIME_FAILURE_CODES",
         "RuntimeFailure",
@@ -16143,16 +16144,18 @@
       "id": "surface:bfc0e983d265508fba76",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/workspaceAnswerContinuation.ts",
-      "sha256": "5b68a915d536aaca88b369316b31b2a7aba82377124c72359eb4a31bda42e4b8",
+      "sha256": "3932d30432507480dc90c283e5dc33bf6dce205d3682e03323c1bc32c2822d95",
       "symbols": [
         "answer",
         "consumed",
         "continueWorkspaceAnswer",
+        "draftReview",
         "error",
         "extendProse",
         "extension",
         "i",
         "instruction",
+        "joined",
         "last",
         "leadingLineOverlap",
         "line",
@@ -16169,6 +16172,7 @@
         "proseAdvanced",
         "removeRepeatedTableHeader",
         "result",
+        "review",
         "sameTable",
         "tableStart",
         "text"
@@ -44109,8 +44113,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:4089",
-        "backend/src/ai/pipeline.ts:4092",
+        "backend/src/ai/pipeline.ts:4094",
+        "backend/src/ai/pipeline.ts:4097",
         "backend/src/ai/projectMemory.ts:7",
         "backend/src/ai/sessionMemory.ts:7",
         "backend/src/builder/providerTransports.ts:10",
@@ -44383,7 +44387,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:139",
-        "backend/src/ai/pipeline.ts:4088",
+        "backend/src/ai/pipeline.ts:4093",
         "backend/src/ai/tenantModelDispatch.ts:6",
         "backend/src/config/supabaseTransport.security.test.ts:6",
         "backend/src/routes/integrations.ts:19",
@@ -90248,13 +90252,15 @@
       "id": "surface:169100c09d49c9650f7a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/NativeSurface.tsx",
-      "sha256": "ac95eb93602d4b06d7f6cdb07af3b18a48df1a7c5595f1e3069dcca9523cc8fa",
+      "sha256": "3719c12c494e7e678240398674d6946cf0ff97a8efe287a237e225d4ed39eeb7",
       "symbols": [
         "NativeAnswer",
         "NativeSurface",
         "accepted",
         "attempts",
+        "body",
         "boundary",
+        "compactRecoveryText",
         "details",
         "end",
         "first",
@@ -91259,7 +91265,7 @@
       "id": "surface:0fef6875af5860e2f4b4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "3cec8dad592adab89ca5ccc974f0603912ad87f0cf2a815604c04691cf2914bb",
+      "sha256": "649cfd424eeff0cc880d8e35c2c2e4624f2b945a60844610da1c06d68e36450f",
       "symbols": [
         "Block",
         "ChecklistItem",
@@ -91291,6 +91297,7 @@
         "close",
         "code",
         "columns",
+        "compactRecovery",
         "contexts",
         "contextualMarkdownTableKeys",
         "contextualTables",
@@ -91334,6 +91341,7 @@
         "listIndices",
         "listItems",
         "literal",
+        "literalCodeKey",
         "liveReadouts",
         "m",
         "markdown",
@@ -91345,6 +91353,7 @@
         "math",
         "n",
         "nativeMarkdownMatches",
+        "nativeVisuals",
         "next",
         "node",
         "nonempty",
@@ -91401,6 +91410,7 @@
         "token",
         "uniqueTitle",
         "value",
+        "visibleCode",
         "visibleKey",
         "visit"
       ],
@@ -111364,11 +111374,12 @@
       "id": "surface:a3b227ec62f0dcdb5ccb",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/connectedAppResult.ts",
-      "sha256": "4fc848952d88a41af3443038519e7c3ee99e2be06eda20640900c77be4446b4d",
+      "sha256": "630f63d8c69aa314fd56136e59d1434eead78e698928c4b17696b63ecd50e148",
       "symbols": [
         "ACTION_REVIEW_PATH",
         "AppResultPreview",
         "LEGACY_PUBLIC_SEARCH_LEAD",
+        "LEGACY_WEB_SEARCH_RETRY",
         "RESULT_MARKER",
         "SAVED_SEARCH_REVIEW",
         "WEB_SEARCH_NOT_RUN",
@@ -111376,6 +111387,7 @@
         "compactConnectedAppConfirmationMarkdown",
         "fenced",
         "isLegacyPublicSearchReview",
+        "isSavedSearchStatus",
         "itemNames",
         "legacyPublicSearch",
         "marker",
@@ -111388,6 +111400,7 @@
         "record",
         "savedSearchReviewLink",
         "search",
+        "value",
         "workspaceReviewId",
         "writeReview"
       ],
@@ -112669,7 +112682,7 @@
       "id": "surface:015cc267f70323e72e46",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sha256": "200346a4061581752164d27f0dbe745972d56b6c922207a0e0464f482868eb95",
+      "sha256": "270afdaf6708b7769263ef8a78ac8d157f86c0f41019779815e4490110a471ab",
       "symbols": [
         "AppMark",
         "BusinessActionConfirmationInline",
@@ -114760,7 +114773,7 @@
       "id": "surface:8c3cd48b2512bdeeff28",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/messageHelpers.ts",
-      "sha256": "34fde87aa6e18eec312614d8d4d781679c1148683aa95a3e98b083699318e209",
+      "sha256": "14490a98e803bcc07659d4398dbffeef7a2783bc830209b1a3583a16b43e8264",
       "symbols": [
         "MessageSuggestions",
         "analysis",
@@ -117421,13 +117434,12 @@
       "id": "surface:2f643a1aa432bf0f982e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/publicAnswerText.ts",
-      "sha256": "d93ef3936182e40b51dc556c4ce841ad18802c6cc8135353d5d2d6b3f9e19dd1",
+      "sha256": "1b9780fd88cbb3ba311afb505391f37892c2b27ba4986616152c979f71c80e35",
       "symbols": [
         "body",
         "end",
         "isPresentationLanguage",
         "markerTail",
-        "notice",
         "paragraph",
         "partialMarker",
         "presentationSyntax",
@@ -125947,7 +125959,7 @@
       "id": "surface:302352813d356af65f42",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaResponseDocument.ts",
-      "sha256": "de5dbbff580ea713dd9969c011ecda2eb95484cee17e864a05edfd865b7d5986",
+      "sha256": "44ca36e8d7191aefe157cf6605c7a7faea3a7e50c364019a0be905c913782488",
       "symbols": [
         "EnhancedAiResponse",
         "MAX_PROTOCOL_CHARS",
@@ -132879,7 +132891,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "aaa6d628d6671bd4be4d337f3f82065a7ccd140ef5b908cb73fc1716ee83cd51",
+      "sha256": "9749ea128f6716156ab251df8bc325505cf2cd492f2b42ef1518c0a12800f263",
       "symbols": [
         "accessibility",
         "answer",
@@ -132968,6 +132980,7 @@
         "mime",
         "monthly",
         "name",
+        "nativeCode",
         "nextBalance",
         "nodes",
         "north",
@@ -132980,6 +132993,7 @@
         "paletteContext",
         "palettePage",
         "panels",
+        "paragraph",
         "parent",
         "popupBounds",
         "positions",
@@ -151462,7 +151476,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:61a46c7416da6a962dc1",
+      "id": "finding:c03cc6b4edb8dcbe8b99",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
       "line": 1330,
       "kind": "PLACEHOLDER",
@@ -151472,7 +151486,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:6ce628f7cea44deca9ac",
+      "id": "finding:0fc934f23a55f954503d",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
       "line": 1331,
       "kind": "PLACEHOLDER",
@@ -152461,84 +152475,84 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:fd897b1fccaa7e05e7b8",
+      "id": "frontend-call:0cde04621f3f5ab0f035",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1068,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:f6f33477ac9aff63710b",
+      "id": "frontend-call:8957817fe4ea2917e1d8",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1071,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:92f6eb4b5dc2230e0d73",
+      "id": "frontend-call:0680ec0f5f151d5ff787",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1841,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:e50fdab42680a6220749",
+      "id": "frontend-call:a4d00dc8594a83360b0d",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1842,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:1680f954a04d29abccdf",
+      "id": "frontend-call:ae7eaf4ac9247f2eaee4",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1847,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:95be5704ae9da4f0d285",
+      "id": "frontend-call:1ee6db306c6475b0447f",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1848,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:3a238d1432db4c08ac3b",
+      "id": "frontend-call:cffc038ce0111cec430b",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1854,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:69372b85d0b2883eb61b",
+      "id": "frontend-call:75cf1192f7fa7ca378f4",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1859,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:25c97116fcadb486b613",
+      "id": "frontend-call:c334fd360f7160c05945",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1916,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:1fc39a1593074c8130f0",
+      "id": "frontend-call:5fb31afb138e17ca3130",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1917,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:e5d1c51f06a886b1a8b0",
+      "id": "frontend-call:de223ba4eb0e00ee673a",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1924,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:de79311f9afeb51e2a13",
+      "id": "frontend-call:100f5346b9d0fa5e972c",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1938,
       "callee": "fetch",
@@ -155275,14 +155289,14 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:a377ba49b845de530929",
+      "id": "frontend-call:92da0b3e776c93097817",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
       "line": 1000,
       "callee": "api.phase1.plan",
       "reachable": true
     },
     {
-      "id": "frontend-call:eb22926917ae89dc2d37",
+      "id": "frontend-call:ae0a1e09f3491ea4671e",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
       "line": 1036,
       "callee": "api.phase1.chat",
@@ -157015,7 +157029,7 @@
     {
       "id": "test-suite:ac6b245129304e42ccfd",
       "sourcePath": "backend/src/ai/workspaceAnswerContinuation.test.ts",
-      "declaredTests": 9,
+      "declaredTests": 12,
       "skipLocations": [],
       "focusLocations": []
     },
