@@ -123748,7 +123748,7 @@
       "id": "surface:a741178549139c6d7626",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/schema-catalog.mjs",
-      "sha256": "6d59a371139e501d3b3183982970d3a900a98de5be3386c351d3bd2fe3f19ff5",
+      "sha256": "226cd449d614c4b6c8a3af577055109df55ef8035912e4ca1a4f02b136386de3",
       "symbols": [
         "assertDisposableSource",
         "collectSchemaCatalog",

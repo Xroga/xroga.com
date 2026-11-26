@@ -337,6 +337,18 @@
       "tests": "tests/chrome-extension/device-auth.mjs",
       "evidence": "Disposable PostgreSQL WASM exercised the exact migration and API with two actors, including grants, expiry, concurrent exchange, scope, rotation of access tokens and revocation. Production roles and provider-backed staging acceptance remain separate.",
       "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "custom_mcp_tool_pins",
+      "migration": "20261113130000_custom_mcp_tool_pins.sql",
+      "migrationSha256": "63d0a9c44f18e5e09426c2592e5bde84daff0d82d23fc96705ebb12669c02bca",
+      "authorizationMigration": "20261113130000_custom_mcp_tool_pins.sql",
+      "authorizationSha256": "63d0a9c44f18e5e09426c2592e5bde84daff0d82d23fc96705ebb12669c02bca",
+      "boundary": "RLS enabled with no policy. All privileges are revoked from anon and authenticated; only service_role (the backend) can read or write. Rows are keyed by user_id (references auth.users, cascade on delete) so a pin is one owner's review of one exact tool definition digest of one server; the backend derives user_id from verified identity. Read and write risk classes only (a later migration widens the check from read to read and write); destructive and financial tools cannot be pinned.",
+      "tests": "backend/src/services/integrations/customMcpPinControl.security.test.ts",
+      "evidence": "Inventory entry only: the migration text was read and its RLS, revoke and grant lines are as described. The unit security test covers the backend pin control. A real disposable full-history replay is the CI check that consumes this entry; it is not a live Supabase receipt and not production parity.",
+      "productionChanges": false
     }
   ]
 }
