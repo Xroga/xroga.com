@@ -50,6 +50,7 @@ import './compose';
 import './compose-editly';
 import './compose-cutline';
 import './convert';
+import './record-screen';
 import './infinite-scroll';
 import './ocr-picture';
 import './image-and-language';

@@ -1,6 +1,6 @@
 // The offscreen document: it does the things the worker cannot.
 import type { OutlineEntry, PdfTextItem } from '@src/agent/pdf-structure';
-import { fetchRetry } from '@src/extension/net';
+import { fetchRetry, recordings, resolveAddress } from '@src/extension/net';
 import { loadTransformers, transcribeUrl, type OrtSession } from '@src/extension/speech';
 //  - Turn text into a Blob and a URL for chrome.downloads, and revoke the URL when the worker says the download ended (uses only the runtime API).
 //  - Recognise text in a picture (the `ocr` tool): the Tesseract engine and its English model are vendored in public/ocr and run in a Web Worker started from here,
@@ -380,7 +380,7 @@ const allFormats = (mb: Mb): unknown[] => [...new Set([...mb.ALL_FORMATS, ...mb.
 
 async function openMedia(mb: Mb, url: string): Promise<{ input: MbInput; bytes?: number }> {
   try {
-    const input = new mb.Input({ source: new mb.UrlSource(url), formats: allFormats(mb) });
+    const input = new mb.Input({ source: new mb.UrlSource(resolveAddress(url)), formats: allFormats(mb) });
     await input.getFormat();
     return { input };
   } catch {
@@ -533,6 +533,42 @@ async function mediaWork(url: string, action: string, o: { from: number; seconds
 
 chrome.runtime.onMessage.addListener((message, _sender, reply) => {
   if (message?.target !== 'offscreen') return;
+  if (message.type === 'record-begin') {
+    void import('@src/extension/record-render').then(m => m.recordBegin(String(message.id)));
+    reply({ ok: true });
+    return true;
+  }
+  if (message.type === 'record-frames') {
+    import('@src/extension/record-render').then(
+      m => {
+        m.recordFrames(String(message.id), message.frames as Array<{ t: number; data: string }>);
+        reply({ ok: true });
+      },
+      error => reply({ ok: false, error: String(error) }),
+    );
+    return true;
+  }
+  if (message.type === 'record-finish') {
+    recordings.release = url => {
+      URL.revokeObjectURL(url);
+      urls.delete(url);
+    };
+    import('@src/extension/record-render').then(m =>
+      m.recordFinish(
+        String(message.id),
+        () => import(/* @vite-ignore */ chrome.runtime.getURL('media/mediabunny.min.mjs')),
+        blob => {
+          const url = URL.createObjectURL(blob);
+          urls.add(url);
+          return url;
+        },
+      ),
+    ).then(
+      result => reply({ ok: true, ...result }),
+      error => reply({ ok: false, error: error instanceof Error ? error.message : String(error) }),
+    );
+    return true;
+  }
   if (message.type === 'convert') {
     Promise.race([
       import('@src/extension/convert-render').then(m =>

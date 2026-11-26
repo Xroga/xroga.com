@@ -2636,7 +2636,7 @@ ${renderSkill(top)}`);
       }
     } else if (call.toolName === 'transcribe') {
       const address = typeof args.url === 'string' ? args.url : '';
-      if (!/^https?:\/\//i.test(address)) {
+      if (!/^https?:\/\//i.test(address) && address !== 'recording:last') {
         outcome = { call, kind, text: 'error: transcribe needs the address of an audio or video file on the web (https or http).', isError: true };
       } else {
         try {
@@ -2662,7 +2662,7 @@ ${renderSkill(top)}`);
     } else if (call.toolName === 'media') {
       const address = typeof args.url === 'string' ? args.url : '';
       const action = typeof args.action === 'string' ? args.action : '';
-      if (!/^https?:\/\//i.test(address)) {
+      if (!/^https?:\/\//i.test(address) && address !== 'recording:last') {
         outcome = { call, kind, text: 'error: media needs the address of an audio or video file on the web (https or http).', isError: true };
       } else if (!['info', 'audio', 'beats', 'beatcuts', 'scenes', 'frames', 'cover'].includes(action)) {
         outcome = { call, kind, text: 'error: media action must be info, audio, beats, beatcuts, scenes, frames or cover.', isError: true };

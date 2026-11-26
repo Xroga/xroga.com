@@ -117,3 +117,37 @@ describe('where a moment of the file falls on the layer', () => {
     expect(layerTimeOf(pb, 25, 1, false)).toBeNull();
   });
 });
+
+describe('zoom on clicks', () => {
+  it('zooms in before a click, holds, and goes back out; the clicked point moves toward the middle', async () => {
+    const { zoomKeyframes } = await import('../compose-motion');
+    const k = zoomKeyframes([{ t: 5, x: 0.8, y: 0.3 }], { scale: 2, lead: 0.5, hold: 1, out: 0.5 })!;
+    expect(evaluateKeyframes(k.scale!, 0)).toBe(1);
+    expect(evaluateKeyframes(k.scale!, 4.5)).toBeCloseTo(1, 6);
+    expect(evaluateKeyframes(k.scale!, 5)).toBe(2);
+    expect(evaluateKeyframes(k.scale!, 5.9)).toBe(2);
+    expect(evaluateKeyframes(k.scale!, 6.5)).toBeCloseTo(1, 6);
+    expect(evaluateKeyframes(k.scale!, 10)).toBe(1);
+    // a point right of centre moves the picture left (negative shift), one above centre moves it down
+    expect(evaluateKeyframes(k.x!, 5)).toBeLessThan(0);
+    expect(evaluateKeyframes(k.y!, 5)).toBeGreaterThan(0);
+    // never past the edge the zoom allows: (scale - 1) / 2
+    expect(Math.abs(evaluateKeyframes(k.x!, 5))).toBeLessThanOrEqual(0.5 + 1e-9);
+    const motion = motionAt({ keyframes: k }, 5, 20);
+    expect(motion.scale).toBe(2);
+  });
+
+  it('shares one zoom between clicks close together, and starts a new one for a later click', async () => {
+    const { zoomKeyframes } = await import('../compose-motion');
+    const k = zoomKeyframes([{ t: 3, x: 0.2, y: 0.5 }, { t: 4, x: 0.7, y: 0.5 }, { t: 12, x: 0.5, y: 0.5 }], { scale: 2, lead: 0.5, hold: 1, out: 0.5, merge: 1.5 })!;
+    expect(evaluateKeyframes(k.scale!, 3.5)).toBe(2);
+    expect(evaluateKeyframes(k.scale!, 4)).toBe(2);
+    expect(evaluateKeyframes(k.scale!, 8)).toBe(1); // back out between the two groups
+    expect(evaluateKeyframes(k.scale!, 12)).toBe(2);
+    // the zoom moves from the first point (left: picture shifts right) to the second (right: shifts left)
+    expect(evaluateKeyframes(k.x!, 3)).toBeGreaterThan(0);
+    expect(evaluateKeyframes(k.x!, 4)).toBeLessThan(0);
+    expect(zoomKeyframes([])).toBeUndefined();
+    expect(zoomKeyframes([{ t: -1, x: 0.5, y: 0.5 }])).toBeUndefined();
+  });
+});

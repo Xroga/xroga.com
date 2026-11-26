@@ -25,6 +25,7 @@ import { WEBMCP_TOOL } from '@src/agent/webmcp';
 import { MEDIA_TOOL } from '@src/agent/media-tool';
 import { COMPOSE_TOOL, composeFilename, describeSpec, normalizeSpec } from '@src/agent/compose-spec';
 import { CONVERT_TOOL, convertMime, describeConvert, normalizeConvert } from '@src/agent/convert-spec';
+import { RECORD_SCREEN_TOOL, describeRecording, recordFilename } from '@src/agent/record-tool';
 import { FREE_TIMES_TOOL } from '@src/agent/free-times';
 import { AgentLoop, REASONING_DROPPED, STOPPED_BY_USER, STOPPED_NOTE } from '@src/agent/loop';
 import type { LoopEnd } from '@src/agent/loop';
@@ -1338,6 +1339,46 @@ export class RunManager {
       if (saved.state !== 'complete') return { text: `error SAVE_FAILED (not saved)\nThe download did not complete: ${saved.error ?? 'interrupted'}.`, isError: true };
       return { text: `save_page_pdf · saved "${saved.name}" (${Math.round(printed.bytes / 1024)} KB) in Downloads.`, isError: false };
     }
+    if (call.toolName === 'record_screen') {
+      const { startRecording, stopRecording, recordingStatus } = await import('./screen-record');
+      const tabId = typeof args.tabId === 'number' ? args.tabId : (await this.scope.tabsOf(conversationId))[0];
+      if (tabId === undefined) return { text: 'error: there is no tab in this task to record. Open the page first.', isError: true };
+      const action = String(args.action ?? '');
+      if (action === 'status') {
+        const st = recordingStatus(tabId);
+        return { text: st.running ? `record_screen · recording this tab: ${st.seconds.toFixed(0)} s, ${st.frames} pictures so far.` : 'record_screen · no recording is running in this tab.', isError: false };
+      }
+      if (action === 'start') {
+        const seconds = Math.min(180, Math.max(5, typeof args.maxSeconds === 'number' ? args.maxSeconds : 90));
+        try {
+          await startRecording(tabId, seconds);
+        } catch (error) {
+          return { text: `error RECORD_FAILED (nothing recorded)\n${(error instanceof Error ? error.message : String(error)).slice(0, 300)}`, isError: true };
+        }
+        return { text: `record_screen · recording this tab (up to ${seconds} s). Do the steps now, then call record_screen with action stop. What is on the screen is recorded; nothing is saved until you stop and the person agrees.`, isError: false };
+      }
+      if (action !== 'stop') return { text: 'error: record_screen action must be start, stop or status.', isError: true };
+      let made;
+      try {
+        made = await stopRecording(tabId);
+      } catch (error) {
+        return { text: `error RECORD_FAILED (nothing saved)\n${(error instanceof Error ? error.message : String(error)).slice(0, 300)}`, isError: true };
+      }
+      const filename = recordFilename(args.filename).replace(/\.(mp4|webm)$/i, '') + (made.container === 'webm' ? '.webm' : '.mp4');
+      const summary = describeRecording({ seconds: made.seconds, frames: made.frames, bytes: made.bytes, width: made.width, height: made.height, container: made.container, clicks: made.clicks, notes: made.notes });
+      const canSave = () => chrome.permissions.contains({ permissions: ['downloads'] }).catch(() => false);
+      let saveAs = false;
+      if ((this.#modes.get(conversationId) ?? 'ask') === 'ask' || !(await canSave())) {
+        const answer = await this.broker.open<'save' | 'save-as' | 'discard'>(conversationId, 'save-file', { filename, mimeType: made.container === 'webm' ? 'video/webm' : 'video/mp4', bytes: made.bytes, preview: `A recording of this tab (${made.seconds.toFixed(1)} s) made on this device` }, signal);
+        if (answer !== 'save' && answer !== 'save-as') return { text: `record_screen · the user did not want the file saved. The recording is kept for this task as recording:last (compose_video and media can use it). ${summary}`, isError: false };
+        saveAs = answer === 'save-as';
+      }
+      if (!(await canSave())) return { text: `record_screen · not saved (Chrome's downloads permission is not allowed); the recording is kept as recording:last. ${summary}`, isError: false };
+      const { saveHeldUrl: save } = await import('./downloads');
+      const saved = await save(made.url, filename, saveAs).catch((error: Error) => ({ state: 'interrupted' as const, error: error.message, name: filename, downloadId: -1 }));
+      if (saved.state !== 'complete') return { text: `error SAVE_FAILED (not saved)\nThe download did not complete: ${saved.error ?? 'interrupted'}. The recording is kept as recording:last. ${summary}`, isError: true };
+      return { text: `record_screen · saved "${saved.name}" in Downloads. ${summary}`, isError: false };
+    }
     if (call.toolName === 'convert_media') {
       const checked = normalizeConvert(args);
       if (!checked.ok) return { text: `error INVALID_ARGUMENT (nothing converted)\n${checked.errors.join('\n')}`, isError: true };
@@ -1887,8 +1928,8 @@ export class RunManager {
           pointAt,
           vision: model.profile.vision, localScreenshots: !!canonical,
           agentTools: isWorker
-            ? [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, PLAN_TOOL, RECORD_DEMO_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL, DATA_OPS_TOOL, MACRO_TOOL, BROWSER_DATA_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, SAVE_SKILL_TOOL, READ_PDF_TOOL, READ_FILE_TOOL, SITE_MAP_TOOL, TRANSCRIBE_TOOL, CHAPTERS_TOOL, MEDIA_TOOL, COMPOSE_TOOL, CONVERT_TOOL, WEBMCP_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, MEMORY_TOOL, LIGHTHOUSE_TOOL] : [])]
-            : [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, PLAN_TOOL, RECORD_DEMO_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL, DATA_OPS_TOOL, MACRO_TOOL, BROWSER_DATA_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, SAVE_SKILL_TOOL, READ_PDF_TOOL, READ_FILE_TOOL, SITE_MAP_TOOL, TRANSCRIBE_TOOL, CHAPTERS_TOOL, MEDIA_TOOL, COMPOSE_TOOL, CONVERT_TOOL, WEBMCP_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, SITE_SCAN_TOOL, MEMORY_TOOL, LIGHTHOUSE_TOOL, REPO_RUN_TOOL, CHANGE_REPO_TOOL, PYTHON_REPL_TOOL] : []), ...(canonical?.plugins ? [...PLUGIN_TOOLS, PLUGIN_CHAIN_TOOL, PLUGIN_CONNECT_TOOL] : []), ...PARALLEL_TOOLS],
+            ? [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, PLAN_TOOL, RECORD_DEMO_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL, DATA_OPS_TOOL, MACRO_TOOL, BROWSER_DATA_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, SAVE_SKILL_TOOL, READ_PDF_TOOL, READ_FILE_TOOL, SITE_MAP_TOOL, TRANSCRIBE_TOOL, CHAPTERS_TOOL, MEDIA_TOOL, COMPOSE_TOOL, CONVERT_TOOL, RECORD_SCREEN_TOOL, WEBMCP_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, MEMORY_TOOL, LIGHTHOUSE_TOOL] : [])]
+            : [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, PLAN_TOOL, RECORD_DEMO_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL, DATA_OPS_TOOL, MACRO_TOOL, BROWSER_DATA_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, SAVE_SKILL_TOOL, READ_PDF_TOOL, READ_FILE_TOOL, SITE_MAP_TOOL, TRANSCRIBE_TOOL, CHAPTERS_TOOL, MEDIA_TOOL, COMPOSE_TOOL, CONVERT_TOOL, RECORD_SCREEN_TOOL, WEBMCP_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, SITE_SCAN_TOOL, MEMORY_TOOL, LIGHTHOUSE_TOOL, REPO_RUN_TOOL, CHANGE_REPO_TOOL, PYTHON_REPL_TOOL] : []), ...(canonical?.plugins ? [...PLUGIN_TOOLS, PLUGIN_CHAIN_TOOL, PLUGIN_CONNECT_TOOL] : []), ...PARALLEL_TOOLS],
         });
         const fullToolList = noSkills ? allTools.filter(t => !skillTool.has(t.name)) : allTools;
         // A request that only reads starts with the small tool list; the model switches to the full one if it needs to act.

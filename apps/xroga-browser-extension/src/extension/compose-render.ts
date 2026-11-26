@@ -5,7 +5,7 @@ import { crossfadeGains, normalizationGain, applyGainSoftLimit, timeStretch } fr
 import { normalizeSpec, resolveDurations, timeline, type ComposeSpec, type Layer, type ResizeMode } from '@src/agent/compose-spec';
 import { drawFrame, type Assets, type Picture, type Scratch } from './compose-draw';
 import { ShaderRunner } from './compose-shader';
-import { fetchRetry } from './net';
+import { fetchRetry, resolveAddress } from './net';
 import { buildPlayback, layerTimeOf } from '@src/agent/compose-playback';
 import { duckCurve, speechRanges, wordsOnClipTime } from '@src/agent/compose-extras';
 import { computeEnvelope } from '@src/agent/media-analysis';
@@ -122,7 +122,7 @@ async function prepare(raw: unknown, loadMb: () => Promise<unknown>): Promise<Pr
   const openVideo = async (url: string) => {
     let input: Input;
     try {
-      input = new mb.Input({ source: new mb.UrlSource(url), formats: [...new Set([...mb.ALL_FORMATS, ...mb.HLS_FORMATS])] });
+      input = new mb.Input({ source: new mb.UrlSource(resolveAddress(url)), formats: [...new Set([...mb.ALL_FORMATS, ...mb.HLS_FORMATS])] });
       await input.getFormat();
     } catch {
       input = new mb.Input({ source: new mb.BlobSource(new Blob([await bytesOf(url)])), formats: [...new Set([...mb.ALL_FORMATS, ...mb.HLS_FORMATS])] });

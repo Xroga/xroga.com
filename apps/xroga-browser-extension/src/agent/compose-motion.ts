@@ -140,3 +140,76 @@ export function keyframesFromList(raw: unknown, span: number): Keyframes | undef
   }
   return any ? out : undefined;
 }
+
+export interface ClickPoint {
+  /** Seconds into the layer (the recording). */
+  t: number;
+  /** Where in the picture, as fractions of its width and height (0 to 1). */
+  x: number;
+  y: number;
+}
+export interface ZoomOptions {
+  /** How far to zoom in. Default 1.8. */
+  scale?: number;
+  /** Seconds to zoom in before the click. Default 0.5. */
+  lead?: number;
+  /** Seconds to stay zoomed after the click. Default 1.2. */
+  hold?: number;
+  /** Seconds to zoom back out. Default 0.5. */
+  out?: number;
+  /** Clicks closer together than this share one zoom. Default 1.5 s. */
+  merge?: number;
+}
+
+/**
+ * Keyframes that zoom in on each click of a recording and back out afterwards (the idea of Panoptik, AGPL, to centre a zoom on the recorded mouse clicks: concept only, written fresh).
+ * Clicks close in time share one zoom that moves from point to point; the shift keeps the clicked point in the middle of the frame as far as the zoom allows.
+ */
+export function zoomKeyframes(clicks: readonly ClickPoint[], options: ZoomOptions = {}): Keyframes | undefined {
+  const scale = clamp(options.scale ?? 1.8, 1.05, 4);
+  const lead = Math.max(0.05, options.lead ?? 0.5);
+  const hold = Math.max(0.1, options.hold ?? 1.2);
+  const out = Math.max(0.1, options.out ?? 0.5);
+  const merge = options.merge ?? 1.5;
+  const sorted = [...clicks].filter(c => Number.isFinite(c.t) && c.t >= 0).sort((a, b) => a.t - b.t);
+  if (!sorted.length) return undefined;
+  // groups of clicks that follow each other closely
+  const groups: ClickPoint[][] = [];
+  for (const c of sorted) {
+    const last = groups[groups.length - 1];
+    if (last && c.t - last[last.length - 1]!.t <= merge) last.push(c);
+    else groups.push([c]);
+  }
+  const shift = (c: ClickPoint) => {
+    // the layer turns about its middle: to bring the point to the middle, move by (0.5 - p) times the scale, but never so far that an edge shows
+    const limit = (scale - 1) / 2;
+    return { dx: clamp((0.5 - c.x) * scale, -limit, limit), dy: clamp((0.5 - c.y) * scale, -limit, limit) };
+  };
+  const sc: Keyframe[] = [];
+  const x: Keyframe[] = [];
+  const y: Keyframe[] = [];
+  const push = (time: number, s: number, dx: number, dy: number, easing: KeyEasing = 'ease-in-out') => {
+    for (const [list, v] of [[sc, s], [x, dx], [y, dy]] as const) {
+      const prev = list[list.length - 1];
+      if (prev && time <= prev.time + 1e-6) list[list.length - 1] = { time: prev.time, value: v, easing };
+      else list.push({ time, value: v, easing });
+    }
+  };
+  for (const g of groups) {
+    const first = g[0]!;
+    const start = Math.max(0, first.t - lead);
+    const a = shift(first);
+    push(start, 1, 0, 0);
+    push(first.t, scale, a.dx, a.dy);
+    for (const c of g.slice(1)) {
+      const s = shift(c);
+      push(Math.max(c.t - 0.35, first.t + 1e-3), scale, s.dx, s.dy);
+      push(c.t, scale, s.dx, s.dy);
+    }
+    const lastClick = g[g.length - 1]!;
+    const lastShift = shift(lastClick);
+    push(lastClick.t + hold, scale, lastShift.dx, lastShift.dy);
+    push(lastClick.t + hold + out, 1, 0, 0);
+  }
+  return { scale: sc, x, y };
+}

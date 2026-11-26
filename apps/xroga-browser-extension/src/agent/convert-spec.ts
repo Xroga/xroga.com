@@ -68,7 +68,7 @@ export function normalizeConvert(args: Record<string, unknown>): Checked {
     const u = new URL(String(args.url ?? ''));
     if (u.protocol === 'https:' || u.protocol === 'http:') url = u.href;
   } catch {
-    /* handled below */
+    if (args.url === 'recording:last') url = 'recording:last';
   }
   if (!url) errors.push('url must be the address of a media file (https or http).');
   const format = String(args.format ?? '') as ConvertFormat;

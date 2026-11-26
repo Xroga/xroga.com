@@ -5,6 +5,7 @@ import type { Controller, Session, SessionConfig, TabsData } from '@src/browser-
 import type { LayerPort } from '@src/agent/ports';
 import { showActionPoint, type PageBorder } from './border';
 import { XROGA_PRODUCT } from '@src/xroga/product';
+import { noteActionPoint } from './screen-record';
 
 /** The extension's labels, defused wherever page text holds them. */
 export const AGENT_LABELS = ['[Nanobrowser note', 'browser-state', 'agent-notes', 'custom-instructions'];
@@ -21,7 +22,11 @@ export function createAgentSession(controller: Controller, config: SessionConfig
     confirmTimeoutMs: Infinity,
     askTimeoutMs: ASK_TIMEOUT_MS,
     boundary: { labels: AGENT_LABELS },
-    onActionPoint: XROGA_PRODUCT ? showActionPoint : undefined,
+    // each action's place is kept while a recording runs (record_screen), and shown on the page in the product build
+    onActionPoint: async (tabId, point, kind) => {
+      noteActionPoint(tabId, point, kind);
+      if (XROGA_PRODUCT) await showActionPoint(tabId, point, kind);
+    },
     ...config,
   });
 }

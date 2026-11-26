@@ -1,7 +1,7 @@
 // Converting a media file in the offscreen document with mediabunny's conversion API (MPL-2.0, vendored unmodified in public/media): the file is read by range requests where the server
 // allows it, converted over WebCodecs, and held as a blob URL for the worker to save. See src/agent/convert-spec.ts for the request.
 import type { ConvertRequest } from '@src/agent/convert-spec';
-import { fetchRetry } from './net';
+import { fetchRetry, resolveAddress } from './net';
 
 interface Track {
   type: string;
@@ -66,7 +66,7 @@ export async function convertMedia(request: ConvertRequest, loadMb: () => Promis
   const formats = [...new Set([...mb.ALL_FORMATS, ...mb.HLS_FORMATS])];
   let input: Input;
   try {
-    input = new mb.Input({ source: new mb.UrlSource(request.url), formats });
+    input = new mb.Input({ source: new mb.UrlSource(resolveAddress(request.url)), formats });
     await input.getFormat();
   } catch {
     // a server without range requests: the whole file, within a limit
