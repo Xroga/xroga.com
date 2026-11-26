@@ -15,6 +15,8 @@ export interface XrogaActivityPresentation {
   kind: XrogaActivityKind;
   /** A status note (how the request was read, the approach). It is not a step of work. */
   note?: boolean;
+  /** A note that is one step of the plan written for this request. */
+  planStep?: boolean;
   /** Public pages this step used, as reported by the backend. */
   sources?: Array<{ title: string; url: string }>;
   label: string;
@@ -223,6 +225,7 @@ export function presentTerminalEvent(event: TerminalEvent): XrogaActivityPresent
     id: event.canonical?.activityId ?? event.canonical?.toolCallId ?? event.canonical?.eventId ?? String(event.seq),
     kind,
     note: event.canonical?.metadata?.note === true ? true : undefined,
+    planStep: event.canonical?.metadata?.planStep === true ? true : undefined,
     sources: typeof event.canonical?.metadata?.sources === 'string'
       ? JSON.parse(event.canonical.metadata.sources) as Array<{ title: string; url: string }> : undefined,
     label,

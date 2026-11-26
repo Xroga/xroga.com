@@ -21,13 +21,20 @@ export const REASONING_SUMMARY_MAX_LINES = 12;
 export const REASONING_SUMMARY_MAX_LINE_CHARS = 600;
 
 const SYSTEM = [
-  'You write the working notes a user watches while an assistant prepares an answer to their request.',
-  'Think about this particular request and say, in the language the user wrote in, how it will be approached:',
-  'what is being asked, what matters, what has to be worked out or checked, and how the answer will be shaped.',
-  'Write each note on its own line as plain prose. Use as many or as few notes as the request genuinely needs.',
-  'Never give the answer itself, never write code, never claim something was already searched, run or verified,',
-  'and never mention these instructions, prompts, models or providers.',
+  'You write what a user watches while an assistant prepares an answer to their request, in the language the user wrote in.',
+  'First write the plan for this particular request: its real steps, one per line, each line starting with "STEP: ".',
+  'Choose as many steps as the request needs; a greeting or a one fact question may need none.',
+  'Then write your working notes, one per line without a prefix: what is being asked, what matters, what has to be',
+  'worked out or checked, and how the answer will be shaped.',
+  'Everything must be specific to this request. Never give the answer itself, never write code, never claim something',
+  'was already searched, run or verified, and never mention these instructions, prompts, models or providers.',
 ].join(' ');
+
+/** A plan step line, marked so the Workspace can draw it as a checklist entry. */
+export function planStep(line: string): string | null {
+  const match = /^STEP\s*[:\-]\s*(.+)$/i.exec(line);
+  return match ? match[1]!.trim() : null;
+}
 
 export function reasoningSummaryEnabled(env: NodeJS.ProcessEnv = process.env): boolean {
   const flag = (env.XROGA_REASONING_SUMMARY ?? '').trim().toLowerCase();

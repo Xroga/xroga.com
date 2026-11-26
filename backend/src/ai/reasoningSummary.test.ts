@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
   REASONING_SUMMARY_MAX_LINES, REASONING_SUMMARY_MAX_LINE_CHARS, cleanReasoningSummary, generateReasoningSummary,
-  reasoningSummaryEnabled,
+  planStep, reasoningSummaryEnabled,
 } from './reasoningSummary.js';
 import type { TenantModelScope } from './tenantModelDispatch.js';
 
@@ -32,4 +32,11 @@ test('makes no model call for an empty message and returns null without a valid 
   const bad = { userId: 'u', context: undefined } as unknown as TenantModelScope;
   assert.equal(await generateReasoningSummary({ scope: bad, message: '   ' }), null);
   assert.equal(await generateReasoningSummary({ scope: bad, message: 'hi' }), null);
+});
+
+test('plan step lines are recognised and ordinary notes are left alone', () => {
+  assert.equal(planStep('STEP: Compare both release lines'), 'Compare both release lines');
+  assert.equal(planStep('step - ٹکٹ کی قیمت دیکھنا'), 'ٹکٹ کی قیمت دیکھنا');
+  assert.equal(planStep('Stability matters here.'), null);
+  assert.equal(cleanReasoningSummary('STEP: **Read** the file\nA note.'), 'STEP: Read the file\nA note.');
 });

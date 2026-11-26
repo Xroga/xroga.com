@@ -14,3 +14,9 @@ test('progress wording picks the matching kind of work', () => {
   assert.equal(kindOf('Sent the request to connected app Gmail: send email'), 'connected-app-write');
   assert.equal(kindOf('Received 2 attached files: a.pdf, b.png'), 'read-file');
 });
+
+test('a planned step is marked as part of the plan and a note is not', () => {
+  const frame = (extra: object, text: string) => adaptTerminalEvent('progress', { agent: 'session', status: 'reasoning_summary', swarmActivity: text, ...extra }, { fromSeq: Math.floor(text.length) });
+  const rows = coalesceActivity([...frame({ planStep: true }, 'Compare the options'), ...frame({}, 'Budget matters most here.')]);
+  assert.deepEqual(rows.map(row => [row.note, row.planStep]), [[true, true], [true, undefined]]);
+});

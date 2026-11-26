@@ -10086,7 +10086,7 @@
       "id": "surface:6b6608aca0b309f1efdb",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/reasoningSummary.ts",
-      "sha256": "c0c59fe1f22b0d7416caa2ac30ce0d70d85c61a24af0796379f0e2a251f4846e",
+      "sha256": "6f332e71ac30f77f00c55cecf34ace5f832204ccf10a913f7c131acbbcf20282",
       "symbols": [
         "REASONING_SUMMARY_MAX_LINES",
         "REASONING_SUMMARY_MAX_LINE_CHARS",
@@ -10099,8 +10099,10 @@
         "flag",
         "generateReasoningSummary",
         "lines",
+        "match",
         "message",
         "messages",
+        "planStep",
         "reasoningSummaryEnabled",
         "result",
         "scope"
@@ -34515,16 +34517,19 @@
       "id": "surface:a84cf17b2bc2287e5cc5",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
-      "sha256": "1c4bf20fb141192c92395bf59b878ae29cfa842a79ff95cad4681b06b555af4c",
+      "sha256": "065c14f1152157c895b5dbe073db2f0a5b2a94dfb8948ef1d59bd5fb066bd968",
       "symbols": [
         "HEARTBEAT_MS",
+        "NOTES_GRACE_MS",
         "controller",
         "files",
+        "finish",
         "heartbeat",
         "line",
         "message",
         "names",
         "note",
+        "notes",
         "open",
         "originalStatus",
         "preparing",
@@ -34532,7 +34537,9 @@
         "router",
         "sendJson",
         "status",
+        "step",
         "text",
+        "timer",
         "wantsStream",
         "write"
       ],
@@ -69395,7 +69402,7 @@
       "id": "surface:ceedc01513cc1ffef785",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/activity/ProcessingStream.tsx",
-      "sha256": "7d3ffd91b1df90e54c1798776beacfbd95ae58fc43430122a66c8d35558b4681",
+      "sha256": "0cadc5c340d32a7587d0a4bffc400703480335b69da6c1758afc4bba34dd6f5d",
       "symbols": [
         "Evidence",
         "Group",
@@ -123451,7 +123458,7 @@
       "id": "surface:e1d63f3bf1a4ffb59a37",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/terminal/activityPresentation.ts",
-      "sha256": "0d7f970a7b19b65d6b6251e97067d6400b3bd47ec7d5083ab05a82cd3761d836",
+      "sha256": "f30248bf601766a38939c682725a253315cc66913500aa65fd9408ed817bab9b",
       "symbols": [
         "GENERIC_PLACEHOLDER",
         "INTERNAL_MARKERS",
@@ -123857,7 +123864,7 @@
       "id": "surface:f97bad94eb42e051ed62",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/terminal/processingStream.ts",
-      "sha256": "50b1c4b750034332f0f81e84f99b7b8ab64b93deac0e11f2d2f2b715642424dd",
+      "sha256": "23cd0019aaa48790a5ce21532c590e9e412d19b4cae48cadb5e0258f110bb0de",
       "symbols": [
         "MAX_ENTRIES",
         "PAST",
@@ -127210,7 +127217,7 @@
       "id": "surface:9cf0fc38a015443d3ee7",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaEventAdapter.ts",
-      "sha256": "5cc624ee7cc8f39ad1d3f1a51ec66f1a3d35cd4240f071a3ebcd63ff8c40ea9f",
+      "sha256": "b36a2c1e25b67bdcf918a882c9d420f400c7c9e445fc94afd3afa17569c7532b",
       "symbols": [
         "CONFIRM_LINK",
         "NOTE_STATUSES",
@@ -141718,9 +141725,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a5ad7c69c77c10d8099a",
+      "id": "registration:034ef95a4339d016834c",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
-      "line": 36,
+      "line": 38,
       "receiver": "router",
       "method": "post",
       "path": "/chat",
@@ -143264,10 +143271,10 @@
       "reason": "Router factory invoked by an imported default export; terminal middleware traced, behavior must still be tested."
     },
     {
-      "id": "route:499c361e873132b0a28a",
-      "registrationId": "registration:a5ad7c69c77c10d8099a",
+      "id": "route:ff47d8c4577bb40b1ca7",
+      "registrationId": "registration:034ef95a4339d016834c",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
-      "line": 36,
+      "line": 38,
       "method": "POST",
       "path": "/api/phase1/chat",
       "mountChain": [
@@ -148973,9 +148980,9 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:9f50817b44fe858cda10",
+      "id": "schedule:eb3797404609dfaccee8",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
-      "line": 55,
+      "line": 57,
       "kind": "setInterval",
       "symbol": "<module>",
       "reachable": true,
@@ -160635,7 +160642,7 @@
     {
       "id": "test-suite:846cdb9ce4a867dd5520",
       "sourcePath": "backend/src/ai/reasoningSummary.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -167243,7 +167250,7 @@
     {
       "id": "test-suite:df85686e05efcbb97b16",
       "sourcePath": "frontend/src/lib/terminal/processingKinds.test.ts",
-      "declaredTests": 1,
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

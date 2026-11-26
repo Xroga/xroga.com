@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import {
-  Brain, ChevronDown, CircleAlert, Database, ExternalLink, FilePen, FileSearch, Globe, Hand, ListChecks, Plug,
+  Brain, ChevronDown, CircleAlert, CircleDashed, Database, ExternalLink, FilePen, FileSearch, Globe, Hand, ListChecks, Plug,
   Rocket, Search, ShieldCheck, SquareTerminal, Wrench, type LucideIcon,
 } from 'lucide-react';
 import { formatElapsed, type TimelineFamily } from '@/lib/terminal/activityTimeline';
@@ -125,7 +125,10 @@ export function ProcessingStream({ entries, rows }: { entries: readonly StreamEn
     <ol className={styles.stream} data-testid="processing-stream" aria-label="Work so far">
       {groupStream(entries).map(entry => {
         let content: ReactNode;
-        if (entry.type === 'note') content = <p className={styles.note}>{entry.text}</p>;
+        if (entry.type === 'note' && entry.plan) {
+          // A planned step: written by the model for this request. It is not ticked, because nothing reports it done.
+          content = <p className={styles.planStep}><CircleDashed className={styles.lineIcon} aria-hidden="true" /><span>{entry.text}</span></p>;
+        } else if (entry.type === 'note') content = <p className={styles.note}>{entry.text}</p>;
         else if (entry.type === 'group') content = <Group id={entry.id} title={entry.text} families={entry.families} steps={entry.steps} rows={rows} />;
         else content = <StepLine step={entry} rows={rows} />;
         return (

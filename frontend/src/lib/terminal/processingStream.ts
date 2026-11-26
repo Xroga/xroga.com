@@ -29,7 +29,7 @@ export interface StreamStep {
   evidence?: StreamEvidence;
 }
 
-export type StreamEntry = { type: 'note'; id: string; text: string } | StreamStep;
+export type StreamEntry = { type: 'note'; id: string; text: string; plan?: boolean } | StreamStep;
 
 /** Consecutive finished steps folded under one summary line. */
 export interface StreamGroup { type: 'group'; id: string; text: string; families: TimelineFamily[]; steps: StreamStep[] }
@@ -138,7 +138,7 @@ export function buildProcessingStream(rows: readonly XrogaActivityPresentation[]
   for (const row of rows) {
     if (row.note) {
       const text = clean(row.label, 700);
-      if (text && !seenNotes.has(text)) { seenNotes.add(text); entries.push({ type: 'note', id: row.id, text }); }
+      if (text && !seenNotes.has(text)) { seenNotes.add(text); entries.push({ type: 'note', id: row.id, text, plan: row.planStep }); }
       continue;
     }
     if (row.kind === 'respond') continue;

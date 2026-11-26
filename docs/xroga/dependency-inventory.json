@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "e50d1645d4e547074d9fbcbd4fa8a3c7421b050d",
+  "source_sha": "98d5bded99e5f62bd995194980f67ac8fd2fa7bd",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17667,7 +17667,7 @@
     },
     {
       "path": "backend/src/ai/reasoningSummary.ts",
-      "sha256": "c0c59fe1f22b0d7416caa2ac30ce0d70d85c61a24af0796379f0e2a251f4846e"
+      "sha256": "6f332e71ac30f77f00c55cecf34ace5f832204ccf10a913f7c131acbbcf20282"
     },
     {
       "path": "backend/src/ai/repairController.ts",
@@ -19135,7 +19135,7 @@
     },
     {
       "path": "backend/src/routes/phase1ChatProgress.ts",
-      "sha256": "1c4bf20fb141192c92395bf59b878ae29cfa842a79ff95cad4681b06b555af4c"
+      "sha256": "065c14f1152157c895b5dbe073db2f0a5b2a94dfb8948ef1d59bd5fb066bd968"
     },
     {
       "path": "backend/src/routes/profile.ts",
@@ -21331,7 +21331,7 @@
     },
     {
       "path": "frontend/src/components/activity/ProcessingStream.tsx",
-      "sha256": "7d3ffd91b1df90e54c1798776beacfbd95ae58fc43430122a66c8d35558b4681"
+      "sha256": "0cadc5c340d32a7587d0a4bffc400703480335b69da6c1758afc4bba34dd6f5d"
     },
     {
       "path": "frontend/src/components/activity/ProcessingSurface.tsx",
@@ -24863,7 +24863,7 @@
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "sha256": "0d7f970a7b19b65d6b6251e97067d6400b3bd47ec7d5083ab05a82cd3761d836"
+      "sha256": "f30248bf601766a38939c682725a253315cc66913500aa65fd9408ed817bab9b"
     },
     {
       "path": "frontend/src/lib/terminal/activityTimeline.ts",
@@ -24883,7 +24883,7 @@
     },
     {
       "path": "frontend/src/lib/terminal/processingStream.ts",
-      "sha256": "50b1c4b750034332f0f81e84f99b7b8ab64b93deac0e11f2d2f2b715642424dd"
+      "sha256": "23cd0019aaa48790a5ce21532c590e9e412d19b4cae48cadb5e0258f110bb0de"
     },
     {
       "path": "frontend/src/lib/terminal/processingView.ts",
@@ -25075,7 +25075,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaEventAdapter.ts",
-      "sha256": "5cc624ee7cc8f39ad1d3f1a51ec66f1a3d35cd4240f071a3ebcd63ff8c40ea9f"
+      "sha256": "b36a2c1e25b67bdcf918a882c9d420f400c7c9e445fc94afd3afa17569c7532b"
     },
     {
       "path": "frontend/src/lib/xrogaFileExports.ts",
@@ -41842,35 +41842,35 @@
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 249,
+      "line": 252,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 250,
+      "line": 253,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 291,
+      "line": 294,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 292,
+      "line": 295,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 304,
+      "line": 307,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
