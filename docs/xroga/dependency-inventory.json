@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "bdae63ed0a1fb792a9a5df7bced9d5ebc02cebda",
+  "source_sha": "b4d9c6a954c233549e7e2817403f834939ed69ca",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17363,7 +17363,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "1dc6c0ef9be8280f4534e83baa0bf2b72bd50a7f3480284d8ee4c5dd3c2b40e8"
+      "sha256": "8cb49dde18ed80baecf8f06f1b762b4b8a8c21a1073c18ca105c7bf8e3f3e8c7"
     },
     {
       "path": "backend/src/ai/buildImprovementMemory.ts",
@@ -17619,7 +17619,7 @@
     },
     {
       "path": "backend/src/ai/progressChannel.ts",
-      "sha256": "dad7d1efc7e16be55a855c2a18a30154c7ff607a5973a4d7eec6497f3ac6283c"
+      "sha256": "de776991c6b7ea6c35ce4aad0375b67772e73c0ec8475b7a412743ea2f474464"
     },
     {
       "path": "backend/src/ai/progressHeartbeat.ts",
@@ -19651,7 +19651,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "d7ac0222f724ad09cf42e5d9afa5e4f40fe8f9a6fd76041c8fcffbf451fd2dff"
+      "sha256": "5276be96f1e819194653a4e1a9f8d4aa9075c100637443f84454776932475b90"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -19675,7 +19675,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "sha256": "39a0926d4ffd44f21b9ba166a8579a6ed7febae7693d39057ee2f3bf50092175"
+      "sha256": "cc2d685f207705b93a3a8b0724e8b6c0eaac2878ec0fb132dac730e441b3c077"
     },
     {
       "path": "backend/src/services/integrations/businessWorkflow.ts",
@@ -24863,7 +24863,7 @@
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "sha256": "1213bdd9c45b85bfa64987d1f4e9eb02282d3c946ac5d158ae54fb5333550c2c"
+      "sha256": "a2ec4622c4022b57a4e012b0ba338cb083d9e068485b13fec20717b5a15b42cd"
     },
     {
       "path": "frontend/src/lib/terminal/activityTimeline.ts",
@@ -33193,7 +33193,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "line": 89,
+      "line": 90,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37960,21 +37960,21 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 660,
+      "line": 661,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1188,
+      "line": 1189,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1214,
+      "line": 1215,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38009,35 +38009,35 @@
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "line": 39,
+      "line": 40,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "line": 57,
+      "line": 58,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "line": 519,
+      "line": 520,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "line": 992,
+      "line": 993,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "line": 1017,
+      "line": 1018,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -41838,35 +41838,35 @@
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 245,
+      "line": 248,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 246,
+      "line": 249,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 286,
+      "line": 289,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 287,
+      "line": 290,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 299,
+      "line": 302,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

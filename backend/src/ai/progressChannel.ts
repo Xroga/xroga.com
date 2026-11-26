@@ -59,3 +59,28 @@ export function startProgressStep(message: string): ProgressStep {
   };
   return { done: (text, sources) => settle('completed', text, sources), fail: (text) => settle('failed', text) };
 }
+
+/**
+ * Reports one real piece of work around the function that does it. The result and any error pass through
+ * unchanged. This is how a kind of work reports itself: add it where the work happens.
+ */
+export async function trackProgress<T>(doing: string, done: (result: T) => string, work: () => Promise<T>): Promise<T> {
+  const step = startProgressStep(doing);
+  try {
+    const result = await work();
+    let text = doing;
+    try { text = done(result); } catch { /* The label is display only. */ }
+    step.done(text);
+    return result;
+  } catch (error) {
+    step.fail(`${doing} failed`);
+    throw error;
+  }
+}
+
+/** "GMAIL_FETCH_EMAILS" becomes "Gmail: fetch emails". Built from the tool's own name, never from its data. */
+export function connectedAppLabel(toolSlug: string): string {
+  const [app = 'app', ...action] = toolSlug.toLowerCase().split('_').filter(Boolean);
+  const name = app.charAt(0).toUpperCase() + app.slice(1);
+  return action.length ? `${name}: ${action.join(' ')}` : name;
+}

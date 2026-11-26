@@ -61,7 +61,10 @@ function kindFor(event: TerminalEvent): XrogaActivityKind {
   // Web steps carry the search words, which must not reclassify the step.
   if (/^search(?:ing|ed) (?:the web|x)\b/i.test(event.text)) return 'search';
   if (/^read(?:ing)? sources\b/i.test(event.text)) return 'read-source';
-  if (/^received d+ attached files?/i.test(event.text)) return 'read-file';
+  // Any connected app and any attached file, by the wording the progress channel uses.
+  if (/^(?:read(?:ing)? connected app|connected app .* (?:needs your approval|returned a problem))\b/i.test(event.text)) return 'connected-app-read';
+  if (/^(?:updating|sent the request to) connected app\b/i.test(event.text)) return 'connected-app-write';
+  if (/^received \d+ attached files?\b/i.test(event.text)) return 'read-file';
   if (event.canonical?.source === 'software-agent-v2') {
     if (operation === 'command.started' || operation === 'command.output' || operation === 'command.completed') return 'command';
     if (operation === 'check.started' || operation === 'check.completed') return 'test';
