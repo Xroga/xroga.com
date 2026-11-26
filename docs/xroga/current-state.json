@@ -2,10 +2,10 @@
   "version": "1.0",
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
-    "branch": "ops-integrated",
-    "sha": "ef1aa05cb2478682b2b1f2233396a10cc9119e54",
-    "sourceTimestampUtc": "2026-11-26T16:57:42+05:00",
-    "auditStartedUtc": "2026-11-26T13:40:15.456Z",
+    "branch": "",
+    "sha": "1ce2780e22c68482cd7244c338c4402b0bd151ff",
+    "sourceTimestampUtc": "2026-11-26T20:29:06+05:00",
+    "auditStartedUtc": "2026-11-26T15:32:56.245Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -148386,6 +148386,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:eeb6682b761db24a4729",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/layout-assemble.test.ts",
+      "declaredTests": 9,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:3b9262391b1e016620d5",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/ledger.test.ts",
       "declaredTests": 10,
@@ -148403,6 +148410,13 @@
       "id": "test-suite:bbad2f6ea786cc9c6676",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/macro-tool.test.ts",
       "declaredTests": 9,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:8146e09f22e18fefad65",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/media-text.test.ts",
+      "declaredTests": 15,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -148465,6 +148479,13 @@
     {
       "id": "test-suite:abdee903b453ce5e1ee0",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/pdf-format.test.ts",
+      "declaredTests": 8,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:a8c7e53e0c8d2730e84f",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/pdf-structure.test.ts",
       "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
@@ -148673,6 +148694,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:dd67d3fcb04e043f9161",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/site-map.test.ts",
+      "declaredTests": 10,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:b6fcb5ee71c742b5d92f",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/site-scan.test.ts",
       "declaredTests": 12,
@@ -148788,6 +148816,13 @@
       "id": "test-suite:4e8c713a22940968e143",
       "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/tool-selection.test.ts",
       "declaredTests": 8,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:cd331876e88eff93f30e",
+      "sourcePath": "apps/xroga-browser-extension/src/agent/__tests__/transcript-format.test.ts",
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -149074,7 +149109,7 @@
     {
       "id": "test-suite:8b5e4dae924ee4cd804d",
       "sourcePath": "apps/xroga-browser-extension/src/browser-control/core/tools/__tests__/emulate.test.ts",
-      "declaredTests": 7,
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },
