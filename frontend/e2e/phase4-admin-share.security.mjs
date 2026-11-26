@@ -162,7 +162,7 @@ test('real Share loader validates both snapshot API versions without changing te
     payload={...payload,response:`Review the exact research request before it is sent: [Review action](${review}). No live evidence has been retrieved.`+requestedCode};
     const savedReview=await f.loadShare(token);
     assert.equal(savedReview.status,'ok');
-    assert.equal(savedReview.share.response,'This search was awaiting review in Workspace.'+requestedCode);
+    assert.equal(savedReview.share.response,'This saved search has no sources.'+requestedCode);
   }finally{api.closeAllConnections();await new Promise(r=>api.close(r));}
 });
 
