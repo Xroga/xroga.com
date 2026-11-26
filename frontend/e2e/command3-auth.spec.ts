@@ -853,8 +853,11 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   pairingWorkspace.searchParams.set('conversation', architectureSession);
   pairingWorkspace.searchParams.set('browserExtension', 'abcdefghijklmnopabcdefghijklmnop');
   pairingWorkspace.searchParams.set('browserPair', '11111111-1111-4111-8111-111111111111');
+  const restoredPairingWorkspace = new URL(pairingWorkspace);
+  restoredPairingWorkspace.searchParams.delete('conversation');
   await page.goto(pairingWorkspace.href);
   await expect(renderedArchitecture.locator('.react-flow__edge')).toHaveCount(1, { timeout: 20_000 });
+  await expect(page).toHaveURL(restoredPairingWorkspace.href);
   await page.mouse.move(0, 0);
   await expect(page.getByText('Conversation restored', { exact: true })).toHaveCount(0, { timeout: 10_000 });
   const transcript = page.getByTestId('terminal-scroll');
@@ -915,7 +918,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     await expect(status).toBeHidden();
     if (mobile) await sidebar.getByRole('button', { name: 'Close sidebar', exact: true }).click();
     await expect.poll(async () => Math.abs((await transcript.boundingBox())!.y - transcriptTop)).toBeLessThanOrEqual(1);
-    await expect(page).toHaveURL(pairingWorkspace.href);
+    await expect(page).toHaveURL(restoredPairingWorkspace.href);
   }
   expect(browserOperatorRequests).toBe(0);
   expect(chatCalls).toBe(9);
