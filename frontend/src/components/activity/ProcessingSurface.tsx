@@ -76,14 +76,14 @@ function SwapText({ text, className, reduced }: { text: string; className?: stri
  * real execution events or the backend's own plan. Text and icons change only when those change, with a short fade
  * and slide. Reduced-motion users get the same content with no movement.
  */
-export function ProcessingSurface({ view, tone }: { view: ProcessingView; tone?: ProcessingTone }) {
+export function ProcessingSurface({ view, tone, listOnly = false }: { view: ProcessingView; tone?: ProcessingTone; listOnly?: boolean }) {
   const reduced = useReducedMotion() ?? false;
   const [userOpen, setUserOpen] = useState<boolean | null>(null);
   const Icon = FAMILY_ICON[view.family] ?? Brain;
   const checklist = view.checklist;
   const finished = checklist?.filter(item => item.status === 'done').length ?? 0;
   const current = checklist?.findLast(item => item.status === 'active') ?? null;
-  const showCopy = view.family !== 'start';
+  const showCopy = !listOnly && view.family !== 'start';
   const open = userOpen ?? ((checklist?.length ?? 0) <= DEFAULT_OPEN_MAX);
   const title = view.checklistSource === 'plan' ? 'Plan' : 'Progress';
   const live = (tone ?? view.tone) !== 'error' && (tone ?? view.tone) !== 'warning';

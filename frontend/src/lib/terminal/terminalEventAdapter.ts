@@ -717,7 +717,9 @@ function softwareText(
         text:
           event.title,
 
+        // Whatever the build agent reported about the file; shown only when the step is opened.
         body:
+          event.summary ??
           null,
       };
     }
@@ -890,6 +892,8 @@ export function adaptTerminalEvent(
         }),
     });
   };
+
+  if (event === 'progress' && payload.status === 'understanding_request') return rows;
 
   /*
    * Permission gates must be processed before keepalive suppression.

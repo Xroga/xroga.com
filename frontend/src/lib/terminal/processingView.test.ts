@@ -145,3 +145,13 @@ test('icon hints come from whole words, so "findings" is not a search', () => {
   assert.equal(familyFromLabel('Search the web'), 'research');
   assert.equal(familyFromLabel('Run the tests'), 'verify');
 });
+
+test('status notes read as thinking and are never listed as steps', () => {
+  const rows = ['Preparing your answer', 'Reads as a question', 'Compare both release lines first'].map(label => (
+    { ...row('understand', label, 'complete'), note: true }));
+  const view = buildProcessingView({ active: rows[2], rows });
+  assert.equal(view.heading, 'Thinking');
+  assert.equal(view.paragraph, 'Compare both release lines first.');
+  assert.equal(view.checklist, null);
+  assert.equal(view.finishedSteps, 0);
+});

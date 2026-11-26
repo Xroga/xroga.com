@@ -43,6 +43,8 @@
 .item[data-tone='stopped'] .icon { color: var(--act-ok); }
 
 .workingPanel { border: 1px solid var(--act-line); border-radius: 13px; padding: 3px; }
+.streamPanel { min-width: 0; }
+.streamPanel[data-waiting='true'] .workingHeader .icon { color: var(--act-warn); }
 .workingHeader { color: var(--act-ink); padding: 7px 9px; margin: 0; }
 .workingCopy { flex: 1; min-width: 0; display: grid; gap: 1px; }
 .workingTitle { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 7px; font-weight: 600; }
