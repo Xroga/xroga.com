@@ -26,7 +26,7 @@ describe('transitions', () => {
   });
 
   it('stays between the two pictures while it runs (plain rules never invent colours), for every rule', () => {
-    const dips = new Set(['fadecolor', 'fadegrayscale']);
+    const dips = new Set(['fadecolor', 'fadegrayscale', 'flash', 'flip', 'filmburn', 'pageturn']);
     for (const name of rules.filter(n => !dips.has(n))) {
       for (const p of [0.2, 0.5, 0.8]) {
         for (const [u, v] of grid) {

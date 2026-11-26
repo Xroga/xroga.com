@@ -150,3 +150,64 @@ describe('a 3D LUT', () => {
     expect(half[0]).toBeLessThan(145);
   });
 });
+
+describe('measuring a picture', () => {
+  const fill = (r: number, g: number, b: number, n = 400) => {
+    const p = new Uint8ClampedArray(n * 4);
+    for (let i = 0; i < n; i++) p.set([r, g, b, 255], i * 4);
+    return p;
+  };
+  it('reads exposure, clipping and crushing', async () => {
+    const { measureLook } = await import('../grade');
+    const mid = measureLook(fill(115, 115, 115), 20, 20);
+    expect(mid.mean).toBeGreaterThan(43);
+    expect(mid.mean).toBeLessThan(47);
+    expect(mid.clipped).toBe(0);
+    expect(measureLook(fill(255, 255, 255), 20, 20).clipped).toBe(100);
+    expect(measureLook(fill(0, 0, 0), 20, 20).crushed).toBe(100);
+  });
+  it('reads a warm cast in the greys, and skin', async () => {
+    const { measureLook, describeLook } = await import('../grade');
+    const warm = measureLook(fill(140, 130, 118), 20, 20);
+    expect(warm.grey).not.toBeNull();
+    expect(describeLook(warm)).toContain('lean warm');
+    const skin = measureLook(fill(205, 150, 120), 20, 20);
+    expect(skin.skin).toBe(100);
+    expect(skin.skinHue).toBeGreaterThan(10);
+  });
+  it('suggests a balance that fixes what it read', async () => {
+    const { measureLook, balanceGrade, applyGrade } = await import('../grade');
+    const dark = measureLook(fill(62, 58, 50), 20, 20);
+    const g = balanceGrade(dark)!;
+    expect(g.exposure).toBeGreaterThan(0.3);
+    expect(g.temperature).toBeLessThan(0);
+    const p = fill(62, 58, 50);
+    applyGrade(p, 20, 20, g);
+    const after = measureLook(p, 20, 20);
+    expect(after.mean).toBeGreaterThan(dark.mean + 8);
+    const castBefore = Math.abs(dark.grey!.r - dark.grey!.b);
+    const castAfter = Math.abs(after.grey!.r - after.grey!.b);
+    expect(castAfter).toBeLessThan(castBefore);
+    // a balanced picture with real range needs nothing
+    const spread = new Uint8ClampedArray(400 * 4);
+    for (let i = 0; i < 400; i++) spread.set(i % 2 ? [190, 190, 190, 255] : [40, 40, 40, 255], i * 4);
+    expect(balanceGrade(measureLook(spread, 20, 20))).toBeUndefined();
+  });
+  it('matches one shot to another', async () => {
+    const { measureLook, matchGrade } = await import('../grade');
+    const a = measureLook(fill(80, 80, 80), 20, 20);
+    const b = measureLook(fill(140, 130, 120), 20, 20);
+    const g = matchGrade(a, b)!;
+    expect(g.exposure).toBeGreaterThan(0.5);
+    expect(g.temperature).toBeGreaterThan(0);
+  });
+});
+
+describe('auto balance in a grade', () => {
+  it('is read from true or balance, and nothing else', async () => {
+    const { normalizeGrade } = await import('../grade');
+    expect(normalizeGrade({ auto: true })).toEqual({ auto: 'balance' });
+    expect(normalizeGrade({ auto: 'balance', contrast: 0.2 })).toEqual({ auto: 'balance', contrast: 0.2 });
+    expect(normalizeGrade({ auto: 'other' })).toBeUndefined();
+  });
+});

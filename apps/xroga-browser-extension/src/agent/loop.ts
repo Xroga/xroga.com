@@ -2641,7 +2641,7 @@ ${renderSkill(top)}`);
       } else {
         try {
           const [{ transcribeFile }, { describeTranscript, describeView, needsWords, clampSeconds }] = await Promise.all([import('@src/extension/transcribe'), import('./transcript-format')]);
-          const view = (['lines', 'words', 'fillers', 'pauses', 'outline'].includes(String(args.view)) ? String(args.view) : 'lines') as 'lines';
+          const view = (['lines', 'words', 'fillers', 'pauses', 'srt', 'vtt', 'outline'].includes(String(args.view)) ? String(args.view) : 'lines') as 'lines';
           const language = typeof args.language === 'string' ? args.language.trim().toLowerCase() : '';
           const result = await transcribeFile(address, { seconds: clampSeconds(args.seconds), from: typeof args.from === 'number' && args.from > 0 ? args.from : 0, words: needsWords(view), multilingual: language !== '' && !/^en/.test(language) });
           let host = 'a media file';
@@ -2664,15 +2664,16 @@ ${renderSkill(top)}`);
       const action = typeof args.action === 'string' ? args.action : '';
       if (!/^https?:\/\//i.test(address) && address !== 'recording:last') {
         outcome = { call, kind, text: 'error: media needs the address of an audio or video file on the web (https or http).', isError: true };
-      } else if (!['info', 'audio', 'beats', 'beatcuts', 'scenes', 'frames', 'cover'].includes(action)) {
-        outcome = { call, kind, text: 'error: media action must be info, audio, beats, beatcuts, scenes, frames or cover.', isError: true };
+      } else if (!['info', 'audio', 'beats', 'beatcuts', 'scenes', 'frames', 'cover', 'highlights', 'look'].includes(action)) {
+        outcome = { call, kind, text: 'error: media action must be info, audio, highlights, beats, beatcuts, scenes, frames or cover.', isError: true };
       } else {
         try {
           const [{ readMedia }, tool, analysis] = await Promise.all([import('@src/extension/media'), import('./media-tool'), import('./media-analysis')]);
           const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : undefined);
           const answer = await readMedia({
             url: address,
-            action: (action === 'beatcuts' ? 'beats' : action) as 'info',
+            action: (action === 'beatcuts' ? 'beats' : action === 'highlights' ? 'audio' : action === 'look' ? 'frames' : action) as 'info',
+            look: action === 'look',
             seconds: num(args.seconds),
             from: num(args.from),
             count: num(args.count),
@@ -2687,7 +2688,10 @@ ${renderSkill(top)}`);
           let text: string;
           let image: CallOutcome['image'] | undefined;
           if (answer.kind === 'info') text = tool.describeInfo(answer);
-          else if (answer.kind === 'audio') text = analysis.describeAudio(answer.report, { thresholdDb: num(args.thresholdDb) ?? -40, minSeconds: num(args.minSeconds) ?? 0.5, from: answer.from });
+          else if (answer.kind === 'audio' && action === 'highlights') {
+            const found = analysis.highlightRanges(answer.report.levels ?? [], { count: num(args.clips), minSeconds: num(args.minSeconds), offset: answer.from });
+            text = analysis.describeHighlights(found, answer.report.seconds, answer.from);
+          } else if (answer.kind === 'audio') text = analysis.describeAudio(answer.report, { thresholdDb: num(args.thresholdDb) ?? -40, minSeconds: num(args.minSeconds) ?? 0.5, from: answer.from });
           else if (answer.kind === 'beats' && action === 'beatcuts') {
             const { beatCutTimes } = await import('./transcript-tools');
             const clips = Math.min(60, Math.max(1, Math.floor(num(args.clips) ?? 8)));
@@ -2701,7 +2705,14 @@ ${renderSkill(top)}`);
             if (this.options.model.profile.vision) image = { data: answer.base64, mediaType: answer.mimeType, note: 'The picture embedded in the file.' };
             else text += ' This model cannot see pictures.';
           } else {
-            text = 'Contact sheet of ' + answer.times.length + ' pictures at ' + answer.times.map(analysis.clock).join(', ') + ' (numbered left to right, top to bottom)' + (answer.decoded < answer.times.length ? '; ' + (answer.times.length - answer.decoded) + ' could not be decoded.' : '.');
+            if (action === 'look' && answer.stats) {
+              const g = await import('./grade');
+              const lines = answer.stats.map((st, i) => (st ? (i + 1) + ' (' + analysis.clock(answer.times[i]!) + '): ' + g.describeLook(st, i > 0 ? answer.stats![i - 1] ?? undefined : undefined) : (i + 1) + ': not decoded'));
+              const first = answer.stats.find(Boolean);
+              const fix = first ? g.balanceGrade(first) : undefined;
+              lines.push(fix ? 'Grade that would balance the first picture, for compose_video: ' + JSON.stringify(fix) + ' (or grade: { auto: "balance" }). To match later shots to the first: take its exposure and temperature as the reference.' : 'Nothing needs balancing in the first picture.');
+              text = 'Look at ' + answer.times.length + ' pictures:\n' + lines.join('\n');
+            } else text = 'Contact sheet of ' + answer.times.length + ' pictures at ' + answer.times.map(analysis.clock).join(', ') + ' (numbered left to right, top to bottom)' + (answer.decoded < answer.times.length ? '; ' + (answer.times.length - answer.decoded) + ' could not be decoded.' : '.');
             if (this.options.model.profile.vision) image = { data: answer.base64, mediaType: 'image/jpeg', note: 'The sheet of pictures from the file, with the time of each on its label.' };
             else text += ' This model cannot see pictures: use scenes or info instead.';
           }

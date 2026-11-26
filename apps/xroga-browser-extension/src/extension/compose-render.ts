@@ -8,6 +8,7 @@ import { ShaderRunner } from './compose-shader';
 import { drawGrid } from './grid';
 import { parseCube, type Lut3D } from '@src/agent/grade';
 import { applyFx } from './audio-fx-render';
+import { cuesToWords, parseSubtitles } from '@src/agent/subtitle-format';
 import { fetchRetry, resolveAddress } from './net';
 import { buildPlayback, layerTimeOf } from '@src/agent/compose-playback';
 import { duckCurve, speechRanges, wordsOnClipTime } from '@src/agent/compose-extras';
@@ -155,6 +156,22 @@ async function prepare(raw: unknown, loadMb: () => Promise<unknown>): Promise<Pr
   for (const [ci, clip] of spec.clips.entries()) {
     for (const layer of clip.layers) {
       if (layer.type !== 'captions' || layer.words?.length) continue;
+      if (layer.subtitles) {
+        // a subtitle file: its lines become timed words on the clip's time, through the video's cuts and speed when the captions belong to a video
+        const shift = layer.subtitleOffset ?? 0;
+        const found = cuesToWords(parseSubtitles(new TextDecoder().decode(await bytesOf(layer.subtitles)))).map(w => ({ ...w, start: w.start + shift, end: w.end + shift })).filter(w => w.end > 0);
+        if (!found.length) notes.push(`clip ${ci + 1}: the subtitle file had no usable lines`);
+        const vid = clip.layers.find((l): l is Extract<Layer, { type: 'video' }> => l.type === 'video');
+        if (vid && !vid.reverse) {
+          const pb = buildPlayback({ cutFrom: vid.cutFrom, cutTo: vid.cutTo ?? videos.get(vid.url)?.duration ?? vid.cutFrom + 3600, cuts: vid.cuts, ...(vid.speedRanges ? { speedRanges: vid.speedRanges } : {}), reverse: false, speed: vid.speed ?? 1, ...(vid.freeze ? { freeze: vid.freeze } : {}) });
+          layer.words = found.flatMap(w => {
+            const a = layerTimeOf(pb, w.start, vid.speed ?? 1, false, vid.freeze);
+            const b = layerTimeOf(pb, Math.max(w.start, w.end - 0.001), vid.speed ?? 1, false, vid.freeze);
+            return a === null ? [] : [{ text: w.text, start: vid.start + a - layer.start, end: vid.start + Math.max(a + 0.05, b ?? a + 0.3) - layer.start }];
+          });
+        } else layer.words = found;
+        continue;
+      }
       const video = clip.layers.find((l): l is Extract<Layer, { type: 'video' }> => l.type === 'video');
       const src = layer.source ?? (video ? { url: video.url, from: video.cutFrom, to: video.cutTo } : undefined);
       if (!src) {

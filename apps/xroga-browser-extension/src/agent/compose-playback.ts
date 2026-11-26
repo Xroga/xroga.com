@@ -10,6 +10,34 @@ export interface SpeedRange {
   speed: number;
 }
 
+/** Named speed curves over a cut of a file: the speed at a share (0 to 1) of the cut, with straight lines between the points. The names follow the speed presets of openreel (MIT). */
+export const SPEED_PRESETS: Record<string, Array<[number, number]>> = {
+  flash: [[0, 0.5], [0.3, 4], [0.7, 4], [1, 0.5]],
+  'smooth-slow-mo': [[0, 1], [0.3, 0.3], [0.7, 0.3], [1, 1]],
+  'jump-cut': [[0, 1], [0.2, 3], [0.4, 1], [0.6, 3], [0.8, 1], [1, 3]],
+  montage: [[0, 1], [0.5, 1.5], [1, 3]],
+  'hero-moment': [[0, 1.5], [0.35, 0.2], [0.65, 0.2], [1, 1.5]],
+  'bullet-time': [[0, 2], [0.4, 0.1], [0.6, 0.1], [1, 2]],
+  'speed-up': [[0, 1], [1, 2.5]],
+  'slow-down': [[0, 1], [1, 0.4]],
+};
+
+/** A named curve as speed ranges over the file seconds from..to: the cut is divided into steps, each at the speed of the curve at its middle. */
+export function presetRanges(name: string, from: number, to: number, steps = 16): SpeedRange[] {
+  const curve = SPEED_PRESETS[name];
+  if (!curve || to - from < 0.2) return [];
+  const speedAt = (u: number): number => {
+    for (let i = 1; i < curve.length; i++) {
+      const [x1, y1] = curve[i]!;
+      const [x0, y0] = curve[i - 1]!;
+      if (u <= x1) return y0 + ((y1 - y0) * (u - x0)) / Math.max(1e-9, x1 - x0);
+    }
+    return curve[curve.length - 1]![1];
+  };
+  const n = Math.max(2, Math.min(40, steps));
+  return Array.from({ length: n }, (_, i) => ({ start: from + ((to - from) * i) / n, end: from + ((to - from) * (i + 1)) / n, speed: Math.round(speedAt((i + 0.5) / n) * 1000) / 1000 }));
+}
+
 export interface PlaybackInput {
   cutFrom: number;
   cutTo: number;

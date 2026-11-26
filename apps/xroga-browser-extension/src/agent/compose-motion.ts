@@ -3,7 +3,10 @@
 // they stay attached to the edges of the clip); the code is written fresh and tested alone.
 export type MotionProp = 'x' | 'y' | 'scale' | 'rotation' | 'opacity';
 export const MOTION_PROPS: readonly MotionProp[] = ['x', 'y', 'scale', 'rotation', 'opacity'];
-export type KeyEasing = 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'hold';
+import { isEasing, resolveEasing } from './easing';
+
+/** linear, hold, ease-in, ease-out, ease-in-out (gentle, quadratic), or any name of src/agent/easing.ts (ease-out-back, ease-in-out-cubic, spring, …). */
+export type KeyEasing = string;
 export interface Keyframe {
   /** Seconds into the layer's run. */
   time: number;
@@ -44,6 +47,8 @@ export function keyEase(easing: KeyEasing, p: number): number {
       return p < 0.5 ? 2 * p * p : 1 - 2 * (1 - p) * (1 - p);
     case 'hold':
       return 0;
+    default:
+      return (resolveEasing(easing) ?? ((x: number) => (x < 0.5 ? 2 * x * x : 1 - 2 * (1 - x) * (1 - x))))(p);
   }
 }
 
@@ -119,12 +124,11 @@ export function motionAt(layer: { keyframes?: Keyframes; animIn?: PresetUse; ani
 export function keyframesFromList(raw: unknown, span: number): Keyframes | undefined {
   if (!Array.isArray(raw)) return undefined;
   const out: Keyframes = {};
-  const easings: KeyEasing[] = ['linear', 'ease-in', 'ease-out', 'ease-in-out', 'hold'];
   for (const item of raw.slice(0, 40)) {
     const e = (item ?? {}) as Record<string, unknown>;
     const at = typeof e.at === 'number' && Number.isFinite(e.at) ? clamp(e.at, 0, Math.max(span, 0.001) * 1000) : undefined;
     if (at === undefined) continue;
-    const easing = easings.includes(e.easing as KeyEasing) ? (e.easing as KeyEasing) : 'ease-in-out';
+    const easing = typeof e.easing === 'string' && (e.easing === 'hold' || isEasing(e.easing)) ? e.easing : 'ease-in-out';
     for (const prop of MOTION_PROPS) {
       const v = e[prop];
       if (typeof v === 'number' && Number.isFinite(v)) (out[prop] ??= []).push({ time: at, value: clamp(v, -10, prop === 'rotation' ? 3600 : 10), easing });

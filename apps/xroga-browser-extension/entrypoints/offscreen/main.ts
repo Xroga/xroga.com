@@ -420,7 +420,7 @@ async function decodeSound(mb: Mb, track: MbTrack, from: number, seconds: number
   return { channels: out, rate };
 }
 
-async function mediaWork(url: string, action: string, o: { from: number; seconds: number; count: number; times?: number[]; width: number; grid?: boolean; thresholdDb: number; minSeconds: number }) {
+async function mediaWork(url: string, action: string, o: { from: number; seconds: number; count: number; times?: number[]; width: number; grid?: boolean; look?: boolean; thresholdDb: number; minSeconds: number }) {
   const mb = (await import(/* @vite-ignore */ chrome.runtime.getURL('media/mediabunny.min.mjs'))) as unknown as Mb;
   const A = await import('@src/agent/media-analysis');
   const { input, bytes } = await openMedia(mb, url);
@@ -467,7 +467,7 @@ async function mediaWork(url: string, action: string, o: { from: number; seconds
       const env = A.computeEnvelope(mono, rate, 0.05);
       let sum = 0;
       for (let i = 0; i < mono.length; i++) sum += mono[i]! * mono[i]!;
-      const report = { seconds, sampleRate: rate, channels: channels.length, loudnessLufs: A.integratedLoudness(channels, rate), peakDb: A.samplePeakDb(channels), rmsDb: Math.round(A.toDb(Math.sqrt(sum / Math.max(1, mono.length))) * 10) / 10, silences: A.detectSilences(env, { thresholdDb: o.thresholdDb, minSeconds: o.minSeconds }), line: A.waveformLine(env, 60) };
+      const report = { seconds, sampleRate: rate, channels: channels.length, loudnessLufs: A.integratedLoudness(channels, rate), peakDb: A.samplePeakDb(channels), rmsDb: Math.round(A.toDb(Math.sqrt(sum / Math.max(1, mono.length))) * 10) / 10, silences: A.detectSilences(env, { thresholdDb: o.thresholdDb, minSeconds: o.minSeconds }), line: A.waveformLine(env, 60), levels: A.windowLevels(env, 1).slice(0, 700) };
       return { kind: 'audio', from, report: { ...report, silences: report.silences.map(x => ({ start: Math.round((x.start + from) * 100) / 100, end: Math.round((x.end + from) * 100) / 100 })) } };
     }
     const video = await input.getPrimaryVideoTrack();
@@ -511,6 +511,8 @@ async function mediaWork(url: string, action: string, o: { from: number; seconds
       ctx.font = '13px sans-serif';
       ctx.textBaseline = 'middle';
       const got: number[] = [];
+      const stats: Array<import('@src/agent/grade').LookStats | null> = [];
+      const measure = o.look ? await import('@src/agent/grade') : undefined;
       for (let i = 0; i < stamps.length; i++) {
         const frame = await sink.getCanvas(Math.min(Math.max(0, stamps[i]!), Math.max(0, duration - 0.05)));
         const x = (i % cols) * w;
@@ -518,13 +520,15 @@ async function mediaWork(url: string, action: string, o: { from: number; seconds
         if (frame) {
           ctx.drawImage(frame.canvas, x, y + label);
           if (o.grid) (await import('@src/extension/grid')).drawGrid(ctx, x, y + label, w, h);
+          if (measure) stats.push(measure.measureLook(ctx.getImageData(x, y + label, w, h).data, w, h));
           got.push(Math.round(frame.timestamp * 100) / 100);
         }
         ctx.fillStyle = '#fff';
         ctx.fillText(`${i + 1}  ${Math.round(stamps[i]! * 10) / 10} s`, x + 4, y + label / 2);
+        if (measure && stats.length <= i) stats.push(null);
       }
       const blob = await sheet.convertToBlob({ type: 'image/jpeg', quality: 0.8 });
-      return { kind: 'frames', base64: await blobToBase64(blob), width: sheet.width, height: sheet.height, times: stamps.map(t => Math.round(t * 100) / 100), decoded: got.length };
+      return { kind: 'frames', base64: await blobToBase64(blob), width: sheet.width, height: sheet.height, times: stamps.map(t => Math.round(t * 100) / 100), decoded: got.length, ...(measure ? { stats } : {}) };
     }
     throw new Error('unknown action ' + action);
   } finally {
@@ -630,6 +634,7 @@ chrome.runtime.onMessage.addListener((message, _sender, reply) => {
         times: Array.isArray(message.times) ? (message.times as unknown[]).filter((t): t is number => typeof t === 'number' && t >= 0).slice(0, 24) : undefined,
         width: Math.min(640, Math.max(96, Math.floor(n(message.width, 320)))),
         grid: message.grid === true,
+        look: message.look === true,
         thresholdDb: Math.min(-10, Math.max(-90, n(message.thresholdDb, -40))),
         minSeconds: Math.min(30, Math.max(0.1, n(message.minSeconds, 0.5))),
       }),

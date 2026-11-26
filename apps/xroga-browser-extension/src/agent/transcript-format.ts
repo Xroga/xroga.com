@@ -3,6 +3,7 @@
 // description and the formatting of the result. The idea of local speech recognition with timestamps comes from the studied video-editing donors
 // (openreel, openfilm, Opencut); written fresh.
 import type { AgentTool } from './tools';
+import { cuesToFile } from './subtitle-format';
 import { chapterText, chapterWarnings, findFillers, findPauses, groupIntoBlocks, keepSegments, wordsToCues, ffmetadataChapters, type TimedWord } from './transcript-tools';
 
 export const TRANSCRIBE_TOOL: AgentTool = {
@@ -10,14 +11,14 @@ export const TRANSCRIBE_TOOL: AgentTool = {
   source: 'agent',
   group: 'reading',
   description:
-    'Turn the speech in an audio or video file (mp3, wav, m4a, ogg, mp4, webm) at a web address into text with times, read on this device (first use downloads a small speech model, about 40 MB). seconds limits how much is read (default 300, at most 1800) and from says where to start, so a long file is read in parts; find lists only the lines with a word; language is english (default, fast) or any other for the multilingual model. view: lines (default), words (every word with its time), fillers (the um and uh to cut, with the ranges and the keep list for a video), pauses (silences between words of minGap seconds or more, default 0.6, with padded ranges to cut), outline (blocks of 20 to 60 s to choose chapters from). Reads no picture of a video, only its sound.',
+    'Turn the speech in an audio or video file (mp3, wav, m4a, ogg, mp4, webm) at a web address into text with times, read on this device (first use downloads a small speech model, about 40 MB). seconds limits how much is read (default 300, at most 1800) and from says where to start, so a long file is read in parts; find lists only the lines with a word; language is english (default, fast) or any other for the multilingual model. view: lines (default), words (every word with its time), fillers (the um and uh to cut, with the ranges and the keep list for a video), pauses (silences between words of minGap seconds or more, default 0.6, with padded ranges to cut), srt or vtt (the speech as a subtitle file), outline (blocks of 20 to 60 s to choose chapters from). Reads no picture of a video, only its sound.',
   parameters: {
     type: 'object',
     properties: {
       url: { type: 'string', maxLength: 2000 },
       seconds: { type: 'number' },
       from: { type: 'number' },
-      view: { type: 'string', enum: ['lines', 'words', 'fillers', 'pauses', 'outline'] },
+      view: { type: 'string', enum: ['lines', 'words', 'fillers', 'pauses', 'srt', 'vtt', 'outline'] },
       repeats: { type: 'boolean' },
       minGap: { type: 'number' },
       find: { type: 'string', maxLength: 200 },
@@ -112,7 +113,7 @@ export function describeTranscript(result: TranscriptResult, options: { find?: s
 
 const stamp = (t: number) => clock(t);
 
-export type TranscriptView = 'lines' | 'words' | 'fillers' | 'pauses' | 'outline';
+export type TranscriptView = 'lines' | 'words' | 'fillers' | 'pauses' | 'srt' | 'vtt' | 'outline';
 
 /** The views that need a time for every word. */
 export const needsWords = (view: TranscriptView): boolean => view !== 'lines';
@@ -140,6 +141,10 @@ export function describeView(result: TranscriptResult, view: TranscriptView, opt
       `${ranges.length} ranges to remove (${total.toFixed(1)} s in all), in seconds of the file: ${JSON.stringify(ranges.slice(0, 60))}`,
       `What stays, as pieces of the file (use one video layer per piece, with cutFrom and cutTo, in compose_video): ${JSON.stringify(keep.slice(0, 60))}`,
     ].join('\n');
+  }
+  if (view === 'srt' || view === 'vtt') {
+    const file = cuesToFile(wordsToCues(words, { maxChars: 42, maxDuration: 6 }), view);
+    return `${head}\nSubtitle file (${view.toUpperCase()}), ready to save or to give to compose_video as captions subtitles:\n${file.length > 12000 ? file.slice(0, 12000) + '\n… (cut: read a shorter part with seconds and from)' : file}`;
   }
   if (view === 'pauses') {
     const { pauses, ranges } = findPauses(words, { minGap: options.minGap });

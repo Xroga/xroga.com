@@ -384,6 +384,8 @@ export interface AudioReport {
   rmsDb: number;
   silences: Range[];
   line: string;
+  /** Level in dB for each second of the part read (for finding highlights). */
+  levels?: number[];
 }
 
 export function describeAudio(r: AudioReport, options: { thresholdDb: number; minSeconds: number; from?: number }): string {
@@ -409,4 +411,87 @@ export function describeScenes(cuts: number[], seconds: number, sampled: number,
   const part = from ? `${clock(seconds)} from ${clock(from)}` : clock(seconds);
   if (!cuts.length) return `No cut found in ${part} (${sampled} frames compared): one continuous shot, or only slow changes.`;
   return `${cuts.length} cut${cuts.length === 1 ? '' : 's'} in ${part} (${sampled} frames compared): ${cuts.slice(0, 80).map(clock).join(', ')}${cuts.length > 80 ? ', …' : ''}. Shots: ${cuts.length + 1}.`;
+}
+
+/** Level in dB for each window of `seconds` (the root of the mean square of the envelope inside it), for finding the moments that stand out. */
+export function windowLevels(env: Envelope, seconds = 1): number[] {
+  const per = Math.max(1, Math.round(seconds / env.windowSec));
+  const out: number[] = [];
+  for (let i = 0; i < env.rms.length; i += per) {
+    let sum = 0;
+    let n = 0;
+    for (let j = i; j < Math.min(env.rms.length, i + per); j++) {
+      sum += env.rms[j]! * env.rms[j]!;
+      n++;
+    }
+    out.push(round(toDb(Math.sqrt(sum / Math.max(1, n))), 1));
+  }
+  return out;
+}
+
+export interface Highlight {
+  start: number;
+  end: number;
+  /** dB above the typical level of the file at the peak of this stretch. */
+  above: number;
+}
+
+/**
+ * The stretches that stand out in a sound: loud moments (applause, a shout, a drop, an emphatic line) found as peaks of the level over `window`-second steps, each grown outward while it stays
+ * well above the typical level, kept between `minSeconds` and `maxSeconds`, and never overlapping. The idea (cut the clips worth keeping out of a long recording from how the sound moves)
+ * comes from openreel's highlight analyser (MIT); written fresh. `offset` is where the part read starts in the file.
+ */
+export function highlightRanges(levels: readonly number[], options: { window?: number; count?: number; minSeconds?: number; maxSeconds?: number; offset?: number } = {}): Highlight[] {
+  const window = options.window ?? 1;
+  const count = Math.max(1, Math.min(20, options.count ?? 5));
+  const minLen = Math.max(1, Math.round((options.minSeconds ?? 4) / window));
+  const maxLen = Math.max(minLen, Math.round((options.maxSeconds ?? 20) / window));
+  const offset = options.offset ?? 0;
+  const live = levels.filter(l => l > -80);
+  if (live.length < minLen) return [];
+  const median = [...live].sort((a, b) => a - b)[Math.floor(live.length / 2)]!;
+  // smooth over three windows so one click or a cough does not win
+  const smooth = levels.map((_, i) => {
+    const a = levels[Math.max(0, i - 1)]!;
+    const b = levels[i]!;
+    const c = levels[Math.min(levels.length - 1, i + 1)]!;
+    return (a + b + c) / 3;
+  });
+  const taken = new Array<boolean>(levels.length).fill(false);
+  const out: Highlight[] = [];
+  while (out.length < count) {
+    let peak = -1;
+    for (let i = 0; i < smooth.length; i++) if (!taken[i] && (peak < 0 || smooth[i]! > smooth[peak]!)) peak = i;
+    if (peak < 0 || smooth[peak]! - median < 3) break;
+    const floor = median + (smooth[peak]! - median) * 0.5;
+    let lo = peak;
+    let hi = peak;
+    while (hi - lo + 1 < maxLen) {
+      const left = lo > 0 && !taken[lo - 1] && smooth[lo - 1]! >= floor;
+      const right = hi < smooth.length - 1 && !taken[hi + 1] && smooth[hi + 1]! >= floor;
+      if (!left && !right) break;
+      if (left && (!right || smooth[lo - 1]! >= smooth[hi + 1]!)) lo--;
+      else hi++;
+    }
+    // too short: take a little of what is around it
+    while (hi - lo + 1 < minLen) {
+      const canL = lo > 0 && !taken[lo - 1];
+      const canR = hi < smooth.length - 1 && !taken[hi + 1];
+      if (!canL && !canR) break;
+      if (canL && (!canR || smooth[lo - 1]! >= smooth[hi + 1]!)) lo--;
+      else hi++;
+    }
+    for (let i = Math.max(0, lo - 1); i <= Math.min(taken.length - 1, hi + 1); i++) taken[i] = true;
+    if (hi - lo + 1 >= minLen) out.push({ start: round(offset + lo * window, 1), end: round(offset + (hi + 1) * window, 1), above: round(smooth[peak]! - median, 1) });
+  }
+  return out.sort((a, b) => a.start - b.start);
+}
+
+export function describeHighlights(found: Highlight[], seconds: number, from: number): string {
+  if (!found.length) return `No moment stands out in the ${clock(seconds)} read${from ? ` from ${clock(from)}` : ''}: the level stays about the same throughout.`;
+  return [
+    `${found.length} moment${found.length === 1 ? '' : 's'} stand out in the sound (louder than the rest of the file), in the file's own time:`,
+    ...found.map(h => `- ${clock(h.start)}–${clock(h.end)} (${(h.end - h.start).toFixed(0)} s, ${h.above} dB above the usual level)`),
+    'To keep them as a short video: one video layer per range with cutFrom and cutTo in compose_video (or listen with transcribe from the start of each).',
+  ].join('\n');
 }

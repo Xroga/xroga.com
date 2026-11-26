@@ -19,7 +19,7 @@ export interface Assets {
   shader(fragment: string, time: number, progress: number): Picture;
 }
 
-import { applyGrade, type Grade, type Lut3D } from '@src/agent/grade';
+import { applyGrade, balanceGrade, measureLook, type Grade, type Lut3D } from '@src/agent/grade';
 
 type Ctx = OffscreenCanvasRenderingContext2D;
 type Box = { x: number; y: number; w: number; h: number };
@@ -63,9 +63,26 @@ function fitRect(pw: number, ph: number, box: Box, mode: ResizeMode, scale: numb
 /** A picture into a box by a resize mode; "contain-blur" lays a blurred, dimmed cover of the same picture behind it. */
 const gradeScratch = new Map<string, OffscreenCanvas>();
 const gradedStill = new WeakMap<object, Picture>();
+const autoGrades = new WeakMap<object, Grade>();
+
+/** A grade with auto: balance becomes the grade that puts the picture right, measured once from the picture (a dark first frame is not kept: it is measured again on a later one). */
+function withAuto(pic: Picture, grade: Grade, key?: object): Grade {
+  if (!grade.auto) return grade;
+  const kept = key ? autoGrades.get(key) : undefined;
+  if (kept) return kept;
+  const small = new OffscreenCanvas(96, 54);
+  const sc = small.getContext('2d', { willReadFrequently: true })!;
+  sc.drawImage(pic, 0, 0, 96, 54);
+  const stats = measureLook(sc.getImageData(0, 0, 96, 54).data, 96, 54);
+  const { auto: _auto, ...own } = grade;
+  const merged: Grade = { ...(stats.mean > 3 ? balanceGrade(stats) : undefined), ...own };
+  if (key && stats.mean > 3) autoGrades.set(key, merged);
+  return merged;
+}
 
 /** A picture with a grade applied, on a canvas of its own (one per size and slot, so two graded pictures in one frame do not overwrite each other). */
-function graded(pic: Picture, grade: Grade, assets: Assets, at: number, slot: string, owner?: object): Picture {
+function graded(pic: Picture, grade0: Grade, assets: Assets, at: number, slot: string, owner?: object, autoKey?: object): Picture {
+  const grade = withAuto(pic, grade0, owner ?? autoKey);
   // a still picture with a steady grade is graded once
   const steady = owner && !grade.grain;
   if (steady) {
@@ -426,7 +443,7 @@ async function drawLayer(ctx: Ctx, layer: Layer, at: number, clipDuration: numbe
     }
     case 'video': {
       const pic = await assets.frame(layer.url, layer.resizeMode, playbackOf(layer).sourceAt(Math.max(0, local)));
-      if (pic) drawPicture(ctx, layer.grade ? graded(pic, layer.grade, assets, at, 'video' + (layer.start | 0)) : pic, boxOf(layer.rect, W, H), layer.resizeMode, 1, 0, layer.frame);
+      if (pic) drawPicture(ctx, layer.grade ? graded(pic, layer.grade, assets, at, 'video' + (layer.start | 0), undefined, layer) : pic, boxOf(layer.rect, W, H), layer.resizeMode, 1, 0, layer.frame);
       return;
     }
     case 'adjustment': {

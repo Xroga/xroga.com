@@ -9,7 +9,7 @@ export type MediaAnswer =
   | { kind: 'beats'; from: number; seconds: number; beats: Beats }
   | { kind: 'scenes'; from: number; seconds: number; sampled: number; cuts: number[] }
   | { kind: 'cover'; base64: string; mimeType: string; bytes: number }
-  | { kind: 'frames'; base64: string; width: number; height: number; times: number[]; decoded: number };
+  | { kind: 'frames'; base64: string; width: number; height: number; times: number[]; decoded: number; stats?: Array<import('@src/agent/grade').LookStats | null> };
 
 export interface MediaRequest {
   url: string;
@@ -20,6 +20,7 @@ export interface MediaRequest {
   times?: number[];
   width?: number;
   grid?: boolean;
+  look?: boolean;
   thresholdDb?: number;
   minSeconds?: number;
 }

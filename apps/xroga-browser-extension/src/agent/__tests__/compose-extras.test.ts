@@ -187,3 +187,26 @@ describe('fx on sounds in a spec', () => {
     expect(a!.fx?.gain).toBe(-6);
   });
 });
+
+describe('named speed curves', () => {
+  it('turn into ranges over the cut, slow in the middle for a hero moment', async () => {
+    const { presetRanges } = await import('../compose-playback');
+    const r = presetRanges('hero-moment', 10, 20, 10);
+    expect(r).toHaveLength(10);
+    expect(r[0]!.start).toBe(10);
+    expect(r[9]!.end).toBe(20);
+    expect(Math.min(...r.map(x => x.speed))).toBeLessThanOrEqual(0.25);
+    expect(r[0]!.speed).toBeGreaterThan(r[4]!.speed);
+    expect(presetRanges('nonsense', 0, 10)).toEqual([]);
+  });
+  it('are expanded when the length of the file is known, and explicit ranges win', async () => {
+    const { normalizeSpec, resolveDurations } = await import('../compose-spec');
+    const r = normalizeSpec({ clips: [{ layers: [{ type: 'video', url: 'https://example.com/a.mp4', cutTo: 10, speedPreset: 'hero-moment' }, { type: 'video', url: 'https://example.com/b.mp4', cutTo: 10, speedPreset: 'montage', speedRanges: [{ from: 0, to: 5, speed: 2 }] }] }] });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const done = resolveDurations(r.spec, () => 10);
+    const [a, b] = done.clips[0]!.layers as Array<{ speedRanges?: unknown[] }>;
+    expect(a!.speedRanges!.length).toBeGreaterThan(8);
+    expect(b!.speedRanges).toHaveLength(1);
+  });
+});

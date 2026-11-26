@@ -129,3 +129,22 @@ describe('bars', () => {
     expect(describeBeats(out, seconds)).toContain('Bars (4/4) probably start at');
   });
 });
+
+describe('highlights', () => {
+  it('finds the loud stretches, keeps them apart and in range', async () => {
+    const { highlightRanges, windowLevels, computeEnvelope } = await import('../media-analysis');
+    const levels = Array.from({ length: 120 }, (_, i) => (i >= 20 && i < 32 ? -10 : i >= 80 && i < 86 ? -14 : -35));
+    const found = highlightRanges(levels, { count: 3, minSeconds: 4, maxSeconds: 15 });
+    expect(found).toHaveLength(2);
+    expect(found[0]!.start).toBeGreaterThanOrEqual(18);
+    expect(found[0]!.end).toBeLessThanOrEqual(35);
+    expect(found[1]!.start).toBeGreaterThanOrEqual(78);
+    expect(found[0]!.end).toBeLessThan(found[1]!.start);
+    for (const h of found) expect(h.end - h.start).toBeLessThanOrEqual(15);
+    expect(highlightRanges(Array(60).fill(-30))).toEqual([]);
+    expect(highlightRanges([-30, -30])).toEqual([]);
+    const env = computeEnvelope(new Float32Array(16000 * 3).fill(0.1), 16000);
+    expect(windowLevels(env, 1)).toHaveLength(3);
+    expect(windowLevels(env, 1)[0]).toBeCloseTo(-20, 0);
+  });
+});

@@ -246,6 +246,84 @@ const RULES: Record<string, Rule> = {
     const l = luma(c.to(u, v));
     return l < c.progress ? c.to(u, v) : c.from(u, v);
   },
+  // more kinds (the set of openreel's transitions: flash, glitch, whip pan, blinds, diamond, spin, flip, colour split, film burn, page turn), each a pixel rule written fresh
+  flash: (u, v, c) => {
+    const white: Rgba = [1, 1, 1, 1];
+    const p = c.progress;
+    return p < 0.5 ? mix(c.from(u, v), white, smooth(0, 1, p * 2)) : mix(white, c.to(u, v), smooth(0, 1, (p - 0.5) * 2));
+  },
+  glitch: (u, v, c) => {
+    const p = c.progress;
+    const band = Math.floor(v * 24);
+    const r = hash(band, 3);
+    const shift = (hash(band, 7) - 0.5) * 0.25 * Math.sin(p * Math.PI);
+    const src = p > r * 0.8 + 0.1 ? c.to : c.from;
+    // the red and blue pictures slip apart a little in each band
+    const a = src(clamp(u + shift), v);
+    const b = src(clamp(u - shift * 0.5), v);
+    return [a[0], src(u, v)[1], b[2], a[3]];
+  },
+  whippan: (u, v, c) => {
+    const p = c.progress;
+    const blur = Math.sin(p * Math.PI) * 0.12;
+    const n = 9;
+    let r = 0;
+    let g = 0;
+    let b = 0;
+    for (let i = 0; i < n; i++) {
+      const x = u + p + (i / (n - 1) - 0.5) * blur;
+      const col = x <= 1 ? c.from(clamp(x), v) : c.to(clamp(x - 1), v);
+      r += col[0];
+      g += col[1];
+      b += col[2];
+    }
+    return [r / n, g / n, b / n, 1];
+  },
+  blinds: (u, v, c) => {
+    const n = 8;
+    const frac = (v * n) % 1;
+    return frac < c.progress ? c.to(u, v) : c.from(u, v);
+  },
+  diamond: (u, v, c) => (Math.abs(u - 0.5) + Math.abs(v - 0.5) < c.progress * 1.0001 ? c.to(u, v) : c.from(u, v)),
+  spin: (u, v, c) => {
+    const p = c.progress;
+    const a = p * Math.PI * 1.5;
+    const k = 1 + p * 0.6;
+    const x = (u - 0.5) * c.ratio;
+    const y = v - 0.5;
+    const rx = (x * Math.cos(a) + y * Math.sin(a)) / k / c.ratio + 0.5;
+    const ry = (-x * Math.sin(a) + y * Math.cos(a)) / k + 0.5;
+    const out = c.from(clamp(rx), clamp(ry));
+    return mix(out, c.to(u, v), smooth(0.35, 0.85, p));
+  },
+  flip: (u, v, c) => {
+    const p = c.progress;
+    const s = Math.max(1e-3, Math.abs(Math.cos(p * Math.PI)));
+    const x = (u - 0.5) / s + 0.5;
+    if (x < 0 || x > 1) return BLACK;
+    return p < 0.5 ? c.from(x, v) : c.to(x, v);
+  },
+  colorsplit: (u, v, c) => {
+    const p = c.progress;
+    const d = Math.sin(p * Math.PI) * 0.03;
+    const at = (x: number) => mix(c.from(clamp(x), v), c.to(clamp(x), v), p);
+    return [at(u + d)[0], at(u)[1], at(u - d)[2], 1];
+  },
+  filmburn: (u, v, c) => {
+    const p = c.progress;
+    const base = mix(c.from(u, v), c.to(u, v), smooth(0.3, 0.7, p));
+    const glow = Math.pow(Math.sin(p * Math.PI), 2) * (0.6 + 0.4 * hash(Math.floor(u * 6), Math.floor(v * 6)));
+    return [clamp(base[0] + glow * 0.9), clamp(base[1] + glow * 0.45), clamp(base[2] + glow * 0.1), 1];
+  },
+  pageturn: (u, v, c) => {
+    const p = c.progress;
+    const edge = 1 - p;
+    if (u < edge) return c.from(u, v);
+    // beyond the fold the next page shows, shaded near the fold
+    const d = (u - edge) / 0.08;
+    const shade = d < 1 ? 0.45 * (1 - d) * Math.sin(p * Math.PI) : 0;
+    return mix(c.to(u, v), BLACK, shade);
+  },
 };
 
 export const TRANSITION_NAMES = Object.keys(RULES).concat(['dummy', 'cut']).sort();

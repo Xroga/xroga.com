@@ -17,6 +17,8 @@ export interface Lut3D {
 }
 
 export interface Grade {
+  /** balance: measure the picture when it is first drawn and set exposure, white balance and (when flat) contrast to put it right; what the grade names beside it wins. */
+  auto?: 'balance';
   exposure?: number;
   temperature?: number;
   tint?: number;
@@ -80,6 +82,7 @@ export function normalizeGrade(raw: unknown): Grade | undefined {
   const g: Grade = { ...base };
   for (const key of ['exposure', 'temperature', 'tint', 'brightness', 'contrast', 'saturation'] as const) if (typeof r[key] === 'number') g[key] = num(r[key], 0, key === 'exposure' ? -3 : -1, key === 'exposure' ? 3 : 1);
   if (typeof r.hue === 'number') g.hue = num(r.hue, 0, -180, 180);
+  if (r.auto === true || r.auto === 'balance') g.auto = 'balance';
   if (typeof r.sharpen === 'number') g.sharpen = num(r.sharpen, 0, 0, 1);
   const w = r.wheels as Record<string, unknown> | undefined;
   if (w && typeof w === 'object') {
@@ -440,4 +443,139 @@ export function applyGrade(px: Uint8ClampedArray, width: number, height: number,
       px[i + 3] = alpha * 255;
     }
   }
+}
+
+// --- measuring a picture ---------------------------------------------------------------------------
+
+export interface LookStats {
+  /** Luma 0..100 (IRE): the 5th and 95th percentile and the mean. */
+  p5: number;
+  mean: number;
+  p95: number;
+  /** Share of pixels at or near white and at or near black, 0..100. */
+  clipped: number;
+  crushed: number;
+  /** Mean saturation 0..100. */
+  saturation: number;
+  /** What the nearly grey pixels average to, 0..1 per channel (a white balance reading); null when there are none. */
+  grey: Rgb | null;
+  /** Share of pixels with a skin hue, and the mean hue of them in degrees. */
+  skin: number;
+  skinHue: number | null;
+}
+
+/** Reads exposure, clipping, white balance, saturation and skin from RGBA pixels (a small copy of the picture is enough). The measures follow what the colour tool of openfilm (MIT) reports. */
+export function measureLook(px: Uint8ClampedArray, width: number, height: number): LookStats {
+  const n = width * height;
+  const hist = new Uint32Array(256);
+  let sum = 0;
+  let clipped = 0;
+  let crushed = 0;
+  let sat = 0;
+  let gr = 0;
+  let gg = 0;
+  let gb = 0;
+  let greyN = 0;
+  let skin = 0;
+  let skinHue = 0;
+  for (let i = 0; i < n; i++) {
+    const r = px[i * 4]! / 255;
+    const g = px[i * 4 + 1]! / 255;
+    const b = px[i * 4 + 2]! / 255;
+    const y = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    hist[Math.round(y * 255)]!++;
+    sum += y;
+    if (y >= 0.98) clipped++;
+    if (y <= 0.02) crushed++;
+    const [h, s, l] = toHsl(r, g, b);
+    sat += s;
+    if (s < 0.14 && l > 0.2 && l < 0.85) {
+      gr += r;
+      gg += g;
+      gb += b;
+      greyN++;
+    }
+    if (h >= 8 && h <= 45 && s >= 0.2 && s <= 0.7 && l >= 0.25 && l <= 0.8) {
+      skin++;
+      skinHue += h;
+    }
+  }
+  const percentile = (q: number): number => {
+    let acc = 0;
+    const target = q * n;
+    for (let v = 0; v < 256; v++) {
+      acc += hist[v]!;
+      if (acc >= target) return v / 255;
+    }
+    return 1;
+  };
+  const pct = (x: number) => Math.round(x * 1000) / 10;
+  return {
+    p5: pct(percentile(0.05)),
+    mean: pct(sum / n),
+    p95: pct(percentile(0.95)),
+    clipped: pct(clipped / n),
+    crushed: pct(crushed / n),
+    saturation: pct(sat / n),
+    grey: greyN > n * 0.01 ? { r: gr / greyN, g: gg / greyN, b: gb / greyN } : null,
+    skin: pct(skin / n),
+    skinHue: skin > n * 0.01 ? Math.round(skinHue / skin) : null,
+  };
+}
+
+/** What is off in a picture, in words, with the reading behind each line. */
+export function describeLook(s: LookStats, previous?: LookStats): string {
+  const out: string[] = [`exposure: mean ${s.mean} IRE, shadows ${s.p5}, highlights ${s.p95}`];
+  if (s.clipped > 2) out.push(`! ${s.clipped} % of the picture is clipped to white`);
+  if (s.crushed > 4) out.push(`! ${s.crushed} % is crushed to black`);
+  if (s.p95 - s.p5 < 35) out.push('! flat: little between the darkest and the lightest');
+  if (s.mean < 25) out.push('! dark');
+  if (s.mean > 70) out.push('! bright');
+  if (s.grey) {
+    const cast = (s.grey.r - s.grey.b) / Math.max(0.05, (s.grey.r + s.grey.b) / 2);
+    out.push(Math.abs(cast) < 0.06 ? 'white balance: greys are grey' : `! white balance: greys lean ${cast > 0 ? 'warm (orange)' : 'cool (blue)'} by ${Math.round(Math.abs(cast) * 100)} %`);
+  } else out.push('white balance: nothing nearly grey to read');
+  out.push(`saturation ${s.saturation} %${s.saturation > 65 ? ' (very saturated)' : s.saturation < 8 ? ' (almost no colour)' : ''}`);
+  if (s.skin > 1) out.push(`skin tones in ${s.skin} % of the picture${s.skinHue !== null && (s.skinHue < 14 || s.skinHue > 35) ? `, hue ${s.skinHue}° (off the usual 15–30°)` : ''}`);
+  if (previous) {
+    const jump = Math.abs(s.mean - previous.mean);
+    if (jump > 12) out.push(`! brightness jumps by ${Math.round(jump)} IRE from the shot before`);
+  }
+  return out.join('; ');
+}
+
+/**
+ * A grade that balances a picture: exposure so the middle sits near 45 IRE (never pushing highlights into clipping), the white balance of nearly grey pixels made neutral, and a little
+ * contrast when the picture is flat. Returns undefined when nothing needs doing.
+ */
+export function balanceGrade(s: LookStats): Grade | undefined {
+  const g: Grade = {};
+  if (s.mean > 3 && Math.abs(s.mean - 45) > 6) {
+    let stops = Math.log2(45 / s.mean);
+    if (stops > 0 && s.p95 > 85) stops = Math.min(stops, Math.max(0, Math.log2(95 / s.p95)));
+    g.exposure = Math.round(Math.min(1.5, Math.max(-1.5, stops)) * 100) / 100;
+  }
+  if (s.grey) {
+    const avg = (s.grey.r + s.grey.b) / 2;
+    const cast = (s.grey.r - s.grey.b) / Math.max(0.05, avg);
+    if (Math.abs(cast) > 0.06) g.temperature = Math.round(Math.min(0.6, Math.max(-0.6, -cast * 1.6)) * 100) / 100;
+    const tintCast = (s.grey.g - avg) / Math.max(0.05, avg);
+    if (Math.abs(tintCast) > 0.06) g.tint = Math.round(Math.min(0.6, Math.max(-0.6, tintCast * 1.2)) * 100) / 100;
+  }
+  if (s.p95 - s.p5 < 35) g.contrast = 0.15;
+  return Object.keys(g).length ? g : undefined;
+}
+
+/** A grade that brings a picture's colour and level to a reference's (for shots of one scene): the exposure from the means, the white balance from the nearly grey pixels. */
+export function matchGrade(s: LookStats, reference: LookStats): Grade | undefined {
+  const g: Grade = {};
+  if (s.mean > 3 && reference.mean > 3 && Math.abs(Math.log2(reference.mean / s.mean)) > 0.1) g.exposure = Math.round(Math.min(2, Math.max(-2, Math.log2(reference.mean / s.mean))) * 100) / 100;
+  if (s.grey && reference.grey) {
+    const warmth = (x: Rgb) => (x.r - x.b) / Math.max(0.05, (x.r + x.b) / 2);
+    const d = warmth(reference.grey) - warmth(s.grey);
+    if (Math.abs(d) > 0.04) g.temperature = Math.round(Math.min(0.6, Math.max(-0.6, d * 1.6)) * 100) / 100;
+  }
+  const dsat = (reference.saturation - s.saturation) / Math.max(10, s.saturation);
+  if (Math.abs(dsat) > 0.15) g.saturation = Math.round(Math.min(0.6, Math.max(-0.6, dsat)) * 100) / 100;
+  return Object.keys(g).length ? g : undefined;
 }

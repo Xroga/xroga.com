@@ -71,6 +71,8 @@ defineScenario({
     const lutNotes = (await previewOnDevice(one([video({ grade: { lut: { url: LUT } } })]), [1])).notes;
     const bw = await frame(one([video(), { type: 'adjustment', grade: { preset: 'bw' } }]));
     const cinematic = await frame(one([video({ grade: { preset: 'cinematic' } })]));
+    const auto = await frame(one([video({ grade: { auto: 'balance' } })]));
+    const looked = await readMedia({ url: TRAILER, action: 'frames', times: [21.5, 60, 100], width: 160, look: true });
     const gridSheet = await previewOnDevice(one([video()]), [1.5], true);
     const gridPlain = await previewOnDevice(one([video()]), [1.5], false);
 
@@ -98,6 +100,8 @@ defineScenario({
       lutLoaded: lutNotes.length === 0,
       lutChangesColour: Math.abs(m1[0] - m0[0]) + Math.abs(m1[1] - m0[1]) + Math.abs(m1[2] - m0[2]) > 12 && difference(plain, withLut) > 8,
       adjustmentIsBlackAndWhite: spread(bw) < 4 && spread(plain) > 8,
+      autoBalanceBrightens: mean(auto)[0] + mean(auto)[1] + mean(auto)[2] > m0[0] + m0[1] + m0[2] + 25,
+      lookMeasures: looked.kind === 'frames' && !!looked.stats && looked.stats.filter(Boolean).length >= 2 && looked.stats.every(st => st === null || (st.mean >= 0 && st.mean <= 100)),
       presetChangesPicture: difference(plain, cinematic) > 8,
       roundMaskKeepsCorners: corner[0] > 200 && corner[1] < 60 && corner[2] < 60 && !(centre[0] > 200 && centre[1] < 60 && centre[2] < 60),
       zoomOnCellChangesFrame: difference(zoomed, unzoomed) > 12,
@@ -113,6 +117,8 @@ defineScenario({
         lutNotes,
         meanPlain: m0.map(Math.round),
         meanLut: m1.map(Math.round),
+        meanAuto: mean(auto).map(Math.round),
+        looked: looked.kind === 'frames' ? looked.stats : null,
         lutDiff: Math.round(difference(plain, withLut)),
         spreadBw: Math.round(spread(bw) * 10) / 10,
         corner,
