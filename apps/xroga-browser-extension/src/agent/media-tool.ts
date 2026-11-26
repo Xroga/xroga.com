@@ -9,17 +9,19 @@ export const MEDIA_TOOL: AgentTool = {
   source: 'agent',
   group: 'reading',
   description:
-    'Look at and listen to an audio or video file at a web address, on this device. action info: container, length, tracks, codecs, tags. audio: loudness, peak, level over time and the silences (thresholdDb, minSeconds). beats: tempo and beat times. scenes: the cuts of the picture. frames: one sheet of pictures at times (list) or count of them spread over the file, width px each. seconds limits how much is read (default 300, at most 600) and from says where to start, so a long file is read in parts (from 600, from 1200, …). For the words spoken, use transcribe.',
+    'Look at and listen to an audio or video file at a web address, on this device. action info: container, length, tracks, codecs, tags. audio: loudness, peak, level over time and the silences (thresholdDb, minSeconds). beats: tempo, beat times and the beats that start bars. beatcuts: cut times that fall on the beat, clips of them (default 8), each everyNBeats beats long (default 4). scenes: the cuts of the picture. frames: one sheet of pictures at times (list) or count of them spread over the file, width px each. seconds limits how much is read (default 300, at most 600) and from says where to start, so a long file is read in parts (from 600, from 1200, …). For the words spoken, use transcribe.',
   parameters: {
     type: 'object',
     properties: {
       url: { type: 'string', maxLength: 2000 },
-      action: { type: 'string', enum: ['info', 'audio', 'beats', 'scenes', 'frames'] },
+      action: { type: 'string', enum: ['info', 'audio', 'beats', 'beatcuts', 'scenes', 'frames'] },
       seconds: { type: 'number' },
       from: { type: 'number' },
       thresholdDb: { type: 'number' },
       minSeconds: { type: 'number' },
       count: { type: 'number' },
+      clips: { type: 'number' },
+      everyNBeats: { type: 'number' },
       times: { type: 'array', items: { type: 'number' }, maxItems: 24 },
       width: { type: 'number' },
     },

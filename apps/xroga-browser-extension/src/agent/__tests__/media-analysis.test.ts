@@ -109,3 +109,23 @@ describe('text', () => {
     expect(describeScenes([], 10, 20)).toContain('No cut found');
   });
 });
+
+describe('bars', () => {
+  it('finds the beat that starts each bar from the accent in a click track', () => {
+    const rate = 11025;
+    const seconds = 32;
+    const pcm = new Float32Array(rate * seconds);
+    let seed = 11;
+    const rnd = () => ((seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296) * 2 - 1;
+    for (let b = 0; b * 0.5 < seconds - 0.2; b++) {
+      const start = Math.round(b * 0.5 * rate);
+      const level = b % 4 === 1 ? 1 : 0.35; // the accent falls on beat 1, 5, 9 … of the clicks
+      for (let i = 0; i < 400; i++) pcm[start + i] = level * rnd() * Math.exp(-i / 90);
+    }
+    const out = trackBeats(pcm, rate);
+    expect(out.downbeats?.length).toBeGreaterThan(5);
+    // every bar start is an accented click: 0.5 s after a multiple of 2 s
+    for (const t of out.downbeats!) expect(((t - 0.5) / 2) % 1 < 0.05 || ((t - 0.5) / 2) % 1 > 0.95).toBe(true);
+    expect(describeBeats(out, seconds)).toContain('Bars (4/4) probably start at');
+  });
+});

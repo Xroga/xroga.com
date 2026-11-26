@@ -33,3 +33,35 @@ defineScenario({
     );
   },
 });
+
+defineScenario({
+  id: 'S5-transcribe-words',
+  set: 'C',
+  title: 'every word of a real recording with its time, and the views built on them',
+  covers: 'transcribe words: the model gives a time for each word (or the tool says it spread them), the words view finds a word, fillers finds nothing to cut in clean speech, outline groups speech, chapters are written',
+  async run() {
+    const { describeView, describeChapters } = await import('../../agent/transcript-format');
+    const result = await transcribeFile(FILE, { seconds: 40, words: true });
+    const words = result.words ?? [];
+    const text = describeView(result, 'words', { find: 'birch' });
+    const fillers = describeView(result, 'fillers', { repeats: true });
+    const outline = describeView(result, 'outline');
+    const chapters = describeChapters({ chapters: [{ time: 0, title: 'Sentences' }, { time: 11, title: 'Dishes' }, { time: 23, title: 'Closing' }], duration: result.totalSeconds ?? 33 });
+    const increasing = words.every((w, i) => i === 0 || w.start >= words[i - 1]!.start - 0.001);
+    const checks: Record<string, boolean> = {
+      manyWords: words.length >= 40,
+      timesIncrease: increasing && words.every(w => w.end >= w.start),
+      firstWordAtStart: words.length > 0 && words[0]!.start < 1.5 && /birch|the/i.test(words[0]!.text),
+      lastWordNearEnd: words.length > 0 && words[words.length - 1]!.end > 28,
+      findsAWord: /Words with "birch": [1-9]/.test(text),
+      fillersView: /No hesitation words|to cut/.test(fillers),
+      outlineView: /blocks of speech/.test(outline),
+      chaptersView: /^00:00 Sentences/.test(chapters) && /meets what YouTube needs/.test(chapters),
+    };
+    return outcome(
+      'every word has a time, and the views built on them work on real speech',
+      JSON.stringify({ failed: Object.entries(checks).filter(([, v]) => !v).map(([k]) => k), spread: result.wordsSpread === true, count: words.length, first: words.slice(0, 6), last: words.slice(-3), fillers: fillers.slice(0, 300), outline: outline.slice(0, 500) }),
+      Object.values(checks).every(Boolean),
+    );
+  },
+});

@@ -237,7 +237,7 @@ export function kindOf(tool: string, args: Record<string, unknown>): ToolKind {
   // a preview of a video makes no file; making it saves one
   if (tool === 'compose_video') return Array.isArray(args.preview) ? 'read' : 'state';
   // the readers of files and sites change nothing; webmcp lists are reads, and a call to a page's own tool may change data
-  if (tool === 'read_pdf' || tool === 'read_file' || tool === 'site_map' || tool === 'transcribe' || tool === 'media') return 'read';
+  if (tool === 'read_pdf' || tool === 'read_file' || tool === 'site_map' || tool === 'transcribe' || tool === 'media' || tool === 'chapters') return 'read';
   if (tool === 'webmcp') return args.action === 'call' ? 'mutate' : 'read';
   if (tool === 'read_attachment' || tool === 'find_color' || tool === 'find_skill' || tool === 'read_skill' || tool === 'confirm_download' || tool === 'plugin_search' || tool === 'plugin_action_search' || tool === 'http_get' || tool === 'site_scan' || tool === 'memory' || tool === 'lighthouse' || tool === 'plugin_connect' || tool === 'run_repository' || tool === 'python_repl' || tool === 'change_repository') return 'read';
   // An approved connected read can transmit private arguments. Fence it like a dispatched effect on recovery.

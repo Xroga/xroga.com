@@ -3,6 +3,8 @@
 // The kinds of analysis come from reading cutline (MIT; silence, loudness, waveform, beats, scenes as perception tools for an editing agent); the code is written fresh,
 // the loudness follows ITU-R BS.1770 (K-weighting and gating) and the beat tracker follows D. Ellis, "Beat Tracking by Dynamic Programming" (2007).
 
+import { downbeats as pickDownbeats } from './transcript-tools';
+
 export const toDb = (amplitude: number): number => (amplitude <= 1e-5 ? -100 : 20 * Math.log10(amplitude));
 const round = (x: number, d = 2) => Math.round(x * 10 ** d) / 10 ** d;
 
@@ -208,6 +210,8 @@ function fft(re: Float64Array, im: Float64Array): void {
 }
 
 export interface Beats {
+  /** The beats that most likely start a bar (4/4), when the pattern is clear. */
+  downbeats?: number[];
   bpm: number;
   /** 0 to 1: how regular the onsets are at that tempo. */
   confidence: number;
@@ -329,7 +333,14 @@ export function trackBeats(samples: Float32Array, sampleRate: number, options: {
   const bpm = mean > 0 ? round(60 / mean, 1) : round(60 / (period * hopSec), 1);
   const variance = gaps.length ? gaps.reduce((s, g) => s + (g - mean) ** 2, 0) / gaps.length : 1;
   const confidence = round(Math.max(0, Math.min(1, ac[bestLag]! * 2, 1 - Math.sqrt(variance) / (mean || 1))), 2);
-  return { bpm, confidence, beats };
+  // the strength of the onset at each beat: the beat that starts a bar is usually the strongest of its four
+  const strength = frames.map(f => {
+    let m = 0;
+    for (let k = Math.max(0, f - 2); k <= Math.min(onset.length - 1, f + 2); k++) m = Math.max(m, onset[k]!);
+    return m;
+  });
+  const bars = pickDownbeats(beats, strength);
+  return { bpm, confidence, beats, ...(bars.length ? { downbeats: bars } : {}) };
 }
 
 /** Mean absolute difference (0 to 1) between two small grey pictures. */
@@ -390,7 +401,8 @@ export function describeBeats(b: Beats, seconds: number, from = 0): string {
   const part = from ? `${clock(seconds)} from ${clock(from)}` : clock(seconds);
   if (!b.beats.length || b.bpm <= 0) return `No steady beat found in ${part} (speech, ambience or too short).`;
   const shown = b.beats.slice(0, 48).map(t => clock(t)).join(' ');
-  return `Tempo about ${b.bpm} BPM (regularity ${b.confidence}), ${b.beats.length} beats in ${part}. Beat times: ${shown}${b.beats.length > 48 ? ' …' : ''}`;
+  const bars = b.downbeats?.length ? ` Bars (4/4) probably start at ${b.downbeats.slice(0, 16).map(t => clock(t)).join(' ')}${b.downbeats.length > 16 ? ' …' : ''}.` : '';
+  return `Tempo about ${b.bpm} BPM (regularity ${b.confidence}), ${b.beats.length} beats in ${part}.${bars} Beat times: ${shown}${b.beats.length > 48 ? ' …' : ''}`;
 }
 
 export function describeScenes(cuts: number[], seconds: number, sampled: number, from = 0): string {

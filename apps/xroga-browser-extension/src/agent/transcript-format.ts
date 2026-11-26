@@ -3,18 +3,22 @@
 // description and the formatting of the result. The idea of local speech recognition with timestamps comes from the studied video-editing donors
 // (openreel, openfilm, Opencut); written fresh.
 import type { AgentTool } from './tools';
+import { chapterText, chapterWarnings, findFillers, groupIntoBlocks, keepSegments, wordsToCues, ffmetadataChapters, type TimedWord } from './transcript-tools';
 
 export const TRANSCRIBE_TOOL: AgentTool = {
   name: 'transcribe',
   source: 'agent',
   group: 'reading',
   description:
-    'Turn the speech in an audio or video file (mp3, wav, m4a, ogg, mp4, webm) at a web address into text with times, read on this device (first use downloads a small speech model, about 40 MB). seconds limits how much from the start is read (default 300, at most 1800); find lists only the lines with a word; language is english (default, fast) or any other for the multilingual model. Reads no picture of a video, only its sound.',
+    'Turn the speech in an audio or video file (mp3, wav, m4a, ogg, mp4, webm) at a web address into text with times, read on this device (first use downloads a small speech model, about 40 MB). seconds limits how much is read (default 300, at most 1800) and from says where to start, so a long file is read in parts; find lists only the lines with a word; language is english (default, fast) or any other for the multilingual model. view: lines (default), words (every word with its time), fillers (the um and uh to cut, with the ranges and the keep list for a video), outline (blocks of 20 to 60 s to choose chapters from). Reads no picture of a video, only its sound.',
   parameters: {
     type: 'object',
     properties: {
       url: { type: 'string', maxLength: 2000 },
       seconds: { type: 'number' },
+      from: { type: 'number' },
+      view: { type: 'string', enum: ['lines', 'words', 'fillers', 'outline'] },
+      repeats: { type: 'boolean' },
       find: { type: 'string', maxLength: 200 },
       language: { type: 'string', maxLength: 40 },
     },
@@ -34,6 +38,12 @@ export interface TranscriptResult {
   readSeconds: number;
   /** Seconds the file holds, when the decoder knew it. */
   totalSeconds?: number;
+  /** Where the part that was read starts (seconds on the file's time line). */
+  from?: number;
+  /** Every word with its time (asked for with view words, fillers or outline). */
+  words?: TimedWord[];
+  /** True when the word times were spread over their lines because the model gave none. */
+  wordsSpread?: boolean;
   model: string;
   /** Bytes of the file downloaded. */
   bytes?: number;
@@ -97,4 +107,68 @@ export function describeTranscript(result: TranscriptResult, options: { find?: s
   if (chunks.length > limit) lines.push(`… ${chunks.length - limit} more lines; use find with a word to narrow it.`);
   lines.push('A machine transcript: names and numbers can be wrong, check them against the source before relying on them.');
   return lines.join('\n');
+}
+
+const stamp = (t: number) => clock(t);
+
+export type TranscriptView = 'lines' | 'words' | 'fillers' | 'outline';
+
+/** The views that need a time for every word. */
+export const needsWords = (view: TranscriptView): boolean => view !== 'lines';
+
+/** A transcript in one of its views: the lines, every word with its time, the hesitations to cut (with the ranges and what stays), or blocks to choose chapters from. */
+export function describeView(result: TranscriptResult, view: TranscriptView, options: { find?: string; repeats?: boolean } = {}): string {
+  if (view === 'lines' || !result.words) return describeTranscript(result, { find: options.find });
+  const words = result.words;
+  const head = `Speech read from the sound: ${stamp(result.readSeconds)}${result.from ? ` from ${stamp(result.from)}` : ''}${result.totalSeconds !== undefined ? ` of ${stamp(result.totalSeconds)}` : ''}, ${words.length} words (model ${result.model}, on this device).${result.wordsSpread ? ' The model gave no word times, so each word is placed by spreading it over its line: good to about a second, not exact.' : ''}`;
+  if (!words.length) return `${head}\nNo speech was found in the part that was read.`;
+  if (view === 'words') {
+    const find = options.find?.trim().toLowerCase();
+    const shown = find ? words.filter(w => w.text.toLowerCase().includes(find)) : words;
+    const lines = shown.slice(0, 400).map(w => `${stamp(w.start)} ${w.text}`);
+    return [head, find ? (shown.length ? `Words with "${options.find}": ${shown.length}` : `No word has "${options.find}".`) : '', ...lines, shown.length > 400 ? `… ${shown.length - 400} more; narrow with find or read a part with from and seconds.` : ''].filter(Boolean).join('\n');
+  }
+  if (view === 'fillers') {
+    const { matches, ranges } = findFillers(words, { repeats: options.repeats === true });
+    if (!matches.length) return `${head}\nNo hesitation words (um, uh, er, hmm…) were found${options.repeats ? ' and no repeated words' : ''}.`;
+    const total = ranges.reduce((s, r) => s + r.end - r.start, 0);
+    const keep = keepSegments(result.readSeconds + (result.from ?? 0), ranges).filter(k => k.end > (result.from ?? 0));
+    return [
+      head,
+      `${matches.length} to cut: ${matches.slice(0, 40).map(m => `${stamp(m.start)} "${m.text}"${m.kind === 'repeat' ? ' (repeat)' : ''}`).join(', ')}${matches.length > 40 ? ', …' : ''}`,
+      `${ranges.length} ranges to remove (${total.toFixed(1)} s in all), in seconds of the file: ${JSON.stringify(ranges.slice(0, 60))}`,
+      `What stays, as pieces of the file (use one video layer per piece, with cutFrom and cutTo, in compose_video): ${JSON.stringify(keep.slice(0, 60))}`,
+    ].join('\n');
+  }
+  // outline: blocks to choose chapters from
+  const cues = wordsToCues(words, { maxChars: 160, maxDuration: 15 });
+  const blocks = groupIntoBlocks(cues, { minDuration: 20, maxDuration: 60, breaks: words.slice(1).flatMap((w, i) => (w.start - words[i]!.end > 1.2 ? [words[i]!.end, w.start] : [])) });
+  return [
+    head,
+    `${blocks.length} blocks of speech (pauses of more than a second close a block early). Choose chapter starts from them; the first chapter must start at 00:00, there must be at least three, and none shorter than 10 s. Then call chapters to write them for a description.`,
+    ...blocks.map(b => `[${stamp(b.start)}–${stamp(b.end)}] ${b.text.length > 220 ? `${b.text.slice(0, 220)}…` : b.text}`),
+  ].join('\n');
+}
+
+export const CHAPTERS_TOOL: AgentTool = {
+  name: 'chapters',
+  source: 'agent',
+  group: 'reading',
+  description: 'Write video chapters as the lines of a YouTube description ("00:00 Title"), and check them against what YouTube needs (the first at 00:00, at least three, none under 10 s). chapters: [{ time (seconds), title }]; duration is the video length in seconds. ffmpeg true also gives the metadata file for ffmpeg. Pure formatting: nothing is read or saved.',
+  parameters: {
+    type: 'object',
+    properties: {
+      chapters: { type: 'array', items: { type: 'object', properties: { time: { type: 'number' }, title: { type: 'string', maxLength: 100 } }, required: ['time', 'title'] }, maxItems: 60 },
+      duration: { type: 'number' },
+      ffmpeg: { type: 'boolean' },
+    },
+    required: ['chapters', 'duration'],
+    additionalProperties: false,
+  },
+};
+
+export function describeChapters(args: { chapters: Array<{ time: number; title: string }>; duration: number; ffmpeg?: boolean }): string {
+  const chapters = [...args.chapters].sort((a, b) => a.time - b.time);
+  const warnings = chapterWarnings(chapters, args.duration);
+  return [chapterText(chapters, args.duration), warnings.length ? `\nYouTube would not accept this as it stands:\n- ${warnings.join('\n- ')}` : '\nThis meets what YouTube needs for chapters.', ...(args.ffmpeg ? ['\nffmpeg metadata:', ffmetadataChapters(chapters, args.duration)] : [])].join('\n');
 }

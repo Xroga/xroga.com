@@ -2640,30 +2640,39 @@ ${renderSkill(top)}`);
         outcome = { call, kind, text: 'error: transcribe needs the address of an audio or video file on the web (https or http).', isError: true };
       } else {
         try {
-          const [{ transcribeFile }, { describeTranscript, clampSeconds }] = await Promise.all([import('@src/extension/transcribe'), import('./transcript-format')]);
+          const [{ transcribeFile }, { describeTranscript, describeView, needsWords, clampSeconds }] = await Promise.all([import('@src/extension/transcribe'), import('./transcript-format')]);
+          const view = (['lines', 'words', 'fillers', 'outline'].includes(String(args.view)) ? String(args.view) : 'lines') as 'lines';
           const language = typeof args.language === 'string' ? args.language.trim().toLowerCase() : '';
-          const result = await transcribeFile(address, { seconds: clampSeconds(args.seconds), multilingual: language !== '' && !/^en/.test(language) });
+          const result = await transcribeFile(address, { seconds: clampSeconds(args.seconds), from: typeof args.from === 'number' && args.from > 0 ? args.from : 0, words: needsWords(view), multilingual: language !== '' && !/^en/.test(language) });
           let host = 'a media file';
           try { host = new URL(address).hostname; } catch { /* keep */ }
-          outcome = { call, kind, text: this.options.layer.wrap(describeTranscript(result, { find: typeof args.find === 'string' ? args.find : undefined }), { site: host }), isError: false };
+          outcome = { call, kind, text: this.options.layer.wrap(view === 'lines' ? describeTranscript(result, { find: typeof args.find === 'string' ? args.find : undefined }) : describeView(result, view, { find: typeof args.find === 'string' ? args.find : undefined, repeats: args.repeats === true }), { site: host }), isError: false };
         } catch (error) {
           outcome = { call, kind, text: 'error: the speech could not be read (' + (error instanceof Error ? error.message : String(error)).slice(0, 200) + '). The address may need a sign-in, not be a sound file, or be too large.', isError: true };
         }
+      }
+    } else if (call.toolName === 'chapters') {
+      try {
+        const { describeChapters } = await import('./transcript-format');
+        const list = Array.isArray(args.chapters) ? args.chapters.filter((c): c is { time: number; title: string } => !!c && typeof (c as { time?: unknown }).time === 'number' && typeof (c as { title?: unknown }).title === 'string') : [];
+        outcome = list.length && typeof args.duration === 'number' ? { call, kind, text: describeChapters({ chapters: list, duration: args.duration, ffmpeg: args.ffmpeg === true }), isError: false } : { call, kind, text: 'error: chapters needs a list of { time, title } and the duration of the video in seconds.', isError: true };
+      } catch (error) {
+        outcome = { call, kind, text: 'error: chapters could not be written (' + (error instanceof Error ? error.message : String(error)).slice(0, 200) + ').', isError: true };
       }
     } else if (call.toolName === 'media') {
       const address = typeof args.url === 'string' ? args.url : '';
       const action = typeof args.action === 'string' ? args.action : '';
       if (!/^https?:\/\//i.test(address)) {
         outcome = { call, kind, text: 'error: media needs the address of an audio or video file on the web (https or http).', isError: true };
-      } else if (!['info', 'audio', 'beats', 'scenes', 'frames'].includes(action)) {
-        outcome = { call, kind, text: 'error: media action must be info, audio, beats, scenes or frames.', isError: true };
+      } else if (!['info', 'audio', 'beats', 'beatcuts', 'scenes', 'frames'].includes(action)) {
+        outcome = { call, kind, text: 'error: media action must be info, audio, beats, beatcuts, scenes or frames.', isError: true };
       } else {
         try {
           const [{ readMedia }, tool, analysis] = await Promise.all([import('@src/extension/media'), import('./media-tool'), import('./media-analysis')]);
           const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : undefined);
           const answer = await readMedia({
             url: address,
-            action: action as 'info',
+            action: (action === 'beatcuts' ? 'beats' : action) as 'info',
             seconds: num(args.seconds),
             from: num(args.from),
             count: num(args.count),
@@ -2678,7 +2687,13 @@ ${renderSkill(top)}`);
           let image: CallOutcome['image'] | undefined;
           if (answer.kind === 'info') text = tool.describeInfo(answer);
           else if (answer.kind === 'audio') text = analysis.describeAudio(answer.report, { thresholdDb: num(args.thresholdDb) ?? -40, minSeconds: num(args.minSeconds) ?? 0.5, from: answer.from });
-          else if (answer.kind === 'beats') text = analysis.describeBeats(answer.beats, answer.seconds, answer.from);
+          else if (answer.kind === 'beats' && action === 'beatcuts') {
+            const { beatCutTimes } = await import('./transcript-tools');
+            const clips = Math.min(60, Math.max(1, Math.floor(num(args.clips) ?? 8)));
+            const every = Math.min(32, Math.max(1, Math.floor(num(args.everyNBeats) ?? 4)));
+            const times = beatCutTimes(answer.beats.beats, clips, every, answer.from);
+            text = times.length ? 'Cut times on the beat (' + every + ' beats per clip, tempo about ' + answer.beats.bpm + ' BPM, regularity ' + answer.beats.confidence + '): ' + times.map(t => analysis.clock(t)).join(' ') + '. Clip lengths in seconds: ' + times.slice(1).map((t, i) => Math.round((t - times[i]!) * 1000) / 1000).join(', ') + '. Use these as the durations of clips in compose_video (the music must start at the first cut).' : 'No steady beat found to cut on (speech, ambience or too short).';
+          } else if (answer.kind === 'beats') text = analysis.describeBeats(answer.beats, answer.seconds, answer.from);
           else if (answer.kind === 'scenes') text = analysis.describeScenes(answer.cuts, answer.seconds, answer.sampled, answer.from);
           else {
             text = 'Contact sheet of ' + answer.times.length + ' pictures at ' + answer.times.map(analysis.clock).join(', ') + ' (numbered left to right, top to bottom)' + (answer.decoded < answer.times.length ? '; ' + (answer.times.length - answer.decoded) + ' could not be decoded.' : '.');

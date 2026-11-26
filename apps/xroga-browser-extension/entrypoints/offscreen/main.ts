@@ -1,6 +1,7 @@
 // The offscreen document: it does the things the worker cannot.
 import type { OutlineEntry, PdfTextItem } from '@src/agent/pdf-structure';
 import { fetchRetry } from '@src/extension/net';
+import { loadTransformers, transcribeUrl, type OrtSession } from '@src/extension/speech';
 //  - Turn text into a Blob and a URL for chrome.downloads, and revoke the URL when the worker says the download ended (uses only the runtime API).
 //  - Recognise text in a picture (the `ocr` tool): the Tesseract engine and its English model are vendored in public/ocr and run in a Web Worker started from here,
 //    because a service worker cannot start workers. Nothing leaves the device. The engine is loaded on the first request and let go after a minute without one.
@@ -333,72 +334,6 @@ interface PdfDoc {
 
 // Speech to text (the `transcribe` tool): transformers.js and its ONNX runtime are vendored in public/speech; the Whisper model (about 41 MB, quantised) is
 // downloaded from Hugging Face on first use and kept by the browser cache. The sound is decoded to 16 kHz mono here, so nothing but the model download leaves the device.
-const MAX_AUDIO_BYTES = 200 * 1024 * 1024;
-type SpeechPipeline = (audio: Float32Array, options: object) => Promise<{ text: string; chunks?: Array<{ timestamp: [number, number | null]; text: string }> }>;
-const speechPipelines = new Map<string, Promise<SpeechPipeline>>();
-
-interface Transformers {
-  env: { allowLocalModels: boolean; backends: { onnx: { wasm: { wasmPaths: string | { mjs: string; wasm: string }; numThreads: number; proxy: boolean } } } };
-  pipeline(task: string, model: string, options: object): Promise<unknown>;
-  AutoModelForObjectDetection: { from_pretrained(id: string, options: object): Promise<{ sessions: { model: OrtSession }; config: { id2label: Record<string, string> } }> };
-  Tensor: new (type: string, data: ArrayLike<number> | BigInt64Array, dims: number[]) => { ort_tensor: unknown };
-}
-interface OrtSession {
-  inputNames: string[];
-  outputNames: string[];
-  run(feeds: Record<string, unknown>): Promise<Record<string, { data: ArrayLike<number | bigint>; dims: number[] }>>;
-}
-let transformers: Promise<Transformers> | undefined;
-/** transformers.js and its ONNX runtime, vendored in public/speech, loaded once; the models themselves are downloaded on first use and kept by the browser cache. */
-function loadTransformers(): Promise<Transformers> {
-  transformers ??= (async () => {
-    const tf = (await import(/* @vite-ignore */ chrome.runtime.getURL('speech/transformers.min.js'))) as Transformers;
-    tf.env.allowLocalModels = false;
-    // the plain WebAssembly build (no graphics-card backend): half the size of the one transformers.js points at by default
-    tf.env.backends.onnx.wasm.wasmPaths = { mjs: chrome.runtime.getURL('speech/ort-wasm-simd-threaded.mjs'), wasm: chrome.runtime.getURL('speech/ort-wasm-simd-threaded.wasm') };
-    tf.env.backends.onnx.wasm.numThreads = 1;
-    tf.env.backends.onnx.wasm.proxy = false;
-    return tf;
-  })();
-  transformers.catch(() => (transformers = undefined));
-  return transformers;
-}
-
-function speechPipeline(multilingual: boolean): Promise<SpeechPipeline> {
-  const model = multilingual ? 'onnx-community/whisper-tiny' : 'onnx-community/whisper-tiny.en';
-  let pending = speechPipelines.get(model);
-  if (!pending) {
-    pending = (async () => {
-      const tf = await loadTransformers();
-      return (await tf.pipeline('automatic-speech-recognition', model, { dtype: 'q8', device: 'wasm' })) as SpeechPipeline;
-    })();
-    pending.catch(() => speechPipelines.delete(model));
-    speechPipelines.set(model, pending);
-  }
-  return pending;
-}
-
-async function transcribe(url: string, seconds: number, multilingual: boolean) {
-  const response = await fetchRetry(url, { credentials: 'omit' });
-  if (!response.ok) throw new Error(`the file answered ${response.status}`);
-  const declared = Number(response.headers.get('content-length') ?? 0);
-  if (declared > MAX_AUDIO_BYTES) throw new Error(`the file is ${Math.round(declared / 1048576)} MB; the limit is ${MAX_AUDIO_BYTES / 1048576} MB`);
-  const bytes = await response.arrayBuffer();
-  if (bytes.byteLength > MAX_AUDIO_BYTES) throw new Error(`the file is ${Math.round(bytes.byteLength / 1048576)} MB; the limit is ${MAX_AUDIO_BYTES / 1048576} MB`);
-  const size = bytes.byteLength; // decodeAudioData detaches the buffer
-  const decoded = await new OfflineAudioContext(1, 16000, 16000).decodeAudioData(bytes);
-  const wanted = Math.min(decoded.length, Math.floor(seconds * 16000));
-  const mono = new Float32Array(wanted);
-  for (let c = 0; c < decoded.numberOfChannels; c++) {
-    const data = decoded.getChannelData(c);
-    for (let i = 0; i < wanted; i++) mono[i] = (mono[i] ?? 0) + (data[i] ?? 0) / decoded.numberOfChannels;
-  }
-  const run = await speechPipeline(multilingual);
-  const out = await run(mono, { return_timestamps: true, chunk_length_s: 30, stride_length_s: 5, ...(multilingual ? { task: 'transcribe' } : {}) });
-  const chunks = (out.chunks ?? [{ timestamp: [0, null] as [number, number | null], text: out.text }]).map(c => ({ timestamp: c.timestamp, text: c.text }));
-  return { chunks, readSeconds: wanted / 16000, totalSeconds: decoded.duration, model: multilingual ? 'whisper-tiny' : 'whisper-tiny.en', bytes: size };
-}
-
 // Media files (the `media` tool): mediabunny (MPL-2.0, vendored unmodified in public/media) reads the container and decodes sound and pictures with WebCodecs; the numbers are
 // worked out by src/agent/media-analysis.ts. A file is read by range requests where the server allows it, so a long video is not downloaded to look at a few frames.
 interface MbTrack {
@@ -625,7 +560,7 @@ chrome.runtime.onMessage.addListener((message, _sender, reply) => {
     return true;
   }
   if (message.type === 'transcribe') {
-    transcribe(String(message.url), Math.max(5, Math.min(1800, Number(message.seconds) || 300)), message.multilingual === true).then(
+    transcribeUrl(String(message.url), { from: Math.max(0, Number(message.from) || 0), seconds: Math.max(5, Math.min(1800, Number(message.seconds) || 300)), multilingual: message.multilingual === true, words: message.words === true }).then(
       result => reply({ ok: true, ...result }),
       error => reply({ ok: false, error: error instanceof Error ? error.message : String(error) }),
     );
