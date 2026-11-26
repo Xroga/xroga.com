@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "185aa4ca2664f786a2ec6510780dffa3a0023f67",
+  "source_sha": "59f035e3b64e6bfeb40a1fcee7820f7cb4dd379f",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -23443,7 +23443,7 @@
     },
     {
       "path": "frontend/src/lib/publicUrlInventory.ts",
-      "sha256": "c89627918ce805cf87d77e64b052d2382f12435c0741b8d8dded79bcc8ea3d06"
+      "sha256": "93fd30ae8ad64669f9aa4723b34343e73b644a159786b6353b8380e0f0a23386"
     },
     {
       "path": "frontend/src/lib/publish/types.ts",
@@ -38757,7 +38757,7 @@
     },
     {
       "path": "frontend/src/lib/publicUrlInventory.ts",
-      "line": 161,
+      "line": 162,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -143,6 +143,7 @@ export function buildPublicUrlInventory(): PublicUrlRecord[] {
     ['/workspace', 'PRIVATE'], ['/dashboard', 'PRIVATE'], ['/settings', 'PRIVATE'], ['/drive', 'PRIVATE'], ['/admin', 'PRIVATE'],
     ['/os-preview', 'PRIVATE'], ['/os-preview/[section]', 'PRIVATE'], ['/os-preview/journey', 'PRIVATE'], ['/os-preview/rich-results', 'PRIVATE'], ['/os-preview/access-denied', 'PRIVATE'], ['/os-preview/founder', 'PRIVATE'],
     ['/auth/login', 'PRIVATE'], ['/auth/signup', 'PRIVATE'], ['/auth/contact', 'PRIVATE'], ['/auth/forgot-password', 'PRIVATE'], ['/auth/reset-password', 'PRIVATE'], ['/auth/github/callback', 'PRIVATE'], ['/onboarding', 'PRIVATE'], ['/preview', 'PRIVATE'], ['/terminal', 'PRIVATE'],
+    ['/team', 'PRIVATE'], ['/join/[token]', 'PUBLIC_NOINDEX'],
     ['/image', 'PUBLIC_NOINDEX'], ['/cybersecurity', 'PUBLIC_NOINDEX'], ['/community/[postId]', 'PUBLIC_NOINDEX'], ['/ref/[code]', 'PUBLIC_NOINDEX'], ['/share/[token]', 'PUBLIC_NOINDEX'], ['/api', 'SYSTEM'], ['/robots.txt', 'SYSTEM'],
     ['/sitemap.xml', 'SYSTEM'], ['/llms.txt', 'SYSTEM'], ['/blog/feed.xml', 'SYSTEM'],
     ['/research/feed.xml', 'SYSTEM'], ['/changelog/feed.xml', 'SYSTEM'],
