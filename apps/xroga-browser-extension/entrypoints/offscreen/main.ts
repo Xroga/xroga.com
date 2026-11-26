@@ -420,7 +420,7 @@ async function decodeSound(mb: Mb, track: MbTrack, from: number, seconds: number
   return { channels: out, rate };
 }
 
-async function mediaWork(url: string, action: string, o: { from: number; seconds: number; count: number; times?: number[]; width: number; thresholdDb: number; minSeconds: number }) {
+async function mediaWork(url: string, action: string, o: { from: number; seconds: number; count: number; times?: number[]; width: number; grid?: boolean; thresholdDb: number; minSeconds: number }) {
   const mb = (await import(/* @vite-ignore */ chrome.runtime.getURL('media/mediabunny.min.mjs'))) as unknown as Mb;
   const A = await import('@src/agent/media-analysis');
   const { input, bytes } = await openMedia(mb, url);
@@ -517,6 +517,7 @@ async function mediaWork(url: string, action: string, o: { from: number; seconds
         const y = Math.floor(i / cols) * (h + label);
         if (frame) {
           ctx.drawImage(frame.canvas, x, y + label);
+          if (o.grid) (await import('@src/extension/grid')).drawGrid(ctx, x, y + label, w, h);
           got.push(Math.round(frame.timestamp * 100) / 100);
         }
         ctx.fillStyle = '#fff';
@@ -591,7 +592,7 @@ chrome.runtime.onMessage.addListener((message, _sender, reply) => {
   }
   if (message.type === 'compose-preview') {
     Promise.race([
-      import('@src/extension/compose-render').then(m => m.previewComposition(message.spec, Array.isArray(message.times) ? (message.times as unknown[]).filter((t): t is number => typeof t === 'number') : [], () => import(/* @vite-ignore */ chrome.runtime.getURL('media/mediabunny.min.mjs')))),
+      import('@src/extension/compose-render').then(m => m.previewComposition(message.spec, Array.isArray(message.times) ? (message.times as unknown[]).filter((t): t is number => typeof t === 'number') : [], () => import(/* @vite-ignore */ chrome.runtime.getURL('media/mediabunny.min.mjs')), message.grid === true)),
       new Promise<never>((_, reject) => setTimeout(() => reject(new Error('the preview was not finished in 5 minutes')), 300_000)),
     ]).then(
       result => reply({ ok: true, ...result }),
@@ -628,6 +629,7 @@ chrome.runtime.onMessage.addListener((message, _sender, reply) => {
         count: Math.min(24, Math.max(1, Math.floor(n(message.count, 8)))),
         times: Array.isArray(message.times) ? (message.times as unknown[]).filter((t): t is number => typeof t === 'number' && t >= 0).slice(0, 24) : undefined,
         width: Math.min(640, Math.max(96, Math.floor(n(message.width, 320)))),
+        grid: message.grid === true,
         thresholdDb: Math.min(-10, Math.max(-90, n(message.thresholdDb, -40))),
         minSeconds: Math.min(30, Math.max(0.1, n(message.minSeconds, 0.5))),
       }),

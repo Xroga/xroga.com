@@ -190,7 +190,7 @@ describe('transitions on the timeline', () => {
 describe('the tool', () => {
   it('offers a preview, and names the transitions and layers', () => {
     const props = (COMPOSE_TOOL.parameters as { properties: Record<string, unknown> }).properties;
-    expect(Object.keys(props)).toEqual(['spec', 'filename', 'preview']);
+    expect(Object.keys(props)).toEqual(['spec', 'filename', 'preview', 'grid']);
     for (const word of ['crosszoom', 'rainbow-colors', 'detached-audio', 'audioNorm', 'contain-blur', 'picture']) expect(COMPOSE_TOOL.description.includes(word) || word === 'picture').toBe(true);
   });
 });

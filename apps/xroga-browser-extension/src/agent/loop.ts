@@ -2641,12 +2641,12 @@ ${renderSkill(top)}`);
       } else {
         try {
           const [{ transcribeFile }, { describeTranscript, describeView, needsWords, clampSeconds }] = await Promise.all([import('@src/extension/transcribe'), import('./transcript-format')]);
-          const view = (['lines', 'words', 'fillers', 'outline'].includes(String(args.view)) ? String(args.view) : 'lines') as 'lines';
+          const view = (['lines', 'words', 'fillers', 'pauses', 'outline'].includes(String(args.view)) ? String(args.view) : 'lines') as 'lines';
           const language = typeof args.language === 'string' ? args.language.trim().toLowerCase() : '';
           const result = await transcribeFile(address, { seconds: clampSeconds(args.seconds), from: typeof args.from === 'number' && args.from > 0 ? args.from : 0, words: needsWords(view), multilingual: language !== '' && !/^en/.test(language) });
           let host = 'a media file';
           try { host = new URL(address).hostname; } catch { /* keep */ }
-          outcome = { call, kind, text: this.options.layer.wrap(view === 'lines' ? describeTranscript(result, { find: typeof args.find === 'string' ? args.find : undefined }) : describeView(result, view, { find: typeof args.find === 'string' ? args.find : undefined, repeats: args.repeats === true }), { site: host }), isError: false };
+          outcome = { call, kind, text: this.options.layer.wrap(view === 'lines' ? describeTranscript(result, { find: typeof args.find === 'string' ? args.find : undefined }) : describeView(result, view, { find: typeof args.find === 'string' ? args.find : undefined, repeats: args.repeats === true, minGap: typeof args.minGap === 'number' ? args.minGap : undefined }), { site: host }), isError: false };
         } catch (error) {
           outcome = { call, kind, text: 'error: the speech could not be read (' + (error instanceof Error ? error.message : String(error)).slice(0, 200) + '). The address may need a sign-in, not be a sound file, or be too large.', isError: true };
         }
@@ -2677,6 +2677,7 @@ ${renderSkill(top)}`);
             from: num(args.from),
             count: num(args.count),
             width: num(args.width),
+            grid: args.grid === true,
             thresholdDb: num(args.thresholdDb),
             minSeconds: num(args.minSeconds),
             times: Array.isArray(args.times) ? args.times.filter((t): t is number => typeof t === 'number') : undefined,
@@ -2717,7 +2718,7 @@ ${renderSkill(top)}`);
           outcome = { call, kind, text: 'error INVALID_ARGUMENT (nothing made)\n' + normal.errors.join('\n'), isError: true };
         } else {
           const times = args.preview.filter((t): t is number => typeof t === 'number' && t >= 0);
-          const sheet = await previewOnDevice(args.spec, times);
+          const sheet = await previewOnDevice(args.spec, times, args.grid === true);
           let text = 'Preview of the video (' + describeSpec(normal.spec) + '): a sheet of ' + sheet.times.length + ' pictures at ' + sheet.times.map(clock).join(', ') + ' (left to right, top to bottom). No file was made; call compose_video again without preview to make it.';
           if (sheet.notes.length) text += ' Note: ' + sheet.notes.join('; ') + '.';
           let image: CallOutcome['image'] | undefined;

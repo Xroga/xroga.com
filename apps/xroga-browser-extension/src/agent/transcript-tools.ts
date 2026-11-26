@@ -246,3 +246,50 @@ export function downbeats(beats: readonly number[], strength: readonly number[],
   }
   return beats.filter((_, i) => i % perBar === best);
 }
+
+export interface Pause {
+  start: number;
+  end: number;
+  /** Seconds of silence between the two words. */
+  gap: number;
+}
+
+/**
+ * Gaps between words of at least `minGap` seconds, and the ranges to take out of them: each shortened by `pad` seconds on both sides, so what is cut never clips a word's breath or the
+ * start of the next one (the padded silence cut of Panoptik's edit tools: concept only, written fresh).
+ */
+export function findPauses(words: readonly TimedWord[], options: { minGap?: number; pad?: number } = {}): { pauses: Pause[]; ranges: Range[] } {
+  const minGap = Math.max(0.2, options.minGap ?? 0.6);
+  const pad = Math.max(0, Math.min(options.pad ?? 0.15, minGap / 2));
+  const pauses: Pause[] = [];
+  const ranges: Range[] = [];
+  for (let i = 1; i < words.length; i++) {
+    const a = words[i - 1]!;
+    const b = words[i]!;
+    const gap = b.start - a.end;
+    if (gap < minGap) continue;
+    pauses.push({ start: Math.round(a.end * 100) / 100, end: Math.round(b.start * 100) / 100, gap: Math.round(gap * 100) / 100 });
+    const from = a.end + pad;
+    const to = b.start - pad;
+    if (to - from > 0.05) ranges.push({ start: Math.round(from * 100) / 100, end: Math.round(to * 100) / 100 });
+  }
+  return { pauses, ranges };
+}
+
+/** Moves the edges of ranges onto the nearest word edge within `tolerance` seconds, so a cut made by eye or by a level meter does not land in the middle of a word. */
+export function snapToWords(ranges: readonly Range[], words: readonly TimedWord[], tolerance = 0.15): Range[] {
+  const edges = words.flatMap(w => [w.start, w.end]);
+  const near = (t: number): number => {
+    let best = t;
+    let d = tolerance;
+    for (const e of edges) {
+      const delta = Math.abs(e - t);
+      if (delta <= d) {
+        d = delta;
+        best = e;
+      }
+    }
+    return best;
+  };
+  return ranges.map(r => ({ start: near(r.start), end: near(r.end) })).filter(r => r.end > r.start);
+}

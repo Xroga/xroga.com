@@ -96,3 +96,94 @@ describe('brand and graphics', () => {
     expect(expandTemplate({ template: 'carousel', text: 'x' }, brand)).toMatchObject({ error: expect.stringContaining('is not one of') });
   });
 });
+
+describe('grounding grid', () => {
+  it('names cells like a spreadsheet and finds their middle', async () => {
+    const { cellName, cellCenter } = await import('../compose-extras');
+    expect(cellName(0, 0)).toBe('A1');
+    expect(cellName(2, 2)).toBe('C3');
+    expect(cellCenter('A1')).toEqual({ x: 0.167, y: 0.167 });
+    expect(cellCenter('b2')).toEqual({ x: 0.5, y: 0.5 });
+    expect(cellCenter('C3')).toEqual({ x: 0.833, y: 0.833 });
+    expect(cellCenter('D1')).toBeNull();
+    expect(cellCenter('A4')).toBeNull();
+    expect(cellCenter('x')).toBeNull();
+    expect(cellCenter('D4', 4)).toEqual({ x: 0.875, y: 0.875 });
+  });
+});
+
+describe('zooms and cells on a video layer', () => {
+  it('turns zooms with a named cell into keyframes, and clicks with a cell into a zoom', async () => {
+    const { normalizeSpec } = await import('../compose-spec');
+    const spec = {
+      clips: [{ duration: 10, layers: [{ type: 'video', url: 'https://example.com/a.mp4', zooms: [{ from: 1, to: 3, cell: 'C1', scale: 2 }, { from: 3.2, to: 5, cell: 'A3', scale: 2 }] }, { type: 'video', url: 'https://example.com/b.mp4', zoomOnClicks: { clicks: [{ t: 2, cell: 'B2' }] } }] }],
+    };
+    const r = normalizeSpec(spec);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const [a, b] = r.spec.clips[0]!.layers as Array<{ keyframes?: { scale?: unknown } }>;
+    expect(a!.keyframes?.scale).toBeTruthy();
+    expect(b!.keyframes?.scale).toBeTruthy();
+  });
+  it('refuses zooms that make no sense', async () => {
+    const { normalizeSpec } = await import('../compose-spec');
+    const r = normalizeSpec({ clips: [{ duration: 4, layers: [{ type: 'video', url: 'https://example.com/a.mp4', zooms: [{ from: 3, to: 1, cell: 'B2' }] }] }] });
+    expect(r.ok).toBe(false);
+  });
+});
+
+describe('frames around pictures', () => {
+  it('reads mask, radius and shadow', async () => {
+    const { frameOf } = await import('../compose-spec');
+    expect(frameOf({})).toBeUndefined();
+    expect(frameOf({ mask: 'circle' })).toEqual({ radius: 0.5 });
+    expect(frameOf({ radius: 9 })).toEqual({ radius: 0.5 });
+    expect(frameOf({ mask: 'rounded', shadow: true })?.shadow?.blur).toBe(24);
+    expect(frameOf({ shadow: { blur: 500, opacity: 3 } })?.shadow).toEqual({ blur: 80, offsetY: 8, opacity: 1 });
+  });
+  it('keeps the frame on a normalized video layer', async () => {
+    const { normalizeSpec } = await import('../compose-spec');
+    const r = normalizeSpec({ clips: [{ duration: 3, layers: [{ type: 'video', url: 'https://example.com/a.mp4', mask: 'circle', width: 0.25, height: 0.25, x: 0.85, y: 0.8, shadow: true }] }] });
+    expect(r.ok).toBe(true);
+    if (r.ok) expect((r.spec.clips[0]!.layers[0] as { frame?: { radius: number } }).frame?.radius).toBe(0.5);
+  });
+});
+
+describe('speed ranges in a spec', () => {
+  it('reads them and fits the clip to the stretched length', async () => {
+    const { normalizeSpec, resolveDurations } = await import('../compose-spec');
+    const r = normalizeSpec({ clips: [{ layers: [{ type: 'video', url: 'https://example.com/a.mp4', cutTo: 10, speedRanges: [{ from: 4, to: 6, speed: 0.5 }, { from: 9, to: 3, speed: 2 }, { from: 0, to: 1, speed: -1 }] }] }] });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const v = r.spec.clips[0]!.layers[0] as { speedRanges?: unknown[] };
+    expect(v.speedRanges).toHaveLength(1);
+    const done = resolveDurations(r.spec, () => 10);
+    expect(done.clips[0]!.duration).toBeCloseTo(12, 5);
+  });
+});
+
+describe('the look of a title', () => {
+  it('reads weight, italic, stroke, box and typewriter', async () => {
+    const { lookOf } = await import('../compose-spec');
+    expect(lookOf({})).toBeUndefined();
+    expect(lookOf({ bold: true, italic: true, typewriter: true })).toEqual({ weight: 800, italic: true, typewriter: true });
+    expect(lookOf({ weight: 640, stroke: { color: '#fff', width: 5 } })).toEqual({ weight: 600, stroke: { color: '#fff', width: 0.2 } });
+    expect(lookOf({ shadow: false, box: { color: '#123456', padding: 5 } })?.box).toEqual({ color: '#123456', padding: 1, radius: 0.25 });
+  });
+});
+
+describe('fx on sounds in a spec', () => {
+  it('keeps the treatment on tracks, audio layers and video layers', async () => {
+    const { normalizeSpec } = await import('../compose-spec');
+    const r = normalizeSpec({
+      audioTracks: [{ url: 'https://example.com/m.mp3', fx: { eq: 'warm', reverb: true } }],
+      clips: [{ duration: 4, layers: [{ type: 'video', url: 'https://example.com/a.mp4', fx: { denoise: { focus: 'hum' }, compressor: true } }, { type: 'detached-audio', url: 'https://example.com/s.mp3', fx: { gain: -6 } }] }],
+    });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.spec.audioTracks[0]!.fx?.reverb).toBeTruthy();
+    const [v, a] = r.spec.clips[0]!.layers as Array<{ fx?: { denoise?: { focus: string }; gain?: number } }>;
+    expect(v!.fx?.denoise?.focus).toBe('hum');
+    expect(a!.fx?.gain).toBe(-6);
+  });
+});

@@ -213,3 +213,62 @@ export function zoomKeyframes(clicks: readonly ClickPoint[], options: ZoomOption
   }
   return { scale: sc, x, y };
 }
+
+export interface ZoomRange {
+  /** Seconds into the layer. */
+  from: number;
+  to: number;
+  /** The focal point, as fractions of the picture. */
+  x: number;
+  y: number;
+  scale?: number;
+}
+
+/**
+ * Keyframes for zooms over stated stretches of time, each on its own focal point: it zooms in over `ramp` seconds from the start, holds, and zooms out after the end. Stretches that follow each other
+ * closely (within `join` seconds) do not zoom out between: the view moves from one focal point to the next, which reads far better than one still zoom over several things (the advice of
+ * Panoptik's director guide: concepts only, no code taken).
+ */
+export function zoomRangeKeyframes(ranges: readonly ZoomRange[], options: { scale?: number; ramp?: number; join?: number } = {}): Keyframes | undefined {
+  const base = clamp(options.scale ?? 1.8, 1.05, 4);
+  const ramp = Math.max(0.1, options.ramp ?? 0.6);
+  const join = options.join ?? 0.4;
+  const sorted = ranges.filter(r => Number.isFinite(r.from) && Number.isFinite(r.to) && r.to > r.from && r.from >= 0).sort((a, b) => a.from - b.from);
+  if (!sorted.length) return undefined;
+  const sc: Keyframe[] = [];
+  const x: Keyframe[] = [];
+  const y: Keyframe[] = [];
+  const push = (time: number, s: number, dx: number, dy: number) => {
+    for (const [list, v] of [[sc, s], [x, dx], [y, dy]] as const) {
+      const prev = list[list.length - 1];
+      if (prev && time <= prev.time + 1e-6) list[list.length - 1] = { time: prev.time, value: v, easing: 'ease-in-out' };
+      else list.push({ time, value: v, easing: 'ease-in-out' });
+    }
+  };
+  const pose = (r: ZoomRange) => {
+    const s = clamp(r.scale ?? base, 1.05, 4);
+    const limit = (s - 1) / 2;
+    return { s, dx: clamp((0.5 - r.x) * s, -limit, limit), dy: clamp((0.5 - r.y) * s, -limit, limit) };
+  };
+  let previous: ZoomRange | undefined;
+  for (const r of sorted) {
+    const p = pose(r);
+    const half = (r.to - r.from) / 2;
+    const rampIn = Math.min(ramp, half);
+    if (previous && r.from - previous.to <= join) {
+      // keeps the zoom and moves on to the next focal point
+      push(r.from, pose(previous).s, pose(previous).dx, pose(previous).dy);
+      push(r.from + rampIn, p.s, p.dx, p.dy);
+    } else {
+      // far from the one before: it has zoomed out by now
+      if (previous) push(Math.min(previous.to + ramp, r.from), 1, 0, 0);
+      push(r.from, 1, 0, 0);
+      push(r.from + rampIn, p.s, p.dx, p.dy);
+    }
+    push(r.to, p.s, p.dx, p.dy);
+    previous = r;
+  }
+  const last = sorted[sorted.length - 1]!;
+  push(last.to + ramp, 1, 0, 0);
+  return { scale: sc, x, y };
+}

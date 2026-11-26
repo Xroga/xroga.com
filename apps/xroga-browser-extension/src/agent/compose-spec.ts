@@ -8,22 +8,77 @@ import { FADE_CURVES } from './audio-mix';
 import { TRANSITION_NAMES, defaultEasing } from './transitions';
 import { keyframesFromList, PRESETS, type Keyframes, type Preset, type PresetUse } from './compose-motion';
 import { expandTemplate, type Brand, type DuckOptions } from './compose-extras';
-import { buildPlayback } from './compose-playback';
-import { zoomKeyframes } from './compose-motion';
+import { buildPlayback, type SpeedRange } from './compose-playback';
+import { normalizeFx, type AudioFx } from './audio-fx';
+import { describeGrade, normalizeGrade, type Grade } from './grade';
+import { zoomKeyframes, zoomRangeKeyframes } from './compose-motion';
+import { cellCenter } from './compose-extras';
 import type { Range } from './transcript-tools';
+
+/** The look of a title: weight, slant, an outline, a shadow, a box behind it, and letters that appear one by one. */
+export interface TextLook {
+  weight?: number;
+  italic?: boolean;
+  stroke?: { color: string; width: number };
+  noShadow?: boolean;
+  box?: { color: string; padding: number; radius: number };
+  typewriter?: boolean;
+}
+
+export function lookOf(L: Record<string, unknown>): TextLook | undefined {
+  const look: TextLook = {};
+  if (L.bold === true) look.weight = 800;
+  if (typeof L.weight === 'number' && Number.isFinite(L.weight)) look.weight = Math.min(900, Math.max(100, Math.round(L.weight / 100) * 100));
+  if (L.italic === true) look.italic = true;
+  const st = L.stroke as { color?: unknown; width?: unknown } | undefined;
+  if (st && typeof st === 'object') look.stroke = { color: colorOf(st.color, '#000000'), width: Math.min(0.2, Math.max(0.005, typeof st.width === 'number' ? st.width : 0.06)) };
+  if (L.shadow === false) look.noShadow = true;
+  const bx = L.box as { color?: unknown; padding?: unknown; radius?: unknown } | undefined;
+  if (bx && typeof bx === 'object') look.box = { color: colorOf(bx.color, 'rgba(0,0,0,0.6)'), padding: Math.min(1, Math.max(0, typeof bx.padding === 'number' ? bx.padding : 0.3)), radius: Math.min(0.5, Math.max(0, typeof bx.radius === 'number' ? bx.radius : 0.25)) };
+  if (L.typewriter === true) look.typewriter = true;
+  return Object.keys(look).length ? look : undefined;
+}
+
+/** speedRanges: [{ from, to, speed }] in seconds of the file: stretches played faster or slower than the rest. */
+export function speedRangesOf(L: Record<string, unknown>): SpeedRange[] | undefined {
+  if (!Array.isArray(L.speedRanges)) return undefined;
+  const out = (L.speedRanges as unknown[]).slice(0, 100).flatMap((r: unknown) => {
+    const k = r as { from?: unknown; to?: unknown; start?: unknown; end?: unknown; speed?: unknown };
+    const a = k?.from ?? k?.start;
+    const b = k?.to ?? k?.end;
+    return typeof a === 'number' && typeof b === 'number' && b > a && typeof k.speed === 'number' && k.speed > 0 ? [{ start: Math.max(0, a), end: b, speed: Math.min(8, Math.max(0.1, k.speed)) }] : [];
+  });
+  return out.length ? out : undefined;
+}
+
+/** Rounded corners (a fraction of the shorter side: 0.5 is a circle) and a drop shadow around a picture or video layer: a camera bubble, a recording shown as a card. */
+export interface PictureFrame {
+  radius: number;
+  shadow?: { blur: number; offsetY: number; opacity: number };
+}
+
+/** mask: circle | rounded, radius (0 to 0.5), shadow: true | { blur, offsetY, opacity }. */
+export function frameOf(L: Record<string, unknown>): PictureFrame | undefined {
+  const mask = L.mask;
+  const radius = mask === 'circle' ? 0.5 : mask === 'rounded' ? 0.06 : typeof L.radius === 'number' && Number.isFinite(L.radius) ? Math.min(0.5, Math.max(0, L.radius)) : 0;
+  const raw = L.shadow;
+  const shadow = raw === true ? { blur: 24, offsetY: 8, opacity: 0.45 } : raw && typeof raw === 'object' ? { blur: Math.min(80, Math.max(0, Number((raw as { blur?: unknown }).blur ?? 24))), offsetY: Math.min(60, Math.max(-60, Number((raw as { offsetY?: unknown }).offsetY ?? 8))), opacity: Math.min(1, Math.max(0, Number((raw as { opacity?: unknown }).opacity ?? 0.45))) } : undefined;
+  return radius > 0 || shadow ? { radius, ...(shadow ? { shadow } : {}) } : undefined;
+}
 
 export const COMPOSE_TOOL: AgentTool = {
   name: 'compose_video',
   source: 'agent',
   group: 'files',
   description:
-    'Make a short video (MP4, or WebM when the browser has no H.264) from a spec and save it in Downloads; asks first in Ask mode. preview: [seconds…] instead shows a sheet of the video at those times, makes no file and asks nothing: use it to check a design first. spec: { width?, height? (default 1280x720, at most 1920x1080), fps? (30), fast? (small and quick), backgroundColor?, defaults?: { duration, transition, layer: {…every layer}, layerType: { video: {…} } }, clips: [{ duration?, backgroundColor?, transition?: { name, duration, easing?, audioOutCurve?, audioInCurve? }, layers: [...] }], audioTracks?: [{ url, start?, cutFrom?, cutTo?, volume?, loop? }], audioFilePath?, loopAudio?, keepSourceAudio?, clipsAudioVolume?, outputVolume?, audioNorm?: { enable, targetLufs?, maxGain? } }. transition.name: random, none, dummy (sound only) or one of fade, fadecolor, fadegrayscale, directional-left|right|up|down, wipeleft|right|up|down, softwipe, circleopen, circleclose, radial, angular, pixelize, squeeze, squeezeh, simplezoom, crosszoom, dreamy, dreamyzoom, swirl, windowslice, doorway, heart, crosswarp, directionalwarp, ripple, waterdrop, bowtiehorizontal|vertical, pinwheel, mosaic, hexagonalize, randomsquares, luminance. Layers (all take start, stop, opacity, fadeIn, fadeOut, effects: { brightness, contrast, saturation, blur, grayscale, sepia, hue }): fill-color|pause { color } · linear-gradient|radial-gradient { colors } · rainbow-colors · shader { fragment (GLSL body), speed } · shape { shape: rect|ellipse|line, color, stroke, x,y,width,height } · title|title-background|subtitle|news-title|slide-in-text { text, textColor, backgroundColor, background: { type, colors }, position: top|center|bottom|top-left|…|{x,y,originX,originY}, fontSize, font: sans|serif|mono|rounded, charSpacing, delay, speed, zoomDirection, zoomAmount } · image { url, resizeMode: contain-blur|contain|cover|stretch, zoomDirection: in|out|left|right, zoomAmount, x,y,width,height,originX,originY } · image-overlay { url, position, width, height } · video { url, cutFrom, cutTo, resizeMode, volume, speed, x,y,width,height,originX,originY } (a clip with a duration fits its video to it) · audio { url, cutFrom, cutTo, volume } · detached-audio { url, start (from the clip start), cutFrom, cutTo, volume } · captions { words: [{ text, start, end }] or source: { url, from?, to? } (the words are then found by listening), fontSize, color, highlightColor, backgroundColor, position: top|middle|bottom, maxWidth } · template { template: title|lower-third|banner|callout|logo, text, subtitle, start, duration, accentColor, textColor }. Every layer also takes keyframes: [{ at (seconds into the layer), x, y (fractions of the frame), scale, rotation (degrees), opacity, easing }] and animationIn / animationOut: { preset: fade|slide-left|slide-right|slide-up|slide-down|zoom|pop, duration }. A video layer also takes zoomOnClicks: { clicks: [{ t, x, y }], scale, hold } (zooms in on each click of a recording: url "recording:last" is the one record_screen kept) and cuts: [{ from, to }] (seconds of the file to take out, as from transcribe fillers or media audio silences), reverse, freeze: { at, hold }. spec.brand: { colors: { primary, accent, text }, font, logo: { url, position, width, opacity } } (templates and a logo on every clip use it). An audio track takes duck: true or { amountDb, thresholdDb, attack, release } to go down under speech. Up to 3 minutes, 60 clips, https addresses only. Only when the person asked for a video.',
+    'Make a short video (MP4, or WebM when the browser has no H.264) from a spec and save it in Downloads; asks first in Ask mode. preview: [seconds…] instead shows a sheet of the video at those times, makes no file and asks nothing: use it to check a design first. spec: { width?, height? (default 1280x720, at most 1920x1080), fps? (30), fast? (small and quick), backgroundColor?, defaults?: { duration, transition, layer: {…every layer}, layerType: { video: {…} } }, clips: [{ duration?, backgroundColor?, transition?: { name, duration, easing?, audioOutCurve?, audioInCurve? }, layers: [...] }], audioTracks?: [{ url, start?, cutFrom?, cutTo?, volume?, loop? }], audioFilePath?, loopAudio?, keepSourceAudio?, clipsAudioVolume?, outputVolume?, audioNorm?: { enable, targetLufs?, maxGain? } }. transition.name: random, none, dummy (sound only) or one of fade, fadecolor, fadegrayscale, directional-left|right|up|down, wipeleft|right|up|down, softwipe, circleopen, circleclose, radial, angular, pixelize, squeeze, squeezeh, simplezoom, crosszoom, dreamy, dreamyzoom, swirl, windowslice, doorway, heart, crosswarp, directionalwarp, ripple, waterdrop, bowtiehorizontal|vertical, pinwheel, mosaic, hexagonalize, randomsquares, luminance. Layers (all take start, stop, opacity, fadeIn, fadeOut, effects: { brightness, contrast, saturation, blur, grayscale, sepia, hue }): fill-color|pause { color } · linear-gradient|radial-gradient { colors } · rainbow-colors · shader { fragment (GLSL body), speed } · shape { shape: rect|ellipse|line, color, stroke, x,y,width,height } · title|title-background|subtitle|news-title|slide-in-text { text, textColor, backgroundColor, background: { type, colors }, position: top|center|bottom|top-left|…|{x,y,originX,originY}, fontSize, font: sans|serif|mono|rounded, charSpacing, delay, speed, zoomDirection, zoomAmount } · image { url, resizeMode: contain-blur|contain|cover|stretch, zoomDirection: in|out|left|right, zoomAmount, x,y,width,height,originX,originY } · image-overlay { url, position, width, height } · video { url, cutFrom, cutTo, resizeMode, volume, speed, x,y,width,height,originX,originY } (a clip with a duration fits its video to it) · audio { url, cutFrom, cutTo, volume } · detached-audio { url, start (from the clip start), cutFrom, cutTo, volume } · captions { words: [{ text, start, end }] or source: { url, from?, to? } (the words are then found by listening), fontSize, color, highlightColor, backgroundColor, position: top|middle|bottom, maxWidth } · template { template: title|lower-third|banner|callout|logo, text, subtitle, start, duration, accentColor, textColor }. Every layer also takes keyframes: [{ at (seconds into the layer), x, y (fractions of the frame), scale, rotation (degrees), opacity, easing }] and animationIn / animationOut: { preset: fade|slide-left|slide-right|slide-up|slide-down|zoom|pop, duration }. A video layer also takes zoomOnClicks: { clicks: [{ t, x, y }], scale, hold } (zooms in on each click of a recording: url "recording:last" is the one record_screen kept) and grade on an image, an image-overlay or a video layer (and a layer { type: adjustment, grade } that grades everything below it in the clip): { preset: warm|cool|cinematic|teal-orange|bw|vintage|vivid|faded|night, exposure, temperature, tint, brightness, contrast, saturation, hue, wheels: { shadows|midtones|highlights: { r, g, b }, lift, gamma, gain }, curves: { rgb|red|green|blue: [[x, y]…] }, hsl: { hue|saturation|luminance: [8 values: red…magenta] }, lut: https address of a .cube file | { url, intensity }, vignette, grain, sharpen, chromaKey: "#00ff00" | { color, tolerance, softness, spill } (a green screen: put the keyed video over a picture) }, and a title takes bold|weight, italic, stroke: { color, width }, shadow: false, box: { color, padding, radius }, typewriter: true, and fx on a sound (an audio track, an audio layer or the sound of a video layer): { denoise: true | { focus: speech|hum|wind|whiteNoise|music|heavy|balanced, amount 0-1 } (learns the noise from the quietest stretch), eq: voice|podcast|warm|bright|telephone|bassboost or [{ type, frequency, gain, q }], highpass, lowpass, compressor: true | { threshold, ratio, attack, release, makeup }, reverb: true | { roomSize, damping, wet }, delay: true | { time, feedback, wet }, gain (dB) }, and speedRanges: [{ from, to, speed }] (seconds of the file; slow where it matters, fast where it does not; sound follows), and mask: circle|rounded, radius (0–0.5), shadow: true (rounded corners and a shadow: a camera bubble, a recording as a card), and zooms: [{ from, to, cell: "A1"–"C3" or x, y, scale }] (a zoom over a stretch, each on its own point; ones close together move from one point to the next), and cuts: [{ from, to }] (seconds of the file to take out, as from transcribe fillers or media audio silences), reverse, freeze: { at, hold }. spec.brand: { colors: { primary, accent, text }, font, logo: { url, position, width, opacity } } (templates and a logo on every clip use it). An audio track takes duck: true or { amountDb, thresholdDb, attack, release } to go down under speech. Up to 3 minutes, 60 clips, https addresses only. Only when the person asked for a video.',
   parameters: {
     type: 'object',
     properties: {
       spec: { type: 'object' },
       filename: { type: 'string', maxLength: 110 },
       preview: { type: 'array', items: { type: 'number' }, maxItems: 12 },
+      grid: { type: 'boolean' },
     },
     required: ['spec'],
     additionalProperties: false,
@@ -70,13 +125,14 @@ export type Layer =
   | ({ type: 'gradient'; kind: 'linear' | 'radial'; colors: [string, string] } & Timed)
   | ({ type: 'shader'; fragment: string; speed: number } & Timed)
   | ({ type: 'shape'; shape: 'rect' | 'ellipse' | 'line'; color: string; stroke: number; rect: Rect } & Timed)
-  | ({ type: 'text'; style: 'title' | 'subtitle' | 'title-background' | 'news-title' | 'slide-in-text'; font: FontName; text: string; color: string; background: string; backgroundShape?: Background; position: Position; fontSize: number; charSpacing: number; delay: number; speed: number; zoom: ZoomDirection; zoomAmount: number } & Timed)
-  | ({ type: 'image'; url: string; resizeMode: ResizeMode; zoom: ZoomDirection; zoomAmount: number; rect: Rect } & Timed)
-  | ({ type: 'image-overlay'; url: string; position: Position; width: number; height: number; zoom: ZoomDirection; zoomAmount: number } & Timed)
+  | ({ type: 'text'; style: 'title' | 'subtitle' | 'title-background' | 'news-title' | 'slide-in-text'; font: FontName; text: string; color: string; background: string; backgroundShape?: Background; position: Position; fontSize: number; charSpacing: number; delay: number; speed: number; zoom: ZoomDirection; zoomAmount: number; look?: TextLook } & Timed)
+  | ({ type: 'image'; url: string; resizeMode: ResizeMode; zoom: ZoomDirection; zoomAmount: number; rect: Rect; frame?: PictureFrame; grade?: Grade } & Timed)
+  | ({ type: 'image-overlay'; url: string; position: Position; width: number; height: number; zoom: ZoomDirection; zoomAmount: number; grade?: Grade } & Timed)
   | ({ type: 'captions'; words?: Array<{ text: string; start: number; end: number }>; source?: { url: string; from: number; to?: number }; font: FontName; fontSize: number; color: string; highlightColor?: string; background: string; position: 'top' | 'middle' | 'bottom'; margin: number; maxWidth: number; maxChars: number; wordsSpread?: boolean } & Timed)
-  | ({ type: 'video'; url: string; cutFrom: number; cutTo?: number; resizeMode: ResizeMode; volume: number; speed?: number; rect: Rect; cuts: Range[]; reverse: boolean; freeze?: { at: number; hold: number } } & Timed)
-  | ({ type: 'audio'; url: string; cutFrom: number; cutTo?: number; volume: number } & Timed)
-  | ({ type: 'detached-audio'; url: string; cutFrom: number; cutTo?: number; volume: number } & Timed);
+  | ({ type: 'video'; url: string; cutFrom: number; cutTo?: number; resizeMode: ResizeMode; volume: number; speed?: number; rect: Rect; cuts: Range[]; speedRanges?: SpeedRange[]; fx?: AudioFx; grade?: Grade; reverse: boolean; freeze?: { at: number; hold: number }; frame?: PictureFrame } & Timed)
+  | ({ type: 'adjustment'; grade: Grade } & Timed)
+  | ({ type: 'audio'; url: string; cutFrom: number; cutTo?: number; volume: number; fx?: AudioFx } & Timed)
+  | ({ type: 'detached-audio'; url: string; cutFrom: number; cutTo?: number; volume: number; fx?: AudioFx } & Timed);
 export interface Transition {
   name: string;
   duration: number;
@@ -102,6 +158,7 @@ export interface AudioTrack {
   loop: boolean;
   /** Go down under speech: set when the track asked for it. */
   duck?: Required<DuckOptions>;
+  fx?: AudioFx;
 }
 export interface ComposeSpec {
   width: number;
@@ -345,37 +402,59 @@ export function normalizeSpec(raw: unknown): Normalized {
           speed: num(L.speed, 1, 0.1, 10),
           zoom: style === 'title' || style === 'title-background' ? zoomOf(L.zoomDirection, 'in') : 'none',
           zoomAmount: num(L.zoomAmount, 0.2, 0, 1),
+          ...(lookOf(L) ? { look: lookOf(L)! } : {}),
           ...timing,
         });
       } else if (type === 'image' || type === 'image-overlay') {
         const url = httpsOnly(L.url ?? L.path);
         if (!url) errors.push(`${at} (${type}) needs an https address in url.`);
-        if (type === 'image') layers.push({ type: 'image', url: url ?? '', resizeMode: resizeOf(L.resizeMode), zoom: zoomOf(L.zoomDirection ?? L.zoom, 'in'), zoomAmount: num(L.zoomAmount, 0.1, 0, 1), rect: rectOf(L), ...timing });
-        else layers.push({ type: 'image-overlay', url: url ?? '', position: positionOf(L.position, 'center'), width: num(L.width, 0.3, 0.02, 1), height: num(L.height, 0.3, 0.02, 1), zoom: zoomOf(L.zoomDirection ?? L.zoom, 'none'), zoomAmount: num(L.zoomAmount, 0.1, 0, 1), ...timing });
+        if (type === 'image') layers.push({ type: 'image', url: url ?? '', resizeMode: resizeOf(L.resizeMode), zoom: zoomOf(L.zoomDirection ?? L.zoom, 'in'), zoomAmount: num(L.zoomAmount, 0.1, 0, 1), rect: rectOf(L), ...(frameOf(L) ? { frame: frameOf(L)! } : {}), ...(normalizeGrade(L.grade) ? { grade: normalizeGrade(L.grade)! } : {}), ...timing });
+        else layers.push({ type: 'image-overlay', url: url ?? '', position: positionOf(L.position, 'center'), width: num(L.width, 0.3, 0.02, 1), height: num(L.height, 0.3, 0.02, 1), zoom: zoomOf(L.zoomDirection ?? L.zoom, 'none'), zoomAmount: num(L.zoomAmount, 0.1, 0, 1), ...(normalizeGrade(L.grade) ? { grade: normalizeGrade(L.grade)! } : {}), ...timing });
+      } else if (type === 'adjustment') {
+        const grade = normalizeGrade(L.grade ?? L);
+        if (!grade) errors.push(`${at} (adjustment) needs a grade: { preset or brightness, contrast, saturation, wheels, curves, lut, vignette, grain, … }.`);
+        else layers.push({ type: 'adjustment', grade, ...timing });
       } else if (type === 'video') {
         const url = httpsOnly(L.url ?? L.path);
         if (!url) errors.push(`${at} (video) needs an https address in url.`);
-        layers.push({ type: 'video', url: url ?? '', cutFrom: num(L.cutFrom, 0, 0, 36000), ...(typeof L.cutTo === 'number' && Number.isFinite(L.cutTo) ? { cutTo: Math.max(0, L.cutTo) } : {}), resizeMode: resizeOf(L.resizeMode), volume: num(L.mixVolume ?? L.volume, 1, 0, 4), ...(typeof L.speed === 'number' && Number.isFinite(L.speed) ? { speed: num(L.speed, 1, 0.25, 4) } : {}), rect: rectOf(L), cuts: (Array.isArray(L.cuts) ? L.cuts : []).slice(0, 300).flatMap((c: unknown) => {
+        layers.push({ type: 'video', url: url ?? '', cutFrom: num(L.cutFrom, 0, 0, 36000), ...(typeof L.cutTo === 'number' && Number.isFinite(L.cutTo) ? { cutTo: Math.max(0, L.cutTo) } : {}), resizeMode: resizeOf(L.resizeMode), volume: num(L.mixVolume ?? L.volume, 1, 0, 4), ...(typeof L.speed === 'number' && Number.isFinite(L.speed) ? { speed: num(L.speed, 1, 0.25, 4) } : {}), rect: rectOf(L), ...(frameOf(L) ? { frame: frameOf(L)! } : {}), cuts: (Array.isArray(L.cuts) ? L.cuts : []).slice(0, 300).flatMap((c: unknown) => {
           const from = (c as { from?: unknown; start?: unknown })?.from ?? (c as { start?: unknown })?.start;
           const to = (c as { to?: unknown; end?: unknown })?.to ?? (c as { end?: unknown })?.end;
           return typeof from === 'number' && typeof to === 'number' && to > from ? [{ start: Math.max(0, from), end: to }] : [];
-        }), reverse: L.reverse === true, ...(L.freeze && typeof L.freeze === 'object' && typeof (L.freeze as { at?: unknown }).at === 'number' ? { freeze: { at: Math.max(0, (L.freeze as { at: number }).at), hold: num((L.freeze as { hold?: unknown }).hold, 2, 0.1, 30) } } : {}), ...timing });
+        }), reverse: L.reverse === true, ...(speedRangesOf(L) ? { speedRanges: speedRangesOf(L)! } : {}), ...(normalizeFx(L.fx) ? { fx: normalizeFx(L.fx)! } : {}), ...(normalizeGrade(L.grade) ? { grade: normalizeGrade(L.grade)! } : {}), ...(L.freeze && typeof L.freeze === 'object' && typeof (L.freeze as { at?: unknown }).at === 'number' ? { freeze: { at: Math.max(0, (L.freeze as { at: number }).at), hold: num((L.freeze as { hold?: unknown }).hold, 2, 0.1, 30) } } : {}), ...timing });
         const zoom = (L.zoomOnClicks && typeof L.zoomOnClicks === 'object' ? L.zoomOnClicks : undefined) as { clicks?: unknown; scale?: unknown; lead?: unknown; hold?: unknown; out?: unknown; merge?: unknown } | undefined;
         if (zoom) {
           const clicks = (Array.isArray(zoom.clicks) ? zoom.clicks : []).slice(0, 200).flatMap((c: unknown) => {
-            const k = c as { t?: unknown; x?: unknown; y?: unknown };
-            return typeof k?.t === 'number' && typeof k.x === 'number' && typeof k.y === 'number' ? [{ t: Math.max(0, k.t), x: Math.min(1, Math.max(0, k.x)), y: Math.min(1, Math.max(0, k.y)) }] : [];
+            const k = c as { t?: unknown; x?: unknown; y?: unknown; cell?: unknown };
+            const cell = typeof k?.cell === 'string' ? cellCenter(k.cell) : null;
+            const px = cell ? cell.x : k?.x;
+            const py = cell ? cell.y : k?.y;
+            return typeof k?.t === 'number' && typeof px === 'number' && typeof py === 'number' ? [{ t: Math.max(0, k.t), x: Math.min(1, Math.max(0, px)), y: Math.min(1, Math.max(0, py)) }] : [];
           });
           const made = zoomKeyframes(clicks, { scale: typeof zoom.scale === 'number' ? zoom.scale : undefined, lead: typeof zoom.lead === 'number' ? zoom.lead : undefined, hold: typeof zoom.hold === 'number' ? zoom.hold : undefined, out: typeof zoom.out === 'number' ? zoom.out : undefined, merge: typeof zoom.merge === 'number' ? zoom.merge : undefined });
           const last = layers[layers.length - 1]!;
           if (made) last.keyframes = { ...(last.keyframes ?? {}), ...made };
-          else errors.push(`${at} (video) zoomOnClicks needs clicks: [{ t, x, y }] with x and y from 0 to 1.`);
+          else errors.push(`${at} (video) zoomOnClicks needs clicks: [{ t, x, y }] (or cell: "B2") with x and y from 0 to 1.`);
+        }
+        if (Array.isArray(L.zooms)) {
+          // zooms: [{ from, to, x, y | cell, scale }]: a zoom over a stretch of the layer, each on its own point; ones close together move from one point to the next without zooming out
+          const ranges = (L.zooms as unknown[]).slice(0, 100).flatMap((z: unknown) => {
+            const k = z as { from?: unknown; to?: unknown; x?: unknown; y?: unknown; cell?: unknown; scale?: unknown };
+            const cell = typeof k?.cell === 'string' ? cellCenter(k.cell) : null;
+            const px = cell ? cell.x : k?.x;
+            const py = cell ? cell.y : k?.y;
+            return typeof k?.from === 'number' && typeof k.to === 'number' && k.to > k.from && typeof px === 'number' && typeof py === 'number' ? [{ from: Math.max(0, k.from), to: k.to, x: Math.min(1, Math.max(0, px)), y: Math.min(1, Math.max(0, py)), ...(typeof k.scale === 'number' ? { scale: k.scale } : {}) }] : [];
+          });
+          const made = zoomRangeKeyframes(ranges);
+          const last = layers[layers.length - 1]!;
+          if (made) last.keyframes = { ...(last.keyframes ?? {}), ...made };
+          else errors.push(`${at} (video) zooms needs [{ from, to, x, y (or cell: "B2"), scale }] with to after from.`);
         }
       } else if (type === 'audio' || type === 'detached-audio') {
         const url = httpsOnly(L.url ?? L.path);
         if (!url) errors.push(`${at} (${type}) needs an https address in url.`);
-        layers.push({ type, url: url ?? '', cutFrom: num(L.cutFrom, 0, 0, 36000), ...(typeof L.cutTo === 'number' && Number.isFinite(L.cutTo) ? { cutTo: Math.max(0, L.cutTo) } : {}), volume: num(L.mixVolume ?? L.volume, 1, 0, 4), ...timing });
-      } else errors.push(`${at} has the type "${type}": use fill-color, pause, linear-gradient, radial-gradient, rainbow-colors, shader, shape, title, subtitle, title-background, news-title, slide-in-text, image, image-overlay, video, audio or detached-audio.`);
+        layers.push({ type, url: url ?? '', cutFrom: num(L.cutFrom, 0, 0, 36000), ...(typeof L.cutTo === 'number' && Number.isFinite(L.cutTo) ? { cutTo: Math.max(0, L.cutTo) } : {}), volume: num(L.mixVolume ?? L.volume, 1, 0, 4), ...(normalizeFx(L.fx) ? { fx: normalizeFx(L.fx)! } : {}), ...timing });
+      } else errors.push(`${at} has the type "${type}": use adjustment, fill-color, pause, linear-gradient, radial-gradient, rainbow-colors, shader, shape, title, subtitle, title-background, news-title, slide-in-text, image, image-overlay, video, audio or detached-audio.`);
     });
     const hasVideo = layers.some(l => l.type === 'video');
     const fixed = typeof clip.duration === 'number' && Number.isFinite(clip.duration);
@@ -391,7 +470,7 @@ export function normalizeSpec(raw: unknown): Normalized {
     const A = (a ?? {}) as Record<string, unknown>;
     const url = httpsOnly(A.url ?? A.path);
     if (!url) errors.push(`audio track ${i + 1} needs an https address in url.`);
-    audioTracks.push({ url: url ?? '', start: num(A.start, 0, 0, LIMITS.maxSeconds), cutFrom: num(A.cutFrom, 0, 0, 36000), ...(typeof A.cutTo === 'number' && Number.isFinite(A.cutTo) ? { cutTo: Math.max(0, A.cutTo) } : {}), volume: num(A.mixVolume ?? A.volume, 1, 0, 4), loop: A.loop === true, ...(A.duck ? { duck: { thresholdDb: num((A.duck as DuckOptions).thresholdDb, -42, -80, -10), amountDb: num((A.duck as DuckOptions).amountDb, -14, -40, 0), attack: num((A.duck as DuckOptions).attack, 0.25, 0.02, 3), release: num((A.duck as DuckOptions).release, 0.8, 0.05, 5), gap: num((A.duck as DuckOptions).gap, 0.6, 0, 3) } } : {}) });
+    audioTracks.push({ ...(normalizeFx(A.fx) ? { fx: normalizeFx(A.fx)! } : {}), url: url ?? '', start: num(A.start, 0, 0, LIMITS.maxSeconds), cutFrom: num(A.cutFrom, 0, 0, 36000), ...(typeof A.cutTo === 'number' && Number.isFinite(A.cutTo) ? { cutTo: Math.max(0, A.cutTo) } : {}), volume: num(A.mixVolume ?? A.volume, 1, 0, 4), loop: A.loop === true, ...(A.duck ? { duck: { thresholdDb: num((A.duck as DuckOptions).thresholdDb, -42, -80, -10), amountDb: num((A.duck as DuckOptions).amountDb, -14, -40, 0), attack: num((A.duck as DuckOptions).attack, 0.25, 0.02, 3), release: num((A.duck as DuckOptions).release, 0.8, 0.05, 5), gap: num((A.duck as DuckOptions).gap, 0.6, 0, 3) } } : {}) });
   });
   if (errors.length) return { ok: false, errors };
   const an = (r.audioNorm ?? undefined) as { enable?: unknown; targetLufs?: unknown; maxGain?: unknown } | undefined;
@@ -421,13 +500,13 @@ export function resolveDurations(spec: ComposeSpec, probe: (url: string) => numb
   const clips = spec.clips.map(c => {
     const videos = c.layers.filter((l): l is Extract<Layer, { type: 'video' }> => l.type === 'video');
     // seconds of the file that are played (after cuts) and the seconds a freeze holds, for one video layer at the speed 1
-    const base = (v: Extract<Layer, { type: 'video' }>) => buildPlayback({ cutFrom: v.cutFrom, cutTo: v.cutTo ?? probe(v.url), cuts: v.cuts, reverse: v.reverse, speed: 1, ...(v.freeze ? { freeze: v.freeze } : {}) });
+    const base = (v: Extract<Layer, { type: 'video' }>) => buildPlayback({ cutFrom: v.cutFrom, cutTo: v.cutTo ?? probe(v.url), cuts: v.cuts, ...(v.speedRanges ? { speedRanges: v.speedRanges } : {}), reverse: v.reverse, speed: 1, ...(v.freeze ? { freeze: v.freeze } : {}) });
     const first = videos[0];
     let duration = c.duration;
     if (duration === undefined) {
       if (first) {
         const pb = base(first);
-        duration = Math.max(0.2, pb.content / (first.speed ?? 1) + (first.freeze?.hold ?? 0));
+        duration = Math.max(0.2, (pb.length - (first.freeze?.hold ?? 0)) / (first.speed ?? 1) + (first.freeze?.hold ?? 0));
       } else duration = 3;
     }
     duration = Math.min(duration, LIMITS.maxSeconds);
@@ -437,7 +516,7 @@ export function resolveDurations(spec: ComposeSpec, probe: (url: string) => numb
       // the speed named wins; else a clip with a given length fits the video to it (what is played over the time left after a freeze); else the video plays at its own speed
       const own = (l.stop ?? duration!) - l.start - (l.freeze?.hold ?? 0);
       const pb = base(l);
-      const speed = l.speed ?? (c.fixed ? Math.min(10, Math.max(0.1, pb.content / Math.max(0.2, own))) : 1);
+      const speed = l.speed ?? (c.fixed ? Math.min(10, Math.max(0.1, (pb.length - (l.freeze?.hold ?? 0)) / Math.max(0.2, own))) : 1);
       return { ...l, cutTo, speed };
     });
     return { ...c, duration, layers };

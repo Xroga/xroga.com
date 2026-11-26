@@ -175,3 +175,22 @@ export function expandTemplate(raw: Raw, brand: Brand | undefined): Raw[] | { er
   }
   return out;
 }
+
+// ---------------------------------------------------------------- grounding grid
+
+const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+/** The name of a cell: a letter for the column (A is the left) and a number for the row (1 is the top), as in a spreadsheet: A1 top left, C3 bottom right of a 3 by 3 grid. */
+export function cellName(col: number, row: number): string {
+  return `${LETTERS[col] ?? '?'}${row + 1}`;
+}
+
+/** The middle of a named cell as fractions of the picture, or null for a name the grid does not have. A grid is \`n\` cells each way (default 3). */
+export function cellCenter(name: string, n = 3): { x: number; y: number } | null {
+  const m = /^([A-Za-z])([1-9]\d?)$/.exec(name.trim());
+  if (!m) return null;
+  const col = LETTERS.indexOf(m[1]!.toUpperCase());
+  const row = Number(m[2]) - 1;
+  if (col < 0 || col >= n || row < 0 || row >= n) return null;
+  return { x: Math.round(((col + 0.5) / n) * 1000) / 1000, y: Math.round(((row + 0.5) / n) * 1000) / 1000 };
+}

@@ -65,7 +65,7 @@ describe('how a video layer plays', () => {
     expect(cut.sourceAt(1)).toBe(11);
     expect(cut.sourceAt(2)).toBe(12); // the end of the first piece; the next picture is from the second
     expect(cut.sourceAt(2.5)).toBe(14.5);
-    expect(cut.pieces).toEqual([{ from: 10, to: 12, reversed: false, at: 0 }, { from: 14, to: 18, reversed: false, at: 2 }]);
+    expect(cut.pieces).toEqual([{ from: 10, to: 12, reversed: false, at: 0, factor: 1 }, { from: 14, to: 18, reversed: false, at: 2, factor: 1 }]);
   });
 
   it('runs faster or slower and says how long the layer then lasts', () => {
@@ -149,5 +149,62 @@ describe('zoom on clicks', () => {
     expect(evaluateKeyframes(k.x!, 4)).toBeLessThan(0);
     expect(zoomKeyframes([])).toBeUndefined();
     expect(zoomKeyframes([{ t: -1, x: 0.5, y: 0.5 }])).toBeUndefined();
+  });
+});
+
+describe('zoom over stated stretches', () => {
+  it('zooms in over the ramp, holds to the end of the stretch, and goes back out', async () => {
+    const { zoomRangeKeyframes } = await import('../compose-motion');
+    const k = zoomRangeKeyframes([{ from: 10, to: 16, x: 0.3, y: 0.5, scale: 1.8 }], { ramp: 0.6 })!;
+    expect(evaluateKeyframes(k.scale!, 9)).toBe(1);
+    expect(evaluateKeyframes(k.scale!, 10.6)).toBeCloseTo(1.8, 6);
+    expect(evaluateKeyframes(k.scale!, 15)).toBeCloseTo(1.8, 6);
+    expect(evaluateKeyframes(k.scale!, 16.6)).toBeCloseTo(1, 6);
+    expect(evaluateKeyframes(k.x!, 12)).toBeGreaterThan(0); // a point left of the middle brings the picture to the right
+  });
+
+  it('moves from one focal point to the next without zooming out between, and zooms out between stretches that are far apart', async () => {
+    const { zoomRangeKeyframes } = await import('../compose-motion');
+    const near = zoomRangeKeyframes([{ from: 2, to: 8, x: 0.28, y: 0.48 }, { from: 8.2, to: 14, x: 0.3, y: 0.68 }], { scale: 1.8, ramp: 0.6, join: 0.4 })!;
+    expect(evaluateKeyframes(near.scale!, 8.1)).toBeCloseTo(1.8, 6); // still zoomed between them
+    expect(evaluateKeyframes(near.y!, 7)).toBeGreaterThan(evaluateKeyframes(near.y!, 13)); // the view has moved down to the second point (the picture shifts up)
+    const far = zoomRangeKeyframes([{ from: 2, to: 6, x: 0.5, y: 0.5 }, { from: 20, to: 24, x: 0.5, y: 0.5 }], { ramp: 0.6 })!;
+    expect(evaluateKeyframes(far.scale!, 12)).toBe(1);
+    expect(zoomRangeKeyframes([{ from: 5, to: 4, x: 0.5, y: 0.5 }])).toBeUndefined();
+    expect(zoomRangeKeyframes([])).toBeUndefined();
+  });
+});
+
+describe('speed ranges on a playback', () => {
+  it('plays a stretch of the file at its own speed and the length follows', () => {
+    // 10 s file: 0-4 normal, 4-6 at half speed, 6-10 normal -> 4 + 4 + 4 = 12 s
+    const pb = buildPlayback({ cutFrom: 0, cutTo: 10, speed: 1, speedRanges: [{ start: 4, end: 6, speed: 0.5 }] });
+    expect(pb.ramped).toBe(true);
+    expect(pb.length).toBeCloseTo(12, 6);
+    expect(pb.sourceAt(2)).toBeCloseTo(2, 6);
+    expect(pb.sourceAt(6)).toBeCloseTo(5, 6); // 2 s into the slow stretch = 1 s of file
+    expect(pb.sourceAt(8)).toBeCloseTo(6, 6);
+    expect(pb.sourceAt(11)).toBeCloseTo(9, 6);
+    expect(pb.finishedAt(5)).toBeCloseTo(6, 6);
+    expect(pb.pieces.map(p => p.factor)).toEqual([1, 0.5, 1]);
+  });
+  it('multiplies with the layer speed, runs backwards and holds a freeze', () => {
+    const fast = buildPlayback({ cutFrom: 0, cutTo: 8, speed: 2, speedRanges: [{ start: 0, end: 4, speed: 2 }] });
+    expect(fast.length).toBeCloseTo(1 + 2, 6); // 4 s at x4, 4 s at x2
+    const back = buildPlayback({ cutFrom: 0, cutTo: 6, speed: 1, reverse: true, speedRanges: [{ start: 0, end: 2, speed: 2 }] });
+    expect(back.length).toBeCloseTo(5, 6);
+    expect(back.sourceAt(0)).toBeCloseTo(6, 6);
+    const held = buildPlayback({ cutFrom: 0, cutTo: 10, speed: 1, freeze: { at: 5, hold: 2 }, speedRanges: [{ start: 6, end: 10, speed: 2 }] });
+    expect(held.length).toBeCloseTo(5 + 2 + 1 + 2, 6);
+    expect(held.sourceAt(6)).toBeCloseTo(5, 6);
+    expect(held.sourceAt(7)).toBeCloseTo(5, 6);
+    expect(held.sourceAt(8)).toBeCloseTo(6, 6);
+    expect(held.sourceAt(9)).toBeCloseTo(8, 6);
+  });
+  it('keeps the old maths when there are no ranges', () => {
+    const pb = buildPlayback({ cutFrom: 0, cutTo: 10, speed: 2, cuts: [{ start: 2, end: 4 }], freeze: { at: 3, hold: 1 } });
+    expect(pb.ramped).toBe(false);
+    expect(pb.length).toBeCloseTo(4 + 1, 6);
+    expect(pb.sourceAt(0.5)).toBeCloseTo(1, 6);
   });
 });

@@ -3,22 +3,23 @@
 // description and the formatting of the result. The idea of local speech recognition with timestamps comes from the studied video-editing donors
 // (openreel, openfilm, Opencut); written fresh.
 import type { AgentTool } from './tools';
-import { chapterText, chapterWarnings, findFillers, groupIntoBlocks, keepSegments, wordsToCues, ffmetadataChapters, type TimedWord } from './transcript-tools';
+import { chapterText, chapterWarnings, findFillers, findPauses, groupIntoBlocks, keepSegments, wordsToCues, ffmetadataChapters, type TimedWord } from './transcript-tools';
 
 export const TRANSCRIBE_TOOL: AgentTool = {
   name: 'transcribe',
   source: 'agent',
   group: 'reading',
   description:
-    'Turn the speech in an audio or video file (mp3, wav, m4a, ogg, mp4, webm) at a web address into text with times, read on this device (first use downloads a small speech model, about 40 MB). seconds limits how much is read (default 300, at most 1800) and from says where to start, so a long file is read in parts; find lists only the lines with a word; language is english (default, fast) or any other for the multilingual model. view: lines (default), words (every word with its time), fillers (the um and uh to cut, with the ranges and the keep list for a video), outline (blocks of 20 to 60 s to choose chapters from). Reads no picture of a video, only its sound.',
+    'Turn the speech in an audio or video file (mp3, wav, m4a, ogg, mp4, webm) at a web address into text with times, read on this device (first use downloads a small speech model, about 40 MB). seconds limits how much is read (default 300, at most 1800) and from says where to start, so a long file is read in parts; find lists only the lines with a word; language is english (default, fast) or any other for the multilingual model. view: lines (default), words (every word with its time), fillers (the um and uh to cut, with the ranges and the keep list for a video), pauses (silences between words of minGap seconds or more, default 0.6, with padded ranges to cut), outline (blocks of 20 to 60 s to choose chapters from). Reads no picture of a video, only its sound.',
   parameters: {
     type: 'object',
     properties: {
       url: { type: 'string', maxLength: 2000 },
       seconds: { type: 'number' },
       from: { type: 'number' },
-      view: { type: 'string', enum: ['lines', 'words', 'fillers', 'outline'] },
+      view: { type: 'string', enum: ['lines', 'words', 'fillers', 'pauses', 'outline'] },
       repeats: { type: 'boolean' },
+      minGap: { type: 'number' },
       find: { type: 'string', maxLength: 200 },
       language: { type: 'string', maxLength: 40 },
     },
@@ -111,13 +112,13 @@ export function describeTranscript(result: TranscriptResult, options: { find?: s
 
 const stamp = (t: number) => clock(t);
 
-export type TranscriptView = 'lines' | 'words' | 'fillers' | 'outline';
+export type TranscriptView = 'lines' | 'words' | 'fillers' | 'pauses' | 'outline';
 
 /** The views that need a time for every word. */
 export const needsWords = (view: TranscriptView): boolean => view !== 'lines';
 
 /** A transcript in one of its views: the lines, every word with its time, the hesitations to cut (with the ranges and what stays), or blocks to choose chapters from. */
-export function describeView(result: TranscriptResult, view: TranscriptView, options: { find?: string; repeats?: boolean } = {}): string {
+export function describeView(result: TranscriptResult, view: TranscriptView, options: { find?: string; repeats?: boolean; minGap?: number } = {}): string {
   if (view === 'lines' || !result.words) return describeTranscript(result, { find: options.find });
   const words = result.words;
   const head = `Speech read from the sound: ${stamp(result.readSeconds)}${result.from ? ` from ${stamp(result.from)}` : ''}${result.totalSeconds !== undefined ? ` of ${stamp(result.totalSeconds)}` : ''}, ${words.length} words (model ${result.model}, on this device).${result.wordsSpread ? ' The model gave no word times, so each word is placed by spreading it over its line: good to about a second, not exact.' : ''}`;
@@ -138,6 +139,17 @@ export function describeView(result: TranscriptResult, view: TranscriptView, opt
       `${matches.length} to cut: ${matches.slice(0, 40).map(m => `${stamp(m.start)} "${m.text}"${m.kind === 'repeat' ? ' (repeat)' : ''}`).join(', ')}${matches.length > 40 ? ', …' : ''}`,
       `${ranges.length} ranges to remove (${total.toFixed(1)} s in all), in seconds of the file: ${JSON.stringify(ranges.slice(0, 60))}`,
       `What stays, as pieces of the file (use one video layer per piece, with cutFrom and cutTo, in compose_video): ${JSON.stringify(keep.slice(0, 60))}`,
+    ].join('\n');
+  }
+  if (view === 'pauses') {
+    const { pauses, ranges } = findPauses(words, { minGap: options.minGap });
+    if (!pauses.length) return `${head}
+No pause of ${(options.minGap ?? 0.6).toFixed(1)} s or more was found between words.`;
+    const total = ranges.reduce((s, r) => s + r.end - r.start, 0);
+    return [
+      head,
+      `${pauses.length} pauses: ${pauses.slice(0, 40).map(p => `${stamp(p.start)} (${p.gap.toFixed(1)} s)`).join(', ')}${pauses.length > 40 ? ', …' : ''}`,
+      `${ranges.length} ranges to take out (${total.toFixed(1)} s in all; each keeps 0.15 s of the silence on both sides so no word is clipped), in seconds of the file: ${JSON.stringify(ranges.slice(0, 60))}. Use them as cuts: [{ from, to }] on a video layer in compose_video.`,
     ].join('\n');
   }
   // outline: blocks to choose chapters from

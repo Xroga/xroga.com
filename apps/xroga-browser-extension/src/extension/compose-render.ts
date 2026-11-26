@@ -5,6 +5,9 @@ import { crossfadeGains, normalizationGain, applyGainSoftLimit, timeStretch } fr
 import { normalizeSpec, resolveDurations, timeline, type ComposeSpec, type Layer, type ResizeMode } from '@src/agent/compose-spec';
 import { drawFrame, type Assets, type Picture, type Scratch } from './compose-draw';
 import { ShaderRunner } from './compose-shader';
+import { drawGrid } from './grid';
+import { parseCube, type Lut3D } from '@src/agent/grade';
+import { applyFx } from './audio-fx-render';
 import { fetchRetry, resolveAddress } from './net';
 import { buildPlayback, layerTimeOf } from '@src/agent/compose-playback';
 import { duckCurve, speechRanges, wordsOnClipTime } from '@src/agent/compose-extras';
@@ -119,6 +122,17 @@ async function prepare(raw: unknown, loadMb: () => Promise<unknown>): Promise<Pr
   const lastFrame = new Map<string, OffscreenCanvas>();
   const layers = spec.clips.flatMap(c => c.layers);
   for (const url of new Set(layers.flatMap(l => (l.type === 'image' || l.type === 'image-overlay' ? [l.url] : [])))) images.set(url, await pictureOf(url));
+  // 3D LUTs the grades name: each .cube file is read once
+  const luts = new Map<string, Lut3D>();
+  const gradeUrls = new Set<string>();
+  for (const l of layers) if ((l.type === 'video' || l.type === 'image' || l.type === 'image-overlay' || l.type === 'adjustment') && l.grade?.lut) gradeUrls.add(l.grade.lut.url);
+  for (const url of gradeUrls) {
+    try {
+      luts.set(url, parseCube(new TextDecoder().decode(await bytesOf(url))));
+    } catch (error) {
+      notes.push('a LUT was not used: ' + (error instanceof Error ? error.message : String(error)));
+    }
+  }
   const openVideo = async (url: string) => {
     let input: Input;
     try {
@@ -153,7 +167,7 @@ async function prepare(raw: unknown, loadMb: () => Promise<unknown>): Promise<Pr
       let words;
       if (!layer.source && video) {
         // through the video layer: its cuts, speed and freeze decide where each word falls
-        const pb = buildPlayback({ cutFrom: video.cutFrom, cutTo: video.cutTo ?? to, cuts: video.cuts, reverse: video.reverse, speed: video.speed ?? 1, ...(video.freeze ? { freeze: video.freeze } : {}) });
+        const pb = buildPlayback({ cutFrom: video.cutFrom, cutTo: video.cutTo ?? to, cuts: video.cuts, ...(video.speedRanges ? { speedRanges: video.speedRanges } : {}), reverse: video.reverse, speed: video.speed ?? 1, ...(video.freeze ? { freeze: video.freeze } : {}) });
         if (video.reverse) notes.push(`clip ${ci + 1}: the video plays backwards, so its speech cannot be captioned`);
         words = heard.words!.flatMap(w => {
           const a = layerTimeOf(pb, w.start, video.speed ?? 1, video.reverse, video.freeze);
@@ -168,6 +182,7 @@ async function prepare(raw: unknown, loadMb: () => Promise<unknown>): Promise<Pr
   let shaders: ShaderRunner | undefined;
   const assets: Assets = {
     images,
+    luts,
     async frame(url: string, mode: ResizeMode, seconds: number) {
       const v = videos.get(url);
       if (!v) return undefined;
@@ -263,8 +278,48 @@ function schedule(ctx: BaseAudioContext, into: AudioNode, part: Part, total: num
   } else src.start(part.when, part.offset, part.duration);
 }
 
+/** The sound of a video layer whose stretches have speeds of their own: each piece is changed in speed without changing the pitch and laid where the picture shows it (after any held picture). */
+async function rampedAudio(mb: Mb, track: unknown, pb: ReturnType<typeof buildPlayback>, speed: number): Promise<AudioBuffer | undefined> {
+  const placed: Array<{ buffer: AudioBuffer; at: number }> = [];
+  const freezeAt = pb.silence?.at;
+  for (const piece of pb.pieces) {
+    const buffer = await decodeRange(mb, track, piece.from, piece.to);
+    if (!buffer) continue;
+    if (piece.reversed) for (let k = 0; k < buffer.numberOfChannels; k++) buffer.getChannelData(k).reverse();
+    const rate = speed * piece.factor;
+    const length = piece.to - piece.from;
+    // a piece that spans the held picture is written in two parts, so the silence falls between
+    const cuts = freezeAt !== undefined && piece.at < freezeAt && piece.at + length > freezeAt ? [0, freezeAt - piece.at, length] : [0, length];
+    for (let i = 0; i + 1 < cuts.length; i++) {
+      const sr = buffer.sampleRate;
+      const from = Math.round(cuts[i]! * sr);
+      const to = Math.min(buffer.length, Math.round(cuts[i + 1]! * sr));
+      if (to - from < 2) continue;
+      const part = new AudioBuffer({ length: to - from, numberOfChannels: buffer.numberOfChannels, sampleRate: sr });
+      for (let k = 0; k < buffer.numberOfChannels; k++) part.copyToChannel(buffer.getChannelData(k).subarray(from, to) as Float32Array<ArrayBuffer>, k);
+      placed.push({ buffer: Math.abs(rate - 1) > 0.01 ? stretched(part, rate) : part, at: pb.finishedAt(piece.at + cuts[i]! + 1e-9) });
+    }
+  }
+  if (!placed.length) return undefined;
+  const sr = placed[0]!.buffer.sampleRate;
+  const channels = Math.max(...placed.map(p => p.buffer.numberOfChannels));
+  const length = Math.max(1, Math.round((pb.length + 0.05) * sr));
+  const data = Array.from({ length: channels }, () => new Float32Array(length));
+  for (const { buffer, at } of placed) {
+    const start = Math.round(at * sr);
+    for (let k = 0; k < channels; k++) {
+      const src = buffer.getChannelData(Math.min(k, buffer.numberOfChannels - 1));
+      data[k]!.set(src.subarray(0, Math.max(0, Math.min(src.length, length - start))), start);
+    }
+  }
+  const out = new AudioBuffer({ length, numberOfChannels: channels, sampleRate: sr });
+  data.forEach((c, k) => out.copyToChannel(c as Float32Array<ArrayBuffer>, k));
+  return out;
+}
+
 /** The sound of a video layer as it plays: its kept pieces in order (each reversed when the video runs backwards), silence where the picture is held, then changed in speed without changing the pitch. */
 async function playbackAudio(mb: Mb, track: unknown, pb: ReturnType<typeof buildPlayback>, speed: number): Promise<AudioBuffer | undefined> {
+  if (pb.ramped) return rampedAudio(mb, track, pb, speed);
   const pieces: Array<{ buffer: AudioBuffer; at: number }> = [];
   for (const piece of pb.pieces) {
     const buffer = await decodeRange(mb, track, piece.from, piece.to);
@@ -305,7 +360,8 @@ async function mixSound(p: Prepared): Promise<AudioBuffer | undefined> {
   const parts: Part[] = [];
   const decoder = new OfflineAudioContext(2, 1, RATE);
   for (const t of spec.audioTracks) {
-    const buffer = await decoder.decodeAudioData(await bytesOf(t.url));
+    let buffer = await decoder.decodeAudioData(await bytesOf(t.url));
+    if (t.fx) buffer = await applyFx(buffer, t.fx);
     parts.push({ buffer, when: t.start, offset: t.cutFrom, duration: (t.cutTo ?? buffer.duration) - t.cutFrom, gain: t.volume, ...(t.loop ? { loop: { from: t.cutFrom, to: t.cutTo ?? buffer.duration } } : {}) });
   }
   const fadeWindows = (ci: number): NonNullable<Part['fades']> => {
@@ -321,7 +377,8 @@ async function mixSound(p: Prepared): Promise<AudioBuffer | undefined> {
     for (const layer of clip.layers) {
       if (layer.type === 'detached-audio') {
         // starts relative to its clip and may run on over the next ones; not cross-faded, not fitted
-        const buffer = await decoder.decodeAudioData(await bytesOf(layer.url));
+        let buffer = await decoder.decodeAudioData(await bytesOf(layer.url));
+        if (layer.fx) buffer = await applyFx(buffer, layer.fx);
         parts.push({ buffer, when: clipStart + layer.start, offset: layer.cutFrom, duration: (layer.cutTo ?? buffer.duration) - layer.cutFrom, gain: layer.volume });
       } else if (spec.keepSourceAudio && layer.type === 'audio') {
         // an audio layer fills its clip: the cut is stretched or squeezed to the clip's length without changing its pitch
@@ -334,6 +391,7 @@ async function mixSound(p: Prepared): Promise<AudioBuffer | undefined> {
         const slice = new AudioBuffer({ length: Math.max(1, Math.floor(cutLength * buffer.sampleRate)), numberOfChannels: buffer.numberOfChannels, sampleRate: buffer.sampleRate });
         for (let k = 0; k < buffer.numberOfChannels; k++) slice.copyToChannel(buffer.getChannelData(k).slice(Math.floor(from * buffer.sampleRate), Math.floor(from * buffer.sampleRate) + slice.length) as Float32Array<ArrayBuffer>, k);
         buffer = Math.abs(rate - 1) > 0.01 && rate >= 0.25 && rate <= 4 ? stretched(slice, rate) : slice;
+        if (layer.fx) buffer = await applyFx(buffer, layer.fx);
         parts.push({ buffer, when: clipStart + layer.start, offset: 0, duration: Math.min(buffer.duration, want), gain: layer.volume * spec.clipsAudioVolume, fades: fadeWindows(ci) });
       } else if (spec.keepSourceAudio && layer.type === 'video') {
         const v = videos.get(layer.url)!;
@@ -341,9 +399,10 @@ async function mixSound(p: Prepared): Promise<AudioBuffer | undefined> {
         if (!track || layer.volume <= 0) continue;
         const vid = layer as Extract<Layer, { type: 'video' }>;
         const speed = vid.speed ?? 1;
-        const pb = buildPlayback({ cutFrom: vid.cutFrom, cutTo: Math.min(vid.cutTo ?? v.duration, vid.cutFrom + (clip.duration! - vid.start) * speed + 0.5 + vid.cuts.reduce((s, c) => s + (c.end - c.start), 0)), cuts: vid.cuts, reverse: vid.reverse, speed, ...(vid.freeze ? { freeze: vid.freeze } : {}) });
-        const buffer = await playbackAudio(mb, track, pb, speed);
+        const pb = buildPlayback({ cutFrom: vid.cutFrom, cutTo: vid.speedRanges ? vid.cutTo ?? v.duration : Math.min(vid.cutTo ?? v.duration, vid.cutFrom + (clip.duration! - vid.start) * speed + 0.5 + vid.cuts.reduce((s, c) => s + (c.end - c.start), 0)), cuts: vid.cuts, ...(vid.speedRanges ? { speedRanges: vid.speedRanges } : {}), reverse: vid.reverse, speed, ...(vid.freeze ? { freeze: vid.freeze } : {}) });
+        let buffer = await playbackAudio(mb, track, pb, speed);
         if (!buffer) continue;
+        if (vid.fx) buffer = await applyFx(buffer, vid.fx);
         parts.push({ buffer, when: clipStart + vid.start, offset: 0, duration: Math.min(buffer.duration, clip.duration! - vid.start), gain: vid.volume * spec.clipsAudioVolume, fades: fadeWindows(ci) });
       }
     }
@@ -427,7 +486,7 @@ export async function renderComposition(raw: unknown, loadMb: () => Promise<unkn
 }
 
 /** A sheet of the video at chosen times, with no file and no sound: for checking a design (editly's single-frame rendering, as one picture). */
-export async function previewComposition(raw: unknown, times: number[], loadMb: () => Promise<unknown>): Promise<PreviewResult> {
+export async function previewComposition(raw: unknown, times: number[], loadMb: () => Promise<unknown>, grid = false): Promise<PreviewResult> {
   const p = await prepare(raw, loadMb);
   const { spec, total } = p;
   const stamps = (times.length ? times : [0, total / 2, total]).map(t => Math.min(Math.max(0, t), total)).slice(0, 12);
@@ -449,6 +508,7 @@ export async function previewComposition(raw: unknown, times: number[], loadMb: 
     const x = (i % cols) * tileW;
     const y = Math.floor(i / cols) * (tileH + label);
     sc.drawImage(frame, x, y + label, tileW, tileH);
+    if (grid) drawGrid(sc, x, y + label, tileW, tileH);
     sc.fillStyle = '#fff';
     sc.fillText(`${i + 1}  ${Math.round(t * 10) / 10} s`, x + 4, y + label / 2);
   }

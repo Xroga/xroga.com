@@ -11,11 +11,15 @@ import { wordsToCues } from '@src/agent/transcript-tools';
 export type Picture = CanvasImageSource & { width: number; height: number };
 export interface Assets {
   images: Map<string, Picture>;
+  /** 3D LUTs read from the .cube files the spec names, by address. */
+  luts?: Map<string, Lut3D>;
   /** A picture of a video at a time in seconds of the video; the last picture when the time is past its end. */
   frame(url: string, mode: ResizeMode, seconds: number): Promise<Picture | undefined>;
   /** A picture made by a shader (the body of mainImage) at a time and a progress. */
   shader(fragment: string, time: number, progress: number): Picture;
 }
+
+import { applyGrade, type Grade, type Lut3D } from '@src/agent/grade';
 
 type Ctx = OffscreenCanvasRenderingContext2D;
 type Box = { x: number; y: number; w: number; h: number };
@@ -57,11 +61,59 @@ function fitRect(pw: number, ph: number, box: Box, mode: ResizeMode, scale: numb
 }
 
 /** A picture into a box by a resize mode; "contain-blur" lays a blurred, dimmed cover of the same picture behind it. */
-function drawPicture(ctx: Ctx, pic: Picture, box: Box, mode: ResizeMode, scale = 1, pan = 0): void {
+const gradeScratch = new Map<string, OffscreenCanvas>();
+const gradedStill = new WeakMap<object, Picture>();
+
+/** A picture with a grade applied, on a canvas of its own (one per size and slot, so two graded pictures in one frame do not overwrite each other). */
+function graded(pic: Picture, grade: Grade, assets: Assets, at: number, slot: string, owner?: object): Picture {
+  // a still picture with a steady grade is graded once
+  const steady = owner && !grade.grain;
+  if (steady) {
+    const done = gradedStill.get(owner!);
+    if (done) return done;
+  }
+  const w = Math.max(1, Math.round(pic.width));
+  const h = Math.max(1, Math.round(pic.height));
+  const key = slot + w + 'x' + h;
+  let canvas = gradeScratch.get(key);
+  if (!canvas) {
+    canvas = new OffscreenCanvas(w, h);
+    gradeScratch.set(key, canvas);
+  }
+  const c = canvas.getContext('2d', { willReadFrequently: true })!;
+  c.clearRect(0, 0, w, h);
+  c.drawImage(pic, 0, 0, w, h);
+  const data = c.getImageData(0, 0, w, h);
+  applyGrade(data.data, w, h, grade, { lut: grade.lut ? assets.luts?.get(grade.lut.url) : undefined, frame: Math.floor(at * 24) });
+  c.putImageData(data, 0, 0);
+  if (steady) {
+    const copy = new OffscreenCanvas(w, h);
+    copy.getContext('2d')!.drawImage(canvas, 0, 0);
+    gradedStill.set(owner!, copy as unknown as Picture);
+    return copy as unknown as Picture;
+  }
+  return canvas as unknown as Picture;
+}
+
+function drawPicture(ctx: Ctx, pic: Picture, box: Box, mode: ResizeMode, scale = 1, pan = 0, frame?: { radius: number; shadow?: { blur: number; offsetY: number; opacity: number } }): void {
   if (!pic.width || !pic.height) return;
+  const r = frame ? Math.min(box.w, box.h) * frame.radius : 0;
+  if (frame?.shadow) {
+    // the shadow is cast by the rounded shape alone, before the picture is clipped into it
+    ctx.save();
+    ctx.shadowColor = `rgba(0,0,0,${frame.shadow.opacity})`;
+    ctx.shadowBlur = frame.shadow.blur;
+    ctx.shadowOffsetY = frame.shadow.offsetY;
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.roundRect(box.x, box.y, box.w, box.h, r);
+    ctx.fill();
+    ctx.restore();
+  }
   ctx.save();
   ctx.beginPath();
-  ctx.rect(box.x, box.y, box.w, box.h);
+  if (r > 0) ctx.roundRect(box.x, box.y, box.w, box.h, r);
+  else ctx.rect(box.x, box.y, box.w, box.h);
   ctx.clip();
   if (mode === 'contain-blur') {
     const back = fitRect(pic.width, pic.height, box, 'cover', 1.15);
@@ -121,9 +173,10 @@ function anchor(position: Position, W: number, H: number): { x: number; y: numbe
 function drawText(ctx: Ctx, layer: Extract<Layer, { type: 'text' }>, progress: number, W: number, H: number): void {
   const min = Math.min(W, H);
   const family = FONTS[layer.font];
-  const weight = layer.style === 'subtitle' ? '600' : '700';
+  const look = layer.look;
+  const weight = look?.weight ?? (layer.style === 'subtitle' ? '600' : '700');
   const size = Math.round(layer.style === 'slide-in-text' ? W * layer.fontSize : layer.style === 'title' || layer.style === 'title-background' ? min * layer.fontSize : min * layer.fontSize);
-  ctx.font = `${weight} ${size}px ${family}`;
+  ctx.font = `${look?.italic ? 'italic ' : ''}${weight} ${size}px ${family}`;
   (ctx as unknown as { letterSpacing: string }).letterSpacing = `${(layer.charSpacing * size * 0.4).toFixed(2)}px`;
   const lineHeight = size * 1.2;
   const a = anchor(layer.position, W, H);
@@ -208,12 +261,42 @@ function drawText(ctx: Ctx, layer: Extract<Layer, { type: 'text' }>, progress: n
   ctx.translate(a.x + k.pan, a.y);
   ctx.scale(k.scale, k.scale);
   ctx.translate(-a.x, -a.y);
-  ctx.shadowColor = 'rgba(0,0,0,0.55)';
-  ctx.shadowBlur = size * 0.12;
+  if (look?.box) {
+    const pad = size * look.box.padding;
+    const bx = a.align === 'left' ? a.x : a.align === 'right' ? a.x - widest : a.x - widest / 2;
+    ctx.fillStyle = look.box.color;
+    ctx.beginPath();
+    ctx.roundRect(bx - pad, originY - pad * 0.6, widest + pad * 2, block + pad * 1.2, Math.min(widest, block) * look.box.radius);
+    ctx.fill();
+  }
+  if (!look?.noShadow && !look?.box) {
+    ctx.shadowColor = 'rgba(0,0,0,0.55)';
+    ctx.shadowBlur = size * 0.12;
+  }
   ctx.fillStyle = layer.color;
   ctx.textAlign = a.align;
   ctx.textBaseline = 'top';
-  lines.forEach((l, i) => ctx.fillText(l, a.x, originY + i * lineHeight));
+  // letters that appear one by one: the share of all letters shown grows with the layer's progress
+  let shown = look?.typewriter ? Math.ceil(clamp01((progress - layer.delay) * layer.speed * 1.6) * lines.join('').length) : Infinity;
+  lines.forEach((l, i) => {
+    const text = shown >= l.length ? l : l.slice(0, Math.max(0, shown));
+    shown -= l.length;
+    if (!text) return;
+    // while letters appear the line keeps the place its whole text would have, so it does not shift
+    let lx = a.x;
+    if (look?.typewriter) {
+      const whole = ctx.measureText(l).width;
+      lx = a.align === 'left' ? a.x : a.align === 'right' ? a.x - whole : a.x - whole / 2;
+      ctx.textAlign = 'left';
+    }
+    if (look?.stroke) {
+      ctx.lineJoin = 'round';
+      ctx.lineWidth = size * look.stroke.width;
+      ctx.strokeStyle = look.stroke.color;
+      ctx.strokeText(text, lx, originY + i * lineHeight);
+    }
+    ctx.fillText(text, lx, originY + i * lineHeight);
+  });
   ctx.restore();
 }
 
@@ -222,7 +305,7 @@ const playbacks = new WeakMap<object, Playback>();
 export function playbackOf(layer: Extract<Layer, { type: 'video' }>): Playback {
   let p = playbacks.get(layer);
   if (!p) {
-    p = buildPlayback({ cutFrom: layer.cutFrom, cutTo: layer.cutTo ?? layer.cutFrom + 3600, cuts: layer.cuts, reverse: layer.reverse, speed: layer.speed ?? 1, ...(layer.freeze ? { freeze: layer.freeze } : {}) });
+    p = buildPlayback({ cutFrom: layer.cutFrom, cutTo: layer.cutTo ?? layer.cutFrom + 3600, cuts: layer.cuts, ...(layer.speedRanges ? { speedRanges: layer.speedRanges } : {}), reverse: layer.reverse, speed: layer.speed ?? 1, ...(layer.freeze ? { freeze: layer.freeze } : {}) });
     playbacks.set(layer, p);
   }
   return p;
@@ -319,15 +402,17 @@ async function drawLayer(ctx: Ctx, layer: Layer, at: number, clipDuration: numbe
       drawText(ctx, layer, progress, W, H);
       return;
     case 'image': {
-      const pic = assets.images.get(layer.url);
-      if (!pic) return;
+      const raw = assets.images.get(layer.url);
+      if (!raw) return;
+      const pic = layer.grade ? graded(raw, layer.grade, assets, at, 'image', layer) : raw;
       const k = kenBurns(layer.zoom, layer.zoomAmount, progress, W);
-      drawPicture(ctx, pic, boxOf(layer.rect, W, H), layer.resizeMode, k.scale, k.pan);
+      drawPicture(ctx, pic, boxOf(layer.rect, W, H), layer.resizeMode, k.scale, k.pan, layer.frame);
       return;
     }
     case 'image-overlay': {
-      const pic = assets.images.get(layer.url);
-      if (!pic) return;
+      const raw = assets.images.get(layer.url);
+      if (!raw) return;
+      const pic = layer.grade ? graded(raw, layer.grade, assets, at, 'overlay', layer) : raw;
       const boxW = layer.width * W;
       const boxH = layer.height * H;
       const k = Math.min(boxW / pic.width, boxH / pic.height);
@@ -341,7 +426,21 @@ async function drawLayer(ctx: Ctx, layer: Layer, at: number, clipDuration: numbe
     }
     case 'video': {
       const pic = await assets.frame(layer.url, layer.resizeMode, playbackOf(layer).sourceAt(Math.max(0, local)));
-      if (pic) drawPicture(ctx, pic, boxOf(layer.rect, W, H), layer.resizeMode);
+      if (pic) drawPicture(ctx, layer.grade ? graded(pic, layer.grade, assets, at, 'video' + (layer.start | 0)) : pic, boxOf(layer.rect, W, H), layer.resizeMode, 1, 0, layer.frame);
+      return;
+    }
+    case 'adjustment': {
+      // grades what is already drawn in this clip: the whole frame, mixed in by the layer's own opacity
+      const before = ctx.getImageData(0, 0, W, H);
+      const after = new ImageData(new Uint8ClampedArray(before.data), W, H);
+      applyGrade(after.data, W, H, layer.grade, { lut: layer.grade.lut ? assets.luts?.get(layer.grade.lut.url) : undefined, frame: Math.floor(at * 24) });
+      const a = ctx.globalAlpha;
+      if (a < 0.999) for (let i = 0; i < after.data.length; i++) after.data[i] = before.data[i]! + (after.data[i]! - before.data[i]!) * a;
+      ctx.save();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.globalAlpha = 1;
+      ctx.putImageData(after, 0, 0);
+      ctx.restore();
       return;
     }
     case 'captions':

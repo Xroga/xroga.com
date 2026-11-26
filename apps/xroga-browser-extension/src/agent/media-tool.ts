@@ -9,7 +9,7 @@ export const MEDIA_TOOL: AgentTool = {
   source: 'agent',
   group: 'reading',
   description:
-    'Look at and listen to an audio or video file at a web address, on this device. action info: container, length, tracks, codecs, tags. audio: loudness, peak, level over time and the silences (thresholdDb, minSeconds). beats: tempo, beat times and the beats that start bars. cover: the picture embedded in the file (album or poster). beatcuts: cut times that fall on the beat, clips of them (default 8), each everyNBeats beats long (default 4). scenes: the cuts of the picture. frames: one sheet of pictures at times (list) or count of them spread over the file, width px each. seconds limits how much is read (default 300, at most 600) and from says where to start, so a long file is read in parts (from 600, from 1200, …). For the words spoken, use transcribe.',
+    'Look at and listen to an audio or video file at a web address, on this device. action info: container, length, tracks, codecs, tags. audio: loudness, peak, level over time and the silences (thresholdDb, minSeconds). beats: tempo, beat times and the beats that start bars. cover: the picture embedded in the file (album or poster). beatcuts: cut times that fall on the beat, clips of them (default 8), each everyNBeats beats long (default 4). scenes: the cuts of the picture. frames: one sheet of pictures at times (list) or count of them spread over the file, width px each; grid: true lays a labelled 3x3 grid (A1 to C3) over each picture so you can name a place, e.g. for a zoom. seconds limits how much is read (default 300, at most 600) and from says where to start, so a long file is read in parts (from 600, from 1200, …). For the words spoken, use transcribe.',
   parameters: {
     type: 'object',
     properties: {
@@ -24,6 +24,7 @@ export const MEDIA_TOOL: AgentTool = {
       everyNBeats: { type: 'number' },
       times: { type: 'array', items: { type: 'number' }, maxItems: 24 },
       width: { type: 'number' },
+      grid: { type: 'boolean' },
     },
     required: ['url', 'action'],
     additionalProperties: false,

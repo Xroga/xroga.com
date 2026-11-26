@@ -19,6 +19,7 @@ export interface MediaRequest {
   count?: number;
   times?: number[];
   width?: number;
+  grid?: boolean;
   thresholdDb?: number;
   minSeconds?: number;
 }

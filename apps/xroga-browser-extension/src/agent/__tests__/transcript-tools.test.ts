@@ -105,3 +105,24 @@ describe('beats', () => {
     expect(downbeats(beats, strength.slice(0, 3))).toEqual([]);
   });
 });
+
+describe('pauses and snapping', () => {
+  const words = [
+    { text: 'one', start: 0, end: 0.5 },
+    { text: 'two', start: 0.6, end: 1.0 },
+    { text: 'three', start: 2.2, end: 2.8 },
+    { text: 'four', start: 4.0, end: 4.4 },
+  ];
+  it('finds pauses and pads the cuts', async () => {
+    const { findPauses } = await import('../transcript-tools');
+    const r = findPauses(words, { minGap: 0.6, pad: 0.15 });
+    expect(r.pauses).toEqual([{ start: 1, end: 2.2, gap: 1.2 }, { start: 2.8, end: 4, gap: 1.2 }]);
+    expect(r.ranges).toEqual([{ start: 1.15, end: 2.05 }, { start: 2.95, end: 3.85 }]);
+    expect(findPauses(words, { minGap: 2 }).pauses).toEqual([]);
+  });
+  it('snaps edges onto words only when close', async () => {
+    const { snapToWords } = await import('../transcript-tools');
+    expect(snapToWords([{ start: 1.08, end: 2.1 }], words)).toEqual([{ start: 1, end: 2.2 }]);
+    expect(snapToWords([{ start: 1.4, end: 1.9 }], words)).toEqual([{ start: 1.4, end: 1.9 }]);
+  });
+});

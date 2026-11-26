@@ -49,6 +49,7 @@ import './media';
 import './compose';
 import './compose-editly';
 import './compose-cutline';
+import './compose-grade';
 import './convert';
 import './record-screen';
 import './infinite-scroll';
