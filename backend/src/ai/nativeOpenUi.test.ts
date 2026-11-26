@@ -1406,6 +1406,19 @@ test('the readable calculator keeps one exact amount table and the independent r
   assert.match(supplementNativeProse(prose.replace('$20.00', '$30.00'), program, true), /Extras: \$20\.00/);
 });
 
+test('readable projection keeps a single explicitly coded result without losing its precision or note', () => {
+  const prose = 'The totals use the starting values.\n\n**Final balance: USD 1,000.80**\n**Interest: USD 50.00**';
+  const program = [
+    'root = Col([Markdown(_xroga_answer), Metric("Final balance", @Format($balance, "currency", 2, "USD")), Metric("Interest", @Format(50, "currency", 2, "USD"), "Includes the final period.")])',
+    '$balance = 1000.8',
+  ].join('\n');
+  const project = (text: string) => supplementNativeProse(text, bindNativeAnswerText(program, text), true);
+  assert.equal(project(prose), prose + '\n\nIncludes the final period.');
+  assert.match(project(prose.replace('USD 1,000.80', 'CAD 1,000.80')), /Final balance: \$1,000\.80/);
+  assert.match(project(prose.replace('USD 1,000.80', 'USD 1,000.81')), /Final balance: \$1,000\.80/);
+  assert.match(project('```text\n' + prose + '\n```'), /\n\nFinal balance: \$1,000\.80/);
+});
+
 test('the saved prose and clipboard fallback retain the substantive native body after an unfinished heading', () => {
   const prose = 'Separate identity and authorization.\n\n## Request path';
   const program = 'root = Col([Title("Request path"), Text("Separate identity and authorization."), Diagram("Trust boundaries", [{id: "client", label: "Client", level: 0}, {id: "app", label: "App", level: 1}], [{from: "client", to: "app", label: "HTTPS"}], "The app authorizes the request."), Table(["Concern", "Guard"], [["Billing", "Verify the webhook"]])])';

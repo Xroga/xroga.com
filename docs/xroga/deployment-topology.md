@@ -1,6 +1,6 @@
 # Deployment topology, source and dated evidence
 
-Source SHA: `468ccd6cfa5c183efd6d8c36b707829853f4b5f7`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
+Source SHA: `f73f4d9d21edd1cab37e875ecfb06e34ad443e45`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -249,4 +249,4 @@ Historical findings below remain as review obligations, not fresh observations. 
 - P1 RELEASE_CONTROLS_UNENFORCED: Observed main and Production/Preview lack platform protection/restrictions; mandatory user release gates still apply. Owner command: 010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P2 HOST_TOOLCHAIN_DRIFT: Vercel project configured Node 24.x; canonical CI/API image is 22.21.1; Fly host test workflow has no explicit setup-node. Owner command: 006; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 
-1298 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.
+1299 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.

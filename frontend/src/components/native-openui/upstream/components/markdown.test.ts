@@ -450,6 +450,21 @@ test('bound Markdown suppresses exact live readouts but keeps worked examples, s
   assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, { text })), /94\.40/);
 });
 
+test('one block of coded amounts is shared by the live readouts and the readable fallback', () => {
+  const amounts = '**Total: USD 105.40**\n**Interest: EUR 5.40**';
+  const program = 'root = Col([Markdown(_xroga_answer), Metric("Total", @Format($value, "currency", 2, "USD")), Metric("Interest", @Format($value - 100, "currency", 2, "EUR"))])\n$value = 105.4';
+  const visible = (text: string) => {
+    const bound = bindNativeAnswerText(program, text);
+    const root = createParser(catalog.schema as LibraryJSONSchema, 'Col').parse(bound).root;
+    const { liveReadouts } = nativeMarkdownMatches(root, initialNativeValueReader(bound));
+    return renderToStaticMarkup(createElement(MarkdownBlocks, { text, nativeReadouts: liveReadouts }));
+  };
+  assert.equal(visible(amounts), '');
+  assert.match(visible(amounts.replace('USD', 'CAD')), /CAD 105\.40/);
+  assert.match(visible(amounts + '\nThe result excludes transaction fees.'), /transaction fees/);
+  assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, { text: amounts })), /USD 105\.40/);
+});
+
 test('inline Markdown preserves underscores inside identifiers', () => {
   const prose = 'Every tenant-owned table carries tenant_id, membership lives in tenant_members, and métrique__totale is a column.';
   assert.equal(render(prose), prose);
