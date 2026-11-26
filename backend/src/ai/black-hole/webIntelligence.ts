@@ -1,5 +1,4 @@
 import {requireTenantContext,requireResourceOwner} from '../../security/tenantContext.js';
-import { startProgressStep } from '../progressChannel.js';
 import {
   explicitlyDisablesResearch,
 } from '../../lib/taskClassifier.js';
@@ -491,50 +490,7 @@ function toUiSources(
 function pendingResearch(decision:WebDecision,reviewUrl:string):WebIntelligenceResult{
   return{action:decision.action,evidence:`Research is pending exact external-data approval: ${reviewUrl}. No research provider has been dispatched.`,bundle:null,sourceCount:0,injectionAttempts:0,reason:'EXACT_RESEARCH_APPROVAL_REQUIRED',needsConfirmation:true,reviewUrl};
 }
-/**
- * The canonical web lane, reporting its real start and outcome to whoever is streaming this request.
- * The research itself is unchanged.
- */
 export async function runWebIntelligence(
-  input: Parameters<typeof gatherWebIntelligence>[0],
-): Promise<WebIntelligenceResult> {
-  const decision = input.decision ?? await decideWebAction(input);
-  if (decision.action === 'none') return gatherWebIntelligence({ ...input, decision });
-  const [doing, did] = decision.action === 'read' ? ['Reading sources', 'Read sources']
-    : decision.action === 'x_research' ? ['Searching X', 'Searched X']
-      : ['Searching the web', 'Searched the web'];
-  // The planned query is the user's own request narrowed for search; secrets are removed before display.
-  const query = redactSecrets(decision.queries?.[0] ?? '').replace(/\s+/g, ' ').trim().slice(0, 140);
-  const subject = query ? ` for "${query}"` : '';
-  const step = startProgressStep(`${doing}${subject}`);
-  try {
-    const result = await gatherWebIntelligence({ ...input, decision });
-    if (result.needsConfirmation) step.done('Web search needs your approval');
-    else if (result.sourceCount === 0) step.done(`${did}: no usable sources`);
-    else step.done(`${did}${subject}: ${describeSources(result)}`, result.bundle?.sources);
-    return result;
-  } catch (error) {
-    step.fail(`${doing} failed`);
-    throw error;
-  }
-}
-
-/** "5 sources from nodejs.org, nextjs.org". Public host names only. */
-function describeSources(result: WebIntelligenceResult): string {
-  const hosts: string[] = [];
-  for (const source of result.bundle?.sources ?? []) {
-    try {
-      const host = new URL(source.url).hostname.replace(/^www./, '');
-      if (!hosts.includes(host)) hosts.push(host);
-    } catch {
-      // A source without a parsable address is only counted.
-    }
-  }
-  const count = `${result.sourceCount} ${result.sourceCount === 1 ? 'source' : 'sources'}`;
-  return hosts.length ? `${count} from ${hosts.slice(0, 3).join(', ')}` : count;
-}
-
-async function gatherWebIntelligence(
   input: {
     userId: string;
     dispatchScope?:TenantModelScope;

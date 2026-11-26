@@ -70,6 +70,14 @@ router.post('/chat', (req: AuthRequest, res, next) => {
   });
   preparing('running', 'Preparing your answer');
 
+  // Files that arrived with this request, by their own names. Nothing is claimed about reading them.
+  const files = Array.isArray(req.body?.attachments) ? req.body.attachments.slice(0, 8) : [];
+  if (files.length) {
+    const names = files.map((file: unknown) => String((file as { name?: unknown } | null)?.name ?? '').slice(0, 60)).filter(Boolean);
+    const text = `Received ${files.length} attached ${files.length === 1 ? 'file' : 'files'}${names.length ? `: ${names.slice(0, 4).join(', ')}` : ''}`;
+    write('progress', publicAiPayload({ agent: 'session', status: 'step', activityId: 'attached-files', activityStatus: 'completed', message: text, swarmActivity: text }));
+  }
+
   try {
     if (message.trim()) {
       const reading = readIntent(message.trim());

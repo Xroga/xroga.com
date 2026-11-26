@@ -64,3 +64,14 @@ test('a refusal keeps its status so the client still sees a refusal', async () =
     assert.equal(result?.data.body.code, 'OUT_OF_ACTIONS');
   });
 });
+
+test('attached files are reported by name as received', async () => {
+  await serve(async (base) => {
+    const res = await fetch(`${base}/api/phase1/chat`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream' },
+      body: JSON.stringify({ message: 'hello there', attachments: [{ name: 'brief.pdf', url: 'x' }] }),
+    });
+    const step = frames(await res.text()).find((frame) => frame.data.activityId === 'attached-files');
+    assert.equal(step?.data.message, 'Received 1 attached file: brief.pdf');
+  });
+});

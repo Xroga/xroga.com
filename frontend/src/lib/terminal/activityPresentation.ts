@@ -61,6 +61,7 @@ function kindFor(event: TerminalEvent): XrogaActivityKind {
   // Web steps carry the search words, which must not reclassify the step.
   if (/^search(?:ing|ed) (?:the web|x)\b/i.test(event.text)) return 'search';
   if (/^read(?:ing)? sources\b/i.test(event.text)) return 'read-source';
+  if (/^received d+ attached files?/i.test(event.text)) return 'read-file';
   if (event.canonical?.source === 'software-agent-v2') {
     if (operation === 'command.started' || operation === 'command.output' || operation === 'command.completed') return 'command';
     if (operation === 'check.started' || operation === 'check.completed') return 'test';

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "8f76f2ec189a473593613fbc5332b95d80605b55",
+  "source_sha": "bdae63ed0a1fb792a9a5df7bced9d5ebc02cebda",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17363,7 +17363,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "8cb49dde18ed80baecf8f06f1b762b4b8a8c21a1073c18ca105c7bf8e3f3e8c7"
+      "sha256": "1dc6c0ef9be8280f4534e83baa0bf2b72bd50a7f3480284d8ee4c5dd3c2b40e8"
     },
     {
       "path": "backend/src/ai/buildImprovementMemory.ts",
@@ -19135,7 +19135,7 @@
     },
     {
       "path": "backend/src/routes/phase1ChatProgress.ts",
-      "sha256": "db2e18d3e9fdba465f12407246a22f5b64fc2b7190677d39b69a04ab2a052e75"
+      "sha256": "27273e84b9e6ef17c702b201f56f70ac363e29b297cfefac91023d909b1c33c2"
     },
     {
       "path": "backend/src/routes/profile.ts",
@@ -24863,7 +24863,7 @@
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "sha256": "03af77d44b044dc1606952c935f1bd403a92617cf0d91074959feb37e90834b9"
+      "sha256": "1213bdd9c45b85bfa64987d1f4e9eb02282d3c946ac5d158ae54fb5333550c2c"
     },
     {
       "path": "frontend/src/lib/terminal/activityTimeline.ts",
@@ -33193,7 +33193,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "line": 90,
+      "line": 89,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -41838,13 +41838,6 @@
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 244,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/lib/terminal/activityPresentation.ts",
       "line": 245,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
@@ -41852,7 +41845,7 @@
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 285,
+      "line": 246,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -41866,7 +41859,14 @@
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 298,
+      "line": 287,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/terminal/activityPresentation.ts",
+      "line": 299,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

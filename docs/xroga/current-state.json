@@ -1704,7 +1704,7 @@
       "callers": [
         "backend/src/ai/black-hole/researchRouter.test.ts:4",
         "backend/src/ai/black-hole/webIntelligence.test.ts:5",
-        "backend/src/ai/black-hole/webIntelligence.ts:34",
+        "backend/src/ai/black-hole/webIntelligence.ts:33",
         "backend/src/ai/researchAnswer.ts:3"
       ],
       "reachable": true,
@@ -2166,7 +2166,7 @@
       "id": "surface:0e78a2534aef2dadd6c0",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "8cb49dde18ed80baecf8f06f1b762b4b8a8c21a1073c18ca105c7bf8e3f3e8c7",
+      "sha256": "1dc6c0ef9be8280f4534e83baa0bf2b72bd50a7f3480284d8ee4c5dd3c2b40e8",
       "symbols": [
         "ACTIONS",
         "WebAction",
@@ -2179,19 +2179,15 @@
         "automaticOfficialDomains",
         "bundle",
         "context",
-        "count",
         "decideWebAction",
         "decision",
-        "describeSources",
         "domains",
         "error",
         "evidence",
         "evidenceExcerptLimit",
         "extractUrls",
-        "gatherWebIntelligence",
         "grokXSearch",
         "host",
-        "hosts",
         "isXUrl",
         "knownUrls",
         "match",
@@ -2212,11 +2208,8 @@
         "result",
         "runWebIntelligence",
         "scopedQuery",
-        "source",
         "sourcePolicy",
         "sources",
-        "step",
-        "subject",
         "toRawResults",
         "toUiSources",
         "value",
@@ -2232,7 +2225,6 @@
         "../openaiCompat.js",
         "../parallelApproval.js",
         "../parallelWeb.js",
-        "../progressChannel.js",
         "../providerRuntime.js",
         "../research.js",
         "../researchSearchProvider.js",
@@ -2245,7 +2237,6 @@
         "backend/src/ai/openaiCompat.ts",
         "backend/src/ai/parallelApproval.ts",
         "backend/src/ai/parallelWeb.ts",
-        "backend/src/ai/progressChannel.ts",
         "backend/src/ai/providerRuntime.ts",
         "backend/src/ai/researchSearchProvider.ts",
         "backend/src/ai/tenantModelDispatch.ts",
@@ -7225,7 +7216,7 @@
         "backend/src/ai/black-hole/contextPlan.ts:32",
         "backend/src/ai/black-hole/gateway.ts:50",
         "backend/src/ai/black-hole/providerAdapter.ts:29",
-        "backend/src/ai/black-hole/webIntelligence.ts:10",
+        "backend/src/ai/black-hole/webIntelligence.ts:9",
         "backend/src/ai/converter.ts:1",
         "backend/src/ai/disabledProviderDispatch.test.ts:4",
         "backend/src/ai/genericSdkAdmission.test.ts:3",
@@ -7427,7 +7418,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/black-hole/webIntelligence.ts:19",
+        "backend/src/ai/black-hole/webIntelligence.ts:18",
         "backend/src/ai/parallelDispatch.ts:6",
         "backend/src/services/integrations/businessAction.ts:1515"
       ],
@@ -7646,7 +7637,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/black-hole/webIntelligence.ts:22",
+        "backend/src/ai/black-hole/webIntelligence.ts:21",
         "backend/src/ai/parallelWeb.security.test.ts:8",
         "backend/src/ai/research.ts:7"
       ],
@@ -8859,11 +8850,9 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts",
-        "scripts/security/verify-oci-federation.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/black-hole/webIntelligence.ts:2",
         "backend/src/routes/phase1ChatProgress.ts:6"
       ],
       "reachable": true,
@@ -9729,7 +9718,7 @@
       "callers": [
         "backend/src/ai/benchmarkRunner.ts:37",
         "backend/src/ai/black-hole/gateway.ts:54",
-        "backend/src/ai/black-hole/webIntelligence.ts:17",
+        "backend/src/ai/black-hole/webIntelligence.ts:16",
         "backend/src/ai/black-hole/xResearchAdmission.security.test.ts:5",
         "backend/src/ai/blackBoxExecution.test.ts:7",
         "backend/src/ai/disabledProviderDispatch.test.ts:6",
@@ -10874,7 +10863,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/black-hole/webIntelligence.ts:18",
+        "backend/src/ai/black-hole/webIntelligence.ts:17",
         "backend/src/ai/parallelApproval.ts:22",
         "backend/src/ai/parallelDispatch.ts:15",
         "backend/src/ai/researchAnswer.ts:7",
@@ -14681,7 +14670,7 @@
       ],
       "callers": [
         "backend/src/ai/architect.ts:6",
-        "backend/src/ai/black-hole/webIntelligence.ts:16",
+        "backend/src/ai/black-hole/webIntelligence.ts:15",
         "backend/src/ai/converter.ts:2",
         "backend/src/ai/modelContext.security.test.ts:5",
         "backend/src/ai/modelRedirectFallback.security.test.ts:6",
@@ -27927,7 +27916,7 @@
       ],
       "callers": [
         "backend/src/ai/black-hole/taskClass.ts:28",
-        "backend/src/ai/black-hole/webIntelligence.ts:3",
+        "backend/src/ai/black-hole/webIntelligence.ts:2",
         "backend/src/ai/blackBoxExecution.test.ts:3",
         "backend/src/ai/intelligentRouter.ts:9",
         "backend/src/ai/pipeline.ts:246",
@@ -27992,7 +27981,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/black-hole/webIntelligence.ts:6",
+        "backend/src/ai/black-hole/webIntelligence.ts:5",
         "backend/src/ai/executionRuntime.ts:2",
         "backend/src/ai/parallelApproval.ts:18",
         "backend/src/ai/parallelWeb.ts:3",
@@ -34495,13 +34484,15 @@
       "id": "surface:a84cf17b2bc2287e5cc5",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
-      "sha256": "db2e18d3e9fdba465f12407246a22f5b64fc2b7190677d39b69a04ab2a052e75",
+      "sha256": "27273e84b9e6ef17c702b201f56f70ac363e29b297cfefac91023d909b1c33c2",
       "symbols": [
         "HEARTBEAT_MS",
         "controller",
+        "files",
         "heartbeat",
         "line",
         "message",
+        "names",
         "open",
         "originalStatus",
         "preparing",
@@ -34509,6 +34500,7 @@
         "router",
         "sendJson",
         "status",
+        "text",
         "wantsStream",
         "write"
       ],
@@ -44676,7 +44668,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/black-hole/webIntelligence.ts:20",
+        "backend/src/ai/black-hole/webIntelligence.ts:19",
         "backend/src/ai/parallelApproval.ts:21",
         "backend/src/ai/researchAnswer.test.ts:174",
         "backend/src/ai/researchAnswer.ts:4",
@@ -123407,7 +123399,7 @@
       "id": "surface:e1d63f3bf1a4ffb59a37",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/terminal/activityPresentation.ts",
-      "sha256": "03af77d44b044dc1606952c935f1bd403a92617cf0d91074959feb37e90834b9",
+      "sha256": "1213bdd9c45b85bfa64987d1f4e9eb02282d3c946ac5d158ae54fb5333550c2c",
       "symbols": [
         "GENERIC_PLACEHOLDER",
         "INTERNAL_MARKERS",
@@ -141596,7 +141588,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b1d355137d2ede489ad0",
+      "id": "registration:5371e2d1d09250adb081",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
       "line": 36,
       "receiver": "router",
@@ -143142,8 +143134,8 @@
       "reason": "Router factory invoked by an imported default export; terminal middleware traced, behavior must still be tested."
     },
     {
-      "id": "route:725c6b94c27ac2ba1bdf",
-      "registrationId": "registration:b1d355137d2ede489ad0",
+      "id": "route:af60878e2c984664b640",
+      "registrationId": "registration:5371e2d1d09250adb081",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
       "line": 36,
       "method": "POST",
@@ -162475,7 +162467,7 @@
     {
       "id": "test-suite:8d73808569e38c5b4489",
       "sourcePath": "backend/src/routes/phase1ChatProgress.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
