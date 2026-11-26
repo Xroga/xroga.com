@@ -398,8 +398,199 @@ async function transcribe(url: string, seconds: number, multilingual: boolean) {
   return { chunks, readSeconds: wanted / 16000, totalSeconds: decoded.duration, model: multilingual ? 'whisper-tiny' : 'whisper-tiny.en', bytes: size };
 }
 
+// Media files (the `media` tool): mediabunny (MPL-2.0, vendored unmodified in public/media) reads the container and decodes sound and pictures with WebCodecs; the numbers are
+// worked out by src/agent/media-analysis.ts. A file is read by range requests where the server allows it, so a long video is not downloaded to look at a few frames.
+interface MbTrack {
+  type: string;
+  codec: string | null;
+  languageCode?: string;
+  codedWidth?: number;
+  codedHeight?: number;
+  rotation?: number;
+  numberOfChannels?: number;
+  sampleRate?: number;
+  computePacketStats(n?: number): Promise<{ packetCount: number; averagePacketRate: number; averageBitrate: number }>;
+}
+interface MbInput {
+  getFormat(): Promise<{ name: string; mimeType: string }>;
+  computeDuration(): Promise<number>;
+  getMetadataTags(): Promise<Record<string, unknown>>;
+  getTracks(): Promise<MbTrack[]>;
+  getPrimaryVideoTrack(): Promise<MbTrack | null>;
+  getPrimaryAudioTrack(): Promise<MbTrack | null>;
+  dispose(): void;
+}
+interface Mb {
+  Input: new (o: { source: unknown; formats: unknown }) => MbInput;
+  ALL_FORMATS: unknown;
+  UrlSource: new (url: string) => unknown;
+  BlobSource: new (blob: Blob) => unknown;
+  AudioBufferSink: new (track: MbTrack) => { buffers(start?: number, end?: number): AsyncGenerator<{ buffer: AudioBuffer; timestamp: number; duration: number }> };
+  CanvasSink: new (track: MbTrack, o: { width?: number; height?: number; fit?: string }) => {
+    getCanvas(t: number): Promise<{ canvas: OffscreenCanvas; timestamp: number } | null>;
+    canvases(start?: number, end?: number): AsyncGenerator<{ canvas: OffscreenCanvas; timestamp: number }>;
+  };
+}
+const MAX_MEDIA_BYTES = 300 * 1024 * 1024;
+const MAX_ANALYSIS_SECONDS = 600;
+
+async function openMedia(mb: Mb, url: string): Promise<{ input: MbInput; bytes?: number }> {
+  try {
+    const input = new mb.Input({ source: new mb.UrlSource(url), formats: mb.ALL_FORMATS });
+    await input.getFormat();
+    return { input };
+  } catch {
+    // a server without range requests: the whole file, within a limit
+    const response = await fetch(url, { credentials: 'omit' });
+    if (!response.ok) throw new Error(`the file answered ${response.status}`);
+    const declared = Number(response.headers.get('content-length') ?? 0);
+    if (declared > MAX_MEDIA_BYTES) throw new Error(`the file is ${Math.round(declared / 1048576)} MB; the limit is ${MAX_MEDIA_BYTES / 1048576} MB`);
+    const blob = await response.blob();
+    if (blob.size > MAX_MEDIA_BYTES) throw new Error(`the file is ${Math.round(blob.size / 1048576)} MB; the limit is ${MAX_MEDIA_BYTES / 1048576} MB`);
+    const input = new mb.Input({ source: new mb.BlobSource(blob), formats: mb.ALL_FORMATS });
+    await input.getFormat();
+    return { input, bytes: blob.size };
+  }
+}
+
+async function decodeSound(mb: Mb, track: MbTrack, seconds: number) {
+  const sink = new mb.AudioBufferSink(track);
+  const parts: Float32Array[][] = [];
+  let rate = 0;
+  let channels = 0;
+  let frames = 0;
+  for await (const { buffer } of sink.buffers(0, seconds)) {
+    rate = buffer.sampleRate;
+    channels = Math.min(2, buffer.numberOfChannels);
+    parts.push(Array.from({ length: channels }, (_, c) => buffer.getChannelData(c).slice()));
+    frames += buffer.length;
+    if (frames >= seconds * rate) break;
+  }
+  if (!parts.length) throw new Error('the sound track could not be decoded in this browser');
+  const out = Array.from({ length: channels }, () => new Float32Array(frames));
+  let at = 0;
+  for (const p of parts) {
+    for (let c = 0; c < channels; c++) out[c]!.set(p[c]!, at);
+    at += p[0]!.length;
+  }
+  return { channels: out, rate };
+}
+
+async function mediaWork(url: string, action: string, o: { seconds: number; count: number; times?: number[]; width: number; thresholdDb: number; minSeconds: number }) {
+  const mb = (await import(/* @vite-ignore */ chrome.runtime.getURL('media/mediabunny.min.mjs'))) as unknown as Mb;
+  const A = await import('@src/agent/media-analysis');
+  const { input, bytes } = await openMedia(mb, url);
+  try {
+    const duration = await input.computeDuration();
+    if (action === 'info') {
+      const tags = await input.getMetadataTags();
+      const clean: Record<string, string> = {};
+      for (const [k, v] of Object.entries(tags)) if (['title', 'artist', 'album', 'albumArtist', 'genre', 'description', 'comment', 'date', 'creationTime', 'beatsPerMinute'].includes(k) && v) clean[k] = v instanceof Date ? v.toISOString().slice(0, 10) : String(v).slice(0, 200);
+      const tracks = [];
+      for (const t of await input.getTracks()) {
+        const stats = await t.computePacketStats(120).catch(() => undefined);
+        tracks.push({ type: t.type, codec: t.codec, language: t.languageCode, width: t.codedWidth, height: t.codedHeight, rotation: t.rotation, channels: t.numberOfChannels, sampleRate: t.sampleRate, fps: t.type === 'video' && stats ? Math.round(stats.averagePacketRate * 100) / 100 : undefined, bitrate: stats ? Math.round(stats.averageBitrate) : undefined });
+      }
+      const format = await input.getFormat();
+      return { kind: 'info', format: format.name, mime: format.mimeType, duration, tags: clean, tracks, bytes };
+    }
+    const span = Math.min(o.seconds, Math.max(1, duration || o.seconds), MAX_ANALYSIS_SECONDS);
+    if (action === 'audio' || action === 'beats') {
+      const track = await input.getPrimaryAudioTrack();
+      if (!track) throw new Error('this file has no sound track');
+      const { channels, rate } = await decodeSound(mb, track, span);
+      const seconds = channels[0]!.length / rate;
+      if (action === 'beats') {
+        const factor = Math.max(1, Math.round(rate / 11025));
+        const beats = A.trackBeats(A.decimate(A.toMono(channels), factor), rate / factor);
+        return { kind: 'beats', seconds, beats };
+      }
+      const mono = A.toMono(channels);
+      const env = A.computeEnvelope(mono, rate, 0.05);
+      let sum = 0;
+      for (let i = 0; i < mono.length; i++) sum += mono[i]! * mono[i]!;
+      const report = { seconds, sampleRate: rate, channels: channels.length, loudnessLufs: A.integratedLoudness(channels, rate), peakDb: A.samplePeakDb(channels), rmsDb: Math.round(A.toDb(Math.sqrt(sum / Math.max(1, mono.length))) * 10) / 10, silences: A.detectSilences(env, { thresholdDb: o.thresholdDb, minSeconds: o.minSeconds }), line: A.waveformLine(env, 60) };
+      return { kind: 'audio', report };
+    }
+    const video = await input.getPrimaryVideoTrack();
+    if (!video) throw new Error('this file has no picture track');
+    if (action === 'scenes') {
+      const sink = new mb.CanvasSink(video, { width: 64, height: 36, fit: 'fill' });
+      const times: number[] = [];
+      const diffs: number[] = [];
+      let prev: Uint8Array | undefined;
+      let last = -1;
+      const step = Math.max(0.25, span / 600);
+      for await (const { canvas, timestamp } of sink.canvases(0, span)) {
+        if (timestamp - last < step) continue;
+        last = timestamp;
+        const px = (canvas.getContext('2d') as OffscreenCanvasRenderingContext2D).getImageData(0, 0, canvas.width, canvas.height).data;
+        const grey = new Uint8Array(px.length / 4);
+        for (let i = 0; i < grey.length; i++) grey[i] = Math.round(0.299 * px[i * 4]! + 0.587 * px[i * 4 + 1]! + 0.114 * px[i * 4 + 2]!);
+        if (prev) {
+          times.push(timestamp);
+          diffs.push(A.frameDifference(prev, grey));
+        }
+        prev = grey;
+      }
+      return { kind: 'scenes', seconds: span, sampled: times.length + 1, cuts: A.detectCuts(times, diffs) };
+    }
+    if (action === 'frames') {
+      const stamps = o.times?.length ? o.times : Array.from({ length: o.count }, (_, i) => (duration * (i + 0.5)) / o.count);
+      const w = o.width;
+      const ratio = (video.codedHeight ?? 9) / (video.codedWidth || 16);
+      const h = Math.max(1, Math.round(w * ratio));
+      const sink = new mb.CanvasSink(video, { width: w, height: h, fit: 'fill' });
+      const cols = Math.min(4, stamps.length);
+      const rows = Math.ceil(stamps.length / cols);
+      const label = 18;
+      const sheet = new OffscreenCanvas(cols * w, rows * (h + label));
+      const ctx = sheet.getContext('2d')!;
+      ctx.fillStyle = '#111';
+      ctx.fillRect(0, 0, sheet.width, sheet.height);
+      ctx.font = '13px sans-serif';
+      ctx.textBaseline = 'middle';
+      const got: number[] = [];
+      for (let i = 0; i < stamps.length; i++) {
+        const frame = await sink.getCanvas(Math.min(Math.max(0, stamps[i]!), Math.max(0, duration - 0.05)));
+        const x = (i % cols) * w;
+        const y = Math.floor(i / cols) * (h + label);
+        if (frame) {
+          ctx.drawImage(frame.canvas, x, y + label);
+          got.push(Math.round(frame.timestamp * 100) / 100);
+        }
+        ctx.fillStyle = '#fff';
+        ctx.fillText(`${i + 1}  ${Math.round(stamps[i]! * 10) / 10} s`, x + 4, y + label / 2);
+      }
+      const blob = await sheet.convertToBlob({ type: 'image/jpeg', quality: 0.8 });
+      return { kind: 'frames', base64: await blobToBase64(blob), width: sheet.width, height: sheet.height, times: stamps.map(t => Math.round(t * 100) / 100), decoded: got.length };
+    }
+    throw new Error('unknown action ' + action);
+  } finally {
+    input.dispose();
+  }
+}
+
 chrome.runtime.onMessage.addListener((message, _sender, reply) => {
   if (message?.target !== 'offscreen') return;
+  if (message.type === 'media') {
+    const n = (v: unknown, d: number) => (typeof v === 'number' && Number.isFinite(v) ? v : d);
+    Promise.race([
+      mediaWork(String(message.url), String(message.action), {
+        seconds: Math.min(MAX_ANALYSIS_SECONDS, Math.max(5, n(message.seconds, 300))),
+        count: Math.min(24, Math.max(1, Math.floor(n(message.count, 8)))),
+        times: Array.isArray(message.times) ? (message.times as unknown[]).filter((t): t is number => typeof t === 'number' && t >= 0).slice(0, 24) : undefined,
+        width: Math.min(640, Math.max(96, Math.floor(n(message.width, 320)))),
+        thresholdDb: Math.min(-10, Math.max(-90, n(message.thresholdDb, -40))),
+        minSeconds: Math.min(30, Math.max(0.1, n(message.minSeconds, 0.5))),
+      }),
+      new Promise<never>((_, reject) => setTimeout(() => reject(new Error('the media reader did not finish in 5 minutes')), 300_000)),
+    ]).then(
+      result => reply({ ok: true, ...result }),
+      error => reply({ ok: false, error: error instanceof Error ? error.message : String(error) }),
+    );
+    return true;
+  }
   if (message.type === 'transcribe') {
     transcribe(String(message.url), Math.max(5, Math.min(1800, Number(message.seconds) || 300)), message.multilingual === true).then(
       result => reply({ ok: true, ...result }),

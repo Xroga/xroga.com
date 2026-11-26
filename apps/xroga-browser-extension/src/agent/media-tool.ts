@@ -1,0 +1,61 @@
+// `media`: ears and eyes for an audio or video file at a web address, on the device (mediabunny decodes it in the offscreen document). info says what the file is (container,
+// tracks, codecs, size, length, tags); audio gives loudness, peak, a level line and the silences; beats the tempo and beat times; scenes the picture cuts; frames one contact sheet of
+// pictures at chosen times. The kinds of perception come from reading cutline (MIT: silence, loudness, beats, scenes and frames as tools for an editing agent); written fresh.
+import type { AgentTool } from './tools';
+import { clock } from './media-analysis';
+
+export const MEDIA_TOOL: AgentTool = {
+  name: 'media',
+  source: 'agent',
+  group: 'reading',
+  description:
+    'Look at and listen to an audio or video file at a web address, on this device. action info: container, length, tracks, codecs, tags. audio: loudness, peak, level over time and the silences (thresholdDb, minSeconds). beats: tempo and beat times. scenes: the cuts of the picture. frames: one sheet of pictures at times (list) or count of them spread over the file, width px each. seconds limits how much from the start is read (default 300, at most 600). For the words spoken, use transcribe.',
+  parameters: {
+    type: 'object',
+    properties: {
+      url: { type: 'string', maxLength: 2000 },
+      action: { type: 'string', enum: ['info', 'audio', 'beats', 'scenes', 'frames'] },
+      seconds: { type: 'number' },
+      thresholdDb: { type: 'number' },
+      minSeconds: { type: 'number' },
+      count: { type: 'number' },
+      times: { type: 'array', items: { type: 'number' }, maxItems: 24 },
+      width: { type: 'number' },
+    },
+    required: ['url', 'action'],
+    additionalProperties: false,
+  },
+};
+
+export interface MediaTrackInfo {
+  type: string;
+  codec: string | null;
+  language?: string;
+  width?: number;
+  height?: number;
+  rotation?: number;
+  channels?: number;
+  sampleRate?: number;
+  fps?: number;
+  bitrate?: number;
+}
+export interface MediaInfo {
+  format: string;
+  mime: string;
+  duration: number;
+  tags: Record<string, string>;
+  tracks: MediaTrackInfo[];
+  bytes?: number;
+}
+
+export function describeInfo(i: MediaInfo): string {
+  const out = [`${i.format} file (${i.mime}), ${clock(i.duration)} long${i.bytes ? `, ${(i.bytes / 1048576).toFixed(1)} MB` : ''}, ${i.tracks.length} track${i.tracks.length === 1 ? '' : 's'}.`];
+  for (const [n, t] of i.tracks.entries()) {
+    if (t.type === 'video') out.push(`- track ${n + 1} picture: ${t.codec ?? 'unknown codec'}, ${t.width}×${t.height}${t.rotation ? `, turned ${t.rotation}°` : ''}${t.fps ? `, about ${t.fps} frames per second` : ''}${t.bitrate ? `, about ${Math.round(t.bitrate / 1000)} kbit/s` : ''}`);
+    else if (t.type === 'audio') out.push(`- track ${n + 1} sound: ${t.codec ?? 'unknown codec'}, ${t.channels === 1 ? 'mono' : t.channels === 2 ? 'stereo' : `${t.channels} channels`}, ${t.sampleRate} Hz${t.bitrate ? `, about ${Math.round(t.bitrate / 1000)} kbit/s` : ''}${t.language && t.language !== 'und' ? `, language ${t.language}` : ''}`);
+    else out.push(`- track ${n + 1} ${t.type}: ${t.codec ?? 'unknown codec'}`);
+  }
+  const tags = Object.entries(i.tags);
+  if (tags.length) out.push(`Tags: ${tags.map(([k, v]) => `${k} "${v}"`).join(', ')}`);
+  return out.join('\n');
+}

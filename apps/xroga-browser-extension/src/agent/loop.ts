@@ -2650,6 +2650,45 @@ ${renderSkill(top)}`);
           outcome = { call, kind, text: 'error: the speech could not be read (' + (error instanceof Error ? error.message : String(error)).slice(0, 200) + '). The address may need a sign-in, not be a sound file, or be too large.', isError: true };
         }
       }
+    } else if (call.toolName === 'media') {
+      const address = typeof args.url === 'string' ? args.url : '';
+      const action = typeof args.action === 'string' ? args.action : '';
+      if (!/^https?:\/\//i.test(address)) {
+        outcome = { call, kind, text: 'error: media needs the address of an audio or video file on the web (https or http).', isError: true };
+      } else if (!['info', 'audio', 'beats', 'scenes', 'frames'].includes(action)) {
+        outcome = { call, kind, text: 'error: media action must be info, audio, beats, scenes or frames.', isError: true };
+      } else {
+        try {
+          const [{ readMedia }, tool, analysis] = await Promise.all([import('@src/extension/media'), import('./media-tool'), import('./media-analysis')]);
+          const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : undefined);
+          const answer = await readMedia({
+            url: address,
+            action: action as 'info',
+            seconds: num(args.seconds),
+            count: num(args.count),
+            width: num(args.width),
+            thresholdDb: num(args.thresholdDb),
+            minSeconds: num(args.minSeconds),
+            times: Array.isArray(args.times) ? args.times.filter((t): t is number => typeof t === 'number') : undefined,
+          });
+          let host = 'a media file';
+          try { host = new URL(address).hostname; } catch { /* keep */ }
+          let text: string;
+          let image: CallOutcome['image'] | undefined;
+          if (answer.kind === 'info') text = tool.describeInfo(answer);
+          else if (answer.kind === 'audio') text = analysis.describeAudio(answer.report, { thresholdDb: num(args.thresholdDb) ?? -40, minSeconds: num(args.minSeconds) ?? 0.5 });
+          else if (answer.kind === 'beats') text = analysis.describeBeats(answer.beats, answer.seconds);
+          else if (answer.kind === 'scenes') text = analysis.describeScenes(answer.cuts, answer.seconds, answer.sampled);
+          else {
+            text = 'Contact sheet of ' + answer.times.length + ' pictures at ' + answer.times.map(analysis.clock).join(', ') + ' (numbered left to right, top to bottom)' + (answer.decoded < answer.times.length ? '; ' + (answer.times.length - answer.decoded) + ' could not be decoded.' : '.');
+            if (this.options.model.profile.vision) image = { data: answer.base64, mediaType: 'image/jpeg', note: 'The sheet of pictures from the file, with the time of each on its label.' };
+            else text += ' This model cannot see pictures: use scenes or info instead.';
+          }
+          outcome = { call, kind, text: this.options.layer.wrap(text, { site: host }), isError: false, ...(image ? { image } : {}) };
+        } catch (error) {
+          outcome = { call, kind, text: 'error: the file could not be read (' + (error instanceof Error ? error.message : String(error)).slice(0, 200) + '). The address may need a sign-in, not be a media file, or use a format this browser cannot decode.', isError: true };
+        }
+      }
     } else if (call.toolName === 'webmcp') {
       let tabId = typeof args.tabId === 'number' ? args.tabId : this.#boundTab;
       if (tabId === null || tabId === undefined) {

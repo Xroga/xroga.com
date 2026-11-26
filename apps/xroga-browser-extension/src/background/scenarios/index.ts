@@ -45,6 +45,7 @@ import './block-requests';
 import './transcribe';
 import './pdf-layout';
 import './webmcp';
+import './media';
 import './infinite-scroll';
 import './ocr-picture';
 import './image-and-language';
