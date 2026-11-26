@@ -3,14 +3,17 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import ts from 'typescript';
-import {voiceClientAwait, isTerminalVoiceFailure} from './voiceRequestPolicy';
+import {voiceClientAwait, voiceDeadline, isTerminalVoiceFailure} from './voiceRequestPolicy';
 
-function actualVoiceApi(mode: string, freeOnly = false) {
+/** AbortSignal as shipped by Safari before iOS 17.4: no static any(). */
+const olderIosAbortSignal = {timeout: (ms: number) => AbortSignal.timeout(ms)};
+
+function actualVoiceApi(mode: string, freeOnly = false, abortSignal: unknown = AbortSignal) {
   let token: string | null = 'original-user-token', requests = 0;
   class ApiError extends Error {constructor(message: string, public status: number, public data: unknown = {}) {super(message);}}
-  const context: Record<string, unknown> = {exports: {}, AbortSignal, Blob, Response, TextDecoder, Uint8Array, Error,
+  const context: Record<string, unknown> = {exports: {}, AbortSignal: abortSignal, Blob, Response, TextDecoder, Uint8Array, Error,
     require: (name: string) => {
-      if (name === './voiceRequestPolicy') return {voiceClientAwait};
+      if (name === './voiceRequestPolicy') return {voiceClientAwait, voiceDeadline};
       if (name === './voicePcm') return {normalizeVoiceAudio: async () => {
         if (mode === 'changeDuringNormalize') token = 'different-account-token';
         if (mode === 'logoutDuringNormalize') token = null;
@@ -65,4 +68,26 @@ test('prepared PCM uses only the free endpoint and pins the original session', a
   assert.equal(changed.requests(), 1);
   const denied = actualVoiceApi('denial', true);
   await assert.rejects(denied.run()); assert.equal(denied.requests(), 1);
+});
+
+test('an iPhone without AbortSignal.any still uploads the recording and receives the transcript', async () => {
+  const api = actualVoiceApi('ok', true, olderIosAbortSignal);
+  assert.equal(await api.run(), 'Verified owned transcript');
+  assert.equal(api.requests(), 1);
+  const cancellation = new AbortController(); cancellation.abort();
+  const cancelled = actualVoiceApi('ok', true, olderIosAbortSignal);
+  await assert.rejects(cancelled.run(cancellation.signal));
+  assert.equal(cancelled.requests(), 0);
+});
+
+test('the voice deadline aborts on cancellation and on timeout, without AbortSignal.any', async () => {
+  const cancellation = new AbortController();
+  const cancelled = voiceDeadline(60000, cancellation.signal);
+  assert.equal(cancelled.aborted, false);
+  cancellation.abort();
+  assert.equal(cancelled.aborted, true);
+  assert.equal(voiceDeadline(60000, cancellation.signal).aborted, true);
+  const expired = voiceDeadline(5);
+  await new Promise(resolve => setTimeout(resolve, 40));
+  assert.equal(expired.aborted, true);
 });

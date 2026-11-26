@@ -1,6 +1,6 @@
 import { API_URL, ApiError, getAccessToken,fetchApiResponse } from '@/lib/api';
 import {normalizeVoiceAudio} from './voicePcm';
-import {voiceClientAwait} from './voiceRequestPolicy';
+import {voiceClientAwait, voiceDeadline} from './voiceRequestPolicy';
 
 /** Starts the voice backend while the user is still speaking. Scale-to-zero means the first request after
  * idle waits for a cold start; a simple no-credential request lets that happen during recording.
@@ -11,7 +11,7 @@ export function warmVoiceBackend(): void {
 
 export async function transcribeVoiceAudio(audio: Blob, cancellation?: AbortSignal,
   options?: {freeOnly: true; preparedPcm: true; expectedToken: string}): Promise<string> {
-  const signal = AbortSignal.any([AbortSignal.timeout(60000), ...(cancellation ? [cancellation] : [])]);
+  const signal = voiceDeadline(60000, cancellation);
   signal.throwIfAborted();
   const token = await voiceClientAwait(getAccessToken(), signal);
   if (!token) throw new ApiError('Please sign in to use voice input.', 401);

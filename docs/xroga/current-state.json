@@ -125268,7 +125268,7 @@
       "id": "surface:0e1350a6a9f50317c14e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/voiceApi.ts",
-      "sha256": "236afeb38215ed1279bdf8acb3041877bb84e30cae989068e226f386f33bc44d",
+      "sha256": "4d91e73e2e48d1cfbccf921c7bc67f01d686f3783dcee800eba3d887819106c4",
       "symbols": [
         "bytes",
         "chunk",
@@ -125329,14 +125329,17 @@
       "id": "surface:459b8f40733fad1985e3",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/voiceCapture.ts",
-      "sha256": "43b394ec936088ee3de7aa7f29d09aed9a40e339dc1ae6e4ba1b28a6038edab0",
+      "sha256": "856556f39ef39fa93297ea3c02cc0ec9eff8b1f6a727a0452f41945352aa379a",
       "symbols": [
+        "AUDIO_RECOVERY_TIMEOUT_MS",
+        "AUDIO_START_TIMEOUT_MS",
         "VOICE_WORKLET_PATH",
         "VoiceCapture",
         "audio",
         "context",
         "error",
         "first",
+        "graph",
         "interrupted",
         "microphone",
         "mute",
@@ -125344,6 +125347,10 @@
         "node",
         "openVoiceCapture",
         "prepareVoiceAudioContext",
+        "recovering",
+        "reported",
+        "resumeAudio",
+        "source",
         "stop",
         "stopped",
         "stream",
@@ -125519,12 +125526,15 @@
       "id": "surface:d0921690b17770f63e7c",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/voiceRequestPolicy.ts",
-      "sha256": "39d5b47f4f9bb6eeb7fc8444a814a33c9329811ee0d61f66cd2e7b9b046c4b9b",
+      "sha256": "b5ccd1a6edfdc4006713a5ec653faa94a36fa44ae0746b1c725ad8860c2c8044",
       "symbols": [
         "abort",
+        "controller",
         "isTerminalVoiceFailure",
+        "timer",
         "value",
-        "voiceClientAwait"
+        "voiceClientAwait",
+        "voiceDeadline"
       ],
       "imports": [],
       "runtimeImports": [],
@@ -157759,77 +157769,91 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:3c54545657269b7bbaf9",
+      "id": "frontend-call:1897785c36a0f85532aa",
       "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
-      "line": 41,
+      "line": 44,
       "callee": "api.run",
       "reachable": false
     },
     {
-      "id": "frontend-call:04197401b761a9e7408b",
+      "id": "frontend-call:47837afe7bbe130c32e4",
       "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
-      "line": 42,
+      "line": 45,
       "callee": "api.requests",
       "reachable": false
     },
     {
-      "id": "frontend-call:e1f7e9f7217a7adb81ec",
+      "id": "frontend-call:913c28235d155ee0d015",
       "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
-      "line": 46,
+      "line": 49,
       "callee": "api.run",
       "reachable": false
     },
     {
-      "id": "frontend-call:d4f5ff8b921b284eb97b",
+      "id": "frontend-call:2e12633f182a2007d9e6",
       "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
-      "line": 46,
+      "line": 49,
       "callee": "api.requests",
       "reachable": false
     },
     {
-      "id": "frontend-call:9ae249639ab70469b5f3",
+      "id": "frontend-call:cfbc730fea4773adc486",
       "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
-      "line": 51,
+      "line": 54,
       "callee": "api.run",
       "reachable": false
     },
     {
-      "id": "frontend-call:44ffe0cf17b7e042b723",
+      "id": "frontend-call:3e998ea982a8d77fd6ff",
       "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
-      "line": 52,
+      "line": 55,
       "callee": "api.requests",
       "reachable": false
     },
     {
-      "id": "frontend-call:91a49d1244fa8c43156e",
+      "id": "frontend-call:6e7408f7c93286586690",
       "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
-      "line": 56,
+      "line": 59,
       "callee": "api.run",
       "reachable": false
     },
     {
-      "id": "frontend-call:96a20a71d066a3e2d46f",
+      "id": "frontend-call:43b0b91caf741e0e9795",
       "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
-      "line": 56,
+      "line": 59,
       "callee": "api.requests",
       "reachable": false
     },
     {
-      "id": "frontend-call:b4b60f3600b25c6f3c8d",
+      "id": "frontend-call:efdf16e1459c9a1da843",
+      "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
+      "line": 75,
+      "callee": "api.run",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:f6383fe0cf369ced0ca1",
+      "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
+      "line": 76,
+      "callee": "api.requests",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:60097474932bb686ab8e",
       "sourcePath": "frontend/src/lib/voiceApi.ts",
       "line": 9,
       "callee": "fetch().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:1bc3aa9747d00ec5689b",
+      "id": "frontend-call:eddf6cf477088051952b",
       "sourcePath": "frontend/src/lib/voiceApi.ts",
       "line": 9,
       "callee": "fetch",
       "reachable": true
     },
     {
-      "id": "frontend-call:7446a5d8b76ee9fa698b",
+      "id": "frontend-call:0a7b72ecda0743e9b85e",
       "sourcePath": "frontend/src/lib/voiceApi.ts",
       "line": 28,
       "callee": "fetchApiResponse",
@@ -167003,14 +167027,14 @@
     {
       "id": "test-suite:ae49f633e918fac5baa9",
       "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
     {
       "id": "test-suite:ad9e3983a37151398e1d",
       "sourcePath": "frontend/src/lib/voiceCapture.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },

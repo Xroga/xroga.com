@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {openVoiceCapture, prepareVoiceAudioContext} from './voiceCapture';
+import {AUDIO_START_TIMEOUT_MS, openVoiceCapture, prepareVoiceAudioContext} from './voiceCapture';
 
 type G = Record<string, unknown>;
 const g = globalThis as unknown as G;
@@ -10,7 +10,12 @@ function install(options: {constraints: unknown[]; fail?: Array<string | null>})
     state = 'suspended'; sampleRate = 48000; closed = false; resumed = 0; onstatechange: (() => void) | null = null;
     audioWorklet = {addModule: async () => {}};
     constructor() { created.push(this); }
-    async resume() { this.resumed++; this.state = 'running'; }
+    recovers = true; hangs = false;
+    async resume() {
+      this.resumed++;
+      if (this.hangs) await new Promise<never>(() => {});
+      if (this.recovers) this.state = 'running';
+    }
     async close() { this.closed = true; }
   }
   const track = {stopped: false, addEventListener() {}, stop() { this.stopped = true; }};
@@ -80,19 +85,73 @@ test('an unsupported browser gets no context instead of an exception', () => {
   } finally { g.AudioContext = saved; }
 });
 
-test('a suspended or interrupted context ends capture and keeps what was heard', async () => {
-  const constraints: unknown[] = [];
-  const env = install({constraints});
+type Interruptible = {state: string; recovers: boolean; hangs: boolean; resumed: number; onstatechange: (() => void) | null};
+const turn = () => new Promise(resolve => setImmediate(resolve));
+
+async function recording(run: (context: Interruptible, interrupted: () => number, stop: () => void) => Promise<void>) {
+  const env = install({constraints: []});
   try {
     let interrupted = 0;
     const capture = await openVoiceCapture(() => { interrupted++; }, new AbortController().signal, prepareVoiceAudioContext());
-    const context = env.created[0] as unknown as {state: string; onstatechange: (() => void) | null};
+    await run(env.created[0] as unknown as Interruptible, () => interrupted, capture.stop);
+    capture.stop();
+  } finally { env.restore(); }
+}
+
+test('a passing iOS audio interruption resumes and recording continues', async () => {
+  await recording(async (context, interrupted) => {
+    for (const state of ['interrupted', 'suspended']) {
+      const before = context.resumed;
+      context.state = state;
+      context.onstatechange?.();
+      await turn();
+      assert.equal(context.resumed, before + 1, state);
+      assert.equal(context.state, 'running', state);
+    }
+    assert.equal(interrupted(), 0);
+  });
+});
+
+test('an interruption that does not recover ends capture once and keeps what was heard', async () => {
+  await recording(async (context, interrupted, stop) => {
+    context.recovers = false;
     context.state = 'interrupted';
     context.onstatechange?.();
-    assert.equal(interrupted, 1);
-    capture.stop();
+    await turn();
+    context.onstatechange?.();
+    await turn();
+    assert.equal(interrupted(), 1);
+    stop();
     context.state = 'suspended';
     context.onstatechange?.();
-    assert.equal(interrupted, 1, 'no further callbacks after stop');
+    await turn();
+    assert.equal(interrupted(), 1, 'no further callbacks after stop');
+  });
+});
+
+test('a closed audio context ends capture immediately without trying to resume', async () => {
+  await recording(async (context, interrupted) => {
+    const before = context.resumed;
+    context.state = 'closed';
+    context.onstatechange?.();
+    assert.equal(interrupted(), 1);
+    assert.equal(context.resumed, before);
+  });
+});
+
+test('a resume that never settles ends in a clear failure and releases the microphone', async t => {
+  const env = install({constraints: []});
+  try {
+    const prepared = prepareVoiceAudioContext()!;
+    const context = prepared as unknown as Interruptible & {closed: boolean};
+    context.state = 'interrupted'; context.hangs = true;
+    t.mock.timers.enable({apis: ['setTimeout']});
+    const opening = openVoiceCapture(() => {}, new AbortController().signal, prepared);
+    const outcome = assert.rejects(opening, /microphone did not start/);
+    await turn(); await turn();
+    t.mock.timers.tick(AUDIO_START_TIMEOUT_MS);
+    await outcome;
+    assert.equal(env.track.stopped, true);
+    assert.equal(context.closed, true);
   } finally { env.restore(); }
 });

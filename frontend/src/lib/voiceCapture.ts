@@ -40,6 +40,27 @@ async function microphone(): Promise<MediaStream> {
   }
 }
 
+/** How long the microphone audio engine may take to start, or to come back after Safari pauses it. */
+export const AUDIO_START_TIMEOUT_MS = 4000;
+export const AUDIO_RECOVERY_TIMEOUT_MS = 2000;
+
+/** resume() can stay pending forever on iOS while another app or the system owns the audio session, so
+ * it is bounded. True only when the context really is running afterwards. */
+async function resumeAudio(context: AudioContext, timeoutMs: number): Promise<boolean> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    await Promise.race([
+      context.resume(),
+      new Promise<void>(resolve => { timer = setTimeout(resolve, timeoutMs); }),
+    ]);
+  } catch {
+    return false;
+  } finally {
+    clearTimeout(timer);
+  }
+  return context.state === 'running';
+}
+
 export interface VoiceCapture {
   rate: number;
   /** Starts delivering sample batches. Resolves when the first batch arrives. */
@@ -60,17 +81,32 @@ export async function openVoiceCapture(onInterrupted: () => void, signal: AbortS
   try {
     if (signal.aborted) throw new DOMException('Voice typing cancelled.', 'AbortError');
     context = context ?? new AudioContext({ latencyHint: 'interactive' });
-    await context.resume();
     await context.audioWorklet.addModule(VOICE_WORKLET_PATH);
+    if (signal.aborted) throw new DOMException('Voice typing cancelled.', 'AbortError');
+    if (!await resumeAudio(context, AUDIO_START_TIMEOUT_MS)) throw new Error('The microphone did not start.');
     if (signal.aborted) throw new DOMException('Voice typing cancelled.', 'AbortError');
   } catch (error) {
     stop();
     throw error;
   }
   const audio = context, track = stream.getAudioTracks()[0];
-  const interrupted = () => { if (!stopped) onInterrupted(); };
+  let reported = false, recovering = false;
+  const interrupted = () => { if (!stopped && !reported) { reported = true; onInterrupted(); } };
   track?.addEventListener('ended', interrupted);
-  audio.onstatechange = () => { if (!stopped && audio.state !== 'running') interrupted(); };
+  // iOS Safari moves a recording context to "interrupted" or "suspended" when the audio route changes
+  // (the microphone switching on, headphones, a notification sound). Most of these pass, so capture is
+  // resumed first and only ends when the audio engine does not come back.
+  audio.onstatechange = () => {
+    if (stopped || recovering || audio.state === 'running') return;
+    if (audio.state === 'closed') { interrupted(); return; }
+    recovering = true;
+    void resumeAudio(audio, AUDIO_RECOVERY_TIMEOUT_MS).then(running => {
+      recovering = false;
+      if (!running) interrupted();
+    });
+  };
+  // Safari can garbage-collect audio nodes that nothing references, which silently ends capture.
+  const graph: AudioNode[] = [];
   return {
     rate: audio.sampleRate,
     begin(onSamples) {
@@ -85,7 +121,9 @@ export async function openVoiceCapture(onInterrupted: () => void, signal: AbortS
         };
         const mute = audio.createGain();
         mute.gain.value = 0;
-        audio.createMediaStreamSource(stream).connect(node);
+        const source = audio.createMediaStreamSource(stream);
+        graph.push(source, node, mute);
+        source.connect(node);
         node.connect(mute);
         mute.connect(audio.destination);
       });
