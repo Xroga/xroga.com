@@ -1,5 +1,5 @@
 // Drawing one moment of a composed video onto a canvas (see src/agent/compose-spec.ts for the description and the timeline). Browser-only: it needs a 2D canvas.
-import { ease, layerActive, layoutAt, type ComposeSpec, type Layer, type ResizeMode } from '@src/agent/compose-spec';
+import { FONTS, ease, layerActive, layerAlpha, layoutAt, type ComposeSpec, type Layer, type ResizeMode } from '@src/agent/compose-spec';
 
 export type Picture = CanvasImageSource & { width: number; height: number };
 export interface Assets {
@@ -61,7 +61,7 @@ async function drawLayer(ctx: Ctx, layer: Layer, at: number, clipDuration: numbe
     }
     case 'text': {
       const size = Math.round(layer.fontSize * H);
-      ctx.font = `${layer.style === 'subtitle' ? '600' : '700'} ${size}px "Segoe UI", Arial, sans-serif`;
+      ctx.font = `${layer.style === 'subtitle' ? '600' : '700'} ${size}px ${FONTS[layer.font]}`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       const lines = wrap(ctx, layer.text, W * 0.88);
@@ -139,7 +139,15 @@ export async function drawFrame(ctx: Ctx, spec: ComposeSpec, t: number, assets: 
     ctx.beginPath();
     ctx.rect(0, 0, W, H);
     ctx.clip();
-    for (const layer of clip.layers) if (layerActive(layer, placed.at, clip.duration!)) await drawLayer(ctx, layer, placed.at, clip.duration!, W, H, assets);
+    for (const layer of clip.layers) {
+      if (!layerActive(layer, placed.at, clip.duration!)) continue;
+      // opacity, fades and the filter belong to the layer alone: it is drawn between a save and a restore
+      ctx.save();
+      ctx.globalAlpha *= layerAlpha(layer, placed.at - layer.start, (layer.stop ?? clip.duration!) - layer.start);
+      if (layer.filter) ctx.filter = layer.filter;
+      await drawLayer(ctx, layer, placed.at, clip.duration!, W, H, assets);
+      ctx.restore();
+    }
     ctx.restore();
     if (placed.dim > 0) {
       ctx.fillStyle = `rgba(0,0,0,${placed.dim})`;

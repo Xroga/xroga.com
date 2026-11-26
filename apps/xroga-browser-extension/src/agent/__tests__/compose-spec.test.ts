@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { COMPOSE_TOOL, LIMITS, composeFilename, describeSpec, ease, layerActive, layoutAt, normalizeSpec, resolveDurations, timeline, totalSeconds, type ComposeSpec } from '../compose-spec';
+import { COMPOSE_TOOL, LIMITS, composeFilename, filterOf, layerAlpha, describeSpec, ease, layerActive, layoutAt, normalizeSpec, resolveDurations, timeline, totalSeconds, type ComposeSpec } from '../compose-spec';
 
 const ok = (raw: unknown): ComposeSpec => {
   const n = normalizeSpec(raw);
@@ -109,6 +109,32 @@ describe('timeline and transitions', () => {
   it('shows a layer only inside its own time', () => {
     const layer = ok({ clips: [{ duration: 5, layers: [{ type: 'fill-color', start: 1, stop: 3 }] }] }).clips[0]!.layers[0]!;
     expect([0.5, 1, 2, 3, 3.5].map(t => layerActive(layer, t, 5))).toEqual([false, true, true, true, false]);
+  });
+});
+
+describe('layer look', () => {
+  it('builds a filter from named numbers only, within range, and ignores everything else', () => {
+    expect(filterOf({ brightness: 1.2, contrast: 9, saturation: 0, blur: 3, grayscale: 1, hue: 400 })).toBe('brightness(1.2) contrast(3) saturate(0) blur(3px) grayscale(1) hue-rotate(360deg)');
+    expect(filterOf({ blur: 'url(javascript:1)', drop: 5, sepia: 0.5 })).toBe('sepia(0.5)');
+    expect(filterOf('blur(5px)')).toBe('');
+    expect(filterOf(undefined)).toBe('');
+  });
+
+  it('fades a layer in and out inside its own run, and scales it by its opacity', () => {
+    const l = { opacity: 0.5, fadeIn: 1, fadeOut: 2 };
+    expect(layerAlpha(l, 0, 10)).toBe(0);
+    expect(layerAlpha(l, 0.5, 10)).toBeCloseTo(0.25, 5);
+    expect(layerAlpha(l, 5, 10)).toBe(0.5);
+    expect(layerAlpha(l, 9, 10)).toBeCloseTo(0.25, 5);
+    expect(layerAlpha({ opacity: 1, fadeIn: 0, fadeOut: 0 }, 3, 5)).toBe(1);
+  });
+
+  it('carries opacity, fades, effects and the font from the description to every layer', () => {
+    const spec = ok({ clips: [{ duration: 4, layers: [{ type: 'fill-color', opacity: 2, fadeIn: 0.5, effects: { blur: 4 } }, { type: 'title', text: 'Hi', font: 'serif', fadeOut: 1 }, { type: 'title', text: 'Hi', font: 'wingdings' }] }] });
+    const [a, b, c] = spec.clips[0]!.layers as unknown as Array<{ opacity: number; fadeIn: number; fadeOut: number; filter: string; font?: string }>;
+    expect([a!.opacity, a!.fadeIn, a!.filter]).toEqual([1, 0.5, 'blur(4px)']);
+    expect([b!.font, b!.fadeOut]).toEqual(['serif', 1]);
+    expect(c!.font).toBe('sans');
   });
 });
 

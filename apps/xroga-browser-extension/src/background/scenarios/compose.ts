@@ -19,9 +19,9 @@ defineScenario({
       height: 360,
       fps: 24,
       clips: [
-        { duration: 2, transition: { name: 'fade', duration: 0.5 }, layers: [{ type: 'linear-gradient', colors: ['#1d2b64', '#f8cdda'] }, { type: 'slide-in-text', text: 'Made on this device', fontSize: 0.1 }] },
+        { duration: 2, transition: { name: 'fade', duration: 0.5 }, layers: [{ type: 'linear-gradient', colors: ['#1d2b64', '#f8cdda'] }, { type: 'slide-in-text', text: 'Made on this device', fontSize: 0.1, font: 'serif', fadeOut: 0.5 }] },
         { transition: { name: 'directional-left', duration: 0.5 }, layers: [{ type: 'video', url: TRAILER, cutFrom: 20, cutTo: 24, speed: 2 }, { type: 'subtitle', text: 'A film segment, cut and sped up', start: 0.5 }] },
-        { duration: 2.5, transition: { name: 'none' }, layers: [{ type: 'fill-color', color: '#000000' }, { type: 'image', url: PHOTO, resizeMode: 'contain', zoom: 'in', zoomAmount: 0.2 }, { type: 'news-title', text: 'Photograph, slow zoom', position: 'bottom', fontSize: 0.06 }] },
+        { duration: 2.5, transition: { name: 'none' }, layers: [{ type: 'fill-color', color: '#000000' }, { type: 'image', url: PHOTO, resizeMode: 'contain', zoom: 'in', zoomAmount: 0.2, fadeIn: 0.4, effects: { grayscale: 1, contrast: 1.2 } }, { type: 'news-title', text: 'Photograph, slow zoom', position: 'bottom', fontSize: 0.06 }] },
       ],
       audioTracks: [{ url: SONG, start: 0, cutFrom: 0, volume: 0.6, loop: true }],
     });

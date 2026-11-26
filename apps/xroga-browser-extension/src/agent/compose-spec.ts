@@ -9,7 +9,7 @@ export const COMPOSE_TOOL: AgentTool = {
   source: 'agent',
   group: 'files',
   description:
-    'Make a short video (MP4, or WebM when the browser has no H.264) from a spec and save it in Downloads; asks first in Ask mode. spec: { width?, height? (default 1280x720, at most 1920x1080), fps? (default 30), clips: [{ duration (seconds), transition?: { name: fade|fadeblack|directional-left|directional-right|directional-up|directional-down|zoom-in|none, duration }, layers: [ { type: fill-color, color } | { type: linear-gradient|radial-gradient, colors: [a,b] } | { type: title|subtitle|title-background|news-title|slide-in-text, text, textColor, position: top|center|bottom, fontSize } | { type: image, url, resizeMode: contain|cover|stretch, zoom: in|out|left|right } | { type: image-overlay, url, x, y, width, height (0 to 1) } | { type: video, url, cutFrom, cutTo, resizeMode, volume, speed (0.25 to 4) } ] } ], audioTracks?: [{ url, start?, cutFrom?, cutTo?, volume?, loop? }], keepSourceAudio? }. Up to 3 minutes, 60 clips, https addresses only. Only when the person asked for a video.',
+    'Make a short video (MP4, or WebM when the browser has no H.264) from a spec and save it in Downloads; asks first in Ask mode. spec: { width?, height? (default 1280x720, at most 1920x1080), fps? (default 30), clips: [{ duration (seconds), transition?: { name: fade|fadeblack|directional-left|directional-right|directional-up|directional-down|zoom-in|none, duration }, layers: [ { type: fill-color, color } | { type: linear-gradient|radial-gradient, colors: [a,b] } | { type: title|subtitle|title-background|news-title|slide-in-text, text, textColor, position: top|center|bottom, fontSize } | { type: image, url, resizeMode: contain|cover|stretch, zoom: in|out|left|right } | { type: image-overlay, url, x, y, width, height (0 to 1) } | { type: video, url, cutFrom, cutTo, resizeMode, volume, speed (0.25 to 4) } ] } ], audioTracks?: [{ url, start?, cutFrom?, cutTo?, volume?, loop? }], keepSourceAudio? }. Any layer also takes opacity (0 to 1), fadeIn and fadeOut (seconds), start and stop (seconds into the clip) and effects: { brightness, contrast, saturation (0 to 3), blur (px), grayscale, sepia (0 to 1), hue (degrees) }; text takes font: sans|serif|mono|rounded. Up to 3 minutes, 60 clips, https addresses only. Only when the person asked for a video.',
   parameters: {
     type: 'object',
     properties: {
@@ -25,13 +25,24 @@ export const LIMITS = { maxSeconds: 180, maxClips: 60, maxLayers: 12, maxTracks:
 
 export type ResizeMode = 'contain' | 'cover' | 'stretch';
 export type Position = { x: number; y: number };
+/** What every layer has: when it shows, how opaque it is, how it fades in and out, and a CSS filter (brightness, contrast, saturation, blur, grayscale, sepia, hue) made from numbers. */
+export interface Timed {
+  start: number;
+  stop?: number;
+  opacity: number;
+  fadeIn: number;
+  fadeOut: number;
+  filter: string;
+}
+export const FONTS = { sans: '"Segoe UI", Arial, sans-serif', serif: 'Georgia, "Times New Roman", serif', mono: 'Consolas, "Courier New", monospace', rounded: '"Trebuchet MS", "Segoe UI", sans-serif' } as const;
+export type FontName = keyof typeof FONTS;
 export type Layer =
-  | { type: 'fill-color'; color: string; start: number; stop?: number }
-  | { type: 'gradient'; kind: 'linear' | 'radial'; colors: [string, string]; start: number; stop?: number }
-  | { type: 'text'; style: 'title' | 'subtitle' | 'title-background' | 'news-title' | 'slide-in-text'; text: string; color: string; background: string; position: Position; fontSize: number; start: number; stop?: number }
-  | { type: 'image'; url: string; resizeMode: ResizeMode; zoom: 'none' | 'in' | 'out' | 'left' | 'right'; zoomAmount: number; start: number; stop?: number }
-  | { type: 'image-overlay'; url: string; x: number; y: number; width: number; height: number; start: number; stop?: number }
-  | { type: 'video'; url: string; cutFrom: number; cutTo?: number; resizeMode: ResizeMode; volume: number; speed: number; start: number; stop?: number };
+  | { type: 'fill-color'; color: string; } & Timed
+  | { type: 'gradient'; kind: 'linear' | 'radial'; colors: [string, string]; } & Timed
+  | { type: 'text'; style: 'title' | 'subtitle' | 'title-background' | 'news-title' | 'slide-in-text'; font: FontName; text: string; color: string; background: string; position: Position; fontSize: number; } & Timed
+  | { type: 'image'; url: string; resizeMode: ResizeMode; zoom: 'none' | 'in' | 'out' | 'left' | 'right'; zoomAmount: number; } & Timed
+  | { type: 'image-overlay'; url: string; x: number; y: number; width: number; height: number; } & Timed
+  | { type: 'video'; url: string; cutFrom: number; cutTo?: number; resizeMode: ResizeMode; volume: number; speed: number; } & Timed;
 export interface Transition {
   name: string;
   duration: number;
@@ -76,6 +87,30 @@ const httpsOnly = (v: unknown): string | undefined => {
     return undefined;
   }
 };
+/** A CSS filter from named numbers; anything else in the object is ignored, so no text from the model reaches the canvas filter. */
+export function filterOf(v: unknown): string {
+  const e = (v && typeof v === 'object' ? v : {}) as Record<string, unknown>;
+  const parts: string[] = [];
+  const add = (key: string, css: string, lo: number, hi: number, unit = '') => {
+    if (typeof e[key] === 'number' && Number.isFinite(e[key])) parts.push(`${css}(${Math.min(hi, Math.max(lo, e[key] as number))}${unit})`);
+  };
+  add('brightness', 'brightness', 0, 3);
+  add('contrast', 'contrast', 0, 3);
+  add('saturation', 'saturate', 0, 3);
+  add('blur', 'blur', 0, 20, 'px');
+  add('grayscale', 'grayscale', 0, 1);
+  add('sepia', 'sepia', 0, 1);
+  add('hue', 'hue-rotate', -360, 360, 'deg');
+  return parts.join(' ');
+}
+
+/** The opacity of a layer at `local` seconds into its run of `span` seconds. */
+export function layerAlpha(l: { opacity: number; fadeIn: number; fadeOut: number }, local: number, span: number): number {
+  const up = l.fadeIn > 0 ? Math.min(1, Math.max(0, local / l.fadeIn)) : 1;
+  const down = l.fadeOut > 0 ? Math.min(1, Math.max(0, (span - local) / l.fadeOut)) : 1;
+  return l.opacity * Math.min(up, down);
+}
+
 const PLACES: Record<string, Position> = { top: { x: 0.5, y: 0.15 }, center: { x: 0.5, y: 0.5 }, bottom: { x: 0.5, y: 0.85 } };
 const positionOf = (v: unknown): Position => {
   if (typeof v === 'string' && PLACES[v]) return PLACES[v]!;
@@ -117,7 +152,7 @@ export function normalizeSpec(raw: unknown): Normalized {
       const L = (l ?? {}) as Record<string, unknown>;
       const at = `${where} layer ${li + 1}`;
       const type = str(L.type);
-      const timing = { start: num(L.start, 0, 0, LIMITS.maxSeconds), ...(typeof L.stop === 'number' && Number.isFinite(L.stop) ? { stop: Math.max(0, L.stop) } : {}) };
+      const timing = { start: num(L.start, 0, 0, LIMITS.maxSeconds), ...(typeof L.stop === 'number' && Number.isFinite(L.stop) ? { stop: Math.max(0, L.stop) } : {}), opacity: num(L.opacity, 1, 0, 1), fadeIn: num(L.fadeIn, 0, 0, 30), fadeOut: num(L.fadeOut, 0, 0, 30), filter: filterOf(L.effects ?? L.filter) };
       if (type === 'fill-color' || type === 'pause') layers.push({ type: 'fill-color', color: colorOf(L.color, '#000000'), ...timing });
       else if (type === 'linear-gradient' || type === 'radial-gradient') {
         const colors = Array.isArray(L.colors) ? L.colors.filter((x): x is string => typeof x === 'string' && COLOR.test(x.trim())).map(x => x.trim()) : [];
@@ -127,7 +162,7 @@ export function normalizeSpec(raw: unknown): Normalized {
         if (!text) errors.push(`${at} (${type}) needs text.`);
         if (text.length > LIMITS.maxText) errors.push(`${at}: text is longer than ${LIMITS.maxText} characters.`);
         const style = type as Extract<Layer, { type: 'text' }>['style'];
-        layers.push({ type: 'text', style, text: text.slice(0, LIMITS.maxText), color: colorOf(L.textColor ?? L.color, '#ffffff'), background: colorOf(L.backgroundColor ?? L.background, style === 'news-title' ? '#d02a42' : '#000000'), position: positionOf(L.position ?? (style === 'subtitle' ? 'bottom' : 'center')), fontSize: num(L.fontSize, style === 'subtitle' ? 0.05 : 0.09, 0.02, 0.3), ...timing });
+        layers.push({ type: 'text', style, font: (str(L.font) in FONTS ? str(L.font) : 'sans') as FontName, text: text.slice(0, LIMITS.maxText), color: colorOf(L.textColor ?? L.color, '#ffffff'), background: colorOf(L.backgroundColor ?? L.background, style === 'news-title' ? '#d02a42' : '#000000'), position: positionOf(L.position ?? (style === 'subtitle' ? 'bottom' : 'center')), fontSize: num(L.fontSize, style === 'subtitle' ? 0.05 : 0.09, 0.02, 0.3), ...timing });
       } else if (type === 'image' || type === 'image-overlay') {
         const url = httpsOnly(L.url ?? L.path);
         if (!url) errors.push(`${at} (${type}) needs an https address in url.`);
