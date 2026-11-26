@@ -378,9 +378,9 @@ test('one exact research approval completes its original rich answer, saves evid
     assert.equal(body.reasoning_effort,undefined);
     if(mode==='automatic-official'){
      assert.match(body.messages[2].content,/Moon passes between the Sun and Earth/);
-     assert.match(body.messages[2].content,/same subject, scope, thresholds, comparisons, and applicable exceptions as the rule/);
-     assert.match(body.messages[2].content,/same pass or fail decision that the cited rule requires/);
-     assert.match(body.messages[2].content,/Keep optional advice separate from the pass condition/);
+     assert.match(body.messages[2].content,/exact subject, scope, thresholds, comparisons, and applicable exceptions/);
+     assert.match(body.messages[2].content,/fails only when the cited condition is violated after applying its exceptions/);
+     assert.match(body.messages[2].content,/A missing method does not establish failure if another permitted method meets the rule/);
     }
     if(mode==='automatic'){
      assert.equal(body.max_tokens,16_384);

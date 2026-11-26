@@ -114,14 +114,17 @@ export interface SearchResult {
   publisherEvidence?: { linkedFrom: string; documentUrl: string };
 }
 const retrievalWords = /^(?:find|original|primary|final|source|publication|standard|dataset|paper|report|rule|official)$/iu;
+const numberedReference = /^(?:(?:understanding[ \t]+)?(?:success criteri(?:on|a)|sc|criterion|clause|section|rule)[ \t]+)?(\d+(?:\.\d+)+)[.:)]?\s+/iu;
+const normativeHeading = /^ {0,3}(?:#{1,6}[ \t]+)?(?:(?:[\p{L}\p{N}-]+[ \t]+){0,2}success criteri(?:on|a)|normative (?:text|requirements?))(?:[ \t]+\([^\r\n)]{1,18}\))?:?[ \t]*\r?$/imu;
+const ruleScopeNote = /\b(?:this|the) (?:criterion|clause|requirement|rule|test)\b[^.!?]{0,150}\b(?:rather than|does not (?:apply|include|require|count)|applies only|excludes)\b/iu;
 
-function pageReferenceSections(content: string, identifiers: readonly string[]): string[] {
+function pageReferenceSections(content: string, identifiers: readonly string[]) {
   // A publisher index often repeats all its reference numbers in a table of
   // contents. Prefer the actual headings and their bodies over that index.
   const headings = [...content.matchAll(/^ {0,3}(?:(#{1,6})[ \t]+|(?=\d+(?:\.\d+){2,}[.:)]?\s+\p{L}))(.*)$/gmu)];
   const sections = new Map<string, { prose: string; explicitHeading: boolean }>();
   headings.forEach((heading, index) => {
-    const reference = /^(\d+(?:\.\d+)+)[.:)]?\s+/u.exec(heading[2])?.[1];
+    const reference = numberedReference.exec(heading[2])?.[1];
     if (!reference || !identifiers.includes(reference)) return;
     const level = heading[1]?.length ?? 1;
     const nextHeading = headings.find((next, offset) => offset > index && (next[1]?.length ?? 1) <= level);
@@ -129,7 +132,7 @@ function pageReferenceSections(content: string, identifiers: readonly string[]):
     const start = (heading.index ?? 0) + heading[0].length;
     const body = content.slice(start, contentEnd).trim();
     if (!body) return;
-    const rule = /^(?:(?:[\p{L}\p{N}-]+[ \t]+){0,2}success criteri(?:on|a)|normative (?:text|requirements?)):[ \t]*\r?$/imu.exec(body);
+    const rule = normativeHeading.exec(body);
     const prose = heading[2] + '\n' + (rule ? body.slice(rule.index + rule[0].length).trim() : body);
     const previous = sections.get(reference);
     const explicitHeading = Boolean(heading[1]);
@@ -138,7 +141,22 @@ function pageReferenceSections(content: string, identifiers: readonly string[]):
       sections.set(reference, { prose, explicitHeading });
     }
   });
-  return identifiers.flatMap(reference => sections.get(reference)?.prose ?? []);
+  return identifiers.flatMap(reference => sections.get(reference) ?? []);
+}
+
+function referenceExcerpt(section: string, limit: number): string {
+  const compact = (prose: string) => prose.replace(/\s+/gu, ' ');
+  const clip = (prose: string, size: number) => prose.slice(0, size).replace(/\s+\S*$/u, '');
+  const full = compact(section);
+  if (full.length <= limit) return full;
+
+  // A rule's scope note can follow lengthy examples. Keep one short note
+  // from that same section with the main rule within the existing budget.
+  const lead = clip(full, limit);
+  const maximumNote = Math.min(480, Math.floor(limit / 3));
+  const note = section.split(/\r?\n[ \t]*\r?\n/u).map(compact)
+    .find(paragraph => paragraph.length <= maximumNote && ruleScopeNote.test(paragraph) && !lead.includes(paragraph));
+  return note ? clip(full, limit - note.length - 2) + '\n\n' + note : lead;
 }
 
 export function matchingPageParagraphs(content: string, question: string): string {
@@ -150,16 +168,14 @@ export function matchingPageParagraphs(content: string, question: string): strin
   let best = '', score = 0;
   const text = content.trim().replace(/[^\S\r\n]+/gu, ' ');
   const sections = pageReferenceSections(text, identifiers);
-  if (sections.length >= 2 || (sections.length === 1 && identifiers.length === 1)) {
+  if (sections.length >= 2 || (sections.length === 1 && (identifiers.length === 1 || sections[0].explicitHeading))) {
     const separators = (sections.length - 1) * 2;
-    const excerpts = sections.map(section => section.replace(/\s+/gu, ' '));
-    const minimumShare = Math.floor((DEEPSEEK_PRIMARY_PAGE_EXCERPT - separators) / excerpts.length);
-    const spare = excerpts.reduce((available, prose) => available + Math.max(0, minimumShare - prose.length), 0);
-    const longSections = excerpts.filter(prose => prose.length > minimumShare).length;
+    const lengths = sections.map(({ prose }) => prose.replace(/\s+/gu, ' ').length);
+    const minimumShare = Math.floor((DEEPSEEK_PRIMARY_PAGE_EXCERPT - separators) / lengths.length);
+    const spare = lengths.reduce((available, length) => available + Math.max(0, minimumShare - length), 0);
+    const longSections = lengths.filter(length => length > minimumShare).length;
     const share = minimumShare + (longSections ? Math.floor(spare / longSections) : 0);
-    return excerpts.map(prose => {
-      return prose.length <= share ? prose : prose.slice(0, share).replace(/\s+\S*$/u, '');
-    }).join('\n\n');
+    return sections.map(({ prose }) => referenceExcerpt(prose, share)).join('\n\n');
   }
   for (let start = 0; start < text.length; start += 400) {
     const end = start + DEEPSEEK_PRIMARY_PAGE_EXCERPT;
