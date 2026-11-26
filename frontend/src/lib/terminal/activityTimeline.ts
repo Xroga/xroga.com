@@ -162,8 +162,11 @@ export function buildActivityTimeline(rows: readonly XrogaActivityPresentation[]
   else if (outcome === 'failure' || rows.at(-1)?.status === 'error') state = 'failed';
   else if (outcome === 'interrupted' || (!outcome && rows.some(row => row.status === 'cancelled' || row.status === 'interrupted'))) state = 'stopped';
   else if (rows.length) state = 'done';
-  const completed = rows.filter(row => row.status === 'complete').length;
-  const failed = rows.filter(isFailure).length;
+  const completed = rows.filter(row => row.status === 'complete' && !row.note && !/:client-(?:read|thought)$/.test(row.id)).length;
+  // One failure is one failure: the Workspace's own line is not counted again beside the error it ended with.
+  const ownLine = (id: string) => /:client-(?:read|thought)$/.test(id);
+  const otherFailure = rows.some(row => isFailure(row) && !ownLine(row.id));
+  const failed = rows.filter(row => isFailure(row) && !(otherFailure && ownLine(row.id))).length;
   const unconfirmed = live.length ? 0 : rows.filter(row => !isFinished(row)).length;
   return { state, settled, active, otherActive, total: rows.length, completed, failed, unconfirmed };
 }

@@ -251,7 +251,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "b3dc5f4a46dc5c86bcd6964dd0740c103b9a322ad161bd67b5188f340da899e7",
+      "sha256": "0d26410da54803a4bb527d53f934892ee85741a68a31ef5865a7ca660b00bc7b",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/black-hole/webIntelligence.ts",
         "sha256": "f7ee10618d7993cc8e827b7f77d23eec06e663232d26a44c598a48825fbb6b7d"
@@ -835,7 +835,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "e7b2d58206f77b539954bd123f6deac582cdb61cff40e81c3b71608ec3b7004f",
+      "sha256": "b4e8da9cfae3e1c13b537734133e22bca0deccd5d41480d78e753efd1e05c74d",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/services/integrations/businessAction.ts",
         "sha256": "79fa4e23cd501826f0425aaa01bcdc79a14b2d457f57f2f56a29b0fde021c0a3"
@@ -885,7 +885,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "sha256": "39a0926d4ffd44f21b9ba166a8579a6ed7febae7693d39057ee2f3bf50092175",
+      "sha256": "cc2d685f207705b93a3a8b0724e8b6c0eaac2878ec0fb132dac730e441b3c077",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/services/integrations/businessRead.ts",
         "sha256": "c051a5b6418a6ec659d62b693c1dec64b3a03a5b81a1a341e83ede8ca2cd24a7"
@@ -1213,5 +1213,28 @@
   "workspacePublisherReadContinuation": {
     "baseline": "84b288e3193fc0f285e699c8785c210d47937f16",
     "scope": "One additive reviewed public publisher GET call site. Only scoped public URLs reach the DNS-pinned, credential-free transport after a persisted owner READ decision. The original paid Search dispatch and the private exact-consent action are unchanged. This static continuity does not certify live acceptance."
+  },
+  "workspaceProcessingStreamContinuation": {
+    "baseline": "0d3d175cb",
+    "previousProofSha256": "53313e77b148c9f4faa914269903a4e122a34e3338c13ab749405ac48b0015a8",
+    "ownerApproval": "The repository owner approved this proof update in the working session on 2026-11-26, and authorized completing the release on 2026-11-27.",
+    "scope": "CURRENT_SOURCE_BINDING_FOR_DISPLAY_ONLY_PROGRESS_REPORTING_NOT_NEW_SECURITY_ACCEPTANCE. The existing web research call and the two existing connected-app calls are wrapped by a reporter that returns their result and errors unchanged. Outbound dispatch targets and arguments, authority permits, approval, persistence, accounting and credential handling are unchanged; the research decision is still made once and passed to the same lane. New output goes only to the requesting user's own event stream: the planned search words with secrets redacted, public source titles and addresses, and the connected app and action name. Live acceptance is not verified.",
+    "bindings": [
+      {
+        "path": "backend/src/ai/black-hole/webIntelligence.ts",
+        "previousSha256": "b3dc5f4a46dc5c86bcd6964dd0740c103b9a322ad161bd67b5188f340da899e7",
+        "currentSha256": "0d26410da54803a4bb527d53f934892ee85741a68a31ef5865a7ca660b00bc7b"
+      },
+      {
+        "path": "backend/src/services/integrations/businessAction.ts",
+        "previousSha256": "e7b2d58206f77b539954bd123f6deac582cdb61cff40e81c3b71608ec3b7004f",
+        "currentSha256": "b4e8da9cfae3e1c13b537734133e22bca0deccd5d41480d78e753efd1e05c74d"
+      },
+      {
+        "path": "backend/src/services/integrations/businessRead.ts",
+        "previousSha256": "39a0926d4ffd44f21b9ba166a8579a6ed7febae7693d39057ee2f3bf50092175",
+        "currentSha256": "cc2d685f207705b93a3a8b0724e8b6c0eaac2878ec0fb132dac730e441b3c077"
+      }
+    ]
   }
 }

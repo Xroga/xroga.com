@@ -1,3 +1,4 @@
+import { connectedAppLabel, trackProgress } from '../../ai/progressChannel.js';
 import {
   createHash,
   randomUUID,
@@ -1603,7 +1604,10 @@ export async function executePreparedBusinessAction(
   assertAuthorityPermit(input.authorityPermit, binding);
 
   const execution =
-    await executeComposioActionTool(
+    await trackProgress(`Updating connected app ${connectedAppLabel(String(input.plan.toolSlug))}`, (result: Awaited<ReturnType<typeof executeComposioActionTool>>) => {
+      const label = connectedAppLabel(String(input.plan.toolSlug));
+      return result.error ? `Connected app ${label} returned a problem` : `Sent the request to connected app ${label}`;
+    }, () => executeComposioActionTool(
       input.userId,
       {
         sessionId:
@@ -1624,7 +1628,7 @@ export async function executePreparedBusinessAction(
         authorityPermit: input.authorityPermit,
         authorityBinding: binding,
       },
-    );
+    ));
 
   const resultDigest = execution.resultDigest;
   if (execution.error || typeof resultDigest !== 'string' || !/^[a-f0-9]{64}$/.test(resultDigest)) {
