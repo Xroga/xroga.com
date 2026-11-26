@@ -3218,6 +3218,7 @@
       "current_paths": [
         "backend/src/routes/phase1.ts",
         "backend/src/routes/phase1BusinessPreflight.ts",
+        "backend/src/routes/phase1ChatProgress.ts",
         "backend/src/synthesis/researchEvidence.ts"
       ],
       "implementation_owner_command": "MISSION-020",

@@ -15,6 +15,8 @@ import { buildFullProjectFiles } from '../services/projectScaffold.js';
 import { notifyBuildComplete, notifyBuildFailed } from '../services/notificationService.js';
 import { isValidClientRunId } from '../lib/clientRunId.js';
 import { publicAiPayload, publicAiText } from '../lib/publicAiIdentity.js';
+import { decideArchitecture, readIntent } from '../ai/intentReasoning.js';
+import { understandingProgress } from '../ai/startupProgress.js';
 import {
   failRun,
   getRun,
@@ -194,6 +196,14 @@ router.post('/execute', (req: AuthRequest, res) => withRunAttempt(async () => {
         stage: 'init',
       },
     });
+    try {
+      const reading = readIntent(prompt.trim());
+      const understanding = understandingProgress([...reading.reasoning, ...decideArchitecture(reading).reasoning]);
+      if (understanding) {
+        const recorded = appendRunEvent(runId, 'progress', understanding as unknown as Record<string, unknown>);
+        if (streamConnected && !res.writableEnded) sendSSE(res, { event: 'progress', data: publicAiPayload({ ...understanding, ...(recorded ? { sequence: recorded.sequence } : {}) }) });
+      }
+    } catch { /* The summary is optional and must never fail a run. */ }
 
     const result = await runBuildPipeline({
       runId,
