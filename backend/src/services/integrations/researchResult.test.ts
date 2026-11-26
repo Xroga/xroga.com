@@ -65,6 +65,17 @@ test('research normalization deduplicates pages, keeps distinct pages, rejects u
   assert.equal(result.text, ''); // Search snippets are not an invented synthesized answer.
 });
 
+test('repeated provider pages preserve one copy of a multiline rule excerpt', () => {
+  const rule = 'Choose one alternative:\n\n- Use an equivalent control.\n- Provide separate access.';
+  const url = 'https://example.com/rule';
+  const receipt = { ok: true, operation: 'search', result: { provider: 'deepseek', results: [
+    { url, excerpts: [rule] },
+    { url, excerpts: ['A separate example is optional.'] },
+    { url, excerpts: [rule] },
+  ] } };
+  assert.equal(presentResearchResult(receipt).sources[0]?.snippet, rule + '\nA separate example is optional.');
+});
+
 test('primary-source research excludes publisher navigation even when the host is official', () => {
   const receipt = { ok: true, operation: 'search', result: { provider: 'deepseek', results: [
     { title: 'Search Publications', url: 'https://publications.example.org/publications/search?k=unrelated&page=1', excerpts: ['Unrelated search query'] },

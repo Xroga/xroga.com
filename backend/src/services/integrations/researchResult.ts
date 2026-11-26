@@ -111,8 +111,9 @@ export function presentResearchResult(raw: unknown, officialOnly?: readonly stri
       const snippet = Array.isArray(item.excerpts) ? item.excerpts.map(text).join('\n') : '';
       const previous = seen.get(canonical);
       if (previous !== undefined) {
-        if (snippet && !sources[previous]!.snippet.split('\n').includes(snippet)) {
-          sources[previous]!.snippet = [sources[previous]!.snippet, snippet].filter(Boolean).join('\n');
+        const existing = sources[previous]!;
+        if (snippet && !('\n' + existing.snippet + '\n').includes('\n' + snippet + '\n')) {
+          existing.snippet = [existing.snippet, snippet].filter(Boolean).join('\n');
         }
         continue;
       }

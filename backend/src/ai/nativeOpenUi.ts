@@ -1021,6 +1021,74 @@ function resolveRecoveryReference(node: ASTNode | undefined, symbols: ReadonlyMa
   return node;
 }
 
+/** Prefer the full written instructions when a second view repeats the same
+ * numbered checklist and the user did not ask for editable checkboxes. */
+export function removeRepeatedOptionalChecklist(program: string, prose: string): string {
+  if (!program.includes('Checkbox')) return program;
+  const { headings, orderedItems } = nativeMarkdownOutline(prose);
+  if (orderedItems.length < 2) return program;
+  const statements = split(tokenize(program));
+  const symbols = new Map(statements.map(statement => [statement.id, parseExpression(statement.tokens)]));
+  const resolve = (node: ASTNode | undefined) => resolveRecoveryReference(node, symbols);
+  const entry = statements.find(statement => statement.id === 'root');
+  const root = symbols.get('root');
+  if (entry?.start === undefined || entry.end === undefined || root?.k !== 'Comp' || root.name !== 'Col') return program;
+  const children = root.args[0];
+  if (children?.k !== 'Arr' || !children.els.some(child => {
+    const node = resolve(child);
+    return node?.k === 'Comp' && node.name === 'Markdown'
+      && node.args[0]?.k === 'Ref' && node.args[0].n === '_xroga_answer';
+  })) return program;
+
+  const stepKey = (value: string) => nativeReadableTextKey(value).replace(/[.!?]$/u, '').trim();
+  const stepLabel = (value: string) => stepKey(value).split(/\s+[–—]\s+/u, 1)[0];
+  const checkboxDirections = /^(?:tick|check|mark)\s+(?:off\s+)?each\b[^.!?\n]*[.!?]?(?:\s+all\s+(?:\p{L}+|\d+)\s+must be recorded before any \p{L}+ claim[.!?]?)?$/iu;
+  const retained = children.els.filter(child => {
+    const node = resolve(child);
+    if (node?.k !== 'Comp' || node.name !== 'Section') return true;
+    const title = resolve(node.args[0]);
+    const items = resolve(node.args[1]);
+    const introduction = resolve(node.args[2]);
+    if (title?.k !== 'Str' || items?.k !== 'Arr' || items.els.length < 2
+      || (introduction && (introduction.k !== 'Str' || /[\[\]<>]/u.test(introduction.v)))) return true;
+    if (introduction?.k === 'Str' && introduction.v.trim() && !prose.includes(introduction.v)
+      && !checkboxDirections.test(introduction.v.trim())) return true;
+    const matching = headings.filter(path => nativeReadableTextKey(path.at(-1) ?? '') === nativeReadableTextKey(title.v));
+    if (matching.length !== 1) return true;
+    const scope = JSON.stringify(matching[0]);
+    const written = orderedItems.filter(item => JSON.stringify(item.headings) === scope);
+    if (written.length !== items.els.length) return true;
+
+    const labels = new Set<string>();
+    const repeated = items.els.every((item, index) => {
+      const control = resolve(item);
+      if (control?.k !== 'Comp' || control.name !== 'Checkbox' || control.args.length !== 2) return false;
+      const [state, text] = control.args;
+      const value = state?.k === 'StateRef' ? symbols.get(state.n) : undefined;
+      const label = resolve(text);
+      if (value?.k !== 'Bool' || value.v || label?.k !== 'Str' || /[\[\]<>]/u.test(label.v)) return false;
+      const writtenStep = written[index].text;
+      const lead = /^\*\*([^*]+)\*\*[ \t]+\S/u.exec(writtenStep)?.[1];
+      const key = stepLabel(label.v);
+      if (!key || labels.has(key)) return false;
+      labels.add(key);
+      const quantities = new Set(writtenStep.match(/\d+(?:\.\d+)?/gu));
+      return stepKey(label.v) === stepKey(writtenStep) || (lead !== undefined && key === stepLabel(lead)
+        && (label.v.match(/\d+(?:\.\d+)?/gu) ?? []).every(quantity => quantities.has(quantity)));
+    });
+    return !repeated;
+  });
+  if (retained.length === children.els.length) return program;
+  try {
+    const rewritten = { ...root, args: [{ ...children, els: retained }, ...root.args.slice(1)] };
+    const expression = printRecoveryExpression(rewritten);
+    if (JSON.stringify(parseExpression(tokenize(expression))) !== JSON.stringify(rewritten)) return program;
+    return restrictNativeWorkspaceProgram(program.slice(0, entry.start) + 'root = ' + expression + program.slice(entry.end), () => true);
+  } catch {
+    return program;
+  }
+}
+
 function normalizeDiagramRows(node: ASTNode, symbols: ReadonlyMap<string, ASTNode>, isNode: boolean): ASTNode {
   const rows = resolveRecoveryReference(node, symbols);
   if (rows?.k !== 'Arr' || rows.els.length > (isNode ? 12 : 18)) return node;
