@@ -86,7 +86,11 @@ export class SandboxAdmissionError extends Error {
   constructor(){super('Sandbox execution authority is no longer available.');this.name='SandboxAdmissionError';}
 }
 
+export interface SandboxArtifact { path: string; contentBase64: string }
+
 export interface SandboxExecutionResult {
+  /** Files the run wrote to its output directory (bounded in number and size by the worker, and checked again by the reader). */
+  artifacts?: readonly SandboxArtifact[];
   stages?:readonly (SandboxExecutionResult&{id:string;networkPolicy?:SandboxNetworkPolicy})[];
   exitCode: number | null;
   stdout: string;

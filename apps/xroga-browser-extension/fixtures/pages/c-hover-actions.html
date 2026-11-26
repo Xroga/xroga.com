@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Rows with hover actions</title>
+<style>
+ul{list-style:none;padding:0;width:520px}
+.row{position:relative;border:1px solid #999;margin:8px 0;padding:14px 12px;cursor:pointer}
+.row .actions{display:none;position:absolute;left:20%;top:0;bottom:0;width:60%;align-items:center;justify-content:space-around}
+.row:hover .actions{display:flex}
+.row .actions button{background:#fdd;border:1px solid #a33;padding:8px 12px}
+</style></head>
+<body>
+<h1>Drafts</h1>
+<ul>
+  <li class="row" tabindex="0" onclick="document.getElementById('s').textContent = 'Opened Ana'"><b>ana@example.test</b> Delivery slot<div class="actions"><button type="button" onclick="event.stopPropagation(); document.getElementById('s').textContent = 'Deleted Ana'">Delete draft</button></div></li>
+  <li class="row" tabindex="0" onclick="document.getElementById('s').textContent = 'Opened Bilal'"><b>bilal@example.test</b> Thursday delivery<div class="actions"><button type="button" onclick="event.stopPropagation(); document.getElementById('s').textContent = 'Deleted Bilal'">Delete draft</button></div></li>
+</ul>
+<p id="s" role="status"></p>
+</body></html>

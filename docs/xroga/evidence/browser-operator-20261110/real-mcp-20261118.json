@@ -1,0 +1,51 @@
+{
+  "case": "mcp",
+  "plan": {
+    "ready": true,
+    "packages": [
+      {
+        "name": "@modelcontextprotocol/server-memory",
+        "version": "2026.1.26",
+        "integrity": "sha512-7F0hbaEB4lVqkYhNW...",
+        "licence": "MIT",
+        "class": "permissive"
+      }
+    ]
+  },
+  "stages": [
+    {
+      "id": "acquire:npm",
+      "networkPolicy": "registry-only",
+      "exitCode": 0,
+      "durationMs": 7122,
+      "stdout": "\nadded 96 packages in 7s\n",
+      "stderr": "npm warn deprecated @modelcontextprotocol/server-memory@2026.1.26: Date-based versions are no longer published. This package has resumed semantic versioning at 1.0.0: install the latest version.\n"
+    },
+    {
+      "id": "verify:npm",
+      "networkPolicy": "none",
+      "exitCode": 0,
+      "durationMs": 46,
+      "stdout": "integrity verified for 1 pinned packages\n",
+      "stderr": ""
+    },
+    {
+      "id": "run:mcp-client",
+      "networkPolicy": "none",
+      "exitCode": 0,
+      "durationMs": 460,
+      "stdout": "server: {\"name\":\"memory-server\",\"version\":\"0.6.3\"}\ntools: create_entities,create_relations,add_observations,delete_entities,delete_observations,delete_relations,read_graph,search_nodes,open_nodes\ncreate_entities: \"[\\n  {\\n    \\\"name\\\": \\\"Xroga\\\",\\n    \\\"entityType\\\": \\\"company\\\",\\n    \\\"observations\\\": [\\n      \\\"runs MCP servers in an isolated sandbox\\\"\\n    ]\\n  }\\n]\"\nread_graph: { \"entities\": [ { \"name\": \"Xroga\", \"entityType\": \"company\", \"observations\": [ \"runs MCP servers in an isolated sandbox\" ] } ], \"relations\": [] }\n",
+      "stderr": "Knowledge Graph MCP Server running on stdio\n"
+    }
+  ],
+  "ledger": [
+    {
+      "reserved": 330
+    },
+    {
+      "settled": 8,
+      "resource": "cloud-run-sandbox;mem=3072MB"
+    }
+  ],
+  "wallMs": 10913
+}

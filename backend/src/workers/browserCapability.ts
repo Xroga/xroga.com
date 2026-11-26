@@ -187,6 +187,7 @@ const EXECUTE_LEASE_TTL_MS = 60_000;
 export async function executeBrowserRun(runId: string, deps: BrowserCapabilityDeps & { runs: BrowserRunStore }, options: { signal?: AbortSignal; cancelPollMs?: number } = {}): Promise<ExecuteOutcome> {
   const record = await deps.runs.loadInternal(runId);
   if (!record) return 'not_found';
+  if (record.spec.executionTarget === 'local_chrome') return 'not_found';
   if (isTerminalRunStatus(record.status)) return 'already_finished';
 
   const task = record.state.tasks[0];

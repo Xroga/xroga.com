@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Account check 6</title>
+<style>body{font:14px sans-serif;margin:16px}section{display:none}section.on{display:block}label{display:block;margin:8px 0}</style></head>
+<body><h1>Account check 6</h1>
+<section id="s1" class="on"><p>Step 1 of 3</p><label>Region <select aria-label="Region"><option value="">Choose...</option><option>North</option><option>South</option><option>East</option></select></label><button type="button" id="b1" disabled>Next</button></section>
+<section id="s2"><p>Step 2 of 3</p><label><input type="checkbox" id="agree"> I confirm the details are correct</label><button type="button" id="b2" disabled>Next</button></section>
+<section id="s3"><p>Step 3 of 3</p><p id="out" role="status">Working...</p></section>
+<script>
+const q=s=>document.querySelector(s), go=n=>{document.querySelectorAll('section').forEach(x=>x.classList.remove('on'));q('#s'+n).classList.add('on')};
+q('select').addEventListener('change',e=>{q('#b1').disabled=!e.target.value});
+q('#b1').addEventListener('click',()=>go(2));
+q('#agree').addEventListener('change',e=>{q('#b2').disabled=!e.target.checked});
+q('#b2').addEventListener('click',()=>{go(3);setTimeout(()=>{q('#out').textContent='Confirmation code: W9C3-62'},2500)});
+</script></body></html>

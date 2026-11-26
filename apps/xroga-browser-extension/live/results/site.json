@@ -1,0 +1,82 @@
+{
+  "orders": [
+    {
+      "tools": [
+        "1:site_action",
+        "2:site_action",
+        "3:site_action",
+        "3:wait",
+        "3:click",
+        "3:wait",
+        "4:read",
+        "5:screenshot"
+      ],
+      "turns": 6,
+      "wallMs": 20841,
+      "end": "partial",
+      "final": "I opened **Order 1002** on the orders page (via the `orders.open` action; it verified with \"chosen: Order 1002\" on the page).\n\nWhat the page shows for it: **\"Order 1002 detail: 2 items\"** — the opened order displays that it contains 2 items. The page text I could read contains no further detail (no item names, prices or totals). I took a screenshot of the detail view to check for more content, but"
+    },
+    {
+      "tools": [
+        "1:click",
+        "2:read",
+        "3:wait",
+        "4:read",
+        "5:screenshot"
+      ],
+      "turns": 6,
+      "wallMs": 20558,
+      "end": "partial",
+      "final": "I opened Order 1002 (clicked \"Open Order 1002\" on the Orders page), and the page now displays the detail view. What it shows, verbatim, is only:\n\n> **Order 1002 detail: 2 items**\n\nThat's all the page renders — no line items, prices, dates, customer or status are shown. The page (a local test page, `stale-and-slow.html?mode=stale`) appears to be serving stale/partially loaded content: after opening"
+    },
+    {
+      "tools": [
+        "1:site_action",
+        "2:site_action",
+        "3:site_action",
+        "3:wait",
+        "3:click",
+        "3:wait",
+        "4:read",
+        "5:screenshot"
+      ],
+      "turns": 6,
+      "wallMs": 23735,
+      "end": "partial",
+      "final": "Order 1002 is open in the orders tab (the reviewed **orders.open** action confirmed the click and verified that \"chosen: Order 1002\" is on the page).\n\n**What the page shows for Order 1002:** the detail view reads exactly:\n\n> Order 1002 detail: 2 items\n\nSo the order contains **2 items**. The page text gives only that summary — no line items, prices or customer details are rendered, and nothing else"
+    },
+    {
+      "tools": [
+        "1:click",
+        "2:snapshot",
+        "3:read",
+        "3:screenshot",
+        "4:wait",
+        "5:read",
+        "5:screenshot"
+      ],
+      "turns": 6,
+      "wallMs": 18311,
+      "end": "partial",
+      "final": "I opened Order 1002 on your orders page. After the click the page updated and the order's detail reads:\n\n**\"Order 1002 detail: 2 items\"**\n\nThat's all the detail the page exposes — no line items, totals, customer or dates are shown, only the item count. The page is the \"stale-and-slow\" test page, so the panel may be rendering only a summary; a second read after a short wait showed the same text. Th"
+    },
+    {
+      "tools": [
+        "1:screenshot",
+        "1:snapshot",
+        "2:read",
+        "2:screenshot",
+        "3:site_action",
+        "4:site_action",
+        "5:site_action",
+        "5:wait",
+        "5:click",
+        "5:wait"
+      ],
+      "turns": 6,
+      "wallMs": 22597,
+      "end": "partial",
+      "final": "I opened Order 1002 on the orders tab, and the action was verified: the page now shows **\"chosen: Order 1002\"**.\n\nWhat I could not finish: reading the order's contents and reporting them back. That page appears to be a deliberately stale/slow test page — it may display detail text before the order is actually opened, so I did not want to quote anything as Order 1002's contents without checking it "
+    }
+  ]
+}

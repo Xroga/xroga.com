@@ -55,6 +55,8 @@ import { phase1AuthMiddleware } from './middleware/phase1Auth.js';
 import mediaRouter from './routes/media.js';
 import driveRouter from './routes/drive.js';
 import browserRunsRouter from './routes/browserRuns.js';
+import localBrowserRouter from './routes/localBrowser.js';
+import { browserDeviceExtension, createBrowserDeviceRouter, createLocalBrowserAuth } from './routes/localBrowserDevice.js';
 import builderRouter from './routes/builder.js';
 import { resolveStorageConfig } from './storage/runtime.js';
 import capabilitiesRouter from './routes/capabilities.js';
@@ -143,7 +145,14 @@ const corsOptions: cors.CorsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Xroga-Language'],
 };
 
-app.use(cors(corsOptions));
+app.use(cors((req, done) => {
+  const extensionId = browserDeviceExtension();
+  const origin = req.headers.origin;
+  if (extensionId && origin === 'chrome-extension://' + extensionId && /^\/api\/browser\/local(?:\/|$)/.test(req.url)) {
+    return done(null, { ...corsOptions, origin, credentials: false });
+  }
+  done(null, corsOptions);
+}));
 
 // Whop Standard Webhooks signatures cover the untouched raw body.
 app.use('/api/billing/webhook', billingWebhookRouter);
@@ -160,6 +169,15 @@ app.use('/api/guest', express.json({ limit: '32kb' }), guestChatRouter);
 if(googleBackgroundSelected()){
   app.post('/internal/canonical-dispatch',express.json({limit:'1kb'}),canonicalDispatchHandler(googleDispatchConfiguration()));
 }
+// Documents attached in the browser extension can be up to 25 MB (base64 in JSON). The larger body limit applies to that one route and only
+// to a request that carries a device bearer token in the expected shape; the token itself is verified by the route's own auth afterwards.
+const documentsAuth = createLocalBrowserAuth();
+app.use('/api/browser/local/documents', (req, res, next) => {
+  if (req.method !== 'POST') return next();
+  if (!/^Bearer xroga_browser_[A-Za-z0-9_-]{43}$/.test(String(req.headers.authorization ?? ''))) return res.status(401).json({ error: 'BROWSER_DEVICE_AUTH_REQUIRED' });
+  // The device token is verified BEFORE the large body is read, so an unauthenticated caller cannot make the server parse 36 MB.
+  return documentsAuth(req, res, (error?: unknown) => (error ? next(error) : express.json({ limit: '36mb' })(req, res, next)));
+});
 app.use(express.json({ limit: '10mb' }));
 
 app.get('/', (_req, res) => {
@@ -259,6 +277,8 @@ app.use('/api/showcase', authMiddleware, showcaseRouter);
 app.use('/api/media', authMiddleware, mediaRouter);
 app.use('/api/drive', authMiddleware, driveRouter);
 app.use('/api/browser/runs', authMiddleware, browserRunsRouter);
+app.use('/api/browser/local/device', createBrowserDeviceRouter());
+app.use('/api/browser/local', createLocalBrowserAuth(), localBrowserRouter);
 app.use('/api/builder', authMiddleware, builderRouter);
 app.use('/api/capabilities', authMiddleware, capabilitiesRouter);
 app.use('/api/debug', authMiddleware, debugRouter);

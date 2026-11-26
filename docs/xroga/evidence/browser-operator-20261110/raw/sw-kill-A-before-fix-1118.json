@@ -1,0 +1,81 @@
+{
+ "steps": {
+  "enrolled": {
+   "configured": true,
+   "saved": true,
+   "verified": true,
+   "ready": true
+  },
+  "itemsBeforeKill": [
+   "alpha"
+  ],
+  "killedAt": "2026-11-18T11:00:12.211Z",
+  "workerBack": true,
+  "itemsRightAfterRestart": [
+   "alpha"
+  ],
+  "runsRightAfterRestart": [
+   {
+    "db": "nanobrowser",
+    "runs": [
+     {
+      "status": "interrupted",
+      "reason": "The extension restarted during this run.",
+      "hasFinish": false,
+      "run": "c0d93796"
+     }
+    ]
+   },
+   {
+    "db": "nanobrowser-signed-out",
+    "runs": []
+   }
+  ],
+  "runsFifteenSecondsLater": [
+   {
+    "db": "nanobrowser",
+    "runs": [
+     {
+      "status": "interrupted",
+      "reason": "The extension restarted during this run.",
+      "hasFinish": false,
+      "run": "c0d93796"
+     }
+    ]
+   },
+   {
+    "db": "nanobrowser-signed-out",
+    "runs": []
+   }
+  ],
+  "itemsFifteenSecondsLater": [
+   "alpha"
+  ],
+  "panelBodyAfterRestart": "Xroga On this page add three todo items named alpha, beta and gam… Staging Preview · v0.3.0 Signed in to Xroga Sign out On this page add three todo items named alpha, beta and gamma, then tell me the list. now Waiting for the next update… Black Hole is working 23s Waiting for the next update… Set textbox «New Todo Input» I'll add the three items one at a time. Interrupted The extension restarted during this run. Resume Stop Plugins Full access",
+  "statusAfterRestart": "Signed in to Xroga",
+  "buttonsAfterRestart": [
+   "New chat",
+   "Send"
+  ],
+  "resumeOffered": true,
+  "pressedResume": true,
+  "resumeTimedOut": true,
+  "itemsAfterResume": [
+   "alpha"
+  ],
+  "answerAfterResume": "On this page add three todo items named alpha, beta and gamma, then tell me the list. 4 minutes ago Worked for 4s I'll add the three items one at a time. The run failed: Error: BROWSER_RUN_BUSY Waiting for the next update… Black Hole is working 4m 21s Waiting for the next update…",
+  "pausedForUncertainWrite": false,
+  "followUpSent": true,
+  "followUpTimedOut": true,
+  "itemsFinal": [
+   "alpha"
+  ],
+  "answerTail": "ee todo items named alpha, beta and gamma, then tell me the list. 9 minutes ago Worked for 4s I'll add the three items one at a time. The run failed: Error: BROWSER_RUN_BUSY Waiting for the next update… Black Hole is working 9m 25s Waiting for the next update…"
+ },
+ "ok": false,
+ "failures": [
+  "the resumed run did not settle",
+  "fewer than three items at the end: [\"alpha\"]",
+  "the follow-up run did not settle"
+ ]
+}

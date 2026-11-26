@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "d59a57ebdc1cbcca2ef99e9d2a64693d69eba5ec67cd02bc87581ba03268b377",
+  "sourceTreeDigest": "98f50600da2528329a612b9d4f25803b1dc2c874b5792cfe192b617c3490aa79",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -38,7 +38,7 @@
     {
       "id": "038ced12b0f74e8d5e0f",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 234,
+      "line": 238,
       "entryPoint": "createModelProviderClient",
       "transport": "fetch",
       "callee": "globalThis.fetch",
@@ -85,7 +85,7 @@
     {
       "id": "31380a8d5b9454a98a98",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 335,
+      "line": 340,
       "entryPoint": "chatCompletion",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -141,7 +141,7 @@
     {
       "id": "9c345e07b723c086440e",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 430,
+      "line": 435,
       "entryPoint": "chatCompletionStream",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -2151,6 +2151,43 @@
       ]
     },
     {
+      "id": "27bc04b09f554f8a04b0",
+      "file": "backend/src/routes/localBrowser.ts",
+      "line": 642,
+      "entryPoint": "createLocalBrowserRouter",
+      "transport": "boundedPublicGet",
+      "callee": "boundedPublicGet",
+      "callSha256": "3d29975459dbe751325d983598b435d215c7cd198c44e3b04bd8013784fc721c",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "PUBLIC_HTTPS_ONLY_CREDENTIAL_FREE_VIA_CENTRAL_BOUNDED_PUBLIC_GET_NOT_FULL_EGRESS_CERTIFICATION",
+      "tenantAuthority": "The route needs a live lease on the run, a device that is still authorised and a verified tenant context. Nothing of the user is attached to the request: the address must be public https (publicHttpsUrl), and the shared guard admits public addresses only with bounded bytes, time and redirects.",
+      "currentProtection": "CENTRAL_PUBLIC_GET_CANDIDATE_NOT_SEMANTIC_CERTIFICATION",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "backend/src/routes/localBrowser.ts",
+          "marker": "router.post('/runs/:runId/public-get'",
+          "sha256": "a40092256167d3e1862314641773ca749df710b56cd6bc8ec053351aea9248ac"
+        },
+        {
+          "path": "backend/src/routes/localBrowser.ts",
+          "marker": "publicHttpsUrl(url)",
+          "sha256": "a40092256167d3e1862314641773ca749df710b56cd6bc8ec053351aea9248ac"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "Credential-free GET only. All redirects share one deadline and byte bound.",
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "public address admission rejects local, metadata, special and IPv4-in-IPv6 targets",
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
+        }
+      ]
+    },
+    {
       "id": "807c2948cdfa16e19b84",
       "file": "backend/src/routes/supabaseOAuth.ts",
       "line": 351,
@@ -2227,6 +2264,53 @@
       ]
     },
     {
+      "id": "f7aa2007f50742984f8d",
+      "file": "backend/src/sandbox/dependencyAcquisition.ts",
+      "line": 61,
+      "entryPoint": "publicRegistryGet",
+      "transport": "boundedPublicGet",
+      "callee": "boundedPublicGet",
+      "callSha256": "301f7f78792bc068a151bdb5cceeada9feb196dd99e8305e6faef48cfcd70b50",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "FIXED_PUBLIC_REGISTRY_HOSTS_VIA_CENTRAL_BOUNDED_PUBLIC_GET_NOT_FULL_EGRESS_CERTIFICATION",
+      "tenantAuthority": "No tenant data is sent: the request is a credential-free GET of a public package record. The only caller is the dependency plan, which builds the address from a fixed host (pypi.org or registry.npmjs.org) and a package name and exact version that were validated and URL-encoded before the call.",
+      "currentProtection": "CENTRAL_PUBLIC_GET_CANDIDATE_NOT_SEMANTIC_CERTIFICATION",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "backend/src/sandbox/dependencyAcquisition.ts",
+          "marker": "https://pypi.org/pypi/${encodeURIComponent(pkg.name)}",
+          "sha256": "45c04834e978bf8a6f24ef4604683530deb93e30c9b500b8e18f763d0d35087f"
+        },
+        {
+          "path": "backend/src/sandbox/dependencyAcquisition.ts",
+          "marker": "https://registry.npmjs.org/${pkg.name.replace",
+          "sha256": "45c04834e978bf8a6f24ef4604683530deb93e30c9b500b8e18f763d0d35087f"
+        },
+        {
+          "path": "backend/src/sandbox/dependencyAcquisition.test.ts",
+          "marker": "pip: exact versions only; every wheel hash is pinned; the install refuses unhashed and source-built packages",
+          "sha256": "35a5e6201fe5d68200f794f0ad302ce526164bcbc38a36b7847e5fe3ea98f094"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "Credential-free GET only. All redirects share one deadline and byte bound.",
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "public address admission rejects local, metadata, special and IPv4-in-IPv6 targets",
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "redirects get independent URL and DNS admission and share a strict redirect cap",
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
+        }
+      ]
+    },
+    {
       "id": "b7515cbdbc7be27b60a8",
       "file": "backend/src/sandbox/google/gceSshTransport.ts",
       "line": 34,
@@ -2260,6 +2344,53 @@
           "path": "docs/xroga/evidence/command-010/PRIVATE-DEPENDENCY-CALLER-TRACE.json",
           "marker": "b7515cbdbc7be27b60a8",
           "sha256": "e17735c8e9c543a80e68793a925c9b27ad9c1944c60613cfcbed54ed3ec77e24"
+        }
+      ]
+    },
+    {
+      "id": "cc40611e19d1a7f81e4b",
+      "file": "backend/src/sandbox/repoRun.ts",
+      "line": 86,
+      "entryPoint": "fetchRepositoryFiles",
+      "transport": "boundedPublicGet",
+      "callee": "boundedPublicGet",
+      "callSha256": "011359d58187d86e604252e627e43a4a65ae8286cb822216582bbb5cc123b6e0",
+      "destination": "https://codeload.github.com",
+      "trust": "FIXED_ORIGIN_CODELOAD_GITHUB_COM_VIA_CENTRAL_BOUNDED_PUBLIC_GET_NOT_FULL_EGRESS_CERTIFICATION",
+      "tenantAuthority": "No tenant data is sent: a credential-free GET of a public repository archive. Owner and repository come from parseRepositoryUrl, which accepts only https://github.com/OWNER/REPO with a restricted character set and rejects dot segments; the version is limited to a name without slashes and is URL-encoded. The host in the address is fixed.",
+      "currentProtection": "CENTRAL_PUBLIC_GET_CANDIDATE_NOT_SEMANTIC_CERTIFICATION",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "backend/src/sandbox/repoRun.ts",
+          "marker": "export function parseRepositoryUrl",
+          "sha256": "bdd29aa5d0b9f6f964a818538382259eb5098bdcf3da8a91efaa2b60242eac00"
+        },
+        {
+          "path": "backend/src/sandbox/repoRun.ts",
+          "marker": "https://codeload.github.com/${owner}/${repo}/tar.gz/${encodeURIComponent(ref)}",
+          "sha256": "bdd29aa5d0b9f6f964a818538382259eb5098bdcf3da8a91efaa2b60242eac00"
+        },
+        {
+          "path": "backend/src/sandbox/repoRun.test.ts",
+          "marker": "only a public github.com owner/repo address is accepted",
+          "sha256": "0a615fddf568fb99eda454eca216394acfd493a26bb69f53ca1bd06f17dfa3bc"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "Credential-free GET only. All redirects share one deadline and byte bound.",
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "public address admission rejects local, metadata, special and IPv4-in-IPv6 targets",
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "redirects get independent URL and DNS admission and share a strict redirect cap",
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
         }
       ]
     },
@@ -2519,32 +2650,32 @@
     {
       "id": "7b6e1f490ce974fc3971",
       "file": "backend/src/services/integrations/composioClient.ts",
-      "line": 1417,
+      "line": 1505,
       "entryPoint": "composioRequest",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "9bdd54f164230d27aca5d0bdf34fc470042478bcc9bd0f1037b146d00f035cd4",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "FIXED_COMPOSIO_TRANSPORT_ORIGINAL_CONTEXT_CURRENT_OWNED_SESSION_FINITE_PUBLIC_DISCOVERY_EXACT_PRIVATE_EGRESS_AND_NATIVE_CONFIGURATION_CONFIRMATION",
-      "tenantAuthority": "ISSUED_ACTOR_OWNER_SOURCE_CREDENTIAL_EPOCH_LIVE_ACCOUNT_ONE_USE_CLAIM_SECRET_FLOOR_TERMINAL_DENIAL_AND_VERIFIED_COMPLETION",
+      "trust": "FIXED_ORIGIN_BACKEND_COMPOSIO_DEV_WITH_PATH_AND_METHOD_ALLOWLIST_AND_MANUAL_REDIRECT_NOT_FULL_EGRESS_CERTIFICATION",
+      "tenantAuthority": "The origin is fixed (https://backend.composio.dev/api/v3.1): the path must start with a single slash with no control characters, backslashes, fragments or encoded dots and slashes, the final origin and prefix are re-checked, and only GET, POST and DELETE are allowed. Anything that is not public catalog metadata requires a verified tenant context; the connector credential is read for that context and re-checked immediately before dispatch; redirects are not followed; the body is capped at 128,000 bytes.",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "VERIFIED_GUARD",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "evidence": [
         {
-          "path": "docs/xroga/evidence/command-010/COMPOSIO-BOUNDARY-20261028.json",
-          "marker": "7b6e1f490ce974fc3971",
-          "sha256": "e96b43ea77ab48b0c3631f8a1f1d2299b062a096222da1315d5c57d934abd89a"
+          "path": "backend/src/services/integrations/composioClient.ts",
+          "marker": "url.origin!=='https://backend.composio.dev'",
+          "sha256": "37664dd39e626c417bec4ed231cbe8f3a8abc840e82983a2761e28aeb2aef53d"
         },
         {
-          "path": "backend/src/services/integrations/composioControl.security.test.ts",
-          "marker": "native Composio control:",
-          "sha256": "01e14c837f7e216a3be14b4b27fab68383cfab31c25fdc242366d4e7c982427d"
+          "path": "backend/src/services/integrations/composioClient.ts",
+          "marker": "redirect:'manual'",
+          "sha256": "37664dd39e626c417bec4ed231cbe8f3a8abc840e82983a2761e28aeb2aef53d"
         },
         {
-          "path": "backend/src/services/integrations/composioProvenance.security.test.ts",
-          "marker": "private connected-app read uses exact existing consent",
-          "sha256": "445b458f198df385ebf35733b0578e22353921e19aaf75c43055847d4d349c73"
+          "path": "backend/src/services/integrations/composioClient.security.test.ts",
+          "marker": "SLACK_GET_REDIRECT_FIXTURE",
+          "sha256": "5963a224809816e2df4d0618424d2ba1fdc139f84ffa47882be363622ff57e83"
         }
       ]
     },
@@ -3812,13 +3943,13 @@
       ]
     },
     {
-      "id": "9ea21a6fc8b8700460c0",
+      "id": "06e6767d8c33bd9749a5",
       "file": "backend/src/workers/browserModelDispatch.ts",
-      "line": 59,
+      "line": 63,
       "entryPoint": "dispatchBrowserModel",
       "transport": "provider-sdk",
-      "callee": "createModelProviderClient(endpoint,beforeDispatch).chat.completions.create",
-      "callSha256": "b2e9ffe461f16a59e267de26c733199d141ee06611ad2048eb6db2b7ea56e74f",
+      "callee": "createModelProviderClient(endpoint,beforeDispatch,dispatch.beforeDispatch,input.onTiming).chat.completions.create",
+      "callSha256": "a4aad98ffb4587fb582ca6da6b5bb1ded28e8e0172bd2f8298c2f14ad789d629",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "SHARED_BROWSER_SDK_ADMISSION_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_TOOL_CONTENT_PROVENANCE",
       "tenantAuthority": "ORIGINAL_API_ISSUED_CONTEXT_CURRENT_PROJECT_OWNER_CANONICAL_CREDENTIAL_REVISION_AND_DURABLE_RESERVATION_PER_WIRE_LEASE_CANCELLATION_AND_SETTLEMENT_PLUS_ATOMIC_USAGE_BEFORE_OUTPUT_NO_RAW_JOB_ID_OR_FABRICATED_CALLBACK_AUTHORITY",
@@ -4343,6 +4474,212 @@
       ]
     },
     {
+      "id": "5b19b5ab231e0280efc7",
+      "file": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 232,
+      "entryPoint": "connect",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "65e08ee42f856fcd72b4dd58d04aec77dd1fadcae354cd26d35a2faa43737364",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "The run id is sent back only after the signed-in Workspace API confirmed the account owns that exact run (loadRun with the paired session) and only when the paired device is this extension.",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "send({ type: 'activity-history', runId: run });",
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "!admitted.has(message.runId) && session.deviceExtension === extensionId",
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
+        }
+      ]
+    },
+    {
+      "id": "6631f0cfac960ae10cff",
+      "file": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 256,
+      "entryPoint": "connect",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "206706dbb61de5380fd1b4d123cfaaeff134ec6f18643bb9f3c9f7f3ddcde24e",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "Resume history is requested only for a run admitted by the signed-in Workspace API through the current Chrome port.",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "if (message.type === 'run' && message.runId && admitted.has(message.runId))",
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "else send({ type: 'activity-history', runId: message.runId })",
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
+        }
+      ]
+    },
+    {
+      "id": "e0aa33d2494c480caeb3",
+      "file": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 266,
+      "entryPoint": "connect",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "3f0d26d4bf152dcc89783b04a195a6d4bf8c9093bb3a10c1454b4d596b59f152",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "Reconnected history is requested only after the API confirms the current account owns the exact run. The connection and run are checked again before sending.",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "if (disposed || portRef.current !== connected || activeRun.current) return",
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "send({ type: 'activity-history', runId: checkpoint })",
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
+        }
+      ]
+    },
+    {
+      "id": "96c8086ac0938c5c9190",
+      "file": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 340,
+      "entryPoint": "connect",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "80ce304010538de36141c81697b2e04d5d62fe4ba24211324eb807875a83b163",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "A refusal: an operation that is not start, resume, document, voice, finish, device or a turn of an admitted run gets only ok:false and no data.",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "send({ type: 'result', id, ok: false });",
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "const isBound = !!value.runId && admitted.has(value.runId);",
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
+        }
+      ]
+    },
+    {
+      "id": "3736829b4cae598c6292",
+      "file": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 353,
+      "entryPoint": "connect",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "8dbda9699ab8293c740bb5d6ed43bd52c729d323ad44176699f254e1435f18fc",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "The reply carries only the text transcribed from the recording the person made, requested with the paired session token; it goes back on the same port to the same request id.",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "send({ type: 'result', id, ok: true, value: { text } });",
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "{ freeOnly: true, preparedPcm: true, expectedToken: pairedToken.current }",
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
+        }
+      ]
+    },
+    {
+      "id": "d8500d7e40e05a539e15",
+      "file": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 354,
+      "entryPoint": "connect",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "80ce304010538de36141c81697b2e04d5d62fe4ba24211324eb807875a83b163",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "A failure reply: only ok:false and the request id, no data.",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": ".catch(() => send({ type: 'result', id, ok: false }))",
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
+        }
+      ]
+    },
+    {
+      "id": "5ad5a74f852db7524d8a",
+      "file": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 367,
+      "entryPoint": "connect",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "26c50fda42001535cb70aac98a0d29a407fa8ea44ab454f87cbf7772b31fff4e",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "The reply is the Workspace API response to a call made with the paired session token for one allowed operation (start, resume, document, finish, device or a turn of an admitted run); the account is derived by that API from the token, not from the message.",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "send({ type: 'result', id, ok: true, value: data });",
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "}, pairedToken.current).then(data => {",
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
+        }
+      ]
+    },
+    {
+      "id": "d875c1fb0614082bd141",
+      "file": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 368,
+      "entryPoint": "connect",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "80ce304010538de36141c81697b2e04d5d62fe4ba24211324eb807875a83b163",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "A failure reply: only ok:false and the request id, no data.",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "() => send({ type: 'result', id, ok: false })).finally(() => requests.delete(id));",
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
+        }
+      ]
+    },
+    {
       "id": "4d6615378bab39e757f0",
       "file": "frontend/src/components/dashboard/ApiConnectionBanner.tsx",
       "line": 17,
@@ -4727,6 +5064,33 @@
       ]
     },
     {
+      "id": "e079c51ab00e88b88aa7",
+      "file": "frontend/src/lib/publicConnectCatalog.ts",
+      "line": 21,
+      "entryPoint": "publicConnectCatalogPage",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "12ce03fb625377d4806972e2c62595cdfe78d3bf27b8cdd5da645d9ce5663494",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "OWN_BACKEND_API_PUBLIC_CATALOG_GET_NO_CREDENTIALS",
+      "tenantAuthority": "A credential-free GET (credentials omitted) of the public integration catalog on the Xroga backend (API_URL); the only inputs are a fixed page size and an optional cursor placed in a URL query string. No account data is sent.",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/publicConnectCatalog.ts",
+          "marker": "method: 'GET', credentials: 'omit'",
+          "sha256": "e3bc7e2a3acb9adba5bb5c8506d1c7fadb5be3e3329d00dad3050d1bd7411240"
+        },
+        {
+          "path": "frontend/src/lib/publicConnectCatalog.ts",
+          "marker": "/api/public/integrations/catalog?",
+          "sha256": "e3bc7e2a3acb9adba5bb5c8506d1c7fadb5be3e3329d00dad3050d1bd7411240"
+        }
+      ]
+    },
+    {
       "id": "20618341b2f95ca0ba5e",
       "file": "frontend/src/lib/setProfileFromImage.ts",
       "line": 21,
@@ -4881,6 +5245,9 @@
         "cd9013aa3fb869fdac91",
         "83834d34bdcfc0b016bb",
         "7415b9c13ced3db60b0a",
+        "27bc04b09f554f8a04b0",
+        "f7aa2007f50742984f8d",
+        "cc40611e19d1a7f81e4b",
         "be1e785f2ee1037bb1c0",
         "651ba21f8a976701efbf",
         "4f66984cbd60464e857e"
@@ -4965,6 +5332,7 @@
         "d836bcd400bd13ddac6c",
         "c09bb8607fa4d00f23b7",
         "3b970c32a8efb294a7fd",
+        "e079c51ab00e88b88aa7",
         "20618341b2f95ca0ba5e",
         "805931ff0dc022677403",
         "195e486260bf940789dd",
@@ -4981,7 +5349,7 @@
         "31380a8d5b9454a98a98",
         "9c345e07b723c086440e",
         "4c899876b9e3850af11b",
-        "9ea21a6fc8b8700460c0"
+        "06e6767d8c33bd9749a5"
       ]
     },
     {
@@ -5029,6 +5397,14 @@
         "944a5617b246ddcc7a6f",
         "33adb167ae3aa360df14",
         "f48e5f4e537c7e879b0a",
+        "5b19b5ab231e0280efc7",
+        "6631f0cfac960ae10cff",
+        "e0aa33d2494c480caeb3",
+        "96c8086ac0938c5c9190",
+        "3736829b4cae598c6292",
+        "d8500d7e40e05a539e15",
+        "5ad5a74f852db7524d8a",
+        "d875c1fb0614082bd141",
         "f9cea4897b39781b679b",
         "e8a0d676ee1d532a3be6",
         "13608654d27d029cbf04",
@@ -5108,8 +5484,8 @@
     }
   ],
   "counts": {
-    "total": 150,
-    "reviewed": 150,
+    "total": 162,
+    "reviewed": 162,
     "pending": 0,
     "unresolvedHighRiskBypasses": 0
   }

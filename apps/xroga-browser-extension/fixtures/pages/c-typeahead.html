@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Typeahead form</title></head>
+<body>
+<h1>Audience</h1>
+<label>Name <input id="name" aria-label="Name"></label>
+<label>Interest <input id="q" role="combobox" aria-label="Interest" aria-expanded="false" autocomplete="off"></label>
+<ul id="lb" role="listbox" aria-label="Suggestions" hidden></ul>
+<p id="chosen" role="status">none</p>
+<script>
+// Suggestions arrive 250 ms after the last keystroke, and only a click on one of them commits the choice (typing alone leaves "none").
+const all = ['Small business owners', 'Small business (Business)', 'Entrepreneurship', 'Online marketing'];
+const q = document.getElementById('q'), lb = document.getElementById('lb'); let t;
+q.addEventListener('input', () => { clearTimeout(t); document.getElementById('chosen').textContent = 'none'; t = setTimeout(() => {
+  const hits = all.filter(x => x.toLowerCase().includes(q.value.toLowerCase())); lb.innerHTML = '';
+  for (const x of q.value ? hits : []) { const li = document.createElement('li'); li.setAttribute('role', 'option'); li.textContent = x; li.onclick = () => { document.getElementById('chosen').textContent = x; lb.hidden = true; q.value = x; }; lb.append(li); }
+  lb.hidden = !lb.children.length; q.setAttribute('aria-expanded', String(!lb.hidden)); }, 250); });
+</script>
+</body></html>

@@ -75,7 +75,7 @@ export class ResourceMeter {
    * Reserves, runs, and settles the measured units exactly once. `measure` receives the result (undefined if the work threw) and the elapsed seconds.
    * Work that throws is still charged what it used. A settlement failure never fails the work: the hold stays open and the sweep charges it in full.
    */
-  async measure<T>(input: MeterInput, run: () => Promise<T>, measure?: (result: T | undefined, elapsedSeconds: number) => number): Promise<T> {
+  async measure<T>(input: MeterInput, run: () => Promise<T>, measure?: (result: T | undefined, elapsedSeconds: number) => number, describe?: (result: T | undefined) => string | undefined): Promise<T> {
     if (!this.config.enabled || !uuid.test(input.runId)) return run();
     const enforced = this.isEnforced(input.category);
     const cap = this.config.caps[input.category] ?? RECORD_ONLY_CAP;
@@ -99,7 +99,7 @@ export class ResourceMeter {
     } finally {
       const elapsedSeconds = (performance.now() - started) / 1000;
       const units = Math.max(0, Math.ceil(measure ? measure(result, elapsedSeconds) : elapsedSeconds));
-      await this.ledger.settle(reservationId, units).catch(() => this.warn('[resourceMeter] settlement failed; the open hold will be charged by the sweep'));
+      await this.ledger.settle(reservationId, units, describe?.(result)?.slice(0, 256)).catch(() => this.warn('[resourceMeter] settlement failed; the open hold will be charged by the sweep'));
     }
   }
 }

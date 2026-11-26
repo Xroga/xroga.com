@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Painted script editor fixture</title>
+<style>body{margin:0;font:14px sans-serif}html,body{height:100%}canvas{display:block;width:100vw;height:100vh}
+#hid{position:absolute;left:0;top:0;width:1px;height:1px;opacity:0;border:0;padding:0}</style></head>
+<body>
+<canvas id="c" width="800" height="500" role="img" aria-label="Editor window"></canvas>
+<textarea id="hid" aria-hidden="true">// example: print("hello")</textarea>
+<p id="state" role="status">menu: none</p><p id="out" role="status">output: none</p>
+<script>
+// Menu bar painted on the canvas, in viewport fractions: Tools at x 0-12.5%, Effects 12.5-25% (top 6%). The editor area is below.
+const c = document.getElementById('c'), g = c.getContext('2d'), hid = document.getElementById('hid');
+let menu = 'none';
+function draw() { g.fillStyle = '#fff'; g.fillRect(0,0,800,500); g.fillStyle = '#ddd'; g.fillRect(0,0,800,30); g.fillStyle = '#000'; g.fillText('Tools', 30, 20); g.fillText('Effects', 130, 20); g.fillText(hid.value.slice(0, 80), 20, 80); }
+draw();
+c.addEventListener('click', e => {
+  const r = c.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+  if (y / r.height < 0.06) { const f = x / r.width; menu = f < 0.125 ? 'Tools' : f < 0.25 ? 'Effects' : 'none'; document.getElementById('state').textContent = 'menu: ' + menu; }
+  else { hid.focus(); hid.setSelectionRange(hid.value.length, hid.value.length); }
+});
+hid.addEventListener('input', draw);
+</script>
+</body></html>

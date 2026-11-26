@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Accounting import</title></head>
+<body>
+<h1>Import orders</h1>
+<label>Orders file <input type="file" id="f" aria-label="Orders file" accept=".csv"></label>
+<button type="button" id="b">Import</button>
+<p id="s" role="status">Nothing imported</p>
+<script>
+document.getElementById('b').addEventListener('click', async () => {
+  const f = document.getElementById('f').files[0];
+  if (!f) { document.getElementById('s').textContent = 'Choose a file first'; return; }
+  const fd = new FormData(); fd.append('file', f, f.name);
+  const r = await fetch('/submit', { method: 'POST', body: fd });
+  document.getElementById('s').textContent = r.ok ? 'Imported ' + f.name + ' (' + f.size + ' bytes)' : 'Import failed';
+});
+</script></body></html>

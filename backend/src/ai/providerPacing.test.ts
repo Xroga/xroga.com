@@ -55,6 +55,7 @@ test('HTTP body cancellation releases its key without fabricating completed usag
 });
 test('429 cooldown respects bounded numeric and date Retry-After without retrying',()=>{
   assert.equal(providerCooldownSeconds(null),60);assert.equal(providerCooldownSeconds('120'),120);
+  assert.equal(providerCooldownSeconds('2'),2);
   assert.equal(providerCooldownSeconds('999999'),300);assert.equal(providerCooldownSeconds('bad'),60);
   assert.equal(providerCooldownSeconds('Wed, 04 Nov 2026 07:02:00 GMT',Date.parse('2026-11-04T07:00:00Z')),120);
 });

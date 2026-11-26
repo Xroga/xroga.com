@@ -1,7 +1,7 @@
 {
   "version": "1.0",
   "missionId": "RESPONSE-EXPERIENCE-V2-906",
-  "baseSha": "0d270ec69bdcf130ff85ce27f524e1d0d1e59e23",
+  "baseSha": "6ee13e4b9e2655efa161937903625353a75c7bea",
   "requirementIds": [
     "XR-MISSION-055"
   ],
@@ -223,6 +223,7 @@
   "rollout": "Production recovered to cd5541 API/Job and d86c8 frontend after failed bounded 4c6319/3fce acceptance. This table identity correction is development-only. Keep draft and preserve rollback.",
   "rollback": "Retain cd5541 API/Job and d86c8 frontend, the legacy renderer and all earlier recovery assets. Existing SQL fence and drain procedure is required for a backend rollback.",
   "knownGaps": [
+    "Integration ancestry starts at 6ee13e4b, the squash that imported this mission. Its historical base 0d270ec69bdcf130ff85ce27f524e1d0d1e59e23 remains a reference, not a release or acceptance claim.",
     "Fresh production generation on backend 4c6319/frontend 3fce045c failed full product acceptance and the cd5541/d86c8 recovery pair was restored.",
     "Required obligation-to-answer coverage remains incomplete. The exact planner binding failure was not persisted, so its precise cause is not asserted as confirmed.",
     "The cancelled Moonshot planner reservation has a new unresolved 38282 micro-USD hold. It and the historical GLM hold remain counted. Further paid acceptance is stopped.",

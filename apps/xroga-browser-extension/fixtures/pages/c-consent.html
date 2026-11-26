@@ -1,0 +1,6 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Consent</title>
+<style>.cookie-banner{position:fixed;left:0;right:0;bottom:0;height:120px;background:#eee;padding:12px}</style></head>
+<body><h1>News</h1><p id="state">no choice yet</p>
+<div class="cookie-banner" id="cookie-notice">We use cookies. <button id="acc">Accept all</button> <button id="rej">Reject all</button> <button id="set">Settings</button></div>
+<script>document.getElementById('acc').onclick=()=>{document.getElementById('state').textContent='accepted';};
+document.getElementById('rej').onclick=()=>{document.getElementById('state').textContent='rejected';document.getElementById('cookie-notice').remove();};</script></body></html>

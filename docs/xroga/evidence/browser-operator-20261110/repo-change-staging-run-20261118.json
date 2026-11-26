@@ -1,0 +1,77 @@
+{
+  "repository": "more-itertools/more-itertools",
+  "commit": "4998a257373f36e91edef7324572ed8df10f39d1",
+  "pinnedMatches": true,
+  "files": [
+    {
+      "path": "more_itertools/recipes.py",
+      "kind": "modified",
+      "additions": 1,
+      "deletions": 1
+    },
+    {
+      "path": "tests/test_xroga_staging.py",
+      "kind": "created",
+      "additions": 7,
+      "deletions": 0
+    }
+  ],
+  "verdict": "verified",
+  "verdictReason": "The repository's own tests passed on the pinned commit and on the edited copy. 1 test run passed (unittest).",
+  "baseline": {
+    "status": "passed",
+    "summary": "1 test run passed (unittest).",
+    "stages": [
+      {
+        "id": "test:.",
+        "exitCode": 0,
+        "durationMs": 2995,
+        "tail": "ue_everseen (more_itertools.recipes)\nDoctest: more_itertools.recipes.unique_everseen ... ok\nunique_justseen (more_itertools.recipes)\nDoctest: more_itertools.recipes.unique_justseen ... ok\n\n----------------------------------------------------------------------\nRan 817 tests in 2.645s\n\nOK (skipped=1)\n"
+      }
+    ]
+  },
+  "after": {
+    "status": "passed",
+    "summary": "1 test run passed (unittest).",
+    "stages": [
+      {
+        "id": "test:.",
+        "exitCode": 0,
+        "durationMs": 2860,
+        "tail": "que_everseen ... ok\nunique_justseen (more_itertools.recipes)\nDoctest: more_itertools.recipes.unique_justseen ... ok\ntest_take (tests.test_xroga_staging.XrogaStagingTests.test_take) ... ok\n\n----------------------------------------------------------------------\nRan 818 tests in 2.522s\n\nOK (skipped=1)\n"
+      }
+    ]
+  },
+  "diff": "diff --git a/more_itertools/recipes.py b/more_itertools/recipes.py\n--- a/more_itertools/recipes.py\n+++ b/more_itertools/recipes.py\n@@ -95,7 +95,7 @@\n _sumprod = getattr(math, 'sumprod', lambda x, y: dotproduct(x, y))\n \n \n-def take(n, iterable):\n+def take(n, iterable):  # edited by an Xroga staging run\n     \"\"\"Return first *n* items of the iterable as a list.\n \n         >>> take(3, range(10))\ndiff --git a/tests/test_xroga_staging.py b/tests/test_xroga_staging.py\nnew file mode 100644\n--- /dev/null\n+++ b/tests/test_xroga_staging.py\n@@ -0,0 +1,7 @@\n+from unittest import TestCase\n+from more_itertools import take\n+\n+\n+class XrogaStagingTests(TestCase):\n+    def test_take(self):\n+        self.assertEqual(take(2, range(10)), [0, 1])\n",
+  "wallMs": 14164,
+  "ledgerRows": [
+    {
+      "reserved": {
+        "runId": "e3d45f23-e235-41de-b811-2c9d20e15852",
+        "category": "sandbox_compute_seconds",
+        "units": 240,
+        "key": "meter-d7c959ba-e711-4436-875f-fbb76b2ed4c6",
+        "cap": 1000000000000000,
+        "windowSeconds": 86400
+      }
+    },
+    {
+      "settled": 3,
+      "resource": "cloud-run-sandbox;mem=1024MB"
+    },
+    {
+      "reserved": {
+        "runId": "e3d45f23-e235-41de-b811-2c9d20e15852",
+        "category": "sandbox_compute_seconds",
+        "units": 240,
+        "key": "meter-317a2104-33c0-4569-8b75-5abce32f9f3f",
+        "cap": 1000000000000000,
+        "windowSeconds": 86400
+      }
+    },
+    {
+      "settled": 3,
+      "resource": "cloud-run-sandbox;mem=1024MB"
+    }
+  ]
+}

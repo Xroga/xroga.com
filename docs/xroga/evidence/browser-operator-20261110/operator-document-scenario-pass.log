@@ -1,0 +1,6 @@
+Chrome started
+Agent extension loaded
+Workspace fixture paired
+{"scenario":"fixture-workbook-and-dynamic-catalog","attachmentChars":55479,"result":{"status":"completed","actions":["snapshot","click","click","wait","snapshot","click","read"],"result":"Orion, Orders!A602:B602: 7 × $82 = $574"},"costMicros":0}
+{"result":"PASS","product":"Chrome/151.0.7922.34","approvedSubmission":false,"cancelledPendingTurn":false,"voiceFixtureRequests":1,"actionCues":["click"],"pointerStaysThroughModelWait":false,"pointerRestsAtLastActionDuringWait":false,"resumedWithoutReplay":false,"restartAndAccountBoundary":false,"manualPauseAndResume":false,"workspaceReceiptRestoreAndSignOut":false,"screenshotPixelsSentToModel":false,"entryPoints":["side panel","Workspace fixture"],"model":"deterministic fixture","liveModelCalls":0,"costMicros":0}
+exit 0

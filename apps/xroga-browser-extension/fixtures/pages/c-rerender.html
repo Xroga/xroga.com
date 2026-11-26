@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Re-rendering page</title></head>
+<body>
+<div id="box"></div>
+<p><button type="button" id="again">Re-render</button></p>
+<p id="s" role="status"></p>
+<script>
+// The Save button is rebuilt as a new element each time "Re-render" is pressed: an old reference to it points at a node that is no longer in the page.
+function draw() {
+  const box = document.getElementById('box');
+  box.innerHTML = '';
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.textContent = 'Save';
+  b.addEventListener('click', () => { document.getElementById('s').textContent = 'Saved'; });
+  box.appendChild(b);
+}
+document.getElementById('again').addEventListener('click', draw);
+draw();
+</script>
+</body></html>

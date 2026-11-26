@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Support console</title>
+<style>body{font:14px sans-serif;margin:16px}iframe{width:480px;height:230px;border:1px solid #888}</style></head>
+<body><div id="app">Loading…</div>
+<script src="lib.js"></script>
+<script>
+// A ticket form that lives in an iframe, whose "priority" control is a custom (shadow-DOM) segmented widget with no native select; the parent page shows the submitted ticket.
+const state = __state; state.tickets = [];
+window.addEventListener('message', e => { if (e.data && e.data.type === 'ticket') { state.tickets.push(e.data.ticket); const el = document.getElementById('last'); if (el) el.textContent = 'Ticket received: ' + e.data.ticket.subject; } });
+mount(app => {
+  const doc = `<!doctype html><body style="font:14px sans-serif"><label>Subject <input aria-label="Subject" id="s"></label>
+  <p>Priority <span id="pri"></span></p><button id="go" type="button">Submit ticket</button>
+  <script>const host=document.getElementById('pri'); const root=host.attachShadow({mode:'open'}); let value='';
+  for (const p of ['Low','Normal','Urgent']) { const b=document.createElement('button'); b.type='button'; b.textContent=p; b.setAttribute('aria-pressed','false'); b.onclick=()=>{ value=p; root.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed', String(x.textContent===p))); }; root.append(b); }
+  document.getElementById('go').onclick=()=>parent.postMessage({type:'ticket',ticket:{subject:document.getElementById('s').value,priority:value}},'*');<\/script></body>`;
+  app.append(h('h1', {}, 'Support'), h('iframe', { title: 'New ticket', srcdoc: doc }), h('p', { id: 'last', role: 'status' }));
+});
+</script></body></html>

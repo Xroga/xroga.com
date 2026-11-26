@@ -1,6 +1,6 @@
 # Deployment topology, source and dated evidence
 
-Source SHA: `fc9938a7effd4f7fd8e4c6237fb8914f9a8c593c`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
+Source SHA: `675d54b78a4a4041be713a87f995dba338b4b369`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -69,7 +69,9 @@ Source SHA: `fc9938a7effd4f7fd8e4c6237fb8914f9a8c593c`; exact current source/con
 | endpoint-chromewebstore-googleapis-com | Source-defined endpoint chromewebstore.googleapis.com | CONFIGURED_BUT_UNVERIFIED | chromewebstore.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-cloud-google-com | Source-defined endpoint cloud.google.com | CONFIGURED_BUT_UNVERIFIED | cloud.google.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-cloudflare-com | Source-defined endpoint cloudflare.com | CONFIGURED_BUT_UNVERIFIED | cloudflare.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-codeload-github-com | Source-defined endpoint codeload.github.com | CONFIGURED_BUT_UNVERIFIED | codeload.github.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-coordinator | Source-defined endpoint coordinator | CONFIGURED_BUT_UNVERIFIED | coordinator | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-cursor-com | Source-defined endpoint cursor.com | CONFIGURED_BUT_UNVERIFIED | cursor.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-design-intuit-com | Source-defined endpoint design.intuit.com | CONFIGURED_BUT_UNVERIFIED | design.intuit.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-dev-whop-com | Source-defined endpoint dev.whop.com | CONFIGURED_BUT_UNVERIFIED | dev.whop.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-developer-android-com | Source-defined endpoint developer.android.com | CONFIGURED_BUT_UNVERIFIED | developer.android.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -112,6 +114,7 @@ Source SHA: `fc9938a7effd4f7fd8e4c6237fb8914f9a8c593c`; exact current source/con
 | endpoint-gemini-google-com | Source-defined endpoint gemini.google.com | CONFIGURED_BUT_UNVERIFIED | gemini.google.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-getfoundry-sh | Source-defined endpoint getfoundry.sh | CONFIGURED_BUT_UNVERIFIED | getfoundry.sh | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-github-com | Source-defined endpoint github.com | CONFIGURED_BUT_UNVERIFIED | github.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-google-gemini-github-io | Source-defined endpoint google-gemini.github.io | CONFIGURED_BUT_UNVERIFIED | google-gemini.github.io | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-hardhat-org | Source-defined endpoint hardhat.org | CONFIGURED_BUT_UNVERIFIED | hardhat.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-huggingface-co | Source-defined endpoint huggingface.co | CONFIGURED_BUT_UNVERIFIED | huggingface.co | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-i-postimg-cc | Source-defined endpoint i.postimg.cc | CONFIGURED_BUT_UNVERIFIED | i.postimg.cc | NOT_INDEPENDENTLY_VERIFIED |
@@ -141,6 +144,7 @@ Source SHA: `fc9938a7effd4f7fd8e4c6237fb8914f9a8c593c`; exact current source/con
 | endpoint-postgresql-org | Source-defined endpoint postgresql.org | CONFIGURED_BUT_UNVERIFIED | postgresql.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-posthog-com | Source-defined endpoint posthog.com | CONFIGURED_BUT_UNVERIFIED | posthog.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-public-example-invalid | Source-defined endpoint public.example.invalid | CONFIGURED_BUT_UNVERIFIED | public.example.invalid | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-pypi-org | Source-defined endpoint pypi.org | CONFIGURED_BUT_UNVERIFIED | pypi.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-python-org | Source-defined endpoint python.org | CONFIGURED_BUT_UNVERIFIED | python.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-railway-app | Source-defined endpoint railway.app | CONFIGURED_BUT_UNVERIFIED | railway.app | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-react-dev | Source-defined endpoint react.dev | CONFIGURED_BUT_UNVERIFIED | react.dev | NOT_INDEPENDENTLY_VERIFIED |
@@ -242,4 +246,4 @@ Historical findings below remain as review obligations, not fresh observations. 
 - P1 RELEASE_CONTROLS_UNENFORCED: Observed main and Production/Preview lack platform protection/restrictions; mandatory user release gates still apply. Owner command: 010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P2 HOST_TOOLCHAIN_DRIFT: Vercel project configured Node 24.x; canonical CI/API image is 22.21.1; Fly host test workflow has no explicit setup-node. Owner command: 006; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 
-1077 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.
+1109 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.

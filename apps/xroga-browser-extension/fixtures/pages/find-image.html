@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Find image fixture</title>
+<style>body{margin:0;background:#fff;font:16px sans-serif}canvas{position:absolute}</style></head>
+<body>
+<button aria-label="Star icon" style="position:absolute;left:60px;top:70px;padding:0;border:0;background:none;width:32px;height:32px"><canvas id="i1" width="32" height="32" style="position:static"></canvas></button>
+<button aria-label="Second star icon" style="position:absolute;left:420px;top:200px;padding:0;border:0;background:none;width:32px;height:32px"><canvas id="i2" width="32" height="32" style="position:static"></canvas></button>
+<canvas id="t" width="520" height="90" style="left:40px;top:320px"></canvas>
+<script>
+for (const id of ['i1', 'i2']) {
+  const g = document.getElementById(id).getContext('2d');
+  g.fillStyle = '#fff'; g.fillRect(0, 0, 32, 32);
+  g.fillStyle = '#c0392b'; g.fillRect(3, 3, 26, 26);
+  g.fillStyle = '#f1c40f'; g.beginPath(); g.moveTo(16, 6); g.lineTo(20, 14); g.lineTo(28, 15); g.lineTo(22, 21); g.lineTo(24, 28); g.lineTo(16, 24); g.lineTo(8, 28); g.lineTo(10, 21); g.lineTo(4, 15); g.lineTo(12, 14); g.closePath(); g.fill();
+  g.fillStyle = '#2c3e50'; g.fillRect(3, 3, 8, 5);
+}
+const t = document.getElementById('t').getContext('2d');
+t.fillStyle = '#fff'; t.fillRect(0, 0, 520, 90); t.fillStyle = '#111'; t.font = 'bold 40px Arial'; t.fillText('Guardar los cambios', 10, 60);
+</script>
+</body></html>

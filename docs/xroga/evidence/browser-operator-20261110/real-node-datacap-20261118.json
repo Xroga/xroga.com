@@ -1,0 +1,53 @@
+{
+  "case": "node",
+  "repository": "motdotla/dotenv",
+  "commit": "9f3e83352ec6ba912161748a2fd15b07829430e2",
+  "pinMatches": true,
+  "filesSent": 35,
+  "omitted": 1,
+  "lockfileSent": true,
+  "stages": [
+    {
+      "id": "acquire:npm-ci",
+      "networkPolicy": "registry-only",
+      "exitCode": 0,
+      "durationMs": 17798,
+      "stdout": "\nadded 776 packages in 17s\n",
+      "stderr": "npm warn deprecated uuid@3.4.0: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.\nnpm warn deprecated har-validator@5.1.5: this library is no longer supported\nnpm warn deprecated request@2.88.2: request has been deprecated, see https://github.com/request/request/issues/3142\n"
+    },
+    {
+      "id": "licence-summary",
+      "networkPolicy": "none",
+      "exitCode": 0,
+      "durationMs": 94,
+      "stdout": "{\"undeclared\":777,\"Apache-2.0\":1,\"MIT\":138,\"(MIT OR CC0-1.0)\":2,\"CC-BY-4.0\":1,\"ISC\":18,\"BSD-2-Clause\":1,\"BSD-3-Clause\":1}\n",
+      "stderr": ""
+    },
+    {
+      "id": "run:dotenv-parse",
+      "networkPolicy": "none",
+      "exitCode": 0,
+      "durationMs": 39,
+      "stdout": "{\"A\":\"1\",\"B\":\"two words\",\"C\":\"3\"}\n",
+      "stderr": ""
+    },
+    {
+      "id": "test:tap",
+      "networkPolicy": "none",
+      "exitCode": 0,
+      "durationMs": 3167,
+      "stdout": "tests/test-config.js 1> logging other\nSuites:   ​2 passed​, ​2 of 2 completed​\nAsserts:  ​​​80 passed​, ​of 80​\n",
+      "stderr": "(node:13) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\n(Use `node --trace-deprecation ...` to show where the warning was created)\n"
+    }
+  ],
+  "ledger": [
+    {
+      "reserved": 420
+    },
+    {
+      "settled": 22,
+      "resource": "cloud-run-sandbox;mem=2048MB"
+    }
+  ],
+  "wallMs": 27692
+}

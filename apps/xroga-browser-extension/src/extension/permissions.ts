@@ -1,0 +1,81 @@
+// Permissions in the extension: the mode belongs to the conversation, the site rules are one map in chrome.storage, and
+// the layer asks `decideWrite` for each classified write.
+// Blocked sites go into every agent session's navigation policy.
+import type { WriteDecision, WriteQuestion } from '@src/browser-control';
+import { decideWrite, siteRulesStorage } from '@src/store/settings';
+import type { SiteRuleEntry } from '@src/store/settings';
+import type { PermissionMode } from '@src/store/types';
+import { XROGA_PRODUCT } from '@src/xroga/product';
+import { WORKSPACE_URL } from '@src/xroga/workspace';
+
+/** Public marketing and documentation routes of xroga.com. Anything not listed (workspace, auth, dashboard, admin, api, share) is blocked. */
+const PUBLIC_XROGA_PATHS = [
+  '/', '/about', '/pricing', '/blog', '/docs', '/features', '/changelog', '/compare', '/alternatives', '/integrations', '/learn',
+  '/security', '/privacy', '/terms', '/refund', '/contact', '/showcase', '/community', '/research', '/stack', '/software', '/tools',
+  '/vibe-coding', '/ai-app-builder', '/ai-coding-agent', '/ai-website-builder', '/build-saas-with-ai', '/build-with', '/crypto',
+  '/cybersecurity', '/game-builder', '/github-ai-coding-agent', '/vercel-ai-deployment', '/llms.txt',
+];
+
+export class Permissions {
+  #rules: Record<string, SiteRuleEntry> = {};
+  #listeners = new Set<() => void>();
+
+  constructor() {
+    void siteRulesStorage.get().then(rules => this.#set(rules));
+    siteRulesStorage.subscribe(() => this.#set(siteRulesStorage.getSnapshot() ?? {}));
+  }
+
+  #set(rules: Record<string, SiteRuleEntry>): void {
+    const blockedBefore = this.blockedSites().join('\n');
+    this.#rules = rules;
+    if (this.blockedSites().join('\n') !== blockedBefore) this.#listeners.forEach(l => l());
+  }
+
+  /** Called when the blocked list changes, so open sessions get the new policy. */
+  onBlockedChange(listener: () => void): () => void {
+    this.#listeners.add(listener);
+    return () => this.#listeners.delete(listener);
+  }
+
+  async ready(): Promise<void> {
+    this.#set(await siteRulesStorage.get());
+  }
+
+  blockedSites(): string[] {
+    return Object.entries(this.#rules)
+      .filter(([, e]) => e.rule === 'block')
+      .map(([site]) => site);
+  }
+
+  navigationPolicy() {
+    // The Xroga app (Workspace, sign-in, account and API routes, other subdomains) stays off limits: the Workspace tab carries
+    // the signed-in session and the bridge. Its public marketing pages open like any other site.
+    const workspaceHost = new URL(WORKSPACE_URL).hostname;
+    return {
+      allow: [],
+      deny: XROGA_PRODUCT && workspaceHost !== 'xroga.com' ? [workspaceHost] : [],
+      blocked: this.blockedSites(),
+      publicHttps: XROGA_PRODUCT,
+      ...(XROGA_PRODUCT ? { publicOnly: { domain: 'xroga.com', paths: PUBLIC_XROGA_PATHS } } : {}),
+    };
+  }
+
+  /** The answer to the layer for a classified write. */
+  decide(mode: PermissionMode, question: WriteQuestion): WriteDecision {
+    // Payments, access grants and secret fields are handed to the person by the gate itself (USER_STEP), whatever this says. Everything
+    // else the agent does on its own; only a deletion still asks.
+    if (XROGA_PRODUCT) return question.category === 'delete' ? { decision: 'ask', canRemember: false } : { decision: 'run', by: 'auto', canRemember: false };
+    // A page with no host cannot hold a rule: a write there asks every time, in both modes.
+    if (!question.site) return { decision: 'ask', canRemember: false };
+    const entry = this.#rules[question.site];
+    const rule = entry?.rule === 'allow' || entry?.rule === 'ask' ? entry.rule : undefined;
+    const decision = decideWrite(mode, rule);
+    return { decision, by: rule ? 'site-rule' : 'auto', canRemember: rule !== 'ask' };
+  }
+
+  /** "Allow on this site". */
+  async allow(site: string): Promise<void> {
+    const now = new Date().toISOString();
+    await siteRulesStorage.set(rules => ({ ...rules, [site]: { rule: 'allow', setAt: now } }));
+  }
+}

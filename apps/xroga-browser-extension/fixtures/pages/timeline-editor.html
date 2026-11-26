@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Timeline editor fixture</title>
+<style>html,body{margin:0;height:100%}canvas{display:block;width:100vw;height:100vh}</style></head>
+<body>
+<!-- A painted timeline: a ruler (top 15%), one clip track. Click the ruler to move the playhead, press s to split the clip under the playhead,
+     drag a clip to move it. Units are thousandths of the canvas width. State is exposed as window.clips for the test, never drawn as text. -->
+<canvas id="c" role="img" aria-label="Timeline editor"></canvas>
+<ul id="cliplist" aria-label="Clips" style="position:absolute;left:-9999px"><li>Clip A starts at 100 and ends at 400</li></ul>
+<script>
+const c = document.getElementById('c'), g = c.getContext('2d');
+c.width = innerWidth; c.height = innerHeight;
+window.clips = [{ id: 'A', s: 100, e: 400 }];
+window.playhead = 250;
+const Y0 = 0.4, Y1 = 0.7;
+function draw() {
+  // The off-screen clip list follows the real clips (it used to stay at its first text after a split, which told the agent the split had not happened).
+  const list = document.getElementById('cliplist'); if (list && window.clips) list.innerHTML = window.clips.map(k => '<li>Clip ' + k.id + ' starts at ' + Math.round(k.s) + ' and ends at ' + Math.round(k.e) + '</li>').join('');
+  g.fillStyle = '#222'; g.fillRect(0, 0, c.width, c.height);
+  g.fillStyle = '#444'; g.fillRect(0, 0, c.width, c.height * 0.15);
+  for (const k of window.clips) { g.fillStyle = '#3a7'; g.fillRect(k.s / 1000 * c.width, Y0 * c.height, (k.e - k.s) / 1000 * c.width - 2, (Y1 - Y0) * c.height); }
+  g.fillStyle = '#f33'; g.fillRect(window.playhead / 1000 * c.width, 0, 2, c.height);
+}
+draw();
+const pos = e => { const r = c.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * 1000, y: (e.clientY - r.top) / r.height }; };
+let drag = null;
+c.addEventListener('mousedown', e => {
+  const p = pos(e);
+  if (p.y < 0.15) { window.playhead = Math.round(p.x); draw(); return; }
+  const k = window.clips.find(k => p.y >= Y0 && p.y <= Y1 && p.x >= k.s && p.x <= k.e);
+  if (k) drag = { k, last: p.x };
+});
+window.addEventListener('mousemove', e => { if (!drag) return; const p = pos(e); const d = p.x - drag.last; drag.k.s += d; drag.k.e += d; drag.last = p.x; draw(); });
+window.addEventListener('mouseup', () => { if (drag) { drag.k.s = Math.round(drag.k.s); drag.k.e = Math.round(drag.k.e); drag = null; draw(); } });
+document.addEventListener('keydown', e => {
+  if (e.key !== 's') return;
+  const k = window.clips.find(k => window.playhead > k.s && window.playhead < k.e);
+  if (!k) return;
+  window.clips.push({ id: k.id + '2', s: window.playhead, e: k.e }); k.e = window.playhead; draw();
+});
+</script>
+</body></html>

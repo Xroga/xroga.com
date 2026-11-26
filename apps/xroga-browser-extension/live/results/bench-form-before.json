@@ -1,0 +1,104 @@
+{
+  "summary": {
+    "runs": 10,
+    "filledWithin6Turns": 10,
+    "turnsToFill": {
+      "p50": 3,
+      "p95": 5
+    },
+    "msToFill": {
+      "p50": 10334,
+      "p95": 21161
+    },
+    "callsBeforeFill": {
+      "p50": 2,
+      "p95": 4
+    },
+    "firstTool": {
+      "snapshot": 7,
+      "fill_form": 3
+    }
+  },
+  "rows": [
+    {
+      "turnsToFill": 3,
+      "msToFill": 12437,
+      "callsBeforeFill": 2,
+      "totalTurns": 7,
+      "wallMs": 29208,
+      "first": "snapshot"
+    },
+    {
+      "turnsToFill": 1,
+      "msToFill": 3882,
+      "callsBeforeFill": 0,
+      "totalTurns": 7,
+      "wallMs": 33093,
+      "first": "fill_form"
+    },
+    {
+      "turnsToFill": 4,
+      "msToFill": 15560,
+      "callsBeforeFill": 3,
+      "totalTurns": 7,
+      "wallMs": 34654,
+      "first": "snapshot"
+    },
+    {
+      "turnsToFill": 3,
+      "msToFill": 19222,
+      "callsBeforeFill": 2,
+      "totalTurns": 7,
+      "wallMs": 36014,
+      "first": "snapshot"
+    },
+    {
+      "turnsToFill": 1,
+      "msToFill": 3570,
+      "callsBeforeFill": 0,
+      "totalTurns": 7,
+      "wallMs": 30778,
+      "first": "fill_form"
+    },
+    {
+      "turnsToFill": 3,
+      "msToFill": 10334,
+      "callsBeforeFill": 2,
+      "totalTurns": 7,
+      "wallMs": 26247,
+      "first": "snapshot"
+    },
+    {
+      "turnsToFill": 2,
+      "msToFill": 8322,
+      "callsBeforeFill": 1,
+      "totalTurns": 7,
+      "wallMs": 33076,
+      "first": "snapshot"
+    },
+    {
+      "turnsToFill": 2,
+      "msToFill": 7197,
+      "callsBeforeFill": 1,
+      "totalTurns": 7,
+      "wallMs": 24862,
+      "first": "snapshot"
+    },
+    {
+      "turnsToFill": 5,
+      "msToFill": 21161,
+      "callsBeforeFill": 4,
+      "totalTurns": 7,
+      "wallMs": 28105,
+      "first": "snapshot"
+    },
+    {
+      "turnsToFill": 1,
+      "msToFill": 4061,
+      "callsBeforeFill": 0,
+      "totalTurns": 7,
+      "wallMs": 32570,
+      "first": "fill_form"
+    }
+  ]
+}

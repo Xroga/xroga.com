@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Billing app</title>
+<style>body{font:14px sans-serif;margin:16px}label{display:block;margin:6px 0}</style></head>
+<body><div id="app">Loading…</div>
+<script src="lib.js"></script>
+<script>
+// Billing app behind a login, opened with an existing session; ?login=1 shows the sign-in form (demo / demo-pass-1121), where the password is the user's step.
+const state = __state; state.signedIn = false; state.loginAttempts = 0; state.invoices = [];
+mount(app => {
+  const login = () => { app.innerHTML = ''; const u = h('input', { 'aria-label': 'Username', name: 'user' }), p = h('input', { type: 'password', 'aria-label': 'Password', name: 'pass' }), err = h('p', { role: 'alert' });
+    app.append(h('h1', {}, 'Sign in'), h('label', {}, 'Username ', u), h('label', {}, 'Password ', p), h('button', { type: 'button', onclick: () => { state.loginAttempts++; if (u.value === 'demo' && p.value === 'demo-pass-1121') { state.signedIn = true; dash(); } else err.textContent = 'Wrong username or password'; } }, 'Sign in'), err); };
+  const dash = () => { app.innerHTML = ''; const c = h('input', { 'aria-label': 'Customer' }), a = h('input', { type: 'number', 'aria-label': 'Amount' }), n = h('select', { 'aria-label': 'Currency' }, ...['EUR', 'USD', 'GBP'].map(x => h('option', { value: x }, x))), m = h('p', { role: 'status' });
+    app.append(h('h1', {}, 'Invoices (' + 'demo' + ')'), h('h2', {}, 'New invoice'), h('label', {}, 'Customer ', c), h('label', {}, 'Amount ', a), h('label', {}, 'Currency ', n), h('button', { type: 'button', onclick: () => { state.invoices.push({ customer: c.value, amount: Number(a.value), currency: n.value }); m.textContent = 'Invoice created'; } }, 'Create invoice'), m); };
+  // The user is already signed in (a session from earlier) unless ?login=1: typing a password is the user's step, so the holdout task is the work inside the app.
+  if (Q.get('login') === '1') login(); else { state.signedIn = true; dash(); }
+});
+</script></body></html>

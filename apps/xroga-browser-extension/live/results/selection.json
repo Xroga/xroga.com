@@ -1,0 +1,134 @@
+{
+  "tracedraw": [
+    {
+      "tools": [
+        "1:screenshot",
+        "2:click",
+        "3:screenshot",
+        "4:snapshot",
+        "5:snapshot"
+      ],
+      "turns": 6,
+      "wallMs": 21217,
+      "end": "partial",
+      "offered": 29
+    },
+    {
+      "tools": [
+        "1:screenshot",
+        "2:click",
+        "3:screenshot",
+        "4:snapshot",
+        "5:press"
+      ],
+      "turns": 6,
+      "wallMs": 21260,
+      "end": "partial",
+      "offered": 29
+    },
+    {
+      "tools": [
+        "1:click",
+        "2:snapshot",
+        "3:screenshot",
+        "4:screenshot",
+        "5:click"
+      ],
+      "turns": 6,
+      "wallMs": 27750,
+      "end": "partial",
+      "offered": 29
+    }
+  ],
+  "ads": [
+    {
+      "tools": [
+        "1:find_skill",
+        "2:read_skill",
+        "3:read",
+        "3:delegate",
+        "4:http_get",
+        "4:http_get",
+        "4:http_get",
+        "4:http_get"
+      ],
+      "turns": 5,
+      "wallMs": 28278,
+      "end": "partial",
+      "offered": 29
+    },
+    {
+      "tools": [
+        "1:find_skill",
+        "1:read",
+        "2:read_skill",
+        "3:delegate",
+        "4:http_get",
+        "4:http_get",
+        "5:navigate"
+      ],
+      "turns": 6,
+      "wallMs": 34899,
+      "end": "partial",
+      "offered": 29
+    },
+    {
+      "tools": [
+        "1:find_skill",
+        "1:snapshot",
+        "2:read_skill",
+        "2:delegate",
+        "3:http_get",
+        "3:http_get",
+        "4:navigate",
+        "5:read",
+        "5:snapshot"
+      ],
+      "turns": 6,
+      "wallMs": 30330,
+      "end": "partial",
+      "offered": 29
+    }
+  ],
+  "form": [
+    {
+      "tools": [
+        "1:snapshot",
+        "2:find",
+        "3:snapshot",
+        "4:fill_form",
+        "5:screenshot"
+      ],
+      "turns": 6,
+      "wallMs": 21725,
+      "end": "partial",
+      "offered": 29
+    },
+    {
+      "tools": [
+        "1:fill_form",
+        "2:snapshot",
+        "3:screenshot",
+        "4:snapshot",
+        "5:find"
+      ],
+      "turns": 6,
+      "wallMs": 23914,
+      "end": "partial",
+      "offered": 29
+    },
+    {
+      "tools": [
+        "1:snapshot",
+        "2:find",
+        "3:snapshot",
+        "4:fill_form",
+        "5:screenshot"
+      ],
+      "turns": 6,
+      "wallMs": 21500,
+      "end": "partial",
+      "offered": 29
+    }
+  ]
+}

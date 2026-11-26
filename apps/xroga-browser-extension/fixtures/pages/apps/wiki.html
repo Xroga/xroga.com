@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Docs editor</title>
+<style>body{font:14px sans-serif;margin:16px}table{border-collapse:collapse}td,th{border:1px solid #bbb;padding:4px 8px}label{margin-right:8px}</style></head>
+<body><div id="app">Loading…</div>
+<script src="lib.js"></script>
+<script>
+// Documentation editor: a page with a "Release notes" table (and an unrelated "Roadmap" table). Add a row to the right table, then Publish; Publish keeps the page's state in state.published.
+const state = __state; state.tables = { 'Release notes': [['1.0', 'First release']], 'Roadmap': [['2.0', 'Planned']] }; state.published = null; state.publishes = 0;
+mount(app => {
+  const note = h('span', { role: 'status' }); const wrap = h('div'); const draw = () => { wrap.innerHTML = ''; for (const [name, rows] of Object.entries(state.tables)) { wrap.append(h('h2', {}, name), h('table', {}, h('tr', {}, h('th', {}, 'Version'), h('th', {}, 'Note')), ...rows.map(r => h('tr', {}, h('td', {}, r[0]), h('td', {}, r[1])))), h('button', { type: 'button', onclick: () => { const v = h('input', { 'aria-label': 'Version for ' + name }), n = h('input', { 'aria-label': 'Note for ' + name }); const row = h('p', {}, v, n, h('button', { type: 'button', onclick: () => { rows.push([v.value, n.value]); draw(); } }, 'Add row to ' + name)); wrap.append(row); } }, 'New row in ' + name)); } };
+  app.append(h('h1', {}, 'Product docs'), wrap, h('p', {}, h('button', { type: 'button', onclick: () => { state.published = JSON.parse(JSON.stringify(state.tables)); state.publishes++; note.textContent = 'Page published'; } }, 'Publish page'), note)); draw();
+});
+</script></body></html>

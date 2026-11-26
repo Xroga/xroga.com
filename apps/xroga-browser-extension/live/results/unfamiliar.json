@@ -1,0 +1,92 @@
+[
+  {
+    "acted": true,
+    "created": 1,
+    "usedFindSkill": false,
+    "saidUnsupported": false,
+    "tools": [
+      "fill_form",
+      "snapshot",
+      "read",
+      "screenshot",
+      "find",
+      "find",
+      "click",
+      "snapshot"
+    ],
+    "turns": 9,
+    "final": "I filled the New invoice form (Client \"Acme Ltd\", Description \"Consulting\", Hours 3, Rate per hour 80, Currency USD) — the tool read the values back correctly —"
+  },
+  {
+    "acted": true,
+    "created": 1,
+    "usedFindSkill": false,
+    "saidUnsupported": false,
+    "tools": [
+      "fill_form",
+      "snapshot",
+      "batch",
+      "find",
+      "read",
+      "screenshot",
+      "set",
+      "click"
+    ],
+    "turns": 9,
+    "final": "I filled in the Beacon Billing new-invoice form — Client: Acme Ltd, Description: Consulting, Hours: 3, Rate per hour: 80, Currency: USD (the form read the value"
+  },
+  {
+    "acted": true,
+    "created": 1,
+    "usedFindSkill": false,
+    "saidUnsupported": false,
+    "tools": [
+      "fill_form",
+      "snapshot",
+      "click",
+      "snapshot",
+      "read",
+      "screenshot",
+      "find",
+      "click"
+    ],
+    "turns": 9,
+    "final": "Not confirmed created — I need to be straight with you about this one.\n\nWhat I did on the Beacon Billing «New invoice» page:\n- Filled the form and read it back:"
+  },
+  {
+    "acted": true,
+    "created": 1,
+    "usedFindSkill": false,
+    "saidUnsupported": false,
+    "tools": [
+      "fill_form",
+      "click",
+      "snapshot",
+      "read",
+      "screenshot",
+      "find",
+      "tabs",
+      "click"
+    ],
+    "turns": 9,
+    "final": "I filled the new-invoice form in the Beacon Billing tab — Client \"Acme Ltd\", Description \"Consulting\", Hours 3, Rate per hour 80, Currency USD (the \"Send copy t"
+  },
+  {
+    "acted": true,
+    "created": 1,
+    "usedFindSkill": false,
+    "saidUnsupported": false,
+    "tools": [
+      "fill_form",
+      "click",
+      "snapshot",
+      "read",
+      "screenshot",
+      "snapshot",
+      "read",
+      "click"
+    ],
+    "turns": 9,
+    "final": "I filled the Beacon Billing new-invoice form correctly — Client: Acme Ltd, Description: Consulting, Hours: 3, Rate per hour: 80, Currency: USD — and clicked \"Cr"
+  }
+]

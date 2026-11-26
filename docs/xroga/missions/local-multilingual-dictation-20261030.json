@@ -1,7 +1,7 @@
 {
   "version": "1.0",
   "missionId": "LOCAL-MULTILINGUAL-DICTATION-20261030",
-  "baseSha": "d7ce7def4ab94a72587907cb4f60690d7f288838",
+  "baseSha": "6ee13e4b9e2655efa161937903625353a75c7bea",
   "requirementIds": [
     "XR-ORIGINAL-F076"
   ],
@@ -185,6 +185,7 @@
   "rollout": "Approved exact free-voice package on October 30. CI and public provider gates before guarded zero-traffic candidate, paired source-safe API/Job promotion and voice-only frontend with current mobile changes. No other batch activation.",
   "rollback": "Restore retained local-only voice frontend before restoring previous compatible paired API/Job digest 49505ef9. Keep KMS, data, platform secret and current feature holds. No production SQL.",
   "knownGaps": [
+    "Integration ancestry starts at 6ee13e4b, the squash that imported this mission and its voice source into the branch. The original historical hotfix base remains d7ce7def4ab94a72587907cb4f60690d7f288838. No voice release or acceptance is inferred from the import.",
     "Founder accepted Urdu/Hindi script ambiguity on 2026-10-30. Measured speech errors remain documented limitations requiring editable review.",
     "Medium failed inside CPU/WASM execution; it is not selected and the root cause is not established.",
     "Physical Android/iOS/Safari/Firefox, actual OS microphone permissions and interruptions, mixed-language and long-utterance acceptance remain unverified.",

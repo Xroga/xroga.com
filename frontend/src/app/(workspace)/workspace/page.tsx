@@ -7,7 +7,7 @@ import { ResponseExperienceProvider } from '@/components/response-experience-v2/
 
 export const metadata = PAGE_SEO.dashboard;
 
-export default async function WorkspacePage({ searchParams }: { searchParams: Promise<{ responseV2?: string }> }) {
+export default async function WorkspacePage({ searchParams }: { searchParams: Promise<{ responseV2?: string; browserPair?: string; browserExtension?: string }> }) {
   const query = await searchParams;
   let authorizedUserId: string | null = null;
   let reviewStatus: string | null = null;

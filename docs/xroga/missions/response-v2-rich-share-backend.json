@@ -1,7 +1,7 @@
 {
   "version": "1.0",
   "missionId": "RESPONSE-V2-RICH-SHARE-BACKEND-20261102",
-  "baseSha": "93474a05881c8ff171fc9ae371ef04d76a780ff3",
+  "baseSha": "6ee13e4b9e2655efa161937903625353a75c7bea",
   "requirementIds": [
     "XR-MISSION-054",
     "XR-MISSION-055"
@@ -89,6 +89,7 @@
   "rollout": "Require exact-source CI, authenticated staging evidence and source-pinned paired release approval. Preserve the serving f803 pair until acceptance.",
   "rollback": "Use the existing guarded API/Job recovery process with a compatible frontend. Preserve all stored response data and the legacy renderer.",
   "knownGaps": [
+    "Integration ancestry starts at 6ee13e4b, the squash that imported this mission. Its historical base 93474a05881c8ff171fc9ae371ef04d76a780ff3 remains a reference, not a release or acceptance claim.",
     "Fresh corrected-model acceptance is not established by prompt or unit tests.",
     "Unknown GLM usage still blocks further paid acceptance under the existing package.",
     "No production deployment of this source has occurred."

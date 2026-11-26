@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Sheet</title>
+<style>body{font:14px sans-serif;margin:16px}table{border-collapse:collapse}td,th{border:1px solid #bbb;padding:2px 6px}input{width:90px}</style></head>
+<body><div id="app">Loading…</div>
+<script src="lib.js"></script>
+<script>
+// Spreadsheet: a grid of editable cells with sortable column headers and an Export CSV button (a real download).
+const state = __state; state.rows = [['Widget', 12], ['Gadget', 40], ['Doohickey', 7], ['Gizmo', 25]]; state.sortedBy = null; state.exports = 0; state.edits = 0;
+mount(app => {
+  const table = h('table');
+  const draw = () => { table.innerHTML = ''; table.append(h('tr', {}, h('th', {}, h('button', { type: 'button', onclick: () => sort(0) }, 'Item')), h('th', {}, h('button', { type: 'button', onclick: () => sort(1) }, 'Amount'))));
+    state.rows.forEach((r, i) => table.append(h('tr', {}, h('td', {}, h('input', { value: r[0], 'aria-label': 'Item row ' + (i + 1), onchange: e => { r[0] = e.target.value; state.edits++; } })), h('td', {}, h('input', { value: r[1], 'aria-label': 'Amount row ' + (i + 1), onchange: e => { r[1] = Number(e.target.value); state.edits++; } }))))); };
+  const sort = col => { const dir = state.sortedBy === 'c' + col + 'asc' ? -1 : 1; state.rows.sort((a, b) => (a[col] > b[col] ? 1 : a[col] < b[col] ? -1 : 0) * dir); state.sortedBy = 'c' + col + (dir === 1 ? 'asc' : 'desc'); draw(); };
+  const exp = () => { const csv = 'Item,Amount\n' + state.rows.map(r => r.join(',')).join('\n'); const a = h('a', { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: 'sheet.csv' }); document.body.append(a); a.click(); a.remove(); state.exports++; state.lastCsv = csv; };
+  app.append(h('h1', {}, 'Sales'), table, h('p', {}, h('button', { type: 'button', onclick: exp }, 'Export CSV'))); draw();
+});
+</script></body></html>

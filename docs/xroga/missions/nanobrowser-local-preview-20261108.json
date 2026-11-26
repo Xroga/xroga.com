@@ -1,0 +1,76 @@
+{
+  "version": "1.0",
+  "missionId": "NANOBROWSER-LOCAL-PREVIEW-20261108",
+  "baseSha": "6ee13e4b9e2655efa161937903625353a75c7bea",
+  "requirementIds": ["XR-FAMILY-browser-execution"],
+  "state": "VERIFIED_SCOPE",
+  "risk": "high",
+  "scope": "Isolate the complete pinned Nanobrowser source and create a model-free Xroga Chrome development preview from the previously reviewed local tab-read workflow. The external message protocol only reports installation status.",
+  "changedFiles": [
+    "apps/xroga-browser-extension/NOTICE",
+    "apps/xroga-browser-extension/XROGA-PREVIEW.md",
+    "apps/xroga-browser-extension/entrypoints/background.ts",
+    "apps/xroga-browser-extension/package.json",
+    "apps/xroga-browser-extension/pnpm-lock.yaml",
+    "apps/xroga-browser-extension/src/xroga/fixture-background.ts",
+    "apps/xroga-browser-extension/src/xroga/preview-background.ts",
+    "apps/xroga-browser-extension/src/xroga/workspace.ts",
+    "apps/xroga-browser-extension/src/xroga/__tests__/workspace.test.ts",
+    "apps/xroga-browser-extension/vite-env.d.ts",
+    "apps/xroga-browser-extension/wxt.config.ts",
+    "docs/xroga/missions/nanobrowser-local-preview-20261108.json",
+    "tests/chrome-extension/browser.mjs"
+  ],
+  "decisions": {
+    "keep": ["The existing Workspace, hosted Browser Worker, scheduler, model gateway, ledger and approval controls"],
+    "extend": ["Isolated upstream source and developer fixtures", "A development package with the existing least-privilege local workflow and status-only discovery"],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "Load the preview unpacked in a disposable Chrome profile.",
+    "rollback": "Unload the preview. No server data or credentials to revoke."
+  },
+  "securityImpact": {
+    "auth": { "changed": false, "description": "No authentication, pairing or session exchange. Discovery cannot grant authority." },
+    "tenant": { "changed": false, "description": "No tenant data, app tokens or server task storage are used." },
+    "approval": { "changed": false, "description": "The existing local workflow reviews a specific tab and document before reading. No mutations or spending can be approved here." },
+    "credentials": { "changed": false, "description": "No provider keys, browser cookies or password field access in the development preview." },
+    "egress": { "changed": true, "description": "The top-level Workspace can receive install status only. The preview blocks outbound connections and has no host permissions." },
+    "cost": { "changed": false, "description": "No model dispatch or hosted browser compute." },
+    "billing": { "changed": false, "description": "No billing change." }
+  },
+  "tests": [
+    { "command": "corepack pnpm test --maxWorkers=2", "scope": "816 passed, four credential-gated provider tests skipped. Includes 12 tests for the status-only protocol.", "negative": true, "reference": "apps/xroga-browser-extension/src/xroga/__tests__/workspace.test.ts" },
+    { "command": "node tests/chrome-extension/browser.mjs <playwright> <chrome> --packaged", "scope": "Passed on Chrome 156.0.8078.81. The actual unpacked preview opened the side panel, bound reads to the reviewed document, denied writes, cancelled, rejected navigation, filtered private fixture fields, and returned status only to a routed Workspace fixture.", "negative": true, "reference": "tests/chrome-extension/browser.mjs" },
+    { "command": "corepack pnpm audit --prod", "scope": "No known vulnerabilities found after pinning undici 7.30.1 in the isolated upstream dependencies.", "negative": false, "reference": "apps/xroga-browser-extension/pnpm-lock.yaml" }
+  ],
+  "architecture": { "change": "none", "reason": "The preview sends no tasks to a backend and creates no scheduler or model route.", "rfc": null },
+  "rollout": "Share a verified unpacked development build only. Leave the application and Chrome Web Store unchanged.",
+  "rollback": "Remove the unpacked Chrome extension or revert the isolated extension branch.",
+  "knownGaps": [
+    "Authenticated pairing, local execution in the canonical scheduler, and ledger-backed browser inference remain unimplemented.",
+    "Production Workspace tasks and progress, authenticated multitab and advertising workflows, approvals and live Zurelay tool calling have not passed integrated acceptance.",
+    "No Web Store submission or approval.",
+    "The repository-wide mission check is blocked on main's pre-existing local-multilingual-dictation-20261030.json ancestry, which references d7ce7def outside main. The extension mission itself and the 11 mission policy tests pass."
+  ],
+  "placeholderClaimsRemaining": [],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": ["The preview is read only. A production browser agent requires authenticated device and lease binding, canonical model metering, integrated browser acceptance, and a separate store release."],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  },
+  "evidenceRefs": [
+    "apps/xroga-browser-extension/NOTICE",
+    "apps/xroga-browser-extension/XROGA-PREVIEW.md",
+    "apps/xroga-browser-extension/src/xroga/__tests__/workspace.test.ts",
+    "tests/chrome-extension/browser.mjs"
+  ]
+}

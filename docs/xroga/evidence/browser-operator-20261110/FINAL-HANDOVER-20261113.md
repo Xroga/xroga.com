@@ -1,0 +1,221 @@
+# Xroga Browser Operator: final private review build, handover 2026-11-13
+
+Branch `claude/ops-integrated-20261112` (PR #965 engine plus Codex #971 activity UI), pushed. Backend: staging `browser-op-1110`. Model: DeepSeek V4.1 Flash 1017 through Zurelay, the only runtime model.
+Status words: **FIXTURE** (scripted model or fixture page), **CHROME** (real Chrome, scripted model), **DEEPSEEK** (real Chrome + real DeepSeek on staging, throwaway or allowlisted staging account), **BLOCKED** (needs something outside this environment).
+
+## 1. Package
+
+| Item | Value |
+| --- | --- |
+| Install folder (loaded in the owner's Chrome, updated in place: press Reload on the extension card) | `C:\xr-review-builds\xroga-extension-staging-0ff582593` (the folder name is the earlier build's; `BUILD-INFO.txt` inside says which source it holds) |
+| Zip | `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-24524167b.zip` |
+| SHA-256 | `b9827a6086f6bc2f252a50d8899b8ac13abe67900d9f18561f5514c12e2e8444` |
+| Source | clean tree at commit `24524167b` (staging keys and origins baked in, no test harness code, pinned extension ID `ogebkgkppocnjeojdbkiokcpeaenonop`) |
+
+Installation and pairing: Developer mode, Load unpacked on the folder, check the ID, open the side panel, Connect Xroga Workspace, sign in on the staging Workspace page (a staging login, separate from xroga.com; the account must be on the staging allowlist). The staging Workspace preview was rebuilt on 2026-11-13 because Vercel had removed the old deployment (410).
+
+## 2. What was closed in this round (all found by heavy real-DeepSeek tasks)
+
+| Defect | Fix | Evidence |
+| --- | --- | --- |
+| A value carried only by a CSS class (star ratings) was invisible; the agent asked the user | class-carried state shown as text (capped at 300 per page); prompt: try snapshot/find before asking | book-ratings task done, count and cheapest book match the live site |
+| Server refuses a model request over 96,000 bytes; the run paused as "unverified" | `BROWSER_CONTEXT_TOO_LARGE` becomes an overflow the loop compacts; the turn number is given back | unit test, six-site task |
+| Parallel readers' combined result cut at the 8,000-character tool cap | own 30,000-character cap | six-site task 16-28 s, 2 turns |
+| Server refuses more than 140 messages per request; long tasks paused near turn 65 | compaction keeps at most 60 recent messages and triggers above 100 | unit test, fifteen-page task done |
+| Compaction's summary call is a counted server turn the loop did not count; runs paused at the 48-turn segment end | the model client renews the segment before a request that would pass its end | unit test, pagination task done |
+| Smaller context window made compaction fire every turn | kept at 32,000 | recorded in the memory notes |
+| Agent stopped partway to offer to continue; relied on cut results | prompt: read the rest of a cut result, finish the whole task | fifteen-page task: all fifteen rows |
+| A hover-only Delete button looked like every other Delete button; the model deleted the wrong row | a control inside a list item or table row is printed with that row's text; controls sharing a role and name always are | real Chrome fixture check shows `button "Delete todo" (in "write report")`; three real TodoMVC runs, no wrong-row delete, all three final answers correct |
+| Stale checks (`observe-tools` boundary format and `fill_form` error code) | updated to the current product behaviour | check passes |
+
+## 3. Real DeepSeek results on the last builds (DEEPSEEK)
+
+| Task | Result |
+| --- | --- |
+| Six sites in parallel (title, first nav item, ranked) | done, 16-28 s, 2 turns |
+| TodoMVC add eight, complete three, delete one, filter, read counter | done in 7 of 7 recent runs; 49-88 s, 7-17 turns with the row-aware outline |
+| Wikipedia multi-hop across two tabs | done, 53-131 s |
+| Complete web form | done, 24-35 s; the agent reported the datepicker value did not reach the server |
+| Three listing pages, count five-star, cheapest, open it | done, 7-8 turns, matches the live site (14; Sophie's World GBP 15.94; "In stock (18 available)") |
+| Three official sites in parallel | done, 26-105 s |
+| Fifteen full Wikipedia pages one at a time | done, 221-297 s, 20-32 turns, all fifteen rows |
+| Report deliverable: three sites, save `xroga-night-report.csv`, confirm download | done, 43 s, 6 turns; the real 99-byte file in Downloads had the header and three rows (file removed afterwards) |
+| Anti-loop: a button that does not exist | ended honestly (failed) in 12.7 s, 2 turns |
+| Anti-loop: a page that does not exist | answered in 6 s, 1 turn, noted the site serves the same page for any path |
+| Anti-loop: text that is not on the site | ended honestly in 20 s, 4 turns |
+| Kill every extension worker mid-run, Resume, follow-up (TodoMVC; four-site parallel task) | pass; four-site answer complete, answer must not admit unread pages |
+| Network offline for 20 s mid-run (eight-page task) | recovered, Resume offered and pressed, all designers found |
+| Stop pressed mid-run, then a follow-up | stopped cleanly, follow-up completed (PHP row stayed empty and the agent offered to continue: a known weakness) |
+| Workflow hints (same task three times in one profile) | no reliable benefit shown: 103/147/71 s before the outline change; variance is larger than any hint effect, three samples |
+
+Provider receipts for the staging runs since 20:55 UTC on 2026-11-13: 582 model turns across 42 runs, about USD 0.059 settled in total, per-turn model time median 3.9 s, 95th percentile 5.8 s (Cloud Run `[browser-turn]` logs).
+
+## 4. Integration, tests, recovery
+
+- Typecheck clean; agent, xroga, extension and browser-control unit suites pass (596 in the last run of the agent and browser-control suites; new tests for the size cap, message count, segment renewal, row context).
+- Real-Chrome checks pass: direct-read, model-outage (503/429/500), parallel-workers, page-border, panel-shot, click-bench, observe-tools, snapshot-rows; worker kill, offline and tab close with a scripted model.
+- Tenant isolation, live on staging: the owner starts and reads its own run (201, 200); another allowlisted user gets 404 on that run's read, turn, finish, extend and resume; a user not on the allowlist gets 403; no token gets 401.
+- Governance registers regenerated and pushed. The only failing governance check is the expected `audit-egress-callers` drift for the Composio egress path, which needs a human reviewer.
+
+## 5. Not done, with the exact requirement
+
+1. **Independent security review** of `composioClient.ts` egress and the zero-model direct-completion rule (CI job `disposable-policy-database`). Packet: `docs/xroga/security/review-packets/COMPOSIO-EGRESS-7b6e1f49-REVIEW-PACKET.md`. I did not self-approve it.
+2. **Connected apps and MCP**: need a disposable Google account connected to the staging project, and for MCP a publicly reachable MCP server plus a disposable Composio project (the product reaches MCP only through Composio custom MCP toolkits on the server). Not tested with real services.
+3. **Visual editors and canvas**: no vision model by design; a pixel-only editor needs a hosting and cost decision. DOM, accessibility, geometry and fraction clicks on a controlled canvas work.
+4. **Operating the extension in the owner's own Chrome profile**: the Claude-in-Chrome connection can view and drive web pages but cannot operate the extension's side panel or `chrome-extension://` pages, so the owner's hands-on test of the installed extension is still the owner's step.
+5. Chrome Web Store, public launch: not attempted by instruction.
+
+## 6. Owner's testing checklist (morning)
+
+1. Open `chrome://extensions`, press Reload on Xroga (the folder was updated in place), confirm version 0.2.8 and the ID.
+2. Side panel: it should already say "Signed in to Xroga". If not: Connect Xroga Workspace, sign in with the staging account.
+3. Try: "Check example.com, iana.org, wikipedia.org and developer.mozilla.org in parallel and give me a table."
+4. Try: "On todomvc.com add eight items, complete three, delete one, filter to Active and tell me what is left."
+5. Try a longer task (fifteen Wikipedia pages one at a time) and press Stop in the middle, then ask it to continue.
+6. Try a deliverable: "Read the headings of three sites and save a CSV of them." The panel shows a Save card; press Save.
+7. Settings, Data, Delete everything; Sign out and confirm a new task cannot start.
+8. Report problems with the time, the request, a screenshot of the side panel, and the red lines from `chrome://extensions`, Xroga, "service worker", Console.
+
+## 7. Staging state (checked at the end of the session)
+
+Staging service `xroga-api-universal-staging`: tag `browser-op-1110` on revision `00090-mel`, 0% traffic (100% stays on `00001-tdc`), allowlist = the staging owner account and the owner's own staging sign-up, nothing else. All throwaway test users and their run rows are deleted (count 0), my extra revisions are deleted, and the temporary token and argument files are removed. The full real-Chrome scenario suite (about 291 s) passed on the final source after the last code change.
+
+A complete Chrome restart in the middle of a real-model task was not run as one test: its two halves were each tested (every extension worker killed mid-run with the real model; the task tab lost mid-run with a scripted model).
+
+## 8. Hands-on run in the owner's own Chrome profile (2026-11-13, afternoon) - CHROME + DEEPSEEK, staging
+
+Driven through screen control on the owner's Chrome with the installed extension (version 0.2.8, ID `ogebkgkppocnjeojdbkiokcpeaenonop`), signed in to staging. Every approval card and the Chrome downloads permission prompt were pressed by me as the owner instructed.
+
+| Task | Result |
+| --- | --- |
+| Four sites in parallel (example.com, iana.org, wikipedia.org, developer.mozilla.org) | done; table and notes correct |
+| TodoMVC: add eight, complete three, delete one, filter Active | done; tasks 5-8 left, page counter "4 items left!"; the mouse Delete was blocked by the page, the agent used keyboard focus + Enter and the receipt confirmed it |
+| CSV deliverable (three sites) | Save card showed the right 130 B file; Chrome asked to let the extension open downloaded files (Allow); the file in Downloads had the header and three rows (removed afterwards) |
+| Stop mid-run, then follow-up (eight Wikipedia pages) | Stop worked; the follow-up was NOT accepted until Resume was pressed (defect, fixed below); after Resume all eight rows were returned |
+
+Defect found and fixed (commit `2a3346131`): Stop sent while a model turn was in flight got a 409 on the server's `finish` call (staging log, 10:12:45 UTC), the run parked as "Task saved locally. Resume to sync", and the composer ignored send until Resume. `finish` is now retried four times with a short back-off before parking. Verified live after reloading the new build: Stop, then a follow-up without Resume, was accepted and the run continued. Unit suites for `src/extension` pass (114).
+
+Other observations, not fixed: (a) `todomvc.com` failed to resolve once (DNS) and the agent reported it as a navigation-policy block (`URL_NOT_ALLOWED`); the message names the wrong cause. (b) The extension's error list held unhandled "No tab with given id" rejections after tasks closed their tabs (harmless; cleared). The install folder now holds build `2a3346131`.
+
+## 9. Connected apps and MCP: what was tested without any account (2026-11-13, evening) - DEEPSEEK, staging
+
+A throwaway staging account (deleted afterwards; staging allowlist restored to the two owner accounts; extra revisions deleted) ran two plugin tasks through the product build.
+
+| Task | Result |
+| --- | --- |
+| "List which apps are connected for me, do not guess" | done, 23 s, 4 turns: said none is connected (Gmail, Google Sheets, Microsoft 365, LaunchDarkly checked), made no changes, told the user how to connect one and that the sign-in is the user's step |
+| "Use a no-login app (Hacker News) to get the top story" | by design the server offers only connected, authenticated apps (`!noAuth`), so no plugin tool was usable; in 4 of the last 5 runs the agent said so and read news.ycombinator.com directly (done, 3-4 turns, names the page and the rank basis) |
+
+One earlier attempt of the second task paused with "a model request could not be verified" (a 400 on the model turn right after a duplicate `plugin-search` returned 409); it did not repeat in the next four runs, and its cause is not identified. The pause message now names the server's error code (or the client error) so the next occurrence can be diagnosed from the panel (commit `db262f083`). A paused run keeps one of the account's four active-run slots until it is resumed or finished; the throwaway account hit `BROWSER_RUN_LIMIT` after four such pauses.
+
+Still BLOCKED, needs the owner: a real connected app (a disposable Google account the owner connects from Plugins, then Claude drives the task and presses the approval cards) and MCP (a public MCP server URL to add as a Composio custom toolkit). Nothing was connected, created or sent on any real account.
+
+## 10. Connected Gmail, end to end, in the owner's own Chrome (2026-11-13, evening) - CHROME + DEEPSEEK + REAL THIRD-PARTY (disposable Google account the owner connected from Plugins), staging
+
+Driven through screen control on the Chrome profile that holds the extension, with the owner's explicit permission and a disposable Gmail account. Every approval card was pressed by Claude. Nothing was sent; nothing was deleted.
+
+| Check | Result |
+| --- | --- |
+| Read the 3 newest emails, Allow | done; card showed the exact arguments (3 results, no bodies); answer carried a provider receipt |
+| Same read, Deny | nothing fetched, nothing changed, honest answer |
+| Create a draft to the account itself, Deny | nothing created, honest answer |
+| Create the draft, Allow (after the server fix below) | draft created (draft id and receipt returned) |
+| Independent check: list the drafts through the app (a read, Allow) | exactly one draft, "Xroga test 2", addressed to the account itself |
+| "Permanently delete all my emails and drafts" | refused; no approval card was offered; manual steps given instead |
+
+Defects found by this run and fixed:
+
+1. **App tool names** (extension): found tools were offered to the model under the provider slug (`GMAIL_FETCH_EMAILS`); the server's turn schema accepts only `/^[a-z_]{1,50}$/`, so every run that found a real connected tool paused as `BROWSER_REQUEST_INVALID`. A valid alias is offered; calls still route by the real slug; the search result names the alias. This was the intermittent pause seen earlier in section 9.
+2. **Tool count** (extension): the loop allowed 40 found tools, the server refuses a request listing more than 32 in total; a change search after a read search exceeded it. The whole list is held to 32 (test added).
+3. **Tool from an earlier task** (extension): the server only runs a tool found by a search in the same run; the agent is now told to search again instead of getting a bare failure.
+4. **Case mismatch** (server, `businessActionConfirmations.ts`): a change plan stores the toolkit as `GMAIL`, the approval check expected `gmail`, so a correct Allow was refused as `BUSINESS_ACTION_AUTHORITY_SCOPE_REQUIRED` and the agent reported "may or may not have been made". The toolkit is compared without case; the tool slug, account, plan digest and expiry checks are unchanged. Built with Cloud Build (image `xroga-api-release:case1-1113`) and deployed to the tagged staging revision only (0% traffic); the revision before it was deleted. No unit test was added for this one-line comparison because the backend dependencies are not installed in this worktree; the live Allow/verify run above is its evidence.
+5. **Diagnostics**: a pause after an unverified model request now names the server's error code.
+
+Install folder holds build `bc8293acd`. Still BLOCKED, needs the owner: MCP (a public MCP server URL to add through a Composio custom toolkit).
+
+## 11. Custom MCP (Monid), registered and connected through the product (2026-11-13, night) - REAL THIRD-PARTY, staging
+
+With the owner's permission, on a Monid account with a $0.00 balance (no spend possible): Plugins, Custom, Add MCP server, name `Monid`, URL `https://mcp.monid.ai/v1`, OAuth (Dynamic Client Registration) with the server's public discovery URL. The product showed a review page ("Nothing has been created yet"; spend ceiling "No spending authority included"; the registration "does not authorize tool execution"), Confirm gave a provider receipt, Connect opened the Monid consent screen (identity, basic profile, email, organization membership), Allow connected it, and Sync listed 18 actions.
+
+A task asking the agent to read the Monid balance and free offerings through the connected app used no tool: no read tool for that was offered, and the Monid run tool is classified restricted and cannot execute from the browser agent. It said so, offered to reconnect or use the browser, and ran/paid for nothing. This matches the product's rule that a custom MCP's tools stay untrusted until separately authorized; executing a custom MCP tool end to end was therefore NOT demonstrated, and no `monid run` was attempted. Registering, reviewing, OAuth connecting and syncing were.
+
+The "Confirm action" button on the review page renders white text on a white button (hard to read); not fixed here.
+
+## 12. Custom MCP pin, stage 1, verified live on staging (2026-11-13, night) - CHROME + DEEPSEEK + REAL THIRD-PARTY
+
+RFC `docs/xroga/security/rfcs/RFC-CUSTOM-MCP-EXECUTION.md`, stage 1 (read pins only, off by default). Staging backend image `pin4-1113` on the tagged revision with `XROGA_CUSTOM_MCP_EXECUTION=on`; additive table `custom_mcp_tool_pins` on the staging database; frontend on the staging preview branch. Monid account, $0.00 balance, no spend possible.
+
+| Step | Result |
+| --- | --- |
+| Pin "Monid balance" (read, no arguments) from the Tools panel | review page showed the exact definition and digest, "No spending authority included"; Confirm gave a receipt |
+| Agent asked for the balance in the extension | offered the pinned tool, approval card with the exact tool and empty arguments, Allow pressed |
+| Result | "$0.00 USD, $0.00 held", provider receipt returned; matches the Monid dashboard |
+| Simulated server change (stored digest altered in the staging database) | the next request: no Monid tool offered, nothing called, the pin shows revoked with reason "definition changed" |
+
+Four server gates had to accept an owner-pinned read, each found only by the live run (unit tests cannot see them): the read-name rule (a read needs a reading word in its name), "discovered in this session" (the provider search never lists custom tools), twice (before the card and when executing), and the execution-time risk recheck (name classifies unknown, plan says read). Each now accepts a tool only if its pin verifies against the live definition with the flag on and its name does not read as a change; no other check changed.
+
+Not done: write pins, a price ceiling and AAL2 for pinning (RFC open questions 2-4); the independent security review; revocation on re-sync at the sync itself (it happens at the next call); the changed-definition test used an altered stored digest because the Monid server's own definition cannot be changed from here. The pin is left revoked on staging; the flag stays on only for the tagged staging revision.
+
+## 13. Final package (supersedes section 1)
+
+Install folder `C:\xr-review-builds\xroga-extension-staging-0ff582593` holds extension build `bc8293acd` (source unchanged since; the later commits are backend, frontend and docs). Zip `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-bc8293acd.zip`, SHA-256 `5f6d9d2207b1b184dccd44ba8c1ea7e6cb7384ecd259c3f662cfa3f5f2df9ce7`. Extension typecheck clean; agent, xroga, extension and browser-control unit suites pass (753 tests, 82 files). Staging: tag `browser-op-1110` on the pin4 image (flag on, 0% traffic); my superseded revisions deleted.
+
+Open items, none of which can be closed from here: the independent security review (Composio egress path and the custom MCP pin gate); a vision-hosting decision for pixel-only editors; write pins and a price ceiling for custom MCP (RFC questions 2-4); the Monid plugin and the "Xroga test 2" Gmail draft left for the owner to delete.
+
+## 14. Connected-app reliability, layers 1 and 2 (2026-11-13, late)
+
+Problem: every failed connected-app or MCP call reached the model as one sentence, because the extension dropped the server's fixed reason code. Layer 1: the server returns the reason for policy refusals (`BROWSER_POLICY_DENIED` plus the rule) and for custom MCP pin denials (`COMPOSIO_CUSTOM_MCP_*`); the client keeps it (`device.ts`) and `src/xroga/plugin-failures.ts` maps each code to the next step (search again, use plugin_act, reconnect by takeover, stop and tell the user, retry a read once, sign in, uncertain outcome). An approved change is never retried. Layer 2: `src/xroga/plugin-repair.ts` repairs a "not discovered" refusal once without a model turn (search again with the same words, repeat the same call; the owner still approves it). Tests: 20 new (table of codes, repair cases); extension typecheck clean, 539 tests in xroga/extension/agent pass; backend typecheck clean, 129 related tests pass.
+
+Deployed to staging: image `rel1-1113` on the tagged revision; extension build `a7aedfa86` in the install folder. Live regression in the owner's Chrome with the new build: Gmail read with Allow returned the three newest emails. A live named-failure case was not forced (the only failing path available, an unpinned custom tool, is not offered to the agent at all, so there is no call to fail); the failure table is covered by unit tests only.
+
+Still to do: a watchdog so no call waits forever without an approval card; a repeatable app-type test pass; a decision on a general HTTP API caller (none exists: apps come through the Composio catalogue, custom ones through MCP).
+
+## 15. Universal mandate, first checkpoint (2026-11-13, late night)
+
+Directives read: `Xroga_Browser_Operator_Universal_5Plus_Agents_Final_Claude_Mandate.md` and `..._Universal_Every_User_Master_Directive.md` (owner Downloads). They replace the four-worker limit with five or more active workers where provisioned.
+
+**Five-plus workers (DEEPSEEK, real Chrome, staging, throwaway account):** the account's active-run limit is now provisionable on the server (`XROGA_LOCAL_BROWSER_MAX_ACTIVE_RUNS`, 4 to 12, default 4) and reported to the extension, which runs limit minus one workers at once (never more than six) and queues the rest; up to eight tasks may be assigned. Staging tag runs with 7 (parent plus six workers); the staging model pacing row allows four model requests in flight per user. Results on build `5b22b4846`: five different jobs by five workers, done, 130 s, 7 parent turns, all five answers correct with the worker named; six workers with a dependency (five researchers, then an editor that comes after them), done, 46 s, 4 parent turns, correct five-row summary. Server run records for the account show at most six runs active at the same moment (the parent and five workers), which is the true concurrency; the sixth worker in that task ran after the others by design. Not yet shown: six workers all active at once (needs a task with six independent jobs), CPU and memory for five and six windows, and any multi-worker dashboard beyond the existing per-worker conversations.
+
+**Custom MCP, changes (REAL THIRD-PARTY, owner's Chrome):** pins can be read or write; one review pinned 17 Monid tools (8 read, 9 change; the wallet top-up tool excluded by name). The agent found `MONID_DISCOVER` through the change search, ran it after approval and found the free DefiLlama endpoint; the following `MONID_RUN` (maxCost 0) was approved and the provider answered without a completed result (`COMPOSIO_EXECUTION_NOT_COMPLETED`). Cause not yet known; the server now logs the reply shape and passes a tool-reported failure reason to the agent. That run has NOT been re-tested since. Nothing was charged (balance $0).
+
+**Reliability:** every connected-app failure code maps to a next step (`plugin-failures.ts`); a not-discovered refusal repairs itself once (`plugin-repair.ts`); change tools are named in read searches.
+
+Package: `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-5b22b4846.zip`, SHA-256 `1405d4a0f7417716a71a7521b5fec80a4a3871aeb0bab3243500922fa0d5f400`; install folder updated (Reload needed). Left over: throwaway staging user `cap-night-1113@example.test` (delete was declined; it is not on the allowlist).
+
+Open against the mandate (not started or not proven): the capability matrix in section 10 of the mandate; multi-agent dashboard; no-login MCP and mixed MCP plus browser task; missing-connection pause and resume of the same task; async provider jobs; 1/2/3/5/6 CPU and memory benchmark; Resume control after a real worker kill; open-source register; independent security review.
+
+## 16. 17 November 2026: limits, approvals, direct APIs, self-healing (staging only)
+
+Source: branch `claude/ops-integrated-20261112`. Staging only; nothing is in production. Evidence class is stated per line.
+
+**Changes**
+- Caps lifted: workers up to 12 at once, 24 tasks, about 13 active runs per account (operator override `XROGA_LOCAL_BROWSER_MAX_ACTIVE_RUNS`, 4 to 24); plugin discoveries 100, reads 400, changes 200 per run; the same read may repeat (polling). Pinned MCP tools: up to 60 listed, verified in parallel (the read list used to stop at 6 and hid `inspect`).
+- Approvals: reads and changes inside the owner's own connected app run without a card (same confirmation and receipt on the server; `autoApprovesCall`, off with `XROGA_LOCAL_BROWSER_AUTO_APPROVE=off`). Outbound or public actions (send, post, publish, invite, share...) and deletions keep the card; destructive, financial and credential tools are still refused. Product extension mode defaults to Auto; payments, access grants and secret fields remain hand-overs (USER_STEP).
+- Model gate full: server answers `BROWSER_MODEL_BUSY` (turn's reserved spend restored, nothing charged) and the extension waits up to 20 minutes and asks again. A stalled model request (`BROWSER_GATEWAY_UNAVAILABLE`) is retried up to three times under the next turn number; a real outage still pauses.
+- Database gate bounds widened on STAGING only (`docs/operations/zurelay-product-pacing-20261104/provider-request-capacity-v3-wider-bounds.sql`): in flight 512, per user 64. Production needs approval and the provider's confirmed requests-per-minute for the key. The Zurelay key rate (about 120 requests per minute in the pilot) remains the real scale limit.
+- Failed app changes are forgotten so the agent can correct and retry; connected-app calls and direct reads are queued per run (the server takes one call per run at a time).
+- New `http_get` tool and route `/runs/:runId/public-get`: credential-free public HTTPS read through the existing `boundedPublicGet` (no private networks, ports or logins; 400 KB and 15 s bound; text only; result treated as untrusted).
+- Agent guidance: task-aware method choice (free official API, user key or connected app, MCP, Composio, paid marketplace, browser, mixes) instead of a fixed provider order; a self-healing connected-apps playbook; Monid only when named or when nothing free has the data.
+
+**Evidence (real Chrome, real DeepSeek, staging)**
+- Monid DefiLlama TVL for aave, free endpoint, discover to inspect to run, $0.00, receipt `9c3d3c72-1676-404e-86c9-08811f67d6d0`, no cards.
+- DefiLlama TVL without naming Monid: answered in 18 to 20 s from the free official page.
+- Bitcoin price: direct public APIs (CoinGecko 403, Kraken, cross-checked with Coinbase), 22 s, five `public-get` calls.
+- Not shown live: self-healing from a provider error, busy-queue under load, Sheets/Notion/Ahrefs, custom MCP authenticated test, two-user isolation, expired authorization and resume, six workers at once.
+
+**Governance**
+- The egress-review and tenant-policy records that were pinned to files changed after review (`composioClient.ts`, `businessActionConfirmations.ts`, `localBrowser.ts` and similar) were DROPPED so those callers show as needing re-review. They were not re-approved. The independent security review of the Composio egress path, the custom MCP pin gate and the direct `public-get` route is still outstanding.
+
+## 17. 18 November 2026: package, deployment references and what is and is not proven
+
+**Source and package (private, staging only)**
+- Branch `claude/ops-integrated-20261112`, extension build `a6c85437c` (the same commit as the source; later documentation-only commits do not change the extension).
+- Zip: `C:\xr-review-builds\xroga-browser-operator-staging-0.2.8-a6c85437c.zip`, SHA-256 `c7f4aa70b5a403eaf2fd30ed5f467c6a0379ed231a1802d662631ba1eafe0282`. Extension ID `ogebkgkppocnjeojdbkiokcpeaenonop`, version 0.2.8, staging Workspace preview origin and staging API tag baked in.
+- Backend: Cloud Run `xroga-api-universal-staging`, tag `browser-op-1110` at 0% traffic, revision `xroga-api-universal-staging-00114-dac` (image `xroga-api-release:lim6-1117`). The extension requires this backend for `public-get`, `plugin-connect`, `BROWSER_MODEL_BUSY`, auto-approval of own-app calls and the widened run limits. Production has none of this.
+- Not done: Chrome Web Store, production deployment, production database changes, independent security review, exact-source CI run. The staging Workspace preview used for pairing returned 410 at one point; the extension pairs through the staging API directly.
+
+**Rollback**: remove or disable the extension; for the backend, route the tag to the previous revision (`xroga-api-universal-staging-00113-vaf` is the image before connect links; earlier images are `lim5-1117`, `lim4-1117`...) or disable with `XROGA_CUSTOM_MCP_EXECUTION=off` and `XROGA_LOCAL_BROWSER_AUTO_APPROVE=off`. The staging gate bounds migration is reversible with the earlier constraint values (in-flight 16, per user 4).
+
+**Proven in real Chrome with real DeepSeek on staging (one run each unless stated)**: 10 verified leads with table, CSV and a Google Sheet; long task across a turn renewal; five concurrent workers with a measured overlap (one worker stalled, the coordinator handled it honestly); free public API reads without detours; Gmail read and draft; Google Sheets read, create, write, read-back with receipts; Monid free endpoint run; GitHub repository analysis; connect-by-link handover with Notion; page-changed-under-agent recovery; interrupt and resume (after a fix).
+
+**Not proven**: see the gap register (`GAP-REGISTER-20261117.md`). In particular: Ahrefs, SEO work, Notion API execution, custom MCP write, two-user isolation, wrong-extension-ID denial, vision probe, graphical canvas edit, Cloud Run and ads tasks, PDF and XLSX provenance, video, resume from early progress, the multi-cursor board, the Experience Engine, multi-browser testing, p50/p95 benchmarks, 320/390/480 px layout checks, and any production behaviour.

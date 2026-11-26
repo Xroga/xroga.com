@@ -1,0 +1,31 @@
+{
+  "names": [
+    "chaos-restore"
+  ],
+  "args": {
+    "model": "deepseek-v4.1-flash-1017",
+    "baseUrl": "https://api.zurelay.com/v1"
+  },
+  "timedOut": false,
+  "reports": [
+    {
+      "name": "chaos-restore",
+      "ok": true,
+      "startedAt": "2026-11-21T23:21:33.650Z",
+      "durationMs": 17666,
+      "result": {
+        "writeStatus": 200,
+        "afterRestore": "interrupted",
+        "ms": 15592,
+        "status": "Done",
+        "saves": 1,
+        "danaNames": [
+          "Dana Ruiz-Lopez"
+        ],
+        "answerTail": " the CRM — the row already read \"Dana Ruiz-Lopez\", and the rename form's contact list also showed \"Dana Ruiz-Lopez (Orbit Labs)\", so I did not save again. To prove it persisted, I reloaded the page: the contacts table still shows Dana Ruiz-Lopez — dana@orbitlabs.test — Orbit Labs. The other records (Alex Kim ×3, Sam Obi) are unchanged.\n\nnow\nDone\nCRM (replica)\nAuto\ndeepseek-v4.1-flash-1017\n· Medium",
+        "ok": true
+      }
+    }
+  ],
+  "console": []
+}
