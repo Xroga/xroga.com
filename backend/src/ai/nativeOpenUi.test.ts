@@ -468,6 +468,39 @@ test('a native checklist does not duplicate the exact numbered steps in its own 
   assert.equal(supplementNativeProse(complete, bindNativeAnswerText(program, prose), true), complete);
 });
 
+test('an optional checkbox overlay yields to the complete numbered answer in the same section', () => {
+  const prose = '## Inspection checklist\n\n1. **Clearance check — width.** Measure the nearest edge at 24 mm. [1]\n'
+    + '2. **Handoff check — record the result.** Log the serial number before passing the cabinet to the next station.';
+  const program = [
+    'root = Col([intro, inspections])',
+    'intro = Markdown(_xroga_answer)',
+    'inspections = Section("Inspection checklist", [clearance, handoff], "Tick each check after inspecting the cabinet.")',
+    'clearance = Checkbox($clearance, "Clearance check — 24 mm")',
+    'handoff = Checkbox($handoff, "Handoff check — serial number recorded")',
+    '$clearance = false',
+    '$handoff = false',
+  ].join('\n');
+  const deliver = (source: string, prompt: string, text = prose) => completeNativeWorkspaceAnswer(
+    text + NATIVE_UI_MARKER + source, 'stop', new Set(['source-1']), prompt, undefined, requiredNativeFormats(prompt),
+  );
+  const prompt = 'Finish with a two-step inspection checklist.';
+  const answer = deliver(program, prompt);
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  assert.equal(answer.response, prose);
+  assert.doesNotMatch(answer.responseSource.text, /Checkbox|\$handoff/);
+
+  assert.match(deliver(program, 'Finish with an interactive checklist.').responseSource.text, /Checkbox/);
+  for (const distinct of [
+    program.replace('24 mm', '20 mm'),
+    program.replace('serial number recorded', 'serial number recorded [1]'),
+    program.replace('Handoff check', 'Calibration check'),
+    program.replace('$handoff = false', '$handoff = true'),
+    program.replace('Tick each check after inspecting the cabinet.', 'Stop the operation if water reaches the terminal.'),
+    program.replace('after inspecting the cabinet.', 'after inspecting the cabinet. Stop the operation if water reaches the terminal.'),
+  ]) assert.match(deliver(distinct, prompt).responseSource.text, /Checkbox/);
+  assert.match(deliver(program, prompt, prose + '\n\n## Inspection checklist\n\n1. Audit the prior run.').responseSource.text, /Checkbox/);
+});
+
 test('a scoped diagram contributes its relationships without repeating the section title', () => {
   const diagram = 'Diagram("Approval path", [{id:"draft",label:"Draft",level:0},{id:"review",label:"Review",level:1}], '
     + '[{from:"draft",to:"review",label:"Ready for review"}], "Review the draft before publishing.")';

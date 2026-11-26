@@ -144,17 +144,22 @@ function pageReferenceSections(content: string, identifiers: readonly string[]) 
   return identifiers.flatMap(reference => sections.get(reference) ?? []);
 }
 
-function referenceExcerpt(section: string, limit: number): string {
-  const compact = (prose: string) => prose.replace(/\s+/gu, ' ');
+function compactReferenceText(text: string): string {
+  // Preserve publisher list and paragraph boundaries. A flattened rule can
+  // make alternatives look like qualifications of the previous item.
+  return text.replace(/\r\n?/gu, '\n').replace(/[^\S\n]+/gu, ' ')
+    .replace(/ *\n */gu, '\n').replace(/\n{3,}/gu, '\n\n').trim();
+}
+
+function referenceExcerpt(full: string, limit: number): string {
   const clip = (prose: string, size: number) => prose.slice(0, size).replace(/\s+\S*$/u, '');
-  const full = compact(section);
   if (full.length <= limit) return full;
 
   // A rule's scope note can follow lengthy examples. Keep one short note
   // from that same section with the main rule within the existing budget.
   const lead = clip(full, limit);
   const maximumNote = Math.min(480, Math.floor(limit / 3));
-  const note = section.split(/\r?\n[ \t]*\r?\n/u).map(compact)
+  const note = full.split('\n\n')
     .find(paragraph => paragraph.length <= maximumNote && ruleScopeNote.test(paragraph) && !lead.includes(paragraph));
   return note ? clip(full, limit - note.length - 2) + '\n\n' + note : lead;
 }
@@ -170,12 +175,13 @@ export function matchingPageParagraphs(content: string, question: string): strin
   const sections = pageReferenceSections(text, identifiers);
   if (sections.length >= 2 || (sections.length === 1 && (identifiers.length === 1 || sections[0].explicitHeading))) {
     const separators = (sections.length - 1) * 2;
-    const lengths = sections.map(({ prose }) => prose.replace(/\s+/gu, ' ').length);
+    const excerpts = sections.map(({ prose }) => compactReferenceText(prose));
+    const lengths = excerpts.map(prose => prose.length);
     const minimumShare = Math.floor((DEEPSEEK_PRIMARY_PAGE_EXCERPT - separators) / lengths.length);
     const spare = lengths.reduce((available, length) => available + Math.max(0, minimumShare - length), 0);
     const longSections = lengths.filter(length => length > minimumShare).length;
     const share = minimumShare + (longSections ? Math.floor(spare / longSections) : 0);
-    return sections.map(({ prose }) => referenceExcerpt(prose, share)).join('\n\n');
+    return excerpts.map(prose => referenceExcerpt(prose, share)).join('\n\n');
   }
   for (let start = 0; start < text.length; start += 400) {
     const end = start + DEEPSEEK_PRIMARY_PAGE_EXCERPT;
