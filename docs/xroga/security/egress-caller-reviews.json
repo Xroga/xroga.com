@@ -4656,6 +4656,282 @@
         }
       ],
       "reviewedOnBranch": "Sends a run ID only to the paired Chrome extension. The session token, page content and the provider key are excluded. No network transport, provider request or external side effect follows from requesting the existing local receipt summary."
+    },
+    {
+      "id": "f7aa2007f50742984f8d",
+      "callSha256": "301f7f78792bc068a151bdb5cceeada9feb196dd99e8305e6faef48cfcd70b50",
+      "sourceFileSha256": "45c04834e978bf8a6f24ef4604683530deb93e30c9b500b8e18f763d0d35087f",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FIXED_PUBLIC_REGISTRY_HOSTS_VIA_CENTRAL_BOUNDED_PUBLIC_GET_NOT_FULL_EGRESS_CERTIFICATION",
+      "tenantAuthority": "No tenant data is sent: the request is a credential-free GET of a public package record. The only caller is the dependency plan, which builds the address from a fixed host (pypi.org or registry.npmjs.org) and a package name and exact version that were validated and URL-encoded before the call.",
+      "evidence": [
+        {
+          "path": "backend/src/sandbox/dependencyAcquisition.ts",
+          "marker": "https://pypi.org/pypi/${encodeURIComponent(pkg.name)}",
+          "sha256": "45c04834e978bf8a6f24ef4604683530deb93e30c9b500b8e18f763d0d35087f"
+        },
+        {
+          "path": "backend/src/sandbox/dependencyAcquisition.ts",
+          "marker": "https://registry.npmjs.org/${pkg.name.replace",
+          "sha256": "45c04834e978bf8a6f24ef4604683530deb93e30c9b500b8e18f763d0d35087f"
+        },
+        {
+          "path": "backend/src/sandbox/dependencyAcquisition.test.ts",
+          "marker": "pip: exact versions only; every wheel hash is pinned; the install refuses unhashed and source-built packages",
+          "sha256": "35a5e6201fe5d68200f794f0ad302ce526164bcbc38a36b7847e5fe3ea98f094"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "Credential-free GET only. All redirects share one deadline and byte bound.",
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "public address admission rejects local, metadata, special and IPv4-in-IPv6 targets",
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "redirects get independent URL and DNS admission and share a strict redirect cap",
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
+        }
+      ],
+      "reviewedOnBranch": "Re-inspected 2026-11-26: publicRegistryGet is exported but its only use in the source is as the default transport of the dependency plan (input.get ?? publicRegistryGet). The destination is dynamic in the scanner only because the address is passed as an argument; every address built in the source starts with one of two fixed https hosts. The shared guard admits public addresses only, no credentials, no custom ports, bounded bytes, time and redirects with independent admission of each redirect. This certifies the destination and bounds, not DNS or provider behaviour."
+    },
+    {
+      "id": "cc40611e19d1a7f81e4b",
+      "callSha256": "011359d58187d86e604252e627e43a4a65ae8286cb822216582bbb5cc123b6e0",
+      "sourceFileSha256": "bdd29aa5d0b9f6f964a818538382259eb5098bdcf3da8a91efaa2b60242eac00",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FIXED_ORIGIN_CODELOAD_GITHUB_COM_VIA_CENTRAL_BOUNDED_PUBLIC_GET_NOT_FULL_EGRESS_CERTIFICATION",
+      "tenantAuthority": "No tenant data is sent: a credential-free GET of a public repository archive. Owner and repository come from parseRepositoryUrl, which accepts only https://github.com/OWNER/REPO with a restricted character set and rejects dot segments; the version is limited to a name without slashes and is URL-encoded. The host in the address is fixed.",
+      "evidence": [
+        {
+          "path": "backend/src/sandbox/repoRun.ts",
+          "marker": "export function parseRepositoryUrl",
+          "sha256": "bdd29aa5d0b9f6f964a818538382259eb5098bdcf3da8a91efaa2b60242eac00"
+        },
+        {
+          "path": "backend/src/sandbox/repoRun.ts",
+          "marker": "https://codeload.github.com/${owner}/${repo}/tar.gz/${encodeURIComponent(ref)}",
+          "sha256": "bdd29aa5d0b9f6f964a818538382259eb5098bdcf3da8a91efaa2b60242eac00"
+        },
+        {
+          "path": "backend/src/sandbox/repoRun.test.ts",
+          "marker": "only a public github.com owner/repo address is accepted",
+          "sha256": "0a615fddf568fb99eda454eca216394acfd493a26bb69f53ca1bd06f17dfa3bc"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "Credential-free GET only. All redirects share one deadline and byte bound.",
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "public address admission rejects local, metadata, special and IPv4-in-IPv6 targets",
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "redirects get independent URL and DNS admission and share a strict redirect cap",
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
+        }
+      ],
+      "reviewedOnBranch": "Re-inspected 2026-11-26: the archive is read into memory with a byte cap and a gunzip output cap, directories, links and .git entries are never extracted, and the exact commit is read from the archive header. The shared guard admits public addresses only, no credentials, bounded bytes, time and redirects with independent admission of each redirect. This certifies the destination and bounds, not the safety of the repository content, which is only ever run inside the isolated sandbox worker."
+    },
+    {
+      "id": "5b19b5ab231e0280efc7",
+      "callSha256": "65e08ee42f856fcd72b4dd58d04aec77dd1fadcae354cd26d35a2faa43737364",
+      "sourceFileSha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "The run id is sent back only after the signed-in Workspace API confirmed the account owns that exact run (loadRun with the paired session) and only when the paired device is this extension.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "send({ type: 'activity-history', runId: run });",
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "!admitted.has(message.runId) && session.deviceExtension === extensionId",
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
+        }
+      ],
+      "reviewedOnBranch": "Re-inspected 2026-11-26: send is connected.postMessage on the Chrome runtime port to the paired extension; it opens no network connection. This certifies the destination and the shape of the message, not the content of the Workspace API reply it relays."
+    },
+    {
+      "id": "96c8086ac0938c5c9190",
+      "callSha256": "80ce304010538de36141c81697b2e04d5d62fe4ba24211324eb807875a83b163",
+      "sourceFileSha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "A refusal: an operation that is not start, resume, document, voice, finish, device or a turn of an admitted run gets only ok:false and no data.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "send({ type: 'result', id, ok: false });",
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "const isBound = !!value.runId && admitted.has(value.runId);",
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
+        }
+      ],
+      "reviewedOnBranch": "Re-inspected 2026-11-26: send is connected.postMessage on the Chrome runtime port to the paired extension; it opens no network connection. This certifies the destination and the shape of the message, not the content of the Workspace API reply it relays."
+    },
+    {
+      "id": "3736829b4cae598c6292",
+      "callSha256": "8dbda9699ab8293c740bb5d6ed43bd52c729d323ad44176699f254e1435f18fc",
+      "sourceFileSha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "The reply carries only the text transcribed from the recording the person made, requested with the paired session token; it goes back on the same port to the same request id.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "send({ type: 'result', id, ok: true, value: { text } });",
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "{ freeOnly: true, preparedPcm: true, expectedToken: pairedToken.current }",
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
+        }
+      ],
+      "reviewedOnBranch": "Re-inspected 2026-11-26: send is connected.postMessage on the Chrome runtime port to the paired extension; it opens no network connection. This certifies the destination and the shape of the message, not the content of the Workspace API reply it relays."
+    },
+    {
+      "id": "d8500d7e40e05a539e15",
+      "callSha256": "80ce304010538de36141c81697b2e04d5d62fe4ba24211324eb807875a83b163",
+      "sourceFileSha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "A failure reply: only ok:false and the request id, no data.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": ".catch(() => send({ type: 'result', id, ok: false }))",
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
+        }
+      ],
+      "reviewedOnBranch": "Re-inspected 2026-11-26: send is connected.postMessage on the Chrome runtime port to the paired extension; it opens no network connection. This certifies the destination and the shape of the message, not the content of the Workspace API reply it relays."
+    },
+    {
+      "id": "5ad5a74f852db7524d8a",
+      "callSha256": "26c50fda42001535cb70aac98a0d29a407fa8ea44ab454f87cbf7772b31fff4e",
+      "sourceFileSha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "The reply is the Workspace API response to a call made with the paired session token for one allowed operation (start, resume, document, finish, device or a turn of an admitted run); the account is derived by that API from the token, not from the message.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "send({ type: 'result', id, ok: true, value: data });",
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
+        },
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "}, pairedToken.current).then(data => {",
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
+        }
+      ],
+      "reviewedOnBranch": "Re-inspected 2026-11-26: send is connected.postMessage on the Chrome runtime port to the paired extension; it opens no network connection. This certifies the destination and the shape of the message, not the content of the Workspace API reply it relays."
+    },
+    {
+      "id": "d875c1fb0614082bd141",
+      "callSha256": "80ce304010538de36141c81697b2e04d5d62fe4ba24211324eb807875a83b163",
+      "sourceFileSha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
+      "tenantAuthority": "A failure reply: only ok:false and the request id, no data.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "() => send({ type: 'result', id, ok: false })).finally(() => requests.delete(id));",
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
+        }
+      ],
+      "reviewedOnBranch": "Re-inspected 2026-11-26: send is connected.postMessage on the Chrome runtime port to the paired extension; it opens no network connection. This certifies the destination and the shape of the message, not the content of the Workspace API reply it relays."
+    },
+    {
+      "id": "27bc04b09f554f8a04b0",
+      "callSha256": "3d29975459dbe751325d983598b435d215c7cd198c44e3b04bd8013784fc721c",
+      "sourceFileSha256": "a40092256167d3e1862314641773ca749df710b56cd6bc8ec053351aea9248ac",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "PUBLIC_HTTPS_ONLY_CREDENTIAL_FREE_VIA_CENTRAL_BOUNDED_PUBLIC_GET_NOT_FULL_EGRESS_CERTIFICATION",
+      "tenantAuthority": "The route needs a live lease on the run, a device that is still authorised and a verified tenant context. Nothing of the user is attached to the request: the address must be public https (publicHttpsUrl), and the shared guard admits public addresses only with bounded bytes, time and redirects.",
+      "evidence": [
+        {
+          "path": "backend/src/routes/localBrowser.ts",
+          "marker": "router.post('/runs/:runId/public-get'",
+          "sha256": "a40092256167d3e1862314641773ca749df710b56cd6bc8ec053351aea9248ac"
+        },
+        {
+          "path": "backend/src/routes/localBrowser.ts",
+          "marker": "publicHttpsUrl(url)",
+          "sha256": "a40092256167d3e1862314641773ca749df710b56cd6bc8ec053351aea9248ac"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "Credential-free GET only. All redirects share one deadline and byte bound.",
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "public address admission rejects local, metadata, special and IPv4-in-IPv6 targets",
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
+        }
+      ],
+      "reviewedOnBranch": "Re-inspected 2026-11-26: the destination is any public https address by design (a read of a public documentation page or data file). The route has no dedicated test for this endpoint; the guard it calls is tested. The answer is returned as untrusted text."
+    },
+    {
+      "id": "7b6e1f490ce974fc3971",
+      "callSha256": "9bdd54f164230d27aca5d0bdf34fc470042478bcc9bd0f1037b146d00f035cd4",
+      "sourceFileSha256": "37664dd39e626c417bec4ed231cbe8f3a8abc840e82983a2761e28aeb2aef53d",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FIXED_ORIGIN_BACKEND_COMPOSIO_DEV_WITH_PATH_AND_METHOD_ALLOWLIST_AND_MANUAL_REDIRECT_NOT_FULL_EGRESS_CERTIFICATION",
+      "tenantAuthority": "The origin is fixed (https://backend.composio.dev/api/v3.1): the path must start with a single slash with no control characters, backslashes, fragments or encoded dots and slashes, the final origin and prefix are re-checked, and only GET, POST and DELETE are allowed. Anything that is not public catalog metadata requires a verified tenant context; the connector credential is read for that context and re-checked immediately before dispatch; redirects are not followed; the body is capped at 128,000 bytes.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/composioClient.ts",
+          "marker": "url.origin!=='https://backend.composio.dev'",
+          "sha256": "37664dd39e626c417bec4ed231cbe8f3a8abc840e82983a2761e28aeb2aef53d"
+        },
+        {
+          "path": "backend/src/services/integrations/composioClient.ts",
+          "marker": "redirect:'manual'",
+          "sha256": "37664dd39e626c417bec4ed231cbe8f3a8abc840e82983a2761e28aeb2aef53d"
+        },
+        {
+          "path": "backend/src/services/integrations/composioClient.security.test.ts",
+          "marker": "SLACK_GET_REDIRECT_FIXTURE",
+          "sha256": "5963a224809816e2df4d0618424d2ba1fdc139f84ffa47882be363622ff57e83"
+        }
+      ],
+      "reviewedOnBranch": "Re-inspected 2026-11-26. This certifies the destination and request limits of this one function; which tool a model may call and what payload it may send remain governed by the separate approval and egress-policy checks that precede it (enforceEgress)."
+    },
+    {
+      "id": "e079c51ab00e88b88aa7",
+      "callSha256": "12ce03fb625377d4806972e2c62595cdfe78d3bf27b8cdd5da645d9ce5663494",
+      "sourceFileSha256": "e3bc7e2a3acb9adba5bb5c8506d1c7fadb5be3e3329d00dad3050d1bd7411240",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "OWN_BACKEND_API_PUBLIC_CATALOG_GET_NO_CREDENTIALS",
+      "tenantAuthority": "A credential-free GET (credentials omitted) of the public integration catalog on the Xroga backend (API_URL); the only inputs are a fixed page size and an optional cursor placed in a URL query string. No account data is sent.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/publicConnectCatalog.ts",
+          "marker": "method: 'GET', credentials: 'omit'",
+          "sha256": "e3bc7e2a3acb9adba5bb5c8506d1c7fadb5be3e3329d00dad3050d1bd7411240"
+        },
+        {
+          "path": "frontend/src/lib/publicConnectCatalog.ts",
+          "marker": "/api/public/integrations/catalog?",
+          "sha256": "e3bc7e2a3acb9adba5bb5c8506d1c7fadb5be3e3329d00dad3050d1bd7411240"
+        }
+      ],
+      "reviewedOnBranch": "Re-inspected 2026-11-26: the destination is the product backend configured at build time, not a user-supplied address. No dedicated test pins this call."
     }
   ]
 }
