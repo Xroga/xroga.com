@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Preferences (novel UI)</title>
+<style>body{font:14px sans-serif;margin:16px}iframe{width:420px;height:230px;border:1px solid #888}</style></head>
+<body><div id="app">Loading…</div>
+<script src="lib.js"></script>
+<script>
+// A preferences page built to defeat a handmade script: right-to-left on odd variants, page zoom, an open shadow root holding the switches, and the Save button inside an iframe.
+// The state the grader reads is in window.__state: notifications and marketing switches as saved.
+const state = __state; state.saved = 0; state.notifications = true; state.marketing = true; state.lastSaved = null;
+mount(app => {
+  if (SEED % 2 === 1) document.documentElement.dir = 'rtl';
+  const host = h('div', { id: 'prefs' }); const root = host.attachShadow({ mode: 'open' });
+  // The switches show what was saved (the page restores its state on reload, as an app would): a person who saved "off" sees "off" after a reload.
+  const live = { notifications: state.notifications !== false, marketing: state.marketing !== false };
+  const sw = (key, label) => { const b = document.createElement('label'); const i = document.createElement('input'); i.type = 'checkbox'; i.checked = live[key]; i.setAttribute('aria-label', label);
+    i.addEventListener('change', () => { live[key] = i.checked; }); b.append(i, ' ' + label); return b; };
+  const order = shuffle([['notifications', 'Email notifications'], ['marketing', 'Marketing emails']]);
+  const h2 = document.createElement('h2'); h2.textContent = 'Preferences'; root.append(h2, ...order.map(([k, l]) => sw(k, l)));
+  const frame = document.createElement('iframe'); frame.title = 'Save panel';
+  frame.srcdoc = '<body style="font:14px sans-serif"><p>Changes apply after saving.</p><button type="button" id="s">Save preferences</button><p id="m" role="status"></p><script>document.getElementById("s").onclick=()=>{parent.postMessage("save","*");document.getElementById("m").textContent="Saved"}<\/script></body>';
+  window.addEventListener('message', e => { if (e.data === 'save') { state.saved++; state.notifications = live.notifications; state.marketing = live.marketing; state.lastSaved = { ...live }; } });
+  app.append(h('h1', {}, 'Account'), host, frame);
+});
+</script></body></html>

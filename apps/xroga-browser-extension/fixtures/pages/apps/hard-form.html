@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Customer onboarding</title>
+<style>body{font:14px sans-serif;margin:16px}label{display:block;margin:8px 0}.err{color:#b00;display:block}</style></head>
+<body><div id="app">Loading…</div>
+<script src="lib.js"></script>
+<script>
+// Onboarding form with dependent dropdowns (country filters region), required-field validation that appears only after submit, and a duplicate-submission trap
+// (every submit creates a record). The right path submits once, after fixing what validation reports.
+const state = __state; state.records = []; state.submits = 0;
+const REGIONS = { Portugal: ['Lisbon', 'Porto'], Japan: ['Tokyo', 'Osaka'], Canada: ['Ontario', 'Quebec'] };
+mount(app => {
+  const f = { company: '', country: '', region: '', seats: '', terms: false }; const errs = h('div', { role: 'alert' }), msg = h('p', { role: 'status' });
+  const region = h('select', { 'aria-label': 'Region', onchange: e => { f.region = e.target.value; } }, h('option', { value: '' }, 'Select a region'));
+  const country = h('select', { 'aria-label': 'Country', onchange: e => { f.country = e.target.value; f.region = ''; region.innerHTML = ''; region.append(h('option', { value: '' }, 'Select a region'), ...(REGIONS[f.country] || []).map(r => h('option', { value: r }, r))); } }, h('option', { value: '' }, 'Select a country'), ...Object.keys(REGIONS).map(c => h('option', { value: c }, c)));
+  app.append(h('h1', {}, 'New customer'),
+    h('label', {}, 'Company name ', h('input', { 'aria-label': 'Company name', oninput: e => { f.company = e.target.value; } })),
+    h('label', {}, 'Country ', country), h('label', {}, 'Region ', region),
+    h('label', {}, 'Seats ', h('input', { type: 'number', 'aria-label': 'Seats', oninput: e => { f.seats = e.target.value; } })),
+    h('label', {}, h('input', { type: 'checkbox', 'aria-label': 'I accept the terms', onchange: e => { f.terms = e.target.checked; } }), ' I accept the terms'),
+    h('button', { type: 'button', onclick: () => { errs.innerHTML = ''; const bad = []; if (!f.company) bad.push('Company name is required'); if (!f.country) bad.push('Country is required'); else if (!f.region) bad.push('Region is required'); if (!(Number(f.seats) >= 1)) bad.push('Seats must be at least 1'); if (!f.terms) bad.push('You must accept the terms');
+      if (bad.length) { bad.forEach(b => errs.append(h('span', { class: 'err' }, b))); return; } state.submits++; state.records.push({ ...f }); msg.textContent = 'Customer created'; } }, 'Create customer'), errs, msg);
+});
+</script></body></html>

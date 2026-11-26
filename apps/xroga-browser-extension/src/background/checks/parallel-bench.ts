@@ -1,0 +1,122 @@
+// Measures the worker scheduler in real Chrome with a fixture model that takes a fixed time per worker turn: one worker, three at
+// once, and four (the fourth waits for a free slot). If the workers really run together, three take about as long as one, and four
+// about twice as long. It reports each phase's wall-clock time and its start and end (epoch ms), so an outside sampler of Chrome's
+// processes can say what the phase cost in CPU and memory. It asserts only that three are not serialised.
+import { runManager } from '@src/extension/index';
+import { listConversations } from '@src/store/conversations';
+import { FIXTURE_ORIGIN } from '../fixtures-config';
+import { defineCheck } from './registry';
+import { sleep, waitForLoad } from './helpers';
+import { FIXTURE_PROVIDER, panel, scriptReplies, seedFixtureModel } from './panel-chat';
+
+const WORKER_MS = 3000;
+// The product backend's activeRunLimit() is 13 (parent + up to 12 workers); a fixture model has no server to say so, so the check supplies it.
+const PRODUCT_ACTIVE_RUN_LIMIT = 13;
+const status = (tag: string) => ({ when: tag, toolCalls: [{ name: 'parallel_task_status', input: { waitSeconds: 20 } }] });
+const worker = (tag: string) => [
+  { when: tag, delayMs: WORKER_MS, toolCalls: [{ name: 'read', input: {} }] },
+  { when: tag, toolCalls: [{ name: 'done', input: { outcome: 'success', summary: `${tag} finished.` } }] },
+];
+const PAGES = ['c-text.html', 'c-states.html', 'c-login.html', 'c-effects.html', 'c-text.html', 'c-states.html'];
+
+defineCheck({
+  name: 'parallel-bench',
+  title: 'Worker scheduler timing',
+  description: 'One, three and four independent workers: wall-clock time per phase, for CPU and memory sampling.',
+  async run() {
+    await seedFixtureModel();
+    runManager.setFallbackActiveRunLimit(PRODUCT_ACTIVE_RUN_LIMIT);
+    await chrome.storage.local.set({ 'nb.providers': [FIXTURE_PROVIDER] });
+    await chrome.storage.local.remove('xroga_parallel_jobs_v1');
+    const window = (await chrome.windows.getCurrent()).id!;
+    const page = await chrome.tabs.create({ windowId: window, url: `${FIXTURE_ORIGIN}/c-effects.html`, active: false });
+    await waitForLoad(page.id!);
+    const view = await chrome.tabs.create({ windowId: window, url: chrome.runtime.getURL(`/sidepanel.html#tab=${page.id}`), active: false });
+    await waitForLoad(view.id!);
+    await sleep(600);
+    const phases: Array<{ name: string; workers: number; ms: number; start: number; end: number; status: string; done: number; failed: number; closedWorker: boolean; maxActive: number }> = [];
+    try {
+      for (const [name, count] of [['one', 1], ['three', 3], ['five', 5], ['six', 6], ['closed', 6]] as const) {
+        // The panel continues one conversation, and the fixture model matches on its first message: one parent tag for all phases.
+        const parent = 'BENCH-PARENT';
+        const tags = Array.from({ length: count }, (_, i) => `BW-${name.toUpperCase()}-${i + 1}`);
+        await scriptReplies([
+          {
+            when: parent,
+            toolCalls: [
+              {
+                name: 'start_parallel_tasks',
+                input: { tasks: tags.map((tag, i) => ({ id: `t${i + 1}`, instruction: `${tag}: read the page`, url: `${FIXTURE_ORIGIN}/${PAGES[i]}` })) },
+              },
+            ],
+          },
+          ...Array.from({ length: 8 }, () => status(parent)),
+          ...tags.flatMap(worker),
+          { when: parent, toolCalls: [{ name: 'done', input: { outcome: 'success', summary: `${name} finished.` } }] },
+        ]);
+        // Each phase is a new conversation, as separate jobs are: workers belong to the conversation that started them.
+        if (name !== 'one') {
+          await panel(page.id!, 'click', { label: 'New chat' });
+          await sleep(500);
+        }
+        const known = new Set((await listConversations()).map(c => c.id));
+        const start = Date.now();
+        await panel(page.id!, 'type-send', { text: `${parent}: run ${count} worker(s) in parallel with several agents` });
+        // One worker's window is closed while all of them work: only that worker may fail.
+        let closedWorker = false;
+        if (name === 'closed') {
+          await sleep(1500);
+          const jobs = Object.values(((await chrome.storage.local.get('xroga_parallel_jobs_v1')).xroga_parallel_jobs_v1 ?? {}) as Record<string, { state: string; windowId?: number; conversationId?: string }>);
+          const victim = jobs.find(j => j.state === 'running' && j.windowId && j.conversationId && !known.has(j.conversationId));
+          if (victim) { await chrome.windows.remove(victim.windowId!).catch(() => undefined); closedWorker = true; }
+        }
+        let last = '';
+        // Sample the job table: the most workers seen active (starting or running) at the same instant is the overlap that really happened.
+        let maxActive = 0;
+        const sampler = setInterval(async () => {
+          const jobs = Object.values(((await chrome.storage.local.get('xroga_parallel_jobs_v1')).xroga_parallel_jobs_v1 ?? {}) as Record<string, { state: string; conversationId?: string }>);
+          const active = jobs.filter(j => (j.state === 'starting' || j.state === 'running') && j.conversationId && !known.has(j.conversationId)).length;
+          if (active > maxActive) maxActive = active;
+        }, 100);
+        // The panel still says "Done" from the phase before: wait until this run has started.
+        for (let i = 0; i < 60 && (await panel(page.id!, 'read')).status === 'Done'; i++) await sleep(50);
+        for (let i = 0; i < 400; i++) {
+          last = (await panel(page.id!, 'read')).status;
+          if (last === 'Done') break;
+          await sleep(150);
+        }
+        const end = Date.now();
+        clearInterval(sampler);
+        const workers = (await listConversations()).filter(c => !known.has(c.id) && c.title.startsWith('Worker: '));
+        phases.push({ name, workers: count, ms: end - start, start, end, status: last, done: workers.filter(w => w.status === 'done').length, failed: workers.filter(w => w.status !== 'done').length, closedWorker, maxActive });
+        await sleep(2500);
+      }
+      const [one, three, five, six] = phases;
+      const closed = phases[4];
+      const report = {
+        workerModelMs: WORKER_MS,
+        activeRunLimit: PRODUCT_ACTIVE_RUN_LIMIT,
+        maxActiveWorkers: Object.fromEntries(phases.map(p => [p.name, p.maxActive])),
+        phases,
+        threeVsOne: Number((three.ms / one.ms).toFixed(2)),
+        fiveVsOne: Number((five.ms / one.ms).toFixed(2)),
+        sixVsOne: Number((six.ms / one.ms).toFixed(2)),
+        serialThreeWouldBe: Math.round(one.ms + 2 * (WORKER_MS + 400)),
+        serialSixWouldBe: Math.round(one.ms + 5 * (WORKER_MS + 400)),
+      };
+      const allDone = phases.every(p => p.status === 'Done' && p.done === (p.name === 'closed' ? p.workers - 1 : p.workers));
+      // The closed window fails exactly one worker and the other five finish.
+      if (!closed.closedWorker || closed.failed !== 1) throw new Error(JSON.stringify({ closedWindowPhase: closed }));
+      // Three together must be clearly faster than three one after another.
+      // With the product's limit, every worker of a phase must have been active at the same instant.
+      const overlapped = phases.every(p => p.maxActive >= (p.name === 'closed' ? p.workers - 1 : p.workers));
+      if (!allDone || !overlapped || three.ms > report.serialThreeWouldBe * 0.8) throw new Error(JSON.stringify(report));
+      return report;
+    } finally {
+      for (const t of [view, page]) await chrome.tabs.remove(t.id!).catch(() => undefined);
+      runManager.setFallbackActiveRunLimit(undefined);
+      await chrome.storage.local.remove('xroga_parallel_jobs_v1');
+      await chrome.storage.local.set({ 'nb.providers': [FIXTURE_PROVIDER] });
+    }
+  },
+});

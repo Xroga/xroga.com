@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Store admin</title>
+<style>body{font:14px sans-serif;margin:16px}table{border-collapse:collapse}td,th{border:1px solid #bbb;padding:4px 8px}#panel{border:1px solid #888;padding:10px;margin-top:12px;max-width:340px}label{display:block;margin:6px 0}</style></head>
+<body><div id="app">Loading…</div>
+<script src="lib.js"></script>
+<script>
+// E-commerce admin: products with variants. Opening a product shows a panel with one price and one stock field PER VARIANT; only the named variant may change.
+const state = __state; state.products = [
+  { name: 'Mug', variants: [{ n: 'Blue', price: 10, stock: 5 }, { n: 'Red', price: 10, stock: 9 }] },
+  { name: 'Cap', variants: [{ n: 'Blue', price: 15, stock: 7 }, { n: 'Black', price: 15, stock: 2 }] },
+  { name: 'Bag', variants: [{ n: 'One size', price: 30, stock: 4 }] }]; state.saves = 0;
+mount(app => {
+  const panel = h('div', { id: 'panel' }, 'Select a product.');
+  const list = h('table', {}, h('tr', {}, h('th', {}, 'Product'), h('th', {}, 'Variants'), h('th', {}, '')),
+    ...shuffle(state.products).map(p => h('tr', {}, h('td', {}, p.name), h('td', {}, p.variants.map(v => v.n).join(', ')), h('td', {}, h('button', { type: 'button', onclick: () => open(p) }, 'Edit ' + p.name)))));
+  function open(p) {
+    panel.innerHTML = ''; panel.append(h('h2', {}, p.name));
+    const rows = p.variants.map(v => { const pr = h('input', { type: 'number', step: '0.01', value: v.price, 'aria-label': v.n + ' price' }), st = h('input', { type: 'number', value: v.stock, 'aria-label': v.n + ' stock' });
+      return { v, pr, st, el: h('div', {}, h('strong', {}, v.n), h('label', {}, 'Price ', pr), h('label', {}, 'Stock ', st)) }; });
+    rows.forEach(r => panel.append(r.el));
+    panel.append(h('button', { type: 'button', onclick: () => { rows.forEach(r => { r.v.price = Number(r.pr.value); r.v.stock = Number(r.st.value); }); state.saves++; panel.append(h('p', { role: 'status' }, 'Saved ' + p.name)); } }, 'Save product'));
+  }
+  app.append(h('h1', {}, 'Products'), list, panel);
+});
+</script></body></html>

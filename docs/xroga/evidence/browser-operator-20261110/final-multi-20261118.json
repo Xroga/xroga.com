@@ -1,0 +1,105 @@
+{
+  "multi": {
+    "repository": "anthropics/skills",
+    "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba",
+    "filesSent": 427,
+    "omittedFiles": 56,
+    "exitCode": 0,
+    "stdout": "README.md\nTHIRD_PARTY_NOTICES.md\ndotenv-src\nskills\nspec\ntemplate\nxroga-out\n---\nCHANGELOG.md\nCONTRIBUTING.md\nLICENSE\nREADME-es.md\nREADME.md\n---\n{\"K\":\"v\"}\n",
+    "stderr": "",
+    "timedOut": false,
+    "durationMs": 159,
+    "artifacts": 0,
+    "runtime": "cloud-run-sandbox",
+    "repositories": [
+      {
+        "repository": "motdotla/dotenv",
+        "commit": "9f3e83352ec6ba912161748a2fd15b07829430e2",
+        "directory": "dotenv-src"
+      }
+    ],
+    "skill": {
+      "found": true,
+      "directory": "skills/skill-creator",
+      "name": "skill-creator",
+      "description": "Create new skills, modify and improve existing skills, and measure skill performance. Use when users want to create a skill from scratch, edit, or optimize an existing skill, run evals to test a skill, benchmark skill performance with variance analysis, or optimize a skill's description for better triggering accuracy.",
+      "allowedTools": null,
+      "problems": [],
+      "scripts": [
+        {
+          "path": "eval-viewer/generate_review.py",
+          "interpreter": "python3",
+          "bytes": 16365,
+          "signals": [
+            "network",
+            "process"
+          ]
+        },
+        {
+          "path": "scripts/__init__.py",
+          "interpreter": "python3",
+          "bytes": 0,
+          "signals": []
+        },
+        {
+          "path": "scripts/aggregate_benchmark.py",
+          "interpreter": "python3",
+          "bytes": 14386,
+          "signals": [
+            "credentials"
+          ]
+        },
+        {
+          "path": "scripts/generate_report.py",
+          "interpreter": "python3",
+          "bytes": 12847,
+          "signals": [
+            "network"
+          ]
+        },
+        {
+          "path": "scripts/improve_description.py",
+          "interpreter": "python3",
+          "bytes": 11116,
+          "signals": [
+            "process",
+            "credentials"
+          ]
+        },
+        {
+          "path": "scripts/package_skill.py",
+          "interpreter": "python3",
+          "bytes": 4234,
+          "signals": []
+        },
+        {
+          "path": "scripts/quick_validate.py",
+          "interpreter": "python3",
+          "bytes": 3972,
+          "signals": []
+        },
+        {
+          "path": "scripts/run_eval.py",
+          "interpreter": "python3",
+          "bytes": 11464,
+          "signals": [
+            "process"
+          ]
+        },
+        {
+          "path": "scripts/run_loop.py",
+          "interpreter": "python3",
+          "bytes": 13605,
+          "signals": []
+        },
+        {
+          "path": "scripts/utils.py",
+          "interpreter": "python3",
+          "bytes": 1661,
+          "signals": []
+        }
+      ],
+      "risk": "review"
+    }
+  }
+}

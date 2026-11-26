@@ -1,0 +1,158 @@
+// Acceptance runs with the REAL model: the product code (WXT_AUTORUN_PRODUCT=1) against the staging backend, with a throwaway staging account.
+// The check enrolls this Chrome as a device for that account (the same authorize and exchange steps as pairing), then sends real tasks from the
+// side panel and measures each: wall time, model turns and the final answer. It needs args { jwt, account }; nothing here runs in a normal build.
+import { BROWSER_API_ORIGIN } from '@src/xroga/workspace';
+import { workspacePaired, workspaceRequest } from '@src/xroga/bridge';
+import { deviceProof, directConfigured, directReady, enrollDevice, savedDevice, verifyDevice } from '@src/xroga/device';
+import { activeBranch, getRun, listConversations } from '@src/store/conversations';
+import { defineCheck } from './registry';
+import { sleep, waitForLoad } from './helpers';
+import { panel } from './panel-chat';
+import { recentTimings } from '@src/agent/timing';
+
+const BASE = `${BROWSER_API_ORIGIN}/api/browser/local`;
+
+const DEFAULT_TASKS = [
+  { name: 'simple-read', text: 'Open https://example.com and tell me the heading of the page.', url: 'https://example.com/' },
+  {
+    name: 'three-pages',
+    text: 'Open https://example.com, https://www.iana.org and https://www.wikipedia.org and tell me the main heading of each page.',
+    url: 'https://example.com/',
+  },
+];
+
+defineCheck({
+  name: 'real-model',
+  title: 'Real model acceptance',
+  description: 'Enrolls this Chrome as a device for a staging test account and runs real tasks through the panel, measuring each.',
+  async run(args: Record<string, unknown>) {
+    const jwt = String(args.jwt ?? '');
+    const account = String(args.account ?? '');
+    if (!jwt || !account) throw new Error('args { jwt, account } are required');
+    const tasks = (Array.isArray(args.tasks) ? args.tasks : DEFAULT_TASKS) as typeof DEFAULT_TASKS;
+    const maxPolls = Number(args.maxPolls ?? 600);
+
+    const report0: Record<string, unknown> = {};
+    const { verifier, challenge } = await deviceProof();
+    const authorized = await fetch(`${BASE}/device/authorize`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', authorization: `Bearer ${jwt}` },
+      body: JSON.stringify({ extensionId: chrome.runtime.id, challenge }),
+    });
+    const body = (await authorized.json()) as { code?: string; error?: string };
+    if (!authorized.ok) throw new Error(`device authorize ${authorized.status}: ${body.error ?? ''}`);
+    await enrollDevice(account, verifier, body);
+    const verified = await verifyDevice().catch(error => String(error));
+    report0.device = { configured: directConfigured(), saved: !!(await savedDevice()), verified, ready: directReady() };
+
+    const window = (await chrome.windows.getCurrent()).id!;
+    const report: Record<string, unknown> = { extensionId: chrome.runtime.id, device: report0.device, tasks: [], polls: [] };
+    // args.maxProbe: what the staging backend does with each effort a device asks for, through the real route (device auth, run ownership, ledger): the effort it used and the
+    // reasoning tokens the provider reported. The run is cancelled at the end.
+    if (args.maxProbe) {
+      const probes: Array<Record<string, unknown>> = [];
+      try {
+        const started = (await workspaceRequest('start', { goal: 'Reasoning effort probe: answer with one number.', startUrl: 'https://example.com', attachmentCount: 0 })) as { runId: string };
+        for (const [i, asked] of (['max', 'high', 'none'] as const).entries()) {
+          const t0 = Date.now();
+          const r = (await workspaceRequest('turn', { runId: started.runId, body: { turn: i + 1, messages: [{ role: 'user', content: 'What is 17 times 23? Reply with the number only.' }], max_tokens: 512, reasoning_effort: asked } })) as { effort?: string; usage?: { completion_tokens?: number; completion_tokens_details?: { reasoning_tokens?: number } }; choice?: { message?: { content?: string } } };
+          probes.push({ asked, used: r.effort, reasoningTokens: r.usage?.completion_tokens_details?.reasoning_tokens, outputTokens: r.usage?.completion_tokens, ms: Date.now() - t0, answer: r.choice?.message?.content?.slice(0, 40) });
+        }
+        await workspaceRequest('finish', { runId: started.runId, body: { status: 'cancelled', actions: [] } }).catch(() => undefined);
+      } catch (error) {
+        probes.push({ error: String((error as Error)?.message ?? error).slice(0, 200) });
+      }
+      report.maxProbe = probes;
+    }
+    for (const task of tasks) {
+      // The page tab is the one in front, as a person's tab is while the agent works on it (a hidden tab makes every screenshot several seconds slower); the panel runs in a second tab.
+      const page = await chrome.tabs.create({ windowId: window, url: task.url, active: true });
+      await waitForLoad(page.id!);
+      const view = await chrome.tabs.create({ windowId: window, url: chrome.runtime.getURL(`/sidepanel.html#tab=${page.id}`), active: false });
+      await waitForLoad(view.id!);
+      await sleep(1500);
+      const before = new Set((await listConversations()).map(c => c.id));
+      const started = Date.now();
+      let status = '';
+      let last = '';
+      try {
+        // Ask mode waits for a person to approve each change; args.auto runs the task in Auto mode, which is a product setting.
+        if (args.auto) await panel(page.id!, 'select', { label: 'Mode', value: 'auto' }).catch(() => undefined);
+        await panel(page.id!, 'type-send', { text: task.text });
+        let conversationId: string | undefined;
+        for (let i = 0; i < maxPolls; i++) {
+          const read = await panel(page.id!, 'read');
+          last = read.transcript;
+          conversationId ??= (await listConversations()).find(c => !before.has(c.id))?.id;
+          const run = conversationId ? await getRun(conversationId) : undefined;
+          status = run?.status ?? 'starting';
+          if (i % 20 === 0) (report.polls as unknown[]).push({ i, bridgePaired: workspacePaired(), status, turns: run?.turns, transcript: last.slice(-120), phases: Object.fromEntries(Object.entries(recentTimings().at(-1)?.phases ?? {}).map(([k, v]) => [k, `${v.count}x ${v.totalMs}ms`])) });
+          // 'interrupted' with the reason 'Syncing the saved result' is the short moment after a run ends while its result is sent to the server.
+          // With args.approve, the check plays the person: it presses the first approval button of a waiting card (and records which).
+          if (args.approve && status === 'awaiting_user' && i % 10 === 0) {
+            (report.polls as unknown[]).push({ i, waitingButtons: (read.buttons ?? []).slice(0, 14), body: String(read.body ?? '').slice(-260) });
+          }
+          if (args.approve && status === 'awaiting_user') {
+            // The card's buttons are not in `buttons`; its text names "Allow" and "Deny". Press Allow (this action only).
+            if (/\nAllow\n/.test(String(read.body ?? ''))) {
+              (report.polls as unknown[]).push({ i, pressed: 'Allow', asked: String(read.body ?? '').match(/Asked because[^\n]*/)?.[0] });
+              await panel(page.id!, 'click', { label: 'Allow' }).catch(() => undefined);
+            }
+          }
+          // A file the agent made waits for the person to press Save (a card with Save, Save as and Skip): the check plays the person only with args.approve.
+          if (args.approve && status === 'awaiting_user' && /Save this file\?/.test(String(read.body ?? '')) && /\nSave\n/.test(String(read.body ?? ''))) {
+            (report.polls as unknown[]).push({ i, pressed: 'Save', file: String(read.body ?? '').match(/[\w.-]+\.(?:csv|md|json|txt|html)/)?.[0] });
+            await panel(page.id!, 'click', { label: 'Save' }).catch(() => undefined);
+          }
+          // A hand-over (ask_user takeover) is answered by the person pressing Done; the check plays the person only when args.done is set.
+          if (args.done && status === 'awaiting_user' && /\nDone\n/.test(String(read.body ?? ''))) {
+            (report.polls as unknown[]).push({ i, pressed: 'Done', body: String(read.body ?? '').slice(-300) });
+            await panel(page.id!, 'click', { label: 'Done' }).catch(() => undefined);
+          }
+          const syncing = status === 'interrupted' && /Syncing/i.test(run?.reason ?? '');
+          if (!syncing && ['done', 'failed', 'stopped', 'capped', 'interrupted'].includes(status)) break;
+          await sleep(500);
+        }
+        const ms = Date.now() - started;
+        const conversation = (await listConversations()).find(c => !before.has(c.id));
+        const run = conversation ? await getRun(conversation.id) : undefined;
+        // Which tools the model called, and what the postconditions and confirm_download said (evidence of how it really behaved).
+        const used: string[] = [];
+        const evidence: string[] = [];
+        if (conversation) {
+          for (const e of await activeBranch(conversation.id)) {
+            if (e.type !== 'message' || e.message.role !== 'tool') continue;
+            for (const p of e.message.parts) {
+              if (p.type !== 'tool-result') continue;
+              used.push(p.toolName);
+              // args.trace keeps the start of every tool result, to see what the model was told at each step.
+              if (args.trace) evidence.push(`${p.toolName} → ${p.text.replace(/\s+/g, ' ').slice(0, 320)}`);
+              const post = (e.result as { receipt?: { postcondition?: { status?: string; detail?: string } } } | undefined)?.receipt?.postcondition;
+              if (post) evidence.push(`${p.toolName}: expect ${post.status}${post.detail ? ` (${post.detail.slice(0, 100)})` : ''}`);
+              if (p.toolName === 'confirm_download') evidence.push(p.text.slice(0, 160));
+            }
+          }
+        }
+        (report.tasks as unknown[]).push({
+          used,
+          evidence,
+          name: task.name,
+          status,
+          seconds: Math.round(ms / 100) / 10,
+          turns: run?.turns,
+          reason: run?.reason,
+          answer: last.slice(-3000),
+          // Where the product run's time went: the loop's phase recorder (the product keeps it in storage for each run).
+          timing: await chrome.storage.local.get('xroga_perf_v1').then(r => {
+            const ring = (r.xroga_perf_v1 ?? []) as Array<{ timings?: { wallMs: number; marks?: Record<string, number>; phases: Record<string, { count: number; totalMs: number; maxMs: number }> } }>;
+            const last = ring.at(-1)?.timings;
+            return last ? { wallMs: Math.round(last.wallMs), marks: last.marks, phases: Object.fromEntries(Object.entries(last.phases).map(([k, v]) => [k, `${v.count}x ${Math.round(v.totalMs)}ms (max ${Math.round(v.maxMs)})`])) } : null;
+          }).catch(() => null),
+        });
+      } finally {
+        for (const t of [view, page]) await chrome.tabs.remove(t.id!).catch(() => undefined);
+      }
+    }
+    return report;
+  },
+});

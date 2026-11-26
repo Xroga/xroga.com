@@ -1,0 +1,902 @@
+import assert from "node:assert/strict";
+import { mkdtemp, realpath, rm, writeFile } from "node:fs/promises";
+import { createRequire } from "node:module";
+import { tmpdir } from "node:os";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const require = createRequire(import.meta.url);
+const { chromium } = require(
+  process.argv[2] ? resolve(process.argv[2]) : "playwright",
+);
+const chrome = process.argv[3];
+const live = process.argv.includes("--live-zurelay");
+const formOnly = live && process.argv.includes("--form-only");
+const documentOnly = process.argv.includes("--document-only");
+const liveKey = live ? process.env.XROGA_CHROME_PROBE_KEY : undefined;
+delete process.env.XROGA_CHROME_PROBE_KEY;
+if (live)
+  assert.ok(
+    liveKey,
+    "An existing credential is required for the authorized live probe.",
+  );
+const providerModel = "deepseek-v4.1-flash-1017";
+const receipts = [];
+const latencyRuns = Number(process.env.XROGA_LATENCY_RUNS ?? 0) || 0;
+let pointerWaitVerified = false;
+let pointerAnchorVerified = false;
+let liveRequests = 0;
+let spentMicros = 0;
+// Chrome's IndexedDB files can exceed Windows' path limit under a deeply nested job root.
+const root = await realpath(process.argv[4] ?? tmpdir());
+const profile = await mkdtemp(join(root, "xr-op-"));
+const audioFixture = join(profile, "dictation.wav");
+const dist = fileURLToPath(
+  new URL("../../apps/xroga-browser-extension/dist", import.meta.url),
+);
+const site = "https://operator-fixture.test";
+const searchOrigin = "https://www.google.com";
+const workspaceOrigin = "https://xroga.com";
+const fixtureOwner = "00000000-0000-4000-8000-000000000001";
+let fixtureAccount = fixtureOwner;
+const repo = fileURLToPath(new URL("../../", import.meta.url));
+const goal = "Open the catalog and report the published fixture price.";
+const answer = "The verified fixture price is $39.";
+const formGoal =
+  "Enter Synthetic Applicant in the application, submit only after my approval, then read the receipt.";
+const formAnswer = "The fixture confirmed the application.";
+const stopGoal = "Stop this task before its pending model turn can act.";
+const recoveryGoal = "Open the catalog and verify the price even if a model request is interrupted.";
+const fileGoal =
+  "Use the target product from the attached file. Follow the catalog link, find the listed price and report it.";
+const workbookGoal =
+  "Use the final order row in the attached workbook. Open the catalog and follow its product link for the final price. Report the product, quantity, unit price and total.";
+const runs = new Map();
+let voiceRequests = 0;
+const actionCues = new Set();
+let rejectPairing = !live;
+let useWorkspaceComponent = false;
+let browser;
+
+async function buildWorkspaceComponent() {
+  const { build } = require("esbuild");
+  const result = await build({
+    stdin: {
+      contents: `
+        import { createRoot } from 'react-dom/client';
+        import { WorkspaceBrowserOperator, WorkspaceBrowserConnection, WorkspaceBrowserProgress, useWorkspaceBrowserOperator, isLocalChromeRequest } from './frontend/src/components/browser/WorkspaceBrowserOperator';
+        function Composer() {
+          const operator = useWorkspaceBrowserOperator();
+          return <main><WorkspaceBrowserProgress operator={operator} prompted={false} /><form onSubmit={event => {
+            event.preventDefault();
+            const text = String(new FormData(event.currentTarget).get('prompt'));
+            if (isLocalChromeRequest(text)) void operator?.start(text.slice('/chrome '.length), []);
+          }}><textarea name="prompt" aria-label="Message Xroga" /><button>Send prompt</button></form></main>;
+        }
+        createRoot(document.querySelector('#app')).render(<WorkspaceBrowserOperator extensionId={window.fixtureExtensionId}><WorkspaceBrowserConnection /><Composer /></WorkspaceBrowserOperator>);
+      `,
+      resolveDir: repo,
+      loader: "tsx",
+    },
+    jsx: "automatic",
+    bundle: true,
+    write: false,
+    define: { "process.env.NODE_ENV": '"production"' },
+    plugins: [{
+      name: "isolated-workspace-api",
+      setup(plugin) {
+        plugin.onResolve({ filter: /^(?:@\/lib\/(api|supabase\/client|voiceApi)|next\/navigation)$/ }, args => ({
+          path: args.path, namespace: "fixture",
+        }));
+        plugin.onLoad({ filter: /.*/, namespace: "fixture" }, args => {
+          if (args.path === "next/navigation") return { contents: "export const usePathname = () => '/workspace';" };
+          if (args.path === "@/lib/api") return { contents: `
+            export class ApiError extends Error { constructor(message, status) { super(message); this.status = status; } }
+            export async function getAccessToken() { return 'fixture-authenticated-user'; }
+            export async function apiFetch(path, options, token) {
+              if (token !== 'fixture-authenticated-user') throw new ApiError('Unauthorized', 401);
+              if (window.fixtureRejectPairing) throw new ApiError('Not found', 404);
+              if (path === '/api/browser/local/session') return { account: window.fixtureAccount };
+              if (path === '/api/browser/local/runs' && options?.method === 'POST') window.fixtureRunStarted = true;
+              const runs = '/api/browser/local/runs';
+              if (options.method === 'POST' && path === runs)
+                return window.fixtureBrowserRequest({ op: 'start', value: JSON.parse(options.body) });
+              if (path.startsWith(runs + '/')) {
+                const [runId, op] = path.slice(runs.length + 1).split('/');
+                if (!options.method && !op) return window.fixtureGetRun(runId);
+                if (options.method === 'POST' && op)
+                  return window.fixtureBrowserRequest({ op, value: { runId, body: JSON.parse(options.body) } });
+              }
+              throw new Error('Unexpected request');
+            }
+          ` };
+          return { contents: `
+            export function createClient() {
+              return { auth: { onAuthStateChange(callback) {
+                window.fixtureAuthChanged = callback;
+                return { data: { subscription: { unsubscribe() { delete window.fixtureAuthChanged; } } } };
+              } } };
+            }
+            export function transcribeVoiceAudio() { throw new Error('Unexpected voice request'); }
+          ` };
+        });
+      },
+    }],
+  });
+  return result.outputFiles[0].text;
+}
+
+async function liveReply(run, request) {
+  const body = {
+    model: providerModel,
+    messages: request.messages,
+    tools: request.tools,
+    tool_choice: request.tool_choice,
+    stream: false,
+    reasoning_effort: "none",
+    max_tokens: 768,
+  };
+  const wire = JSON.stringify(body);
+  // Conservative: UTF-8 wire bytes upper-bound text tokens for these synthetic requests.
+  assert.ok(
+    ++liveRequests <= 14 &&
+      spentMicros + Math.ceil(Buffer.byteLength(wire) * 0.03 + 768 * 0.12) <=
+        25_000,
+    "Live probe reached its request or $0.025 spend ceiling.",
+  );
+  const { validateZurelayRequest, verifyZurelayResponse } =
+    await import("../../backend/src/ai/zurelayWire.ts");
+  const { actualProviderCostMicroUsd } =
+    await import("../../backend/src/ai/providerBudget.ts");
+  validateZurelayRequest(body, providerModel);
+  const started = performance.now();
+  const response = await fetch("https://api.zurelay.com/v1/chat/completions", {
+    method: "POST",
+    redirect: "manual",
+    signal: AbortSignal.timeout(35_000),
+    headers: {
+      authorization: `Bearer ${liveKey}`,
+      "content-type": "application/json",
+      "x-zurelay-fallback": "off",
+    },
+    body: wire,
+  });
+  assert.ok(
+    response.ok,
+    `Live Zurelay request failed with HTTP ${response.status}`,
+  );
+  await verifyZurelayResponse(response, providerModel, false);
+  const payload = await response.json();
+  const usage = payload.usage;
+  const costMicros = actualProviderCostMicroUsd({
+    modelId: "deepseek_v4_1_flash_1017",
+    inputTokens: usage.prompt_tokens,
+    outputTokens: usage.completion_tokens,
+    cachedInputTokens: usage.prompt_tokens_details?.cached_tokens,
+    reasoningTokens: usage.completion_tokens_details?.reasoning_tokens,
+  });
+  spentMicros += costMicros;
+  const choice = payload.choices[0];
+  const tools = (choice.message.tool_calls ?? []).map(
+    (call) => call.function.name,
+  );
+  run.turns.push(...tools);
+  const receipt = {
+    id: response.headers.get("x-request-id"),
+    elapsedMs: Math.round(performance.now() - started),
+    promptTokens: usage.prompt_tokens,
+    completionTokens: usage.completion_tokens,
+    costMicros,
+    tools,
+  };
+  receipts.push(receipt);
+  console.log(JSON.stringify(receipt));
+  return { id: payload.id, model: "deepseek_v4_1_flash_1017", choice, usage };
+}
+
+function reply(run, request) {
+  const history = JSON.stringify(request.messages);
+  const observation =
+    request.messages.findLast((message) => message.role === "tool")?.content ??
+    "";
+  const ref = (label) => {
+    const line = observation.split("\n").find((item) => item.includes(label));
+    const value = /\[([a-z]+\d+)\]/.exec(line ?? "")?.[1];
+    assert.ok(value, observation.slice(-2500));
+    return { ref: value };
+  };
+  const call = (name, args) => ({
+    id: `tool_${request.turn}`,
+    type: "function",
+    function: { name, arguments: JSON.stringify(args) },
+  });
+  let tool;
+  if (run.goal === workbookGoal) {
+    if (request.turn === 1) {
+      const [, id, chars] = /\(id ([\w-]+)\) has (\d+) characters/.exec(history) ?? [];
+      assert.ok(id);
+      tool = call("read_attachment", { id, offset: Number(chars) - 550, maxChars: 550 });
+    } else if (request.turn === 2) {
+      assert.match(observation, /A602="Orion"\s+B602="7"/);
+      tool = call("snapshot", {});
+    } else if (request.turn === 3) tool = call("click", { target: ref("Browse catalog") });
+    else if (request.turn === 4) tool = call("click", { target: ref("Show products") });
+    else if (request.turn === 5) tool = call("wait", { text: "Orion product details" });
+    else if (request.turn === 6) tool = call("snapshot", {});
+    else if (request.turn === 7) tool = call("click", { target: ref("Orion product details") });
+    else if (request.turn === 8) tool = call("read", {});
+    else if (request.turn === 9) {
+      const price = Number(/Verified unit price: \$(\d+)/.exec(observation)?.[1]);
+      const quantity = Number(/B602=\\"(\d+)\\"/.exec(history)?.[1]);
+      assert.ok(price > 0 && quantity > 0);
+      tool = call("done", { outcome: "success", summary: `Orion, Orders!A602:B602: ${quantity} × $${price} = $${quantity * price}` });
+    }
+  } else if (request.turn === 1) tool = call("snapshot", {});
+  else if (run.goal === formGoal) {
+    if (request.turn === 2)
+      tool = call("fill_form", {
+        fields: [
+          { target: ref("Applicant name"), value: "Synthetic Applicant" },
+        ],
+        submit: ref("Submit application"),
+      });
+    else if (request.turn === 3) tool = call("read", {});
+    else if (request.turn === 4) {
+      assert.match(history, /Application received: Synthetic Applicant/);
+      tool = call("done", { outcome: "success", summary: formAnswer });
+    }
+  } else if (request.turn === 2) {
+    tool = call("click", { target: ref("Browse catalog") });
+  } else if (run.goal === recoveryGoal) {
+    if (request.turn === 4) tool = call("snapshot", {});
+    if (request.turn === 5) tool = call("read", {});
+    if (request.turn === 6) tool = call("done", { outcome: "success", summary: answer });
+  } else if (request.turn === 3) tool = call("read", {});
+  else if (request.turn === 4) tool = call("screenshot", {});
+  else if (request.turn === 5) {
+    assert.match(history, /Fixture price: \$39/);
+    assert.doesNotMatch(history, /image_url|data:image/);
+    tool = call("done", { outcome: "success", summary: answer });
+  }
+  if (!tool) throw new Error("Unexpected extra model request");
+  run.turns.push(tool.function.name);
+  return {
+    id: `fixture_${request.turn}`,
+    model: "deepseek_v4_1_flash_1017",
+    choice: {
+      finish_reason: "tool_calls",
+      message: { content: null, tool_calls: [tool] },
+    },
+    usage: { prompt_tokens: 150, completion_tokens: 20, total_tokens: 170 },
+  };
+}
+
+try {
+  const workspaceComponent = live ? null : await buildWorkspaceComponent();
+  if (!live) {
+    const rate = 16_000;
+    const wav = Buffer.alloc(44 + 4 * rate * 2);
+    wav.write("RIFF"); wav.writeUInt32LE(wav.length - 8, 4); wav.write("WAVEfmt ", 8);
+    wav.writeUInt32LE(16, 16); wav.writeUInt16LE(1, 20); wav.writeUInt16LE(1, 22);
+    wav.writeUInt32LE(rate, 24); wav.writeUInt32LE(rate * 2, 28); wav.writeUInt16LE(2, 32);
+    wav.writeUInt16LE(16, 34); wav.write("data", 36); wav.writeUInt32LE(wav.length - 44, 40);
+    for (let i = 0; i < 4 * rate; i++)
+      wav.writeInt16LE(Math.round(4000 * Math.sin(2 * Math.PI * 440 * i / rate)), 44 + i * 2);
+    await writeFile(audioFixture, wav);
+  }
+  browser = await chromium.launchPersistentContext(profile, {
+    ...(chrome ? { executablePath: chrome } : { channel: "chromium" }),
+    headless: false,
+    ignoreDefaultArgs: ["--disable-extensions"],
+    args: [
+      "--enable-unsafe-extension-debugging",
+      "--disable-background-networking",
+      "--disable-background-timer-throttling",
+      "--use-mock-keychain",
+      ...(live ? [] : ["--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream",
+        `--use-file-for-fake-audio-capture=${audioFixture}`]),
+    ],
+    timeout: 20_000,
+  });
+  console.log("Chrome started");
+  browser.on("page", page => page.on("pageerror", error => console.error("Fixture page error:", error.message)));
+  const tab = browser.pages()[0];
+  // The on-page Xroga pointer, as the page can see it: its mode and its status (its content is in a closed shadow root).
+  const pointerState = () => tab.evaluate(() => {
+    const host = document.querySelector("[data-xroga-pointer]");
+    return host ? { mode: host.getAttribute("data-xroga-pointer"), status: host.getAttribute("data-xroga-status") } : null;
+  });
+  const cdp = await browser.browser().newBrowserCDPSession();
+  const { id } = await cdp.send("Extensions.loadUnpacked", { path: dist });
+  console.log("Agent extension loaded");
+  if (!live) {
+    await browser.exposeFunction("fixtureGetRun", id => {
+      const run = runs.get(id);
+      assert.ok(run);
+      return { status: run.result?.status ?? "running", result: { text: run.result?.result } };
+    });
+    await browser.exposeFunction("fixtureActionCue", action => actionCues.add(action));
+    await browser.addInitScript(origin => {
+      if (location.origin !== origin) return;
+      for (const event of ["click", "input"]) {
+        document.addEventListener(event, () => {
+          if (document.querySelector("[data-xroga-pointer=point], [data-xroga-pointer=neutral]"))
+            void window.fixtureActionCue(event);
+        }, true);
+      }
+    }, site);
+  }
+  await browser.exposeFunction(
+    "fixtureBrowserRequest",
+    async ({ op, value }) => {
+      if (op === "voice" && !live) {
+        const wav = Buffer.from(value.body, "base64");
+        const { requireVoicePcm } = await import("../../backend/src/ai/voicePcm.ts");
+        assert.ok(requireVoicePcm(wav).seconds > 0);
+        voiceRequests++;
+        return { text: "Synthetic dictation draft" };
+      }
+      if (op === "start") {
+        const fixtureGoal = value.goal === `${goal} ${site}` ? goal : value.goal;
+        assert.ok(
+          [goal, formGoal, stopGoal, fileGoal, workbookGoal, recoveryGoal].includes(
+            fixtureGoal,
+          ),
+        );
+        if (value.goal === fileGoal || value.goal === workbookGoal)
+          assert.equal(value.attachmentCount, 1);
+        const runId = globalThis.crypto.randomUUID();
+        assert.ok([site, searchOrigin].includes(value.startUrl), "Persist only the starting origin");
+        runs.set(runId, { goal: fixtureGoal, turns: [], startUrl: value.startUrl });
+        return { runId, turns: 0, maxTurns: 48, remainingMs: 40 * 60_000 };
+      }
+      const run = runs.get(value.runId);
+      assert.ok(
+        run,
+        "turns and results use the admitted canonical run identity",
+      );
+      if (op === "turn") {
+        if (run.goal === recoveryGoal) {
+          (run.ordinals ??= []).push(value.body.turn);
+          if (value.body.turn === 3) {
+            // Hang after the provider admission boundary, then pause from the actual side panel.
+            await new Promise(resolve => { run.release = resolve; });
+            throw new Error("Synthetic unknown provider receipt");
+          }
+        }
+        if (run.goal === stopGoal) {
+          run.pending = true;
+          await new Promise((resolve) => {
+            run.release = resolve;
+          });
+        }
+        try {
+          return live && run.goal !== stopGoal ? await liveReply(run, value.body) : reply(run, value.body);
+        } catch (error) {
+          if (!live && run.goal !== recoveryGoal) console.error("Fixture turn", value.body.turn, error.message);
+          throw error;
+        }
+      }
+      if (op === "resume" && run.goal === recoveryGoal) {
+        assert.deepEqual(run.ordinals, [1, 2, 3]);
+        return { runId: value.runId, turns: 3, maxTurns: 48, remainingMs: 39 * 60_000 };
+      }
+      if (op === "finish") {
+        if (run.goal === recoveryGoal && !(run.finishAttempts ?? 0)) {
+          run.finishAttempts = 1;
+          run.firstFinish = value.body;
+          throw new Error("Synthetic finalization acknowledgement lost");
+        }
+        if (run.goal === recoveryGoal) {
+          run.finishAttempts++;
+          assert.deepEqual(value.body, run.firstFinish, "Resend only the durable outcome");
+        }
+        run.result = value.body;
+        return { status: value.body.status };
+      }
+      throw new Error("Unexpected request");
+    },
+  );
+  await browser.route(/^https?:\/\//, (route) => {
+    const url = new URL(route.request().url());
+    if (url.origin === site || (!live && url.origin === searchOrigin)) {
+      const body =
+        url.pathname === "/catalog"
+          ? documentOnly
+            ? '<title>Catalog</title><main><h1>Catalog</h1><button id="reveal">Show products</button><div id="products"></div></main><script>document.querySelector("#reveal").onclick = () => setTimeout(() => { document.querySelector("#products").innerHTML = "<a href=\'/products/orion\'>Orion product details</a>"; }, 250);</script>'
+            : "<title>Catalog</title><main><h1>Catalog</h1><p>Atlas Fixture price: $39</p><p>Orion Fixture price: $82</p></main>"
+          : url.pathname === "/products/orion"
+            ? "<title>Orion details</title><main><h1>Orion</h1><p>Verified unit price: $82</p></main>"
+            : url.pathname === "/apply"
+              ? '<title>Application</title><main><form action="/received"><label>Applicant name<input name="applicant" required></label><button type="submit">Submit application</button></form></main>'
+              : url.pathname === "/received" &&
+                  url.searchParams.get("applicant") === "Synthetic Applicant"
+                ? "<title>Receipt</title><main><p>Application received: Synthetic Applicant</p></main>"
+                : '<title>Store</title><main><h1>Store</h1><a href="/catalog">Browse catalog</a></main>';
+      return route.fulfill({ contentType: "text/html", body });
+    }
+    if (url.origin === workspaceOrigin && url.pathname === "/workspace") {
+      if (rejectPairing || useWorkspaceComponent) {
+        return route.fulfill({
+          contentType: "text/html",
+          body: `<!doctype html><div id="app"></div><script>
+            window.fixtureRejectPairing=${rejectPairing};
+            window.fixtureAccount=${JSON.stringify(fixtureAccount)};
+            window.fixtureExtensionId=${JSON.stringify(id)};
+            ${workspaceComponent.replaceAll("</script", "<\\/script")}</script>`,
+        });
+      }
+      return route.fulfill({
+        contentType: "text/html",
+        body: `<!doctype html><title>Workspace bridge fixture</title>
+        <div id="state">connecting</div><script>
+        const query = new URLSearchParams(location.search);
+        const port = chrome.runtime.connect(query.get('browserExtension'), {name:'xroga-browser-v1'});
+        window.events = [];
+        window.startTask = (goal, startUrl, files) => port.postMessage({type:'start-task',goal,startUrl,files});
+        window.resumeTask = runId => port.postMessage({type:'resume-task',runId});
+        port.onMessage.addListener(async m => {
+          events.push(m.type === 'activity' ? [m.type,m.tool,m.status] : [m.type,m.runId]);
+          if(m.type==='paired') document.querySelector('#state').textContent='paired';
+          if(m.type==='pair-rejected') document.querySelector('#state').textContent='account rejected';
+          if(m.type==='request') {
+            try { port.postMessage({type:'result',id:m.id,ok:true,value:await fixtureBrowserRequest(m)}); }
+            catch (e) { document.querySelector('#state').textContent=e.message; port.postMessage({type:'result',id:m.id,ok:false}); }
+          }
+        });
+        port.postMessage({type:'pair',nonce:query.get('browserPair'),account:${JSON.stringify(fixtureAccount)}});
+        </script>`,
+      });
+    }
+    return route.abort();
+  });
+  await tab.goto(site);
+  const { targetInfos } = await cdp.send("Target.getTargets", {
+    filter: [{ type: "tab" }],
+  });
+  const target = targetInfos.find((item) => item.url === tab.url());
+  assert.ok(target);
+  await cdp.send("Extensions.triggerAction", { id, targetId: target.targetId });
+  const panel = await browser.newPage();
+  await tab.bringToFront();
+  await panel.goto(`chrome-extension://${id}/sidepanel.html`);
+  const connect = () => panel.getByRole("button", { name: "Connect Xroga Workspace" })
+    .evaluate((button) => button.click());
+  if (!live) {
+    // Opening the side panel attempts an authenticated handoff in the background.
+    await panel.getByRole("alert").filter({hasText:"Browser Automation is unavailable"}).waitFor({timeout: 15_000})
+      .catch(async error => {
+        for (const page of browser.pages()) {
+          if (page === panel || page.url().startsWith(`${workspaceOrigin}/workspace?`)) {
+            console.error("Pairing fixture page:", (await page.locator("body").innerText()).slice(0, 500));
+          }
+        }
+        throw error;
+      });
+    const pairingPages = browser.pages().filter(page => page.url().startsWith(`${workspaceOrigin}/workspace?`));
+    assert.equal(pairingPages.length, 1);
+    await pairingPages[0].locator("summary").filter({hasText:"Browser Automation"}).click();
+    await pairingPages[0].getByRole("status").filter({hasText:"Browser Automation is unavailable"}).waitFor();
+    const [pairingTab] = await panel.evaluate(() => chrome.tabs.query({ url: "https://xroga.com/workspace*" }));
+    assert.equal(pairingTab?.active, false);
+    rejectPairing = false;
+    await connect();
+  }
+  let workspace;
+  const deadline = Date.now() + 15_000;
+  while (!workspace && Date.now() < deadline) {
+    workspace = browser
+      .pages()
+      .find((page) => page.url().startsWith(`${workspaceOrigin}/workspace?`));
+    if (!workspace) await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  assert.ok(
+    workspace,
+    `Expected pairing page. Open pages: ${browser
+      .pages()
+      .map((page) => page.url())
+      .join(", ")}`,
+  );
+  await workspace
+    .getByText("paired", { exact: true })
+    .waitFor({ timeout: 15_000 })
+    .catch(async (error) => {
+      console.error(
+        "Pairing state:",
+        await workspace.locator("body").innerText(),
+      );
+      console.error(
+        "Extension panel:",
+        await panel.locator("body").innerText(),
+      );
+      throw error;
+    });
+  console.log("Workspace fixture paired");
+  await panel.getByRole("status").filter({ hasText: "Workspace connected" }).waitFor({timeout: 15_000});
+  await panel.getByRole("button", { name: "Connect Xroga Workspace" }).waitFor({ state: "hidden" });
+  assert.equal(await panel.getByLabel("Website or search").count(), 0);
+  const input = panel.locator("textarea");
+  if (!live) {
+    const settings = await browser.newPage();
+    await settings.goto(`chrome-extension://${id}/options.html#permissions`);
+    await settings.getByText("Xroga Browser Automation", { exact: true }).waitFor();
+    const permissions = await settings.evaluate(() => chrome.permissions.getAll());
+    assert.ok(permissions.permissions.includes("tabGroups"));
+    assert.ok(permissions.permissions.includes("downloads"));
+    assert.ok(!permissions.permissions.includes("notifications"));
+    await settings.getByRole("button", { name: "General" }).click();
+    assert.equal(await settings.getByText("Maximum turns").count(), 0);
+    await settings.getByRole("button", { name: "Workflows" }).click();
+    await settings.getByText("Custom instructions", { exact: true }).waitFor();
+    await settings.getByRole("button", { name: "New shortcut" }).click();
+    await settings.locator('input[type="file"]').setInputFiles({
+      name: "SKILL.md", mimeType: "text/markdown",
+      buffer: Buffer.from("---\nname: product-research\ndescription: Review listings\n---\nCompare the public listings."),
+    });
+    await settings.getByRole("button", { name: "Save", exact: true }).click();
+    await settings.getByText("/product-research", { exact: true }).waitFor();
+    await settings.close();
+    await panel.bringToFront();
+    await panel.getByRole("button", { name: "Voice input" }).click();
+    const stopVoice = panel.getByRole("button", { name: "Stop recording" });
+    await stopVoice.waitFor();
+    await new Promise(resolve => setTimeout(resolve, 450));
+    await stopVoice.click();
+    await panel.waitForFunction(() => document.querySelector("textarea")?.value === "Synthetic dictation draft", undefined, { timeout: 12_000 })
+      .catch(async error => {
+        console.error("Dictation fixture", { voiceRequests, alerts: await panel.getByRole("alert").allTextContents() });
+        throw error;
+      });
+    assert.equal(voiceRequests, 1);
+    assert.equal(runs.size, 0, "Dictation must not send a task");
+  }
+  const waitForFinish = async (expected) => {
+    await workspace
+      .waitForFunction(
+        (count) =>
+          window.events.filter((event) => event[0] === "finished").length ===
+          count,
+        expected,
+        { timeout: live ? 100_000 : 25_000, polling: 100 },
+      )
+      .catch(async (error) => {
+        console.error(
+          "Workspace fixture:",
+          await workspace.locator("#state").textContent(),
+        );
+        console.error("Events:", await workspace.evaluate(() => window.events));
+        console.error(
+          "Panel:",
+          (await panel.locator("body").innerText()).slice(-1500),
+        );
+        throw error;
+      });
+  };
+  if (documentOnly) {
+    const { default: ExcelJS } = await import("exceljs");
+    const { readBrowserDocument } =
+      await import("../../backend/src/routes/browserDocuments.ts");
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Orders");
+    sheet.addRow(["Product", "Quantity", "Notes"]);
+    for (let index = 1; index <= 600; index++) {
+      sheet.addRow([
+        `Archive row ${index}`,
+        1,
+        "Prior reference only. It is not the order to process.",
+      ]);
+    }
+    sheet.addRow(["Orion", 7, "Final order to process"]);
+    const text = await readBrowserDocument(
+      "orders.xlsx",
+      Buffer.from(await workbook.xlsx.writeBuffer()),
+    );
+    assert.ok(text.length > 40_000);
+    await workspace.evaluate(
+      ({ goal, site, text }) =>
+        window.startTask(goal, site, [{ name: "orders.xlsx.txt", text }]),
+      { goal: workbookGoal, site, text },
+    );
+    await waitForFinish(1);
+    const run = [...runs.values()][0];
+    assert.equal(run.result?.status, "completed", await workspace.locator("#state").textContent());
+    assert.match(run.result.result, /Orion/i);
+    assert.match(run.result.result, /\b574\b/);
+    assert.ok(run.turns.includes("read_attachment"));
+    assert.ok(
+      browser.pages().some((page) => page.url() === `${site}/products/orion`),
+    );
+    console.log(
+      JSON.stringify({
+        scenario: live ? "live-workbook-and-dynamic-catalog" : "fixture-workbook-and-dynamic-catalog",
+        attachmentChars: text.length,
+        result: run.result,
+        costMicros: spentMicros,
+      }),
+    );
+  } else if (!formOnly) {
+    await input.fill(goal);
+    if (!live) await tab.bringToFront();
+    const coldStart = Date.now();
+    const coldVisible = latencyRuns ? tab.waitForSelector("[data-xroga-pointer]", { timeout: 15_000 }).then(() => Date.now() - coldStart).catch(() => null) : null;
+    await input.press("Enter");
+    console.log("Side-panel task submitted");
+    await waitForFinish(1);
+    console.log("Side-panel task reached a terminal state");
+    const coldDone = Date.now() - coldStart;
+    console.log("First task receipt:", JSON.stringify([...runs.values()]));
+    assert.equal(
+      [...runs.values()][0]?.result?.status,
+      "completed",
+      await workspace.locator("#state").textContent(),
+    );
+    assert.ok(browser.pages().some((page) => page.url() === `${site}/catalog`));
+    if (latencyRuns) {
+      // Latency mode (XROGA_LATENCY_RUNS=N): repeat the same simple task in the real extension and real Chrome, timing it from the
+      // Playwright side, then read the per-phase ring the worker kept. The model is the deterministic fixture, so model time is
+      // about zero here: these numbers are the local overhead (observation, actions, settle, journal, sync), not live model latency.
+      const samples = [{ cold: true, pointerVisibleMs: await coldVisible, doneMs: coldDone }];
+      for (let i = 2; i <= latencyRuns; i++) {
+        await tab.goto(site);
+        const t0 = Date.now();
+        await input.fill(goal);
+        const visible = tab.waitForSelector("[data-xroga-pointer]", { timeout: 15_000 }).then(() => Date.now() - t0).catch(() => null);
+        await input.press("Enter");
+        await waitForFinish(i);
+        samples.push({ cold: false, pointerVisibleMs: await visible, doneMs: Date.now() - t0 });
+      }
+      let worker = browser.serviceWorkers().find(w => w.url().startsWith("chrome-extension://"));
+      worker ??= await browser.waitForEvent("serviceworker", { timeout: 10_000 });
+      const perf = await worker.evaluate(async () => (await chrome.storage.local.get("xroga_perf_v1")).xroga_perf_v1 ?? []);
+      const out = process.env.XROGA_LATENCY_OUT;
+      const report = { product: (await cdp.send("Browser.getVersion")).product, runs: latencyRuns, model: "deterministic fixture", samples, perf };
+      if (out) await writeFile(out, JSON.stringify(report, null, 2));
+      console.log(JSON.stringify({ latency: "recorded", runs: latencyRuns, out: out ?? null }));
+      throw Object.assign(new Error("latency mode complete"), { latencyDone: true });
+    }
+    await workspace.evaluate(
+      ({ goal, site, live }) =>
+        window.startTask(
+          goal,
+          live ? site : undefined,
+          live
+            ? [
+                {
+                  name: "purchase-order.csv",
+                  text: "product,quantity\nOrion,2",
+                },
+              ]
+            : undefined,
+        ),
+      { goal: live ? fileGoal : goal, site, live },
+    );
+    await waitForFinish(2);
+    assert.equal(
+      browser.pages().filter((page) => [`${site}/catalog`, `${searchOrigin}/catalog`].includes(page.url())).length,
+      2,
+    );
+    assert.equal(runs.size, 2);
+    if (!live) assert.ok([...runs.values()].some(run => run.startUrl === searchOrigin));
+    for (const run of runs.values()) {
+      if (live) {
+        assert.equal(run.result?.status, "completed");
+        assert.match(
+          run.result.result,
+          run.goal === fileGoal ? /Orion[\s\S]*82|82[\s\S]*Orion/i : /39/,
+        );
+        assert.ok(
+          run.result.actions.some(
+            (action) => action === "click" || action === "navigate",
+          ),
+        );
+      } else {
+        assert.deepEqual(run.turns, ["snapshot", "click", "read", "screenshot", "done"]);
+        assert.deepEqual(run.result, {
+          status: "completed",
+          result: answer,
+          // The agent captures the page once before the first turn and counts it as work done (ef262b72d), so the scripted model's own first snapshot is the second.
+          actions: ["snapshot", "snapshot", "click", "read", "screenshot"],
+        });
+      }
+    }
+  }
+  if (!documentOnly) {
+    await tab.goto(`${site}/apply`);
+    await input.fill(formGoal);
+    if (!live) await tab.bringToFront();
+    await input.press("Enter");
+    const allow = panel.getByRole("button", { name: "Allow", exact: true });
+    await allow
+      .waitFor({ timeout: live ? 70_000 : 15_000 })
+      .catch(async (error) => {
+        console.error(
+          "Form receipt:",
+          [...runs.values()].find((run) => run.goal === formGoal),
+        );
+        console.error(
+          "Workspace state:",
+          await workspace.locator("#state").textContent(),
+        );
+        console.error("Form panel:", await panel.locator("body").innerText());
+        throw error;
+      });
+    assert.equal(
+      await panel
+        .getByRole("button", { name: "Always allow", exact: false })
+        .count(),
+      0,
+    );
+    await workspace.waitForFunction(
+      () => window.events.some((event) => event[2] === "approval-required"),
+      undefined,
+      {
+        timeout: 5_000,
+        polling: 100,
+      },
+    );
+    assert.equal(
+      browser.pages().some((page) => page.url().startsWith(`${site}/received`)),
+      false,
+    );
+    await allow.click();
+    await waitForFinish(formOnly ? 1 : 3);
+    assert.ok(
+      browser.pages().some((page) => page.url().startsWith(`${site}/received`)),
+    );
+    const formRun = [...runs.values()].find((run) => run.goal === formGoal);
+    if (live) assert.equal(formRun.result?.status, "completed");
+    else
+      assert.deepEqual(formRun.result, {
+        status: "completed",
+        result: formAnswer,
+        actions: ["snapshot", "fill_form", "read"],
+      });
+
+    await tab.goto(site);
+    await input.fill(stopGoal);
+    await input.press("Enter");
+    const stop = panel.getByRole("button", { name: "Stop", exact: true });
+    await stop.waitFor({ timeout: 15_000 });
+    const pendingDeadline = Date.now() + 10_000;
+    let stopRun;
+    while (!stopRun?.pending && Date.now() < pendingDeadline) {
+      stopRun = [...runs.values()].find((run) => run.goal === stopGoal);
+      if (!stopRun?.pending)
+        await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    assert.ok(stopRun?.pending);
+    // The model is thinking and nothing has been clicked yet: past the 1.6 s the old pointer lasted, the pointer is still
+    // on the page with a neutral anchored status, not pointing at a control.
+    await new Promise(resolve => setTimeout(resolve, 2500));
+    assert.deepEqual(await pointerState(), { mode: "neutral", status: "Waiting for response" }, "the pointer stays through a model wait");
+    pointerWaitVerified = true;
+    await stop.click();
+    try {
+      await waitForFinish(formOnly ? 2 : 4);
+      assert.deepEqual(stopRun.result, { status: "cancelled", actions: [] });
+      await tab.waitForFunction(() => !document.querySelector("[data-xroga-pointer]"), undefined, { timeout: 5000 });
+    } finally {
+      stopRun.release();
+    }
+  }
+  if (!live && !documentOnly) {
+    await tab.goto(site);
+    await input.fill(recoveryGoal);
+    await input.press("Enter");
+    const pause = panel.getByRole("button", { name: "Pause and take over", exact: true });
+    await pause.waitFor({ timeout: 25_000 });
+    const claimDeadline = Date.now() + 20_000;
+    let recovery;
+    while (!recovery?.release && Date.now() < claimDeadline) {
+      recovery = [...runs.values()].find(run => run.goal === recoveryGoal);
+      if (!recovery?.release) await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    assert.ok(recovery?.release, "the third request crossed the fixture provider admission boundary");
+    // Actions have run in this task, so the pointer rests at the last verified point while the third model request waits.
+    await new Promise(resolve => setTimeout(resolve, 2500));
+    assert.deepEqual(await pointerState(), { mode: "point", status: "Waiting for response" }, "the pointer rests at the last verified action during a model wait");
+    pointerAnchorVerified = true;
+    await pause.click();
+    await tab.waitForFunction(() => !document.querySelector("[data-xroga-pointer]"), undefined, { timeout: 5000 });
+    const resume = panel.getByRole("button", { name: "Resume", exact: true });
+    await resume.waitFor({ timeout: 25_000 });
+    recovery.release();
+    assert.deepEqual(recovery.ordinals, [1, 2, 3]);
+    assert.equal(recovery.result, undefined);
+    await input.fill("Keep this draft until the checkpoint is resolved.");
+    await input.press("Enter");
+    assert.equal(await input.inputValue(), "Keep this draft until the checkpoint is resolved.");
+    assert.deepEqual(recovery.ordinals, [1, 2, 3]);
+    await input.fill("");
+    await resume.click();
+    await panel.getByText("Task saved locally. Resume to sync the result without rerunning any action.", { exact: true }).waitFor({ timeout: 25_000 }).catch(async error => {
+      console.error("Recovery fixture state:", JSON.stringify({ ordinals: recovery.ordinals, finishAttempts: recovery.finishAttempts, events: await workspace.evaluate(() => window.events.slice(-12)), panel: (await panel.locator('body').innerText()).slice(-1200) }));
+      throw error;
+    });
+    assert.equal(recovery.result, undefined);
+    assert.deepEqual(recovery.ordinals, [1, 2, 3, 4, 5, 6]);
+    const runId = [...runs.entries()].find(([, candidate]) => candidate === recovery)?.[0];
+    assert.ok(runId);
+
+    // Kill the actual Chrome service worker. Only the owner can re-pair this profile and sync the saved result.
+    const workerClient = await browser.newCDPSession(tab);
+    await workerClient.send("ServiceWorker.enable");
+    fixtureAccount = "00000000-0000-4000-8000-000000000002";
+    await workerClient.send("ServiceWorker.stopAllWorkers");
+    await workerClient.detach();
+    await workspace.close();
+    const reopening = browser.waitForEvent("page", { timeout: 20_000, predicate: page => page !== panel });
+    await tab.bringToFront();
+    await panel.reload();
+    workspace = await reopening;
+    await workspace.getByText("account rejected", { exact: true }).waitFor({ timeout: 15_000 });
+    assert.equal(recovery.finishAttempts, 1);
+
+    fixtureAccount = fixtureOwner;
+    await connect();
+    await workspace.getByText("paired", { exact: true }).waitFor({ timeout: 15_000 });
+    await workspace.waitForFunction(id => window.events.some(([type, run]) => type === 'checkpoint' && run === id), runId);
+    await workspace.evaluate(id => window.resumeTask(id), runId);
+    await waitForFinish(1);
+    assert.deepEqual(recovery.ordinals, [1, 2, 3, 4, 5, 6]);
+    assert.equal(recovery.finishAttempts, 2);
+    assert.equal(recovery.result.status, "completed");
+    assert.equal(recovery.result.actions.filter(action => action === "click").length, 1);
+    useWorkspaceComponent = true;
+    await workspace.goto(workspaceOrigin + "/workspace");
+    await workspace.locator("summary").filter({hasText:"Chrome connected"}).waitFor({ timeout: 20_000 });
+    // Browser Automation is run and shown only in the extension: the Workspace prints no task status, activity or result, and starts no task from its chat.
+    assert.equal(await workspace.getByText("Browser task completed", { exact: true }).count(), 0);
+    assert.equal(await workspace.getByText("Browser activity", { exact: true }).count(), 0);
+    assert.equal(await workspace.getByRole("button", { name: "Start in Chrome" }).count(), 0);
+    assert.equal(recovery.finishAttempts, 2);
+    const priorRuns = runs.size;
+    await workspace.getByLabel("Message Xroga").fill(`/chrome ${goal} ${site}`);
+    await workspace.getByRole("button", { name: "Send prompt" }).click();
+    await workspace.waitForTimeout(2_500);
+    assert.equal(runs.size, priorRuns, "The Workspace chat started no browser task");
+    assert.equal(await workspace.getByText("Browser task completed", { exact: true }).count(), 0);
+    assert.equal(await workspace.getByText("Browser task running", { exact: true }).count(), 0);
+    assert.equal(await workspace.getByText("Browser activity", { exact: true }).count(), 0);
+    assert.equal(await workspace.getByText(answer, { exact: true }).count(), 0);
+    assert.ok(actionCues.has("click"), "The Xroga pointer was visible when Chrome clicked");
+    assert.ok(actionCues.has("input"), "The Xroga pointer was visible when Chrome typed");
+  }
+  const { product } = await cdp.send("Browser.getVersion");
+  console.log(
+    JSON.stringify({
+      result: "PASS",
+      product,
+      approvedSubmission: !documentOnly,
+      cancelledPendingTurn: !documentOnly,
+      voiceFixtureRequests: voiceRequests,
+      actionCues: [...actionCues].sort(),
+      pointerStaysThroughModelWait: pointerWaitVerified,
+      pointerRestsAtLastActionDuringWait: pointerAnchorVerified,
+      resumedWithoutReplay: !live && !documentOnly,
+      restartAndAccountBoundary: !live && !documentOnly,
+      manualPauseAndResume: !live && !documentOnly,
+      workspaceReceiptRestoreAndSignOut: !live && !documentOnly,
+      screenshotPixelsSentToModel: false,
+      entryPoints: ["side panel", "Workspace fixture"],
+      model: live ? providerModel : "deterministic fixture",
+      liveModelCalls: receipts.length,
+      costMicros: spentMicros,
+    }),
+  );
+} catch (error) {
+  if (!error?.latencyDone) throw error;
+} finally {
+  try {
+    await browser?.close();
+  } finally {
+    if (dirname(await realpath(profile)) !== root)
+      throw new Error("Chrome profile is outside its owned directory.");
+    await rm(profile, {
+      recursive: true,
+      force: true,
+      maxRetries: 3,
+      retryDelay: 100,
+    });
+  }
+}

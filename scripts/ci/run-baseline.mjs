@@ -47,7 +47,12 @@ export async function runSteps(steps, { cwd = root, env = safeTestEnvironment(),
       if (count) result[field] = Number(count);
     }
     results.push(result); onResult(result);
-    if (result.exitCode !== 0) return { exitCode: result.exitCode, results };
+    if (result.exitCode !== 0) {
+      // The step's full output is not kept as an artifact, so name what failed: the failing test lines (already redacted), bounded.
+      const failing = result.output.split(/\r?\n/).filter(line => /^\s*(?:✖|not ok)\s/.test(line) || /^\s*(?:error|failureType|code):/.test(line)).slice(0, 120);
+      if (failing.length) console.error(`Failing lines of ${step.name} (first ${failing.length}):\n${failing.join('\n')}`);
+      return { exitCode: result.exitCode, results };
+    }
   }
   return { exitCode: 0, results };
 }

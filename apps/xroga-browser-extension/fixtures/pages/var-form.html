@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Variant contact form</title>
+<style>body{font:14px sans-serif;margin:0;padding:16px}#stage{position:relative;min-height:520px}label{display:block;margin:6px 0}
+#dlg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center}#dlg div{background:#fff;padding:24px}</style></head>
+<body>
+<!-- A contact form generated from ?seed=N: shuffled fields, a moved Save button, a duplicate "Save" link, delayed rendering, a blocking overlay, page zoom. -->
+<div id="stage"></div>
+<p id="count" role="status">saves: 0</p><p id="result" role="status">saved: none</p>
+<script>
+const seed = Number(new URLSearchParams(location.search).get('seed') || 1);
+let a = seed * 2654435761 >>> 0;
+const rnd = () => (a = (a * 1664525 + 1013904223) >>> 0) / 4294967296;
+const fields = ['Name', 'Email', 'Phone', 'Company'];
+for (let i = fields.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [fields[i], fields[j]] = [fields[j], fields[i]]; }
+document.body.style.zoom = String([0.75, 1, 1.25, 1.5][seed % 4]);
+const delay = Math.floor(rnd() * 1200), overlay = seed % 2 === 1, moved = rnd() > 0.5;
+let saves = 0;
+setTimeout(() => {
+  const st = document.getElementById('stage');
+  st.innerHTML = '<h1>Contact</h1><a href="#top" id="dupe">Save</a>' +
+    '<form id="f">' + fields.map(n => `<label>${n} <input name="${n}" type="text"></label>`).join('') +
+    `<button type="button" id="draft" disabled>Save draft</button>` +
+    `<button type="button" id="save" style="${moved ? 'position:absolute;left:' + Math.floor(rnd() * 300) + 'px;top:' + (300 + Math.floor(rnd() * 150)) + 'px' : ''}">Save</button></form>`;
+  document.getElementById('save').addEventListener('click', () => {
+    saves++; document.getElementById('count').textContent = 'saves: ' + saves;
+    const v = n => document.querySelector(`input[name="${n}"]`).value;
+    document.getElementById('result').textContent = 'saved: ' + v('Name') + '|' + v('Email') + '|' + v('Phone') + '|' + v('Company');
+  });
+  if (overlay) {
+    const d = document.createElement('div'); d.id = 'dlg'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-label', 'Cookie notice');
+    d.innerHTML = '<div><p>We use cookies.</p><button type="button" id="close">Close</button></div>';
+    document.body.appendChild(d);
+    d.querySelector('#close').addEventListener('click', () => d.remove());
+  }
+}, delay);
+</script>
+</body></html>

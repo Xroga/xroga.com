@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portfolio, loads as you scroll</title>
+  <style>
+    body { font-family: sans-serif; margin: 0; }
+    section { height: 480px; padding: 20px; box-sizing: border-box; border-bottom: 1px solid #ccc; }
+  </style>
+</head>
+<body>
+  <main id="feed"><section><h2>Project 1</h2><p>Kitchen refit in Headingley.</p></section></main>
+  <script>
+    let n = 1;
+    function more() {
+      const se = document.scrollingElement;
+      while (n < 8 && se.scrollTop + innerHeight > se.scrollHeight - 300) {
+        n++;
+        const s = document.createElement('section');
+        s.innerHTML = '<h2>Project ' + n + '</h2><p>Case study ' + n + ' loaded on scroll.</p>';
+        document.getElementById('feed').appendChild(s);
+      }
+    }
+    addEventListener('scroll', more);
+    more();
+  </script>
+</body>
+</html>

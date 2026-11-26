@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Export panel</title></head>
+<body><button type="button" id="b">Export orders</button>
+<script>
+// Makes a CSV in this frame and revokes its address at once.
+const t = new URLSearchParams(parent.location.search).get('t') || 'plain';
+document.getElementById('b').addEventListener('click', () => {
+  const csv = 'id,total\nORD-' + t + ',42.00\n';
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: 'orders-' + t + '.csv' });
+  document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 0);
+});
+</script></body></html>

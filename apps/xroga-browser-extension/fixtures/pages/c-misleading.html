@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Profile</title></head>
+<body>
+<h1>Profile</h1>
+<label>Display name <input id="n" aria-label="Display name" value="Ada"></label>
+<button type="button" id="b">Save profile</button>
+<p id="m" role="status"></p>
+<script>
+// A misleading success: the page says Saved whatever the server answered.
+document.getElementById('b').addEventListener('click', async () => {
+  try {
+    const r = await fetch('/api/profile-missing?token=SECRETVALUE123', { method: 'POST', body: '{}' });
+    if (!r.ok) console.error('save failed with status ' + r.status);
+  } catch (e) { console.error('save request failed: ' + e); }
+  document.getElementById('m').textContent = 'Saved!';
+});
+</script></body></html>

@@ -1,0 +1,108 @@
+[
+  {
+    "tools": [
+      "1:snapshot",
+      "2:click",
+      "3:snapshot",
+      "4:click",
+      "5:snapshot",
+      "6:click",
+      "7:snapshot",
+      "8:click",
+      "9:snapshot",
+      "10:screenshot",
+      "11:click",
+      "12:click",
+      "13:snapshot",
+      "14:canvas"
+    ],
+    "turns": 15,
+    "wallMs": 73760,
+    "end": "partial",
+    "usedConsoleTool": false,
+    "usedFindSkill": false,
+    "documents": 1,
+    "scriptsRun": 0,
+    "shapes": 0,
+    "exported": false,
+    "simCalls": [
+      "click:New Document Alt+Shift+N",
+      "click:Tools",
+      "click:Scripts",
+      "click:Scripts Panel",
+      "click:Script editor",
+      "click:Help"
+    ]
+  },
+  {
+    "tools": [
+      "1:snapshot",
+      "2:click",
+      "3:snapshot",
+      "4:batch",
+      "4:click",
+      "4:snapshot",
+      "5:click",
+      "6:snapshot",
+      "7:click",
+      "8:screenshot",
+      "9:snapshot",
+      "10:click",
+      "11:snapshot",
+      "12:click",
+      "13:canvas",
+      "14:http_get"
+    ],
+    "turns": 15,
+    "wallMs": 54057,
+    "end": "partial",
+    "usedConsoleTool": false,
+    "usedFindSkill": false,
+    "documents": 1,
+    "scriptsRun": 0,
+    "shapes": 0,
+    "exported": false,
+    "simCalls": [
+      "click:New Document Alt+Shift+N",
+      "click:Tools",
+      "click:Scripts",
+      "click:Scripts Panel",
+      "click:Help",
+      "click:Script editor"
+    ]
+  },
+  {
+    "tools": [
+      "1:snapshot",
+      "2:screenshot",
+      "3:click",
+      "4:snapshot",
+      "5:click",
+      "6:snapshot",
+      "7:click",
+      "8:snapshot",
+      "9:click",
+      "10:snapshot",
+      "11:click",
+      "12:find",
+      "13:read",
+      "14:http_get"
+    ],
+    "turns": 15,
+    "wallMs": 65300,
+    "end": "partial",
+    "usedConsoleTool": false,
+    "usedFindSkill": false,
+    "documents": 0,
+    "scriptsRun": 0,
+    "shapes": 0,
+    "exported": false,
+    "simCalls": [
+      "click:Tools",
+      "click:Scripts",
+      "click:Scripts Panel",
+      "click:Help",
+      "click:Help"
+    ]
+  }
+]

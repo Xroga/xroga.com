@@ -18,7 +18,8 @@ test('current transport proof binds every claimed source and keeps unresolved ca
     '31380a8d5b9454a98a98':'VERIFIED_GUARD',
     '9c345e07b723c086440e':'VERIFIED_GUARD',
     '4c899876b9e3850af11b':'VERIFIED_GUARD',
-    '0120190c0159cac3279d':'VERIFIED_GUARD',
+    // The browser caller now supplies a timing-only callback to the same guarded transport.
+    '06e6767d8c33bd9749a5':'VERIFIED_GUARD',
   });
   assert.equal(proof.phase4,'PREPARATORY_NOT_ACCEPTED');
   assert.equal(proof.phase3,'B1_P3_VERIFIED');

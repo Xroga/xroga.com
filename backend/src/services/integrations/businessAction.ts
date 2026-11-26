@@ -31,6 +31,7 @@ import {
   ComposioClientError,
   executeComposioActionTool,
   getComposioToolDetails,
+  pinnedCustomSlugClass,
   listComposioToolkits,
   searchComposioActionTools,
   type XrogaConnectTool,
@@ -1089,13 +1090,20 @@ export async function prepareBusinessAction(
 
     /** Bounded results from preceding reads; only allowed for reviewed workflows. */
     referenceEvidence?: BusinessActionReferenceEvidence[];
+
+    /**
+     * A tool and arguments already chosen by the caller (the browser agent). The planner model is not called; the tool must still be a
+     * connected, non-read action found by discovery, and the plan, digest, authority scope and confirmation are built exactly as before.
+     */
+    fixedSelection?: { toolSlug: string; arguments: Record<string, unknown>; summary: string };
   },
 ): Promise<BusinessActionPreparationOutcome> {
   const tenantContext=requireTenantContext(input.tenantContext),userId=input.userId;
   requireResourceOwner(tenantContext,userId);
   input={userId,tenantContext,useCase:input.useCase,signal:input.signal,
     forceConfirmation:input.forceConfirmation === true,
-    referenceEvidence:input.referenceEvidence && structuredClone(input.referenceEvidence)};
+    referenceEvidence:input.referenceEvidence && structuredClone(input.referenceEvidence),
+    fixedSelection:input.fixedSelection && structuredClone(input.fixedSelection)};
   const useCase =
     input.useCase.trim();
 
@@ -1140,6 +1148,15 @@ export async function prepareBusinessAction(
    * required until metadata proves a
    * safer classification.
    */
+  // The provider's search never lists a custom MCP server's tools. When the call names an owner-pinned tool that changes data (flag on,
+  // definition unchanged), it joins the candidates here; every later check (connected account, exact plan, approval) is unchanged.
+  if (input.fixedSelection && !discovery.tools.some((tool) => tool.slug === input.fixedSelection!.toolSlug)) {
+    const pinned = await pinnedCustomSlugClass(input.userId, input.fixedSelection.toolSlug, input.tenantContext);
+    if (pinned?.kind === 'write') {
+      discovery.tools.push({ slug: input.fixedSelection.toolSlug, toolkit: pinned.toolkit, risk: 'write', requiresConfirmation: true });
+    }
+  }
+
   const actionCandidates =
     discovery.tools
       .filter(
@@ -1248,7 +1265,7 @@ export async function prepareBusinessAction(
   const orderedTools = rankToolsBySkill(connectedTools, discovery.skill);
   const skillGuidance = boundedComposioGuidance(discovery, orderedTools.slice(0, MAX_TOOL_CANDIDATES));
 
-  const selection =
+  const selection = input.fixedSelection ??
     await selectActionToolAndArguments(
       {
         tenantContext,
@@ -1526,10 +1543,17 @@ export async function executePreparedBusinessAction(
    * is required even if the original plan was
    * classified more permissively.
    */
-  const details =
+  const fetchedDetails =
     await getComposioToolDetails(
       input.plan.toolSlug,metadataContext,
     );
+  // A custom MCP tool the owner pinned has a name that says little, so it classifies as unknown. The pin (re-verified here against the
+  // live definition, flag on) is what gives it its class, and only the class the owner pinned and the plan carries (read or write);
+  // nothing else about the check changes.
+  const pinnedClass = fetchedDetails.risk !== input.plan.risk && !!metadataContext
+    ? await pinnedCustomSlugClass(input.userId, input.plan.toolSlug, metadataContext) : undefined;
+  const pinnedMatch = !!pinnedClass && (input.plan.risk === 'read' || input.plan.risk === 'write') && pinnedClass.kind === input.plan.risk;
+  const details = pinnedMatch ? { ...fetchedDetails, risk: input.plan.risk } : fetchedDetails;
 
   if (
     details.deprecated

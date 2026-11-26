@@ -1,0 +1,128 @@
+{
+  "complex": [
+    {
+      "tools": [
+        "1:plan",
+        "1:click",
+        "2:snapshot",
+        "3:screenshot",
+        "4:read",
+        "5:find",
+        "5:click",
+        "6:snapshot",
+        "7:screenshot",
+        "8:tabs",
+        "8:find"
+      ],
+      "planned": true,
+      "turns": 9,
+      "wallMs": 36651,
+      "planResult": "done: [object Object]"
+    },
+    {
+      "tools": [
+        "1:plan",
+        "1:click",
+        "2:snapshot",
+        "3:screenshot",
+        "4:read",
+        "5:click",
+        "6:snapshot",
+        "6:screenshot",
+        "7:snapshot",
+        "7:wait",
+        "8:http_get",
+        "8:tabs"
+      ],
+      "planned": true,
+      "turns": 9,
+      "wallMs": 34264,
+      "planResult": "done: [object Object]"
+    },
+    {
+      "tools": [
+        "1:plan",
+        "1:click",
+        "2:snapshot",
+        "3:screenshot",
+        "4:read",
+        "5:click",
+        "6:screenshot",
+        "7:snapshot",
+        "8:wait"
+      ],
+      "planned": true,
+      "turns": 9,
+      "wallMs": 33347,
+      "planResult": "done: [object Object]"
+    },
+    {
+      "tools": [
+        "1:plan",
+        "1:click",
+        "2:snapshot",
+        "3:screenshot",
+        "4:read",
+        "5:snapshot",
+        "6:click",
+        "7:read",
+        "8:navigate"
+      ],
+      "planned": true,
+      "turns": 9,
+      "wallMs": 27600,
+      "planResult": "done: [object Object]"
+    },
+    {
+      "tools": [
+        "1:plan",
+        "1:click",
+        "2:snapshot",
+        "3:snapshot",
+        "4:screenshot",
+        "5:read",
+        "6:click",
+        "7:snapshot",
+        "8:navigate"
+      ],
+      "planned": true,
+      "turns": 9,
+      "wallMs": 41397,
+      "planResult": "done: [object Object]"
+    }
+  ],
+  "simple": [
+    {
+      "tools": [],
+      "planned": false,
+      "turns": 1,
+      "wallMs": 2260
+    },
+    {
+      "tools": [],
+      "planned": false,
+      "turns": 1,
+      "wallMs": 4418
+    },
+    {
+      "tools": [
+        "1:read"
+      ],
+      "planned": false,
+      "turns": 2,
+      "wallMs": 5459
+    },
+    {
+      "tools": [],
+      "planned": false,
+      "turns": 1,
+      "wallMs": 2196
+    },
+    {
+      "tools": [],
+      "planned": false,
+      "turns": 1,
+      "wallMs": 2030
+    }
+  ]
+}

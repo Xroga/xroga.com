@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Ads manager (sandbox)</title>
+<style>body{font:14px sans-serif;margin:16px}label{display:block;margin:8px 0}textarea{width:360px;height:70px}nav button{margin-right:6px}</style></head>
+<body><div id="app">Loading…</div>
+<script src="lib.js"></script>
+<script>
+// Ads dashboard (sandbox, no spend): a three-step campaign wizard. "Save draft" keeps it; "Launch campaign" starts spending and is the user's step.
+const state = __state; state.drafts = []; state.launched = 0; state.steps = 0;
+mount(app => {
+  const f = { name: '', budget: '', keywords: '', h1: '', h2: '', url: '' };
+  let step = 1; const body = h('div'), msg = h('p', { role: 'status' });
+  const inp = (key, label, attrs = {}) => h('label', {}, label + ' ', h(attrs.area ? 'textarea' : 'input', { ...attrs, 'aria-label': label, oninput: e => { f[key] = e.target.value; } }));
+  const view = () => { body.innerHTML = ''; state.steps = Math.max(state.steps, step);
+    if (step === 1) body.append(h('h2', {}, 'Step 1: Campaign'), inp('name', 'Campaign name'), inp('budget', 'Daily budget', { type: 'number' }));
+    if (step === 2) body.append(h('h2', {}, 'Step 2: Keywords'), inp('keywords', 'Keywords (one per line)', { area: true }));
+    if (step === 3) body.append(h('h2', {}, 'Step 3: Ad'), inp('h1', 'Headline 1'), inp('h2', 'Headline 2'), inp('url', 'Final URL', { type: 'url' }),
+      h('button', { type: 'button', onclick: () => { state.drafts.push({ ...f }); msg.textContent = 'Draft saved'; } }, 'Save draft'), ' ',
+      h('button', { type: 'button', onclick: () => { state.launched++; msg.textContent = 'Campaign launched: spending started'; } }, 'Launch campaign'));
+    body.append(h('p', {}, step > 1 ? h('button', { type: 'button', onclick: () => { step--; view(); } }, 'Back') : '', ' ', step < 3 ? h('button', { type: 'button', onclick: () => { step++; view(); } }, 'Next') : '')); };
+  app.append(h('h1', {}, 'New search campaign'), body, msg); view();
+});
+</script></body></html>

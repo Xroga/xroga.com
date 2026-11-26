@@ -66,6 +66,7 @@ flowchart LR
   endpoint_chromewebstore_googleapis_com["Source-defined endpoint chromewebstore.googleapis.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_cloud_google_com["Source-defined endpoint cloud.google.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_cloudflare_com["Source-defined endpoint cloudflare.com - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_codeload_github_com["Source-defined endpoint codeload.github.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_coordinator["Source-defined endpoint coordinator - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_cursor_com["Source-defined endpoint cursor.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_design_intuit_com["Source-defined endpoint design.intuit.com - CONFIGURED_BUT_UNVERIFIED"]
@@ -141,6 +142,7 @@ flowchart LR
   endpoint_postgresql_org["Source-defined endpoint postgresql.org - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_posthog_com["Source-defined endpoint posthog.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_public_example_invalid["Source-defined endpoint public.example.invalid - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_pypi_org["Source-defined endpoint pypi.org - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_python_org["Source-defined endpoint python.org - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_railway_app["Source-defined endpoint railway.app - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_react_dev["Source-defined endpoint react.dev - CONFIGURED_BUT_UNVERIFIED"]
@@ -267,6 +269,7 @@ flowchart LR
   api -. "source host/reference; unverified" .-> endpoint_chromewebstore_googleapis_com
   frontend -. "source host/reference; unverified" .-> endpoint_cloud_google_com
   frontend -. "source host/reference; unverified" .-> endpoint_cloudflare_com
+  api -. "source host/reference; unverified" .-> endpoint_codeload_github_com
   api -. "source host/reference; unverified" .-> endpoint_coordinator
   frontend -. "source host/reference; unverified" .-> endpoint_cursor_com
   frontend -. "source host/reference; unverified" .-> endpoint_design_intuit_com
@@ -342,6 +345,7 @@ flowchart LR
   frontend -. "source host/reference; unverified" .-> endpoint_postgresql_org
   frontend -. "source host/reference; unverified" .-> endpoint_posthog_com
   api -. "source host/reference; unverified" .-> endpoint_public_example_invalid
+  api -. "source host/reference; unverified" .-> endpoint_pypi_org
   frontend -. "source host/reference; unverified" .-> endpoint_python_org
   frontend -. "source host/reference; unverified" .-> endpoint_railway_app
   frontend -. "source host/reference; unverified" .-> endpoint_react_dev

@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Company directory</title><style>body{font:14px sans-serif;margin:16px}li{margin:6px 0}</style></head>
+<body><div id="app">Loading…</div>
+<script src="lib.js"></script>
+<script>
+// Research: a directory of companies; each profile page states a founding year and headquarters. Facts are randomised per variant, so the answer cannot be remembered.
+const names = ['Northwind', 'Contoso', 'Fabrikam', 'Tailspin', 'Litware'];
+const picked = shuffle(names).slice(0, 3);
+__state.facts = Object.fromEntries(picked.map(n => [n, { year: 1950 + Math.floor(rnd() * 60), city: pick(['Lisbon', 'Osaka', 'Austin', 'Lyon', 'Perth']) }]));
+mount(app => { app.append(h('h1', {}, 'Company directory'), h('ul', {}, ...shuffle(names).map(n => h('li', {}, h('a', { href: 'research-co.html?v=' + SEED + '&n=' + n }, n + ' profile'))))); });
+</script></body></html>

@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Xroga Browser Automation",
+  "version": "0.1.0",
+  "description": "Run scoped browser tasks in the Chrome tab you choose.",
+  "minimum_chrome_version": "123",
+  "permissions": ["activeTab", "scripting", "sidePanel"],
+  "incognito": "not_allowed",
+  "icons": { "16": "icon-16.png", "32": "icon-32.png" },
+  "action": {
+    "default_title": "Open Xroga Browser Automation",
+    "default_icon": { "16": "icon-16.png", "32": "icon-32.png" }
+  },
+  "background": { "service_worker": "background.js" },
+  "content_security_policy": {
+    "extension_pages": "default-src 'self'; script-src 'self'; object-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'"
+  },
+  "side_panel": { "default_path": "panel.html" }
+}

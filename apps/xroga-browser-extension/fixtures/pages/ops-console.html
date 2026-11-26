@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Ops console fixture</title>
+<style>body{font:15px sans-serif;margin:0;padding:16px}table{border-collapse:collapse}td,th{border:1px solid #aaa;padding:4px 10px}#status{margin:8px 0;font-weight:bold}canvas{border:1px solid #888;display:block;margin-top:8px}</style></head>
+<body>
+<h1>Invoice approvals</h1>
+<table id="inv"><tr><th>Invoice</th><th>Client</th><th>Total</th><th>File</th></tr>
+<tr><td>INV-17</td><td>Acme</td><td>9,990</td><td><a href="sample-report.pdf">invoice-17.pdf</a></td></tr>
+<tr><td>INV-18</td><td>Globex</td><td>4,200</td><td><a href="c-text.html">invoice-18.pdf</a></td></tr></table>
+<p id="status" role="status">status: waiting</p>
+<canvas id="board" width="640" height="260"></canvas>
+<script>
+// A board drawn on a canvas: no element for the card or the columns. The card can be dragged from Pending to Approved with the pointer.
+const c = document.getElementById('board'), g = c.getContext('2d');
+const card = { x: 40, y: 90, w: 190, h: 70, drag: false, dx: 0, dy: 0 };
+function draw() {
+  g.clearRect(0, 0, 640, 260); g.fillStyle = '#f4f4f4'; g.fillRect(0, 0, 640, 260);
+  g.fillStyle = '#ddd'; g.fillRect(0, 0, 320, 260); g.fillStyle = '#cfe8cf'; g.fillRect(320, 0, 320, 260);
+  g.fillStyle = '#111'; g.font = 'bold 22px Arial'; g.fillText('Pending', 20, 34); g.fillText('Approved', 340, 34);
+  g.fillStyle = '#0a64c8'; g.fillRect(card.x, card.y, card.w, card.h);
+  g.fillStyle = '#fff'; g.font = 'bold 20px Arial'; g.fillText('INV-17', card.x + 14, card.y + 30); g.fillText('9,990', card.x + 14, card.y + 56);
+}
+draw();
+const pos = e => { const r = c.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+c.addEventListener('mousedown', e => { const [x, y] = pos(e); if (x >= card.x && x <= card.x + card.w && y >= card.y && y <= card.y + card.h) { card.drag = true; card.dx = x - card.x; card.dy = y - card.y; } });
+c.addEventListener('mousemove', e => { if (!card.drag) return; const [x, y] = pos(e); card.x = x - card.dx; card.y = y - card.dy; draw(); });
+window.addEventListener('mouseup', e => { if (!card.drag) return; card.drag = false; const [x] = pos(e); document.getElementById('status').textContent = x > 320 ? 'status: approved INV-17' : 'status: still pending INV-17'; });
+</script>
+</body></html>

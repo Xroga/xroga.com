@@ -120,8 +120,8 @@
     }
   ],
   "counts": {
-    "total": 161,
-    "reviewed": 161,
+    "total": 167,
+    "reviewed": 167,
     "pending": 0,
     "unresolvedHighRiskReviewCandidates": 0
   },
@@ -215,7 +215,7 @@
     },
     {
       "path": "scripts/security/source-lifetime-bindings.test.mjs",
-      "sha256": "7d3c3af8176a838c9b1f3de5e75630ca8c4d26e634d886ff8c0975d5157a9640",
+      "sha256": "52bab3d72c3d1afd62ba30988a7f946382bbae97b1885f85b02257f097d91508",
       "previousGenericSdkBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "71eaca46f240f51b1ac490fd9e137cafbe0d0423313991de7b1bc0f57e588bcb",
@@ -302,7 +302,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "098a1911741a23bb6b688fc094481e23e464108965bd42e98c8384c62936c54a",
+      "sha256": "daf86f2c5c9e445f684d4ed5e3510a0bb115f37cc46f4d9bf74415221171e0c1",
       "previousGenericSdkBinding": {
         "sha256": "0a418cef1bdbdadb77f14288c4298990900a111fbc0def0050756a9b146914ca",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -835,7 +835,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "e7b2d58206f77b539954bd123f6deac582cdb61cff40e81c3b71608ec3b7004f",
+      "sha256": "d7ac0222f724ad09cf42e5d9afa5e4f40fe8f9a6fd76041c8fcffbf451fd2dff",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/services/integrations/businessAction.ts",
         "sha256": "79fa4e23cd501826f0425aaa01bcdc79a14b2d457f57f2f56a29b0fde021c0a3"
@@ -881,7 +881,11 @@
         "previousSha256": "52834ccc98c469b80c2f14419d79fe66e39c7ff475ef5885e7d1be463153abcf"
       },
       "expoWorkflowContinuation": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json",
-      "previousSha256": "98ce8ce7042d42f4d136c1e3ab0f17b618f92c3bdf6c8f4cfedd3da2875939d0"
+      "previousSha256": "98ce8ce7042d42f4d136c1e3ab0f17b618f92c3bdf6c8f4cfedd3da2875939d0",
+      "beforeBrowserPluginActions": {
+        "path": "backend/src/services/integrations/businessAction.ts",
+        "sha256": "8fc37cada11db34659cca31efa804ff99bcac3d076d83c6deabd52142662381f"
+      }
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
@@ -1213,5 +1217,12 @@
   "workspacePublisherReadContinuation": {
     "baseline": "84b288e3193fc0f285e699c8785c210d47937f16",
     "scope": "One additive reviewed public publisher GET call site. Only scoped public URLs reach the DNS-pinned, credential-free transport after a persisted owner READ decision. The original paid Search dispatch and the private exact-consent action are unchanged. This static continuity does not certify live acceptance."
+  },
+  "localChromeCurrentSourceReconciliation": {
+    "scope": "CURRENT_SOURCE_METADATA_NOT_NEW_SECURITY_ACCEPTANCE",
+    "previousProofSha256": "f7c19d49f9d3433032b7f5bc8a1489acbaab698e6e9b05953527cae38f4e1024",
+    "verifiedEgressCandidates": 155,
+    "guardChange": "Hosted browser execution rejects local Chrome runs before task or egress processing. Current model SDK caller was separately rebound.",
+    "workspacePortReview": "Five previously reviewed local Workspace port sends remain exact; the current source review binds those sends to the authenticated Workspace and existing API ownership fence."
   }
 }

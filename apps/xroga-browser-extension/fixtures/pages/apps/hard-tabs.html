@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Vendor portal</title>
+<style>body{font:14px sans-serif;margin:16px}li{margin:6px 0}label{display:block;margin:8px 0}</style></head>
+<body><div id="app">Loading…</div>
+<script src="lib.js"></script>
+<script>
+// Multi-tab: each vendor's "View contract" opens in a NEW tab showing that contract's value; the summary form here must hold all three values. State is graded from the summary form.
+const state = __state; state.summary = null;
+const vendors = shuffle(['Apex', 'Borealis', 'Cobalt']); const values = Object.fromEntries(vendors.map(v => [v, 1000 * (1 + Math.floor(rnd() * 9)) + Math.floor(rnd() * 100)])); state.values = values;
+mount(app => {
+  const out = {}; const form = h('div', {}, ...vendors.map(v => h('label', {}, v + ' contract value ', out[v] = h('input', { 'aria-label': v + ' contract value' }))), h('button', { type: 'button', onclick: () => { state.summary = Object.fromEntries(vendors.map(v => [v, Number(out[v].value)])); document.getElementById('ok').textContent = 'Summary saved'; } }, 'Save summary'), h('span', { id: 'ok', role: 'status' }));
+  app.append(h('h1', {}, 'Vendors'), h('ul', {}, ...vendors.map(v => h('li', {}, v + ' ', h('a', { href: 'hard-tabs-contract.html?v=' + SEED + '&vendor=' + v + '&value=' + values[v], target: '_blank' }, 'View contract of ' + v)))), h('h2', {}, 'Summary'), form);
+});
+</script></body></html>

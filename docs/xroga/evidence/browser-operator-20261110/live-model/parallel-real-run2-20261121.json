@@ -1,0 +1,90 @@
+{
+  "names": [
+    "parallel-real"
+  ],
+  "args": {
+    "model": "deepseek-v4.1-flash-1017",
+    "baseUrl": "https://api.zurelay.com/v1",
+    "arms": [
+      "free",
+      "parallel",
+      "single"
+    ],
+    "repeat": 2
+  },
+  "timedOut": false,
+  "reports": [
+    {
+      "name": "parallel-real",
+      "ok": true,
+      "startedAt": "2026-11-21T13:51:36.010Z",
+      "durationMs": 915560,
+      "result": {
+        "model": "deepseek-v4.1-flash-1017",
+        "runs": [
+          {
+            "arm": "free",
+            "rep": 0,
+            "ms": 125412,
+            "status": "Done",
+            "found": 4,
+            "ok": true,
+            "workers": 0,
+            "maxActive": 0
+          },
+          {
+            "arm": "parallel",
+            "rep": 0,
+            "ms": 163792,
+            "status": "Done",
+            "found": 4,
+            "ok": true,
+            "workers": 4,
+            "maxActive": 3
+          },
+          {
+            "arm": "single",
+            "rep": 0,
+            "ms": 127957,
+            "status": "Done",
+            "found": 4,
+            "ok": true,
+            "workers": 0,
+            "maxActive": 0
+          },
+          {
+            "arm": "free",
+            "rep": 1,
+            "ms": 134092,
+            "status": "Done",
+            "found": 4,
+            "ok": true,
+            "workers": 0,
+            "maxActive": 0
+          },
+          {
+            "arm": "parallel",
+            "rep": 1,
+            "ms": 232253,
+            "status": "Waiting for the next update…",
+            "found": 0,
+            "ok": false,
+            "workers": 4,
+            "maxActive": 3
+          },
+          {
+            "arm": "single",
+            "rep": 1,
+            "ms": 127332,
+            "status": "Done",
+            "found": 4,
+            "ok": true,
+            "workers": 0,
+            "maxActive": 0
+          }
+        ]
+      }
+    }
+  ],
+  "console": []
+}

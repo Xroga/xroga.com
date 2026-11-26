@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Human in a frame</title>
+<style>body{margin:0;font:14px sans-serif}iframe{position:absolute;left:0;top:200px;width:600px;height:300px;border:1px solid #888}</style></head>
+<body>
+<button id="save" style="margin:20px">Save</button>
+<p id="count" role="status">clicks: 0</p>
+<!-- A same-origin frame (srcdoc) where a person types; the agent works on the button above it. -->
+<iframe id="notes" title="Notes" srcdoc="<textarea id='t' style='width:95%;height:250px'></textarea>"></iframe>
+<script>
+let n = 0;
+document.getElementById('save').addEventListener('click', () => { n++; document.getElementById('count').textContent = 'clicks: ' + n; });
+</script>
+</body></html>

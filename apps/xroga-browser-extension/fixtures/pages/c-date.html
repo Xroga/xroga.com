@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Date inputs</title></head>
+<body>
+<h1>Booking</h1>
+<label>Day <input type="date" id="d" aria-label="Day"></label>
+<label>Start <input type="time" id="t" aria-label="Start"></label>
+<p id="o" role="status">no date</p>
+<script>
+const o = document.getElementById('o'), show = () => { o.textContent = (document.getElementById('d').value || '-') + ' ' + (document.getElementById('t').value || '-'); };
+document.getElementById('d').addEventListener('input', show); document.getElementById('t').addEventListener('input', show);
+</script></body></html>

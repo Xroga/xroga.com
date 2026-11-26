@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Find by query fixture</title></head>
+<body>
+<h1>Orders</h1>
+<table id="orders"><tr><td>A-1</td><td><button id="a1" class="open">Open</button></td></tr><tr><td>B-2</td><td><button id="b2" class="open">Open</button></td></tr></table>
+<p><a href="/docs/guide.pdf">Guide (PDF)</a> <a href="javascript:void(0)">Nothing</a> <a href="/login?token=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">Magic link</a></p><div id="wrap"><span>not a control</span></div>
+<p id="state" role="status">state: idle</p>
+<script>for (const b of document.querySelectorAll('button')) b.onclick = () => { document.getElementById('state').textContent = 'state: opened ' + b.id; };</script>
+</body></html>

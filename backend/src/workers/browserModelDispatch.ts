@@ -30,7 +30,8 @@ export function requireBrowserModelAuthority(job:BrowserJob,authority:BrowserMod
 
 export async function dispatchBrowserModel(input:{job:BrowserJob;authority:BrowserModelAuthority|undefined;signal:AbortSignal;
   modelId:ModelId;body:Record<string,unknown>&{messages:unknown;tools?:unknown};estimatedInputTokens:number;maximumOutputTokens:number;
-  idempotencyKey:string;client?:()=>BrowserModelClient;platformCostCeiling?:number}):Promise<any>{
+  idempotencyKey:string;client?:()=>BrowserModelClient;platformCostCeiling?:number;
+  onTiming?:(phase:'queue'|'provider_headers'|'reservation'|'settled',elapsedMs:number)=>void}):Promise<any>{
   const job=structuredClone(input.job);
   const authority=requireBrowserModelAuthority(job,input.authority);
   const scope={context:authority.context,userId:authority.context.userId,
@@ -42,10 +43,12 @@ export async function dispatchBrowserModel(input:{job:BrowserJob;authority:Brows
   // No page content can replace the body while ownership/budget checks await.
   const body=snapshotModelEgressPayload(input.body,'');
   await current();
+  const reserveStarted = performance.now();
   const result=await withTenantModelReservation({scope,modelId:input.modelId,
     payload:{messages:body.messages,tools:body.tools},estimatedInputTokens:input.estimatedInputTokens,
     maximumOutputTokens:input.maximumOutputTokens,idempotencyKey:input.idempotencyKey,
     execute:async dispatch=>{
+      input.onTiming?.('reservation', performance.now() - reserveStarted);
       const endpoint=resolveEndpoint(input.modelId,dispatch.credentialOverride);
       const request=snapshotModelEgressPayload({...body,model:endpoint.apiModel,messages:dispatch.payload.messages,
         ...(dispatch.payload.tools?{tools:dispatch.payload.tools}:{})},endpoint.apiKey);
@@ -57,7 +60,7 @@ export async function dispatchBrowserModel(input:{job:BrowserJob;authority:Brows
       const client=input.client?.();
       if(client&&client.model!==endpoint.apiModel)throw Object.assign(Error('Browser model destination changed.'),{code:'MODEL_DISPATCH_BINDING_DENIED'});
       await beforeDispatch(wire);
-      const completion=client?await client.create(request,{signal}):await createModelProviderClient(endpoint,beforeDispatch,dispatch.beforeDispatch).chat.completions.create(request as never,{signal,maxRetries:0});
+      const completion=client?await client.create(request,{signal}):await createModelProviderClient(endpoint,beforeDispatch,dispatch.beforeDispatch,input.onTiming).chat.completions.create(request as never,{signal,maxRetries:0});
       const inputTokens=completion?.usage?.prompt_tokens,outputTokens=completion?.usage?.completion_tokens;
       const reasoningTokens=completion?.usage?.completion_tokens_details?.reasoning_tokens??0;
       const providerRequestId=client ? completion?.id : modelTransportReceipt(endpoint).requestId;
@@ -73,5 +76,6 @@ export async function dispatchBrowserModel(input:{job:BrowserJob;authority:Brows
   // Settlement can await I/O too. Denied ownership/cancellation never publishes
   // an already completed answer or authorizes a second provider request.
   await requireModelProjectBinding(scope);await current();
+  input.onTiming?.('settled', performance.now() - reserveStarted);
   return result.completion;
 }

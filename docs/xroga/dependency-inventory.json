@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "1c565e3b89e23653fd097ac0430e9e8e4503cc31",
+  "source_sha": "26018d4eeb9a70632e86d15ec9e07686af998c7d",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -392,7 +392,9 @@
         "XROGA_SANDBOX_FLY_REGION",
         "XROGA_SANDBOX_FLY_TOKEN",
         "XROGA_SANDBOX_LIVE_TEST_API_KEY",
+        "XROGA_SANDBOX_WORKER_AUDIENCE",
         "XROGA_SANDBOX_WORKER_NAME",
+        "XROGA_SANDBOX_WORKER_RESTRICTED",
         "XROGA_SANDBOX_WORKER_TOKEN",
         "XROGA_SANDBOX_WORKER_URL"
       ],
@@ -2421,7 +2423,9 @@
         "SUPABASE_ANON_KEY",
         "SUPABASE_URL",
         "XB01_DISPOSABLE_SUPABASE",
-        "XB01_LOCAL_DATABASE_URL"
+        "XB01_LOCAL_DATABASE_URL",
+        "XROGA_COMPOSIO_ERROR_DETAIL",
+        "XROGA_CUSTOM_MCP_EXECUTION"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -2943,6 +2947,40 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "frontend/src/components/response-experience-v2/entityRegistry.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-codeload-github-com",
+      "provider": "Source-defined endpoint codeload.github.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/sandbox/repoRun.ts"
+      ],
+      "hostnames": [
+        "codeload.github.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/sandbox/repoRun.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -5221,6 +5259,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
+        "backend/src/sandbox/remoteSandbox.ts",
         "backend/src/scripts/verifyGceExecution.ts",
         "backend/src/synthesis/projectRuntime/googleFactory.ts",
         "backend/src/workers/browserRunDispatch.ts",
@@ -5255,6 +5294,11 @@
         "XROGA_GCE_ZONE",
         "XROGA_PROJECT_RUNTIME_PROVIDER",
         "XROGA_RELEASE_SHA",
+        "XROGA_SANDBOX_WORKER_AUDIENCE",
+        "XROGA_SANDBOX_WORKER_NAME",
+        "XROGA_SANDBOX_WORKER_RESTRICTED",
+        "XROGA_SANDBOX_WORKER_TOKEN",
+        "XROGA_SANDBOX_WORKER_URL",
         "XROGA_STAGING_AUTH_BUILD",
         "XROGA_STAGING_INVOKER_SUBJECT",
         "XROGA_STAGING_MANIFEST_PATH",
@@ -5272,6 +5316,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
+        "backend/src/sandbox/remoteSandbox.ts",
         "backend/src/scripts/verifyGceExecution.ts",
         "backend/src/synthesis/projectRuntime/googleFactory.ts",
         "backend/src/workers/browserRunDispatch.ts",
@@ -5795,6 +5840,40 @@
       "evidence_ids": []
     },
     {
+      "dependency_id": "endpoint-pypi-org",
+      "provider": "Source-defined endpoint pypi.org",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/sandbox/dependencyAcquisition.ts"
+      ],
+      "hostnames": [
+        "pypi.org"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/sandbox/dependencyAcquisition.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
       "dependency_id": "endpoint-python-org",
       "provider": "Source-defined endpoint python.org",
       "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
@@ -5906,6 +5985,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
+        "backend/src/sandbox/dependencyAcquisition.ts",
         "backend/src/workers/imagePins.ts"
       ],
       "hostnames": [
@@ -5927,6 +6007,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
+        "backend/src/sandbox/dependencyAcquisition.ts",
         "backend/src/workers/imagePins.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -8432,6 +8513,7 @@
         "backend/src/routes/existingSource.ts",
         "backend/src/routes/guestChat.ts",
         "backend/src/routes/localBrowser.ts",
+        "backend/src/routes/localBrowserDevice.ts",
         "backend/src/routes/nativeOpenUiEvaluation.ts",
         "backend/src/runtime/readiness.ts",
         "backend/src/runtime/startupPolicy.ts",
@@ -8450,6 +8532,7 @@
         "backend/src/workers/browserCoordinatorHost.ts",
         "backend/src/workers/googleSwarmQueue.ts",
         "backend/src/workers/proxySidecar.ts",
+        "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/api/showcase/aura/chat/route.ts",
         "frontend/src/app/native-answer-evaluation/page.tsx",
@@ -8570,6 +8653,7 @@
         "XROGA_BROWSER_IMAGE",
         "XROGA_BROWSER_PLANNER_MODEL",
         "XROGA_BROWSER_PROXY_IMAGE",
+        "XROGA_BROWSER_REASONING_DEFAULT",
         "XROGA_BROWSER_REPO_ROOT",
         "XROGA_BROWSER_WORKER_URL",
         "XROGA_BUILDER_INPROCESS_QA",
@@ -8601,8 +8685,12 @@
         "XROGA_GITHUB_BOT_NAME",
         "XROGA_LEGACY_CREDENTIAL_MIGRATION",
         "XROGA_LOCAL_BROWSER_ALLOWED_USER_IDS",
+        "XROGA_LOCAL_BROWSER_AUTO_APPROVE",
+        "XROGA_LOCAL_BROWSER_DEVICE_EXTENSION_ID",
         "XROGA_LOCAL_BROWSER_ENABLED",
+        "XROGA_LOCAL_BROWSER_MAX_ACTIVE_RUNS",
         "XROGA_LOCAL_BROWSER_MAX_TURNS",
+        "XROGA_LOCAL_BROWSER_VISION_PROBE",
         "XROGA_MAX_REPAIR_ATTEMPTS",
         "XROGA_NATIVE_OPENUI_WORKSPACE",
         "XROGA_OCI_KMS_AUTH_MODE",
@@ -8673,6 +8761,7 @@
         "backend/src/routes/existingSource.ts",
         "backend/src/routes/guestChat.ts",
         "backend/src/routes/localBrowser.ts",
+        "backend/src/routes/localBrowserDevice.ts",
         "backend/src/routes/nativeOpenUiEvaluation.ts",
         "backend/src/runtime/readiness.ts",
         "backend/src/runtime/startupPolicy.ts",
@@ -8691,6 +8780,7 @@
         "backend/src/workers/browserCoordinatorHost.ts",
         "backend/src/workers/googleSwarmQueue.ts",
         "backend/src/workers/proxySidecar.ts",
+        "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/api/showcase/aura/chat/route.ts",
         "frontend/src/app/native-answer-evaluation/page.tsx",
@@ -9953,6 +10043,8 @@
         "backend/src/lib/platformReady.ts",
         "backend/src/routes/github.ts",
         "backend/src/routes/integrations.ts",
+        "backend/src/routes/localBrowser.ts",
+        "backend/src/routes/localBrowserPlugins.ts",
         "backend/src/routes/phase1.ts",
         "backend/src/services/integrations/composioClient.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
@@ -11625,7 +11717,7 @@
         "backend/src/builder/qa/playwrightQaDriver.ts",
         "backend/src/index.ts",
         "backend/src/routes/github.ts",
-        "backend/src/routes/localBrowser.ts",
+        "backend/src/routes/localBrowserDevice.ts",
         "backend/src/runtime/startupPolicy.ts",
         "backend/src/sandbox/sandboxProviders.ts",
         "backend/src/scripts/runCanonicalWorker.ts",
@@ -14157,6 +14249,25 @@
       ]
     },
     {
+      "name": "XROGA_BROWSER_REASONING_DEFAULT",
+      "consuming_sources": [
+        "backend/src/routes/localBrowser.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_BROWSER_REPO_ROOT",
       "consuming_sources": [
         "backend/src/workers/browserCoordinatorHost.ts"
@@ -14311,7 +14422,7 @@
     {
       "name": "XROGA_CHROME_EXTENSION_ID",
       "consuming_sources": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
+        "frontend/src/app/(workspace)/layout.tsx"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -14369,6 +14480,26 @@
       ]
     },
     {
+      "name": "XROGA_COMPOSIO_ERROR_DETAIL",
+      "consuming_sources": [
+        "backend/src/routes/localBrowser.ts",
+        "backend/src/services/integrations/composioClient.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-backend-composio-dev"
+      ]
+    },
+    {
       "name": "XROGA_CREDENTIAL_KMS_PROVIDER",
       "consuming_sources": [
         "backend/src/runtime/readiness.ts",
@@ -14386,6 +14517,26 @@
       ],
       "dependency_ids": [
         "credential-store"
+      ]
+    },
+    {
+      "name": "XROGA_CUSTOM_MCP_EXECUTION",
+      "consuming_sources": [
+        "backend/src/services/integrations/composioClient.ts",
+        "backend/src/services/integrations/customMcpPins.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-backend-composio-dev"
       ]
     },
     {
@@ -15369,6 +15520,25 @@
     {
       "name": "XROGA_LOCAL_BROWSER_ALLOWED_USER_IDS",
       "consuming_sources": [
+        "backend/src/routes/localBrowserDevice.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_LOCAL_BROWSER_AUTO_APPROVE",
+      "consuming_sources": [
         "backend/src/routes/localBrowser.ts"
       ],
       "environments": [
@@ -15386,7 +15556,46 @@
       ]
     },
     {
+      "name": "XROGA_LOCAL_BROWSER_DEVICE_EXTENSION_ID",
+      "consuming_sources": [
+        "backend/src/routes/localBrowserDevice.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_LOCAL_BROWSER_ENABLED",
+      "consuming_sources": [
+        "backend/src/routes/localBrowser.ts",
+        "backend/src/routes/localBrowserDevice.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_LOCAL_BROWSER_MAX_ACTIVE_RUNS",
       "consuming_sources": [
         "backend/src/routes/localBrowser.ts"
       ],
@@ -15406,6 +15615,25 @@
     },
     {
       "name": "XROGA_LOCAL_BROWSER_MAX_TURNS",
+      "consuming_sources": [
+        "backend/src/routes/localBrowser.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_LOCAL_BROWSER_VISION_PROBE",
       "consuming_sources": [
         "backend/src/routes/localBrowser.ts"
       ],
@@ -16148,6 +16376,26 @@
       ]
     },
     {
+      "name": "XROGA_SANDBOX_WORKER_AUDIENCE",
+      "consuming_sources": [
+        "backend/src/sandbox/remoteSandbox.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "google-execution",
+        "endpoint-metadata-google-internal"
+      ]
+    },
+    {
       "name": "XROGA_SANDBOX_WORKER_NAME",
       "consuming_sources": [
         "backend/src/sandbox/remoteSandbox.ts"
@@ -16163,7 +16411,28 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "google-execution"
+        "google-execution",
+        "endpoint-metadata-google-internal"
+      ]
+    },
+    {
+      "name": "XROGA_SANDBOX_WORKER_RESTRICTED",
+      "consuming_sources": [
+        "backend/src/sandbox/remoteSandbox.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "google-execution",
+        "endpoint-metadata-google-internal"
       ]
     },
     {
@@ -16182,7 +16451,8 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "google-execution"
+        "google-execution",
+        "endpoint-metadata-google-internal"
       ]
     },
     {
@@ -16201,7 +16471,8 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "google-execution"
+        "google-execution",
+        "endpoint-metadata-google-internal"
       ]
     },
     {
@@ -17308,7 +17579,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "098a1911741a23bb6b688fc094481e23e464108965bd42e98c8384c62936c54a"
+      "sha256": "daf86f2c5c9e445f684d4ed5e3510a0bb115f37cc46f4d9bf74415221171e0c1"
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
@@ -17372,7 +17643,7 @@
     },
     {
       "path": "backend/src/ai/providerPacing.ts",
-      "sha256": "1f0dc6734214d1fabb7b1398399bbfaa3d283196cafe1a4bce0ed9fed0dcf369"
+      "sha256": "7df0dea199e4d1236eb256cdac6072eb9b39eae1ea155d4f87db1999c66997ac"
     },
     {
       "path": "backend/src/ai/providerPolicy.ts",
@@ -17436,7 +17707,7 @@
     },
     {
       "path": "backend/src/ai/resourceMeter.ts",
-      "sha256": "41d41394517529873968222975159e930630e672a03f7f6d786507d63cee1a3d"
+      "sha256": "a7052c1dcbc6eea80c1049639f813704072432f907a7c706620df413d0cf0f26"
     },
     {
       "path": "backend/src/ai/responseIcons.ts",
@@ -18120,7 +18391,11 @@
     },
     {
       "path": "backend/src/existingSource/change/production.ts",
-      "sha256": "0494c9f7d6bb855fa01ecadf0c3416feb084974f6c9446d77a60f090bf8b9a9b"
+      "sha256": "eb5a774687b67d044c7ea1de37dc9c53c205e1dc59364bcd6cbde8e234588b64"
+    },
+    {
+      "path": "backend/src/existingSource/change/publicRepoChange.ts",
+      "sha256": "50d5e5bdeb4b18a3ee2a76b37a33ca318af43acd98763bd2df2a83851f0c6877"
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
@@ -18272,7 +18547,7 @@
     },
     {
       "path": "backend/src/index.ts",
-      "sha256": "24f60f51d782c4d3e8213817308a75e08b166739ed073074508785fa4034bcb9"
+      "sha256": "b676e8a03cd20b3c4e7259f494ca71f663b162a95cdfb1bf3ddbd2c3fcabe684"
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
@@ -18716,7 +18991,7 @@
     },
     {
       "path": "backend/src/routes/browserDocuments.ts",
-      "sha256": "52b4445687ccae287d6c84bfefac85c463400915c5857c7d70f4b9a9a5cddfe3"
+      "sha256": "131007966c483ed8c7741e73be3a230c85e3cb79db89dd90908c68605d28206e"
     },
     {
       "path": "backend/src/routes/browserRunInternal.ts",
@@ -18804,11 +19079,23 @@
     },
     {
       "path": "backend/src/routes/integrations.ts",
-      "sha256": "e6aab8dfd7f534aeb38932151f6ef807eb71447e4bc2b538e6d01b0585905a21"
+      "sha256": "293d69a3b07158683f81a04df3f069b9e37489e6dd1e592a61e63cdf119b6326"
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "sha256": "873a0c1ae4876e25462a9b9e18772d456ee3334fd5e5dd4492e0775b3427d019"
+      "sha256": "a40092256167d3e1862314641773ca749df710b56cd6bc8ec053351aea9248ac"
+    },
+    {
+      "path": "backend/src/routes/localBrowserDevice.ts",
+      "sha256": "6c315347d3c9d61d21e2722dca380a1c2f7891cefb06e709d964b08f855c31ff"
+    },
+    {
+      "path": "backend/src/routes/localBrowserDirectRead.ts",
+      "sha256": "c4c35b55fd6f52534eb693815db8f17e2e2492196fbdd5216915eba0f216d260"
+    },
+    {
+      "path": "backend/src/routes/localBrowserPlugins.ts",
+      "sha256": "c71ed45f02944b55101f6c7930a6ac6c213fe580091f9249a5d7a0d5f2282fef"
     },
     {
       "path": "backend/src/routes/marketplace.ts",
@@ -18943,8 +19230,16 @@
       "sha256": "eac9ca2b4ea7f6af3de801e4c083fbeb33ab3edd75e4de2900518e9511a88ebf"
     },
     {
+      "path": "backend/src/sandbox/agentSkill.ts",
+      "sha256": "0eb344ea6eaa82ce488f1e549880c2a17adc2b68c9dcef3c2b8e9958ecaa087d"
+    },
+    {
       "path": "backend/src/sandbox/containerCancellation.local.integration.ts",
       "sha256": "a51ff2700018ebe1c8de13c8d6d94edb855183a77d5acaa16ea4f0e8f59bd41d"
+    },
+    {
+      "path": "backend/src/sandbox/dependencyAcquisition.ts",
+      "sha256": "45c04834e978bf8a6f24ef4604683530deb93e30c9b500b8e18f763d0d35087f"
     },
     {
       "path": "backend/src/sandbox/flyMachineSandbox.ts",
@@ -18972,11 +19267,15 @@
     },
     {
       "path": "backend/src/sandbox/meteredExecution.ts",
-      "sha256": "e55acab12c5d0ec4900d0f61a1fae4090fe1e3b20f45cf22ce55018df396fcad"
+      "sha256": "27aa4a40697792b2249603f7d39245740424a9aa6e40bbaf4c8d8fa019aeb07a"
     },
     {
       "path": "backend/src/sandbox/remoteSandbox.ts",
-      "sha256": "a97ed5a5320436ba360e384b95a9bdd6232a19f021a6e551b378cc6969f475a2"
+      "sha256": "db251c56839ff03fa5d7d6df7449adc9b617fc7595a6796060b49da7d7354790"
+    },
+    {
+      "path": "backend/src/sandbox/repoRun.ts",
+      "sha256": "bdd29aa5d0b9f6f964a818538382259eb5098bdcf3da8a91efaa2b60242eac00"
     },
     {
       "path": "backend/src/sandbox/sandboxEnvironment.ts",
@@ -18992,7 +19291,11 @@
     },
     {
       "path": "backend/src/sandbox/sandboxTypes.ts",
-      "sha256": "5e630d4a26584f4499c5efcf05f584bb3230fc9bbf40be3c1d9fd00306055477"
+      "sha256": "48673ae651ff36744dd8f699c574998e1feaa204fd600643943b8e6a8c5599c2"
+    },
+    {
+      "path": "backend/src/sandbox/workerExecutionPort.ts",
+      "sha256": "b85697dabb93e661cc59a511485e5d2933dcfcfb3690350522b50c9005d6268b"
     },
     {
       "path": "backend/src/scripts/runCanonicalWorker.ts",
@@ -19199,6 +19502,10 @@
       "sha256": "6ace142fd3daab4c1d94037513c4065ac2893ed1f451e6662db7dd67c0c1b378"
     },
     {
+      "path": "backend/src/security/publicBodyText.ts",
+      "sha256": "7c4dac295524c57a3636a229a31f3543092f5c1480701a88c3151b985feeb194"
+    },
+    {
       "path": "backend/src/security/quotaEvidence.local.integration.ts",
       "sha256": "fada49f928fe3d2befccc4ae0d1f8741fe759f6cbd1604c2fea820eded80b0f4"
     },
@@ -19340,7 +19647,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "e7b2d58206f77b539954bd123f6deac582cdb61cff40e81c3b71608ec3b7004f"
+      "sha256": "d7ac0222f724ad09cf42e5d9afa5e4f40fe8f9a6fd76041c8fcffbf451fd2dff"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -19376,11 +19683,11 @@
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "48263936e0eba7c491f982779df5642ce6769ef83cde89c6beacbee2a66e0e10"
+      "sha256": "b216ccdb6dbd1b40ac0c38e837fd9da49b16a70902007aea4953027048fb8ef8"
     },
     {
       "path": "backend/src/services/integrations/composioControl.ts",
-      "sha256": "f8ad0d65a5f8e70a636a57161db93e25ce68e77a9fa873980e593ccbd8dc1e74"
+      "sha256": "06e8b400c89771c9cef3002a505cd565c53c9a59c6aabde89bb263cc8455e8cf"
     },
     {
       "path": "backend/src/services/integrations/composioNamespace.ts",
@@ -19413,6 +19720,10 @@
     {
       "path": "backend/src/services/integrations/cryptoProvider.ts",
       "sha256": "a4fb326b9cf7382a89649bf05552b4222ed5924397cf1b14a268999ffa721fb9"
+    },
+    {
+      "path": "backend/src/services/integrations/customMcpPins.ts",
+      "sha256": "e5de2ee6a0bf38bb043f0f54990f778d99e47d81a2ad6a0920e559d7ea85a042"
     },
     {
       "path": "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts",
@@ -19500,7 +19811,7 @@
     },
     {
       "path": "backend/src/services/integrations/pluginPermissionPolicy.ts",
-      "sha256": "e2f5003e2bf6f567b9f893812668288e9dfb01e920df0eea7870896cdb3b3b3d"
+      "sha256": "f8a669921857f89212a9a3dcf963b6ccefcfa40877480d292c5c6431d7424767"
     },
     {
       "path": "backend/src/services/integrations/researchResult.ts",
@@ -20228,7 +20539,7 @@
     },
     {
       "path": "backend/src/workers/browserModelDispatch.ts",
-      "sha256": "e113109ead824127c843bc27b7d07119fda3fae8e4ec0ddefd1abc177b79a63e"
+      "sha256": "ff4022afa5c3c031956a4eda38253e27c4f6ae3641f78d039085d60890ccb3c9"
     },
     {
       "path": "backend/src/workers/browserModelGateway.ts",
@@ -20344,7 +20655,7 @@
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/actions/confirm/[id]/page.tsx",
-      "sha256": "dce5419ab84dd08d1ed687551bfbf00bc8e62006aaed8b35d7501c99f5c63d6f"
+      "sha256": "32116fd4f2eb38681dc1f482ce7f8372995fd42630ee022a37ad99154bcbfe88"
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/analytics/page.tsx",
@@ -20524,11 +20835,11 @@
     },
     {
       "path": "frontend/src/app/(workspace)/layout.tsx",
-      "sha256": "0c878ec62c92cb0529a52f985e39dfc50756ee0ad06f2dd4940c57724b46f8d0"
+      "sha256": "4c1ca037b72ce3a2dadb443b207c20a9735905cbb2e09f774d537624f404469c"
     },
     {
       "path": "frontend/src/app/(workspace)/workspace/page.tsx",
-      "sha256": "657ab53ea74ddb58f9d7f002d033360c0f47cf4341596a3945b27357b7e917f5"
+      "sha256": "fd429217773c90765e312d1ab1743e11bf3c86914354dedda9ea9b02a728dfec"
     },
     {
       "path": "frontend/src/app/about/page.tsx",
@@ -21152,7 +21463,7 @@
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "sha256": "ef9da002abe7c0c6002e57dfa59830f3b4672de0a9b326f8cb963f8802332415"
+      "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
     },
     {
       "path": "frontend/src/components/browser/XrogaBrowser.tsx",
@@ -21272,7 +21583,7 @@
     },
     {
       "path": "frontend/src/components/dashboard/DashboardView.tsx",
-      "sha256": "8919b0607d5b6d172c35a260587b6158b979db66071b55648befeb1afc7e5585"
+      "sha256": "969c1cea7e3e593ffa1c10c410a8ea42904980587dcbe625ad12831df5a917e2"
     },
     {
       "path": "frontend/src/components/dashboard/DashboardWelcome.tsx",
@@ -22204,7 +22515,7 @@
     },
     {
       "path": "frontend/src/components/integrations/CustomMcpManager.tsx",
-      "sha256": "47340753ec6349b09b1da846fe02628fee0af5f8b37eebfaa59cd9bc585f76a7"
+      "sha256": "dd00e4ac29c783104f6e185edbcca19d8be279a370ca0761c5c5e4f1ab719d87"
     },
     {
       "path": "frontend/src/components/integrations/FreeApiOptionsPanel.tsx",
@@ -22324,7 +22635,7 @@
     },
     {
       "path": "frontend/src/components/layout/Sidebar.tsx",
-      "sha256": "92a6ed8fe6cbd5acdf5864084e6b9984327273f2135ea7ff1969e016fde1fc42"
+      "sha256": "6af7cfbf593828d4cb66e545b89469f782e9e9a11133326d9d7389e34ab1854f"
     },
     {
       "path": "frontend/src/components/layout/SidebarActionMenu.tsx",
@@ -23284,7 +23595,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sha256": "56771761395d13094fd28183ae415e0d5bddeae383e8f43d49490de6758c5b73"
+      "sha256": "c9012e95a471135020ab400e0b1bcbd28a6a4bf628d715b33599169df818006d"
     },
     {
       "path": "frontend/src/components/terminal/TerminalDock.tsx",
@@ -24728,7 +25039,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaConnect.ts",
-      "sha256": "f21dc8a91d626123ecda91340d33738b9b95f3a6aa0df80fa231c7a1540c835b"
+      "sha256": "cdd72ad178b7de76d0bcf4ad0b16e77a9f070f146b18902a778dcd2543d72d5a"
     },
     {
       "path": "frontend/src/lib/xrogaCsv.ts",
@@ -26269,42 +26580,42 @@
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/index.ts",
-      "line": 120,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
       "line": 121,
       "credentialsInUrl": false
     },
     {
-      "hostname": "www.xroga.com",
+      "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 122,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xrogaaicom.vercel.app",
+      "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 123,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga-api.fly.dev",
+      "hostname": "xrogaaicom.vercel.app",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 124,
       "credentialsInUrl": false
     },
     {
+      "hostname": "xroga-api.fly.dev",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 125,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 216,
+      "line": 233,
       "credentialsInUrl": false
     },
     {
@@ -26808,7 +27119,21 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/integrations.ts",
-      "line": 2038,
+      "line": 2082,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 740,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "backend/src/routes/localBrowserPlugins.ts",
+      "line": 145,
       "credentialsInUrl": false
     },
     {
@@ -26875,6 +27200,20 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "pypi.org",
+      "protocol": "https:",
+      "path": "backend/src/sandbox/dependencyAcquisition.ts",
+      "line": 69,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "registry.npmjs.org",
+      "protocol": "https:",
+      "path": "backend/src/sandbox/dependencyAcquisition.ts",
+      "line": 81,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "api.machines.dev",
       "protocol": "https:",
       "path": "backend/src/sandbox/flyMachineSandbox.ts",
@@ -26900,6 +27239,20 @@
       "protocol": "https:",
       "path": "backend/src/sandbox/google/gceSshTransport.ts",
       "line": 116,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "metadata.google.internal",
+      "protocol": "http:",
+      "path": "backend/src/sandbox/remoteSandbox.ts",
+      "line": 80,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "codeload.github.com",
+      "protocol": "https:",
+      "path": "backend/src/sandbox/repoRun.ts",
+      "line": 86,
       "credentialsInUrl": false
     },
     {
@@ -27809,21 +28162,21 @@
       "hostname": "backend.composio.dev",
       "protocol": "https:",
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 16,
+      "line": 17,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1394,
+      "line": 1482,
       "credentialsInUrl": false
     },
     {
       "hostname": "backend.composio.dev",
       "protocol": "https:",
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1417,
+      "line": 1505,
       "credentialsInUrl": false
     },
     {
@@ -30119,14 +30472,14 @@
       "hostname": "mcp.example.com",
       "protocol": "https:",
       "path": "frontend/src/components/integrations/CustomMcpManager.tsx",
-      "line": 178,
+      "line": 259,
       "credentialsInUrl": false
     },
     {
       "hostname": "mcp.example.com",
       "protocol": "https:",
       "path": "frontend/src/components/integrations/CustomMcpManager.tsx",
-      "line": 225,
+      "line": 306,
       "credentialsInUrl": false
     },
     {
@@ -33822,7 +34175,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 274,
+      "line": 279,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -35634,6 +35987,20 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/existingSource/change/publicRepoChange.ts",
+      "line": 72,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/publicRepoChange.ts",
+      "line": 81,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/existingSource/change/service.ts",
       "line": 60,
       "scope": "MODULE_LIFETIME",
@@ -37196,7 +37563,7 @@
     },
     {
       "path": "backend/src/routes/browserDocuments.ts",
-      "line": 25,
+      "line": 57,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37218,6 +37585,90 @@
     {
       "path": "backend/src/routes/guestChat.ts",
       "line": 71,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 80,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 82,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 84,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 168,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 181,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 278,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 306,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 321,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 761,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 770,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 803,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/localBrowserDirectRead.ts",
+      "line": 26,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37279,6 +37730,20 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/sandbox/dependencyAcquisition.ts",
+      "line": 71,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/sandbox/dependencyAcquisition.ts",
+      "line": 133,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/sandbox/google/executionBinding.ts",
       "line": 35,
       "scope": "FUNCTION_LOCAL",
@@ -37330,6 +37795,20 @@
     {
       "path": "backend/src/sandbox/google/googleSandbox.ts",
       "line": 67,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/sandbox/repoRun.ts",
+      "line": 29,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/sandbox/repoRun.ts",
+      "line": 159,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37469,21 +37948,21 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 659,
+      "line": 660,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1171,
+      "line": 1188,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1197,
+      "line": 1214,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37553,43 +38032,57 @@
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 716,
+      "line": 717,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1290,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1319,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1350,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1884,
+      "line": 1100,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 2011,
+      "line": 1378,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/composioClient.ts",
+      "line": 1407,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/composioClient.ts",
+      "line": 1438,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/composioClient.ts",
+      "line": 1993,
       "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/composioClient.ts",
+      "line": 2125,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/composioClient.ts",
+      "line": 2994,
+      "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
@@ -39695,14 +40188,21 @@
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 80,
+      "line": 137,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 81,
+      "line": 138,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "line": 279,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

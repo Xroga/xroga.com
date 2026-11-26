@@ -1,0 +1,60 @@
+.mark {
+  --orbit-blue: #2563cc;
+  --orbit-violet: #6253b5;
+  --orbit-cyan-light: #007eaa;
+  --orbit-violet-light: #4536ba;
+  --orbit-rim: #357cf5;
+  --orbit-star: #315c95;
+  display: inline-flex;
+  flex: none;
+  width: 20px;
+  height: 20px;
+}
+
+.mark[data-compact] { width: 18px; height: 18px; }
+@media (max-width: 480px) {
+  .mark { width: 18px; height: 18px; }
+}
+
+:global(.dark) .mark,
+:global(.theme-black) .mark,
+:global(.theme-gray) .mark,
+:global(.terminal-skin-dark) .mark,
+:global(.terminal-skin-gray) .mark,
+:global(.terminal-skin-amoled) .mark {
+  --orbit-blue: #4e94fc;
+  --orbit-violet: #8b7cff;
+  --orbit-cyan-light: #75efff;
+  --orbit-violet-light: #a0a7ff;
+  --orbit-rim: #5d9dff;
+  --orbit-star: #eafbff;
+}
+
+.mark svg { display: block; width: 100%; height: 100%; }
+.primary, .secondary { stroke-width: .95; }
+.primary { stroke: var(--orbit-blue); }
+.secondary { stroke: var(--orbit-violet); }
+.horizon { fill: #030817; }
+.rim { stroke: var(--orbit-rim); stroke-width: 1.2; opacity: .88; }
+.particles { fill: var(--orbit-star); opacity: .8; }
+.cyan, .violet {
+  stroke-dasharray: 6 94;
+  stroke-linecap: round;
+  stroke-width: 1.75;
+  stroke-dashoffset: var(--orbit-phase);
+}
+.cyan { stroke: var(--orbit-cyan-light); --orbit-phase: -8px; }
+.violet { stroke: var(--orbit-violet-light); --orbit-phase: -61px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .cyan, .violet { animation: orbit 2s linear infinite paused; }
+  .rim { animation: rim 2s ease-in-out infinite paused; }
+  .mark[data-motion='running'] :is(.cyan, .violet, .rim) { animation-play-state: running; }
+}
+@keyframes orbit {
+  to { stroke-dashoffset: calc(var(--orbit-phase) - 100px); }
+}
+@keyframes rim {
+  0%, 100% { opacity: .88; }
+  50% { opacity: 1; }
+}

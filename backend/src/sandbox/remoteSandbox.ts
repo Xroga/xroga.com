@@ -57,6 +57,37 @@ export interface RemoteSandboxOptions {
   token?: string;
   name?: string;
   fetchImpl?: typeof fetch;
+  /**
+   * When set, the worker is a private Cloud Run service: each request carries a Google identity token minted for this audience by the
+   * metadata server (so only this API's service account, granted invoker on the worker, can call it). The shared token then travels in
+   * its own header instead of Authorization.
+   */
+  audience?: string;
+  /**
+   * Allows `registry-only` stages to be sent to this worker. Off by default: only a worker that answers `restrictedNetwork: true` to its own
+   * restricted-network self-test (checked before every first use) may receive one, and a worker that does not is treated as unable to run it.
+   */
+  allowRestricted?: boolean;
+}
+
+const ID_TOKEN_TTL_MS = 45 * 60_000;
+let cachedIdToken: { audience: string; value: string; expires: number } | undefined;
+
+async function googleIdToken(audience: string, fetchImpl: typeof fetch): Promise<string | null> {
+  if (cachedIdToken && cachedIdToken.audience === audience && cachedIdToken.expires > Date.now()) return cachedIdToken.value;
+  try {
+    const response = await fetchImpl(
+      `http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/identity?audience=${encodeURIComponent(audience)}&format=full`,
+      { headers: { 'Metadata-Flavor': 'Google' }, signal: AbortSignal.timeout(3_000) },
+    );
+    if (!response.ok) return null;
+    const value = (await response.text()).trim();
+    if (!/^[A-Za-z0-9._-]{20,4000}$/.test(value)) return null;
+    cachedIdToken = { audience, value, expires: Date.now() + ID_TOKEN_TTL_MS };
+    return value;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -118,6 +149,10 @@ export function readWorkerResult(body: unknown): SandboxExecutionResult | null {
   if (typeof b.killedForLimit !== 'boolean') return null;
   if (typeof b.durationMs !== 'number' || !Number.isFinite(b.durationMs)) return null;
 
+  const artifacts = readArtifacts(b.artifacts);
+  if (artifacts === null) return null;
+  const stages = readStages(b.stages);
+  if (stages === null) return null;
   return {
     exitCode,
     stdout: capture(b.stdout),
@@ -125,7 +160,46 @@ export function readWorkerResult(body: unknown): SandboxExecutionResult | null {
     timedOut: b.timedOut,
     killedForLimit: b.killedForLimit,
     durationMs: b.durationMs,
+    ...(artifacts.length ? { artifacts } : {}),
+    ...(stages ? { stages } : {}),
   };
+}
+
+/** Per-stage results of a multi-stage request, re-checked: a reply that is not exactly this shape is not trusted at all (null). */
+function readStages(value: unknown): NonNullable<SandboxExecutionResult['stages']> | null | undefined {
+  if (value === undefined) return undefined;
+  if (!Array.isArray(value) || value.length > 8) return null;
+  const out: Array<NonNullable<SandboxExecutionResult['stages']>[number]> = [];
+  for (const item of value) {
+    const s = item as Record<string, unknown> | null;
+    if (!s || typeof s.id !== 'string' || !/^[A-Za-z0-9:._/-]{1,120}$/.test(s.id) || typeof s.timedOut !== 'boolean' || typeof s.killedForLimit !== 'boolean'
+      || typeof s.durationMs !== 'number' || !Number.isFinite(s.durationMs) || (s.exitCode !== null && s.exitCode !== undefined && typeof s.exitCode !== 'number')) return null;
+    out.push({ id: s.id, exitCode: (s.exitCode ?? null) as number | null, stdout: capture(s.stdout), stderr: capture(s.stderr), timedOut: s.timedOut, killedForLimit: s.killedForLimit, durationMs: s.durationMs,
+      ...(s.networkPolicy === 'none' || s.networkPolicy === 'registry-only' ? { networkPolicy: s.networkPolicy } : {}) });
+  }
+  return out;
+}
+
+const MAX_ARTIFACTS = 20;
+const MAX_ARTIFACT_BASE64 = 3 * 1024 * 1024;
+const MAX_ARTIFACTS_TOTAL_BASE64 = 8 * 1024 * 1024;
+
+/** Files a worker returns, re-checked here: a reply that is not exactly this shape is not trusted at all (null). */
+export function readArtifacts(value: unknown): Array<{ path: string; contentBase64: string }> | null {
+  if (value === undefined) return [];
+  if (!Array.isArray(value) || value.length > MAX_ARTIFACTS) return null;
+  const out: Array<{ path: string; contentBase64: string }> = [];
+  let total = 0;
+  for (const item of value) {
+    const path = (item as { path?: unknown })?.path;
+    const data = (item as { contentBase64?: unknown })?.contentBase64;
+    if (typeof path !== 'string' || !path || path.length > 400 || path.startsWith('/') || path.includes('\\') || path.includes('\0') || path.split('/').includes('..')) return null;
+    if (typeof data !== 'string' || data.length > MAX_ARTIFACT_BASE64 || !/^[A-Za-z0-9+/]*={0,2}$/.test(data)) return null;
+    total += data.length;
+    if (total > MAX_ARTIFACTS_TOTAL_BASE64) return null;
+    out.push({ path, contentBase64: data });
+  }
+  return out;
 }
 
 /** Bound on a worker-supplied explanation before it reaches a log or a refusal message. */
@@ -183,18 +257,29 @@ export class RemoteSandboxRuntime implements SandboxRuntime {
   private readonly url: string;
   private readonly token?: string;
   private readonly fetchImpl: typeof fetch;
+  private readonly audience?: string;
+  private readonly allowRestricted: boolean;
+  private restrictedVerifiedUntil = 0;
 
   constructor(options: RemoteSandboxOptions) {
+    this.allowRestricted = options.allowRestricted === true;
     this.name = options.name ?? 'remote-worker';
     this.url = options.url.replace(/\/+$/, '');
     this.token = options.token;
     this.fetchImpl = options.fetchImpl ?? fetch;
+    this.audience = options.audience;
   }
 
-  private headers(): Record<string, string> {
+  private async headers(): Promise<Record<string, string>> {
     const headers: Record<string, string> = { 'content-type': 'application/json' };
     // Header, not query string: query strings are written to access logs.
-    if (this.token) headers.authorization = `Bearer ${this.token}`;
+    if (this.audience) {
+      const identity = await googleIdToken(this.audience, this.fetchImpl);
+      if (identity) headers.authorization = `Bearer ${identity}`;
+      if (this.token) headers['x-xroga-worker-token'] = this.token;
+    } else if (this.token) {
+      headers.authorization = `Bearer ${this.token}`;
+    }
     return headers;
   }
 
@@ -213,7 +298,7 @@ export class RemoteSandboxRuntime implements SandboxRuntime {
     try {
       const response = await this.fetchImpl(`${this.url}/health`, {
         method: 'GET',
-        headers: this.headers(),
+        headers: await this.headers(),
         signal: controller.signal,
       });
       if (!response.ok) {
@@ -238,16 +323,45 @@ export class RemoteSandboxRuntime implements SandboxRuntime {
     }
   }
 
+  /** Asks the worker to run its restricted-network self-test; only an explicit `restrictedNetwork === true` counts, and it is remembered briefly. */
+  private async restrictedVerified(): Promise<boolean> {
+    if (this.restrictedVerifiedUntil > Date.now()) return true;
+    if (!isAcceptableWorkerUrl(this.url)) return false;
+    try {
+      const response = await this.fetchImpl(`${this.url}/health?check=restricted`, { method: 'GET', headers: await this.headers(), signal: AbortSignal.timeout(60_000) });
+      if (!response.ok) return false;
+      const body = (await response.json()) as { restrictedNetwork?: unknown; networkIsolation?: unknown };
+      if (body.restrictedNetwork !== true || body.networkIsolation !== true) return false;
+      this.restrictedVerifiedUntil = Date.now() + 5 * 60_000;
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   async execute(request: SandboxExecutionRequest): Promise<SandboxExecutionResult> {
-    requireEnforcedSandboxNetworkPolicy(request.networkPolicy, this.name);
+    const wantsNetwork = request.networkPolicy === 'registry-only' || (request.stages ?? []).some((stage) => stage.networkPolicy === 'registry-only');
+    // Without the explicit option a restricted-network request is refused here exactly as before; with it, the worker must prove the restriction.
+    if (!this.allowRestricted) {
+      requireEnforcedSandboxNetworkPolicy(request.networkPolicy, this.name);
+      if (wantsNetwork) requireEnforcedSandboxNetworkPolicy('registry-only', this.name);
+    }
     const started = Date.now();
+    if (wantsNetwork && !(await this.restrictedVerified())) {
+      return {
+        exitCode: null, stdout: '', stderr: 'Isolation worker could not verify its restricted-network stage; generated code was not run.',
+        timedOut: false, killedForLimit: false, durationMs: Date.now() - started,
+      };
+    }
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), request.timeoutMs + TRANSPORT_GRACE_MS);
+    // the caller's own deadline or cancellation ends the wait too (the worker still enforces its own limits on what it already started)
+    if (request.signal) { if (request.signal.aborted) controller.abort(); else request.signal.addEventListener('abort', () => controller.abort(), { once: true }); }
 
     try {
       const response = await this.fetchImpl(`${this.url}/execute`, {
         method: 'POST',
-        headers: this.headers(),
+        headers: await this.headers(),
         signal: controller.signal,
         // Exactly the caller's environment. `process.env` is never read here, so a secret
         // can only reach the worker if a caller explicitly put it in the request.
@@ -259,6 +373,7 @@ export class RemoteSandboxRuntime implements SandboxRuntime {
           networkPolicy: request.networkPolicy,
           environment: request.environment,
           limits: request.limits,
+          ...(request.stages?.length ? { stages: request.stages.map((s) => ({ id: s.id, command: s.command, args: s.args, networkPolicy: s.networkPolicy, timeoutMs: s.timeoutMs, ...(s.cwd ? { cwd: s.cwd } : {}) })) } : {}),
           // Forwarded so a worker that supports per-execution images can honour it. A worker
           // that ignores the field is safe: the collector reports `browser_unavailable`.
           ...(request.image ? { image: request.image } : {}),
@@ -324,5 +439,7 @@ export function remoteSandboxFromEnvironment(
     url,
     token: env.XROGA_SANDBOX_WORKER_TOKEN?.trim() || undefined,
     name: env.XROGA_SANDBOX_WORKER_NAME?.trim() || 'remote-worker',
+    audience: env.XROGA_SANDBOX_WORKER_AUDIENCE?.trim() || undefined,
+    allowRestricted: env.XROGA_SANDBOX_WORKER_RESTRICTED === '1',
   });
 }

@@ -1,0 +1,8 @@
+Chrome started
+Agent extension loaded
+Workspace fixture paired
+Side-panel task submitted
+Side-panel task reached a terminal state
+First task receipt: [{"goal":"Open the catalog and report the published fixture price.","turns":["snapshot","click","read","screenshot","done"],"startUrl":"https://operator-fixture.test","result":{"status":"completed","actions":["snapshot","click","read","screenshot"],"result":"The verified fixture price is $39."}}]
+{"result":"PASS","product":"Chrome/151.0.7922.34","approvedSubmission":true,"cancelledPendingTurn":true,"voiceFixtureRequests":1,"actionCues":["click","input"],"pointerStaysThroughModelWait":true,"pointerRestsAtLastActionDuringWait":true,"resumedWithoutReplay":true,"restartAndAccountBoundary":true,"manualPauseAndResume":true,"workspaceReceiptRestoreAndSignOut":true,"screenshotPixelsSentToModel":false,"entryPoints":["side panel","Workspace fixture"],"model":"deterministic fixture","liveModelCalls":0,"costMicros":0}
+exit 0

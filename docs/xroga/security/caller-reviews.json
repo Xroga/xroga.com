@@ -18975,37 +18975,6 @@
       }
     },
     {
-      "path": "backend/src/services/integrations/composioControl.ts",
-      "sourceSha256": "f8ad0d65a5f8e70a636a57161db93e25ce68e77a9fa873980e593ccbd8dc1e74",
-      "callIds": [
-        "81d01fa98445cfc7e929",
-        "2df8cd7fa411b818081c"
-      ],
-      "disposition": "SCOPED_BOUNDARY",
-      "authority": "Only the original context recovered from the canonical permit can inspect its exact owned executing confirmation. User, immutable plan digest, expiry, durable claim and effect marker are checked before and after every provider mutation. WeakMap admission cannot be fabricated, replayed, serialized or transferred across actors.",
-      "reason": "Actual canonical vault and confirmation tests pass for all three supported registration modes, sync, deletion and paused trigger registration. Cancellation, source and credential changes, account substitution, provider authorization denial, malformed receipt and replay fail closed. This adapter creates no scheduler, principal or ledger and does not certify unrelated Phase2 or production acceptance.",
-      "evidence": [
-        {
-          "path": "backend/src/services/integrations/composioControl.ts",
-          "marker": ".eq('user_id',userId)"
-        },
-        {
-          "path": "backend/src/services/integrations/composioControl.security.test.ts",
-          "marker": "native Composio control:"
-        }
-      ],
-      "beforeCurrentMainIntegration": {
-        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
-        "sourceSha256": "f8ad0d65a5f8e70a636a57161db93e25ce68e77a9fa873980e593ccbd8dc1e74",
-        "callIds": [
-          "81d01fa98445cfc7e929",
-          "2df8cd7fa411b818081c"
-        ],
-        "disposition": "SCOPED_BOUNDARY"
-      },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
-    },
-    {
       "path": "backend/src/services/integrations/credentialEnvelope.ts",
       "sourceSha256": "df3f11e4de24d0d787671e59fae7bb1e5f27180d5d6fdba1107944d3735a6fca",
       "callIds": [
@@ -27171,105 +27140,6 @@
       "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
     },
     {
-      "path": "frontend/src/app/(workspace)/layout.tsx",
-      "sourceSha256": "0c878ec62c92cb0529a52f985e39dfc50756ee0ad06f2dd4940c57724b46f8d0",
-      "callIds": [
-        "5740af96dff28fda6f3f"
-      ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "These seven conservative inventory entries are genuine public-key server component or middleware queries, not service-role factories or false positives. The shared server creator uses only validated publishable configuration and verified Auth cookies. Three profile setup RPCs accept no owner argument, derive auth.uid() inside fixed SQL and return only that subject id/display name/onboarding. Pages check the returned subject and fail closed on query errors or mismatch. Public community profile column grants remain restrictive. Four current_community_role calls also take no owner argument and derive current identity from the validated JWT. Admin/community pages use current database role. Founder middleware and layout independently require configured founder identity, current role and real AAL2 before returning private HTML/RSC. Query owner/role fields grant nothing.",
-      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. One exact query per listed file. New actual Next HTTP fixture uses real local Auth-cookie issuance, distinct owner/member profiles and onboarding states, own dashboard/workspace metadata, completed versus pending onboarding, legitimate admin/community rendering and member denial despite forged query identity. Current role changes affect the same session. Real local TOTP admits the correct founder and demotion denies its still-AAL2 cookie, exercising both middleware and layout RPCs. Exact foreign profile remains unchanged. Installed Next streaming redirect markers are validated explicitly, while private founder denial remains strict403. No backend service-role or external account grant is inferred. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. The current source differs from this historical review; mapping by unchanged caller signature and ordinal only preserves identity. Current-source security proof remains required.",
-      "evidence": [
-        {
-          "path": "frontend/src/lib/supabase/server.ts",
-          "marker": "config.publishableKey"
-        },
-        {
-          "path": "frontend/src/app/(workspace)/layout.tsx",
-          "marker": "read_current_profile_setup"
-        },
-        {
-          "path": "supabase/migrations/20261019000600_current_profile_setup.sql",
-          "marker": "CREATE OR REPLACE FUNCTION public.read_current_profile_setup()"
-        }
-      ],
-      "historicalReview": {
-        "path": "frontend/src/app/(workspace)/layout.tsx",
-        "sourceSha256": "2958f2226458632dd06bfe25fceb74b7f2b665c10a92ff8470e810ce1943a810",
-        "callIds": [
-          "5740af96dff28fda6f3f"
-        ],
-        "disposition": "REVIEWED_GAP",
-        "authority": "Existing server Supabase client independently verifies the Auth cookie. The fixed read_current_profile_setup SQL function derives auth.uid() internally, returns only that profile id/display name/onboarding and accepts no client owner. Public column grants and community row policies are unchanged. No service key enters the browser.",
-        "reason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
-        "evidence": [
-          {
-            "path": "frontend/src/lib/supabase/server.ts",
-            "marker": "config.publishableKey"
-          },
-          {
-            "path": "frontend/src/app/(workspace)/layout.tsx",
-            "marker": "read_current_profile_setup"
-          },
-          {
-            "path": "supabase/migrations/20261019000600_current_profile_setup.sql",
-            "marker": "CREATE OR REPLACE FUNCTION public.read_current_profile_setup()"
-          }
-        ],
-        "historicalReview": {
-          "path": "frontend/src/app/(workspace)/layout.tsx",
-          "sourceSha256": "30ae792edc888b89b7c8849cc6c07294564a599b265070abe115846996471e61",
-          "callIds": [
-            "c2126cd594624a77ed05"
-          ],
-          "disposition": "SCOPED_BOUNDARY",
-          "authority": "Inspected full layout/page and cookie-bound publishable server client. Server getUser supplies the exact profiles.id filter; no request-provided identity or service-role credential enters this read. Only onboarding/display-name fields are returned, with RLS still applied.",
-          "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
-          "evidence": [
-            {
-              "path": "frontend/src/lib/supabase/server.ts",
-              "marker": "config.publishableKey"
-            },
-            {
-              "path": "frontend/src/app/(workspace)/layout.tsx",
-              "marker": ".eq('id', user.id)"
-            }
-          ]
-        }
-      },
-      "command007Proof": {
-        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
-        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
-        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
-        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
-        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
-        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
-        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
-        "obligationIds": [
-          "OB-49626f1bf7036db9:observed-actual-next-server-owner-role"
-        ],
-        "passedTests": [
-          "real server page reads bind verified cookies to own profile and current role despite forged query ownership"
-        ],
-        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
-      },
-      "separateUncertifiedScope": {
-        "state": "PRESERVED_NOT_CERTIFIED",
-        "originalReviewReason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
-        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
-        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
-      },
-      "beforeCurrentMainIntegration": {
-        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
-        "sourceSha256": "2958f2226458632dd06bfe25fceb74b7f2b665c10a92ff8470e810ce1943a810",
-        "callIds": [
-          "5740af96dff28fda6f3f"
-        ],
-        "disposition": "SCOPED_BOUNDARY"
-      },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
-    },
-    {
       "path": "frontend/src/app/admin/community/page.tsx",
       "sourceSha256": "8791cb3af7da75e7bd24283460a2893b714ca3fd3ef0dd1b811059491b90e1a2",
       "callIds": [
@@ -28379,31 +28249,6 @@
       "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
     },
     {
-      "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sourceSha256": "56771761395d13094fd28183ae415e0d5bddeae383e8f43d49490de6758c5b73",
-      "callIds": [
-        "227a815ae8e2c760bd61"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
-      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
-      "evidence": [
-        {
-          "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-          "marker": "const incoming = Array.from(list).filter("
-        }
-      ],
-      "beforeCurrentMainIntegration": {
-        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
-        "sourceSha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860",
-        "callIds": [
-          "18f7c2043f2ceb0ebac3"
-        ],
-        "disposition": "NOT_PERSISTENCE"
-      },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
-    },
-    {
       "path": "frontend/src/components/terminal/XrogaUtilityBlockView.tsx",
       "sourceSha256": "456bcddeced123a22c4655c4f3837357c7092158f6b5af677414daa32bdc92fa",
       "callIds": [
@@ -29170,31 +29015,6 @@
       ]
     },
     {
-      "path": "backend/src/ai/resourceMeter.ts",
-      "sourceSha256": "41d41394517529873968222975159e930630e672a03f7f6d786507d63cee1a3d",
-      "callIds": [
-        "1f13e40af8474dd650cc",
-        "508616f756e49c4a7c6a"
-      ],
-      "disposition": "NARROW_EXCEPTION",
-      "authority": "The only caller is the existing Google delivery maintenance tick, and only when XROGA_ENGINEERING_METERING=1. It uses the registered engineering_resource_sweep authority, which calls the single database function sweep_stale_engineering_reservations with a bounded interval. The function takes no owner, selects no row for the caller and returns only a count. The threshold has a floor of one hour (default two) so a call that is still running cannot be charged early.",
-      "reason": "Fixed-table lifecycle maintenance that spans owners by design, never selects or returns customer content and invokes no provider. A real disposable PostgreSQL test with a worker killed by SIGKILL shows the unsettled hold is charged in full once, the sweep is repeatable, and a recent hold is left alone. The function is service-role only and anon/authenticated are explicitly revoked. This certifies this bounded maintenance call, not usage accounting accuracy or any production behaviour.",
-      "evidence": [
-        {
-          "path": "backend/src/ai/resourceMeter.test.ts",
-          "marker": "sweep: off when metering is off"
-        },
-        {
-          "path": "backend/tests/engineeringResourceLedger.processes.local.integration.ts",
-          "marker": "a worker killed with SIGKILL while holding a reservation leaks a visible hold"
-        },
-        {
-          "path": "backend/tests/engineeringResourceLedger.local.integration.ts",
-          "marker": "the table and functions are not reachable by anonymous or signed-in roles"
-        }
-      ]
-    },
-    {
       "path": "backend/src/ai/engineeringOperator.ts",
       "sourceSha256": "f00e3e1dac207e02b2aedfa5fef844483a77435613cc5e6ba48b7cd75ec3cafa",
       "callIds": [
@@ -29444,69 +29264,6 @@
       }
     },
     {
-      "path": "backend/src/routes/localBrowser.ts",
-      "sourceSha256": "873a0c1ae4876e25462a9b9e18772d456ee3334fd5e5dd4492e0775b3427d019",
-      "callIds": [
-        "5df2ea611eb4f0af7872"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
-      "reason": "Decodes the already bounded document body into a local byte buffer. The scanner matches the built-in Buffer method name.",
-      "evidence": [
-        {
-          "path": "backend/src/routes/localBrowser.ts",
-          "marker": "Buffer.from(data.base64, 'base64')"
-        }
-      ]
-    },
-    {
-      "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "sourceSha256": "ef9da002abe7c0c6002e57dfa59830f3b4672de0a9b326f8cb963f8802332415",
-      "callIds": [
-        "c4f69f052e53d5249b1f",
-        "83437d9a6bbff05b9371"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
-      "reason": "Decodes the user-requested recording or enumerates user-selected File objects locally. Neither method is a database or storage invocation.",
-      "evidence": [
-        {
-          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-          "marker": "Uint8Array.from(atob(encoded)"
-        },
-        {
-          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-          "marker": "Array.from(event.target.files"
-        }
-      ]
-    },
-    {
-      "path": "backend/src/routes/browserDocuments.ts",
-      "sourceSha256": "52b4445687ccae287d6c84bfefac85c463400915c5857c7d70f4b9a9a5cddfe3",
-      "callIds": [
-        "49d80835a4c3c34ee32b",
-        "4b5a67879fe8cadd9429",
-        "6976a39ca0e1440bcce4"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Built-in Buffer and Uint8Array constructors create local memory objects only. They carry no identity, database handle or storage authority.",
-      "reason": "These matches allocate ZIP signature bytes or copy already supplied PDF and spreadsheet bytes into the local parser. The static scanner matched the method name from.",
-      "evidence": [
-        {
-          "path": "backend/src/routes/browserDocuments.ts",
-          "marker": "Buffer.from([0x50, 0x4b, 0x05, 0x06])"
-        },
-        {
-          "path": "backend/src/routes/browserDocuments.ts",
-          "marker": "pdf.getDocument({ data: Uint8Array.from(data), isEvalSupported: false"
-        },
-        {
-          "path": "backend/src/routes/browserDocuments.ts",
-          "marker": "workbook.xlsx.load(Uint8Array.from(data).buffer)"
-        }
-      ]
-    },
-    {
       "path": "frontend/src/lib/clipboard.ts",
       "sourceSha256": "ea08eff8a91e3336f46bc92a58eedd114859e9cc65d99052b848ef275b26bc17",
       "callIds": [
@@ -29545,6 +29302,279 @@
           "marker": "marks limited document evidence without splitting a UTF-8 character"
         }
       ]
+    },
+    {
+      "path": "frontend/src/app/(workspace)/layout.tsx",
+      "sourceSha256": "4c1ca037b72ce3a2dadb443b207c20a9735905cbb2e09f774d537624f404469c",
+      "callIds": [
+        "68a71e7e97bdbf681c01"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "These seven conservative inventory entries are genuine public-key server component or middleware queries, not service-role factories or false positives. The shared server creator uses only validated publishable configuration and verified Auth cookies. Three profile setup RPCs accept no owner argument, derive auth.uid() inside fixed SQL and return only that subject id/display name/onboarding. Pages check the returned subject and fail closed on query errors or mismatch. Public community profile column grants remain restrictive. Four current_community_role calls also take no owner argument and derive current identity from the validated JWT. Admin/community pages use current database role. Founder middleware and layout independently require configured founder identity, current role and real AAL2 before returning private HTML/RSC. Query owner/role fields grant nothing.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. One exact query per listed file. New actual Next HTTP fixture uses real local Auth-cookie issuance, distinct owner/member profiles and onboarding states, own dashboard/workspace metadata, completed versus pending onboarding, legitimate admin/community rendering and member denial despite forged query identity. Current role changes affect the same session. Real local TOTP admits the correct founder and demotion denies its still-AAL2 cookie, exercising both middleware and layout RPCs. Exact foreign profile remains unchanged. Installed Next streaming redirect markers are validated explicitly, while private founder denial remains strict403. No backend service-role or external account grant is inferred. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. The current source differs from this historical review; mapping by unchanged caller signature and ordinal only preserves identity. Current-source security proof remains required.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/supabase/server.ts",
+          "marker": "config.publishableKey"
+        },
+        {
+          "path": "frontend/src/app/(workspace)/layout.tsx",
+          "marker": "read_current_profile_setup"
+        },
+        {
+          "path": "supabase/migrations/20261019000600_current_profile_setup.sql",
+          "marker": "CREATE OR REPLACE FUNCTION public.read_current_profile_setup()"
+        }
+      ],
+      "historicalReview": {
+        "path": "frontend/src/app/(workspace)/layout.tsx",
+        "sourceSha256": "2958f2226458632dd06bfe25fceb74b7f2b665c10a92ff8470e810ce1943a810",
+        "callIds": [
+          "5740af96dff28fda6f3f"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Existing server Supabase client independently verifies the Auth cookie. The fixed read_current_profile_setup SQL function derives auth.uid() internally, returns only that profile id/display name/onboarding and accepts no client owner. Public column grants and community row policies are unchanged. No service key enters the browser.",
+        "reason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
+        "evidence": [
+          {
+            "path": "frontend/src/lib/supabase/server.ts",
+            "marker": "config.publishableKey"
+          },
+          {
+            "path": "frontend/src/app/(workspace)/layout.tsx",
+            "marker": "read_current_profile_setup"
+          },
+          {
+            "path": "supabase/migrations/20261019000600_current_profile_setup.sql",
+            "marker": "CREATE OR REPLACE FUNCTION public.read_current_profile_setup()"
+          }
+        ],
+        "historicalReview": {
+          "path": "frontend/src/app/(workspace)/layout.tsx",
+          "sourceSha256": "30ae792edc888b89b7c8849cc6c07294564a599b265070abe115846996471e61",
+          "callIds": [
+            "c2126cd594624a77ed05"
+          ],
+          "disposition": "SCOPED_BOUNDARY",
+          "authority": "Inspected full layout/page and cookie-bound publishable server client. Server getUser supplies the exact profiles.id filter; no request-provided identity or service-role credential enters this read. Only onboarding/display-name fields are returned, with RLS still applied.",
+          "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+          "evidence": [
+            {
+              "path": "frontend/src/lib/supabase/server.ts",
+              "marker": "config.publishableKey"
+            },
+            {
+              "path": "frontend/src/app/(workspace)/layout.tsx",
+              "marker": ".eq('id', user.id)"
+            }
+          ]
+        }
+      },
+      "command007Proof": {
+        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+        "obligationIds": [
+          "OB-49626f1bf7036db9:observed-actual-next-server-owner-role"
+        ],
+        "passedTests": [
+          "real server page reads bind verified cookies to own profile and current role despite forged query ownership"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+      },
+      "beforeCurrentMainIntegration": {
+        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+        "sourceSha256": "2958f2226458632dd06bfe25fceb74b7f2b665c10a92ff8470e810ce1943a810",
+        "callIds": [
+          "5740af96dff28fda6f3f"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
+      },
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+    },
+    {
+      "path": "backend/src/ai/resourceMeter.ts",
+      "sourceSha256": "a7052c1dcbc6eea80c1049639f813704072432f907a7c706620df413d0cf0f26",
+      "callIds": [
+        "1e78d06e886bf0795dd5",
+        "9caea37dce7332cbd78d"
+      ],
+      "disposition": "NARROW_EXCEPTION",
+      "authority": "The only caller is the existing Google delivery maintenance tick, and only when XROGA_ENGINEERING_METERING=1. It uses the registered engineering_resource_sweep authority, which calls the single database function sweep_stale_engineering_reservations with a bounded interval. The function takes no owner, selects no row for the caller and returns only a count. The threshold has a floor of one hour (default two) so a call that is still running cannot be charged early.",
+      "reason": "Fixed-table lifecycle maintenance that spans owners by design, never selects or returns customer content and invokes no provider. A real disposable PostgreSQL test with a worker killed by SIGKILL shows the unsettled hold is charged in full once, the sweep is repeatable, and a recent hold is left alone. The function is service-role only and anon/authenticated are explicitly revoked. This certifies this bounded maintenance call, not usage accounting accuracy or any production behaviour.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/resourceMeter.test.ts",
+          "marker": "sweep: off when metering is off"
+        },
+        {
+          "path": "backend/tests/engineeringResourceLedger.processes.local.integration.ts",
+          "marker": "a worker killed with SIGKILL while holding a reservation leaks a visible hold"
+        },
+        {
+          "path": "backend/tests/engineeringResourceLedger.local.integration.ts",
+          "marker": "the table and functions are not reachable by anonymous or signed-in roles"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+      "sourceSha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780",
+      "callIds": [
+        "ffa5a9eec1bdc0caa995"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
+      "reason": "Decodes the user-requested recording locally. The byte conversion does not invoke a database or storage client.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+          "marker": "Uint8Array.from(atob(encoded)"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/composioControl.ts",
+      "sourceSha256": "06e8b400c89771c9cef3002a505cd565c53c9a59c6aabde89bb263cc8455e8cf",
+      "callIds": [
+        "d8979ec278e78beb6550",
+        "751d4198266ba218c7ab"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Only the original context recovered from the canonical permit can inspect its exact owned executing confirmation. User, immutable plan digest, expiry, durable claim and effect marker are checked before and after every provider mutation. WeakMap admission cannot be fabricated, replayed, serialized or transferred across actors.",
+      "reason": "Actual canonical vault and confirmation tests pass for all three supported registration modes, sync, deletion and paused trigger registration. Cancellation, source and credential changes, account substitution, provider authorization denial, malformed receipt and replay fail closed. This adapter creates no scheduler, principal or ledger and does not certify unrelated Phase2 or production acceptance. The exact owned confirmation read and its entire query callback are unchanged. The test evidence covers the original operations. This static reconciliation confers no acceptance for the added PIN_CUSTOM_MCP_TOOL operation or for any provider effect.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/composioControl.ts",
+          "marker": ".eq('user_id',userId)"
+        },
+        {
+          "path": "backend/src/services/integrations/composioControl.security.test.ts",
+          "marker": "native Composio control:"
+        }
+      ],
+      "beforeCurrentMainIntegration": {
+        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+        "sourceSha256": "f8ad0d65a5f8e70a636a57161db93e25ce68e77a9fa873980e593ccbd8dc1e74",
+        "callIds": [
+          "81d01fa98445cfc7e929",
+          "2df8cd7fa411b818081c"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
+      },
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "sourceMergeContinuation": {
+        "sourceParent": "26018d4eeb9a70632e86d15ec9e07686af998c7d",
+        "previousSourceSha256": "f8ad0d65a5f8e70a636a57161db93e25ce68e77a9fa873980e593ccbd8dc1e74",
+        "previousCallIds": [
+          "81d01fa98445cfc7e929",
+          "2df8cd7fa411b818081c"
+        ],
+        "scope": "EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NO_NEW_SECURITY_ACCEPTANCE"
+      }
+    },
+    {
+      "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
+      "sourceSha256": "c9012e95a471135020ab400e0b1bcbd28a6a4bf628d715b33599169df818006d",
+      "callIds": [
+        "590dbb7d21550effa467"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. The exact native FileList conversion and its enclosing handler are unchanged. The browser-operator branch and any upload or egress remain outside this classification.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
+          "marker": "const incoming = Array.from(list).filter("
+        }
+      ],
+      "beforeCurrentMainIntegration": {
+        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+        "sourceSha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860",
+        "callIds": [
+          "18f7c2043f2ceb0ebac3"
+        ],
+        "disposition": "NOT_PERSISTENCE"
+      },
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "sourceMergeContinuation": {
+        "sourceParent": "26018d4eeb9a70632e86d15ec9e07686af998c7d",
+        "previousSourceSha256": "56771761395d13094fd28183ae415e0d5bddeae383e8f43d49490de6758c5b73",
+        "previousCallIds": [
+          "227a815ae8e2c760bd61"
+        ],
+        "scope": "EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NO_NEW_SECURITY_ACCEPTANCE"
+      }
+    },
+    {
+      "path": "backend/src/routes/localBrowser.ts",
+      "sourceSha256": "a40092256167d3e1862314641773ca749df710b56cd6bc8ec053351aea9248ac",
+      "callIds": [
+        "7238c5d4e187fa4f3c07"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
+      "reason": "Decodes the already bounded document body into a local byte buffer. The scanner matches the built-in Buffer method name. The exact in-memory Buffer conversion remains after the bounded document-input validation. This marker classifies the conversion only. New browser behavior and other conversions remain separate.",
+      "evidence": [
+        {
+          "path": "backend/src/routes/localBrowser.ts",
+          "marker": "Buffer.from(data.base64, 'base64')"
+        }
+      ],
+      "sourceMergeContinuation": {
+        "sourceParent": "26018d4eeb9a70632e86d15ec9e07686af998c7d",
+        "previousSourceSha256": "873a0c1ae4876e25462a9b9e18772d456ee3334fd5e5dd4492e0775b3427d019",
+        "previousCallIds": [
+          "5df2ea611eb4f0af7872"
+        ],
+        "scope": "EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NO_NEW_SECURITY_ACCEPTANCE"
+      }
+    },
+    {
+      "path": "backend/src/routes/browserDocuments.ts",
+      "sourceSha256": "131007966c483ed8c7741e73be3a230c85e3cb79db89dd90908c68605d28206e",
+      "callIds": [
+        "c5afc3e57e785ef3ef3b",
+        "87ed7df95645a68cdb05",
+        "ca5e36bcc97ba13a6ccd"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Built-in Buffer and Uint8Array constructors create local memory objects only. They carry no identity, database handle or storage authority.",
+      "reason": "These matches allocate ZIP signature bytes or copy already supplied PDF and spreadsheet bytes into the local parser. The static scanner matched the method name from. The ZIP signature allocation and the exact Buffer-to-Uint8Array copies are unchanged. This static reconciliation confers no acceptance for new PDF layout, page limits, parser behavior or egress.",
+      "evidence": [
+        {
+          "path": "backend/src/routes/browserDocuments.ts",
+          "marker": "Buffer.from([0x50, 0x4b, 0x05, 0x06])"
+        },
+        {
+          "path": "backend/src/routes/browserDocuments.ts",
+          "marker": "pdf.getDocument({ data: Uint8Array.from(data), isEvalSupported: false"
+        },
+        {
+          "path": "backend/src/routes/browserDocuments.ts",
+          "marker": "workbook.xlsx.load(Uint8Array.from(data).buffer)"
+        }
+      ],
+      "sourceMergeContinuation": {
+        "sourceParent": "26018d4eeb9a70632e86d15ec9e07686af998c7d",
+        "previousSourceSha256": "52b4445687ccae287d6c84bfefac85c463400915c5857c7d70f4b9a9a5cddfe3",
+        "previousCallIds": [
+          "49d80835a4c3c34ee32b",
+          "4b5a67879fe8cadd9429",
+          "6976a39ca0e1440bcce4"
+        ],
+        "scope": "EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NO_NEW_SECURITY_ACCEPTANCE"
+      }
     }
   ],
   "retiredSourceReviews": [
@@ -29586,6 +29616,94 @@
             "marker": "opts={...opts,zip:Buffer.from(opts.zip)}"
           }
         ]
+      }
+    },
+    {
+      "reason": "The floating Workspace form was removed. Its file-list conversion disappeared. The retained audio conversion is independently rebound to its unchanged expression.",
+      "parent": "a428f9bb16689b200bd6983150ef0c23347dd821",
+      "removedCallIds": [
+        "9a1aa074201d15f0e9b0"
+      ],
+      "review": {
+        "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+        "sourceSha256": "9a970ad831e3085d51dacae2ac200470a4a220400add4326a5d0fec5f51b55e4",
+        "callIds": [
+          "9a1aa074201d15f0e9b0",
+          "aeed73270fbd285f4446"
+        ],
+        "disposition": "NOT_PERSISTENCE",
+        "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
+        "reason": "Decodes the user-requested recording or enumerates user-selected File objects locally. Neither method is a database or storage invocation.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+            "marker": "Uint8Array.from(atob(encoded)"
+          },
+          {
+            "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+            "marker": "Array.from(event.target.files"
+          }
+        ]
+      }
+    },
+    {
+      "reason": "The former standalone file-list conversion is absent from the integrated browser UI. The other call survived with the exact main-parent recording conversion review.",
+      "parent": "26018d4eeb9a70632e86d15ec9e07686af998c7d",
+      "removedCallIds": [
+        "83437d9a6bbff05b9371"
+      ],
+      "review": {
+        "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+        "sourceSha256": "ef9da002abe7c0c6002e57dfa59830f3b4672de0a9b326f8cb963f8802332415",
+        "callIds": [
+          "c4f69f052e53d5249b1f",
+          "83437d9a6bbff05b9371"
+        ],
+        "disposition": "NOT_PERSISTENCE",
+        "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
+        "reason": "Decodes the user-requested recording or enumerates user-selected File objects locally. Neither method is a database or storage invocation.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+            "marker": "Uint8Array.from(atob(encoded)"
+          },
+          {
+            "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+            "marker": "Array.from(event.target.files"
+          }
+        ]
+      }
+    },
+    {
+      "reason": "The previous pricing CTA particles Array.from expression is absent from the integrated pricing presentation. Its exact historical native-render conversion review is retained.",
+      "parent": "0d777152f43b5be1918efa27b506898008ab960f",
+      "removedCallIds": [
+        "e75e25572d006aea3011"
+      ],
+      "review": {
+        "path": "frontend/src/components/pricing/PricingPageClient.tsx",
+        "sourceSha256": "06dc256ae10249978f8b73114f455a3b4a518d39287cd08dd229810ab66875c5",
+        "callIds": [
+          "e75e25572d006aea3011"
+        ],
+        "disposition": "NOT_PERSISTENCE",
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in CtaParticles, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/pricing/PricingPageClient.tsx",
+            "marker": "{Array.from({ length: 10 }, (_, index) => ("
+          }
+        ],
+        "beforeCurrentMainIntegration": {
+          "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+          "sourceSha256": "06dc256ae10249978f8b73114f455a3b4a518d39287cd08dd229810ab66875c5",
+          "callIds": [
+            "e75e25572d006aea3011"
+          ],
+          "disposition": "NOT_PERSISTENCE"
+        },
+        "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
       }
     }
   ]

@@ -1,0 +1,76 @@
+{
+  "case": "python",
+  "repository": "psf/requests",
+  "commit": "0e322af87745eff34caffe4df68456ebc20d9068",
+  "pinMatches": true,
+  "filesSent": 118,
+  "omitted": 11,
+  "plan": {
+    "ready": true,
+    "packages": [
+      {
+        "name": "urllib3",
+        "version": "2.2.3",
+        "hashes": 1,
+        "licence": "MIT License",
+        "class": "permissive"
+      },
+      {
+        "name": "idna",
+        "version": "3.10",
+        "hashes": 1,
+        "licence": "BSD License",
+        "class": "permissive"
+      },
+      {
+        "name": "certifi",
+        "version": "2024.8.30",
+        "hashes": 1,
+        "licence": "MPL-2.0",
+        "class": "permissive"
+      },
+      {
+        "name": "charset-normalizer",
+        "version": "3.4.0",
+        "hashes": 104,
+        "licence": "MIT",
+        "class": "permissive"
+      }
+    ],
+    "lockfile": [
+      "urllib3==2.2.3 --hash=sha256:ca899ca043dcb1bafa3e262d73aa25c465bfb49e0",
+      "idna==3.10 --hash=sha256:946d195a0d259cbba61165e88e65941f16e9b36ea6ddb",
+      "certifi==2024.8.30 --hash=sha256:922820b53db7a7257ffbda3f597266d435245",
+      "charset-normalizer==3.4.0 --hash=sha256:4f9fc98dad6c2eaa32fc3af1417d95",
+      ""
+    ]
+  },
+  "stages": [
+    {
+      "id": "acquire:pip",
+      "networkPolicy": "registry-only",
+      "exitCode": 0,
+      "durationMs": 2238,
+      "stdout": "",
+      "stderr": "  WARNING: The script normalizer is installed in '/tmp/xroga-run-LTU3q5/.local/bin' which is not on PATH.\n  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.\nWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv\n"
+    },
+    {
+      "id": "run:requests",
+      "networkPolicy": "none",
+      "exitCode": 0,
+      "durationMs": 244,
+      "stdout": "requests 2.32.3 from /tmp/xroga-run-LTU3q5/src/requests/__init__.py\nprepared url: https://example.org/search?q=xroga+sandbox&page=2\nurllib3 2.2.3 idna xn--bcher-kva.example charset utf_8\nnetwork from the job: ConnectionError\n",
+      "stderr": ""
+    }
+  ],
+  "ledger": [
+    {
+      "reserved": 300
+    },
+    {
+      "settled": 3,
+      "resource": "cloud-run-sandbox;mem=1024MB"
+    }
+  ],
+  "wallMs": 11013
+}

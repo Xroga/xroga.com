@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Reports</title>
+<style>body{font:14px sans-serif;margin:16px}button[disabled]{opacity:.5}</style></head>
+<body><div id="app">Loading…</div>
+<script src="lib.js"></script>
+<script>
+// Slow, duplicate-prone action: "Generate report" shows a spinner for ~3 s with no other change, then a confirmation and a report id. Every click creates a report, even during the spinner
+// (a retry or double click makes a duplicate). One report is wanted.
+const state = __state; state.reports = [];
+mount(app => {
+  const status = h('p', { role: 'status' }, 'Idle'); let n = 0;
+  app.append(h('h1', {}, 'Monthly report'), h('button', { type: 'button', onclick: () => { const id = ++n; state.reports.push({ id, at: Date.now() }); status.textContent = 'Generating…'; setTimeout(() => { status.textContent = 'Report ready: R-' + (1000 + id); }, 3000); } }, 'Generate report'), status);
+});
+</script></body></html>

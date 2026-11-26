@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Order log</title>
+<style>body{font:14px sans-serif;margin:16px}#list{height:260px;overflow:auto;border:1px solid #999;width:420px}.row{padding:6px;border-bottom:1px solid #eee}#detail{margin-top:10px}</style></head>
+<body><div id="app">Loading…</div>
+<script src="lib.js"></script>
+<script>
+// An order log in a scrolling container that loads more rows only when scrolled near the bottom (200 orders, 40 at a time). The order to find is far down; opening it shows its status in a panel.
+const state = __state; const TARGET = 'ORD-1187'; // far down: the third batch
+state.target = TARGET; state.opened = null; state.reported = null;
+const orders = Array.from({ length: 200 }, (_, i) => ({ id: 'ORD-' + (1100 + i), status: ['paid', 'shipped', 'refunded', 'pending'][(i * 7 + SEED) % 4] }));
+mount(app => {
+  let shown = 0; const list = h('div', { id: 'list', 'aria-label': 'Orders', tabindex: '0' }), detail = h('div', { id: 'detail', role: 'status' });
+  const more = () => { for (const o of orders.slice(shown, shown + 40)) list.append(h('div', { class: 'row' }, o.id + ' ', h('button', { type: 'button', onclick: () => { state.opened = o.id; detail.textContent = 'Order ' + o.id + ' status: ' + o.status; } }, 'Open ' + o.id))); shown += 40; };
+  list.addEventListener('scroll', () => { if (list.scrollTop + list.clientHeight >= list.scrollHeight - 30 && shown < orders.length) more(); });
+  more(); app.append(h('h1', {}, 'Orders'), list, detail);
+  state.status = orders.find(o => o.id === TARGET)?.status;
+});
+</script></body></html>

@@ -31,6 +31,8 @@ export function validateCurrentMigrationAdditions(additions,files,readMigration)
     existing_source_changes:['20261027030000_existing_source_changes.sql','20261027030000_existing_source_changes.sql'],
     engineering_resource_reservations:['20261029100000_engineering_resource_ledger.sql','20261029100000_engineering_resource_ledger.sql'],
     engineering_resource_limits:['20261029100000_engineering_resource_ledger.sql','20261029100000_engineering_resource_ledger.sql'],
+    local_browser_device_sessions:['20261108181114_local_browser_device_sessions.sql','20261108181114_local_browser_device_sessions.sql'],
+    custom_mcp_tool_pins:['20261113130000_custom_mcp_tool_pins.sql','20261113130000_custom_mcp_tool_pins.sql'],
     teams:[teams,teams],team_members:[teams,teams],team_invitations:[teams,teams],
     team_link_redemptions:[teams,teams],team_audit:[teams,teams],
     notification_push_subscriptions:['20261110212913_smart_notification_push_subscriptions.sql','20261110212913_smart_notification_push_subscriptions.sql']};

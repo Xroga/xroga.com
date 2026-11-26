@@ -1,0 +1,33 @@
+{
+  "names": [
+    "model-outage"
+  ],
+  "args": {},
+  "timedOut": false,
+  "reports": [
+    {
+      "name": "model-outage",
+      "ok": true,
+      "startedAt": "2026-11-18T19:10:42.615Z",
+      "durationMs": 6199,
+      "result": {
+        "http503": {
+          "recovered": true,
+          "how": "automatic retry",
+          "modelRequests": 2
+        },
+        "http429": {
+          "recovered": true,
+          "how": "automatic retry",
+          "modelRequests": 2
+        },
+        "http500": {
+          "recovered": true,
+          "how": "automatic retry",
+          "modelRequests": 2
+        }
+      }
+    }
+  ],
+  "console": []
+}

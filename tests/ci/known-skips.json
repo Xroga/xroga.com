@@ -401,6 +401,16 @@
       "reason": "Needs a disposable PostgreSQL (STORAGE_TEST_DATABASE_URL); skipped without it and run with REQUIRE_PHASE1_FIXTURES=1 by the storage-phase1 workflow.",
       "issue_or_command": "Batch 1.5 storage-phase1 workflow (manual dispatch) and the phase3 browser host scripts",
       "review_date": "2026-12-15"
+    },
+    {
+      "id": "527a2ed434dac5f95e81def429e5bf2a0f467dd2b33f2a2302f7dede5aeb7f0d",
+      "path": "deploy/sandbox-worker/server.test.mjs",
+      "title": "a file the job (or repository) plants in a run-local bin directory never shadows a system program",
+      "condition": "process.platform === 'win32'",
+      "owner": "Xroga engineering",
+      "reason": "The test plants a POSIX shell script and runs it with sh and chmod; Windows has neither. It runs on the Linux CI host and was verified on the sandbox worker.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-12-15"
     }
   ]
 }

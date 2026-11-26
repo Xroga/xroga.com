@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Text in a picture fixture</title>
+<style>body{margin:0;background:#fff}canvas{display:block}</style></head>
+<body>
+<canvas id="c" width="900" height="500"></canvas>
+<script>
+// The words are painted into an image first and the image is drawn on the page canvas: no text call is made on the page canvas, as in a WebGL or image-based editor.
+const src = document.createElement('canvas'); src.width = 900; src.height = 500;
+const g = src.getContext('2d');
+g.fillStyle = '#fff'; g.fillRect(0, 0, 900, 500);
+g.fillStyle = '#111'; g.font = 'bold 44px Arial';
+g.fillText('Export as PDF', 60, 100);
+g.fillText('Total due 4,200', 60, 260);
+g.fillText('Save draft', 500, 420);
+const out = document.getElementById('c').getContext('2d');
+out.drawImage(src, 0, 0);
+const img = out.getImageData(0, 0, 900, 500); out.putImageData(img, 0, 0);
+</script>
+</body></html>

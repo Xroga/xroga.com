@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Webmail (replica)</title>
+<style>
+body{font:14px sans-serif;margin:16px}
+ul{list-style:none;padding:0;margin:8px 0;width:560px}
+.row{position:relative;border:1px solid #bbb;border-radius:6px;margin:6px 0;padding:8px 12px;cursor:pointer}
+.row b{display:block}
+.row small{color:#555}
+/* The row shows its own action buttons over its middle once the pointer is on it, as many mail apps do. */
+.row .actions{display:none;position:absolute;left:25%;top:0;bottom:0;width:50%;background:#fff3;align-items:center;justify-content:space-around}
+.row:hover .actions{display:flex}
+.row .actions button{background:#fdd;border:1px solid #a33;padding:6px 10px;cursor:pointer}
+label{display:block;margin:6px 0}
+textarea{width:460px;height:140px}
+input[type=text],input:not([type]){width:340px}
+</style></head>
+<body><div id="app">Loading…</div>
+<script src="lib.js"></script>
+<script>
+// A webmail replica with the quirks of a real one: the saved draft keeps only what the server was sent, paragraph breaks are squeezed unless "Keep paragraph spacing" is on,
+// a draft that is only autosaved (2.5 s after the last edit) is lost if the editor is closed first, and a row in the Drafts list shows its own Delete button over its middle on hover.
+// Drafts live on the server; the grader reads /__replica/state, never the page.
+const API = (a, b) => fetch('/__replica/api/mail/' + a, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(b || {}) }).then(async r => ({ status: r.status, body: await r.json() }));
+mount(async app => {
+  if (Q.get('reset') && !sessionStorage.getItem('replica-reset')) { sessionStorage.setItem('replica-reset', '1'); await fetch('/__replica/reset', { method: 'POST' }); }
+  const view = h('div'), msg = h('p', { role: 'status' });
+  const snippet = t => String(t || '').replace(/\s+/g, ' ').slice(0, 70);
+  const list = async () => {
+    const { body } = await API('list', {}); view.innerHTML = '';
+    view.append(h('h1', {}, 'Drafts'), h('p', {}, h('span', {}, body.length + ' drafts')),
+      h('p', {}, h('button', { type: 'button', onclick: () => compose(null) }, 'New message')),
+      h('ul', {}, body.map(d => h('li', { class: 'row', onclick: () => open(d.id) },
+        h('b', {}, d.to), h('span', {}, d.subject), h('small', {}, snippet(d.body)),
+        h('div', { class: 'actions' }, h('button', { type: 'button', onclick: async e => { e.stopPropagation(); await API('discard', { id: d.id }); list(); } }, 'Delete draft'))))));
+  };
+  const open = async id => { const { body } = await API('get', { id }); compose(body); };
+  const compose = d => {
+    let id = d ? d.id : null, dirty = false, timer = null;
+    const to = h('input', { 'aria-label': 'To', value: d ? d.to : '' }), subject = h('input', { 'aria-label': 'Subject', value: d ? d.subject : '' });
+    const bodyEl = h('textarea', { 'aria-label': 'Message body' }); bodyEl.value = d ? d.body : '';
+    const keep = h('input', { type: 'checkbox', 'aria-label': 'Keep paragraph spacing' });
+    const persist = async () => {
+      const r = await API('save', { id, to: to.value, subject: subject.value, body: bodyEl.value, keepSpacing: keep.checked, lose: Q.get('lose') });
+      if (r.status === 200) { id = r.body.draft.id; dirty = false; msg.textContent = 'Draft saved'; } else msg.textContent = 'Not saved: ' + (r.body.error || r.status);
+    };
+    const touch = () => { dirty = true; msg.textContent = ''; clearTimeout(timer); timer = setTimeout(persist, 2500); };
+    for (const el of [to, subject, bodyEl, keep]) el.addEventListener('input', touch);
+    view.innerHTML = '';
+    view.append(h('h1', {}, d ? 'Edit draft' : 'New message'), h('label', {}, 'To ', to), h('label', {}, 'Subject ', subject), h('label', {}, 'Body ', bodyEl),
+      h('label', {}, keep, ' Keep paragraph spacing'),
+      h('button', { type: 'button', onclick: persist }, 'Save draft'), ' ',
+      h('button', { type: 'button', onclick: async () => { clearTimeout(timer); await API('send', { to: to.value }); msg.textContent = 'Sent'; } }, 'Send'), ' ',
+      // Closing drops anything that is only waiting for the autosave.
+      h('button', { type: 'button', onclick: () => { clearTimeout(timer); msg.textContent = ''; list(); } }, 'Close'));
+  };
+  app.append(view, msg); await list();
+});
+</script></body></html>

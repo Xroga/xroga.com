@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Account settings</title></head>
+<body>
+<h1>Account settings</h1>
+<form aria-label="Profile">
+  <label>Full name <input aria-label="Full name" required></label>
+  <label>Email <input type="email" aria-label="Email" value="not-an-email"></label>
+  <label>Country <select aria-label="Country"><option>United Kingdom</option><option selected>Germany</option><option>France</option></select></label>
+  <label>Password <input type="password" aria-label="Password" value="hunter2-secret"></label>
+  <fieldset><legend>Notifications</legend>
+    <label><input type="checkbox" aria-label="Weekly digest" checked> Weekly digest</label>
+    <label><input type="checkbox" aria-label="Product news"> Product news</label>
+  </fieldset>
+  <input type="hidden" name="csrf" value="zzz">
+  <button type="submit">Save profile</button>
+</form>
+<form aria-label="Billing" style="display:none"><label>Card note <input aria-label="Card note"></label></form>
+</body></html>

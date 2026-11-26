@@ -1,0 +1,1 @@
+PDF reading (the `read_pdf` tool) runs on this device with pdf.js (pdfjs-dist 4.10.38, Apache-2.0, https://github.com/mozilla/pdf.js), unmodified. Pages that hold only a picture of text are read with the on-device text recognition (see ../ocr). Nothing is sent anywhere.

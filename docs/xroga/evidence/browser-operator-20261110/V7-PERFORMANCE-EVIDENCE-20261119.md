@@ -1,0 +1,65 @@
+# Browser Operator performance repair: measured causes, changes and results, 19 November 2026
+
+All numbers are from the real staging path (installed extension in Chrome, DeepSeek V4.1 Flash 1017 through Zurelay, staging revision `00146-wod`). Server numbers come from the backend's own `[browser-turn]` log records; the sample sizes are stated. No production change.
+
+## 1. Where the time goes (baseline: 159 real turns, 13:15 to 14:05 UTC, TraceDraw runs)
+| Measure | Value |
+| --- | --- |
+| Model turn, end to end | p50 8.7 s, p95 33.1 s, max 67.5 s |
+| Provider wait (time to response headers) | p50 7.9 s, p95 31.8 s: **91% of a turn** |
+| Gateway queue / ledger reservation | p50 45 ms / 52 ms (negligible) |
+| Input tokens per turn | p50 21,043 (p95 23,432); 84% served from the provider cache |
+| Output tokens per turn | p50 109, p95 1,334, max 1,669 |
+| Request size | p50 75 KB of text plus a screenshot (185 to 218 KB on the wire in the first vision run, up to 289 KB later) |
+| Model share of wall-clock time per run | 93 to 95% |
+Conclusion: Xroga's own code (gateway, ledger, tool dispatch, UI) is not the bottleneck. The time is the provider call, and it is driven by (a) the number of turns and (b) the slow tail of long prose output, not by reasoning (the gateway already sends `reasoning_effort: none` on every turn).
+
+Controlled A/B on the real endpoint (2 calls per variant, so indicative only): default thinking 58.8 s and 7.3 s; `reasoning_effort` none 4.3 s and 2.7 s; `thinking` disabled 3.6 s and 3.6 s; `low` 3.9 s and 3.6 s. The production path already uses `none`.
+
+## 2. Changes made for speed and reliability
+1. `canvas` steps may be placed in a `batch`, with a prompt rule to batch known canvas sequences and screenshot afterwards, replacing the one-screenshot-one-click-per-turn pattern.
+2. A brevity rule in the system prompt: between tool calls write nothing or one short sentence; no coordinate narration in prose (it targets the output tail above).
+3. `tabs adopt`: use a tab the user already has open and named. It considers only tabs of the session's window with a matching title or address, never names a non-matching tab, needs the match text to appear in the user's own request (a guess is refused), and refuses non-web pages. This removes the duplicate-tab and wrong-tab loop.
+4. `canvas type` and `canvas key`: typing and key presses into fields a canvas paints, allowed only while the focused element is a canvas (the guarded `type` and `press` keep refusing real fields). Secrets (password, card number, code) and consequential words are refused.
+5. Vision, the canvas tool, point actions and `find_color` exposure fixed earlier (see V6-ROOT-CAUSES).
+Tests: 1279 extension tests pass (new: adoption scoping, canvas keys and typing, batch membership); typecheck clean.
+
+## 3. Same-task comparison (TraceDraw)
+Before (vision on, canvas tool, no batch, no brevity rule, no adoption): see section 1; the agent worked one screenshot and one step per turn for 35 minutes without finishing, and stopped because typing into canvas-painted fields was cancelled by the key guard.
+Measured runs, same task family (TraceDraw, real Chrome, real DeepSeek, staging 00146-wod):
+| Run | Build | Turns | Wall time | Outcome |
+| --- | --- | --- | --- | --- |
+| A | vision + canvas tool | 55 | about 11 min | rectangle only, no export |
+| B | + batch, brevity rule, tab adoption (model-called) | 37 | about 10 min | no export; did not adopt the open tab; first model call 77 s |
+| C | + bind-named-tab before turn 1 (small task: read the rectangle size) | 3 | about 45 s model time (1 m 44 s on screen) | correct: 135.172 x 89.493 mm, no duplicate tab |
+| D | + adopted tab always visible, no reload of adopted site | 35+ (stopped by me) | 7+ min | document created, but the script never got into TraceDraw's painted code editor; no shapes, no export |
+| D (continued) | same run, left running after I stopped watching | roughly 60+ in total | about 18 min (started 16:31 UTC, SVG written 16:49 UTC) | **VERIFIED LIVE: a real SVG exported by TraceDraw** (see below) |
+| E | stray-tab guard and hidden-input fix (this commit) | not yet run end to end | n/a | not run |
+Correction to the line above: run D did finish. Its exported file `tracedraw-export-20261119.svg` (4,180 bytes, in this folder) contains a blue rectangle (fill #0000ff), a red ellipse (#ff0000) and the text Xroga as glyph outlines, and it renders correctly in Chrome. Flaws: the circle extends past the right edge of the A4 page (x 170 to 230 mm on a 210 mm page), and the run took about 18 minutes, far from the one-minute target. So: output VERIFIED, speed FAILED.
+Original note, written before the file was found: the full drawing and SVG export was thought unverified. Run D shows the remaining blocker precisely: entering text into an application's painted code editor. Findings: (1) keys do reach the app (a new document was created with Ctrl+N and Enter in a disposable browser); (2) the model-driven path spends dozens of turns failing to focus and fill that editor; (3) no code-level deterministic "open the script panel, paste the script, run, verify the object count" path exists yet, which is what could bring this task near one minute.
+Side tests with an emulated viewport mis-mapped clicks (a coordinate artifact of that harness), so they are not evidence about the product.
+
+## 4. Not done in this pass (stated, not hidden)
+Per-run structured timing waterfall with p50/p95 over a 20-run suite; the five- and six-worker overlap re-test; the other task classes (S0 to S5) before and after; a second unfamiliar editor; compact visual deltas instead of resending full screenshots (the token cache already absorbs most of the image cost, 84% cached); a side-panel main-thread profile. The extension already keeps a per-run phase timing summary on the device (`RunTimings`); it has not yet been exported for these runs.
+
+
+## 5. Runs F to I, 19 to 20 November (all real Chrome, real DeepSeek, staging 00146-wod; none produced a new SVG)
+| Run | Build change | Turns | Time | Result |
+| --- | --- | --- | --- | --- |
+| F | hidden-input fix | 84 | about 12 min | scripts typed into the painted editor; the agent then guessed API names (TypeError: not a callable function); no SVG |
+| G | + docs gate | 55+ | about 10 min | invented names again (CreateTextRange, RGBAssign); stopped |
+| H | + app-script-console skill | 44 | about 7 min | **the skill never matched**: its pattern contained backspace characters; no effect; the active tab also fell back to the first tab |
+| I | + tab refreshed each turn, progress checks at 20/35/50 turns | 51 | about 7.5 min | same invented names; skill still not selected |
+| J | + skill pattern fixed (test proves it is now selected) and a complete copy-and-run template using the documented API | 40+ | about 5 min | the agent left TraceDraw and searched Google for the API; stopped |
+Root cause found this round: the playbook meant to stop API guessing had never been selected (corrupted regex), so runs F to I tested nothing about it. After the fix (run J) the agent still wandered to a web search; the next lever must be code, not text: when a TraceDraw-like script error repeats, load the app docs page for the model automatically, and refuse web searches while a task tab is bound and its app is open.
+Reference sources (outside the repo): nanobrowser/nanobrowser 291d5f3927ee (Apache-2.0), alibaba/page-agent d8dd334487cb (MIT), derpx06/webgenie 56b5d8bccff3 (Apache-2.0), openbrowse-ai/openbrowse 9c1bec9d9278 (MIT). Read so far: WebGenie's replan decision table (guard refusal, two unvalidated steps, stalled repeats trigger a replan); Xroga already has repeat, no-effect and cycle guards (src/agent/guards.ts) and now a progress check at 20/35/50 turns. No upstream code was copied.
+
+## 6. Component proof without the model (disposable Chrome, 1280x800, DPR 1, fresh timestamped screenshots), 20 Nov
+Harness fixes: menu positions were wrong because the UI scales with the window (a click meant for Tools opened Effects). Each step is now verified by a fresh screenshot before the next.
+- Tools menu opens at (441,12); Scripts submenu then Scripts Panel (745,209): verified open.
+- **Root cause of the repeated `TypeError: not a callable function`:** the Scripts editor opens with an example program and a click puts the caret inside it; inserted text is spliced into the example (`ActivePage.Shapeprint(1+2)s.Count`). Not (only) wrong API names.
+- With select-all first, the documented template ran: Output `objects 3`; blue rectangle, red circle and "Xroga" on the page. File > Export (Ctrl+E) defaults to SVG; the download was captured (`scripts/fixtures/a4-good.svg`, 4,005 bytes).
+- `scripts/verify-a4-svg.mjs` parses an export: page 210 x 297 mm, one blue rectangle (20,157 to 90,207), one round red circle (110,137 to 180,207; 70 x 70), text outlines, side by side, all inside the page: PASS. The same checker FAILS the earlier 18-minute export (circle to x 230 mm). Both are tests (`scripts/verify-a4-svg.test.mjs`, 2 pass).
+- Code (commit a7568ec6a): `canvas type` has `replace` (Ctrl+A before insert; unit test); the loop refuses a long painted-editor text without `replace` and refuses retyping an identical text; 1287 extension tests pass.
+## 7. Live DeepSeek run on that build (K)
+Started 20:12:47 UTC on the TraceDraw tab with a stale editor full of earlier guesses. Within about 8 minutes the document contained a blue rectangle, a red circle and "Xroga" text (the label appeared doubled), the document had been renamed, but **no SVG was exported by 20:29 (about 17 minutes)**; stopped. Not a pass. Remaining gap: the model-driven path is still far slower than the 2-minute scripted path; the proven sequence (open Scripts Panel, select-all, insert template, Run, read Output, Export, verify SVG) is not yet a single deterministic tool.

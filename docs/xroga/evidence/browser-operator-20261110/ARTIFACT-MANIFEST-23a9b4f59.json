@@ -1,0 +1,231 @@
+{
+  "source": {
+    "repo": "Xroga/xroga.com",
+    "branch": "claude/ops-integrated-20261112",
+    "commit": "23a9b4f595b45d7c0c36dc6b2e765005238bf887",
+    "working_tree_clean": true
+  },
+  "build": {
+    "command": "npx wxt build (apps/xroga-browser-extension) with WXT_PRODUCT_PERMISSIONS=1 and the staging WXT_XROGA_* values",
+    "node": "v24.18.0",
+    "built_at": "2026-11-21T09:32:44.5817423Z",
+    "extension_id": "ogebkgkppocnjeojdbkiokcpeaenonop",
+    "api_origin": "https://browser-op-1110---xroga-api-universal-staging-422lt7eujq-uk.a.run.app",
+    "workspace_origin": "https://xrogaaicom-git-claude-live-run-943-20261110-xrogas-projects.vercel.app"
+  },
+  "manifest": {
+    "name": "Xroga Browser Automation (Staging)",
+    "version": "0.2.8",
+    "permissions": [
+      "debugger",
+      "tabs",
+      "sidePanel",
+      "storage",
+      "webNavigation",
+      "unlimitedStorage",
+      "alarms",
+      "offscreen",
+      "contextMenus",
+      "scripting",
+      "tabGroups",
+      "downloads"
+    ],
+    "host_permissions": [
+      "https://*/*"
+    ],
+    "optional_permissions": [
+      "notifications",
+      "downloads.open"
+    ]
+  },
+  "backend": {
+    "service": "xroga-api-universal-staging",
+    "region": "us-east4",
+    "revision": "xroga-api-universal-staging-00146-wod",
+    "tag": "browser-op-1110",
+    "image_digest": "sha256:19a547eb1595e9a087251aa4806b29aac6ff05e1214d3d0b6620c066ee59605b",
+    "last_backend_source_commit": "16c9d82f0"
+  },
+  "zip": {
+    "path": "C:\\xr-review-builds\\xroga-browser-operator-staging-0.2.8-23a9b4f59.zip",
+    "bytes": 1152910,
+    "sha256": "F47F9B1F1F7854D2242D6E51370DDDBE499CB51100464C569F5C200523E38525"
+  },
+  "files": [
+    {
+      "path": "background.js",
+      "bytes": 2245291,
+      "sha256": "076246E96B25F215A6BFCDF29243A89A915A1FB078BCDF0563C00B48AD9DCB4F"
+    },
+    {
+      "path": "icon-128.png",
+      "bytes": 14236,
+      "sha256": "0053BE353D412B9F4794F411D972AF9CF9BA6D797BB5B8ACCBFE1B7BC933D15D"
+    },
+    {
+      "path": "icon-16.png",
+      "bytes": 1141,
+      "sha256": "DA72953713B74A3B5898E7FF67FFF4879F20888B8AFA9A4637671D96A7A512B0"
+    },
+    {
+      "path": "icon-32.png",
+      "bytes": 1977,
+      "sha256": "F8068D2E07432D6B58C5AE8492DF297C6CAE7DE9599C16FF2B21DBD83F076E15"
+    },
+    {
+      "path": "INSTALL-XROGA.md",
+      "bytes": 2651,
+      "sha256": "C609C292010E4B876158BD8FF5A9EB78698D7FAD29E222DA914FD5D10DC4DC95"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 11357,
+      "sha256": "C71D239DF91726FC519C6EB72D318EC65820627232B2F796219E87DCF35D0AB4"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 1734,
+      "sha256": "A9D47FD2F69904A6EC1D464BFDF51AD85DF6BFEBFD2FFA25E9778094176A9EE8"
+    },
+    {
+      "path": "NOTICE",
+      "bytes": 1172,
+      "sha256": "1B0351E0B2E107A7E0817797285C2C1E29D843D9A6B96CCE576D694A416CB719"
+    },
+    {
+      "path": "offscreen.html",
+      "bytes": 327,
+      "sha256": "8019E2BB5E3F39D248EE5B81B639F0D8CDC3775B807A093200A2DD58ABC26B2B"
+    },
+    {
+      "path": "options.html",
+      "bytes": 756,
+      "sha256": "2FF883F89820A516C2AAC7C347D4E188046E4C10D8D0A65AB77E9A8AAD4D4C36"
+    },
+    {
+      "path": "permission.html",
+      "bytes": 634,
+      "sha256": "806EEEBD695743C86F28691BA571E1C9A6F9F376BC666061274DE66A188BDDEC"
+    },
+    {
+      "path": "PRIVACY.md",
+      "bytes": 8016,
+      "sha256": "80967C6CDA40E187AB20F85DAE7564C27BA17C8222CBAAAD916AB62B4EAD4DFA"
+    },
+    {
+      "path": "sidepanel.html",
+      "bytes": 773,
+      "sha256": "64936280A1F4A54ABA1E8FB01B5751782738AA54563DFADBC8AEC64329EC03F7"
+    },
+    {
+      "path": "theme-init.js",
+      "bytes": 522,
+      "sha256": "8A6C95E99EF509A9E50DA6D9AD6518BB998A49D7F8E1180CD536BB0D833FA094"
+    },
+    {
+      "path": "xroga-icon-128.png",
+      "bytes": 14236,
+      "sha256": "0053BE353D412B9F4794F411D972AF9CF9BA6D797BB5B8ACCBFE1B7BC933D15D"
+    },
+    {
+      "path": "xroga-icon-48.png",
+      "bytes": 2987,
+      "sha256": "34AA2C0BE927CC12A7D2C6ECC6E0807240D5DB0DA262EFB304AD7F38D652152E"
+    },
+    {
+      "path": "xroga-icon.png",
+      "bytes": 1977,
+      "sha256": "F8068D2E07432D6B58C5AE8492DF297C6CAE7DE9599C16FF2B21DBD83F076E15"
+    },
+    {
+      "path": "XROGA-OPERATOR.md",
+      "bytes": 9930,
+      "sha256": "D386D1298AD8EE2200844F6AC08F0031AF190270E45F4382E2AFB4AB7A64113B"
+    },
+    {
+      "path": "assets/icons-Ci_2c9Pk.css",
+      "bytes": 38325,
+      "sha256": "8D2C9F955CB6B2A9DED52803EC8A0F2497C84BBF1BB242FF4AE11E006C2F9E4F"
+    },
+    {
+      "path": "assets/sidepanel-DCnGrqAh.css",
+      "bytes": 1742,
+      "sha256": "FC073358E3ADDC82DB9EB36954C017886D793B5E606E5F3B91B45F88BD3EDAC1"
+    },
+    {
+      "path": "brand/logo-horizontal.png",
+      "bytes": 38894,
+      "sha256": "4E17B291DC3664C2F3E3DCC9317D61F2BCCD3D5CB81F8601D22A850190C4DAA5"
+    },
+    {
+      "path": "brand/panel-wave.png",
+      "bytes": 807,
+      "sha256": "59EAE8B30732F704DC0E637D23CB6ACE70D48CFAE91313301DCF836C6C6EAA36"
+    },
+    {
+      "path": "brand/wave.jpg",
+      "bytes": 34044,
+      "sha256": "08E0929402CDDC11683BCFE069F478A0922FC4C167D9A2DE8B3FC3281B5F68DF"
+    },
+    {
+      "path": "chunks/_virtual_wxt-html-plugins-P2Xu9kJm.js",
+      "bytes": 670,
+      "sha256": "418C206484B89B68EF5F067277831E583FC9193A62AADF4DE269ACAAEB12A85F"
+    },
+    {
+      "path": "chunks/icons-CPu9JlIW.js",
+      "bytes": 192795,
+      "sha256": "86ED1F794475A699D1C1460AD9775CDDE8867BB4A3611F0054991FA253F4F073"
+    },
+    {
+      "path": "chunks/links-oAwr2lLf.js",
+      "bytes": 926434,
+      "sha256": "8BE76E84B9C55F5141470DC2C3E0478BB10BEF5CAAD822BAE19B4EA1E6E5158E"
+    },
+    {
+      "path": "chunks/offscreen-BBfAasK2.js",
+      "bytes": 337,
+      "sha256": "0146DFD823F285D542B799DC59C51EAB1EE544025472A8B939F40F4DD3A35513"
+    },
+    {
+      "path": "chunks/options-DtVQbdvR.js",
+      "bytes": 24056,
+      "sha256": "DCA626271279E0427573D8096E08CD98A3053C8CDD3C1C0E3B19C6F125C893D2"
+    },
+    {
+      "path": "chunks/permission-DvNqiwuQ.js",
+      "bytes": 1923,
+      "sha256": "0BFA44602485087D467AE849BE3428B14506BAFD4567333A6ECD81058C6D7B7C"
+    },
+    {
+      "path": "chunks/sidepanel-CecPD67X.js",
+      "bytes": 258359,
+      "sha256": "B8A439B071336A790AEC65B24F1BBA39D7B63F956EB18C98037A11DC09661D38"
+    },
+    {
+      "path": "chunks/zh_CN-DPNsjGQc.js",
+      "bytes": 25991,
+      "sha256": "905157F709823085A783CC9F711B404E31DB5CCA96D5EA80D0D2AA432F498A59"
+    },
+    {
+      "path": "chunks/zh_TW-DogxuBKP.js",
+      "bytes": 26123,
+      "sha256": "F6A4772B0F6202C05E125CD7EEEDB37245AC2D4B7CC6C85EEC26E60145FCBB96"
+    },
+    {
+      "path": "_locales/en/messages.json",
+      "bytes": 377,
+      "sha256": "602D6C5C4236FFE1EDD604956D6B446DC64DD611E8E486FCACA203A164F100CB"
+    },
+    {
+      "path": "_locales/zh_CN/messages.json",
+      "bytes": 394,
+      "sha256": "D766BD77439EF7673DF171DD863C813C6A6950F935E2076C2376318F9C20BDD1"
+    },
+    {
+      "path": "_locales/zh_TW/messages.json",
+      "bytes": 403,
+      "sha256": "26B3983F1094B1A08EC7AB4D664EC95544FFEFBF8EF6928A028CF3B28506A8DA"
+    }
+  ]
+}

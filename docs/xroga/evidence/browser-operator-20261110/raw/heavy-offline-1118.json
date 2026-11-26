@@ -1,0 +1,35 @@
+{
+ "steps": {
+  "enrolled": {
+   "configured": true,
+   "saved": true,
+   "verified": true,
+   "ready": true
+  },
+  "mode": "offline",
+  "workStarted": true,
+  "offlineAt": "2026-11-18T14:43:35.498Z",
+  "networkBack": true,
+  "workerBack": true,
+  "resumeOffered": true,
+  "pressedResume": true,
+  "resumeTimedOut": true,
+  "afterInterruptionTimedOut": true,
+  "settledAfterInterruption": false,
+  "titlesAfterResume": [
+   "Guido van Rossum",
+   "James Gosling"
+  ],
+  "followUpSent": true,
+  "titlesFinal": [
+   "Guido van Rossum",
+   "James Gosling"
+  ],
+  "answerTail": " ΓåÆ 18k tokens Worked for 20s 12 minutes ago Recent steps were shortened to fit the model's context: 20k ΓåÆ 17k tokens Worked for 22s 11 minutes ago Recent steps were shortened to fit the model's context: 21k ΓåÆ 18k tokens Worked for 3m 38s 8 minutes ago Recent steps were shortened to fit the model's context: 21k ΓåÆ 18k tokens Worked for 4m 46s The Perl page is loaded; let me read its infobox. 3 minutes ago Continue and finish the table with all four sites. 3 minutes ago Worked for 44s 2 minutes ago"
+ },
+ "ok": false,
+ "failures": [
+  "the resumed run did not settle",
+  "the final answer lacks some sites: [\"Guido van Rossum\",\"James Gosling\"]"
+ ]
+}

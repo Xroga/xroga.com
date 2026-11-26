@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Canvas editor fixture</title>
+<style>body{font:14px sans-serif;margin:0;padding:40px 0 800px 60px}canvas{display:block;border:1px solid #888;margin-top:30px}#panel{margin-top:12px}</style></head>
+<body>
+<h1>Canvas editor</h1>
+<ul aria-label="Layers"><li>Logo: x 100, y 60, 80 x 50</li><li>Background</li></ul>
+<canvas id="c" role="img" aria-label="Design canvas" width="400" height="300"></canvas>
+<p id="panel" role="status">Selected: none</p>
+<script>
+const c = document.getElementById('c'), g = c.getContext('2d');
+const logo = { x: 100, y: 60, w: 80, h: 50 };
+function draw(sel) { g.clearRect(0,0,400,300); g.fillStyle = '#eee'; g.fillRect(0,0,400,300); g.fillStyle = sel ? '#06c' : '#c60'; g.fillRect(logo.x, logo.y, logo.w, logo.h); }
+draw(false);
+c.addEventListener('click', e => {
+  const r = c.getBoundingClientRect();
+  const x = (e.clientX - r.left) * (c.width / r.width), y = (e.clientY - r.top) * (c.height / r.height);
+  const hit = x >= logo.x && x <= logo.x + logo.w && y >= logo.y && y <= logo.y + logo.h;
+  draw(hit);
+  document.getElementById('panel').textContent = hit ? 'Selected: Logo at ' + Math.round(x) + ',' + Math.round(y) : 'Selected: none';
+});
+</script>
+</body></html>
