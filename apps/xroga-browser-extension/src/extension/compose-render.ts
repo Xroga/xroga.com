@@ -1,7 +1,10 @@
-// Rendering a composed video in the offscreen document: assets are fetched, each frame is drawn by compose-draw.ts, the sound is mixed offline, and mediabunny (MPL-2.0, vendored
-// unmodified in public/media) encodes with WebCodecs: MP4 with H.264 and AAC where the browser can encode them, WebM with VP9 (or VP8) and Opus where it cannot.
+// Rendering a composed video in the offscreen document: assets are fetched, each frame is drawn by compose-draw.ts, the sound is mixed offline (cross-fades at the transitions, speed
+// changes that keep the pitch, normalisation), and mediabunny (MPL-2.0, vendored unmodified in public/media) encodes with WebCodecs: MP4 with H.264 and AAC where the browser can
+// encode them, WebM with VP9 (or VP8) and Opus where it cannot. The audio model (clips' own sound, audio layers, detached audio, tracks, cross-fades, normalisation) follows editly's mixer.
+import { crossfadeGains, normalizationGain, applyGainSoftLimit, timeStretch } from '@src/agent/audio-mix';
 import { normalizeSpec, resolveDurations, timeline, type ComposeSpec, type Layer, type ResizeMode } from '@src/agent/compose-spec';
-import { drawFrame, type Assets, type Picture } from './compose-draw';
+import { drawFrame, type Assets, type Picture, type Scratch } from './compose-draw';
+import { ShaderRunner } from './compose-shader';
 import { fetchRetry } from './net';
 
 interface Track {
@@ -44,6 +47,14 @@ export interface ComposeResult {
   renderMs: number;
   notes: string[];
 }
+export interface PreviewResult {
+  base64: string;
+  width: number;
+  height: number;
+  times: number[];
+  seconds: number;
+  notes: string[];
+}
 
 const MAX_ASSET_BYTES = 150 * 1024 * 1024;
 const RATE = 48000;
@@ -76,15 +87,25 @@ async function pictureOf(url: string): Promise<Picture> {
   }
 }
 
-export async function renderComposition(raw: unknown, loadMb: () => Promise<unknown>, makeUrl: (blob: Blob) => string): Promise<ComposeResult> {
-  const started = performance.now();
+interface Prepared {
+  spec: ComposeSpec;
+  total: number;
+  starts: number[];
+  overlaps: number[];
+  assets: Assets;
+  scratch: Scratch;
+  mb: Mb;
+  videos: Map<string, { input: Input; duration: number; track: Track }>;
+  notes: string[];
+}
+
+/** Everything a render or a preview needs: the checked description with its lengths resolved, the pictures, the video readers and the shader canvas. */
+async function prepare(raw: unknown, loadMb: () => Promise<unknown>): Promise<Prepared> {
   const normal = normalizeSpec(raw);
   if (!normal.ok) throw new Error(normal.errors.join(' '));
   let spec: ComposeSpec = normal.spec;
   const mb = (await loadMb()) as Mb;
   const notes: string[] = [];
-
-  // ---- pictures and videos named in the layers
   const images = new Map<string, Picture>();
   const videos = new Map<string, { input: Input; duration: number; track: Track }>();
   const sinks = new Map<string, { getCanvas(t: number): Promise<{ canvas: OffscreenCanvas; timestamp: number } | null> }>();
@@ -109,7 +130,7 @@ export async function renderComposition(raw: unknown, loadMb: () => Promise<unkn
   const tl = timeline(spec);
   if (!tl) throw new Error('the length of the video could not be worked out');
   if (tl.total > 180) throw new Error(`the video would be ${tl.total.toFixed(1)} s; the limit is 180 s`);
-
+  let shaders: ShaderRunner | undefined;
   const assets: Assets = {
     images,
     async frame(url: string, mode: ResizeMode, seconds: number) {
@@ -127,68 +148,145 @@ export async function renderComposition(raw: unknown, loadMb: () => Promise<unkn
       if (got) lastFrame.set(key, got.canvas);
       return (got?.canvas ?? lastFrame.get(key)) as unknown as Picture | undefined;
     },
+    shader(fragment: string, time: number, progress: number) {
+      shaders ??= new ShaderRunner(spec.width, spec.height);
+      return shaders.render(fragment, time, progress) as unknown as Picture;
+    },
   };
+  const scratch: Scratch = { a: new OffscreenCanvas(spec.width, spec.height), b: new OffscreenCanvas(spec.width, spec.height) };
+  return { spec, total: tl.total, starts: tl.starts, overlaps: tl.overlaps, assets, scratch, mb, videos, notes };
+}
 
-  // ---- the sound: video layers' own sound and the audio tracks, mixed offline into one buffer
-  const total = tl.total;
-  const parts: Array<{ buffer: AudioBuffer; when: number; offset: number; duration?: number; gain: number; rate?: number; loop?: { from: number; to: number } }> = [];
+interface Part {
+  buffer: AudioBuffer;
+  when: number;
+  offset: number;
+  duration?: number;
+  gain: number;
+  loop?: { from: number; to: number };
+  /** Cross-fade windows (seconds on the video's time line) for a clip's own sound. */
+  fades?: Array<{ at: number; length: number; direction: 'in' | 'out'; curve: string }>;
+}
+
+async function decodeRange(mb: Mb, track: unknown, from: number, to: number): Promise<AudioBuffer | undefined> {
+  const chunks: Float32Array[][] = [];
+  let frames = 0;
+  let rate = RATE;
+  for await (const { buffer } of new mb.AudioBufferSink(track).buffers(from, to)) {
+    rate = buffer.sampleRate;
+    chunks.push(Array.from({ length: Math.min(2, buffer.numberOfChannels) }, (_, k) => buffer.getChannelData(k).slice()));
+    frames += buffer.length;
+  }
+  if (!frames) return undefined;
+  const channels = chunks[0]!.length;
+  const joined = new AudioBuffer({ length: frames, numberOfChannels: channels, sampleRate: rate });
+  let at = 0;
+  for (const ch of chunks) {
+    for (let k = 0; k < channels; k++) joined.copyToChannel(ch[k]! as Float32Array<ArrayBuffer>, k, at);
+    at += ch[0]!.length;
+  }
+  return joined;
+}
+
+/** The same sound at another speed with the same pitch (time stretch), as a new buffer. */
+function stretched(buffer: AudioBuffer, rate: number): AudioBuffer {
+  const channels = Array.from({ length: buffer.numberOfChannels }, (_, k) => buffer.getChannelData(k));
+  const out = timeStretch(channels, rate, buffer.sampleRate);
+  const result = new AudioBuffer({ length: Math.max(1, out[0]!.length), numberOfChannels: out.length, sampleRate: buffer.sampleRate });
+  out.forEach((c, k) => result.copyToChannel(c as Float32Array<ArrayBuffer>, k));
+  return result;
+}
+
+/** The sound of the whole video: tracks, clips' own sound, audio layers and detached audio, mixed with cross-fades at the transitions. */
+async function mixSound(p: Prepared): Promise<AudioBuffer | undefined> {
+  const { spec, mb, videos, total, starts, overlaps } = p;
+  const parts: Part[] = [];
   const decoder = new OfflineAudioContext(2, 1, RATE);
   for (const t of spec.audioTracks) {
     const buffer = await decoder.decodeAudioData(await bytesOf(t.url));
     parts.push({ buffer, when: t.start, offset: t.cutFrom, duration: (t.cutTo ?? buffer.duration) - t.cutFrom, gain: t.volume, ...(t.loop ? { loop: { from: t.cutFrom, to: t.cutTo ?? buffer.duration } } : {}) });
   }
-  if (spec.keepSourceAudio) {
-    for (const [ci, clip] of spec.clips.entries()) {
-      for (const layer of clip.layers.filter((l): l is Extract<Layer, { type: 'video' }> => l.type === 'video')) {
+  const fadeWindows = (ci: number): NonNullable<Part['fades']> => {
+    const out: NonNullable<Part['fades']> = [];
+    const clip = spec.clips[ci]!;
+    const prev = ci > 0 ? spec.clips[ci - 1]! : undefined;
+    if (prev && overlaps[ci - 1]! > 0) out.push({ at: starts[ci]!, length: overlaps[ci - 1]!, direction: 'in', curve: prev.transition.audioInCurve });
+    if (overlaps[ci]! > 0) out.push({ at: starts[ci]! + clip.duration! - overlaps[ci]!, length: overlaps[ci]!, direction: 'out', curve: clip.transition.audioOutCurve });
+    return out;
+  };
+  for (const [ci, clip] of spec.clips.entries()) {
+    const clipStart = starts[ci]!;
+    for (const layer of clip.layers) {
+      if (layer.type === 'detached-audio') {
+        // starts relative to its clip and may run on over the next ones; not cross-faded, not fitted
+        const buffer = await decoder.decodeAudioData(await bytesOf(layer.url));
+        parts.push({ buffer, when: clipStart + layer.start, offset: layer.cutFrom, duration: (layer.cutTo ?? buffer.duration) - layer.cutFrom, gain: layer.volume });
+      } else if (spec.keepSourceAudio && layer.type === 'audio') {
+        // an audio layer fills its clip: the cut is stretched or squeezed to the clip's length without changing its pitch
+        let buffer = await decoder.decodeAudioData(await bytesOf(layer.url));
+        const from = Math.min(layer.cutFrom, buffer.duration);
+        const to = Math.min(layer.cutTo ?? from + (clip.duration! - layer.start), buffer.duration);
+        const cutLength = Math.max(0.05, to - from);
+        const want = clip.duration! - layer.start;
+        const rate = cutLength / want;
+        const slice = new AudioBuffer({ length: Math.max(1, Math.floor(cutLength * buffer.sampleRate)), numberOfChannels: buffer.numberOfChannels, sampleRate: buffer.sampleRate });
+        for (let k = 0; k < buffer.numberOfChannels; k++) slice.copyToChannel(buffer.getChannelData(k).slice(Math.floor(from * buffer.sampleRate), Math.floor(from * buffer.sampleRate) + slice.length) as Float32Array<ArrayBuffer>, k);
+        buffer = Math.abs(rate - 1) > 0.01 && rate >= 0.25 && rate <= 4 ? stretched(slice, rate) : slice;
+        parts.push({ buffer, when: clipStart + layer.start, offset: 0, duration: Math.min(buffer.duration, want), gain: layer.volume * spec.clipsAudioVolume, fades: fadeWindows(ci) });
+      } else if (spec.keepSourceAudio && layer.type === 'video') {
         const v = videos.get(layer.url)!;
-        const audioTrack = await v.input.getPrimaryAudioTrack();
-        if (!audioTrack || layer.volume <= 0) continue;
-        const to = Math.min(layer.cutTo ?? v.duration, layer.cutFrom + (clip.duration! - layer.start) * layer.speed);
-        const chunks: Float32Array[][] = [];
-        let frames = 0;
-        let rate = RATE;
-        for await (const { buffer } of new mb.AudioBufferSink(audioTrack).buffers(layer.cutFrom, to)) {
-          rate = buffer.sampleRate;
-          chunks.push(Array.from({ length: Math.min(2, buffer.numberOfChannels) }, (_, k) => buffer.getChannelData(k).slice()));
-          frames += buffer.length;
-        }
-        if (!frames) continue;
-        const channels = chunks[0]!.length;
-        const joined = new AudioBuffer({ length: frames, numberOfChannels: channels, sampleRate: rate });
-        let at = 0;
-        for (const ch of chunks) {
-          for (let k = 0; k < channels; k++) joined.copyToChannel(ch[k]! as Float32Array<ArrayBuffer>, k, at);
-          at += ch[0]!.length;
-        }
-        parts.push({ buffer: joined, when: tl.starts[ci]! + layer.start, offset: 0, duration: joined.duration / layer.speed, gain: layer.volume, rate: layer.speed });
+        const track = await v.input.getPrimaryAudioTrack();
+        if (!track || layer.volume <= 0) continue;
+        const speed = (layer as Extract<Layer, { type: 'video' }>).speed ?? 1;
+        const to = Math.min(layer.cutTo ?? v.duration, layer.cutFrom + (clip.duration! - layer.start) * speed);
+        let buffer = await decodeRange(mb, track, layer.cutFrom, to);
+        if (!buffer) continue;
+        if (Math.abs(speed - 1) > 0.01) buffer = stretched(buffer, speed);
+        parts.push({ buffer, when: clipStart + layer.start, offset: 0, duration: buffer.duration, gain: layer.volume * spec.clipsAudioVolume, fades: fadeWindows(ci) });
       }
     }
   }
-  let mixed: AudioBuffer | undefined;
-  if (parts.length) {
-    const ctx = new OfflineAudioContext(2, Math.ceil(total * RATE), RATE);
-    const master = ctx.createGain();
-    master.gain.setValueAtTime(spec.outputVolume, 0);
-    master.gain.setValueAtTime(spec.outputVolume, Math.max(0, total - 0.3));
-    master.gain.linearRampToValueAtTime(0, total);
-    master.connect(ctx.destination);
-    for (const p of parts) {
-      const src = ctx.createBufferSource();
-      src.buffer = p.buffer;
-      if (p.rate && p.rate !== 1) src.playbackRate.value = p.rate; // a sped-up or slowed video's sound changes pitch with it
-      const g = ctx.createGain();
-      g.gain.value = p.gain;
-      src.connect(g).connect(master);
-      if (p.loop) {
-        src.loop = true;
-        src.loopStart = p.loop.from;
-        src.loopEnd = p.loop.to;
-        src.start(p.when, p.offset);
-        src.stop(total);
-      } else src.start(p.when, p.offset, p.rate && p.rate !== 1 ? p.duration! * p.rate : p.duration);
+  if (!parts.length) return undefined;
+  const ctx = new OfflineAudioContext(2, Math.ceil(total * RATE), RATE);
+  const master = ctx.createGain();
+  master.gain.setValueAtTime(spec.outputVolume, 0);
+  master.gain.setValueAtTime(spec.outputVolume, Math.max(0, total - 0.3));
+  master.gain.linearRampToValueAtTime(0, total);
+  master.connect(ctx.destination);
+  for (const part of parts) {
+    const src = ctx.createBufferSource();
+    src.buffer = part.buffer;
+    const level = ctx.createGain();
+    level.gain.value = part.gain;
+    const fade = ctx.createGain();
+    for (const f of part.fades ?? []) {
+      const g = crossfadeGains(f.direction === 'out' ? f.curve : 'tri', f.direction === 'in' ? f.curve : 'tri', 128);
+      fade.gain.setValueCurveAtTime(f.direction === 'out' ? g.out : g.in, Math.max(0, f.at), Math.max(0.01, f.length));
     }
-    mixed = await ctx.startRendering();
+    src.connect(level).connect(fade).connect(master);
+    if (part.loop) {
+      src.loop = true;
+      src.loopStart = part.loop.from;
+      src.loopEnd = part.loop.to;
+      src.start(part.when, part.offset);
+      src.stop(total);
+    } else src.start(part.when, part.offset, part.duration);
   }
+  const mixed = await ctx.startRendering();
+  if (spec.audioNorm) {
+    const channels = Array.from({ length: mixed.numberOfChannels }, (_, k) => mixed.getChannelData(k));
+    const gain = normalizationGain(channels, RATE, spec.audioNorm.targetLufs, spec.audioNorm.maxGain);
+    if (gain !== null) applyGainSoftLimit(channels, gain);
+    else p.notes.push('the sound was too quiet to normalise');
+  }
+  return mixed;
+}
+
+export async function renderComposition(raw: unknown, loadMb: () => Promise<unknown>, makeUrl: (blob: Blob) => string): Promise<ComposeResult> {
+  const started = performance.now();
+  const p = await prepare(raw, loadMb);
+  const { spec, mb, total, notes } = p;
+  const mixed = await mixSound(p);
 
   // ---- encoders: MP4 (H.264, AAC) where the browser has them, else WebM (VP9 or VP8, Opus)
   const size = { width: spec.width, height: spec.height };
@@ -204,7 +302,7 @@ export async function renderComposition(raw: unknown, loadMb: () => Promise<unkn
   const target = new mb.BufferTarget();
   const output = new mb.Output({ format: mp4 ? new mb.Mp4OutputFormat({ fastStart: 'in-memory' }) : new mb.WebMOutputFormat(), target });
   const canvas = new OffscreenCanvas(spec.width, spec.height);
-  const ctx2d = canvas.getContext('2d') as OffscreenCanvasRenderingContext2D;
+  const ctx2d = canvas.getContext('2d', { willReadFrequently: true }) as OffscreenCanvasRenderingContext2D;
   const videoSource = new mb.CanvasSource(canvas, { codec: videoCodec, bitrate: mb.QUALITY_HIGH });
   output.addVideoTrack(videoSource);
   const audioSource = mixed && audioCodec ? new mb.AudioBufferSource({ codec: audioCodec, bitrate: mb.QUALITY_HIGH }) : undefined;
@@ -216,14 +314,48 @@ export async function renderComposition(raw: unknown, loadMb: () => Promise<unkn
   }
   const frames = Math.max(1, Math.round(total * spec.fps));
   for (let f = 0; f < frames; f++) {
-    await drawFrame(ctx2d, spec, Math.min(total, f / spec.fps), assets);
+    await drawFrame(ctx2d, spec, Math.min(total, f / spec.fps), p.assets, p.scratch);
     await videoSource.add(f / spec.fps, 1 / spec.fps);
   }
   videoSource.close();
   await output.finalize();
-  for (const v of videos.values()) v.input.dispose();
+  for (const v of p.videos.values()) v.input.dispose();
   const buffer = target.buffer;
   if (!buffer) throw new Error('the encoder produced no file');
   const blob = new Blob([buffer], { type: mp4 ? 'video/mp4' : 'video/webm' });
   return { url: makeUrl(blob), bytes: blob.size, seconds: total, container: mp4 ? 'mp4' : 'webm', videoCodec, audioCodec: audioCodec ?? undefined, frames, renderMs: Math.round(performance.now() - started), notes };
+}
+
+/** A sheet of the video at chosen times, with no file and no sound: for checking a design (editly's single-frame rendering, as one picture). */
+export async function previewComposition(raw: unknown, times: number[], loadMb: () => Promise<unknown>): Promise<PreviewResult> {
+  const p = await prepare(raw, loadMb);
+  const { spec, total } = p;
+  const stamps = (times.length ? times : [0, total / 2, total]).map(t => Math.min(Math.max(0, t), total)).slice(0, 12);
+  const cols = Math.min(3, stamps.length);
+  const rows = Math.ceil(stamps.length / cols);
+  const tileW = Math.min(spec.width, Math.floor(960 / cols));
+  const tileH = Math.round((tileW * spec.height) / spec.width);
+  const label = 18;
+  const sheet = new OffscreenCanvas(cols * tileW, rows * (tileH + label));
+  const sc = sheet.getContext('2d')!;
+  sc.fillStyle = '#111';
+  sc.fillRect(0, 0, sheet.width, sheet.height);
+  sc.font = '13px sans-serif';
+  sc.textBaseline = 'middle';
+  const frame = new OffscreenCanvas(spec.width, spec.height);
+  const fc = frame.getContext('2d', { willReadFrequently: true }) as OffscreenCanvasRenderingContext2D;
+  for (const [i, t] of stamps.entries()) {
+    await drawFrame(fc, spec, t, p.assets, p.scratch);
+    const x = (i % cols) * tileW;
+    const y = Math.floor(i / cols) * (tileH + label);
+    sc.drawImage(frame, x, y + label, tileW, tileH);
+    sc.fillStyle = '#fff';
+    sc.fillText(`${i + 1}  ${Math.round(t * 10) / 10} s`, x + 4, y + label / 2);
+  }
+  for (const v of p.videos.values()) v.input.dispose();
+  const blob = await sheet.convertToBlob({ type: 'image/jpeg', quality: 0.82 });
+  const bytes = new Uint8Array(await blob.arrayBuffer());
+  let binary = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return { base64: btoa(binary), width: sheet.width, height: sheet.height, times: stamps, seconds: total, notes: p.notes };
 }

@@ -233,7 +233,9 @@ export function kindOf(tool: string, args: Record<string, unknown>): ToolKind {
   if (tool === 'start_parallel_tasks') return 'mutate';
   if (tool === 'plan') return 'read';
   if (tool === 'browser_data') return ['history_search', 'bookmarks_search', 'tabs_all', 'tabs_duplicates'].includes(String(args.action)) ? 'read' : 'mutate';
-  if (tool === 'save_file' || tool === 'save_page_pdf' || tool === 'compose_video') return 'state';
+  if (tool === 'save_file' || tool === 'save_page_pdf') return 'state';
+  // a preview of a video makes no file; making it saves one
+  if (tool === 'compose_video') return Array.isArray(args.preview) ? 'read' : 'state';
   // the readers of files and sites change nothing; webmcp lists are reads, and a call to a page's own tool may change data
   if (tool === 'read_pdf' || tool === 'read_file' || tool === 'site_map' || tool === 'transcribe' || tool === 'media') return 'read';
   if (tool === 'webmcp') return args.action === 'call' ? 'mutate' : 'read';

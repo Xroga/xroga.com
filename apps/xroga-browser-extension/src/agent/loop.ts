@@ -2690,6 +2690,25 @@ ${renderSkill(top)}`);
           outcome = { call, kind, text: 'error: the file could not be read (' + (error instanceof Error ? error.message : String(error)).slice(0, 200) + '). The address may need a sign-in, not be a media file, or use a format this browser cannot decode.', isError: true };
         }
       }
+    } else if (call.toolName === 'compose_video' && Array.isArray(args.preview)) {
+      try {
+        const [{ normalizeSpec, describeSpec }, { previewOnDevice }, { clock }] = await Promise.all([import('./compose-spec'), import('@src/extension/compose'), import('./media-analysis')]);
+        const normal = normalizeSpec(args.spec);
+        if (!normal.ok) {
+          outcome = { call, kind, text: 'error INVALID_ARGUMENT (nothing made)\n' + normal.errors.join('\n'), isError: true };
+        } else {
+          const times = args.preview.filter((t): t is number => typeof t === 'number' && t >= 0);
+          const sheet = await previewOnDevice(args.spec, times);
+          let text = 'Preview of the video (' + describeSpec(normal.spec) + '): a sheet of ' + sheet.times.length + ' pictures at ' + sheet.times.map(clock).join(', ') + ' (left to right, top to bottom). No file was made; call compose_video again without preview to make it.';
+          if (sheet.notes.length) text += ' Note: ' + sheet.notes.join('; ') + '.';
+          let image: CallOutcome['image'] | undefined;
+          if (this.options.model.profile.vision) image = { data: sheet.base64, mediaType: 'image/jpeg', note: 'The sheet of the planned video, with the time of each picture on its label.' };
+          else text += ' This model cannot see pictures, so check the plan from the description instead.';
+          outcome = { call, kind, text, isError: false, ...(image ? { image } : {}) };
+        }
+      } catch (error) {
+        outcome = { call, kind, text: 'error COMPOSE_FAILED (nothing made)\n' + (error instanceof Error ? error.message : String(error)).slice(0, 400), isError: true };
+      }
     } else if (call.toolName === 'webmcp') {
       let tabId = typeof args.tabId === 'number' ? args.tabId : this.#boundTab;
       if (tabId === null || tabId === undefined) {

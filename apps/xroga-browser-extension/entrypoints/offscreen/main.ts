@@ -575,6 +575,16 @@ async function mediaWork(url: string, action: string, o: { from: number; seconds
 
 chrome.runtime.onMessage.addListener((message, _sender, reply) => {
   if (message?.target !== 'offscreen') return;
+  if (message.type === 'compose-preview') {
+    Promise.race([
+      import('@src/extension/compose-render').then(m => m.previewComposition(message.spec, Array.isArray(message.times) ? (message.times as unknown[]).filter((t): t is number => typeof t === 'number') : [], () => import(/* @vite-ignore */ chrome.runtime.getURL('media/mediabunny.min.mjs')))),
+      new Promise<never>((_, reject) => setTimeout(() => reject(new Error('the preview was not finished in 5 minutes')), 300_000)),
+    ]).then(
+      result => reply({ ok: true, ...result }),
+      error => reply({ ok: false, error: error instanceof Error ? error.message : String(error) }),
+    );
+    return true;
+  }
   if (message.type === 'compose') {
     Promise.race([
       import('@src/extension/compose-render').then(m =>

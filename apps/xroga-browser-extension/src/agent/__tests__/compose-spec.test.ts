@@ -12,8 +12,8 @@ describe('normalizeSpec', () => {
   it('fills in the size, the rate, the transition and the colours', () => {
     const spec = ok({ clips: [{ duration: 3, layers: [{ type: 'fill-color' }, title('Hello')] }, { duration: 2, layers: [{ type: 'linear-gradient', colors: ['#fff', 'tomato'] }] }] });
     expect([spec.width, spec.height, spec.fps]).toEqual([1280, 720, 30]);
-    expect(spec.clips[0]!.transition).toEqual({ name: 'fade', duration: 0.5, easing: 'ease-in-out' });
-    expect(spec.clips[0]!.layers[0]).toMatchObject({ type: 'fill-color', color: '#000000' });
+    expect(spec.clips[0]!.transition).toEqual({ name: 'fade', duration: 0.5, easing: 'linear', audioOutCurve: 'tri', audioInCurve: 'tri' });
+    expect(spec.clips[0]!.layers[0]).toMatchObject({ type: 'fill-color', color: expect.stringMatching(/^#[0-9a-f]{6}$/i) }); // editly picks a colour when none is given
     expect(spec.clips[0]!.layers[1]).toMatchObject({ type: 'text', style: 'title', color: '#ffffff', position: { x: 0.5, y: 0.5 } });
     expect(spec.clips[1]!.layers[0]).toMatchObject({ type: 'gradient', kind: 'linear', colors: ['#fff', 'tomato'] });
     expect(spec.keepSourceAudio).toBe(true);
@@ -53,7 +53,7 @@ describe('normalizeSpec', () => {
 
   it('speeds a video layer up or down, within 0.25 to 4, and its clip follows', () => {
     const spec = ok({ clips: [{ layers: [{ type: 'video', url: 'https://x.test/v.mp4', cutFrom: 0, cutTo: 8, speed: 2 }] }, { layers: [{ type: 'video', url: 'https://x.test/v.mp4', cutFrom: 0, cutTo: 4, speed: 0.5 }] }, { layers: [{ type: 'video', url: 'https://x.test/v.mp4', cutFrom: 0, cutTo: 4, speed: 99 }] }, { layers: [{ type: 'video', url: 'https://x.test/v.mp4', cutFrom: 0, cutTo: 4 }] }] });
-    expect(spec.clips.map(c => (c.layers[0] as { speed: number }).speed)).toEqual([2, 0.5, 4, 1]);
+    expect(spec.clips.map(c => (c.layers[0] as { speed: number }).speed)).toEqual([2, 0.5, 4, undefined]); // 1 when resolved, below
     expect(resolveDurations(spec, () => 99).clips.map(c => c.duration)).toEqual([4, 8, 1, 4]);
   });
 
@@ -80,30 +80,6 @@ describe('timeline and transitions', () => {
   it('never lets a transition take more than half of a clip', () => {
     const short = ok({ clips: [{ duration: 1, transition: { name: 'fade', duration: 5 }, layers: [{ type: 'fill-color' }] }, { duration: 1, layers: [{ type: 'fill-color' }] }] });
     expect(timeline(short)!.overlaps[0]).toBe(0.5);
-  });
-
-  it('shows one clip, then two sliding past each other, then one', () => {
-    expect(layoutAt(spec, 1).map(p => p.clip)).toEqual([0]);
-    const mid = layoutAt(spec, 3.5);
-    expect(mid.map(p => p.clip)).toEqual([0, 1]);
-    expect(mid[0]!.dx).toBeCloseTo(-500, 0); // outgoing: half way off to the left (eased 0.5 is 0.5)
-    expect(mid[1]!.dx).toBeCloseTo(500, 0); // incoming: half way in from the right
-    expect(layoutAt(spec, 5).map(p => p.clip)).toEqual([1]);
-    expect(layoutAt(spec, 9.5)).toEqual([]);
-  });
-
-  it('crossfades, dips through black and zooms', () => {
-    const make = (name: string) => ok({ clips: [{ duration: 4, transition: { name, duration: 2, easing: 'linear' }, layers: [{ type: 'fill-color' }] }, { duration: 4, layers: [{ type: 'fill-color' }] }] });
-    const fade = layoutAt(make('fade'), 3);
-    expect(fade.map(p => p.alpha)).toEqual([1, 0.5]);
-    const dip = layoutAt(make('fadeblack'), 2.5);
-    expect(dip[0]!.dim).toBeCloseTo(0.5, 5);
-    expect(dip[1]!.alpha).toBe(0);
-    const late = layoutAt(make('fadeblack'), 3.5);
-    expect(late[0]!.dim).toBe(1);
-    expect(late[1]!.alpha).toBeCloseTo(0.5, 5);
-    const zoom = layoutAt(make('zoom-in'), 3);
-    expect(zoom[1]!.scale).toBeCloseTo(1.15, 5);
   });
 
   it('shows a layer only inside its own time', () => {

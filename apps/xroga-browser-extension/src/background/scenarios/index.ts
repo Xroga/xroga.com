@@ -47,6 +47,7 @@ import './pdf-layout';
 import './webmcp';
 import './media';
 import './compose';
+import './compose-editly';
 import './infinite-scroll';
 import './ocr-picture';
 import './image-and-language';
