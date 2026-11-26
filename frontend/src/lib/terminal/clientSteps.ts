@@ -5,17 +5,34 @@
  */
 
 export const CLIENT_THOUGHT = 'client-thought';
+/** The first part of a prompt's life: it is being read and classified. */
+export const CLIENT_READ = 'client-read';
+
+export const isClientStep = (id: string): boolean => id.endsWith(CLIENT_THOUGHT) || id.endsWith(CLIENT_READ);
 
 export type ClientStepStatus = 'running' | 'completed' | 'failed';
 
 export function thoughtFrame(
   status: ClientStepStatus, text: string,
   extra: { sources?: Array<{ title: string; url: string }> } = {},
+  id: string = CLIENT_THOUGHT,
 ): Record<string, unknown> {
-  return { agent: 'session', status: 'step', activityId: CLIENT_THOUGHT, activityStatus: status, message: text, swarmActivity: text, ...extra };
+  return { agent: 'session', status: 'step', activityId: id, activityStatus: status, message: text, swarmActivity: text, ...extra };
 }
 
-export const THINKING = 'Thinking';
+export const READING = 'Reading your message';
+
+/**
+ * What is being prepared, in the words the planner returned for this particular request, kept as written.
+ * Different requests therefore read differently; without a description a plain line is used.
+ */
+export function workingText(plan: { goalContract?: { desiredOutcome?: string; deliverables?: ReadonlyArray<{ description?: string }> } }): string {
+  const raw = plan.goalContract?.deliverables?.[0]?.description || plan.goalContract?.desiredOutcome || '';
+  const subject = raw.split(/\s+/).filter(Boolean).join(' ').replace(/[.!?;:,]+$/, '');
+  if (!subject) return 'Writing your answer';
+  const short = subject.length > 90 ? subject.slice(0, 89).split(' ').slice(0, -1).join(' ') + '…' : subject;
+  return 'Preparing: ' + short;
+}
 
 function seconds(ms: number): string {
   const total = Math.max(1, Math.round(ms / 1000));

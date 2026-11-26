@@ -2,7 +2,7 @@ import type { XrogaActivityPresentation } from './activityPresentation';
 import { publicActivityText } from './activityPresentation';
 import { familyOf, type TimelineFamily } from './activityTimeline';
 import { redactTerminalText } from './terminalRedaction';
-import { CLIENT_THOUGHT } from './clientSteps';
+import { CLIENT_THOUGHT, isClientStep } from './clientSteps';
 
 /**
  * The inline work stream: written updates and one line per real step, in the order they happened.
@@ -66,7 +66,7 @@ export function groupStream(entries: readonly StreamEntry[]): Array<StreamEntry 
   };
   for (const entry of entries) {
     // The Thinking line stays on its own; only the work under it folds.
-    const standalone = entry.type === 'step' && entry.id.endsWith(CLIENT_THOUGHT);
+    const standalone = entry.type === 'step' && isClientStep(entry.id);
     if (entry.type === 'step' && !standalone && (entry.state === 'done' || entry.state === 'reported')) { run.push(entry); continue; }
     flush();
     out.push(entry);
@@ -156,7 +156,7 @@ export function buildProcessingStream(rows: readonly XrogaActivityPresentation[]
     // A command line reads as the command itself, which says more than "Command finished".
     const command = row.kind === 'command' ? clean(row.detail, 90) : '';
     const verb = state === 'done' ? 'Ran ' : state === 'live' ? 'Running ' : state === 'failed' ? 'Failed: ' : '';
-    const text = command ? `${verb}${command}` : state === 'done' ? pastTense(label) : label;
+    const text = command ? `${verb}${command}` : state === 'done' && !isClientStep(row.id) ? pastTense(label) : label;
     const previous = entries.at(-1);
     // The same line reported twice in a row adds nothing.
     if (previous?.type === 'step' && previous.text === text && previous.state === state) continue;

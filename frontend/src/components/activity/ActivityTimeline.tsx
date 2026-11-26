@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import {
-  AlertTriangle, Brain, CheckCircle2, ChevronDown, CircleX, CirclePause, Database, FilePen, FileSearch, FileText,
+  AlertTriangle, CheckCircle2, ChevronDown, CircleX, CirclePause, Database, FilePen, FileSearch, FileText,
   Clock, Globe, Hand, ListTodo, Plug, Rocket, Search, ShieldCheck, SquareTerminal, type LucideIcon,
 } from 'lucide-react';
 import type { XrogaActivityPresentation } from '@/lib/terminal/activityPresentation';
@@ -109,7 +109,8 @@ export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel
   const [chosenOpen, setOpen] = useState<boolean | null>(null);
   // A run watched live keeps its stream on screen when it finishes; saved history starts folded.
   const [watched] = useState(() => model.state === 'working' || model.state === 'waiting');
-  const open = chosenOpen ?? (watched && stream.length > 0);
+  const onlyThinking = stream.every(entry => entry.type === 'step' && /:client-(?:read|thought)$/.test(entry.id));
+  const open = chosenOpen ?? (watched && stream.length > 0 && !onlyThinking);
   const [streamHidden, setStreamHidden] = useState(false);
   const openRows = useOpenRows();
   const [showAll, setShowAll] = useState(false);
@@ -121,22 +122,14 @@ export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel
   // A finished run folds into one quiet header so the answer under it stays the focus.
   if (!running) {
     if (!settled.length && state !== 'failed' && state !== 'stopped') return null;
-    // A prompt that only needed thinking keeps one quiet line: there is nothing to open.
-    const only = stream.length === 1 && stream[0]!.type === 'step' ? stream[0] : null;
-    if (state === 'done' && only?.type === 'step' && only.id.endsWith(':client-thought') && !only.evidence?.sources) {
-      return (
-        <section className={styles.timeline} aria-label="Activity" data-state={state} data-testid="activity-timeline">
-          <p className={`${styles.row} ${styles.header}`} data-static="true"><Brain className={styles.icon} aria-hidden="true" /><span className={styles.text}>{only.text}</span></p>
-        </section>
-      );
-    }
     const steps = model.total;
     const summary = [
       model.completed > 0 ? `${model.completed} completed` : '',
       model.failed > 0 ? `${model.failed} failed` : '',
-      model.unconfirmed > 0 ? `${model.unconfirmed} unconfirmed` : '',
     ].filter(Boolean).join(' · ');
-    const label = state === 'failed' ? 'Run failed' : state === 'stopped' ? 'Run stopped' : 'Work history';
+    // The header names what this particular run did: how long it thought, when that is known.
+    const thought = stream.find(entry => entry.type === 'step' && entry.id.endsWith(':client-thought') && entry.state === 'done');
+    const label = state === 'failed' ? 'Run failed' : state === 'stopped' ? 'Run stopped' : thought?.text ?? 'Work history';
     const HeaderIcon = state === 'failed' ? CircleX : state === 'stopped' ? CirclePause : CheckCircle2;
     return (
       <section className={styles.timeline} aria-label="Activity" data-state={state} data-testid="activity-timeline">
@@ -144,7 +137,7 @@ export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel
           disabled={!steps} onClick={() => setOpen(!open)}>
           <HeaderIcon className={styles.icon} aria-hidden="true" style={state === 'failed' ? { color: 'var(--act-danger)' } : undefined} />
           <span className={styles.text}>{label}</span>
-          {steps ? <><span className={styles.meta}>{summary || `${steps} ${steps === 1 ? 'step' : 'steps'}`}</span><ChevronDown className={styles.chevron} aria-hidden="true" /></> : null}
+          {steps ? <><span className={styles.meta}>{summary || (thought ? '' : `${steps} ${steps === 1 ? 'step' : 'steps'}`)}</span><ChevronDown className={styles.chevron} aria-hidden="true" /></> : null}
         </button>
         {open && stream.length ? <ProcessingStream entries={stream} rows={openRows} /> : null}
         {open && !stream.length ? <>

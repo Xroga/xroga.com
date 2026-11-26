@@ -13,9 +13,6 @@ import { buildProcessingView } from '@/lib/terminal/processingView';
 import { buildProcessingStream } from '@/lib/terminal/processingStream';
 import type { SwarmTodoItem } from '@/lib/swarm';
 
-/** Nothing new for this long is worth saying out loud, and only as a measured fact. */
-const STALLED_AFTER_MS = 9_000;
-
 interface TerminalLiveActivityProps {
   run?: TerminalRunState;
   activity?: readonly XrogaActivityPresentation[];
@@ -67,16 +64,6 @@ export function TerminalLiveActivity({
     [rows, active, run?.outcome],
   );
 
-  const lastObservableAt = Math.max(
-    run?.startedAt ?? mountedAt,
-    run?.events.at(-1)?.at ?? 0,
-    ...rows.map((row) => row.updatedAt),
-  );
-  const silentForMs = Math.max(0, now - lastObservableAt);
-  const note = active && silentForMs >= STALLED_AFTER_MS && model.state !== 'waiting'
-    ? `No new update for ${formatElapsed(silentForMs)}`
-    : undefined;
-
   if (rows.length === 0 && !active && !run?.outcome) return null;
 
   const baseLabel = pendingWorkLabel(run?.events ?? [], rows.length > 0, pendingReply);
@@ -91,7 +78,7 @@ export function TerminalLiveActivity({
       data-testid="terminal-live-activity"
       data-state={shell ? 'pending' : active ? 'active' : 'settled'}
     >
-      <ActivityTimeline model={model} now={now} runStartedAt={run?.startedAt ?? mountedAt} pendingLabel={label} note={note} processing={processing} stream={stream} />
+      <ActivityTimeline model={model} now={now} runStartedAt={run?.startedAt ?? mountedAt} pendingLabel={label} processing={processing} stream={stream} />
     </div>
   );
 }

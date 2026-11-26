@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "940ffaf69f86fec9fe617bb2d0d2da5f9f0c07ac",
+  "source_sha": "fb14112c590007faa0184547446816ddf54cd67e",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -21323,7 +21323,7 @@
     },
     {
       "path": "frontend/src/components/activity/ActivityTimeline.tsx",
-      "sha256": "551e527655ce6945aa99ae72bded1a18d8af6f3ae11035b7e6a8d5f010408b09"
+      "sha256": "f7a6a98fea04b8932ce50c747a91c4a1f13c03939dc6ad460a5f3b1abac5fbdb"
     },
     {
       "path": "frontend/src/components/activity/BlackHoleIndicator.tsx",
@@ -23147,7 +23147,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/conversation.ts",
-      "sha256": "6925e7ad1fd047a211c84ee0375e88a46259a0f2b7a29daf4789d6c58051e858"
+      "sha256": "2fc6ae0cbe2e52e71a4f7f5c9cb39bd9d0bc9cf45c3e9a0a7bbbf5d7b2feb623"
     },
     {
       "path": "frontend/src/components/response-experience-v2/diagramSyntax.ts",
@@ -23611,7 +23611,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalLiveActivity.tsx",
-      "sha256": "82a562133e77a94ce3266c2195d98dd50368ad3b01300b088cd874d112cffea0"
+      "sha256": "c5ae201fbb1a02d432d3f7779258ce26bb635d66d92edc492b0aa25c3a384cc5"
     },
     {
       "path": "frontend/src/components/terminal/TerminalSearchBar.tsx",
@@ -23947,7 +23947,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "04aa04c70b8ef6585898139df23276f74619ee35ae2b6da99d4f3b8ed5f17e61"
+      "sha256": "c5fceeb704970bb1bb9338e2ee64f0f7d205409c2bd244fb14475a7ed17473f7"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -24863,15 +24863,15 @@
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "sha256": "b93ac280d3223c9ee41733e6bffc79fb2a1e76799331198b10a72c3235bb3853"
+      "sha256": "0d7f970a7b19b65d6b6251e97067d6400b3bd47ec7d5083ab05a82cd3761d836"
     },
     {
       "path": "frontend/src/lib/terminal/activityTimeline.ts",
-      "sha256": "d3fb13cc06ff9039ccd28734727fd968cdf8ba8228e54470052f52ea14e7afcf"
+      "sha256": "22b9d64222dbbc91e096ba3faefe53ddf283bef92c4cffe9a1fc2ca767e18374"
     },
     {
       "path": "frontend/src/lib/terminal/clientSteps.ts",
-      "sha256": "cf90b8eaa01d0d324db727af8d51b7212dfe140e3a5685d86d0b9e8e2ec0cd7f"
+      "sha256": "19deb673333a79bb9b754fb9d8ccdbea880afb83fa6ef0eed0dbecd983cafbde"
     },
     {
       "path": "frontend/src/lib/terminal/dictation.ts",
@@ -24883,7 +24883,7 @@
     },
     {
       "path": "frontend/src/lib/terminal/processingStream.ts",
-      "sha256": "368c845fba437513c6e0669008c050d2e84bd356e04f528a2bd58689b33c19db"
+      "sha256": "57423498f39ac9af90aafe8edb1e0643adc2d9c75290c218f9d6b17027418f1a"
     },
     {
       "path": "frontend/src/lib/terminal/processingView.ts",
@@ -31181,7 +31181,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4117,
+      "line": 4138,
       "credentialsInUrl": false
     },
     {
@@ -41317,14 +41317,14 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2164,
+      "line": 2183,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2197,
+      "line": 2216,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

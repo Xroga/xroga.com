@@ -73,7 +73,7 @@ import {
 } from '@/lib/workLanes';
 import { runLightLaneChat } from '@/lib/runLightLaneChat';
 import { runGuestLaneChat } from '@/lib/runGuestLaneChat';
-import { THINKING, thoughtDone, thoughtFrame } from '@/lib/terminal/clientSteps';
+import { CLIENT_READ, READING, thoughtDone, thoughtFrame, workingText } from '@/lib/terminal/clientSteps';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
 import { useWorkspaceAuthGate } from '@/components/workspace/WorkspaceAuthGate';
 import { GitHubBuildGateModal } from '@/components/terminal/GitHubBuildGateModal';
@@ -704,13 +704,28 @@ export function TerminalChatProvider({
   }, []);
   /** When the current prompt started thinking; null once that line has ended. */
   const thinkingSinceRef = useRef<number | null>(null);
+  const readingRef = useRef(false);
   const startThinking = useCallback(() => {
     thinkingSinceRef.current = Date.now();
-    pushTerminalEvent('progress', thoughtFrame('running', THINKING));
+    readingRef.current = true;
+    pushTerminalEvent('progress', thoughtFrame('running', READING, {}, CLIENT_READ));
+  }, [pushTerminalEvent]);
+  /** The request has been read: say what is now being prepared, in this request's own words. */
+  const workOnThought = useCallback((text: string) => {
+    if (thinkingSinceRef.current === null) return;
+    if (readingRef.current) {
+      readingRef.current = false;
+      pushTerminalEvent('progress', thoughtFrame('completed', 'Read your message', {}, CLIENT_READ));
+    }
+    pushTerminalEvent('progress', thoughtFrame('running', text));
   }, [pushTerminalEvent]);
   const finishThinking = useCallback((sources?: Array<{ title: string; url: string }>) => {
     const since = thinkingSinceRef.current;
     if (since === null) return;
+    if (readingRef.current) {
+      readingRef.current = false;
+      pushTerminalEvent('progress', thoughtFrame('completed', 'Read your message', {}, CLIENT_READ));
+    }
     thinkingSinceRef.current = null;
     const done = thoughtDone(Date.now() - since, sources);
     pushTerminalEvent('progress', thoughtFrame('completed', done.text, { sources: done.sources }));
@@ -718,7 +733,11 @@ export function TerminalChatProvider({
   const failThinking = useCallback(() => {
     if (thinkingSinceRef.current === null) return;
     thinkingSinceRef.current = null;
-    pushTerminalEvent('progress', thoughtFrame('failed', 'Could not finish thinking'));
+    const wasReading = readingRef.current;
+    readingRef.current = false;
+    pushTerminalEvent('progress', wasReading
+      ? thoughtFrame('failed', 'Could not read your message', {}, CLIENT_READ)
+      : thoughtFrame('failed', 'Could not finish the answer'));
   }, [pushTerminalEvent]);
   const [githubGateOpen, setGithubGateOpen] = useState(false);
   const [vercelGateOpen, setVercelGateOpen] = useState(false);
@@ -2354,6 +2373,7 @@ const stopRequestedRunIdRef =
 
       startTerminalRun();
       startThinking();
+      workOnThought('Writing your answer');
       const keepActivity = () => {
         const activity = coalesceActivity(terminalEventsRef.current);
         setMessages((current) => current.map((row) => (row.id === assistantId ? { ...row, executionActivity: activity } : row)));
@@ -3015,7 +3035,8 @@ if (
           ));
         }
 
-        if (!usePhase1Engine) finishThinking();
+        if (usePhase1Engine) workOnThought(workingText(semanticPlan));
+        else finishThinking();
 
         if (usePhase1Engine) {
           setPipelineCompact(false);

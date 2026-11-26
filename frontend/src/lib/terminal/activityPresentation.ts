@@ -1,4 +1,4 @@
-import { CLIENT_THOUGHT } from './clientSteps';
+import { isClientStep } from './clientSteps';
 import type { TerminalEvent } from './terminalEvent';
 import { redactTerminalText } from './terminalRedaction';
 
@@ -251,7 +251,7 @@ export function coalesceActivity(
   for (const event of events) {
     if (event.kind === 'output' || event.kind === 'result' || event.kind === 'session') continue;
     // The Workspace's own Thinking line is a real, timed step, not filler.
-    if (isGenericPlaceholderActivity(event.text) && event.canonical?.activityId !== CLIENT_THOUGHT) continue;
+    if (isGenericPlaceholderActivity(event.text) && !isClientStep(event.canonical?.activityId ?? '')) continue;
     const canonical = event.canonical;
     const identity = canonical ? `${canonical.runId ?? ''}:${canonical.eventId}` : `sequence:${event.seq}`;
     if (seen.has(identity)) continue;
