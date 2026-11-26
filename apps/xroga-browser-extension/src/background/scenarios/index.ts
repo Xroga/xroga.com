@@ -42,6 +42,7 @@ import './pdf-structure';
 import './read-file-real';
 import './site-map';
 import './block-requests';
+import './transcribe';
 import './infinite-scroll';
 import './ocr-picture';
 import './image-and-language';

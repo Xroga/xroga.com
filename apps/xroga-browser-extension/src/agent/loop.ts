@@ -2634,6 +2634,22 @@ ${renderSkill(top)}`);
           outcome = { call, kind, text: 'error: the PDF could not be read (' + (error instanceof Error ? error.message : String(error)).slice(0, 200) + '). If it needs a sign-in the person has not done in this browser, or is not a PDF, read the page another way.', isError: true };
         }
       }
+    } else if (call.toolName === 'transcribe') {
+      const address = typeof args.url === 'string' ? args.url : '';
+      if (!/^https?:\/\//i.test(address)) {
+        outcome = { call, kind, text: 'error: transcribe needs the address of an audio or video file on the web (https or http).', isError: true };
+      } else {
+        try {
+          const [{ transcribeFile }, { describeTranscript, clampSeconds }] = await Promise.all([import('@src/extension/transcribe'), import('./transcript-format')]);
+          const language = typeof args.language === 'string' ? args.language.trim().toLowerCase() : '';
+          const result = await transcribeFile(address, { seconds: clampSeconds(args.seconds), multilingual: language !== '' && !/^en/.test(language) });
+          let host = 'a media file';
+          try { host = new URL(address).hostname; } catch { /* keep */ }
+          outcome = { call, kind, text: this.options.layer.wrap(describeTranscript(result, { find: typeof args.find === 'string' ? args.find : undefined }), { site: host }), isError: false };
+        } catch (error) {
+          outcome = { call, kind, text: 'error: the speech could not be read (' + (error instanceof Error ? error.message : String(error)).slice(0, 200) + '). The address may need a sign-in, not be a sound file, or be too large.', isError: true };
+        }
+      }
     } else if (call.toolName === 'site_map') {
       const address = typeof args.url === 'string' ? args.url : '';
       if (!/^https?:\/\//i.test(address)) {

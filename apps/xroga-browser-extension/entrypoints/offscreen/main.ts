@@ -206,8 +206,63 @@ interface PdfDoc {
   destroy(): Promise<void>;
 }
 
+// Speech to text (the `transcribe` tool): transformers.js and its ONNX runtime are vendored in public/speech; the Whisper model (about 41 MB, quantised) is
+// downloaded from Hugging Face on first use and kept by the browser cache. The sound is decoded to 16 kHz mono here, so nothing but the model download leaves the device.
+const MAX_AUDIO_BYTES = 200 * 1024 * 1024;
+type SpeechPipeline = (audio: Float32Array, options: object) => Promise<{ text: string; chunks?: Array<{ timestamp: [number, number | null]; text: string }> }>;
+const speechPipelines = new Map<string, Promise<SpeechPipeline>>();
+
+function speechPipeline(multilingual: boolean): Promise<SpeechPipeline> {
+  const model = multilingual ? 'onnx-community/whisper-tiny' : 'onnx-community/whisper-tiny.en';
+  let pending = speechPipelines.get(model);
+  if (!pending) {
+    pending = (async () => {
+      const tf = (await import(/* @vite-ignore */ chrome.runtime.getURL('speech/transformers.min.js'))) as {
+        env: { allowLocalModels: boolean; backends: { onnx: { wasm: { wasmPaths: string; numThreads: number; proxy: boolean } } } };
+        pipeline(task: string, model: string, options: object): Promise<SpeechPipeline>;
+      };
+      tf.env.allowLocalModels = false;
+      tf.env.backends.onnx.wasm.wasmPaths = chrome.runtime.getURL('speech/');
+      tf.env.backends.onnx.wasm.numThreads = 1;
+      tf.env.backends.onnx.wasm.proxy = false;
+      return tf.pipeline('automatic-speech-recognition', model, { dtype: 'q8', device: 'wasm' });
+    })();
+    pending.catch(() => speechPipelines.delete(model));
+    speechPipelines.set(model, pending);
+  }
+  return pending;
+}
+
+async function transcribe(url: string, seconds: number, multilingual: boolean) {
+  const response = await fetch(url, { credentials: 'omit' });
+  if (!response.ok) throw new Error(`the file answered ${response.status}`);
+  const declared = Number(response.headers.get('content-length') ?? 0);
+  if (declared > MAX_AUDIO_BYTES) throw new Error(`the file is ${Math.round(declared / 1048576)} MB; the limit is ${MAX_AUDIO_BYTES / 1048576} MB`);
+  const bytes = await response.arrayBuffer();
+  if (bytes.byteLength > MAX_AUDIO_BYTES) throw new Error(`the file is ${Math.round(bytes.byteLength / 1048576)} MB; the limit is ${MAX_AUDIO_BYTES / 1048576} MB`);
+  const size = bytes.byteLength; // decodeAudioData detaches the buffer
+  const decoded = await new OfflineAudioContext(1, 16000, 16000).decodeAudioData(bytes);
+  const wanted = Math.min(decoded.length, Math.floor(seconds * 16000));
+  const mono = new Float32Array(wanted);
+  for (let c = 0; c < decoded.numberOfChannels; c++) {
+    const data = decoded.getChannelData(c);
+    for (let i = 0; i < wanted; i++) mono[i] = (mono[i] ?? 0) + (data[i] ?? 0) / decoded.numberOfChannels;
+  }
+  const run = await speechPipeline(multilingual);
+  const out = await run(mono, { return_timestamps: true, chunk_length_s: 30, stride_length_s: 5, ...(multilingual ? { task: 'transcribe' } : {}) });
+  const chunks = (out.chunks ?? [{ timestamp: [0, null] as [number, number | null], text: out.text }]).map(c => ({ timestamp: c.timestamp, text: c.text }));
+  return { chunks, readSeconds: wanted / 16000, totalSeconds: decoded.duration, model: multilingual ? 'whisper-tiny' : 'whisper-tiny.en', bytes: size };
+}
+
 chrome.runtime.onMessage.addListener((message, _sender, reply) => {
   if (message?.target !== 'offscreen') return;
+  if (message.type === 'transcribe') {
+    transcribe(String(message.url), Math.max(5, Math.min(1800, Number(message.seconds) || 300)), message.multilingual === true).then(
+      result => reply({ ok: true, ...result }),
+      error => reply({ ok: false, error: error instanceof Error ? error.message : String(error) }),
+    );
+    return true;
+  }
   if (message.type === 'blob-url') {
     const bytes = message.base64 ? Uint8Array.from(atob(message.content as string), c => c.charCodeAt(0)) : undefined;
     const url = URL.createObjectURL(new Blob([bytes ?? (message.content as string)], { type: message.mimeType as string }));
