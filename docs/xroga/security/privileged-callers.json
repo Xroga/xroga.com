@@ -1,26 +1,26 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "3f607da26bf0365486fc667b1ed859919e847bcd6beef40789e9107fbe7025b2",
+  "reviewRegistrySha256": "cd6136f8d43ac7f9fdc068e146d7c235ec30a3704aa63dcce988407f2448972d",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 227,
-    "persistenceCandidates": 1007,
-    "ownerPredicateCandidates": 262,
-    "reviewRequired": 176,
-    "reviewedCandidates": 831,
-    "unresolvedSafetyCandidates": 217,
+    "privilegedFactorySites": 230,
+    "persistenceCandidates": 1015,
+    "ownerPredicateCandidates": 264,
+    "reviewRequired": 185,
+    "reviewedCandidates": 830,
+    "unresolvedSafetyCandidates": 226,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 176,
+    "REVIEW_REQUIRED": 185,
     "SCOPED_BOUNDARY": 533,
     "NARROW_EXCEPTION": 52,
-    "NOT_PERSISTENCE": 205,
+    "NOT_PERSISTENCE": 204,
     "REVIEWED_GAP": 41
   },
   "acceptance": {
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 80,
-    "unresolvedCandidateBoundaries": 927,
+    "unresolvedCandidateBoundaries": 935,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3968,11 +3968,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "1f13e40af8474dd650cc"
+        "id": "1e78d06e886bf0795dd5"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "508616f756e49c4a7c6a"
+        "id": "9caea37dce7332cbd78d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4700,15 +4700,15 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "49d80835a4c3c34ee32b"
+        "id": "c5afc3e57e785ef3ef3b"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "4b5a67879fe8cadd9429"
+        "id": "87ed7df95645a68cdb05"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6976a39ca0e1440bcce4"
+        "id": "ca5e36bcc97ba13a6ccd"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4748,11 +4748,27 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "1432d961dd6efd6d466f"
+        "id": "fa002470b4fda426b25c"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "b3f20ea28966bc9457bc"
+        "id": "769c29b4f260ae917ece"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "7238c5d4e187fa4f3c07"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "4f2f153a1fb4a19064d8"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "686be3670804b36e2821"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "566c55f77cb71b2aa47b"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4812,6 +4828,22 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "199c89376cc477b8c93c"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "12690ff6770fa50bad0a"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "43f74a68b16673a66b2a"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "344cb37df2ca54037032"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "20c9e87145ae5dc93476"
       },
       {
@@ -4845,6 +4877,10 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "4513966c972a639bd886"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "827947d788037cc47e27"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5020,11 +5056,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "f7772240df4e6f147cd6"
+        "id": "7435325dc6f8734b9505"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "fa3eb52937c8beccc796"
+        "id": "b4a46938a0dec4c5f10c"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6336,7 +6372,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "b14757670cd7cae6bebc"
+        "id": "ffa5a9eec1bdc0caa995"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6376,15 +6412,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "8204b932fb1d657bcf51"
-      },
-      {
-        "code": "MISSING_CALLER_REVIEW",
         "id": "4fe92c7afdea034fa58b"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "7afd23280a7f3c8a8a03"
+        "id": "dd508fe9836928e3970f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6648,15 +6680,15 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "49d80835a4c3c34ee32b"
+        "id": "c5afc3e57e785ef3ef3b"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "4b5a67879fe8cadd9429"
+        "id": "87ed7df95645a68cdb05"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "6976a39ca0e1440bcce4"
+        "id": "ca5e36bcc97ba13a6ccd"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -6664,11 +6696,27 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "1432d961dd6efd6d466f"
+        "id": "fa002470b4fda426b25c"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "b3f20ea28966bc9457bc"
+        "id": "769c29b4f260ae917ece"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "7238c5d4e187fa4f3c07"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "4f2f153a1fb4a19064d8"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "686be3670804b36e2821"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "566c55f77cb71b2aa47b"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -6700,6 +6748,22 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "199c89376cc477b8c93c"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "12690ff6770fa50bad0a"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "43f74a68b16673a66b2a"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "344cb37df2ca54037032"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "40d26174ab7687d9847a"
       },
       {
@@ -6713,6 +6777,10 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "725ab11dc4a109e702b5"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "827947d788037cc47e27"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -6776,11 +6844,11 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "f7772240df4e6f147cd6"
+        "id": "7435325dc6f8734b9505"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "fa3eb52937c8beccc796"
+        "id": "b4a46938a0dec4c5f10c"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7640,11 +7708,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "1f13e40af8474dd650cc"
+        "id": "1e78d06e886bf0795dd5"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "508616f756e49c4a7c6a"
+        "id": "9caea37dce7332cbd78d"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10144,7 +10212,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "b14757670cd7cae6bebc"
+        "id": "ffa5a9eec1bdc0caa995"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10168,11 +10236,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "8204b932fb1d657bcf51"
-      },
-      {
-        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "7afd23280a7f3c8a8a03"
+        "id": "dd508fe9836928e3970f"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10201,11 +10265,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 1007,
+    "currentCallers": 1015,
     "structuredVerified": 80,
-    "structuredUnproven": 927,
-    "manualUnresolved": 217,
-    "manualUnsupported": 710,
+    "structuredUnproven": 935,
+    "manualUnresolved": 226,
+    "manualUnsupported": 709,
     "agreedVerified": 80,
     "proofAwaitingManualReconciliation": 0
   },
@@ -12310,7 +12374,7 @@
       }
     },
     {
-      "id": "1f13e40af8474dd650cc",
+      "id": "1e78d06e886bf0795dd5",
       "path": "backend/src/ai/resourceMeter.ts",
       "line": 127,
       "enclosing": "sweepStaleEngineeringReservations",
@@ -12318,7 +12382,7 @@
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "41d41394517529873968222975159e930630e672a03f7f6d786507d63cee1a3d",
+      "sourceSha256": "a7052c1dcbc6eea80c1049639f813704072432f907a7c706620df413d0cf0f26",
       "semanticReview": {
         "authority": "The only caller is the existing Google delivery maintenance tick, and only when XROGA_ENGINEERING_METERING=1. It uses the registered engineering_resource_sweep authority, which calls the single database function sweep_stale_engineering_reservations with a bounded interval. The function takes no owner, selects no row for the caller and returns only a count. The threshold has a floor of one hour (default two) so a call that is still running cannot be charged early.",
         "reason": "Fixed-table lifecycle maintenance that spans owners by design, never selects or returns customer content and invokes no provider. A real disposable PostgreSQL test with a worker killed by SIGKILL shows the unsettled hold is charged in full once, the sweep is repeatable, and a recent hold is left alone. The function is service-role only and anon/authenticated are explicitly revoked. This certifies this bounded maintenance call, not usage accounting accuracy or any production behaviour.",
@@ -12339,7 +12403,7 @@
       }
     },
     {
-      "id": "508616f756e49c4a7c6a",
+      "id": "9caea37dce7332cbd78d",
       "path": "backend/src/ai/resourceMeter.ts",
       "line": 128,
       "enclosing": "sweepStaleEngineeringReservations",
@@ -12347,7 +12411,7 @@
       "target": "sweep_stale_engineering_reservations",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "41d41394517529873968222975159e930630e672a03f7f6d786507d63cee1a3d",
+      "sourceSha256": "a7052c1dcbc6eea80c1049639f813704072432f907a7c706620df413d0cf0f26",
       "semanticReview": {
         "authority": "The only caller is the existing Google delivery maintenance tick, and only when XROGA_ENGINEERING_METERING=1. It uses the registered engineering_resource_sweep authority, which calls the single database function sweep_stale_engineering_reservations with a bounded interval. The function takes no owner, selects no row for the caller and returns only a count. The threshold has a floor of one hour (default two) so a call that is still running cannot be charged early.",
         "reason": "Fixed-table lifecycle maintenance that spans owners by design, never selects or returns customer content and invokes no provider. A real disposable PostgreSQL test with a worker killed by SIGKILL shows the unsettled hold is charged in full once, the sweep is repeatable, and a recent hold is left alone. The function is service-role only and anon/authenticated are explicitly revoked. This certifies this bounded maintenance call, not usage accounting accuracy or any production behaviour.",
@@ -19201,37 +19265,37 @@
       }
     },
     {
-      "id": "49d80835a4c3c34ee32b",
+      "id": "c5afc3e57e785ef3ef3b",
       "path": "backend/src/routes/browserDocuments.ts",
-      "line": 19,
+      "line": 51,
       "enclosing": "officeArchive",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "52b4445687ccae287d6c84bfefac85c463400915c5857c7d70f4b9a9a5cddfe3"
+      "sourceSha256": "131007966c483ed8c7741e73be3a230c85e3cb79db89dd90908c68605d28206e"
     },
     {
-      "id": "4b5a67879fe8cadd9429",
+      "id": "87ed7df95645a68cdb05",
       "path": "backend/src/routes/browserDocuments.ts",
-      "line": 64,
+      "line": 96,
       "enclosing": "readBrowserDocument",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "52b4445687ccae287d6c84bfefac85c463400915c5857c7d70f4b9a9a5cddfe3"
+      "sourceSha256": "131007966c483ed8c7741e73be3a230c85e3cb79db89dd90908c68605d28206e"
     },
     {
-      "id": "6976a39ca0e1440bcce4",
+      "id": "ca5e36bcc97ba13a6ccd",
       "path": "backend/src/routes/browserDocuments.ts",
-      "line": 85,
+      "line": 127,
       "enclosing": "readBrowserDocument",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "52b4445687ccae287d6c84bfefac85c463400915c5857c7d70f4b9a9a5cddfe3"
+      "sourceSha256": "131007966c483ed8c7741e73be3a230c85e3cb79db89dd90908c68605d28206e"
     },
     {
       "id": "3a0a65d6d673a33eaf05",
@@ -19463,26 +19527,70 @@
       }
     },
     {
-      "id": "1432d961dd6efd6d466f",
+      "id": "fa002470b4fda426b25c",
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 340,
+      "line": 471,
+      "enclosing": "vetTurnImages",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "a40092256167d3e1862314641773ca749df710b56cd6bc8ec053351aea9248ac"
+    },
+    {
+      "id": "769c29b4f260ae917ece",
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 485,
       "enclosing": "visionProbe",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a378faf1bcf3b87d7dcf82620855fc2bfb9847ff04121fd784f25c06bd4c65b8"
+      "sourceSha256": "a40092256167d3e1862314641773ca749df710b56cd6bc8ec053351aea9248ac"
     },
     {
-      "id": "b3f20ea28966bc9457bc",
+      "id": "7238c5d4e187fa4f3c07",
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 428,
+      "line": 577,
       "enclosing": "createLocalBrowserRouter",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a378faf1bcf3b87d7dcf82620855fc2bfb9847ff04121fd784f25c06bd4c65b8"
+      "sourceSha256": "a40092256167d3e1862314641773ca749df710b56cd6bc8ec053351aea9248ac"
+    },
+    {
+      "id": "4f2f153a1fb4a19064d8",
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 718,
+      "enclosing": "createLocalBrowserRouter",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "a40092256167d3e1862314641773ca749df710b56cd6bc8ec053351aea9248ac"
+    },
+    {
+      "id": "686be3670804b36e2821",
+      "path": "backend/src/routes/localBrowserPlugins.ts",
+      "line": 114,
+      "enclosing": "createLocalBrowserPluginCatalog",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "c71ed45f02944b55101f6c7930a6ac6c213fe580091f9249a5d7a0d5f2282fef"
+    },
+    {
+      "id": "566c55f77cb71b2aa47b",
+      "path": "backend/src/routes/localBrowserPlugins.ts",
+      "line": 114,
+      "enclosing": "createLocalBrowserPluginCatalog",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "c71ed45f02944b55101f6c7930a6ac6c213fe580091f9249a5d7a0d5f2282fef"
     },
     {
       "id": "c9a009f6baa9e3a3bbad",
@@ -20357,6 +20465,50 @@
       }
     },
     {
+      "id": "199c89376cc477b8c93c",
+      "path": "backend/src/routes/teams.ts",
+      "line": 49,
+      "enclosing": "call",
+      "kind": "RPC_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "ed12e795542c30516005b5a9681eee3b7e734fd619d80e1eaf913d3979df0b5b"
+    },
+    {
+      "id": "12690ff6770fa50bad0a",
+      "path": "backend/src/routes/teams.ts",
+      "line": 49,
+      "enclosing": "call",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "ed12e795542c30516005b5a9681eee3b7e734fd619d80e1eaf913d3979df0b5b"
+    },
+    {
+      "id": "43f74a68b16673a66b2a",
+      "path": "backend/src/routes/teams.ts",
+      "line": 134,
+      "enclosing": "<module>",
+      "kind": "RPC_CANDIDATE",
+      "target": "team_create_link",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "ed12e795542c30516005b5a9681eee3b7e734fd619d80e1eaf913d3979df0b5b"
+    },
+    {
+      "id": "344cb37df2ca54037032",
+      "path": "backend/src/routes/teams.ts",
+      "line": 134,
+      "enclosing": "<module>",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "ed12e795542c30516005b5a9681eee3b7e734fd619d80e1eaf913d3979df0b5b"
+    },
+    {
       "id": "353aa869f7c46574b7a6",
       "path": "backend/src/routes/terminalSessions.ts",
       "line": 110,
@@ -20774,6 +20926,17 @@
           }
         ]
       }
+    },
+    {
+      "id": "827947d788037cc47e27",
+      "path": "backend/src/sandbox/repoRun.ts",
+      "line": 67,
+      "enclosing": "readTarball",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "bdd29aa5d0b9f6f964a818538382259eb5098bdcf3da8a91efaa2b60242eac00"
     },
     {
       "id": "001a7a58713675bbbba0",
@@ -22001,7 +22164,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "15d2c7f112c1eceab5d5ebf718f92791609f547721500180fa81143bb14da0f8"
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
     },
     {
       "id": "287e2fe0dabebc523a36",
@@ -22012,7 +22175,7 @@
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "15d2c7f112c1eceab5d5ebf718f92791609f547721500180fa81143bb14da0f8"
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
     },
     {
       "id": "3a763a5523dac73c10d4",
@@ -22023,7 +22186,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "15d2c7f112c1eceab5d5ebf718f92791609f547721500180fa81143bb14da0f8"
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
     },
     {
       "id": "46aca4c01b2d3d90acad",
@@ -22034,7 +22197,7 @@
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "15d2c7f112c1eceab5d5ebf718f92791609f547721500180fa81143bb14da0f8"
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
     },
     {
       "id": "85b1d7461e8691468225",
@@ -22045,7 +22208,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "15d2c7f112c1eceab5d5ebf718f92791609f547721500180fa81143bb14da0f8"
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
     },
     {
       "id": "545cee9f47055ec5d761",
@@ -22056,7 +22219,7 @@
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "15d2c7f112c1eceab5d5ebf718f92791609f547721500180fa81143bb14da0f8"
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
     },
     {
       "id": "7231d508555849d87d32",
@@ -22067,7 +22230,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "15d2c7f112c1eceab5d5ebf718f92791609f547721500180fa81143bb14da0f8"
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
     },
     {
       "id": "8609662e7417659e88ca",
@@ -22078,7 +22241,7 @@
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "15d2c7f112c1eceab5d5ebf718f92791609f547721500180fa81143bb14da0f8"
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
     },
     {
       "id": "a2737e6413bb535344c8",
@@ -22089,7 +22252,7 @@
       "target": "cancel_business_action_confirmation",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "15d2c7f112c1eceab5d5ebf718f92791609f547721500180fa81143bb14da0f8"
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
     },
     {
       "id": "a794b7db009e04b8617a",
@@ -22100,7 +22263,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "15d2c7f112c1eceab5d5ebf718f92791609f547721500180fa81143bb14da0f8"
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
     },
     {
       "id": "319518470d46e4577f12",
@@ -22111,7 +22274,7 @@
       "target": "finish_business_action_confirmation",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "15d2c7f112c1eceab5d5ebf718f92791609f547721500180fa81143bb14da0f8"
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
     },
     {
       "id": "2714b6af44879d208f97",
@@ -22122,7 +22285,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "15d2c7f112c1eceab5d5ebf718f92791609f547721500180fa81143bb14da0f8"
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
     },
     {
       "id": "a1b9e751df5bc764909d",
@@ -22133,29 +22296,29 @@
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "15d2c7f112c1eceab5d5ebf718f92791609f547721500180fa81143bb14da0f8"
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
     },
     {
-      "id": "f7772240df4e6f147cd6",
+      "id": "7435325dc6f8734b9505",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 735,
+      "line": 733,
       "enclosing": "confirmBusinessAction",
       "kind": "RPC_CANDIDATE",
       "target": "claim_business_action_confirmation",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "15d2c7f112c1eceab5d5ebf718f92791609f547721500180fa81143bb14da0f8"
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
     },
     {
-      "id": "fa3eb52937c8beccc796",
+      "id": "b4a46938a0dec4c5f10c",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 813,
+      "line": 811,
       "enclosing": "confirmBusinessAction",
       "kind": "RPC_CANDIDATE",
       "target": "authorize_business_action_dispatch",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "15d2c7f112c1eceab5d5ebf718f92791609f547721500180fa81143bb14da0f8"
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
     },
     {
       "id": "bf8469a6c974491acd3c",
@@ -30832,15 +30995,15 @@
       }
     },
     {
-      "id": "b14757670cd7cae6bebc",
+      "id": "ffa5a9eec1bdc0caa995",
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 348,
+      "line": 350,
       "enclosing": "WorkspaceBrowserOperator",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1",
+      "sourceSha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780",
       "semanticReview": {
         "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
         "reason": "Decodes the user-requested recording locally. The byte conversion does not invoke a database or storage client.",
@@ -31559,27 +31722,6 @@
       }
     },
     {
-      "id": "8204b932fb1d657bcf51",
-      "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "line": 107,
-      "enclosing": "IntegrationsModal",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0dbd96995b155733fa243bf3ce5cab4f3a5e374f86e566ff29f850f3cae8f8c1",
-      "semanticReview": {
-        "authority": "Native Array.from copies a local Map iterator into React state for rendering validated plugin search results. This disposition covers only that conversion, not adjacent connector search or any consequential integration action.",
-        "reason": "Exact current-source receiver and surrounding data flow were inspected. Only the native in-memory conversion is excluded. No adjacent authority, persistence or provider boundary is certified.",
-        "evidence": [
-          {
-            "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-            "marker": "setApps(Array.from(available.values()));"
-          }
-        ]
-      }
-    },
-    {
       "id": "4fe92c7afdea034fa58b",
       "path": "frontend/src/components/terminal/ResponseSources.tsx",
       "line": 57,
@@ -31591,15 +31733,15 @@
       "sourceSha256": "0fd186c17e5d8ab081a61db58f16e171de43d5d8cc66727caccab5245f1a5fc7"
     },
     {
-      "id": "7afd23280a7f3c8a8a03",
+      "id": "dd508fe9836928e3970f",
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 430,
+      "line": 434,
       "enclosing": "TerminalChatBar",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "c2edaea30162f2313c6de6e121be4c68b0676b19014ed31da5c4cd98eddee839",
+      "sourceSha256": "dfdcf903eefaa158b3d6e28c2da80df9312563791359622133a686a4bfdcb82f",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",

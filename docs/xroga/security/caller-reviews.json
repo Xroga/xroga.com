@@ -28220,10 +28220,10 @@
     },
     {
       "path": "backend/src/ai/resourceMeter.ts",
-      "sourceSha256": "41d41394517529873968222975159e930630e672a03f7f6d786507d63cee1a3d",
+      "sourceSha256": "a7052c1dcbc6eea80c1049639f813704072432f907a7c706620df413d0cf0f26",
       "callIds": [
-        "1f13e40af8474dd650cc",
-        "508616f756e49c4a7c6a"
+        "1e78d06e886bf0795dd5",
+        "9caea37dce7332cbd78d"
       ],
       "disposition": "NARROW_EXCEPTION",
       "authority": "The only caller is the existing Google delivery maintenance tick, and only when XROGA_ENGINEERING_METERING=1. It uses the registered engineering_resource_sweep authority, which calls the single database function sweep_stale_engineering_reservations with a bounded interval. The function takes no owner, selects no row for the caller and returns only a count. The threshold has a floor of one hour (default two) so a call that is still running cannot be charged early.",
