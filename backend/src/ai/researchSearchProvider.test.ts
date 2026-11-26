@@ -127,7 +127,7 @@ test('a standard excerpt favors exact clause coverage over a repeated last query
     '\n\n4.1.9 Target spacing\n\nThe individual target or an equivalent control must have enough space.';
   const result = matchingPageParagraphs(navigation + primary + '\n\n' + navigation + noisy,
     'connector standard 4.1.8 and 4.1.9 switch layout overview');
-  assert.match(result, /4\.1\.8.*4\.1\.9.*equivalent control/);
+  assert.match(result, /4\.1\.8.*4\.1\.9.*equivalent control/su);
 });
 
 test('official references use each requested section body instead of the shared contents list', () => {
@@ -140,9 +140,9 @@ test('official references use each requested section body instead of the shared 
     + '### 6.3.8 Confirmation choices\n\n' + longBetween + '\n\nNormative requirements:\n'
     + 'Provide an alternative that does not rely on recalling a code.';
   const result = matchingPageParagraphs(text, 'Requirements handbook 2.2 references 4.1.7, 4.1.9, and 6.3.8');
-  assert.match(result, /4\.1\.7 Readable state Display the current state/);
-  assert.match(result, /4\.1\.9 Input limits Show the permitted range/);
-  assert.match(result, /6\.3\.8 Confirmation choices Provide an alternative/);
+  assert.match(result, /4\.1\.7 Readable state\nDisplay the current state/u);
+  assert.match(result, /4\.1\.9 Input limits\nShow the permitted range/u);
+  assert.match(result, /6\.3\.8 Confirmation choices\nProvide an alternative/u);
   assert.doesNotMatch(result, /Contents|Unrelated/);
   assert.ok(result.length <= 3200);
 });
@@ -164,8 +164,20 @@ test('a dedicated reference page preserves the rule and its late scope note for 
       + '\n\n# Clause 8.4.4 Emergency controls\nThis criterion applies only to a separate cabinet.',
   }] }, 'e5a4d084bbd155ace992b62bcef1f796', 'Inspect standards 8.4.2, 9.5.1 and 9.5.4 in a simulated lab.');
   const [excerpt] = result.results[0].excerpts;
-  assert.match(excerpt, /^Understanding SC 8\.4\.2 Cabinet latches The active latch must remain visible/u);
+  assert.match(excerpt, /^Understanding SC 8\.4\.2 Cabinet latches\nThe active latch must remain visible/u);
   assert.ok(excerpt.includes(note));
   assert.doesNotMatch(excerpt, /Site contents|In brief|separate cabinet/u);
   assert.ok(excerpt.length <= 3200);
+});
+
+test('a numbered rule keeps separately sufficient exceptions distinct from explanatory examples', () => {
+  const content = '# Rule 5.6.7 Cabinet access\n\n## Normative requirements\n\n'
+    + 'Keep the service opening clear unless one of the following applies:\n\n'
+    + '- Spacer: the gauge touches neither the adjacent cover nor the spacer around another undersized opening.\n'
+    + '- Equivalent access: a second opening already meets the minimum size.\n\n'
+    + '## Examples\nAn auxiliary panel illustrates the rule.\n\n# Rule 5.6.8 Status indicator\nUse a separate label.';
+  const excerpt = matchingPageParagraphs(content, 'Summarize the main rule in 5.6.7 and its exceptions.');
+  assert.match(excerpt, /following applies:\n\n- Spacer:[^\n]+another undersized/u);
+  assert.match(excerpt, /opening\.\n- Equivalent access:[^\n]+minimum size\.\n\n## Examples/u);
+  assert.doesNotMatch(excerpt, /5\.6\.8|separate label/u);
 });

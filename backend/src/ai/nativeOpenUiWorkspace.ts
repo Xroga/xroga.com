@@ -4,7 +4,7 @@ import { nativeAnswerReviewReason, nativeFactualGuidance, nativeTechnicalCorrect
 import { checklistFromProse, requestsEditableChecklist, suppliedPeriodicSeries } from './nativeOpenUiRecovery.js';
 import { conflictingNativeReadouts, correctExplicitCurrencyReadouts, correctExplicitReadoutShares, initialNativeReadouts, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
 import { recoverNativeReadoutExplanations } from './nativeOpenUi.js';
-import { bindNativeAnswerText, prioritizeNativeCalculator, removeRepeatedCalculatorFormulas } from './nativeOpenUi.js';
+import { bindNativeAnswerText, prioritizeNativeCalculator, removeRepeatedCalculatorFormulas, removeRepeatedOptionalChecklist } from './nativeOpenUi.js';
 import { reviewEditorialProse } from './nativeOpenUiEditorial.js';
 import { nativeMarkdownTables } from './nativeMarkdown.js';
 import { compactNativeDocumentProse, requestedNativeDocumentFormat } from './nativeDocumentDownload.js';
@@ -189,8 +189,13 @@ export function completeNativeWorkspaceAnswer(
   if (recoveryReview.conflict) return editorialFallback(prose, recoveryReview.conflict);
   const candidate = repair?.program ?? originalProgram;
   const validation = repair?.validation ?? original;
-  const deduplicated = finishReason === 'stop' && validation?.ok && requiredFormats.includes('calculator')
-    ? removeRepeatedCalculatorFormulas(candidate, prose) : candidate;
+  let deduplicated = candidate;
+  if (finishReason === 'stop' && validation?.ok) {
+    if (requiredFormats.includes('calculator')) deduplicated = removeRepeatedCalculatorFormulas(deduplicated, prose);
+    if (!requiredFormats.includes('checklist') && !requestsEditableChecklist(formatPrompt)) {
+      deduplicated = removeRepeatedOptionalChecklist(deduplicated, prose);
+    }
+  }
   const compatibleProgram = deduplicated !== candidate && validateNativeWorkspaceProgram(deduplicated, evidenceIds, prose,
     undefined, { request: prompt }).ok ? deduplicated : candidate;
   const ordered = finishReason === 'stop' && validation?.ok && requiredFormats.includes('calculator')
