@@ -9,6 +9,7 @@
   "changedFiles": [
     "docs/xroga/WORKSPACE_MIC_ROOT_CAUSES_20261127.md",
     "docs/xroga/missions/workspace-mic-ios-capture-20261127.json",
+    "docs/xroga/security/egress-caller-reviews.json",
     "frontend/src/lib/voiceApi.security.test.ts",
     "frontend/src/lib/voiceApi.ts",
     "frontend/src/lib/voiceCapture.test.ts",
@@ -23,7 +24,7 @@
     "tenant": {"changed": false, "description": "No resource access changes."},
     "approval": {"changed": false, "description": "No approval changes."},
     "credentials": {"changed": false, "description": "No credential changes."},
-    "egress": {"changed": false, "description": "Same destinations and request bodies. Cancellation and the 60 second limit are preserved."},
+    "egress": {"changed": false, "description": "Same destinations and request bodies. Cancellation and the 60 second limit are preserved. With founder approval on November 27, the egress review source hash for voiceApi.ts was rebound; the reviewed wake-up call is unchanged."},
     "cost": {"changed": false, "description": "No provider or usage change."},
     "billing": {"changed": false, "description": "No billing changes."}
   },
