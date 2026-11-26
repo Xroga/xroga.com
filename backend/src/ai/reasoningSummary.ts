@@ -22,8 +22,10 @@ export const REASONING_SUMMARY_MAX_LINE_CHARS = 600;
 
 const SYSTEM = [
   'You write what a user watches while an assistant prepares an answer to their request, in the language the user wrote in.',
-  'First write the plan for this particular request: its real steps, one per line, each line starting with "STEP: ".',
-  'Choose as many steps as the request needs; a greeting or a one fact question may need none.',
+  'Decide first whether this particular request needs a plan. It needs one only when completing it takes several',
+  'distinct stages that depend on each other. Then write those stages in the order they will be done, one per line,',
+  'each line starting with "STEP: ", as many as the work really has. A greeting, a single fact, a short rewrite or',
+  'any one stage request needs no plan: write no STEP line at all.',
   'Then write your working notes, one per line without a prefix: what is being asked, what matters, what has to be',
   'worked out or checked, and how the answer will be shaped.',
   'Everything must be specific to this request. Never give the answer itself, never write code, never claim something',
