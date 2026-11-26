@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a9b98fa3443cb368f4b5c8b9beec463681965f86",
+  "source_sha": "ea341547906b1e0038f2632bfc78578bc80484ea",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17627,7 +17627,7 @@
     },
     {
       "path": "backend/src/ai/prompts.ts",
-      "sha256": "3b80f9bc92f0912ce9e1a14607376f4cceffa3bfaf391556a92dce1c204ccc03"
+      "sha256": "89171c93a18ecf816ebca8bd97ac4a7f922fd16998ee69a567c654ed964718ea"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -17695,7 +17695,7 @@
     },
     {
       "path": "backend/src/ai/researchSearchProvider.ts",
-      "sha256": "d3d52c10cbc57ae3c79576c8e0735b9050a00903ac7cfdcd319b7e02644a5e96"
+      "sha256": "8f9bd22f963fd7dcc6abf299f9fd86cb9c7332f0ca2cc36537617bd49b816c4d"
     },
     {
       "path": "backend/src/ai/researchWebsiteEvidence.ts",
@@ -26342,7 +26342,7 @@
       "hostname": "cdn.deepseek.com",
       "protocol": "https:",
       "path": "backend/src/ai/researchSearchProvider.ts",
-      "line": 188,
+      "line": 204,
       "credentialsInUrl": false
     },
     {
@@ -34672,35 +34672,35 @@
     },
     {
       "path": "backend/src/ai/researchSearchProvider.ts",
-      "line": 122,
+      "line": 125,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/researchSearchProvider.ts",
-      "line": 147,
+      "line": 165,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/researchSearchProvider.ts",
-      "line": 148,
+      "line": 166,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/researchSearchProvider.ts",
-      "line": 169,
+      "line": 185,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/researchSearchProvider.ts",
-      "line": 171,
+      "line": 187,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
