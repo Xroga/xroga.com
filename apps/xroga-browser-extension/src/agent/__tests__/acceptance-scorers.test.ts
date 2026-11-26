@@ -48,6 +48,12 @@ describe('acceptance scorers', () => {
       'N4-selenium-form': 'The form says Received!',
       'N5-github-react': 'v19.3.1 published 2026-10-14',
       'N6-python-functools': 'New in version 3.9; equivalent to lru_cache(maxsize=None)',
+      'S1-pdf-sections': 'Abstract, 1. Introduction, 2. Related Work',
+      'S2-sitemap-python': 'The sitemap lists 3.11, 3.12, 3.13, 3.14, 3.15, 3.16 and 3; robots.txt disallows /dev',
+      'S3-notebook': 'The notebook is the Preface; its first section is What Is Data Science?',
+      'S4-calendar': 'Thanksgiving Day 2027 is 2027-11-25; the calendar has 700 events',
+      'S5-subtitles': 'The first line is Aprendi a me virar e voce voltou at 00:00',
+      'S6-email': 'Sent by Mikel Lindsaar, subject Testing 123, Sat, 22 Nov 2008',
     };
     for (const t of tasks as unknown as Array<{ name: string; expect: never }>) {
       expect(perfect[t.name], t.name).toBeTruthy();

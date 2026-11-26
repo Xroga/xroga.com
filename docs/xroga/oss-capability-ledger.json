@@ -998,7 +998,7 @@
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Rebuilt, not copied: bundled skill shopify-admin-data-safely (read before write, cursor paging, query cost, bulk operations, API versions, userErrors, scopes, approvals). The schema-validation scripts need the Shopify CLI and a store; not built.",
+      "adoption_or_rejection_reason": "Rebuilt, not copied: bundled skill shopify-admin-data-safely (read before write, cursor paging, query cost, bulk operations, API versions, userErrors, scopes, approvals). The schema-validation scripts need the Shopify CLI and a store; not built. Second pass: skills shopify-theme-edit-safely (duplicate, edit the copy, preview, publish only on approval) and the merchant-side parts of the developer skills rebuilt in own words.",
       "classification": "REJECT",
       "rights_note": "no licence file in the repository: nothing copied; skill rebuilt in own words"
     },
@@ -1032,7 +1032,7 @@
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Taken: skill shopify-new-store-and-test-data (mock.shop reference catalogs, preview store limits). Telemetry of the toolkit is not used.",
+      "adoption_or_rejection_reason": "Taken: skill shopify-new-store-and-test-data (mock.shop reference catalogs, preview store limits). Telemetry of the toolkit is not used. Second pass, from its references (MIT): skills shopifyql-store-analytics (one query per question, COMPARE TO, TIMESERIES, row cap), shopify-flow-automation, shopify-custom-data-admin, shopify-app-store-listing. The UCP CLI skill needs a local CLI and telemetry and is not used.",
       "classification": "ADAPT CODE",
       "rights_note": "MIT"
     },
@@ -1066,7 +1066,7 @@
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Taken: skills google-ads-conversion-troubleshooting and google-ads-gaql-validation (four steps, no OR, no FROM in metadata queries, WHERE fields in SELECT, hour_of_day rename in v23). The live dry run needs an API token and is left to the person.",
+      "adoption_or_rejection_reason": "Taken: skills google-ads-conversion-troubleshooting and google-ads-gaql-validation (four steps, no OR, no FROM in metadata queries, WHERE fields in SELECT, hour_of_day rename in v23). The live dry run needs an API token and is left to the person. Second pass: skills google-ads-account-hierarchy (get-cids-under-mcc) and google-ads-pmax-asset-groups (pmax-listing-filter), attributed.",
       "classification": "ADAPT CODE",
       "rights_note": "Apache-2.0; attributed in the skill"
     },
@@ -1076,7 +1076,7 @@
       "priority": "P0",
       "default_treatment": "ON-DEMAND API WORKER",
       "provenance": "N+W",
-      "status": "BEHAVIOR-COMPARED",
+      "status": "CODE INTEGRATED",
       "canonical_url": "https://github.com/googleads/google-ads-python",
       "resolved_slug": "googleads/google-ads-python",
       "default_branch": "main",
@@ -1094,12 +1094,14 @@
       "xroga_file_paths": [
         "apps/xroga-browser-extension/src/agent/skill-catalog.ts"
       ],
-      "new_tests": [],
+      "new_tests": [
+        "apps/xroga-browser-extension/src/agent/__tests__/skill-triggers.test.ts"
+      ],
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "The client is a Python API worker and the extension does not run Python. Its rules (micros, enum names, error text names the failed field, partial failure) are in the GAQL validation skill. Nothing else taken.",
-      "classification": "REJECT",
+      "adoption_or_rejection_reason": "The client is a Python API worker and the extension does not run Python, so the client is not run. Taken as skills (own wording, Apache-2.0 ideas): google-ads-reporting-recipes, google-ads-policy-disapprovals (the policy-violation examples), google-ads-keyword-planner (the planning examples), plus the GAQL rules of google-ads-gaql-validation.",
+      "classification": "ADAPT CODE",
       "rights_note": "Apache-2.0"
     },
     {
@@ -1132,7 +1134,7 @@
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Rebuilt as skill meta-ads-reporting-limits-and-paging: follow paging.next to the end, async reports, rate-limit headers, error code groups, attribution windows. The SDK itself is not run.",
+      "adoption_or_rejection_reason": "Rebuilt as skill meta-ads-reporting-limits-and-paging: follow paging.next to the end, async reports, rate-limit headers, error code groups, attribution windows. The SDK itself is not run. Second pass: skill meta-ads-audiences-and-creative (custom and lookalike audiences, pixel, catalogue, formats), own words.",
       "classification": "REJECT",
       "rights_note": "custom Meta licence (use with Meta APIs only): no code copied; skill written in own words"
     },
@@ -1198,17 +1200,23 @@
       "xroga_file_paths": [
         "apps/xroga-browser-extension/src/browser-control/core/tools/act.ts",
         "apps/xroga-browser-extension/src/browser-control/core/page-data.ts",
-        "apps/xroga-browser-extension/src/browser-control/protocol/schemas.ts"
+        "apps/xroga-browser-extension/src/browser-control/protocol/schemas.ts",
+        "apps/xroga-browser-extension/src/agent/site-map.ts",
+        "apps/xroga-browser-extension/src/extension/site-map.ts",
+        "apps/xroga-browser-extension/src/agent/loop.ts",
+        "apps/xroga-browser-extension/src/extension/run-manager.ts"
       ],
       "new_tests": [
         "apps/xroga-browser-extension/src/background/scenarios/infinite-scroll.ts",
         "apps/xroga-browser-extension/src/background/scenarios/article-data-hold.ts",
-        "apps/xroga-browser-extension/src/browser-control/core/__tests__/page-data.test.ts"
+        "apps/xroga-browser-extension/src/browser-control/core/__tests__/page-data.test.ts",
+        "apps/xroga-browser-extension/src/agent/__tests__/site-map.test.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/site-map.ts"
       ],
-      "chrome_check": "S4-infinite-scroll passes (feed of 60 loaded 10 at a time); S4-article-data-hold passes (data format)",
+      "chrome_check": "S4-infinite-scroll passes (feed of 60 loaded 10 at a time); S4-article-data-hold passes (data format); S4-site-map passes on real sites: MDN sitemap index with gzip children (one chosen by part of its address, thousands of pages grouped by section) and docs.python.org (sitemap named in robots.txt, disallowed paths left out)",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Taken as ideas: scroll untilEnd (the idea of infiniteScroll: stop when the page stops growing) and read format data (contacts, social profiles, JSON-LD, microdata). blockRequests not built: the operator works in the person's own browser, where blocking images or fonts breaks pages. Queue, sessions, proxies and sitemap crawling belong to a backend crawler.",
+      "adoption_or_rejection_reason": "Taken as ideas: scroll untilEnd (infiniteScroll), read format data (contacts, social profiles, JSON-LD, microdata), and the new tool site_map (robots.txt rules for all crawlers, sitemap and sitemap index reading, gzip, include and exclude filters, section grouping; the idea of Crawlee's sitemap, robots and enqueueLinks handling). blockRequests not built: the operator works in the person's own browser, where blocking images or fonts breaks pages. Queue, sessions and proxies belong to a backend crawler.",
       "classification": "ADAPT CODE",
       "rights_note": "Apache-2.0; ideas, code written fresh"
     },
@@ -1239,16 +1247,19 @@
         "apps/xroga-browser-extension/src/agent/zip-read.ts",
         "apps/xroga-browser-extension/src/extension/file-read.ts",
         "apps/xroga-browser-extension/src/agent/loop.ts",
-        "apps/xroga-browser-extension/src/extension/run-manager.ts"
+        "apps/xroga-browser-extension/src/extension/run-manager.ts",
+        "apps/xroga-browser-extension/src/agent/media-text.ts"
       ],
       "new_tests": [
         "apps/xroga-browser-extension/src/agent/__tests__/file-format.test.ts",
-        "apps/xroga-browser-extension/src/background/scenarios/read-file.ts"
+        "apps/xroga-browser-extension/src/background/scenarios/read-file.ts",
+        "apps/xroga-browser-extension/src/agent/__tests__/media-text.test.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/read-file-real.ts"
       ],
-      "chrome_check": "S4-read-file passes: docx, xlsx (sheets, dates, row numbers), pptx, epub chapter, csv profile and paging, zip member, 404 and PDF named plainly",
+      "chrome_check": "S4-read-file passes: docx, xlsx (sheets, dates, row numbers), pptx, epub chapter, csv profile and paging, zip member, 404 and PDF named plainly; S4-read-file-real passes on real files: a Jupyter notebook, an email, a 700-event calendar, WebVTT and SRT subtitles",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Taken: the set of formats and the idea of one text form for all of them, built as read_file without any library (zip reader on DecompressionStream, own XML reader). Added beyond it: real spreadsheet row numbers, column profiles, find and offset. Audio, video and image captioning not built.",
+      "adoption_or_rejection_reason": "Taken: the set of formats and the idea of one text form for all of them, built as read_file without any library (zip reader on DecompressionStream, own XML reader). Added beyond it: real spreadsheet row numbers, column profiles, find and offset. Audio, video and image captioning not built. Second pass: Jupyter notebooks (cells, outputs, pictures named), email (.eml: encoded words, quoted-printable, base64, multipart, attachments listed). Audio, video, YouTube transcripts and image captioning are not built.",
       "classification": "ADAPT CODE",
       "rights_note": "MIT; ideas, code written fresh, no Python library used"
     },
@@ -1258,7 +1269,7 @@
       "priority": "P1",
       "default_treatment": "BACKEND PARSER",
       "provenance": "H",
-      "status": "CODE INTEGRATED",
+      "status": "LIVE CHROMIUM VERIFIED",
       "canonical_url": "https://github.com/docling-project/docling",
       "resolved_slug": "docling-project/docling",
       "default_branch": "main",
@@ -1276,15 +1287,22 @@
       "xroga_file_paths": [
         "apps/xroga-browser-extension/src/agent/zip-read.ts",
         "apps/xroga-browser-extension/src/agent/file-format.ts",
-        "apps/xroga-browser-extension/src/agent/office-read.ts"
+        "apps/xroga-browser-extension/src/agent/office-read.ts",
+        "apps/xroga-browser-extension/src/agent/pdf-structure.ts",
+        "apps/xroga-browser-extension/entrypoints/offscreen/main.ts",
+        "apps/xroga-browser-extension/src/agent/media-text.ts",
+        "apps/xroga-browser-extension/src/agent/pdf-format.ts"
       ],
       "new_tests": [
-        "apps/xroga-browser-extension/src/agent/__tests__/file-format.test.ts"
+        "apps/xroga-browser-extension/src/agent/__tests__/file-format.test.ts",
+        "apps/xroga-browser-extension/src/agent/__tests__/pdf-structure.test.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/pdf-structure.ts",
+        "apps/xroga-browser-extension/src/agent/__tests__/media-text.test.ts"
       ],
-      "chrome_check": null,
+      "chrome_check": "S4-pdf-structure passes on a real two-column paper from arXiv: title and section headings as Markdown lines, columns read one after the other, rotated side stamp left out",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Taken as ideas: archive limits before inflating, CSV dialect sniffing (sep= line, quotes, BOM), EPUB spine order, heading levels from style names. The layout and table-structure models need model downloads and are not built; PDF text and OCR already exist.",
+      "adoption_or_rejection_reason": "Taken as ideas, written fresh for text items (no models, no code): read_pdf with structure true builds Markdown with reading order across columns, headings from the document outline first, then section numbering, then type size (the order of Docling's heading-hierarchy stage), lists, wrapped and hyphenated lines, aligned cells as tables, and the outline with page numbers. Also its email, calendar and WebVTT backends (read_file), archive limits, CSV dialect sniffing and EPUB spine order. The layout, table-structure and vision models need model downloads and are not built.",
       "classification": "ADAPT CODE",
       "rights_note": "MIT; ideas, code written fresh"
     },
@@ -1321,10 +1339,10 @@
         "apps/xroga-browser-extension/src/agent/__tests__/acceptance-scorers.test.ts",
         "apps/xroga-browser-extension/src/background/scenarios/article-data-hold.ts"
       ],
-      "chrome_check": "S4-article-data-hold passes: a quick click releases early, click with holdMs 1400 reveals the code",
+      "chrome_check": "S4-article-data-hold passes: a quick click releases early, click with holdMs 1400 reveals the code; press holdMs (keyboard_down and keyboard_up): a quick press measures 3 ms on the page, a 1.2 s hold measures 1208 ms. Live acceptance: 18 real-world tasks run with the real model (docs/xroga/evidence/LIVE-SKILLS-AB-20261126.md)",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Taken: press and hold (click holdMs; the action space has mouse_down/up and keyboard_down/up) and the scored task idea (goal, validate, scorers for numbers, lists and strings, written fresh). The environment itself (gym loop, Python tasks) is not run.",
+      "adoption_or_rejection_reason": "Taken: press and hold (click holdMs; the action space has mouse_down/up and keyboard_down/up) and the scored task idea (goal, validate, scorers for numbers, lists and strings, written fresh). The environment itself (gym loop, Python tasks) is not run. Second pass: keyboard hold (press holdMs). mouse_down and mouse_up are covered by click holdMs and drag.",
       "classification": "ADAPT CODE",
       "rights_note": "LICENSE file is Apache-2.0 (GitHub reports no SPDX)"
     },

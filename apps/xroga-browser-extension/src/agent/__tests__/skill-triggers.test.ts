@@ -30,6 +30,17 @@ const SHOULD: Array<[string, string]> = [
   ['validate my gaql query before I run it, the select and where fields', 'google-ads-gaql-validation'],
   ['pull meta ads insights with paging and avoid the rate limit error', 'meta-ads-reporting-limits-and-paging'],
   ['export all products from the shopify admin graphql api with a bulk operation', 'shopify-admin-data-safely'],
+  ['write a shopifyql query to compare sales by product with the previous period', 'shopifyql-store-analytics'],
+  ['set up a shopify flow workflow that tags orders and notifies staff', 'shopify-flow-automation'],
+  ['add a metafield definition and a metaobject to my shopify products in custom data settings', 'shopify-custom-data-admin'],
+  ['edit my shopify theme liquid code safely, duplicate it and preview before publishing', 'shopify-theme-edit-safely'],
+  ['prepare my shopify app store listing and pricing plans for review submission', 'shopify-app-store-listing'],
+  ['pull the google ads search terms report with quality score by device and hour', 'google-ads-reporting-recipes'],
+  ['list the client accounts under my google ads manager mcc account', 'google-ads-account-hierarchy'],
+  ['exclude urls from a performance max asset group url expansion', 'google-ads-pmax-asset-groups'],
+  ['my google ad is disapproved for a policy violation, appeal or request an exemption', 'google-ads-policy-disapprovals'],
+  ['use the google ads keyword planner for keyword ideas and forecast clicks', 'google-ads-keyword-planner'],
+  ['build a lookalike custom audience and a carousel creative for facebook and instagram ads', 'meta-ads-audiences-and-creative'],
 ];
 
 // Near-misses: the words overlap a skill, the need is another one. None of them should put the skill that shares its words first.

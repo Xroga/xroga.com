@@ -2626,12 +2626,33 @@ ${renderSkill(top)}`);
       } else {
         try {
           const { readPdfFile } = await import('@src/extension/pdf');
-          const result = await readPdfFile(address, { pages: typeof args.pages === 'string' ? args.pages : undefined, picture: args.ocr === true, lang: OCR_LANGUAGES[String(args.language ?? 'english')] ?? 'eng' });
+          const result = await readPdfFile(address, { pages: typeof args.pages === 'string' ? args.pages : undefined, picture: args.ocr === true, structure: args.structure === true, lang: OCR_LANGUAGES[String(args.language ?? 'english')] ?? 'eng' });
           let host = 'a PDF';
           try { host = new URL(address).hostname; } catch { /* keep */ }
           outcome = { call, kind, text: this.options.layer.wrap(describePdf(result, { find: typeof args.find === 'string' ? args.find : undefined, requested: parsePages(typeof args.pages === 'string' ? args.pages : undefined, result.pageCount) }), { site: host }), isError: false };
         } catch (error) {
           outcome = { call, kind, text: 'error: the PDF could not be read (' + (error instanceof Error ? error.message : String(error)).slice(0, 200) + '). If it needs a sign-in the person has not done in this browser, or is not a PDF, read the page another way.', isError: true };
+        }
+      }
+    } else if (call.toolName === 'site_map') {
+      const address = typeof args.url === 'string' ? args.url : '';
+      if (!/^https?:\/\//i.test(address)) {
+        outcome = { call, kind, text: 'error: site_map needs the address of a site (https or http), for example https://example.com/', isError: true };
+      } else {
+        try {
+          const [{ readSiteMap }, { describeSiteMap }] = await Promise.all([import('@src/extension/site-map'), import('./site-map')]);
+          const report = await readSiteMap(address, { sitemap: typeof args.sitemap === 'string' ? args.sitemap : undefined });
+          let host = 'a site';
+          try { host = new URL(address).hostname; } catch { /* keep */ }
+          const text = describeSiteMap(report, {
+            include: typeof args.include === 'string' ? args.include : undefined,
+            exclude: typeof args.exclude === 'string' ? args.exclude : undefined,
+            limit: typeof args.limit === 'number' ? args.limit : undefined,
+            includeDisallowed: args.includeDisallowed === true,
+          });
+          outcome = { call, kind, text: this.options.layer.wrap(text, { site: host }), isError: text.startsWith('error:') };
+        } catch (error) {
+          outcome = { call, kind, text: 'error: the site map could not be read (' + (error instanceof Error ? error.message : String(error)).slice(0, 200) + ').', isError: true };
         }
       }
     } else if (call.toolName === 'read_file') {

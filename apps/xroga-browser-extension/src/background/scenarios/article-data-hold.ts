@@ -23,6 +23,11 @@ defineScenario({
     const early = await evaluate<string>(holdTab, undefined, "document.getElementById('state').textContent");
     const held = (await ctx.call('click', { target: { role: 'button', name: 'Hold to reveal' }, holdMs: 1400 })) as Result;
     const revealed = await evaluate<string>(holdTab, undefined, "document.getElementById('state').textContent");
+    const keyAt = async () => /key held (\d+) ms/.exec(await evaluate<string>(holdTab, undefined, "document.getElementById('keyheld').textContent"))?.[1];
+    const pressA = (await ctx.call('press', { keys: 'h', tabId: holdTab })) as Result;
+    const quickKey = Number(await keyAt());
+    const pressB = (await ctx.call('press', { keys: 'h', holdMs: 1200, tabId: holdTab })) as Result;
+    const keyHeld = Number(await keyAt());
     void tabId;
     const articleOk =
       /4\.2 metres/.test(a) && /^## What changed|\n## What changed/m.test(a) && /- East wall: 14 berths/.test(a) && /\| Under 8 m \| 18 euros \| 310 euros \|/.test(a) &&
@@ -34,8 +39,8 @@ defineScenario({
       /linkedin: https:\/\/www\.linkedin\.com\/company\/coastal-gazette/.test(d) && !/intent\/tweet/.test(d) && /feed\.xml/.test(d) && /Organization/.test(d);
     return outcome(
       'article keeps the story and drops the menu and ads; data lists json-ld, open graph, contacts, social profiles and the feed; a quick click releases early and a held click reveals the code',
-      JSON.stringify({ article: a.slice(0, 700), data: d.slice(0, 1500), quick: quick.ok, early, held: held.ok, revealed }),
-      articleOk && dataOk && !!quick.ok && /released early/.test(early) && !!held.ok && /revealed 4821/.test(revealed),
+      JSON.stringify({ article: a.slice(0, 700), data: d.slice(0, 1500), quick: quick.ok, early, held: held.ok, revealed, quickKey, keyHeld, pressA: (pressA.text ?? '').slice(0, 200), pressB: (pressB.text ?? '').slice(0, 200) }),
+      articleOk && dataOk && !!quick.ok && /released early/.test(early) && !!held.ok && /revealed 4821/.test(revealed) && quickKey < 400 && keyHeld >= 1100,
     );
   },
 });

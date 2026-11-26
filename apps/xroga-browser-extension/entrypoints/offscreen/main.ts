@@ -1,4 +1,5 @@
 // The offscreen document: it does the things the worker cannot.
+import type { OutlineEntry, PdfTextItem } from '@src/agent/pdf-structure';
 //  - Turn text into a Blob and a URL for chrome.downloads, and revoke the URL when the worker says the download ended (uses only the runtime API).
 //  - Recognise text in a picture (the `ocr` tool): the Tesseract engine and its English model are vendored in public/ocr and run in a Web Worker started from here,
 //    because a service worker cannot start workers. Nothing leaves the device. The engine is loaded on the first request and let go after a minute without one.
@@ -82,7 +83,7 @@ async function recognize(base64: string, mimeType: string, lang: string) {
 // public/pdf, Apache-2.0) gives each page's text, and a page with no text, or all pages when asked, is drawn to a canvas and read with the same text recognition as above.
 const MAX_PDF_BYTES = 60 * 1024 * 1024;
 const pdfSteps: string[] = [];
-async function readPdf(url: string, spec: string | undefined, forcePicture: boolean, lang: string) {
+async function readPdf(url: string, spec: string | undefined, forcePicture: boolean, lang: string, structure = false) {
   pdfSteps.length = 0;
   pdfSteps.push('start');
   // A hidden document never gets a screen refresh, and pdf.js draws a page on the next one: make the refresh a timer here, as it is not seen by anyone.
@@ -110,11 +111,18 @@ async function readPdf(url: string, spec: string | undefined, forcePicture: bool
   const doc = await Promise.race([opening, new Promise<never>((_, reject) => setTimeout(() => reject(new Error('the PDF reader did not open the file in 60 seconds')), 60_000))]);
   const wanted = parsePages(spec, doc.numPages);
   const pages: Array<{ page: number; text: string; source: 'text' | 'picture' }> = [];
+  const layout = new Map<number, { items: PdfTextItem[]; width: number }>();
   for (const n of wanted) {
     const page = await doc.getPage(n);
     let text = '';
     if (!forcePicture) {
       const content = await page.getTextContent();
+      if (structure) {
+        layout.set(n, {
+          width: page.getViewport({ scale: 1 }).width,
+          items: content.items.filter(i => typeof i.str === 'string' && Math.abs(i.transform[1]!) <= 0.2 * Math.abs(i.transform[0]!)).map(i => ({ str: i.str as string, x: i.transform[4]!, y: i.transform[5]!, w: i.width ?? 0, h: Math.abs(i.transform[3]!) || i.height || 10 })),
+        });
+      }
       let lastY: number | undefined;
       for (const item of content.items) {
         if (!('str' in item)) continue;
@@ -138,10 +146,22 @@ async function readPdf(url: string, spec: string | undefined, forcePicture: bool
     } else pages.push({ page: n, text, source: 'text' });
     page.cleanup();
   }
+  let outline: OutlineEntry[] | undefined;
+  if (structure) {
+    const { bodySize, structurePage } = await import('@src/agent/pdf-structure');
+    outline = await readOutline(doc);
+    const all = [...layout.values()].map(l => l.items);
+    const body = bodySize(all);
+    const sizes = all.flat().map(i => i.h);
+    for (const p of pages) {
+      const l = layout.get(p.page);
+      if (l && p.source === 'text') p.text = structurePage(l.items, l.width, { body, sizes, outline, page: p.page }) || p.text;
+    }
+  }
   const meta = await doc.getMetadata().catch(() => undefined);
   const title = (meta?.info as { Title?: string } | undefined)?.Title;
   await doc.destroy();
-  return { pageCount: doc.numPages, title, pages };
+  return { pageCount: doc.numPages, title, pages, ...(outline?.length ? { outline } : {}) };
 }
 async function blobToBase64(blob: Blob): Promise<string> {
   const bytes = new Uint8Array(await blob.arrayBuffer());
@@ -149,10 +169,35 @@ async function blobToBase64(blob: Blob): Promise<string> {
   for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
   return btoa(binary);
 }
+interface PdfOutlineNode { title: string; dest: unknown; items?: PdfOutlineNode[] }
+/** The document's own table of contents (bookmarks) as a flat list with page numbers, best effort and bounded. */
+async function readOutline(doc: PdfDoc): Promise<OutlineEntry[]> {
+  const nodes = await doc.getOutline().catch(() => null);
+  const out: OutlineEntry[] = [];
+  const walk = async (list: PdfOutlineNode[], depth: number): Promise<void> => {
+    for (const n of list) {
+      if (out.length >= 300) return;
+      let page: number | undefined;
+      try {
+        const dest = typeof n.dest === 'string' ? await doc.getDestination(n.dest) : (n.dest as unknown[] | null);
+        const ref = dest?.[0];
+        if (ref && typeof ref === 'object') page = (await doc.getPageIndex(ref)) + 1;
+        else if (typeof ref === 'number') page = ref + 1;
+      } catch { /* a bookmark with no usable target keeps no page */ }
+      if (n.title?.trim()) out.push({ title: n.title.trim().slice(0, 200), depth, ...(page ? { page } : {}) });
+      if (n.items?.length) await walk(n.items, depth + 1);
+    }
+  };
+  if (nodes) await walk(nodes, 1);
+  return out;
+}
 interface PdfDoc {
   numPages: number;
+  getOutline(): Promise<PdfOutlineNode[] | null>;
+  getDestination(id: string): Promise<unknown[] | null>;
+  getPageIndex(ref: object): Promise<number>;
   getPage(n: number): Promise<{
-    getTextContent(): Promise<{ items: Array<{ str?: string; transform: number[] }> }>;
+    getTextContent(): Promise<{ items: Array<{ str?: string; transform: number[]; width?: number; height?: number }> }>;
     getViewport(o: { scale: number }): { width: number; height: number };
     render(o: object): { promise: Promise<void> };
     cleanup(): void;
@@ -174,7 +219,7 @@ chrome.runtime.onMessage.addListener((message, _sender, reply) => {
     reply({ held: urls.size });
   } else if (message.type === 'pdf') {
     Promise.race([
-      readPdf(String(message.url), message.pages as string | undefined, message.picture === true, /^[a-z_]{3,8}$/.test(String(message.lang)) ? String(message.lang) : 'eng'),
+      readPdf(String(message.url), message.pages as string | undefined, message.picture === true, /^[a-z_]{3,8}$/.test(String(message.lang)) ? String(message.lang) : 'eng', message.structure === true),
       new Promise<never>((_, reject) => setTimeout(() => reject(new Error('the PDF reader stalled (' + pdfSteps.join('; ') + ')')), 100_000)),
     ]).then(
       result => reply({ ok: true, ...result }),

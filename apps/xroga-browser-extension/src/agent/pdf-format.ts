@@ -8,7 +8,7 @@ export const READ_PDF_TOOL: AgentTool = {
   source: 'agent',
   group: 'reading',
   description:
-    'Read the text of a PDF: the one open in the tab (default) or a public address. pages like "1-3,7" reads only those (default the first 5); find returns only the lines that contain that text, with their page; ocr true reads pages as pictures (for scans). Pages with no text are read as pictures automatically. Read-only; nothing leaves the browser.',
+    'Read the text of a PDF: the one open in the tab (default) or a public address. pages like "1-3,7" reads only those (default the first 5); find returns only the lines that contain that text, with their page; ocr true reads pages as pictures (for scans); structure true returns headings, lists, tables and columns in reading order as Markdown, with its outline. Pages with no text are read as pictures automatically. Read-only; nothing leaves the browser.',
   parameters: {
     type: 'object',
     properties: {
@@ -16,6 +16,7 @@ export const READ_PDF_TOOL: AgentTool = {
       pages: { type: 'string', maxLength: 60 },
       find: { type: 'string', maxLength: 120 },
       ocr: { type: 'boolean' },
+      structure: { type: 'boolean' },
       language: { type: 'string', enum: ['english', 'arabic', 'urdu', 'hindi', 'spanish', 'french', 'german', 'portuguese', 'russian', 'chinese'] },
       tabId: { type: 'number' },
     },
@@ -32,6 +33,8 @@ export interface PdfResult {
   pageCount: number;
   title?: string;
   pages: PdfPageText[];
+  /** The document's own table of contents, when it has one and structure was asked for. */
+  outline?: Array<{ title: string; depth: number; page?: number }>;
 }
 
 /** "1-3,7" as page numbers within 1..count, in order, without repeats. Empty or unreadable gives the first `fallback` pages. */
@@ -74,7 +77,8 @@ export function describePdf(result: PdfResult, options: { find?: string; request
   }
   const lastRead = result.pages[result.pages.length - 1]?.page ?? 0;
   const more = stopped ? ` Stopped before page ${stopped}: read on with pages "${stopped}-${Math.min(result.pageCount, stopped + 4)}".` : lastRead < result.pageCount ? ` Pages ${lastRead + 1} to ${result.pageCount} are not read yet: use pages "${lastRead + 1}-${Math.min(result.pageCount, lastRead + 5)}".` : '';
-  return `${head}${more}${NL}${parts.join(NL)}`;
+  const toc = result.outline?.length ? `${NL}Outline:${NL}${result.outline.slice(0, 60).map(o => `${'  '.repeat(o.depth - 1)}- ${o.title}${o.page ? ` (p${o.page})` : ''}`).join(NL)}${NL}` : '';
+  return `${head}${more}${toc}${NL}${parts.join(NL)}`;
 }
 
 /** The address of the PDF a page outline says the tab shows (its header line names the address, then the viewport), or undefined. */

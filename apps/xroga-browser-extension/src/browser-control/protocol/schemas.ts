@@ -161,6 +161,7 @@ export const PressArgsSchema = z.strictObject({
   ...actionCommon,
   keys: z.string().min(1).describe('A key or chord: "Enter", "Escape", "Control+A"; Mod is Control, or Command on a Mac'),
   target: TargetSchema.optional(),
+  holdMs: z.number().int().min(50).max(10000).optional().describe('hold the key down this long (ms)'),
 });
 
 export const HoverArgsSchema = z.strictObject({ ...actionCommon, target: TargetSchema });

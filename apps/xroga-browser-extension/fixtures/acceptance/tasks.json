@@ -172,5 +172,93 @@
         "lru_cache"
       ]
     }
+  },
+  {
+    "name": "S1-pdf-sections",
+    "url": "https://www.google.com/",
+    "text": "A research paper is at https://arxiv.org/pdf/1512.03385 . Read its first two pages and list the section headings you find, in order, with their numbers if they have one.",
+    "expect": {
+      "type": "contains_all",
+      "values": [
+        "Abstract",
+        "Introduction",
+        "Related Work"
+      ]
+    }
+  },
+  {
+    "name": "S2-sitemap-python",
+    "url": "https://www.google.com/",
+    "text": "Using the site's own sitemap and robots.txt (not the pages), tell me which Python documentation version folders https://docs.python.org lists in its sitemap, and whether its robots.txt tells crawlers to avoid /dev.",
+    "expect": {
+      "type": "contains_all",
+      "values": [
+        "3.11",
+        "3.12",
+        "3.13",
+        "3.14",
+        "3.15",
+        "3.16",
+        "/dev"
+      ]
+    }
+  },
+  {
+    "name": "S3-notebook",
+    "url": "https://www.google.com/",
+    "text": "A Jupyter notebook is at https://raw.githubusercontent.com/jakevdp/PythonDataScienceHandbook/master/notebooks/00.00-Preface.ipynb . Tell me the title of the notebook and the heading of its first section.",
+    "expect": {
+      "type": "contains_all",
+      "values": [
+        "Preface",
+        "What Is Data Science"
+      ]
+    }
+  },
+  {
+    "name": "S4-calendar",
+    "url": "https://www.google.com/",
+    "text": "A calendar file is at https://www.thunderbird.net/media/caldata/autogen/USHolidays.ics . On what date is Thanksgiving Day in 2027, and how many events does the calendar hold in total?",
+    "expect": {
+      "type": "all",
+      "parts": [
+        {
+          "type": "contains_all",
+          "values": [
+            "2027-11-25"
+          ]
+        },
+        {
+          "type": "number",
+          "value": 700,
+          "tolerance": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "S5-subtitles",
+    "url": "https://www.google.com/",
+    "text": "A subtitle file is at https://raw.githubusercontent.com/brenopolanski/html5-video-webvtt-example/master/MIB2-subtitles-pt-BR.vtt . What is the very first line spoken and at what time does it start?",
+    "expect": {
+      "type": "contains_all",
+      "values": [
+        "Aprendi a me virar",
+        "00:00"
+      ]
+    }
+  },
+  {
+    "name": "S6-email",
+    "url": "https://www.google.com/",
+    "text": "An email message file is at https://raw.githubusercontent.com/mikel/mail/master/spec/fixtures/emails/plain_emails/basic_email.eml . Who sent it, what is its subject, and what date does it carry?",
+    "expect": {
+      "type": "contains_all",
+      "values": [
+        "Mikel Lindsaar",
+        "Testing 123",
+        "22 Nov 2008"
+      ]
+    }
   }
 ]

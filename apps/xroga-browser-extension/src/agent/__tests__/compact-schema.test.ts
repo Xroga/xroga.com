@@ -35,7 +35,8 @@ describe('compactSchema', () => {
     // 0.915 with the diagnostics description naming cookies, storage, issues and weight, and save_page_pdf's paper, landscape and scale (about 300 characters, served from the prompt cache).
     // 0.925 with find by xpath or css and read as html (two short arguments and an enum value: about 200 characters).
     // 0.935 with read formats article and data, click holdMs and scroll untilEnd/maxRounds (about 300 characters of arguments).
-    expect(size(tools)).toBeLessThan(32_064 * 0.935);
+    // 0.94 with press holdMs (the keyboard_down and keyboard_up of BrowserGym: one short argument).
+    expect(size(tools)).toBeLessThan(32_064 * 0.94);
   });
 
   it('offers the at option of click only to a run that asks for it', () => {

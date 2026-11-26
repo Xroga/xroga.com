@@ -2,10 +2,11 @@
 <html lang="en"><head><meta charset="utf-8"><title>Hold to reveal</title>
 <style>body{font-family:sans-serif;padding:30px} #hold{padding:18px 30px;font-size:18px;user-select:none} #bar{height:8px;background:#ddd;width:240px;margin-top:10px} #fill{height:8px;background:#27a;width:0}</style></head>
 <body><h1>Reveal the access code</h1><p>Press and hold the button for one second to reveal the code.</p>
-<button id="hold">Hold to reveal</button><div id="bar"><div id="fill"></div></div><p id="state">state: idle</p>
+<button id="hold">Hold to reveal</button><div id="bar"><div id="fill"></div></div><p id="state">state: idle</p><p id="keyheld">key held: none</p>
 <script>
 const b=document.getElementById('hold'),fill=document.getElementById('fill'),st=document.getElementById('state');let t0=0,timer=0,done=false;
 function stop(){clearInterval(timer);if(!done){fill.style.width='0';st.textContent='state: released early after '+(Date.now()-t0)+' ms';}}
 b.addEventListener('pointerdown',()=>{t0=Date.now();done=false;st.textContent='state: holding';timer=setInterval(()=>{const p=Math.min(1,(Date.now()-t0)/1000);fill.style.width=(p*240)+'px';if(p>=1){clearInterval(timer);done=true;st.textContent='state: revealed 4821';}},30);});
 b.addEventListener('pointerup',stop);b.addEventListener('pointercancel',stop);b.addEventListener('click',e=>e.preventDefault());
+let kd=0;document.addEventListener('keydown',e=>{if(e.key==='h'&&!e.repeat)kd=Date.now();});document.addEventListener('keyup',e=>{if(e.key==='h'&&kd){document.getElementById('keyheld').textContent='key held '+(Date.now()-kd)+' ms';kd=0;}});
 </script></body></html>

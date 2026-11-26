@@ -4,6 +4,7 @@
 // backends of Docling (MIT; Python libraries Xroga does not run) and the profile of a table; written fresh.
 import type { AgentTool } from './tools';
 import { decodeText, ZipFile, ZipError, DEFAULT_ZIP_LIMITS } from './zip-read';
+import { readCalendar, readEmail, readNotebook, readSubtitles } from './media-text';
 import { htmlToText, markdownTable, parseXml, kids, kid, textOf, readDocx, readXlsx, readPptx, readOdf, readEpub, colName, type XNode } from './office-read';
 
 export const READ_FILE_TOOL: AgentTool = {
@@ -11,7 +12,7 @@ export const READ_FILE_TOOL: AgentTool = {
   source: 'agent',
   group: 'reading',
   description:
-    'Read a document file at an address (or the open tab if it shows one): Word docx, Excel xlsx, PowerPoint pptx, OpenDocument, EPUB, CSV/TSV, JSON, text, HTML, RSS, zip. Spreadsheets list sheets with real row numbers; sheet/rows pick a sheet and a row range (default 1-50), chapter picks an EPUB chapter, member opens a file inside a zip, find returns only matching lines, offset continues a long result. PDFs: use read_pdf. Read-only; nothing leaves the browser.',
+    'Read a document file at an address (or the open tab if it shows one): Word docx, Excel xlsx, PowerPoint pptx, OpenDocument, EPUB, CSV/TSV, JSON, Jupyter notebooks, emails (.eml), calendars (.ics), subtitles (.vtt, .srt), text, HTML, RSS, zip. Spreadsheets list sheets with real row numbers; sheet/rows pick a sheet and a row range (default 1-50), chapter picks an EPUB chapter, member opens a file inside a zip, find returns only matching lines, offset continues a long result. PDFs: use read_pdf. Read-only; nothing leaves the browser.',
   parameters: {
     type: 'object',
     properties: {
@@ -183,7 +184,7 @@ function tableText(title: string, rows: string[][], range: [number, number], row
   const shown = [['row', ...header], ...picked.map(x => [String(x.n), ...x.r])];
   const head = `${title}: ${body.length} data row${body.length === 1 ? '' : 's'} × ${header.length} column${header.length === 1 ? '' : 's'}${rowNumbers ? `, header in row ${rowNumbers[0]}` : ''}.`;
   const profile = body.length > 5 ? `Columns:${NL}${profileColumns(header, body).join(NL)}` : '';
-  const more = picked.length < body.length ? `Rows ${picked[0]?.n ?? from}-${picked[picked.length - 1]?.n ?? to} shown; ask for others with rows "51-100".` : 'All rows shown.';
+  const more = picked.length < body.length ? `Rows ${picked[0]?.n ?? from}-${picked[picked.length - 1]?.n ?? to} shown; ask for others with rows "51-100", or use find with a word to list only the matching rows.` : 'All rows shown.';
   return [head, profile, markdownTable(shown), more].filter(Boolean).join(NL + NL);
 }
 
@@ -235,7 +236,7 @@ function readFeed(xml: string): string | undefined {
 
 // ---------------------------------------------------------------- dispatch
 
-type Kind = 'docx' | 'xlsx' | 'pptx' | 'epub' | 'odf' | 'zip' | 'pdf' | 'legacy-office' | 'image' | 'json' | 'csv' | 'html' | 'xml' | 'text';
+type Kind = 'ipynb' | 'eml' | 'ics' | 'subtitles' | 'docx' | 'xlsx' | 'pptx' | 'epub' | 'odf' | 'zip' | 'pdf' | 'legacy-office' | 'image' | 'json' | 'csv' | 'html' | 'xml' | 'text';
 
 export function detectKind(bytes: Uint8Array, name = '', contentType = ''): Kind {
   const ext = /\.([a-z0-9]+)(?:$|[?#])/i.exec(name)?.[1]?.toLowerCase() ?? '';
@@ -245,6 +246,10 @@ export function detectKind(bytes: Uint8Array, name = '', contentType = ''): Kind
   if (bytes[0] === 0xd0 && bytes[1] === 0xcf && bytes[2] === 0x11 && bytes[3] === 0xe0) return 'legacy-office';
   if (head(8) === '\u0089PNG\r\n\u001a\n' || (bytes[0] === 0xff && bytes[1] === 0xd8) || head(4) === 'GIF8' || head(4) === 'RIFF') return 'image';
   const sample = decodeText(bytes.subarray(0, 4096)).trimStart();
+  if (ext === 'ipynb' || /"nbformat"/.test(sample.slice(0, 4096))) return 'ipynb';
+  if (ext === 'ics' || /text\/calendar/.test(contentType) || /^BEGIN:VCALENDAR/i.test(sample)) return 'ics';
+  if (ext === 'vtt' || ext === 'srt' || /text\/vtt/.test(contentType) || /^WEBVTT/.test(sample) || /^\d+\r?\n\d\d:\d\d:\d\d,\d{3} -->/.test(sample)) return 'subtitles';
+  if (ext === 'eml' || /message\/rfc822/.test(contentType) || /^(?:Delivered-To|Return-Path|Received|MIME-Version|Message-ID|From|Date|Subject):/i.test(sample)) return 'eml';
   if (ext === 'json' || ext === 'ndjson' || ext === 'jsonl' || /json/.test(contentType) || /^[[{]/.test(sample)) return 'json';
   if (ext === 'csv' || ext === 'tsv' || /csv|tab-separated/.test(contentType)) return 'csv';
   if (ext === 'html' || ext === 'htm' || /html/.test(contentType) || /^<!doctype html|^<html/i.test(sample)) return 'html';
@@ -330,7 +335,11 @@ export async function readFileContents(bytes: Uint8Array, options: FileReadOptio
       }
     } else {
       const text = decodeText(bytes);
-      if (kind === 'json') body = readJson(text, options);
+      if (kind === 'ipynb') body = readNotebook(text);
+      else if (kind === 'eml') body = readEmail(text);
+      else if (kind === 'ics') body = readCalendar(text, parseRange(options.rows));
+      else if (kind === 'subtitles') body = readSubtitles(text);
+      else if (kind === 'json') body = readJson(text, options);
       else if (kind === 'csv') {
         const parsed = parseDelimited(text);
         body = tableText(`Table (delimiter ${parsed.delimiter === '\t' ? 'tab' : `"${parsed.delimiter}"`})`, parsed.rows, parseRange(options.rows));

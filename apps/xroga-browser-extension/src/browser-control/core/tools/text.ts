@@ -1013,8 +1013,21 @@ export async function press(ctx: ToolContext, args: PressArgs): Promise<ToolOutc
         }
         // What the key does is judged again after the focus and the modifiers reached the page.
         if (again) await recheck(ctx, again, modeOf, chord.modifiers.length > 0, `${chord.key} was not sent.`);
-        const dialog = await keys.press(chord.key);
-        if (dialog) return { dialog };
+        // Press and hold (the keyboard_down and keyboard_up of BrowserGym): the key stays down for holdMs, then is released.
+        if (args.holdMs) {
+          const down = await keys.down(chord.key);
+          if (down) return { dialog: down };
+          const end = Date.now() + Math.min(args.holdMs, 10_000);
+          while (Date.now() < end) {
+            checkCancelled(ctx);
+            await new Promise(resolve => setTimeout(resolve, Math.min(200, Math.max(1, end - Date.now()))));
+          }
+          const up = await keys.up(chord.key);
+          if (up) return { dialog: up };
+        } else {
+          const dialog = await keys.press(chord.key);
+          if (dialog) return { dialog };
+        }
         for (const modifier of [...chord.modifiers].reverse()) {
           const released = await keys.up(modifier);
           if (released) return { dialog: released };

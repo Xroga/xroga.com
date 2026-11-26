@@ -363,6 +363,52 @@ Approvals: creating a store account, entering payment or plan details, publishin
   {
     verified: 'curated',
     md: `---
+name: pictures-and-painted-interfaces
+description: Read and act on an interface that is only pixels (a canvas, a WebGL editor, a chart, an image, a scanned page) where the outline names nothing: which tool to try in which order and how to check the result.
+license: Xroga-internal
+metadata:
+  domain: canvas
+  hosts: ""
+  keywords: canvas image picture pixels painted webgl chart screenshot ocr scanned icon logo colour color text recognition editor game map
+  requires: browser
+  risk: write
+  docs: ""
+---
+- Look before acting: screenshot with marks true numbers the label-like regions and lists the words the page painted with canvas label; take that first.
+- Words that only exist in a picture: ocr reads them on this device and gives positions (region reads a part larger; find returns just the lines you need; language for non-English text). Trust a word marked with a question mark less and read it again from a region.
+- An icon or logo without words: find_image with the ref of an element that shows it finds every place it appears; find_color finds a swatch or a coloured object.
+- Act with canvas using a label, a mark number or fractions from these tools. One action at a time, then look again: a canvas reports no effect of its own, so the picture (or a number the page shows) is the proof.
+- If the same action twice changes nothing, the target is not where you think: re-read the picture, do not repeat the click.
+- Some editors have a script console or menu path that is more exact than pointing: use it when the page offers one.
+Verify: the page's own state afterwards (a count, a title, a value, a new picture region) matches the request.
+Approvals: a click that sends, publishes, deletes, pays or shares something needs the person's approval at that step, however the target was found.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
+name: unfamiliar-interface-and-games
+description: Learn an interface or a game you have not seen before by testing small safe moves and writing down what each did, then use the rules you found. For puzzles, web games and tools with unknown controls.
+license: Xroga-internal
+metadata:
+  domain: general
+  hosts: ""
+  keywords: game puzzle play unfamiliar unknown controls levels snake 2048 laser drag keys arrow hypothesis learn rules
+  requires: browser
+  risk: write
+  docs: ""
+---
+- Start by reading the screen and any instructions the page shows; the controls are often listed (keys, mouse, drag).
+- Make a guess about what a control does, try the smallest move that tests it, and look at what changed. Write the rule down as a fact in the plan (for example "arrow down does nothing when the last row is full") so it is not rediscovered.
+- A move that changes nothing is information: the same move in the same position will not change anything either; try a different direction or a different place.
+- When a guess is wrong, say what you now think instead, and test that. Prefer a few exact moves over many random ones.
+- Watch for things that move or count down: take a new screenshot after every action rather than assuming the state.
+- Keys: press for single keys, hold behaviour is not needed for most games; use drag for sliders and pieces. Stop and ask the person when a step could spend money, buy something or share their data.
+Verify: the goal state is on the screen (a score, a level number, a win message), not only that the last move worked.
+Approvals: a step that could spend money, buy something or share their data needs the person's approval first.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
 name: reading-documents-articles-and-feeds
 description: Pick the right reader for what is in front of you: a long article, a page's hidden data and contacts, a Word, Excel, PowerPoint, EPUB, CSV or JSON file, a PDF, an endless feed, or a hold-to-confirm button.
 license: Xroga-internal
@@ -455,48 +501,239 @@ Approvals: any mutation, deleting anything, refunds, price or inventory changes,
   {
     verified: 'curated',
     md: `---
-name: pictures-and-painted-interfaces
-description: Read and act on an interface that is only pixels (a canvas, a WebGL editor, a chart, an image, a scanned page) where the outline names nothing: which tool to try in which order and how to check the result.
-license: Xroga-internal
+name: shopifyql-store-analytics
+description: Answer a store owner's numbers questions (sales, orders, sessions, conversion, trends, comparisons) in the Shopify admin with one ShopifyQL query instead of reading rows by hand.
+license: MIT (patterns adapted from the Shopify AI Toolkit)
 metadata:
-  domain: canvas
-  hosts: ""
-  keywords: canvas image picture pixels painted webgl chart screenshot ocr scanned icon logo colour color text recognition editor game map
+  domain: commerce
+  hosts: admin.shopify.com shopify.dev
+  keywords: shopifyql analytics report sales sessions conversion rate trend compare previous period timeseries revenue by product channel new returning customers exploration
   requires: browser
-  risk: write
-  docs: ""
+  risk: read
+  docs: https://shopify.dev/docs/api/shopifyql
 ---
-- Look before acting: screenshot with marks true numbers the label-like regions and lists the words the page painted with canvas label; take that first.
-- Words that only exist in a picture: ocr reads them on this device and gives positions (region reads a part larger; find returns just the lines you need; language for non-English text). Trust a word marked with a question mark less and read it again from a region.
-- An icon or logo without words: find_image with the ref of an element that shows it finds every place it appears; find_color finds a swatch or a coloured object.
-- Act with canvas using a label, a mark number or fractions from these tools. One action at a time, then look again: a canvas reports no effect of its own, so the picture (or a number the page shows) is the proof.
-- If the same action twice changes nothing, the target is not where you think: re-read the picture, do not repeat the click.
-- Some editors have a script console or menu path that is more exact than pointing: use it when the page offers one.
-Verify: the page's own state afterwards (a count, a title, a value, a new picture region) matches the request.
-Approvals: a click that sends, publishes, deletes, pays or shares something needs the person's approval at that step, however the target was found.`,
+- In the admin open Analytics, then Reports and a new exploration or the ShopifyQL editor; the figures there are totals computed by Shopify, not a sum of the rows a page happens to show.
+- One query answers one question. Metrics from two schemas for the same dates: list both in FROM and group by the shared time field. This period against an earlier one: DURING with COMPARE TO and WITH PERCENT_CHANGE. A value per item: GROUP BY the item. A history: one TIMESERIES query over the whole range, with a coarser step for a long range.
+- Choose the FROM schema for what the question is about (sales, sessions, products and so on); use only field names the editor's autocomplete or the documentation shows, never invent one.
+- A result of exactly 1,000 rows probably stopped at the cap: ask for the total in the query instead of adding rows up.
+- Dates and time zone follow the store settings; say the range and the currency next to every figure.
+Verify: the number in the query result equals the same report in the standard Reports page for the same range, or say why it differs.
+Approvals: reading only. Saving a report, sharing it or sending data out of the store needs the person's approval.`,
   },
   {
     verified: 'curated',
     md: `---
-name: unfamiliar-interface-and-games
-description: Learn an interface or a game you have not seen before by testing small safe moves and writing down what each did, then use the rules you found. For puzzles, web games and tools with unknown controls.
-license: Xroga-internal
+name: shopify-flow-automation
+description: Create or change a Shopify Flow automation in the admin (a trigger, conditions and actions such as tagging an order, notifying staff or sending an email) without sending anything unintended.
+license: MIT (ideas adapted from the Shopify AI Toolkit)
 metadata:
-  domain: general
-  hosts: ""
-  keywords: game puzzle play unfamiliar unknown controls levels snake 2048 laser drag keys arrow hypothesis learn rules
+  domain: commerce
+  hosts: admin.shopify.com
+  keywords: shopify flow workflow automation trigger condition action tag order customer email notify staff automate template activate
   requires: browser
   risk: write
-  docs: ""
+  docs: https://help.shopify.com/en/manual/shopify-flow
 ---
-- Start by reading the screen and any instructions the page shows; the controls are often listed (keys, mouse, drag).
-- Make a guess about what a control does, try the smallest move that tests it, and look at what changed. Write the rule down as a fact in the plan (for example "arrow down does nothing when the last row is full") so it is not rediscovered.
-- A move that changes nothing is information: the same move in the same position will not change anything either; try a different direction or a different place.
-- When a guess is wrong, say what you now think instead, and test that. Prefer a few exact moves over many random ones.
-- Watch for things that move or count down: take a new screenshot after every action rather than assuming the state.
-- Keys: press for single keys, hold behaviour is not needed for most games; use drag for sliders and pieces. Stop and ask the person when a step could spend money, buy something or share their data.
-Verify: the goal state is on the screen (a score, a level number, a win message), not only that the last move worked.
-Approvals: a step that could spend money, buy something or share their data needs the person's approval first.`,
+- Open the Flow app in the admin. Start from a template that is close to the goal; a workflow is a trigger, optional conditions, then actions. Name it for what it does.
+- Fields available to conditions and actions come from the trigger: pick them from the editor's list, not by guessing a name. Build conditions step by step and check each branch.
+- Test with the editor's run or preview on a sample, not on live customers: actions that send an email or message, charge, refund, cancel, delete or change inventory act on real orders once the workflow is on.
+- Turn a workflow on only after the person has read the exact trigger, conditions and actions; turn it off again rather than deleting it when something looks wrong.
+- Tags, notes and internal notifications are the safe actions; everything that reaches a customer is not.
+Verify: after activation trigger one harmless sample (or wait for the first real event), then read the workflow's run history for the result and any error.
+Approvals: activating, editing an active workflow, and any action that messages a customer, moves money or deletes data need the person's explicit approval with the exact workflow shown.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
+name: shopify-custom-data-admin
+description: Add custom fields (metafields) and custom record types (metaobjects) to a Shopify store from Settings, then fill their values on products, collections or customers and read them back.
+license: MIT (ideas adapted from the Shopify AI Toolkit)
+metadata:
+  domain: commerce
+  hosts: admin.shopify.com
+  keywords: shopify metafield metaobject definition custom data settings custom fields product page namespace type storefront access
+  requires: browser
+  risk: write
+  docs: https://help.shopify.com/en/manual/custom-data
+---
+- Settings, then Custom data lists the definitions for products, variants, collections, customers, orders and more, and the metaobject types. A definition comes first (name, type, whether the storefront may read it); values are entered afterwards on each item.
+- Pick the type that fits the value (single line text, number, date, true or false, file, reference to another item): changing a type later is limited, so confirm it before saving.
+- A field is shown on the storefront only if its access allows it and the theme displays it; saving the value does not make it appear by itself.
+- Add values on the item's own page under its custom data section, one item first, then check the storefront page before doing many.
+- Deleting a definition deletes the values stored under it.
+Verify: reopen the item and read the value back, then open the storefront page and confirm it shows where expected.
+Approvals: creating or changing a definition, bulk value edits, and deleting a definition (which removes its values) need the person's approval.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
+name: shopify-theme-edit-safely
+description: Change a Shopify store's look or code (sections, Liquid, settings) in the theme editor without breaking the live storefront: duplicate first, edit the copy, preview, then publish only on approval.
+license: Xroga-internal
+metadata:
+  domain: commerce
+  hosts: admin.shopify.com
+  keywords: shopify theme liquid online store customize edit code duplicate preview publish section snippet template storefront design
+  requires: browser
+  risk: write
+  docs: https://help.shopify.com/en/manual/online-store/themes
+---
+- In Online Store, then Themes, never edit the live theme directly: use Duplicate, work in the copy, and keep the original as the way back.
+- Use Customize for sections and settings; use Edit code only for what the editor cannot do, and change the smallest piece (one section or snippet) at a time.
+- Liquid is code: an unclosed tag or a wrong object name breaks the page. After each save open the preview link of the copy on a product page, a collection page and the cart page before the next change.
+- Do not paste a script or code from an untrusted source into a theme; do not touch checkout or payment related files.
+- Publishing replaces what customers see: it is a separate, deliberate step.
+Verify: the preview of the copy shows the change on the pages that use it and nothing else moved; then, after approval and publishing, load the live storefront and check the same pages.
+Approvals: publishing a theme, deleting a theme, adding third-party code and any change to checkout need the person's explicit approval.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
+name: shopify-app-store-listing
+description: Prepare a Shopify app's pricing plans and App Store listing in the Partner Dashboard, and walk the pre-submission checklist before sending the app for review.
+license: MIT (ideas adapted from the Shopify AI Toolkit)
+metadata:
+  domain: commerce
+  hosts: partners.shopify.com shopify.dev
+  keywords: shopify app store listing review submission partner dashboard pricing plans tiers trial recurring usage billing compliance checklist
+  requires: browser
+  risk: write
+  docs: https://shopify.dev/docs/apps/launch
+---
+- Pricing: for a new public app use Shopify's managed App Pricing in the Partner Dashboard (plans, tiers, recurring or usage options, trials) rather than hand-built billing, unless a legacy or unusual model needs the Admin billing API.
+- Listing: name, tagline, description, screenshots and a support contact must describe what the app really does; claims the app cannot back up are a common reason for rejection.
+- Before submitting read the App Store requirements page and check the app against it item by item: install and uninstall work, permissions requested are the minimum, no surprise charges, data handling disclosed.
+- Submitting sends the app to Shopify's review: do it only when the person says the app is ready.
+Verify: the listing preview matches the app, the pricing page shows the plans as intended, and the checklist has no open item you cannot explain.
+Approvals: submitting for review, changing live pricing, and anything that charges merchants need the person's explicit approval.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
+name: google-ads-reporting-recipes
+description: Get the standard Google Ads reports (campaign performance, search terms, quality score, geography, device, hour of day) right: the fields, the segments, the date range and the checks that make the numbers trustworthy.
+license: Apache-2.0 (patterns adapted from the Google Ads API examples)
+metadata:
+  domain: advertising
+  hosts: ads.google.com developers.google.com
+  keywords: google ads report search terms report quality score geographic device hour of day segment performance download campaign metrics cost per conversion date range gaql recipe
+  requires: browser
+  risk: read
+  docs: https://developers.google.com/google-ads/api/docs/reporting/overview
+---
+- In the interface use Reports, then the report editor (or the table of a campaign, ad group or keyword page) with columns and segments chosen deliberately; a segment such as hour, device or network multiplies the rows and changes the totals shown per row.
+- Search terms come from the Insights and reports or the Search terms view of a campaign, not from the keywords table; read the match type and whether the term is already a keyword or an exclusion.
+- Cost in the API is in micros (a millionth of the currency unit); in the interface it is already in currency. Conversions are by the conversion action set as primary; read that setting before comparing periods.
+- Always state the date range, the time zone of the account, the currency, and whether data for today is partial.
+- Data for the last day or two can still change as conversions arrive.
+Verify: the total of a segmented table equals the unsegmented total for the same range and columns, or say why not.
+Approvals: reading only. Downloading reports to a file the person did not ask for, sharing them, or changing any setting seen in them needs approval.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
+name: google-ads-account-hierarchy
+description: Understand and walk a Google Ads manager (MCC) account: list its client accounts, sub-managers and links, and act on the right account without mixing them up.
+license: Apache-2.0 (idea adapted from the Google Ads API developer assistant)
+metadata:
+  domain: advertising
+  hosts: ads.google.com
+  keywords: google ads manager account mcc child accounts client sub-manager hierarchy link access accounts list customer id switch account
+  requires: browser
+  risk: read
+  docs: https://support.google.com/google-ads/answer/6139186
+---
+- A manager account holds client accounts, which can themselves be managers: the Accounts page of the manager shows the tree, with each account's customer ID (ten digits, shown with dashes).
+- Before any action confirm which account is open: the customer ID and name in the header, and whether you are in the manager or in a client. The same page looks the same in different accounts.
+- Linking and access: a client appears under a manager only after the client accepted the link; read the status (active, pending, cancelled) before assuming access.
+- Work on one client at a time; for a task across many accounts list them first, then repeat the same read-only step per account and keep the results labelled by customer ID.
+Verify: quote the customer ID and account name in every result, and re-read the header after switching.
+Approvals: sending or accepting a link, changing access levels, removing an account and any change made inside a client account need the person's approval naming that account.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
+name: google-ads-pmax-asset-groups
+description: Work with Performance Max asset groups and Shopping listings: URL expansion and exclusions, product groups from the feed, and checking what is actually eligible before changing anything.
+license: Apache-2.0 (ideas adapted from the Google Ads API developer assistant and examples)
+metadata:
+  domain: advertising
+  hosts: ads.google.com merchants.google.com
+  keywords: google ads performance max pmax asset group url expansion exclusion webpage listing group product feed shopping merchant center tree
+  requires: browser
+  risk: write
+  docs: https://support.google.com/google-ads/answer/10724817
+---
+- An asset group has its own final URL settings: to keep a group off some pages use the URL exclusions or page rules of that asset group, not a campaign-wide setting, unless the person asked for campaign scope.
+- For a shopping or retail campaign the product groups (listing groups) split the feed by brand, category, ID or custom label; read the current tree and what each branch bids or includes before editing a branch.
+- The feed decides eligibility: check the Merchant Center product statuses (approved, limited, disapproved) first, since a bid change cannot fix a disapproved product.
+- A change to groups or exclusions can change spend within hours: make one change at a time and note the before state.
+Verify: after the change reopen the asset group or product group tree and read it back; look at the next day's impressions for the affected products or pages.
+Approvals: any change to asset groups, URL rules, product groups, bids or budgets needs the person's approval with the before and after shown.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
+name: google-ads-policy-disapprovals
+description: Find out why a Google Ads ad or keyword is disapproved or limited, fix what the policy actually says, and appeal or request an exemption only where that is allowed.
+license: Apache-2.0 (ideas adapted from the Google Ads API examples on policy violations)
+metadata:
+  domain: advertising
+  hosts: ads.google.com support.google.com
+  keywords: google ads disapproved ad policy violation limited policy manager appeal exemption request keyword restricted trademark editorial
+  requires: browser
+  risk: write
+  docs: https://support.google.com/adspolicy
+---
+- Open the ad or keyword's status and the Policy manager: it names the policy topic, whether it is a disapproval or a limit, and often the exact text or URL that triggered it. Read that, do not guess.
+- Fix the cause (edit the text, the landing page, or the claim) before appealing: an appeal for an unchanged ad is usually rejected. Some topics allow a request for an exemption, others never do (for example counterfeit goods).
+- A repeated, rewording-only attempt to get around a policy is itself a violation: do not do it.
+- An edited ad goes back into review; a review can take a business day or more.
+Verify: after the edit read the status again and keep the policy reference text in the report to the person.
+Approvals: editing ads, submitting an appeal or an exemption request, and pausing or removing ads need the person's approval.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
+name: google-ads-keyword-planner
+description: Use the Google Ads Keyword Planner for keyword ideas, historical search volume, forecasts of clicks and cost, and bid estimates, and report them with their limits.
+license: Apache-2.0 (ideas adapted from the Google Ads API planning examples)
+metadata:
+  domain: advertising
+  hosts: ads.google.com
+  keywords: google ads keyword planner keyword ideas historical metrics search volume forecast clicks cost bid estimate reach planner plan budget
+  requires: browser
+  risk: read
+  docs: https://support.google.com/google-ads/answer/7337243
+---
+- Tools, then Planning, then Keyword Planner: Discover new keywords from words or a website, or Get search volume and forecasts for a list you paste.
+- Set the location, the language and the network before reading numbers: volume is for those settings only. Volume is shown as a range for accounts with little spend.
+- Forecasts depend on the bid, the budget and the date range chosen; they are estimates, not promises. Quote the settings next to every figure.
+- Competition and top-of-page bid columns are rough guides; check them against real search results before using them.
+Verify: repeat one keyword with a different location to see that the numbers move as expected, and state which settings the figures belong to.
+Approvals: reading only. Adding the ideas to a plan or campaign, or changing bids or budgets, needs the person's approval.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
+name: meta-ads-audiences-and-creative
+description: Build the audience and the ad creative of a Meta (Facebook and Instagram) campaign carefully: custom and lookalike audiences, the pixel, a catalogue, formats and placements, and the checks before anything is published.
+license: Xroga-internal
+metadata:
+  domain: advertising
+  hosts: business.facebook.com adsmanager.facebook.com www.facebook.com
+  keywords: meta facebook instagram ads custom audience lookalike pixel customer list catalogue catalog creative image video carousel placements audience size
+  requires: browser
+  risk: write
+  docs: https://www.facebook.com/business/help
+---
+- Audiences: a custom audience comes from a customer list, website visitors through the pixel, or engagement; a lookalike needs a source of at least a few hundred people and a chosen country and size. Read the estimated audience size and the exclusions before saving.
+- Customer lists contain personal data: only upload a list the person owns and has permission to use, never invent or enrich one, and do not paste it anywhere else.
+- Creative: pick the format that fits (single image or video, carousel, collection) and the placements; check the preview on feed, stories and reels, and read the text for claims the business cannot support, since policy review rejects them.
+- A catalogue ad needs a connected, approved product feed; check its status first.
+- Learning phase: many edits restart it; change as little as possible once an ad set is delivering.
+Verify: open the ad preview and the review status after saving, and read the audience details back.
+Approvals: uploading a customer list, publishing or editing a live ad, changing budgets and sharing an audience with another account need the person's explicit approval.`,
   },
 ];
 
