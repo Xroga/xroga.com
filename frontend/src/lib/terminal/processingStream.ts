@@ -2,6 +2,7 @@ import type { XrogaActivityPresentation } from './activityPresentation';
 import { publicActivityText } from './activityPresentation';
 import { familyOf, type TimelineFamily } from './activityTimeline';
 import { redactTerminalText } from './terminalRedaction';
+import { CLIENT_ANSWER, CLIENT_UNDERSTAND } from './clientSteps';
 
 /**
  * The inline work stream: written updates and one line per real step, in the order they happened.
@@ -64,7 +65,9 @@ export function groupStream(entries: readonly StreamEntry[]): Array<StreamEntry 
     run = [];
   };
   for (const entry of entries) {
-    if (entry.type === 'step' && (entry.state === 'done' || entry.state === 'reported')) { run.push(entry); continue; }
+    // Understanding and answering stay on their own lines; only the work between them folds.
+    const standalone = entry.type === 'step' && (entry.id.endsWith(CLIENT_UNDERSTAND) || entry.id.endsWith(CLIENT_ANSWER));
+    if (entry.type === 'step' && !standalone && (entry.state === 'done' || entry.state === 'reported')) { run.push(entry); continue; }
     flush();
     out.push(entry);
   }
@@ -119,11 +122,15 @@ const MAX_ENTRIES = 40;
  * and the first, mechanical reading of the request once a written approach note follows it.
  */
 function tidy(entries: StreamEntry[]): StreamEntry[] {
-  const otherSteps = entries.some(e => e.type === 'step' && !e.id.endsWith(WRAPPER_STEP));
+  const isWrapper = (id: string) => id.endsWith(WRAPPER_STEP) || id.endsWith(CLIENT_ANSWER);
+  const otherSteps = entries.some(e => e.type === 'step' && !isWrapper(e.id) && !e.id.endsWith(CLIENT_UNDERSTAND));
+  const clientAnswer = entries.some(e => e.type === 'step' && e.id.endsWith(CLIENT_ANSWER));
   const notes = entries.filter(e => e.type === 'note');
   const superseded = notes.length > 1 ? notes[0] : undefined;
   return entries.filter(e => e.type === 'step'
-    ? !(otherSteps && e.id.endsWith(WRAPPER_STEP) && e.state !== 'failed')
+    // The whole-answer lines give way to real work; one with sources, or a failure, always stays.
+    ? !(isWrapper(e.id) && e.state !== 'failed' && !e.evidence?.sources
+      && (otherSteps || (clientAnswer && e.id.endsWith(WRAPPER_STEP))))
     : e !== superseded);
 }
 
@@ -155,7 +162,8 @@ export function buildProcessingStream(rows: readonly XrogaActivityPresentation[]
     const previous = entries.at(-1);
     // The same line reported twice in a row adds nothing.
     if (previous?.type === 'step' && previous.text === text && previous.state === state) continue;
-    const detail = row.kind === 'command' || row.kind === 'test' ? '' : clean(row.detail, 120);
+    // The request summary is long; it opens under its line instead of trailing it.
+    const detail = row.kind === 'command' || row.kind === 'test' || row.id.endsWith(CLIENT_UNDERSTAND) ? '' : clean(row.detail, 120);
     entries.push({
       type: 'step', id: row.id, text, state,
       // Web pages being read belong with the search that found them, not with project files.

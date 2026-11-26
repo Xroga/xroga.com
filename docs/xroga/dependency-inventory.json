@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b4d9c6a954c233549e7e2817403f834939ed69ca",
+  "source_sha": "ab21d72a6f4f3c25bfe53d49c1233fc36235ffac",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -23147,7 +23147,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/conversation.ts",
-      "sha256": "c39c247b412edd2e8b4a7d47bb7dae7ccdb1b4be2b0d708d17cc7095d837df77"
+      "sha256": "92dd39d5b03983da6e69947635f8ff171dda6d039256672dacda16dd2588256f"
     },
     {
       "path": "frontend/src/components/response-experience-v2/diagramSyntax.ts",
@@ -23947,7 +23947,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "0a7ef8e4de121bcd6beb203b6c8e004ad103dac4aadaa2da28455c72c76032ab"
+      "sha256": "f79feff6dd2b6a8033d321908b4801c3dd50766221465ef40446b0af92700b08"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -24870,6 +24870,10 @@
       "sha256": "ea42f7939cb02031d61c042c27f6fe6c9a6ac7c3c4b8e1c45c4e6f02859ade78"
     },
     {
+      "path": "frontend/src/lib/terminal/clientSteps.ts",
+      "sha256": "2d7b538342520f5e2bf7ebe5d91bb5529e9a4b1cd3719632ed494b3dac38a085"
+    },
+    {
       "path": "frontend/src/lib/terminal/dictation.ts",
       "sha256": "5e60fdb6908c8a06cc876720ca8f95c9920a79cb17e69c35c472720486b59fe8"
     },
@@ -24879,7 +24883,7 @@
     },
     {
       "path": "frontend/src/lib/terminal/processingStream.ts",
-      "sha256": "c451dd1538970b49d1e7db9fd0e2448feff0ab9422231c699e9450e720f4c6d3"
+      "sha256": "b43a37ec6d13e778a8fc242423ce416995a4ed8dd89688e9d5eb94d7e727e1b5"
     },
     {
       "path": "frontend/src/lib/terminal/processingView.ts",
@@ -31177,7 +31181,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4080,
+      "line": 4105,
       "credentialsInUrl": false
     },
     {
@@ -41306,21 +41310,21 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 681,
+      "line": 682,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2145,
+      "line": 2148,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2178,
+      "line": 2181,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -41873,21 +41877,21 @@
     },
     {
       "path": "frontend/src/lib/terminal/processingStream.ts",
-      "line": 47,
+      "line": 48,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/terminal/processingStream.ts",
-      "line": 62,
+      "line": 63,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/terminal/processingStream.ts",
-      "line": 135,
+      "line": 142,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
