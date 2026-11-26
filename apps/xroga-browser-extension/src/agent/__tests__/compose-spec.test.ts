@@ -27,13 +27,13 @@ describe('normalizeSpec', () => {
   });
 
   it('says what is wrong, part by part', () => {
-    const n = normalizeSpec({ clips: [{ duration: 2, layers: [{ type: 'title' }, { type: 'image', url: 'http://x.test/a.png' }, { type: 'sparkle' }], transition: { name: 'spin' } }, { layers: [] }], audioTracks: [{ url: 'file:///c:/a.mp3' }] });
+    const n = normalizeSpec({ clips: [{ duration: 2, layers: [{ type: 'title' }, { type: 'image', url: 'http://x.test/a.png' }, { type: 'sparkle' }], transition: { name: 'sparkle-wipe' } }, { layers: [] }], audioTracks: [{ url: 'file:///c:/a.mp3' }] });
     expect(n.ok).toBe(false);
     const text = n.ok ? '' : n.errors.join('\n');
     expect(text).toContain('clip 1 layer 1 (title) needs text');
     expect(text).toContain('clip 1 layer 2 (image) needs an https address');
     expect(text).toContain('layer 3 has the type "sparkle"');
-    expect(text).toContain('transition "spin"');
+    expect(text).toContain('transition "sparkle-wipe"');
     expect(text).toContain('clip 2 needs layers');
     expect(text).toContain('audio track 1 needs an https address');
     expect(normalizeSpec(null).ok).toBe(false);

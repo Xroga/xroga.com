@@ -43,6 +43,8 @@ const SHOULD: Array<[string, string]> = [
   ['build a lookalike custom audience and a carousel creative for facebook and instagram ads', 'meta-ads-audiences-and-creative'],
   ['how loud is this podcast mp3 and where are the silences, and what is the tempo of the song', 'media-files-listen-look-and-transcribe'],
   ['make a short intro video with a title card, a photo and background music and save it as mp4', 'making-a-video-on-the-device'],
+  ['cut the best moments out of this long webinar recording, remove the silences and ums and add subtitles', 'cut-highlights-and-tidy-a-recording'],
+  ['my video is too dark with a blue cast, fix the white balance and add a cinematic look and reduce the hiss in the voice', 'grade-and-clean-up-a-video'],
   ['does this site offer webmcp tools for agents, list the registered page tools and call one', 'tools-a-page-offers-an-agent'],
 ];
 

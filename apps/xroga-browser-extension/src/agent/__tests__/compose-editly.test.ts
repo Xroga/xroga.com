@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { composeHelp } from '../compose-help';
 import { boxOf, kenBurns } from '../../extension/compose-draw';
 import { COMPOSE_TOOL, RAINBOW_SHADER, layoutAt, normalizeSpec, positionOf, rectOf, resolveDurations, timeline, transitionAt, type ComposeSpec, type Layer } from '../compose-spec';
 
@@ -190,8 +191,9 @@ describe('transitions on the timeline', () => {
 describe('the tool', () => {
   it('offers a preview, and names the transitions and layers', () => {
     const props = (COMPOSE_TOOL.parameters as { properties: Record<string, unknown> }).properties;
-    expect(Object.keys(props)).toEqual(['spec', 'filename', 'preview', 'grid']);
-    for (const word of ['crosszoom', 'rainbow-colors', 'detached-audio', 'audioNorm', 'contain-blur', 'picture']) expect(COMPOSE_TOOL.description.includes(word) || word === 'picture').toBe(true);
+    expect(Object.keys(props)).toEqual(['spec', 'filename', 'preview', 'grid', 'help']);
+    const everything = COMPOSE_TOOL.description + ' ' + composeHelp('all');
+    for (const word of ['crosszoom', 'rainbow-colors', 'detached-audio', 'audioNorm', 'contain-blur', 'picture']) expect(everything.includes(word) || word === 'picture', word).toBe(true);
   });
 });
 
@@ -256,5 +258,25 @@ describe('more of the model: motion, captions, cuts, brand, templates and duckin
     expect(spec.audioTracks[0]!.duck).toEqual({ thresholdDb: -42, amountDb: -14, attack: 0.25, release: 0.8, gap: 0.6 });
     expect(spec.audioTracks[1]!.duck).toMatchObject({ amountDb: -20, attack: 0.5, release: 0.8 });
     expect(spec.audioTracks[2]!.duck).toBeUndefined();
+  });
+});
+
+describe('the reference by topic', () => {
+  it('answers every topic with the fields the spec reader takes, and says which topics there are', async () => {
+    const { COMPOSE_HELP_TOPICS, composeHelp } = await import('../compose-help');
+    for (const t of COMPOSE_HELP_TOPICS) expect(composeHelp(t).length).toBeGreaterThan(80);
+    expect(composeHelp('grade')).toContain('wheels');
+    expect(composeHelp('sound')).toContain('denoise');
+    expect(composeHelp('transitions')).toContain('pageturn');
+    expect(composeHelp('all')).toContain('[captions]');
+    expect(composeHelp('nonsense')).toContain('help topics');
+    expect(COMPOSE_TOOL.description.length).toBeLessThan(2500);
+    expect((COMPOSE_TOOL.parameters as { required: string[] }).required).toEqual([]);
+  });
+  it('lists in the reference every transition the code has', async () => {
+    const { composeHelp } = await import('../compose-help');
+    const { TRANSITION_NAMES } = await import('../transitions');
+    const text = composeHelp('transitions');
+    for (const n of TRANSITION_NAMES.filter(x => !x.startsWith('directional-') && !x.startsWith('wipe') && !x.startsWith('bowtie') && x !== 'cut')) expect(text, n).toContain(n);
   });
 });

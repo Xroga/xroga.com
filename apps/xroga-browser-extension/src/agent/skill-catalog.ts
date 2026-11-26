@@ -739,7 +739,7 @@ Approvals: uploading a customer list, publishing or editing a live ad, changing 
     verified: 'curated',
     md: `---
 name: media-files-listen-look-and-transcribe
-description: Find out what is inside an audio or video file at an address without playing it: its tracks and codecs, loudness, silences, tempo and beats, picture cuts, a sheet of frames, and the words spoken.
+description: Find out what is inside an audio or video file at an address without playing it: its tracks and codecs, loudness, silences, tempo and beats, picture cuts, a sheet of frames, the loud moments, how the picture looks, and the words spoken.
 license: Xroga-internal
 metadata:
   domain: general
@@ -752,7 +752,10 @@ metadata:
 - Start with media action info: container, length, picture and sound tracks, codecs, size and tags. It reads by range, so a long file is not downloaded to look at it.
 - Where the sound is quiet: media audio gives integrated loudness (LUFS), sample peak, a level line over time and every silence of minSeconds or more below thresholdDb. Speech is usually around -16 LUFS; streaming music near -14. Cut points for dead air are the silences.
 - Music: media beats gives the tempo and the beat times. Say the tempo as about, and report its regularity; speech and ambience have no beat and the tool says so.
+- Where it stands out: media highlights lists the loud moments (applause, a shout, an emphatic line) as ranges to keep; transcribe with view pauses lists the silences between words with padded ranges to cut. Picture quality: media look measures exposure, clipping, white balance, saturation and skin tones of pictures at times, says what is off and gives the grade that fixes it.
 - Picture: media scenes lists the cuts; then media frames with times (or a count) returns one sheet of pictures, each labelled with its time, so you can say what is on screen at 0:24. A model that cannot see pictures gets the list only.
+- Words: transcribe returns what is said with times; with view srt or vtt it writes a subtitle file, and with view fillers or pauses the cuts that tidy a talk.
+- A picture with a labelled grid: media frames with grid true draws A1 to C3 over each picture, so a place can be named (C1) and used for a zoom.
 - Words: transcribe returns what is said with times. It reads the first 5 minutes by default; ask for more with seconds, or find a word to see only its lines. It is a small on-device model: check names and numbers against the source.
 - Quote times back (minutes:seconds) with every claim, and say how much of the file you read.
 Verify: each statement about the file carries a time or a number the tool returned.
@@ -767,7 +770,7 @@ license: Xroga-internal
 metadata:
   domain: general
   hosts: ""
-  keywords: make video create video slideshow title card intro outro montage clip music soundtrack transition fade subtitle mp4 compose render
+  keywords: make video create video gif animated slideshow colour grade lut green screen denoise speed ramp title card intro outro montage clip music soundtrack transition fade subtitle mp4 compose render
   requires: browser
   risk: write
   docs: ""
@@ -775,11 +778,59 @@ metadata:
 - Plan before the call: one idea per clip, 2 to 5 seconds each (a title 2 to 3 s), at most about 7 words in a title, and a first clip that says what the video is. Total under 3 minutes.
 - The spec is plain data: clips with layers (colour or gradient first, then pictures or video, text last), a transition at the end of a clip (fade 0.4 to 0.6 s is the safe default; none for a hard cut), audioTracks for music. Addresses must be https; only use pictures, film and music the person owns or that are licensed for it, and say where each came from.
 - A video layer takes cutFrom and cutTo in seconds; a clip with no duration takes its length from the cut. Sound of a video layer is kept unless keepSourceAudio is false. Music under speech: volume 0.2 to 0.35; alone: 0.6 to 0.9. A track with loop true fills the whole video.
+- The call carries its own reference: compose_video with help set to layers, transitions, motion, speed, grade, sound, text, captions or output (or all) returns every option of that part; ask before using one you are unsure of. Use preview with a few times (and grid true) to look at the design before the real call.
+- Colour and sound: grade (a preset, auto balance, wheels, curves, a .cube LUT, a green screen) on a picture or video; an adjustment layer grades the whole clip; fx on a sound (denoise, eq, compressor, reverb). Measure first with media look, apply small steps, and preview.
+- Pace and focus: speedRanges or a speedPreset slows what matters and speeds the rest; zooms on a named cell, a round mask with a shadow for a camera bubble; a clip with stagger brings titles in one after another; keyframe easing names include springs.
+- An animated GIF: format gif (and gifFps) in the spec, or convert_media with format gif from a video; it has no sound.
 - Cut on the music: media beats on the song gives beat times; choose clip lengths that are whole beats apart.
 - Size 1280x720 at 30 fps is enough; a smaller size renders faster. The call asks the person first in Ask mode and saves to Downloads; it never overwrites.
 - Report what was made from the tool result (length, frames, size, container) and the plan you followed. If the container is WebM, say the browser had no H.264.
 Verify: the result line states the length, the frame count and the file name; if the person wants to check the pictures, the saved file can be read back with media frames.
 Approvals: saving the file needs the person's approval in Ask mode; never use pictures, film or music without the right to.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
+name: cut-highlights-and-tidy-a-recording
+description: Turn a long recording or talk into a short one: find the moments that stand out, cut the silences and fillers, caption it from a subtitle file or from listening, and write chapters.
+license: Xroga-internal
+metadata:
+  domain: general
+  hosts: ""
+  keywords: highlights highlight reel trim recording talk podcast webinar lecture silences fillers um uh pauses captions subtitles srt vtt chapters shorten summary clip best moments
+  requires: browser
+  risk: write
+  docs: ""
+---
+- Look first, in this order: media info (length), media highlights (the loud moments as ranges), transcribe with view outline (blocks to choose chapters from) and view pauses or fillers (what to cut). Read a long file in parts with from and seconds.
+- Choose what to keep from what was returned, not from guesses: each kept stretch is one video layer with cutFrom and cutTo, or one video layer with cuts listing the ranges to take out. Say the times you chose.
+- Captions: transcribe view srt writes the words as a subtitle file; compose_video captions take subtitles (an .srt or .vtt address, with subtitleOffset when the file is for a longer film), a words list, or listen by themselves. Give them a style (classic, modern, cinematic, bold, minimal, karaoke).
+- Chapters: the chapters tool checks them against what YouTube needs; give it the times of the blocks you chose.
+- Check with compose_video preview at a few times before the real call, then report the length that came out against the length asked.
+Verify: the result length matches the sum of the kept ranges less the transitions, and the captions fall on the words said.
+Approvals: saving the file needs the person's approval in Ask mode; never publish or send the result without it.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
+name: grade-and-clean-up-a-video
+description: Fix or style the picture and sound of a video: measure exposure and white balance, balance or grade it, key a green screen, reduce noise, and level the voice.
+license: Xroga-internal
+metadata:
+  domain: general
+  hosts: ""
+  keywords: colour correct color grade lut white balance exposure dark flat green screen chroma key noise reduction denoise hum hiss equaliser compressor reverb voice cinematic look vignette grain
+  requires: browser
+  risk: write
+  docs: ""
+---
+- Measure before changing: media look at a few times says the exposure in IRE, what is clipped or crushed, whether greys lean warm or cool, saturation, skin tones, and jumps between shots, and gives the grade that fixes the first picture. grade auto balance does the same on its own.
+- Correct first, then style: balance exposure and white balance, match the shots of one scene to each other, then a look (a preset such as cinematic or teal-orange, wheels, curves, or a .cube LUT at an intensity). Small steps, a preview after each.
+- A green screen: chromaKey on the video layer, laid over a picture layer below it; raise spill if green edges remain.
+- Sound: fx denoise (focus speech for a voice, hum for mains buzz, wind, whiteNoise) learns the noise from the quietest stretch of the sound; then eq voice or podcast, a compressor to even the level, a little reverb only if the voice is too dry. Check the result with media audio (loudness, silences).
+- Never treat the picture or sound of material the person has no right to use; say what was changed and by how much.
+Verify: media look on the result shows the numbers that were off now in range; media audio shows the loudness and the silences expected.
+Approvals: saving the file needs the person's approval in Ask mode.`,
   },
   {
     verified: 'curated',

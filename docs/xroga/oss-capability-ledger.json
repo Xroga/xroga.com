@@ -1364,7 +1364,7 @@
       "pushed_at": "2026-10-06T00:20:52Z",
       "language": "Python",
       "stars": 668,
-      "inspected_level": "README, experiments/loop.py (step info, episode statistics, error capture), inspect_results.py (summaries, standard errors, ablation and error reports), reproducibility_util.py and the journal, hinting.py and the hint database, the agents and the analysis folder",
+      "inspected_level": "README; src/agentlab/agents/dynamic_prompting.py (Shrinkable, fit_tokens, the prompt flags), generic_agent and hint_use_agent (hint retrieval modes direct, llm and emb, BM25 and embedding indexes), hitl_agent, tool_use_agent, visual_agent, experiments/loop.py (step info, episode statistics), analyze/inspect_results.py, agent_xray.py and episode_to_html.py, reproducibility_agent and the journal",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
       "xroga_file_paths": [
@@ -1373,10 +1373,10 @@
       "new_tests": [
         "apps/xroga-browser-extension/src/agent/__tests__/acceptance-study.test.ts"
       ],
-      "chrome_check": "study.mjs run on the real live runs of 2026-11-26 (skills on and skills off, 12 tasks each): mean 1.0 with its spread, tools used, no error classes, and a comparison that says there is no clear difference, which matches what the live A/B found",
+      "chrome_check": "study.mjs run on the real live runs of 2026-11-26 (skills on and skills off, 12 tasks each): mean 1.0 with its spread, tools used, no error classes, and a comparison that says there is no clear difference, which matches what the live A/B found. The new views (report, tools, stability) are covered by unit tests on constructed runs; they have not yet been run on a live run.",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Ideas only, code written fresh for Xroga run files: a summary of a run with the standard error of the mean, tools used and error classes; a paired comparison of two runs that only calls a difference real beyond two standard errors (AgentLab ablation reports); a journal of runs with what is needed to repeat them (source sha, dirty flag, extension version, model, skills flag) and a refusal to mix columns (its reproducibility journal). Not taken: the Ray scheduler, BrowserGym environments, the Gradio viewer and the Python agents, which belong to a Python research stack.",
+      "adoption_or_rejection_reason": "Ideas only, code written fresh for Xroga run files: a summary of a run with the standard error and a 95 % range, tools used and error classes; a paired comparison of two runs that only calls a difference real beyond two standard errors (AgentLab ablation reports); a journal of runs with what is needed to repeat them (its reproducibility journal); a per-tool table (mean of the tasks that used a tool against the rest); a stability view that names the tasks that come out differently from run to run; and a self-contained HTML report of a run (its episode_to_html, without screenshots because a run here keeps none). Read and not taken, with the reason: prompt shrinking by lines (Xroga compaction already summarises older steps and keeps a ledger), hint retrieval from a database by BM25 or embeddings (the bundled skills are ranked by their own triggers; an embedding ranker would need a model and has not been built), the human-in-the-loop hint labeller (ask_user covers the ask), and the Ray scheduler, BrowserGym environments, Gradio viewer and Python agents, which belong to a Python research stack.",
       "classification": "ADAPT CODE",
       "rights_note": null
     },
@@ -1404,15 +1404,24 @@
       "xroga_file_paths": [
         "apps/xroga-browser-extension/src/agent/media-analysis.ts",
         "apps/xroga-browser-extension/src/agent/media-tool.ts",
+        "apps/xroga-browser-extension/src/agent/transcript-tools.ts",
+        "apps/xroga-browser-extension/src/agent/transcript-format.ts",
+        "apps/xroga-browser-extension/src/agent/compose-playback.ts",
+        "apps/xroga-browser-extension/src/agent/compose-extras.ts",
+        "apps/xroga-browser-extension/src/agent/audio-mix.ts",
         "apps/xroga-browser-extension/src/extension/media.ts",
-        "apps/xroga-browser-extension/entrypoints/offscreen/main.ts",
-        "apps/xroga-browser-extension/public/media/mediabunny.min.mjs"
+        "apps/xroga-browser-extension/src/extension/speech.ts"
       ],
       "new_tests": [
         "apps/xroga-browser-extension/src/agent/__tests__/media-analysis.test.ts",
-        "apps/xroga-browser-extension/src/background/scenarios/media.ts"
+        "apps/xroga-browser-extension/src/agent/__tests__/transcript-tools.test.ts",
+        "apps/xroga-browser-extension/src/agent/__tests__/compose-extras.test.ts",
+        "apps/xroga-browser-extension/src/agent/__tests__/audio-mix.test.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/media.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/compose-cutline.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/transcribe.ts"
       ],
-      "chrome_check": "S5-media passes on real files: the Sintel trailer (854x480 H.264 with stereo AAC, tags read, 8 or more cuts, a contact sheet of 6 frames, loudness near -13 LUFS, silences at the start and end) and a SoundHelix song (about 138 BPM). The cut positions were checked by eye on a contact sheet of the frames either side of them.",
+      "chrome_check": "S5-media, S5-compose-cutline, S5-transcribe-words and S5-compose-more on real files (the Sintel trailer, a SoundHelix song, a public speech file): loudness, silences, tempo, scene cuts, frames, word-timed captions, ducking measured by loudness, cut-outs, freeze and reverse, pauses, highlights found in the levels of a real file",
       "deepseek_check": null,
       "performance_before_after": null,
       "adoption_or_rejection_reason": "Taken as ideas, written fresh: the perception tools for an editing agent become the media tool (info, audio with loudness, silences and a level line, beats, scenes, frames as a contact sheet). The loudness follows ITU-R BS.1770 (checked: a full-scale 997 Hz tone reads about -3 LUFS) and the beat tracker follows D. Ellis, Beat Tracking by Dynamic Programming (2007), as cutline cites; a guard refuses a steady tone or hiss as a beat. Not taken: the timeline document, the MCP server, the editor UI and the server-side ffmpeg render.",
@@ -1425,7 +1434,7 @@
       "priority": "P1",
       "default_treatment": "TEST / REFERENCE",
       "provenance": "H",
-      "status": "CODE INTEGRATED",
+      "status": "LIVE CHROMIUM VERIFIED",
       "canonical_url": "https://github.com/heychintan/openreel",
       "resolved_slug": "heychintan/openreel",
       "default_branch": "main",
@@ -1437,20 +1446,38 @@
       "pushed_at": "2026-08-29T12:14:00Z",
       "language": null,
       "stars": 0,
-      "inspected_level": "README feature list, the editor packages and the transitions, text animation, audio effect and export code paths",
+      "inspected_level": "README; packages/core/src: audio (audio-effects-engine, noise-reduction, highlight-analyzer, beat detection, volume automation), video (color-grading-engine, filter-presets, speed-presets, chroma-key-engine, transition-engine, keyframe-engine, mask-engine, stabilization, upscaling, frame-interpolation, multicam, motion tracking), text (text-animation-presets, character-animator, subtitle-engine), types/effects.ts (parameter ranges of every effect and transition); the apps/web editor panels for each",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
       "xroga_file_paths": [
+        "apps/xroga-browser-extension/src/agent/grade.ts",
+        "apps/xroga-browser-extension/src/agent/audio-fx.ts",
+        "apps/xroga-browser-extension/src/agent/easing.ts",
+        "apps/xroga-browser-extension/src/agent/transitions.ts",
+        "apps/xroga-browser-extension/src/agent/compose-playback.ts",
+        "apps/xroga-browser-extension/src/agent/compose-motion.ts",
+        "apps/xroga-browser-extension/src/agent/subtitle-format.ts",
+        "apps/xroga-browser-extension/src/agent/media-analysis.ts",
         "apps/xroga-browser-extension/src/agent/compose-spec.ts",
-        "apps/xroga-browser-extension/src/extension/compose-draw.ts"
+        "apps/xroga-browser-extension/src/extension/audio-fx-render.ts",
+        "apps/xroga-browser-extension/src/extension/compose-draw.ts",
+        "apps/xroga-browser-extension/src/extension/compose-render.ts"
       ],
       "new_tests": [
-        "apps/xroga-browser-extension/src/agent/__tests__/compose-spec.test.ts"
+        "apps/xroga-browser-extension/src/agent/__tests__/grade.test.ts",
+        "apps/xroga-browser-extension/src/agent/__tests__/audio-fx.test.ts",
+        "apps/xroga-browser-extension/src/agent/__tests__/easing.test.ts",
+        "apps/xroga-browser-extension/src/agent/__tests__/transitions.test.ts",
+        "apps/xroga-browser-extension/src/agent/__tests__/subtitle-format.test.ts",
+        "apps/xroga-browser-extension/src/agent/__tests__/compose-motion.test.ts",
+        "apps/xroga-browser-extension/src/agent/__tests__/media-analysis.test.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/compose-grade.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/compose-more.ts"
       ],
-      "chrome_check": "S5-compose passes: a video with a sliding title, a film segment with a subtitle and a photograph with a slow zoom and a news-style title, as an H.264/AAC MP4",
+      "chrome_check": "S5-compose-grade and S5-compose-more on real material, measured from the pixels and the sound: a real 17-point LUT (a .cube file from a public MIT repository) changes the colour of a Sintel frame; a black-and-white adjustment layer leaves no colour; auto balance brightens a dark frame (mean 18,13,8 to 41,27,11); noise reduction, voice equaliser, compressor and reverb change the loudness of a real speech file by 7.5 LU; a hero-moment speed curve gives exactly the length the curve works out to; a typewriter title types in; staggered titles come in one after another",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Ideas only, nothing copied: the set of transitions (crossfade, dip to black, slide, zoom), word-level text animation as a slide-in title, fades at the end of the sound, and music that sits under speech at a lower level. Not taken: the React editor, WebGPU effects, colour grading, noise reduction and the keyframe system.",
+      "adoption_or_rejection_reason": "Ideas and parameter vocabularies taken, code written fresh. Taken: colour grading (exposure, temperature, tint, brightness, contrast, saturation, hue, three-way wheels with lift, gamma and gain, RGB and per-channel curves, eight-range hue/saturation/luminance, 3D LUT from a .cube file, vignette, film grain, sharpen, chroma key with spill suppression, an adjustment layer); audio treatment (spectral noise reduction learned from the sound with its focus profiles speech, hum, wind, white noise, music, heavy; EQ bands and presets; compressor; reverb with room size and damping; echo); ten more transitions (flash, glitch, whip pan, blinds, diamond, spin, flip, colour split, film burn, page turn); speed ranges and the named speed curves (flash, smooth slow-mo, jump cut, montage, hero moment, bullet time); text looks (weight, stroke, box, typewriter); SRT and WebVTT reading and writing, caption styles; highlight finding from the sound; the full easing family. Read and not taken, with the reason: the WebGPU renderer and shaders (the canvas renderer is enough for the clip lengths allowed and runs where WebGPU does not), stabilization, upscaling, frame interpolation, motion tracking, multicam and shape masks (large, each a project of its own; the round and rounded masks with shadow were built), particle effects and the effect-behaviour studio, text to speech and the AI features (they call outside services).",
       "classification": "ADAPT CODE",
       "rights_note": null
     },
@@ -1460,7 +1487,7 @@
       "priority": "P2",
       "default_treatment": "TEST / REFERENCE",
       "provenance": "H",
-      "status": "CODE INTEGRATED",
+      "status": "LIVE CHROMIUM VERIFIED",
       "canonical_url": "https://github.com/openfilm/openfilm",
       "resolved_slug": "openfilm/openfilm",
       "default_branch": "main",
@@ -1472,20 +1499,27 @@
       "pushed_at": "2026-11-20T15:57:04Z",
       "language": "TypeScript",
       "stars": 8661,
-      "inspected_level": "README (how a film is made: tracks of clips with timed media and per-clip overrides), the openfilm skill, the editors and the community skill and asset standard",
+      "inspected_level": "README; packages/openfilm/manual/film/SKILL.md (the film.html model, tracks, clips, speed, overrides, pages that draw from time alone, words as WebVTT beside media, links to moments, the look command, loudness), manual/media/SKILL.md (where media comes from), plugins/color/skills/color/SKILL.md (input, layers, output, look, balance, match, filter), plugins/canvas/skills/canvas/SKILL.md, skills/openfilm/SKILL.md",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
       "xroga_file_paths": [
         "apps/xroga-browser-extension/src/agent/skill-catalog.ts",
-        "apps/xroga-browser-extension/src/agent/compose-spec.ts"
+        "apps/xroga-browser-extension/src/agent/grade.ts",
+        "apps/xroga-browser-extension/src/agent/compose-help.ts",
+        "apps/xroga-browser-extension/src/agent/compose-spec.ts",
+        "apps/xroga-browser-extension/src/agent/subtitle-format.ts",
+        "apps/xroga-browser-extension/src/extension/compose-draw.ts"
       ],
       "new_tests": [
-        "apps/xroga-browser-extension/src/agent/__tests__/skill-triggers.test.ts"
+        "apps/xroga-browser-extension/src/agent/__tests__/skill-triggers.test.ts",
+        "apps/xroga-browser-extension/src/agent/__tests__/grade.test.ts",
+        "apps/xroga-browser-extension/src/agent/__tests__/subtitle-format.test.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/compose-grade.ts"
       ],
-      "chrome_check": "S5-compose passes (see openreel); the bundled skill making-a-video-on-the-device ranks first for a request to make a short intro video",
+      "chrome_check": "media look measured real Sintel frames (exposure, crushed share, white balance) and auto balance brightened a dark one (S5-compose-grade)",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Ideas only: a film as timed layers with in and out points on each piece of media, and a skill that teaches an agent how to plan a film (clip lengths, text, sound level, what to check). Written as the skill making-a-video-on-the-device and the cutFrom and cutTo of compose_video. Not taken: the desktop app, the film.html format, the editors and the connectors to generation services.",
+      "adoption_or_rejection_reason": "Ideas only. Taken: the rule that a picture depends only on its time (every effect here is a pure function of the time, the grain is seeded by the frame); the colour tool as a method (measure first: exposure in IRE, clipped and crushed shares, white balance of the nearly grey pixels, saturation, skin tones, jumps from the shot before; then balance, match shots, then a look) built as media look, grade auto balance and the match grade; loudness targets for what is published (-14 web, -16 podcast, -23 broadcast, in the help of compose_video); words timed in a WebVTT beside a file (read as subtitles); the habit of looking at a contact sheet of the film before saving (compose_video preview). Skills: making-a-video-on-the-device, grade-and-clean-up-a-video, cut-highlights-and-tidy-a-recording. Read and not taken: film.html and the Studio timeline (a person-facing editor), the canvas of generation nodes and the media providers (they spend credits on outside services), the render command and its chunks.",
       "classification": "ADAPT CODE",
       "rights_note": null
     },
@@ -1507,7 +1541,7 @@
       "pushed_at": "2026-08-12T03:15:33Z",
       "language": "TypeScript",
       "stars": 6,
-      "inspected_level": "README, the web app and the shared libraries (a trim-and-export editor on a Rust and WebAssembly core)",
+      "inspected_level": "README; the whole apps/web editor route (trim in and out, playback rate, export progress), the landing and wallet pages, the API server and database schema",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
       "xroga_file_paths": [],
@@ -1515,7 +1549,7 @@
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Read, nothing taken (no licence found). What it offers, trimming a clip and exporting it in the browser, is covered by compose_video with a video layer, cutFrom and cutTo.",
+      "adoption_or_rejection_reason": "Read all of it, nothing taken (no licence file in the repository, although the README shows an MIT badge). The editor route is a trim-and-export page; the rest is a site, a wallet sign-in and a leaderboard. Trimming and exporting are compose_video with a video layer, cutFrom and cutTo, and convert_media with trim.",
       "classification": "TEST REFERENCE",
       "rights_note": "No licence file in the repository: nothing taken."
     },
@@ -1537,23 +1571,37 @@
       "pushed_at": "2026-10-04T14:03:45Z",
       "language": "TypeScript",
       "stars": 7,
-      "inspected_level": "README, the WebMCP layer (tool registration lifecycle, batch executor, snapping, time spaces), the tool list and the director guide",
+      "inspected_level": "README; the WebMCP registration code and its 30 tools; the editor model (clips, tracks, zooms, speed, captions, probe frames with a grid), the director guide, the staged-edit and export code (read for concepts only: AGPL)",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
       "xroga_file_paths": [
         "apps/xroga-browser-extension/src/browser-control/core/webmcp-hook.ts",
         "apps/xroga-browser-extension/src/agent/webmcp.ts",
-        "apps/xroga-browser-extension/src/extension/webmcp.ts",
-        "apps/xroga-browser-extension/src/browser-control/core/controller.ts"
+        "apps/xroga-browser-extension/src/agent/record-tool.ts",
+        "apps/xroga-browser-extension/src/agent/compose-motion.ts",
+        "apps/xroga-browser-extension/src/agent/compose-extras.ts",
+        "apps/xroga-browser-extension/src/agent/compose-playback.ts",
+        "apps/xroga-browser-extension/src/agent/transcript-tools.ts",
+        "apps/xroga-browser-extension/src/extension/screen-record.ts",
+        "apps/xroga-browser-extension/src/extension/record-render.ts",
+        "apps/xroga-browser-extension/src/extension/grid.ts",
+        "apps/xroga-browser-extension/src/extension/compose-draw.ts"
       ],
       "new_tests": [
         "apps/xroga-browser-extension/src/agent/__tests__/webmcp.test.ts",
-        "apps/xroga-browser-extension/src/background/scenarios/webmcp.ts"
+        "apps/xroga-browser-extension/src/agent/__tests__/record-tool.test.ts",
+        "apps/xroga-browser-extension/src/agent/__tests__/compose-motion.test.ts",
+        "apps/xroga-browser-extension/src/agent/__tests__/compose-extras.test.ts",
+        "apps/xroga-browser-extension/src/agent/__tests__/transcript-tools.test.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/webmcp.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/record-screen.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/compose-grade.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/compose-more.ts"
       ],
-      "chrome_check": "S5-webmcp passes on the real Panoptik demo studio (its public page, as a test target only): the hook supplied navigator.modelContext, the page registered 30 tools, they were listed with their arguments, and a read-only one answered with the page's own message",
+      "chrome_check": "S5-webmcp on the public Panoptik demo studio (30 tools listed, a read-only one answered); S5-record-screen (a real Wikipedia page recorded with two clicks, made into a demo with zooms on the clicks); S5-compose-grade (zoom on a named cell, round mask with shadow, grid overlay, speed range length) and S5-compose-more (typewriter, stagger, pauses)",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Concept only: discover and call the tools a page registers through WebMCP (navigator.modelContext, and the older document and window names). New tool webmcp: list shows the tools and whether each is read-only; call runs one by name; a tool that is not read-only needs confirmed true. Not taken: the video editor, its tools and its staged-edit review.",
+      "adoption_or_rejection_reason": "Concepts only, no code copied (AGPL-3.0). Built fresh: the webmcp tool and its document-start hook (a page offers its own tools to an agent); record_screen (the tab recorded with Chrome's screencast into an MP4 on the device, with the agent's own clicks kept as fractions of the picture) and zoomOnClicks; zooms over stretches on named grid cells (A1 to C3) that move from one point to the next without zooming out; the labelled grid on media frames and previews; speed ranges; round and rounded masks with a shadow (a camera bubble, a recording as a card); text looks and typewriter; pause cuts with padding (transcribe view pauses). Not built: word-edge snapping is in the code (snapToWords) but no tool calls it yet; the staged-edit protocol and the studio itself.",
       "classification": "REJECT",
       "rights_note": "AGPL-3.0: no code copied. Only the idea (a page offers its own tools to an agent through the WebMCP API) was used; the hook, the tool and the bridge are written fresh. The live demo page was used only as a test target."
     },
@@ -1563,7 +1611,7 @@
       "priority": "P1",
       "default_treatment": "ON-DEMAND ARTIFACT WORKER",
       "provenance": "H",
-      "status": "CODE INTEGRATED",
+      "status": "LIVE CHROMIUM VERIFIED",
       "canonical_url": "https://github.com/motion-canvas/motion-canvas",
       "resolved_slug": "motion-canvas/motion-canvas",
       "default_branch": "main",
@@ -1575,19 +1623,24 @@
       "pushed_at": "2026-07-02T20:01:32Z",
       "language": "TypeScript",
       "stars": 20093,
-      "inspected_level": "packages/core (tweening timing functions, spring, interpolation, transitions, flow), the 2D package and the Vite editor",
+      "inspected_level": "README; packages/core/src: tweening (timingFunctions, interpolationFunctions, spring, tween), flow (all, any, chain, delay, sequence, loop), transitions (fade, slide, zoomIn, zoomOut), signals (createSignal, createComputed, createEffect); packages/2d components and the examples",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
       "xroga_file_paths": [
-        "apps/xroga-browser-extension/src/agent/compose-spec.ts"
+        "apps/xroga-browser-extension/src/agent/easing.ts",
+        "apps/xroga-browser-extension/src/agent/compose-motion.ts",
+        "apps/xroga-browser-extension/src/agent/compose-spec.ts",
+        "apps/xroga-browser-extension/src/agent/transitions.ts"
       ],
       "new_tests": [
-        "apps/xroga-browser-extension/src/agent/__tests__/compose-spec.test.ts"
+        "apps/xroga-browser-extension/src/agent/__tests__/easing.test.ts",
+        "apps/xroga-browser-extension/src/agent/__tests__/compose-motion.test.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/compose-more.ts"
       ],
-      "chrome_check": "S5-compose passes; the easing curves are checked to run from 0 to 1 and to keep their order",
+      "chrome_check": "S5-compose-more rendered a spring-eased move and three transitions between four clips on a real run (length 4.8 s as worked out)",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Ideas only: the easing set (ease in, out, in-out, out-back) used for transitions and for text and zoom movement, and the zoom-in transition. Not adopted: code-defined generator scenes and the Vite editor, which are a TypeScript project to build, not a thing an extension can run on a person's request.",
+      "adoption_or_rejection_reason": "Ideas only, code written fresh. Taken: the whole timing family (sine, quad, cubic, quart, quint, expo, circ, back, elastic, bounce, each in, out and in-out) and springs (the closed-form damped oscillator, four named shapes) as keyframe and transition easing; the sequence flow as clip stagger; the idea of transitions as scene-level effects (the pixel-rule transitions cover fade, slide and zoom). Read and not taken, with the reason: code-defined scenes with generator functions and the Vite editor (a spec of plain data is what a model writes reliably), signals (there is no live state to react to in a rendered clip), the 2D node graph (text, shapes and images are layers).",
       "classification": "ADAPT CODE",
       "rights_note": null
     },
@@ -1609,7 +1662,7 @@
       "pushed_at": "2026-09-29T21:30:20Z",
       "language": "C",
       "stars": 17978,
-      "inspected_level": "README, the ffmpeg, core, core-mt, util and types packages, the build scripts and the Dockerfile",
+      "inspected_level": "README; packages/core and core-mt (licence GPL-2.0-or-later in package.json; the build enables GPL and links x264 and x265), the wrapper API and its worker, the build scripts",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
       "xroga_file_paths": [],
@@ -1617,7 +1670,7 @@
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Not vendored. The standard core is a GPL build (x264, x265) of about 30 MB, which would change the licence of the package. What an editor needs here, cutting, joining, resizing, adding sound and encoding, is done with the browser's own WebCodecs through mediabunny (compose_video, media). A conversion between codecs the browser cannot encode is not covered; the tool says when the browser has no H.264 and writes WebM instead.",
+      "adoption_or_rejection_reason": "Not vendored: the core is a GPL build (x264 and x265), about 30 MB, which would change the licence of the package. The browser's own WebCodecs through mediabunny do the cutting, joining, scaling, mixing and encoding that matter. From ffmpeg's way of making a GIF (a palette made from the frames, then the pictures mapped to it) the two steps were written fresh as an encoder (median cut, ordered dithering, LZW), tested by decoding what it writes, and used by convert_media and compose_video; the filters it offers (loudnorm, atempo, xfade, silenceremove) have their own equivalents already (loudness normalisation, pitch-keeping speed, 46 transitions, silences and pauses).",
       "classification": "INVOKE ON DEMAND",
       "rights_note": "The wasm core is built with --enable-gpl and links x264 and x265 (GPL): it is not vendored in the extension."
     },
@@ -1644,15 +1697,16 @@
       "chosen_reuse_method": null,
       "xroga_file_paths": [
         "apps/xroga-browser-extension/public/media/mediabunny.min.mjs",
-        "apps/xroga-browser-extension/public/media/LICENSE-mediabunny-MPL-2.0.txt",
-        "apps/xroga-browser-extension/entrypoints/offscreen/main.ts",
+        "apps/xroga-browser-extension/src/extension/media.ts",
+        "apps/xroga-browser-extension/src/extension/convert-render.ts",
+        "apps/xroga-browser-extension/src/extension/record-render.ts",
         "apps/xroga-browser-extension/src/extension/compose-render.ts"
       ],
       "new_tests": [
         "apps/xroga-browser-extension/src/background/scenarios/media.ts",
         "apps/xroga-browser-extension/src/background/scenarios/compose.ts"
       ],
-      "chrome_check": "S5-media and S5-compose pass: mediabunny 1.66.4 reads MP4 and MP3 by range requests, decodes sound and pictures, and writes an H.264/AAC MP4 that it can read back (7.5 s, 180 frames, 1.3 MB)",
+      "chrome_check": "S5-media, S5-convert (webm, wav, ogg, HLS to mp4 and back), S5-record-screen and the compose scenarios read and write real files through it",
       "deepseek_check": null,
       "performance_before_after": null,
       "adoption_or_rejection_reason": "Used as a library, loaded on demand in the offscreen document (never in the page): it gives container reading, decoding and writing on top of WebCodecs, which is what the media and compose_video tools need.",
@@ -1682,16 +1736,25 @@
       "chosen_reuse_method": null,
       "xroga_file_paths": [
         "apps/xroga-browser-extension/src/agent/compose-spec.ts",
-        "apps/xroga-browser-extension/src/extension/compose-draw.ts",
+        "apps/xroga-browser-extension/src/agent/compose-help.ts",
+        "apps/xroga-browser-extension/src/agent/transitions.ts",
+        "apps/xroga-browser-extension/src/agent/audio-mix.ts",
+        "apps/xroga-browser-extension/src/agent/compose-motion.ts",
         "apps/xroga-browser-extension/src/extension/compose-render.ts",
-        "apps/xroga-browser-extension/src/extension/compose.ts",
-        "apps/xroga-browser-extension/src/extension/run-manager.ts"
+        "apps/xroga-browser-extension/src/extension/compose-draw.ts",
+        "apps/xroga-browser-extension/src/extension/compose.ts"
       ],
       "new_tests": [
         "apps/xroga-browser-extension/src/agent/__tests__/compose-spec.test.ts",
-        "apps/xroga-browser-extension/src/background/scenarios/compose.ts"
+        "apps/xroga-browser-extension/src/agent/__tests__/compose-editly.test.ts",
+        "apps/xroga-browser-extension/src/agent/__tests__/transitions.test.ts",
+        "apps/xroga-browser-extension/src/agent/__tests__/audio-mix.test.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/compose.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/compose-editly.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/compose-grade.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/compose-more.ts"
       ],
-      "chrome_check": "S5-compose passes on real material (a CC-BY film segment, a CC0 photograph, a song): the result has the planned length (7.5 s), a picture track of 640x360 and a sound track at about -17.7 LUFS",
+      "chrome_check": "S5-compose, S5-compose-editly, S5-compose-cutline, S5-compose-grade and S5-compose-more on real material; the tool carries its own reference by topic (help) so its description stays short",
       "deepseek_check": null,
       "performance_before_after": null,
       "adoption_or_rejection_reason": "Ideas only, written fresh: a declarative description of a video as clips with layers and a transition at the end of each clip, defaults, music tracks with start, cut points, volume and looping, resize modes and slow zoom. Limits added: https addresses only, 3 minutes, 60 clips, 1920x1080. A video layer plays at its own speed (a longer clip holds the last picture). Not taken: ffmpeg, GL transitions, fabric.js layers and custom canvases.",
@@ -2401,5 +2464,5 @@
       "rights_note": null
     }
   ],
-  "generated_at_update": "2026-11-21 donor sprint"
+  "generated_at_update": "2026-11-26T20:43:56.331Z"
 }

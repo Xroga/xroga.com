@@ -2721,6 +2721,9 @@ ${renderSkill(top)}`);
           outcome = { call, kind, text: 'error: the file could not be read (' + (error instanceof Error ? error.message : String(error)).slice(0, 200) + '). The address may need a sign-in, not be a media file, or use a format this browser cannot decode.', isError: true };
         }
       }
+    } else if (call.toolName === 'compose_video' && args.help !== undefined) {
+      const { composeHelp } = await import('./compose-help');
+      outcome = { call, kind, text: composeHelp(args.help), isError: false };
     } else if (call.toolName === 'compose_video' && Array.isArray(args.preview)) {
       try {
         const [{ normalizeSpec, describeSpec }, { previewOnDevice }, { clock }] = await Promise.all([import('./compose-spec'), import('@src/extension/compose'), import('./media-analysis')]);

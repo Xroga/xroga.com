@@ -77,7 +77,8 @@ function canonical(name: string): string {
 }
 
 function build(key: string): Fn | null {
-  if (key === 'linear' || key === '') return t => t;
+  if (key === '') return null;
+  if (key === 'linear') return t => t;
   if (key === 'sin') return t => Math.sin((t * Math.PI) / 2);
   if (key === 'cos') return t => 1 - Math.cos((t * Math.PI) / 2);
   if (key === 'hold') return () => 0;
