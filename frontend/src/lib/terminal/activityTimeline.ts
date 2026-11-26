@@ -162,7 +162,7 @@ export function buildActivityTimeline(rows: readonly XrogaActivityPresentation[]
   else if (outcome === 'failure' || rows.at(-1)?.status === 'error') state = 'failed';
   else if (outcome === 'interrupted' || (!outcome && rows.some(row => row.status === 'cancelled' || row.status === 'interrupted'))) state = 'stopped';
   else if (rows.length) state = 'done';
-  const completed = rows.filter(row => row.status === 'complete').length;
+  const completed = rows.filter(row => row.status === 'complete' && !row.note).length;
   const failed = rows.filter(isFailure).length;
   const unconfirmed = live.length ? 0 : rows.filter(row => !isFinished(row)).length;
   return { state, settled, active, otherActive, total: rows.length, completed, failed, unconfirmed };

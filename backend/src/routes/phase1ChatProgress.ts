@@ -3,6 +3,7 @@ import { readIntent } from '../ai/intentReasoning.js';
 import { understandingProgress } from '../ai/startupProgress.js';
 import { publicAiPayload } from '../lib/publicAiIdentity.js';
 import { generateReasoningSummary, reasoningSummaryEnabled } from '../ai/reasoningSummary.js';
+import { withProgressSink } from '../ai/progressChannel.js';
 import type { AuthRequest } from '../middleware/auth.js';
 
 /**
@@ -57,13 +58,17 @@ router.post('/chat', (req: AuthRequest, res, next) => {
   heartbeat.unref?.();
   res.once('close', () => { open = false; clearInterval(heartbeat); });
 
-  write('progress', {
+  // One real step that spans the whole handler: it ends when the handler's answer (or refusal) arrives.
+  const preparing = (activityStatus: 'running' | 'completed' | 'failed', text: string) => write('progress', {
     agent: 'session',
     status: 'preparing_answer',
-    message: 'Preparing your answer.',
+    activityId: 'preparing-answer',
+    activityStatus,
+    message: text,
     swarmStatusLabel: 'Working',
-    swarmActivity: 'Preparing your answer',
+    swarmActivity: text,
   });
+  preparing('running', 'Preparing your answer');
 
   try {
     if (message.trim()) {
@@ -105,13 +110,15 @@ router.post('/chat', (req: AuthRequest, res, next) => {
     clearInterval(heartbeat);
     res.status = originalStatus;
     res.json = sendJson;
+    if (status < 400) preparing('completed', 'Prepared your answer');
+    else preparing('failed', 'Could not prepare the answer');
     write('result', { status, body });
     open = false;
     res.end();
     return res;
   }) as typeof res.json;
 
-  return next();
+  return withProgressSink((frame) => write('progress', publicAiPayload({ ...frame })), () => next());
 });
 
 export default router;

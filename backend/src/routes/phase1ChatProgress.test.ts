@@ -49,7 +49,8 @@ test('an event-stream client gets real progress frames, then the same answer as 
     const progress = all.filter((frame) => frame.event === 'progress');
     assert.ok(progress.some((frame) => frame.data.status === 'understanding_request'));
     assert.equal(progress[0]?.data.status, 'preparing_answer');
-    assert.equal(progress.at(-1)?.data.status, 'understanding_request', 'the reading is the last line, so it stays on screen during the wait');
+    assert.equal(progress.at(-1)?.data.activityStatus, 'completed', 'the preparing step ends when the answer arrives');
+    assert.equal(progress.at(-1)?.data.activityId, progress[0]?.data.activityId);
     assert.ok(!JSON.stringify(progress).includes('%'), 'no percentages');
   });
 });

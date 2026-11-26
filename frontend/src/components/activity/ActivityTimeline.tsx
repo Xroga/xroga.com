@@ -14,6 +14,8 @@ import styles from './activity.module.css';
 import { BlackHoleIndicator } from './BlackHoleIndicator';
 import { ProcessingSurface } from './ProcessingSurface';
 import type { ProcessingView } from '@/lib/terminal/processingView';
+import { ProcessingStream, useOpenRows } from './ProcessingStream';
+import type { StreamEntry } from '@/lib/terminal/processingStream';
 
 const FAMILY_ICON: Record<TimelineFamily, LucideIcon> = {
   command: SquareTerminal, verify: ShieldCheck, read: FileSearch, research: Search, write: FilePen,
@@ -99,10 +101,17 @@ export interface ActivityTimelineProps {
   note?: string;
   /** Heading, paragraph and optional checklist derived from the same real rows. */
   processing?: ProcessingView;
+  /** Inline work stream built from the same real rows. */
+  stream?: readonly StreamEntry[];
 }
 
-export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel = 'Starting request', note, processing }: ActivityTimelineProps) {
-  const [open, setOpen] = useState(false);
+export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel = 'Starting request', note, processing, stream = [] }: ActivityTimelineProps) {
+  const [chosenOpen, setOpen] = useState<boolean | null>(null);
+  // A run watched live keeps its stream on screen when it finishes; saved history starts folded.
+  const [watched] = useState(() => model.state === 'working' || model.state === 'waiting');
+  const open = chosenOpen ?? (watched && stream.length > 0);
+  const [streamHidden, setStreamHidden] = useState(false);
+  const openRows = useOpenRows();
   const [showAll, setShowAll] = useState(false);
   const [liveOpen, setLiveOpen] = useState(false);
   const [historyCount, setHistoryCount] = useState(HISTORY_PAGE_SIZE);
@@ -123,12 +132,13 @@ export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel
     return (
       <section className={styles.timeline} aria-label="Activity" data-state={state} data-testid="activity-timeline">
         <button type="button" className={`${styles.row} ${styles.header}`} aria-expanded={steps ? open : undefined}
-          disabled={!steps} onClick={() => setOpen(value => !value)}>
+          disabled={!steps} onClick={() => setOpen(!open)}>
           <HeaderIcon className={styles.icon} aria-hidden="true" style={state === 'failed' ? { color: 'var(--act-danger)' } : undefined} />
           <span className={styles.text}>{label}</span>
           {steps ? <><span className={styles.meta}>{summary || `${steps} ${steps === 1 ? 'step' : 'steps'}`}</span><ChevronDown className={styles.chevron} aria-hidden="true" /></> : null}
         </button>
-        {open ? <>
+        {open && stream.length ? <ProcessingStream entries={stream} rows={openRows} /> : null}
+        {open && !stream.length ? <>
           <ol className={styles.list}>{settled.slice(0, historyCount).map(item => <SettledItem key={item.id} item={item} />)}</ol>
           {settled.length > historyCount ? (
             <button type="button" className={styles.earlier} onClick={() => setHistoryCount(count => count + HISTORY_PAGE_SIZE)}>Show more steps</button>
@@ -146,28 +156,30 @@ export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel
   const elapsed = startedAt ? formatElapsed(now - startedAt) : '';
   const waiting = state === 'waiting';
   const WaitingIcon = active?.kind === 'approval' || active?.kind === 'connection' ? Hand : Clock;
-  const hasDetails = Boolean(active || settled.length);
+  const hasStream = stream.length > 0;
+  const hasDetails = Boolean(active || settled.length || hasStream);
   const LiveIcon = active ? FAMILY_ICON[familyOf(active.kind)] : null;
 
   return (
     <section className={styles.timeline} aria-label="Activity" data-state={state} data-testid="activity-timeline">
       <span className={styles.sr} role="status" aria-live="polite">{text}</span>
-      <div className={styles.workingPanel} data-waiting={waiting ? 'true' : undefined}>
+      <div className={hasStream ? styles.streamPanel : styles.workingPanel} data-waiting={waiting ? 'true' : undefined}>
         <button type="button" className={`${styles.row} ${styles.workingHeader}`}
-          aria-expanded={hasDetails ? liveOpen : undefined} data-static={hasDetails ? undefined : 'true'}
-          onClick={hasDetails ? () => setLiveOpen(value => !value) : undefined} tabIndex={hasDetails ? 0 : -1}>
+          aria-expanded={hasStream ? !streamHidden : hasDetails ? liveOpen : undefined} data-static={hasDetails ? undefined : 'true'}
+          onClick={hasStream ? () => setStreamHidden(value => !value) : hasDetails ? () => setLiveOpen(value => !value) : undefined} tabIndex={hasDetails ? 0 : -1}>
           {waiting ? <WaitingIcon className={styles.icon} aria-hidden="true" /> : <BlackHoleIndicator />}
           <span className={styles.workingCopy}>
             <span className={styles.workingTitle}>
               <span>{waiting ? text : 'Black Hole is working'}</span>
               {elapsed ? <span className={styles.meta} aria-hidden="true">{elapsed}</span> : null}
             </span>
-            {!waiting && !(processing && processing.family !== 'start') ? <span className={styles.stage}>{text}</span> : null}
+            {!waiting && !hasStream && !(processing && processing.family !== 'start') ? <span className={styles.stage}>{text}</span> : null}
           </span>
           {hasDetails ? <ChevronDown className={styles.chevron} aria-hidden="true" /> : null}
         </button>
-        {processing ? <ProcessingSurface view={processing} /> : null}
-        {liveOpen && hasDetails ? <div className={styles.workingDetails}>
+        {processing && (!hasStream || processing.checklistSource === 'plan') ? <ProcessingSurface view={processing} listOnly={hasStream} /> : null}
+        {hasStream && !streamHidden ? <ProcessingStream entries={stream} rows={openRows} /> : null}
+        {!hasStream && liveOpen && hasDetails ? <div className={styles.workingDetails}>
           {hidden > 0 ? <button type="button" className={styles.earlier} onClick={() => {
             if (showAll) setHistoryCount(count => count + HISTORY_PAGE_SIZE);
             else setShowAll(true);

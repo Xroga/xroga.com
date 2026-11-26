@@ -717,7 +717,9 @@ function softwareText(
         text:
           event.title,
 
+        // Whatever the build agent reported about the file; shown only when the step is opened.
         body:
+          event.summary ??
           null,
       };
     }
