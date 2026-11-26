@@ -120,8 +120,8 @@
     }
   ],
   "counts": {
-    "total": 150,
-    "reviewed": 150,
+    "total": 151,
+    "reviewed": 151,
     "pending": 0,
     "unresolvedHighRiskReviewCandidates": 0
   },
@@ -991,6 +991,16 @@
         "previousSha256": "bf6525099f63f61c7bc2586bc24d52285312a825266d8eea3bf0d483d8d552fa",
         "currentSha256": "a2f18f24f9ce73a4947c9bbfc3112cc42fbf4a4fd8590a0bbbcaaf75bab776c9"
       }
-    ]
+    ],
+    "countCorrection": {
+      "previousProofSha256": "c91e2c207880a5895f0b301150a7821a8ae8d5f0074a08d505dbd07f4d35d564",
+      "priorCounts": {
+        "total": 150,
+        "reviewed": 150,
+        "pending": 0,
+        "unresolvedHighRiskReviewCandidates": 0
+      },
+      "reason": "The source of one public platform catalog GET was already in the serving commit but absent from its register. The existing team review (id e079c51ab00e88b88aa7) and its test are carried over unchanged for the identical source. No new transport is introduced by this release for that caller."
+    }
   }
 }
