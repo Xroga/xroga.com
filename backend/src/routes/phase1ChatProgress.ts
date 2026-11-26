@@ -99,13 +99,16 @@ router.post('/chat', (req: AuthRequest, res, next) => {
       signal: controller.signal,
     }).then((summary) => {
       if (!summary || !open) return;
-      write('progress', publicAiPayload({
-        agent: 'session',
-        status: 'reasoning_summary',
-        message: summary,
-        swarmStatusLabel: 'Thinking',
-        swarmActivity: summary,
-      }));
+      // One frame per note, so each appears as its own written update.
+      for (const note of summary.split('\n')) {
+        write('progress', publicAiPayload({
+          agent: 'session',
+          status: 'reasoning_summary',
+          message: note,
+          swarmStatusLabel: 'Thinking',
+          swarmActivity: note,
+        }));
+      }
     });
   }
 

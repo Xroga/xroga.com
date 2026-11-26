@@ -118,18 +118,15 @@ const clean = (value: string | undefined, max: number): string => {
 const MAX_ENTRIES = 40;
 
 /**
- * Two lines only matter when there is nothing better to show: the step that spans the whole chat answer,
- * and the first, mechanical reading of the request once a written approach note follows it.
+ * The backend's step that spans the whole chat answer only matters when there is nothing better to show.
  */
 function tidy(entries: StreamEntry[]): StreamEntry[] {
   const thought = entries.some(e => e.type === 'step' && e.id.endsWith(CLIENT_THOUGHT));
   const otherSteps = entries.some(e => e.type === 'step' && !e.id.endsWith(WRAPPER_STEP));
-  const notes = entries.filter(e => e.type === 'note');
-  const superseded = notes.length > 1 ? notes[0] : undefined;
   return entries.filter(e => e.type === 'step'
     // The backend's whole-answer line gives way to real work and to the Thinking line.
     ? !(e.id.endsWith(WRAPPER_STEP) && e.state !== 'failed' && (otherSteps || thought))
-    : e !== superseded);
+    : true);
 }
 
 const WRAPPER_STEP = 'preparing-answer';
@@ -140,7 +137,7 @@ export function buildProcessingStream(rows: readonly XrogaActivityPresentation[]
   const seenNotes = new Set<string>();
   for (const row of rows) {
     if (row.note) {
-      const text = clean(row.label, 400);
+      const text = clean(row.label, 700);
       if (text && !seenNotes.has(text)) { seenNotes.add(text); entries.push({ type: 'note', id: row.id, text }); }
       continue;
     }

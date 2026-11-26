@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "444a2d30b55892a363bdba053aac88fb7d91a4da",
+  "source_sha": "e50d1645d4e547074d9fbcbd4fa8a3c7421b050d",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17667,7 +17667,7 @@
     },
     {
       "path": "backend/src/ai/reasoningSummary.ts",
-      "sha256": "4420a54836e0cc01db6a7f4050fe5f7be485c23460f849d73dd6233d2c1e2b27"
+      "sha256": "c0c59fe1f22b0d7416caa2ac30ce0d70d85c61a24af0796379f0e2a251f4846e"
     },
     {
       "path": "backend/src/ai/repairController.ts",
@@ -19135,7 +19135,7 @@
     },
     {
       "path": "backend/src/routes/phase1ChatProgress.ts",
-      "sha256": "27273e84b9e6ef17c702b201f56f70ac363e29b297cfefac91023d909b1c33c2"
+      "sha256": "1c4bf20fb141192c92395bf59b878ae29cfa842a79ff95cad4681b06b555af4c"
     },
     {
       "path": "backend/src/routes/profile.ts",
@@ -24883,7 +24883,7 @@
     },
     {
       "path": "frontend/src/lib/terminal/processingStream.ts",
-      "sha256": "57423498f39ac9af90aafe8edb1e0643adc2d9c75290c218f9d6b17027418f1a"
+      "sha256": "50b1c4b750034332f0f81e84f99b7b8ab64b93deac0e11f2d2f2b715642424dd"
     },
     {
       "path": "frontend/src/lib/terminal/processingView.ts",
@@ -41891,7 +41891,7 @@
     },
     {
       "path": "frontend/src/lib/terminal/processingStream.ts",
-      "line": 140,
+      "line": 137,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -43,12 +43,12 @@ test('backend step frames start live and settle into one finished line', () => {
   assert.equal(settled[0]!.text, 'Searched the web: 4 sources from nodejs.org');
 });
 
-test('the whole-answer step and the mechanical reading give way to real steps and a written note', () => {
+test('the whole-answer step gives way to real steps and every written note stays', () => {
   const wrapper = row(':preparing-answer', 'Preparing your answer', 'active');
-  const reading = row('r', 'Reads as "a question answered".', 'complete', true);
-  assert.deepEqual(buildProcessingStream([wrapper, reading], true).map(e => e.text), ['Preparing your answer', 'Reads as "a question answered".']);
-  const more = [wrapper, reading, row('n', 'Compare both release lines first.', 'complete', true), row('a', 'Searching the web', 'active')];
-  assert.deepEqual(buildProcessingStream(more, true).map(e => e.text), ['Compare both release lines first.', 'Searching the web']);
+  const first = row('n1', 'The request compares two releases.', 'complete', true);
+  assert.deepEqual(buildProcessingStream([wrapper, first], true).map(e => e.text), ['Preparing your answer', 'The request compares two releases.']);
+  const more = [wrapper, first, row('n2', 'Stability matters more than novelty here.', 'complete', true), row('a', 'Searching the web', 'active')];
+  assert.deepEqual(buildProcessingStream(more, true).map(e => e.text), ['The request compares two releases.', 'Stability matters more than novelty here.', 'Searching the web']);
 });
 
 test('finished steps fold into one summary; the live line stays out; evidence is only what the row holds', () => {

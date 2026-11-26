@@ -10086,26 +10086,24 @@
       "id": "surface:6b6608aca0b309f1efdb",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/reasoningSummary.ts",
-      "sha256": "4420a54836e0cc01db6a7f4050fe5f7be485c23460f849d73dd6233d2c1e2b27",
+      "sha256": "c0c59fe1f22b0d7416caa2ac30ce0d70d85c61a24af0796379f0e2a251f4846e",
       "symbols": [
-        "REASONING_SUMMARY_MAX_CHARS",
+        "REASONING_SUMMARY_MAX_LINES",
+        "REASONING_SUMMARY_MAX_LINE_CHARS",
         "REASONING_SUMMARY_MAX_OUTPUT_TOKENS",
-        "REASONING_SUMMARY_MIN_MESSAGE_CHARS",
         "REASONING_SUMMARY_MODEL",
         "SYSTEM",
         "cleanReasoningSummary",
         "context",
-        "cut",
-        "end",
         "execute",
         "flag",
         "generateReasoningSummary",
+        "lines",
         "message",
         "messages",
         "reasoningSummaryEnabled",
         "result",
-        "scope",
-        "text"
+        "scope"
       ],
       "imports": [
         "../lib/publicAiIdentity.js",
@@ -34517,7 +34515,7 @@
       "id": "surface:a84cf17b2bc2287e5cc5",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
-      "sha256": "27273e84b9e6ef17c702b201f56f70ac363e29b297cfefac91023d909b1c33c2",
+      "sha256": "1c4bf20fb141192c92395bf59b878ae29cfa842a79ff95cad4681b06b555af4c",
       "symbols": [
         "HEARTBEAT_MS",
         "controller",
@@ -34526,6 +34524,7 @@
         "line",
         "message",
         "names",
+        "note",
         "open",
         "originalStatus",
         "preparing",
@@ -123858,7 +123857,7 @@
       "id": "surface:f97bad94eb42e051ed62",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/terminal/processingStream.ts",
-      "sha256": "57423498f39ac9af90aafe8edb1e0643adc2d9c75290c218f9d6b17027418f1a",
+      "sha256": "50b1c4b750034332f0f81e84f99b7b8ab64b93deac0e11f2d2f2b715642424dd",
       "symbols": [
         "MAX_ENTRIES",
         "PAST",
@@ -123885,7 +123884,6 @@
         "isCommand",
         "label",
         "liveId",
-        "notes",
         "otherSteps",
         "out",
         "pastTense",
@@ -123896,7 +123894,6 @@
         "standalone",
         "state",
         "step",
-        "superseded",
         "text",
         "thought",
         "tidy",
@@ -141721,7 +141718,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:5371e2d1d09250adb081",
+      "id": "registration:a5ad7c69c77c10d8099a",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
       "line": 36,
       "receiver": "router",
@@ -143267,8 +143264,8 @@
       "reason": "Router factory invoked by an imported default export; terminal middleware traced, behavior must still be tested."
     },
     {
-      "id": "route:af60878e2c984664b640",
-      "registrationId": "registration:5371e2d1d09250adb081",
+      "id": "route:499c361e873132b0a28a",
+      "registrationId": "registration:a5ad7c69c77c10d8099a",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
       "line": 36,
       "method": "POST",
