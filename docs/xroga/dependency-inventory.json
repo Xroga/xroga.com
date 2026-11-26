@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "f47e6004fe2fd14ce6e6c5ffadb567b01114f15f",
+  "source_sha": "675d54b78a4a4041be713a87f995dba338b4b369",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {

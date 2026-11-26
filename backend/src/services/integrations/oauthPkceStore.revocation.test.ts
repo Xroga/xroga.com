@@ -112,10 +112,19 @@ test('shared OAuth requires authority, persists revocation and rejects path trav
     assert.equal(await getUserPluginPermissionMode(context.userId, 'github'), 'low_risk');
     await setUserPluginPermissionMode(context, 'full_access');
     assert.equal(await getUserPluginPermissionMode(context.userId, 'github'), 'full_access');
+    // Account-wide Full access is the owner's explicit switch for every app: it is decided before any app policy is read, so an
+    // outage of one app's policy cannot lower it (sending, publishing, deleting and payments still ask in every mode).
+    toolkitOutage = true;
+    calls.length = 0;
+    assert.equal(await getUserPluginPermissionMode(context.userId, 'github'), 'full_access');
+    assert.equal(calls.length, 1, 'only the account-wide policy is read when it is full access');
+    toolkitOutage = false;
+    // With the account below Full access, an unavailable app policy fails closed and never falls back to a mirror or the global mode.
+    await setUserPluginPermissionMode(context, 'low_risk');
     toolkitOutage = true;
     calls.length = 0;
     assert.equal(await getUserPluginPermissionMode(context.userId, 'github'), 'always_ask');
-    assert.equal(calls.length, 1, 'unavailable toolkit policy cannot fall back to global full access or a mirror');
+    assert.equal(calls.length, 2, 'the account-wide policy and the unavailable app policy are the only reads');
     toolkitOutage = false;
     await setUserPluginPermissionMode(context, 'read_only', 'github');
     assert.equal(await getUserPluginPermissionMode(context.userId, 'github'), 'read_only');

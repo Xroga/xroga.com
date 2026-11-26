@@ -109,7 +109,9 @@ test('metadata waits cannot change the admitted actor plan or confirmation autho
   input.plan.summary='Read a harmless document';(input.plan.arguments.target as Record<string,unknown>).message='other-message';
   release();const result=await pending;assert.equal(result.status,'confirmation_required');
   if(result.status!=='confirmation_required')throw new Error('Expected original confirmation requirement');
-  assert.deepEqual(result.plan,admitted);assert.equal(verifyPlanDigest(result.plan),true);assert.equal(metadata,1);assert.equal(policies,1);
+  assert.deepEqual(result.plan,admitted);assert.equal(verifyPlanDigest(result.plan),true);assert.equal(metadata,1);
+  // The account-wide Full access switch is read first, then the app's own policy: two reads of the admitted owner's policy, no more.
+  assert.equal(policies,2);
 });
 
 test('metadata for a different same-toolkit action is rejected before policy or execution',async t=>{

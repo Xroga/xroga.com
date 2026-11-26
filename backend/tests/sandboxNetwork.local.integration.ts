@@ -1,7 +1,7 @@
 /** Real local Docker, pre-existing image only. No cloud or provider operation. */
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {execFileSync,spawnSync} from 'node:child_process';
+import {execFileSync} from 'node:child_process';
 import {ContainerSandboxRuntime} from '../src/sandbox/sandboxProviders.js';
 import {DEFAULT_SANDBOX_LIMITS} from '../src/sandbox/sandboxTypes.js';
 
@@ -31,15 +31,7 @@ test('actual no-network container installs an offline package and cannot reach p
   // This disposable proof needs one CPU. Production defaults request five CPUs,
   // which Docker correctly rejects on the four-CPU GitHub runner.
   const limits={...DEFAULT_SANDBOX_LIMITS,cpuSeconds:60};
-  let result;
-  try{result=await new ContainerSandboxRuntime({binary:'docker',image}).execute({files:[],command:'node',args:['-e',script],timeoutMs:30000,networkPolicy:'none',environment:{HOME:'/work'},limits});}
-  catch(error){
-    // DIAGNOSTIC (temporary): the daemon's own refusal text, which the runtime deliberately hides.
-    const nl=String.fromCharCode(10);
-    const run=(args)=>{const r=spawnSync('docker',args,{encoding:'utf8',timeout:20000});return args.join(' ')+' => '+r.status+nl+String(r.stdout||'').slice(0,1500)+String(r.stderr||'').slice(0,1500);};
-    console.log('DIAG '+[run(['version','--format','{{.Server.Version}} {{.Server.Os}}']),run(['info','--format','{{.Driver}} cgroup={{.CgroupVersion}} cpus={{.NCPU}} mem={{.MemTotal}} rt={{.DefaultRuntime}} sec={{.SecurityOptions}}']),run(['create','--name','xroga-diag','--pull','never','--log-driver','none','--network','none','--user','1000:1000','--read-only','--tmpfs','/work:rw,size=2048m,mode=1777','--memory','2048m','--memory-swap','2048m','--cpus','1','--pids-limit','256','--cap-drop','ALL','--security-opt','no-new-privileges','--workdir','/work',image,'node','-e','1']),run(['rm','-f','xroga-diag']),run(['create','--name','xroga-diag2','--rm','--pull','never','--network','none','--label','io.xroga.cleanup.owner=XROGA_LOCAL_DISPOSABLE_JOB_V1',image,'node','-e','1']),run(['rm','-f','xroga-diag2']),run(['create','--name','xroga-diag3','--label','io.xroga.cleanup.owner=XROGA_LOCAL_DISPOSABLE_JOB_V1','--label','io.xroga.cleanup.disposable=true','--pull','never','--network','none',image,'node','-e','1']),run(['rm','-f','xroga-diag3'])].join(nl+'----'+nl));
-    throw error;
-  }
+  const result=await new ContainerSandboxRuntime({binary:'docker',image}).execute({files:[],command:'node',args:['-e',script],timeoutMs:30000,networkPolicy:'none',environment:{HOME:'/work'},limits});
   assert.equal(result.exitCode,0,JSON.stringify(result));
   assert.match(result.stdout,/OFFLINE_INSTALL_AND_KERNEL_NETWORK_DENIAL_VERIFIED/);
   assert.equal(result.timedOut,false);
