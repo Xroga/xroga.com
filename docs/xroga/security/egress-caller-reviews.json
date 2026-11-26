@@ -4618,7 +4618,7 @@
     {
       "id": "6631f0cfac960ae10cff",
       "callSha256": "206706dbb61de5380fd1b4d123cfaaeff134ec6f18643bb9f3c9f7f3ddcde24e",
-      "sourceFileSha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1",
+      "sourceFileSha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780",
       "disposition": "VERIFIED_GUARD",
       "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
       "tenantAuthority": "Resume history is requested only for a run admitted by the signed-in Workspace API through the current Chrome port.",
@@ -4626,12 +4626,12 @@
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "if (message.type === 'run' && message.runId && admitted.has(message.runId))",
-          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
         },
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "else send({ type: 'activity-history', runId: message.runId })",
-          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
         }
       ],
       "reviewedOnBranch": "Sends a run ID only to the paired Chrome extension. The session token, page content and the provider key are excluded. No network transport, provider request or external side effect follows from requesting the existing local receipt summary."
@@ -4639,7 +4639,7 @@
     {
       "id": "e0aa33d2494c480caeb3",
       "callSha256": "3f0d26d4bf152dcc89783b04a195a6d4bf8c9093bb3a10c1454b4d596b59f152",
-      "sourceFileSha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1",
+      "sourceFileSha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780",
       "disposition": "VERIFIED_GUARD",
       "trust": "BOUNDED_CHROME_EXTENSION_PORT_NO_HTTP_TRANSPORT_OR_SESSION_TOKEN_IN_RESPONSE",
       "tenantAuthority": "Reconnected history is requested only after the API confirms the current account owns the exact run. The connection and run are checked again before sending.",
@@ -4647,12 +4647,12 @@
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "if (disposed || portRef.current !== connected || activeRun.current) return",
-          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
         },
         {
           "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
           "marker": "send({ type: 'activity-history', runId: checkpoint })",
-          "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+          "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
         }
       ],
       "reviewedOnBranch": "Sends a run ID only to the paired Chrome extension. The session token, page content and the provider key are excluded. No network transport, provider request or external side effect follows from requesting the existing local receipt summary."

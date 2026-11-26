@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "ced2e59fa115c0e220559e7c28fefa67b04086c9",
+  "source_sha": "50e94d234f13cdf48040ad4812ea251972784102",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -388,7 +388,9 @@
         "XROGA_SANDBOX_FLY_REGION",
         "XROGA_SANDBOX_FLY_TOKEN",
         "XROGA_SANDBOX_LIVE_TEST_API_KEY",
+        "XROGA_SANDBOX_WORKER_AUDIENCE",
         "XROGA_SANDBOX_WORKER_NAME",
+        "XROGA_SANDBOX_WORKER_RESTRICTED",
         "XROGA_SANDBOX_WORKER_TOKEN",
         "XROGA_SANDBOX_WORKER_URL"
       ],
@@ -2898,6 +2900,40 @@
       "evidence_ids": []
     },
     {
+      "dependency_id": "endpoint-codeload-github-com",
+      "provider": "Source-defined endpoint codeload.github.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/sandbox/repoRun.ts"
+      ],
+      "hostnames": [
+        "codeload.github.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/sandbox/repoRun.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
       "dependency_id": "endpoint-coordinator",
       "provider": "Source-defined endpoint coordinator",
       "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
@@ -2927,6 +2963,40 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/workers/browserCoordinator.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-cursor-com",
+      "provider": "Source-defined endpoint cursor.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/lib/externalAgentWorkflows.ts"
+      ],
+      "hostnames": [
+        "cursor.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/lib/externalAgentWorkflows.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -3385,6 +3455,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
+        "frontend/src/lib/externalAgentWorkflows.ts",
         "frontend/src/lib/seoPhase2Content.ts"
       ],
       "hostnames": [
@@ -3406,6 +3477,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
+        "frontend/src/lib/externalAgentWorkflows.ts",
         "frontend/src/lib/seoPhase2Content.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -3557,6 +3629,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
+        "frontend/src/lib/externalAgentWorkflows.ts",
         "frontend/src/lib/pluginCatalog.ts",
         "frontend/src/lib/seoPhase2Content.ts"
       ],
@@ -3579,6 +3652,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
+        "frontend/src/lib/externalAgentWorkflows.ts",
         "frontend/src/lib/pluginCatalog.ts",
         "frontend/src/lib/seoPhase2Content.ts"
       ],
@@ -4426,6 +4500,7 @@
         "frontend/src/components/response-experience-v2/entityRegistry.ts",
         "frontend/src/components/terminal/ChatIntegrationsBar.tsx",
         "frontend/src/components/terminal/GithubRepoModal.tsx",
+        "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx",
         "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
         "frontend/src/context/TerminalChatContext.tsx",
@@ -4433,6 +4508,7 @@
         "frontend/src/lib/chatArchive.ts",
         "frontend/src/lib/cloudTerminalSessions.ts",
         "frontend/src/lib/engineeringArtifact.ts",
+        "frontend/src/lib/externalAgentWorkflows.ts",
         "frontend/src/lib/githubProjectsFromHistory.ts",
         "frontend/src/lib/pluginCatalog.ts",
         "frontend/src/lib/syncRepoTerminalSessions.ts",
@@ -4486,6 +4562,7 @@
         "frontend/src/components/response-experience-v2/entityRegistry.ts",
         "frontend/src/components/terminal/ChatIntegrationsBar.tsx",
         "frontend/src/components/terminal/GithubRepoModal.tsx",
+        "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx",
         "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
         "frontend/src/context/TerminalChatContext.tsx",
@@ -4493,10 +4570,45 @@
         "frontend/src/lib/chatArchive.ts",
         "frontend/src/lib/cloudTerminalSessions.ts",
         "frontend/src/lib/engineeringArtifact.ts",
+        "frontend/src/lib/externalAgentWorkflows.ts",
         "frontend/src/lib/githubProjectsFromHistory.ts",
         "frontend/src/lib/pluginCatalog.ts",
         "frontend/src/lib/syncRepoTerminalSessions.ts",
         "frontend/src/lib/terminalHistory.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-google-gemini-github-io",
+      "provider": "Source-defined endpoint google-gemini.github.io",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/lib/externalAgentWorkflows.ts"
+      ],
+      "hostnames": [
+        "google-gemini.github.io"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/lib/externalAgentWorkflows.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -5030,6 +5142,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
+        "backend/src/sandbox/remoteSandbox.ts",
         "backend/src/scripts/verifyGceExecution.ts",
         "backend/src/synthesis/projectRuntime/googleFactory.ts",
         "backend/src/workers/browserRunDispatch.ts"
@@ -5062,7 +5175,12 @@
         "XROGA_GCE_VERIFY_ONLY",
         "XROGA_GCE_ZONE",
         "XROGA_PROJECT_RUNTIME_PROVIDER",
-        "XROGA_RELEASE_SHA"
+        "XROGA_RELEASE_SHA",
+        "XROGA_SANDBOX_WORKER_AUDIENCE",
+        "XROGA_SANDBOX_WORKER_NAME",
+        "XROGA_SANDBOX_WORKER_RESTRICTED",
+        "XROGA_SANDBOX_WORKER_TOKEN",
+        "XROGA_SANDBOX_WORKER_URL"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -5076,6 +5194,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
+        "backend/src/sandbox/remoteSandbox.ts",
         "backend/src/scripts/verifyGceExecution.ts",
         "backend/src/synthesis/projectRuntime/googleFactory.ts",
         "backend/src/workers/browserRunDispatch.ts"
@@ -5588,6 +5707,40 @@
       "evidence_ids": []
     },
     {
+      "dependency_id": "endpoint-pypi-org",
+      "provider": "Source-defined endpoint pypi.org",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/sandbox/dependencyAcquisition.ts"
+      ],
+      "hostnames": [
+        "pypi.org"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/sandbox/dependencyAcquisition.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
       "dependency_id": "endpoint-python-org",
       "provider": "Source-defined endpoint python.org",
       "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
@@ -5699,6 +5852,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
+        "backend/src/sandbox/dependencyAcquisition.ts",
         "backend/src/workers/imagePins.ts"
       ],
       "hostnames": [
@@ -5720,6 +5874,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
+        "backend/src/sandbox/dependencyAcquisition.ts",
         "backend/src/workers/imagePins.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -8307,6 +8462,7 @@
         "XROGA_BROWSER_IMAGE",
         "XROGA_BROWSER_PLANNER_MODEL",
         "XROGA_BROWSER_PROXY_IMAGE",
+        "XROGA_BROWSER_REASONING_DEFAULT",
         "XROGA_BROWSER_REPO_ROOT",
         "XROGA_BROWSER_WORKER_URL",
         "XROGA_BUILDER_INPROCESS_QA",
@@ -13838,6 +13994,25 @@
       ]
     },
     {
+      "name": "XROGA_BROWSER_REASONING_DEFAULT",
+      "consuming_sources": [
+        "backend/src/routes/localBrowser.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_BROWSER_REPO_ROOT",
       "consuming_sources": [
         "backend/src/workers/browserCoordinatorHost.ts"
@@ -15903,6 +16078,26 @@
       ]
     },
     {
+      "name": "XROGA_SANDBOX_WORKER_AUDIENCE",
+      "consuming_sources": [
+        "backend/src/sandbox/remoteSandbox.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "google-execution",
+        "endpoint-metadata-google-internal"
+      ]
+    },
+    {
       "name": "XROGA_SANDBOX_WORKER_NAME",
       "consuming_sources": [
         "backend/src/sandbox/remoteSandbox.ts"
@@ -15918,7 +16113,28 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "google-execution"
+        "google-execution",
+        "endpoint-metadata-google-internal"
+      ]
+    },
+    {
+      "name": "XROGA_SANDBOX_WORKER_RESTRICTED",
+      "consuming_sources": [
+        "backend/src/sandbox/remoteSandbox.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "google-execution",
+        "endpoint-metadata-google-internal"
       ]
     },
     {
@@ -15937,7 +16153,8 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "google-execution"
+        "google-execution",
+        "endpoint-metadata-google-internal"
       ]
     },
     {
@@ -15956,7 +16173,8 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "google-execution"
+        "google-execution",
+        "endpoint-metadata-google-internal"
       ]
     },
     {
@@ -17009,7 +17227,7 @@
     },
     {
       "path": "backend/src/ai/resourceMeter.ts",
-      "sha256": "41d41394517529873968222975159e930630e672a03f7f6d786507d63cee1a3d"
+      "sha256": "a7052c1dcbc6eea80c1049639f813704072432f907a7c706620df413d0cf0f26"
     },
     {
       "path": "backend/src/ai/responseIcons.ts",
@@ -17677,7 +17895,11 @@
     },
     {
       "path": "backend/src/existingSource/change/production.ts",
-      "sha256": "0494c9f7d6bb855fa01ecadf0c3416feb084974f6c9446d77a60f090bf8b9a9b"
+      "sha256": "eb5a774687b67d044c7ea1de37dc9c53c205e1dc59364bcd6cbde8e234588b64"
+    },
+    {
+      "path": "backend/src/existingSource/change/publicRepoChange.ts",
+      "sha256": "50d5e5bdeb4b18a3ee2a76b37a33ca318af43acd98763bd2df2a83851f0c6877"
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
@@ -17829,7 +18051,7 @@
     },
     {
       "path": "backend/src/index.ts",
-      "sha256": "7b62495689940b518363a781c7cc2a88406d2a2b70c4105c8378c83ee8e93f52"
+      "sha256": "94cc884155378701c12a9a0f8a9167b77e8fe7c7dcc5cbaee94a198b31a2a56b"
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
@@ -18269,7 +18491,7 @@
     },
     {
       "path": "backend/src/routes/browserDocuments.ts",
-      "sha256": "52b4445687ccae287d6c84bfefac85c463400915c5857c7d70f4b9a9a5cddfe3"
+      "sha256": "131007966c483ed8c7741e73be3a230c85e3cb79db89dd90908c68605d28206e"
     },
     {
       "path": "backend/src/routes/browserRunInternal.ts",
@@ -18361,11 +18583,11 @@
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "sha256": "a378faf1bcf3b87d7dcf82620855fc2bfb9847ff04121fd784f25c06bd4c65b8"
+      "sha256": "a40092256167d3e1862314641773ca749df710b56cd6bc8ec053351aea9248ac"
     },
     {
       "path": "backend/src/routes/localBrowserDevice.ts",
-      "sha256": "94ffe69a8a5b2a58504ee8deebf7e7e6f2029b387ede5fd1d08c7127f85d9616"
+      "sha256": "6c315347d3c9d61d21e2722dca380a1c2f7891cefb06e709d964b08f855c31ff"
     },
     {
       "path": "backend/src/routes/localBrowserDirectRead.ts",
@@ -18373,7 +18595,7 @@
     },
     {
       "path": "backend/src/routes/localBrowserPlugins.ts",
-      "sha256": "afb6d29d8b8582cd8c38a80c3df5f79c96c4d4f604b318c9f67da2d398a79044"
+      "sha256": "c71ed45f02944b55101f6c7930a6ac6c213fe580091f9249a5d7a0d5f2282fef"
     },
     {
       "path": "backend/src/routes/marketplace.ts",
@@ -18452,6 +18674,10 @@
       "sha256": "f61a9e808d9708eb4929981a610087819bbed0681bd88c327cd6edecb0260f2c"
     },
     {
+      "path": "backend/src/routes/teams.ts",
+      "sha256": "ed12e795542c30516005b5a9681eee3b7e734fd619d80e1eaf913d3979df0b5b"
+    },
+    {
       "path": "backend/src/routes/terminalSessions.ts",
       "sha256": "35e80b68558f984ecd2a821b23e42d155689b9ea7b0f17f063195a8d640cd55d"
     },
@@ -18496,8 +18722,16 @@
       "sha256": "eac9ca2b4ea7f6af3de801e4c083fbeb33ab3edd75e4de2900518e9511a88ebf"
     },
     {
+      "path": "backend/src/sandbox/agentSkill.ts",
+      "sha256": "0eb344ea6eaa82ce488f1e549880c2a17adc2b68c9dcef3c2b8e9958ecaa087d"
+    },
+    {
       "path": "backend/src/sandbox/containerCancellation.local.integration.ts",
       "sha256": "a51ff2700018ebe1c8de13c8d6d94edb855183a77d5acaa16ea4f0e8f59bd41d"
+    },
+    {
+      "path": "backend/src/sandbox/dependencyAcquisition.ts",
+      "sha256": "45c04834e978bf8a6f24ef4604683530deb93e30c9b500b8e18f763d0d35087f"
     },
     {
       "path": "backend/src/sandbox/flyMachineSandbox.ts",
@@ -18525,11 +18759,15 @@
     },
     {
       "path": "backend/src/sandbox/meteredExecution.ts",
-      "sha256": "e55acab12c5d0ec4900d0f61a1fae4090fe1e3b20f45cf22ce55018df396fcad"
+      "sha256": "27aa4a40697792b2249603f7d39245740424a9aa6e40bbaf4c8d8fa019aeb07a"
     },
     {
       "path": "backend/src/sandbox/remoteSandbox.ts",
-      "sha256": "a97ed5a5320436ba360e384b95a9bdd6232a19f021a6e551b378cc6969f475a2"
+      "sha256": "db251c56839ff03fa5d7d6df7449adc9b617fc7595a6796060b49da7d7354790"
+    },
+    {
+      "path": "backend/src/sandbox/repoRun.ts",
+      "sha256": "bdd29aa5d0b9f6f964a818538382259eb5098bdcf3da8a91efaa2b60242eac00"
     },
     {
       "path": "backend/src/sandbox/sandboxEnvironment.ts",
@@ -18545,7 +18783,11 @@
     },
     {
       "path": "backend/src/sandbox/sandboxTypes.ts",
-      "sha256": "5e630d4a26584f4499c5efcf05f584bb3230fc9bbf40be3c1d9fd00306055477"
+      "sha256": "48673ae651ff36744dd8f699c574998e1feaa204fd600643943b8e6a8c5599c2"
+    },
+    {
+      "path": "backend/src/sandbox/workerExecutionPort.ts",
+      "sha256": "b85697dabb93e661cc59a511485e5d2933dcfcfb3690350522b50c9005d6268b"
     },
     {
       "path": "backend/src/scripts/runCanonicalWorker.ts",
@@ -18752,6 +18994,10 @@
       "sha256": "6ace142fd3daab4c1d94037513c4065ac2893ed1f451e6662db7dd67c0c1b378"
     },
     {
+      "path": "backend/src/security/publicBodyText.ts",
+      "sha256": "7c4dac295524c57a3636a229a31f3543092f5c1480701a88c3151b985feeb194"
+    },
+    {
       "path": "backend/src/security/quotaEvidence.local.integration.ts",
       "sha256": "fada49f928fe3d2befccc4ae0d1f8741fe759f6cbd1604c2fea820eded80b0f4"
     },
@@ -18893,7 +19139,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sha256": "15d2c7f112c1eceab5d5ebf718f92791609f547721500180fa81143bb14da0f8"
+      "sha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
     },
     {
       "path": "backend/src/services/integrations/businessAutomations.ts",
@@ -18921,7 +19167,7 @@
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "e34acb6ce100b87a447cb0ec33f648d0e9100151c29bccd74ee88ed822515d7d"
+      "sha256": "37664dd39e626c417bec4ed231cbe8f3a8abc840e82983a2761e28aeb2aef53d"
     },
     {
       "path": "backend/src/services/integrations/composioControl.ts",
@@ -19049,7 +19295,7 @@
     },
     {
       "path": "backend/src/services/integrations/pluginPermissionPolicy.ts",
-      "sha256": "e2f5003e2bf6f567b9f893812668288e9dfb01e920df0eea7870896cdb3b3b3d"
+      "sha256": "f8a669921857f89212a9a3dcf963b6ccefcfa40877480d292c5c6431d7424767"
     },
     {
       "path": "backend/src/services/integrations/researchResult.ts",
@@ -20009,7 +20255,7 @@
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/projects/page.tsx",
-      "sha256": "e643e1733f69d23c8811043a9ecdde59f91039259112213f1629308d707f8291"
+      "sha256": "a4a6433193e478693e56015a09b22e608caed3d7a4e90f74021de9f58b6e25bf"
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/publish/cws/callback/page.tsx",
@@ -20052,12 +20298,20 @@
       "sha256": "2afc1c2bf12ca0f2f5b538e4d3528d4ca5372da4ca9028a688fc914581bb7c0b"
     },
     {
+      "path": "frontend/src/app/(shell)/join/[token]/page.tsx",
+      "sha256": "12652028f0357d1677220586062f843542d351de0235a743c01668ea84fc6923"
+    },
+    {
       "path": "frontend/src/app/(shell)/layout.tsx",
       "sha256": "44577045e394eb2a8183474d4516c4be72464f50567a92622757fed257625597"
     },
     {
       "path": "frontend/src/app/(shell)/settings/page.tsx",
       "sha256": "3da7fc6ae667f0a8fb5e3e1f66bdfb7731196ebb76c33c06261fdea447f04436"
+    },
+    {
+      "path": "frontend/src/app/(shell)/team/page.tsx",
+      "sha256": "542d4977cae6f2f6c83ec6cac1659ccb4fe7d2b46cfd71ec75ce9ca7f373e005"
     },
     {
       "path": "frontend/src/app/(workspace)/dashboard/page.tsx",
@@ -20178,6 +20432,18 @@
     {
       "path": "frontend/src/app/auth/signup/page.tsx",
       "sha256": "7109a7bf6121b5073a1e4e7fa20b58fa9b22111e46fe3590ba3cf1b55a2b2ac7"
+    },
+    {
+      "path": "frontend/src/app/black-hole/BlackHoleExperience.tsx",
+      "sha256": "dbc487d46c0ea71e0563229a6bc575d6d321a343ad44ea2ac5187df942c77243"
+    },
+    {
+      "path": "frontend/src/app/black-hole/BlackHoleVisual.tsx",
+      "sha256": "6ccc0c75a79ee3ce340cb23f2e1e2fc300f8d566f6e6604bfaca7a8dee29f54a"
+    },
+    {
+      "path": "frontend/src/app/black-hole/page.tsx",
+      "sha256": "7f10142ce873fb7c806f947e3c4d3fff5a58f477a5e00a532ffe2309a210ddbb"
     },
     {
       "path": "frontend/src/app/blog/[slug]/page.tsx",
@@ -20320,8 +20586,12 @@
       "sha256": "618d56589fb61eb5b252f1d9f7c46eed8bf933cd7a38034735281e15f8d7cbd7"
     },
     {
+      "path": "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
+      "sha256": "8b580f61099e58b0b129e1d061e8a821f63a07816fcdb2f8b9a9a498ab008a8d"
+    },
+    {
       "path": "frontend/src/app/integrations/page.tsx",
-      "sha256": "1aaa012550be10314a212302a3e7d3b3c4bc6fc52b70e5276a74a94b27da3ef5"
+      "sha256": "fc75d7cdcb03ad409f7978b61b81cbcae587aa5954c3ea33a2b8270c222044e7"
     },
     {
       "path": "frontend/src/app/layout.tsx",
@@ -20401,7 +20671,7 @@
     },
     {
       "path": "frontend/src/app/page.tsx",
-      "sha256": "8a5984a73ef38a3926a5feee112afccbbe1bb6e835f8aee6da8baaa59a1c8aa3"
+      "sha256": "462e349f4a696db57c3c15f4d352763aa159126568354c965b00869a3926edbe"
     },
     {
       "path": "frontend/src/app/pricing/layout.tsx",
@@ -20653,7 +20923,7 @@
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "sha256": "82983bf0a836d2e284ffe35ddea6b182b42dcb64304a2a394e6becc9a46213c1"
+      "sha256": "3ec20a8fbc6eebbd983a008a58cc7c14fa93bbff6a2b23bc222a09e115b41780"
     },
     {
       "path": "frontend/src/components/browser/XrogaBrowser.tsx",
@@ -20773,7 +21043,7 @@
     },
     {
       "path": "frontend/src/components/dashboard/DashboardView.tsx",
-      "sha256": "31218793ba7eadbcb863556c8df57565775f8ac23ba9007a4463dcf783d5ec6e"
+      "sha256": "1168d33a88e1b3a8ee3031136bc60172485ffaf155badf5b012752f0299ab2ab"
     },
     {
       "path": "frontend/src/components/dashboard/DashboardWelcome.tsx",
@@ -21733,7 +22003,7 @@
     },
     {
       "path": "frontend/src/components/integrations/PluginBrandLogo.tsx",
-      "sha256": "8e8832149f544dbf4299886318ccd381f1da0dc20c2460747004d7b0d87939df"
+      "sha256": "8a1b4797ebbc64162a388eb86ff3c5c01694266470ffaad500e5ae3cd6a02292"
     },
     {
       "path": "frontend/src/components/integrations/PluginDetail.tsx",
@@ -21825,7 +22095,7 @@
     },
     {
       "path": "frontend/src/components/layout/Sidebar.tsx",
-      "sha256": "f96d852da2b68a77133a1164dc70b3c115def79315bba910a6f9d7f51a5952df"
+      "sha256": "9796854efb77ad0c71044aa609bf2d5b4262f7614d0ef08c5674d56a5a2b6ea1"
     },
     {
       "path": "frontend/src/components/layout/SidebarActionMenu.tsx",
@@ -21841,7 +22111,7 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarNavScroller.tsx",
-      "sha256": "030ee91457b3cad4704a09d8e94f597cd17f9c590e0ec9beb3fa07e85ed4f7ae"
+      "sha256": "88b416a3164797ba1081419d50c97a58e809055a9edea69dcf8e7efd06cc6b17"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
@@ -21905,11 +22175,15 @@
     },
     {
       "path": "frontend/src/components/marketing/AiAppBuilderLanding.tsx",
-      "sha256": "e1eb7cb35b512811c0479a2b654d8761773ea46bdf80ec1e9a8580e1df1202e1"
+      "sha256": "d349e01dd506f0ee950ef131a09a492d617e7a8e486e66d6b9e1cb4825bff171"
     },
     {
       "path": "frontend/src/components/marketing/AiAppBuilderPrompt.tsx",
       "sha256": "8cc1c60efe052177e6cb6c9888e28bafc625bb1582a6a26bc4897cd9ac0ff529"
+    },
+    {
+      "path": "frontend/src/components/marketing/AiAppBuilderSeoContent.tsx",
+      "sha256": "cfde1940f87dea9b8e463c9890f982de51a813c93a127a87f90d9f17741c94b8"
     },
     {
       "path": "frontend/src/components/marketing/AiAppBuilderWatercolor.tsx",
@@ -22396,6 +22670,18 @@
       "sha256": "c41d209915a903da8cfb6d4f0efc4e7de01c3c7113008dbb6832f737944b64d2"
     },
     {
+      "path": "frontend/src/components/team/JoinTeam.tsx",
+      "sha256": "317bf23befbbbeeb0dc661704ee53c7e55eb7775ebb145538cf7eb9e67fe4e7a"
+    },
+    {
+      "path": "frontend/src/components/team/TeamPage.tsx",
+      "sha256": "cde92e06a076b450a920ee74077ea528e51a837fef9fca352df766b3a17568c6"
+    },
+    {
+      "path": "frontend/src/components/team/TeamWorkspace.tsx",
+      "sha256": "df03f32c5c518d80c740313fd69a6b5ff1ffe09e83d3f826128a477769b9e2b7"
+    },
+    {
       "path": "frontend/src/components/terminal/AgentTypewriterText.tsx",
       "sha256": "02bb61853744a50898d6cac335cdbcc09f466de14936180e74359154adedc0dc"
     },
@@ -22405,11 +22691,11 @@
     },
     {
       "path": "frontend/src/components/terminal/BlackHoleMark.tsx",
-      "sha256": "cee93c037c1fb922df7fc49826bbb6f308d1af372dedc8efd2d27d5d5475a7c2"
+      "sha256": "7683980a268cdcf2b2d10be25f49e44ae4d772a9357c8f6800deb6cf380c04a9"
     },
     {
       "path": "frontend/src/components/terminal/BlackHoleVButton.tsx",
-      "sha256": "fdc49818f067ad6fb65666437409407b18f27e0e1bc2ed6567aaad86fa65a298"
+      "sha256": "63ea8e31d85fe06f4af105055de0a9648531b029124609fe894b230097e755fd"
     },
     {
       "path": "frontend/src/components/terminal/BuildCodeSandbox.tsx",
@@ -22429,7 +22715,7 @@
     },
     {
       "path": "frontend/src/components/terminal/ChatBarActionsMenu.tsx",
-      "sha256": "caa7e448e518c7b41b2302b1f97414998ad975847bffba857995113934feb4e3"
+      "sha256": "1a513ca4141fb8bea2e79b0dbae99677b52d47ecc203f7fb82539eb537205f20"
     },
     {
       "path": "frontend/src/components/terminal/ChatBarButtons.tsx",
@@ -22461,7 +22747,7 @@
     },
     {
       "path": "frontend/src/components/terminal/ChatTurnRail.tsx",
-      "sha256": "6afcf033d68796efb15e3bcec771bec8840bda755b3b9f7ffe660e1ad40b843d"
+      "sha256": "a8cb247e4540341a102045b91342063fd1741bc5b712b41f50f38bcd979e8378"
     },
     {
       "path": "frontend/src/components/terminal/ChatbarQueueOutside.tsx",
@@ -22521,7 +22807,7 @@
     },
     {
       "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "sha256": "0dbd96995b155733fa243bf3ce5cab4f3a5e374f86e566ff29f850f3cae8f8c1"
+      "sha256": "0d364d2758cc8871f42f4b371a0fcbde31f90a84f7d6286ca0924a7dbd42b310"
     },
     {
       "path": "frontend/src/components/terminal/LegacyLandingOutputView.tsx",
@@ -22545,7 +22831,7 @@
     },
     {
       "path": "frontend/src/components/terminal/ModelAppPermissions.tsx",
-      "sha256": "c8371dd30298bb8a2a98d94934ecc395ba20b354df6a7f435b3286a6401c093c"
+      "sha256": "982cd973fc45e7d3bd177526be63cdbdb76b108a267492503ec8c9bc2a771724"
     },
     {
       "path": "frontend/src/components/terminal/ProductStartChips.tsx",
@@ -22562,6 +22848,10 @@
     {
       "path": "frontend/src/components/terminal/ProjectWorkspaceRail.tsx",
       "sha256": "6b9c079c5921ac6ab12ae12b0a5676432463843e36e99eabd51b2d3ec9c6eec2"
+    },
+    {
+      "path": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
+      "sha256": "6af84f6552f9c2f3e40fd187e6805d30b3ecfa11c1d4867cc69c7ce61f86e867"
     },
     {
       "path": "frontend/src/components/terminal/ReasoningAndFollowUps.tsx",
@@ -22617,7 +22907,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sha256": "c2edaea30162f2313c6de6e121be4c68b0676b19014ed31da5c4cd98eddee839"
+      "sha256": "dfdcf903eefaa158b3d6e28c2da80df9312563791359622133a686a4bfdcb82f"
     },
     {
       "path": "frontend/src/components/terminal/TerminalDock.tsx",
@@ -22672,16 +22962,20 @@
       "sha256": "8e0b17b81dcdb750e39ecf274727996fc6a899a2c4eafbd5132b5fa9bf1e49ed"
     },
     {
+      "path": "frontend/src/components/terminal/WorkspaceConversationMenu.tsx",
+      "sha256": "a4ab64fe6dbf10123a71053f29f1a763cd96e3d206d916f302b5f479acb50c78"
+    },
+    {
       "path": "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx",
       "sha256": "267574d0f4175c1b1075d14c1a5c8e39de4a9c315101479d8edd8c3c8c894dd7"
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceLauncher.tsx",
-      "sha256": "88725edfafa78eeb8e50129641166281becee1d7e81b99a86d7d10c2f0e9c867"
+      "sha256": "fb66177195fa8ac30107e287b33e186452aa7c3a4d46bf4c279ab8affa93e6f2"
     },
     {
       "path": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
-      "sha256": "a1919f56653e80ff61698e1a16b9e8dcb4f83936931e1af827b061a0ad4c0726"
+      "sha256": "f173d0d4148f7e92510c13f4c2352c29b2188337026e714eccb2769bca0dc2fd"
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceSearchButton.tsx",
@@ -22941,7 +23235,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "e63361404059650e86323ce433c60037c52409a119beece8baf48acc90254c5b"
+      "sha256": "88017b26b195c939a255d361cf3b903eb7a8faf806abe2ae6417326e7b0a9656"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -23057,7 +23351,7 @@
     },
     {
       "path": "frontend/src/lib/capabilityPages.ts",
-      "sha256": "7733757da3fe9c24bcb1bec24e50e426957c3328151f5766dc4a81d92d1a3f0e"
+      "sha256": "a87bebf54942f456218cff340737efacfa6626b30749863b7d682d257801b343"
     },
     {
       "path": "frontend/src/lib/capacityMessage.ts",
@@ -23192,6 +23486,10 @@
       "sha256": "840051367eb8a652f7aa8d5d6e7598f8eaccbf9f8c2d624cd89b1f520f8befb3"
     },
     {
+      "path": "frontend/src/lib/externalAgentWorkflows.ts",
+      "sha256": "b6d2664c66bc8d77d8e07147a557a89d7d728a305dd7cc4fc657a5560f60f2b3"
+    },
+    {
       "path": "frontend/src/lib/featureSeo.ts",
       "sha256": "627b9d37311cba5656702772fa1da4a843fb08f0327ecf601692bef6d2fce71f"
     },
@@ -23280,6 +23578,10 @@
       "sha256": "5006b5e6ba40f87933ef75c2ba044f49b56613ae15030bbb196e511be8bb7078"
     },
     {
+      "path": "frontend/src/lib/integrationDiscoveryFilters.ts",
+      "sha256": "d61ff34189519aca091736ea4d89d4bf2fa786a63e6a9479bbda881a4e093219"
+    },
+    {
       "path": "frontend/src/lib/integrationLogos.ts",
       "sha256": "784f334a41cd827b721058ea0fd51aa48f921d89d66a969462992023cfe3e1f2"
     },
@@ -23322,6 +23624,10 @@
     {
       "path": "frontend/src/lib/legacyLandingRunRecovery.ts",
       "sha256": "cc1077e8e8ed4e57cb2443caa032fdacf1396f084d504dfb6fd617c3fa5724a0"
+    },
+    {
+      "path": "frontend/src/lib/liveIntegrationDiscovery.ts",
+      "sha256": "fde037723c32672aa6e2e556f78d85cbc96a4bfc410986764eaa0737de49d1e6"
     },
     {
       "path": "frontend/src/lib/mathDetect.ts",
@@ -23492,12 +23798,24 @@
       "sha256": "ed15332a34fb2ba534b79d043d0faf2c4fd1d98754cb45f6c858dfa63e781964"
     },
     {
+      "path": "frontend/src/lib/publicConnectCatalog.ts",
+      "sha256": "e3bc7e2a3acb9adba5bb5c8506d1c7fadb5be3e3329d00dad3050d1bd7411240"
+    },
+    {
+      "path": "frontend/src/lib/publicIntegrationLogo.ts",
+      "sha256": "a9df6561f2dba341f2c5deebd5fbe88aa2ae677d0a6c198979655d6e1027a0e0"
+    },
+    {
+      "path": "frontend/src/lib/publicIntegrationsDirectory.ts",
+      "sha256": "e00c00150889f0dbc5edfb926dce8d60af90c52e530dfc6780e0aef77fbd143b"
+    },
+    {
       "path": "frontend/src/lib/publicMarketing.ts",
       "sha256": "020281baaedc2433064c1ba4fa738456977272ab9545be67770f8f8618a48fd0"
     },
     {
       "path": "frontend/src/lib/publicUrlInventory.ts",
-      "sha256": "39207af254d2a8a86ecbf99ea7f14378c4c7b956a87f1f0d0cf4a45a198c1f72"
+      "sha256": "53cedb2c7022391c56e4fd479d153a6cd5140b780f189fd70c437994b5900237"
     },
     {
       "path": "frontend/src/lib/publish/types.ts",
@@ -23748,6 +24066,10 @@
       "sha256": "583902051342bf8237a2e687256a048d0e5edbf2db4de72ec3f08c4968c096bf"
     },
     {
+      "path": "frontend/src/lib/teams.ts",
+      "sha256": "da070267c6186578c54577749b98a9547ce33ec7fa1c713696cd96d2775db8fa"
+    },
+    {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
       "sha256": "9691f43d3dd244e8ab5b7d4c27eedae9ab41f4e4d1ca530476ef86d1bca388f6"
     },
@@ -23989,7 +24311,7 @@
     },
     {
       "path": "frontend/src/store/useComposerToolsStore.ts",
-      "sha256": "963d54b27d042b07858c478c64604bb5a4f5e530266f045f099e64ff437d8d18"
+      "sha256": "9d50dc34cf43994ef9f0fab4921a0bd8f59dcc979584afe2e39ede941ec6f72d"
     },
     {
       "path": "frontend/src/store/useCurrencyStore.ts",
@@ -25451,42 +25773,42 @@
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/index.ts",
-      "line": 118,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
       "line": 119,
       "credentialsInUrl": false
     },
     {
-      "hostname": "www.xroga.com",
+      "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 120,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xrogaaicom.vercel.app",
+      "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 121,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga-api.fly.dev",
+      "hostname": "xrogaaicom.vercel.app",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 122,
       "credentialsInUrl": false
     },
     {
+      "hostname": "xroga-api.fly.dev",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 123,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 221,
+      "line": 231,
       "credentialsInUrl": false
     },
     {
@@ -25997,14 +26319,14 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 515,
+      "line": 740,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/localBrowserPlugins.ts",
-      "line": 90,
+      "line": 145,
       "credentialsInUrl": false
     },
     {
@@ -26071,6 +26393,20 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "pypi.org",
+      "protocol": "https:",
+      "path": "backend/src/sandbox/dependencyAcquisition.ts",
+      "line": 69,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "registry.npmjs.org",
+      "protocol": "https:",
+      "path": "backend/src/sandbox/dependencyAcquisition.ts",
+      "line": 81,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "api.machines.dev",
       "protocol": "https:",
       "path": "backend/src/sandbox/flyMachineSandbox.ts",
@@ -26096,6 +26432,20 @@
       "protocol": "https:",
       "path": "backend/src/sandbox/google/gceSshTransport.ts",
       "line": 116,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "metadata.google.internal",
+      "protocol": "http:",
+      "path": "backend/src/sandbox/remoteSandbox.ts",
+      "line": 80,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "codeload.github.com",
+      "protocol": "https:",
+      "path": "backend/src/sandbox/repoRun.ts",
+      "line": 86,
       "credentialsInUrl": false
     },
     {
@@ -29343,7 +29693,7 @@
       "hostname": "cdn.simpleicons.org",
       "protocol": "https:",
       "path": "frontend/src/components/integrations/PluginBrandLogo.tsx",
-      "line": 58,
+      "line": 65,
       "credentialsInUrl": false
     },
     {
@@ -29385,14 +29735,14 @@
       "hostname": "x.com",
       "protocol": "https:",
       "path": "frontend/src/components/marketing/AiAppBuilderLanding.tsx",
-      "line": 633,
+      "line": 637,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/components/marketing/AiAppBuilderLanding.tsx",
-      "line": 642,
+      "line": 646,
       "credentialsInUrl": false
     },
     {
@@ -29879,6 +30229,20 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "github.com",
+      "protocol": "https:",
+      "path": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
+      "line": 123,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "github.com",
+      "protocol": "https:",
+      "path": "frontend/src/components/terminal/ProjectsQuickPopover.tsx",
+      "line": 187,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "www.google.com",
       "protocol": "https:",
       "path": "frontend/src/components/terminal/SourceLogo.tsx",
@@ -29903,7 +30267,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
-      "line": 50,
+      "line": 54,
       "credentialsInUrl": false
     },
     {
@@ -29987,7 +30351,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4002,
+      "line": 4012,
       "credentialsInUrl": false
     },
     {
@@ -30177,6 +30541,48 @@
       "protocol": "https:",
       "path": "frontend/src/lib/engineeringArtifact.ts",
       "line": 1446,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "github.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/externalAgentWorkflows.ts",
+      "line": 24,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "docs.anthropic.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/externalAgentWorkflows.ts",
+      "line": 31,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "cursor.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/externalAgentWorkflows.ts",
+      "line": 38,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "docs.github.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/externalAgentWorkflows.ts",
+      "line": 45,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "google-gemini.github.io",
+      "protocol": "https:",
+      "path": "frontend/src/lib/externalAgentWorkflows.ts",
+      "line": 52,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "github.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/externalAgentWorkflows.ts",
+      "line": 59,
       "credentialsInUrl": false
     },
     {
@@ -31493,6 +31899,13 @@
       "protocol": "https:",
       "path": "frontend/src/lib/syncRepoTerminalSessions.ts",
       "line": 101,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/teams.ts",
+      "line": 49,
       "credentialsInUrl": false
     },
     {
@@ -33612,6 +34025,20 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/existingSource/change/publicRepoChange.ts",
+      "line": 72,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/publicRepoChange.ts",
+      "line": 81,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/existingSource/change/service.ts",
       "line": 60,
       "scope": "MODULE_LIFETIME",
@@ -35174,7 +35601,7 @@
     },
     {
       "path": "backend/src/routes/browserDocuments.ts",
-      "line": 25,
+      "line": 57,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -35202,42 +35629,77 @@
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 52,
+      "line": 80,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 124,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/routes/localBrowser.ts",
-      "line": 207,
+      "line": 82,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 235,
+      "line": 84,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 168,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 536,
+      "line": 181,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/routes/localBrowser.ts",
-      "line": 571,
+      "line": 278,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 306,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 321,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 761,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 770,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/localBrowser.ts",
+      "line": 803,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -35306,6 +35768,20 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/sandbox/dependencyAcquisition.ts",
+      "line": 71,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/sandbox/dependencyAcquisition.ts",
+      "line": 133,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/sandbox/google/executionBinding.ts",
       "line": 35,
       "scope": "FUNCTION_LOCAL",
@@ -35357,6 +35833,20 @@
     {
       "path": "backend/src/sandbox/google/googleSandbox.ts",
       "line": 67,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/sandbox/repoRun.ts",
+      "line": 29,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/sandbox/repoRun.ts",
+      "line": 159,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -35601,21 +36091,21 @@
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1949,
+      "line": 1950,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 2075,
+      "line": 2081,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 2886,
+      "line": 2892,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37624,7 +38114,35 @@
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/projects/page.tsx",
-      "line": 133,
+      "line": 120,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
+      "line": 34,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
+      "line": 235,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
+      "line": 296,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/app/integrations/IntegrationsMarketplace.tsx",
+      "line": 302,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37694,21 +38212,21 @@
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 135,
+      "line": 137,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 136,
+      "line": 138,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
-      "line": 277,
+      "line": 279,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37841,7 +38359,14 @@
     },
     {
       "path": "frontend/src/components/integrations/PluginBrandLogo.tsx",
-      "line": 57,
+      "line": 13,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/integrations/PluginBrandLogo.tsx",
+      "line": 64,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38359,14 +38884,14 @@
     },
     {
       "path": "frontend/src/components/terminal/ChatTurnRail.tsx",
-      "line": 155,
+      "line": 177,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/terminal/ChatTurnRail.tsx",
-      "line": 164,
+      "line": 186,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38380,14 +38905,14 @@
     },
     {
       "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "line": 101,
+      "line": 120,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "line": 156,
+      "line": 132,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38471,14 +38996,14 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2046,
+      "line": 2056,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2079,
+      "line": 2089,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -38638,6 +39163,20 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "frontend/src/lib/liveIntegrationDiscovery.ts",
+      "line": 11,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/liveIntegrationDiscovery.ts",
+      "line": 76,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "frontend/src/lib/mediaHelpers.ts",
       "line": 17,
       "scope": "FUNCTION_LOCAL",
@@ -38785,6 +39324,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "frontend/src/lib/publicIntegrationsDirectory.ts",
+      "line": 37,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "frontend/src/lib/publicMarketing.ts",
       "line": 44,
       "scope": "MODULE_LIFETIME",
@@ -38793,7 +39339,7 @@
     },
     {
       "path": "frontend/src/lib/publicUrlInventory.ts",
-      "line": 160,
+      "line": 161,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -39115,7 +39661,7 @@
     },
     {
       "path": "frontend/src/store/useComposerToolsStore.ts",
-      "line": 178,
+      "line": 183,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

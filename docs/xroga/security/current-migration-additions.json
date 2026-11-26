@@ -349,6 +349,66 @@
       "tests": "backend/src/services/integrations/customMcpPinControl.security.test.ts",
       "evidence": "Inventory entry only: the migration text was read and its RLS, revoke and grant lines are as described. The unit security test covers the backend pin control. A real disposable full-history replay is the CI check that consumes this entry; it is not a live Supabase receipt and not production parity.",
       "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "teams",
+      "migration": "20261102000000_team_invitations.sql",
+      "migrationSha256": "020329b0928b79cf523ae607789f5a255885e2102d40e1226ea012bf10783fa8",
+      "authorizationMigration": "20261102000000_team_invitations.sql",
+      "authorizationSha256": "020329b0928b79cf523ae607789f5a255885e2102d40e1226ea012bf10783fa8",
+      "boundary": "RLS enabled with no policy. All privileges are revoked from anon and authenticated; only service_role (the backend) has table DML. The backend derives the actor from the verified session and calls service-only SECURITY DEFINER functions, which enforce membership, ownership, token and limit checks; clients never receive table grants. Expand-only migration, no existing rows, columns, grants or policies changed.",
+      "tests": "backend/src/routes/teams.test.ts",
+      "evidence": "Inventory entry only: the migration text was read and its RLS, revoke and grant statements are as described (its own header says it is not authorized for production until the isolated staging, security and authenticated-browser gates pass). The backend route test covers the route layer. A real disposable full-history replay is the CI check that consumes this entry; not a live Supabase receipt and not production parity.",
+      "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "team_members",
+      "migration": "20261102000000_team_invitations.sql",
+      "migrationSha256": "020329b0928b79cf523ae607789f5a255885e2102d40e1226ea012bf10783fa8",
+      "authorizationMigration": "20261102000000_team_invitations.sql",
+      "authorizationSha256": "020329b0928b79cf523ae607789f5a255885e2102d40e1226ea012bf10783fa8",
+      "boundary": "RLS enabled with no policy. All privileges are revoked from anon and authenticated; only service_role (the backend) has table DML. The backend derives the actor from the verified session and calls service-only SECURITY DEFINER functions, which enforce membership, ownership, token and limit checks; clients never receive table grants. Expand-only migration, no existing rows, columns, grants or policies changed.",
+      "tests": "backend/src/routes/teams.test.ts",
+      "evidence": "Inventory entry only: the migration text was read and its RLS, revoke and grant statements are as described (its own header says it is not authorized for production until the isolated staging, security and authenticated-browser gates pass). The backend route test covers the route layer. A real disposable full-history replay is the CI check that consumes this entry; not a live Supabase receipt and not production parity.",
+      "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "team_invitations",
+      "migration": "20261102000000_team_invitations.sql",
+      "migrationSha256": "020329b0928b79cf523ae607789f5a255885e2102d40e1226ea012bf10783fa8",
+      "authorizationMigration": "20261102000000_team_invitations.sql",
+      "authorizationSha256": "020329b0928b79cf523ae607789f5a255885e2102d40e1226ea012bf10783fa8",
+      "boundary": "RLS enabled with no policy. All privileges are revoked from anon and authenticated; only service_role (the backend) has table DML. The backend derives the actor from the verified session and calls service-only SECURITY DEFINER functions, which enforce membership, ownership, token and limit checks; clients never receive table grants. Expand-only migration, no existing rows, columns, grants or policies changed.",
+      "tests": "backend/src/routes/teams.test.ts",
+      "evidence": "Inventory entry only: the migration text was read and its RLS, revoke and grant statements are as described (its own header says it is not authorized for production until the isolated staging, security and authenticated-browser gates pass). The backend route test covers the route layer. A real disposable full-history replay is the CI check that consumes this entry; not a live Supabase receipt and not production parity.",
+      "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "team_link_redemptions",
+      "migration": "20261102000000_team_invitations.sql",
+      "migrationSha256": "020329b0928b79cf523ae607789f5a255885e2102d40e1226ea012bf10783fa8",
+      "authorizationMigration": "20261102000000_team_invitations.sql",
+      "authorizationSha256": "020329b0928b79cf523ae607789f5a255885e2102d40e1226ea012bf10783fa8",
+      "boundary": "RLS enabled with no policy. All privileges are revoked from anon and authenticated; only service_role (the backend) has table DML. The backend derives the actor from the verified session and calls service-only SECURITY DEFINER functions, which enforce membership, ownership, token and limit checks; clients never receive table grants. Expand-only migration, no existing rows, columns, grants or policies changed.",
+      "tests": "backend/src/routes/teams.test.ts",
+      "evidence": "Inventory entry only: the migration text was read and its RLS, revoke and grant statements are as described (its own header says it is not authorized for production until the isolated staging, security and authenticated-browser gates pass). The backend route test covers the route layer. A real disposable full-history replay is the CI check that consumes this entry; not a live Supabase receipt and not production parity.",
+      "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "team_audit",
+      "migration": "20261102000000_team_invitations.sql",
+      "migrationSha256": "020329b0928b79cf523ae607789f5a255885e2102d40e1226ea012bf10783fa8",
+      "authorizationMigration": "20261102000000_team_invitations.sql",
+      "authorizationSha256": "020329b0928b79cf523ae607789f5a255885e2102d40e1226ea012bf10783fa8",
+      "boundary": "RLS enabled with no policy. All privileges are revoked from anon and authenticated; only service_role (the backend) has table DML. The backend derives the actor from the verified session and calls service-only SECURITY DEFINER functions, which enforce membership, ownership, token and limit checks; clients never receive table grants. Expand-only migration, no existing rows, columns, grants or policies changed.",
+      "tests": "backend/src/routes/teams.test.ts",
+      "evidence": "Inventory entry only: the migration text was read and its RLS, revoke and grant statements are as described (its own header says it is not authorized for production until the isolated staging, security and authenticated-browser gates pass). The backend route test covers the route layer. A real disposable full-history replay is the CI check that consumes this entry; not a live Supabase receipt and not production parity.",
+      "productionChanges": false
     }
   ]
 }

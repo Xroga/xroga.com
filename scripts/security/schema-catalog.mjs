@@ -31,7 +31,12 @@ export function validateCurrentMigrationAdditions(additions,files,readMigration)
     engineering_resource_reservations:['20261029100000_engineering_resource_ledger.sql','20261029100000_engineering_resource_ledger.sql'],
     engineering_resource_limits:['20261029100000_engineering_resource_ledger.sql','20261029100000_engineering_resource_ledger.sql'],
     local_browser_device_sessions:['20261108181114_local_browser_device_sessions.sql','20261108181114_local_browser_device_sessions.sql'],
-    custom_mcp_tool_pins:['20261113130000_custom_mcp_tool_pins.sql','20261113130000_custom_mcp_tool_pins.sql']};
+    custom_mcp_tool_pins:['20261113130000_custom_mcp_tool_pins.sql','20261113130000_custom_mcp_tool_pins.sql'],
+    teams:['20261102000000_team_invitations.sql','20261102000000_team_invitations.sql'],
+    team_members:['20261102000000_team_invitations.sql','20261102000000_team_invitations.sql'],
+    team_invitations:['20261102000000_team_invitations.sql','20261102000000_team_invitations.sql'],
+    team_link_redemptions:['20261102000000_team_invitations.sql','20261102000000_team_invitations.sql'],
+    team_audit:['20261102000000_team_invitations.sql','20261102000000_team_invitations.sql']};
   assert.deepEqual(additions.tables.map(t=>`${t.schema}.${t.table_name}`),Object.keys(reviewed).map(name=>'public.'+name));
   for(const entry of additions.tables){
     assert.deepEqual([entry.migration,entry.authorizationMigration],reviewed[entry.table_name],'Only the explicitly reviewed creation and ownership migrations apply');

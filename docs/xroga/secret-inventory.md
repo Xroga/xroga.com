@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `ced2e59fa115c0e220559e7c28fefa67b04086c9`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `50e94d234f13cdf48040ad4812ea251972784102`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -237,6 +237,7 @@ Values are forbidden. Source SHA: `ced2e59fa115c0e220559e7c28fefa67b04086c9`. Na
 | XROGA_BROWSER_IMAGE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_BROWSER_PLANNER_MODEL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_BROWSER_PROXY_IMAGE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_BROWSER_REASONING_DEFAULT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_BROWSER_REPO_ROOT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_BROWSER_TASKS_LOCATION | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
 | XROGA_BROWSER_TASKS_PROJECT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
@@ -342,9 +343,11 @@ Values are forbidden. Source SHA: `ced2e59fa115c0e220559e7c28fefa67b04086c9`. Na
 | XROGA_SANDBOX_FLY_REGION | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution, endpoint-api-machines-dev |
 | XROGA_SANDBOX_FLY_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | google-execution, endpoint-127-0-0-1, endpoint-api-machines-dev, endpoint-api-whop-com, endpoint-example-invalid, endpoint-public-example-invalid |
 | XROGA_SANDBOX_LIVE_TEST_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | google-execution |
-| XROGA_SANDBOX_WORKER_NAME | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution |
-| XROGA_SANDBOX_WORKER_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | google-execution |
-| XROGA_SANDBOX_WORKER_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution |
+| XROGA_SANDBOX_WORKER_AUDIENCE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution, endpoint-metadata-google-internal |
+| XROGA_SANDBOX_WORKER_NAME | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution, endpoint-metadata-google-internal |
+| XROGA_SANDBOX_WORKER_RESTRICTED | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution, endpoint-metadata-google-internal |
+| XROGA_SANDBOX_WORKER_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | google-execution, endpoint-metadata-google-internal |
+| XROGA_SANDBOX_WORKER_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution, endpoint-metadata-google-internal |
 | XROGA_SOFTWARE_AGENT_V2 | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_SOFTWARE_AGENT_V2_SHADOW | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_STAGING_AUTH_BUILD | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1 |
