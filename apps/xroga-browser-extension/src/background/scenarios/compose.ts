@@ -20,7 +20,7 @@ defineScenario({
       fps: 24,
       clips: [
         { duration: 2, transition: { name: 'fade', duration: 0.5 }, layers: [{ type: 'linear-gradient', colors: ['#1d2b64', '#f8cdda'] }, { type: 'slide-in-text', text: 'Made on this device', fontSize: 0.1 }] },
-        { transition: { name: 'directional-left', duration: 0.5 }, layers: [{ type: 'video', url: TRAILER, cutFrom: 20, cutTo: 24 }, { type: 'subtitle', text: 'A film segment, cut and placed', start: 1 }] },
+        { transition: { name: 'directional-left', duration: 0.5 }, layers: [{ type: 'video', url: TRAILER, cutFrom: 20, cutTo: 24, speed: 2 }, { type: 'subtitle', text: 'A film segment, cut and sped up', start: 0.5 }] },
         { duration: 2.5, transition: { name: 'none' }, layers: [{ type: 'fill-color', color: '#000000' }, { type: 'image', url: PHOTO, resizeMode: 'contain', zoom: 'in', zoomAmount: 0.2 }, { type: 'news-title', text: 'Photograph, slow zoom', position: 'bottom', fontSize: 0.06 }] },
       ],
       audioTracks: [{ url: SONG, start: 0, cutFrom: 0, volume: 0.6, loop: true }],
@@ -28,7 +28,7 @@ defineScenario({
     const info = await readMedia({ url: made.url, action: 'info' });
     const sheet = await readMedia({ url: made.url, action: 'frames', count: 8, width: 160 });
     const audio = await readMedia({ url: made.url, action: 'audio', seconds: 30 });
-    const expected = 2 + 4 + 2.5 - 0.5 - 0.5;
+    const expected = 2 + 2 + 2.5 - 0.5 - 0.5; // the film segment of 4 s runs at double speed: 2 s
     const checks: Record<string, boolean> = {
       length: Math.abs(made.seconds - expected) < 0.05 && info.kind === 'info' && Math.abs(info.duration - expected) < 0.5,
       tracks: info.kind === 'info' && info.tracks.some(t => t.type === 'video' && t.width === 640 && t.height === 360) && info.tracks.some(t => t.type === 'audio'),

@@ -20,6 +20,9 @@ defineScenario({
     const frames = await readMedia({ url: TRAILER, action: 'frames', count: 6, width: 240 });
     const audio = await readMedia({ url: TRAILER, action: 'audio', seconds: 60, minSeconds: 0.3 });
     const beats = await readMedia({ url: SONG, action: 'beats', seconds: 60 });
+    // a later part of the song: the times are the file's own (the song changes tempo between parts, so only the range is checked)
+    const later = await readMedia({ url: SONG, action: 'beats', from: 120, seconds: 40 });
+    const tail = await readMedia({ url: TRAILER, action: 'audio', from: 30, seconds: 40, minSeconds: 0.3 });
     const seconds = Math.round((Date.now() - t0) / 1000);
     const checks: Record<string, boolean> = {
       infoFormat: info.kind === 'info' && /mp4|mov/i.test(info.format) && info.duration > 40 && info.duration < 70,
@@ -28,6 +31,8 @@ defineScenario({
       cuts: scenes.kind === 'scenes' && scenes.cuts.length >= 8 && scenes.cuts.length <= 60,
       sheet: frames.kind === 'frames' && frames.decoded === 6 && frames.base64.length > 8000 && frames.width === 4 * 240,
       loudness: audio.kind === 'audio' && audio.report.loudnessLufs !== null && audio.report.loudnessLufs < -5 && audio.report.loudnessLufs > -45 && audio.report.line.length === 60,
+      // reading in parts: the times are the file's own, not the part's
+      parts: later.kind === 'beats' && later.from === 120 && later.beats.beats.length >= 20 && later.beats.beats[0]! >= 120 && later.beats.beats[0]! < 122 && later.beats.bpm >= 60 && later.beats.bpm <= 190 && tail.kind === 'audio' && tail.from === 30 && tail.report.seconds > 20 && tail.report.seconds < 23 && tail.report.silences.length >= 1 && tail.report.silences[0]!.start > 49,
       tempo: beats.kind === 'beats' && beats.beats.bpm >= 70 && beats.beats.bpm <= 190 && beats.beats.beats.length >= 20 && beats.beats.confidence >= 0.3,
     };
     const shown = [
@@ -38,7 +43,7 @@ defineScenario({
     ].join('\n');
     return outcome(
       'real files are described: tracks, cuts, a sheet of frames, loudness and a tempo',
-      JSON.stringify({ failed: Object.entries(checks).filter(([, v]) => !v).map(([k]) => k), seconds, shown: shown.slice(0, 2600) }),
+      JSON.stringify({ failed: Object.entries(checks).filter(([, v]) => !v).map(([k]) => k), seconds, shown: shown.slice(0, 800) }),
       Object.values(checks).every(Boolean),
     );
   },

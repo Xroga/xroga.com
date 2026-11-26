@@ -2665,6 +2665,7 @@ ${renderSkill(top)}`);
             url: address,
             action: action as 'info',
             seconds: num(args.seconds),
+            from: num(args.from),
             count: num(args.count),
             width: num(args.width),
             thresholdDb: num(args.thresholdDb),
@@ -2676,9 +2677,9 @@ ${renderSkill(top)}`);
           let text: string;
           let image: CallOutcome['image'] | undefined;
           if (answer.kind === 'info') text = tool.describeInfo(answer);
-          else if (answer.kind === 'audio') text = analysis.describeAudio(answer.report, { thresholdDb: num(args.thresholdDb) ?? -40, minSeconds: num(args.minSeconds) ?? 0.5 });
-          else if (answer.kind === 'beats') text = analysis.describeBeats(answer.beats, answer.seconds);
-          else if (answer.kind === 'scenes') text = analysis.describeScenes(answer.cuts, answer.seconds, answer.sampled);
+          else if (answer.kind === 'audio') text = analysis.describeAudio(answer.report, { thresholdDb: num(args.thresholdDb) ?? -40, minSeconds: num(args.minSeconds) ?? 0.5, from: answer.from });
+          else if (answer.kind === 'beats') text = analysis.describeBeats(answer.beats, answer.seconds, answer.from);
+          else if (answer.kind === 'scenes') text = analysis.describeScenes(answer.cuts, answer.seconds, answer.sampled, answer.from);
           else {
             text = 'Contact sheet of ' + answer.times.length + ' pictures at ' + answer.times.map(analysis.clock).join(', ') + ' (numbered left to right, top to bottom)' + (answer.decoded < answer.times.length ? '; ' + (answer.times.length - answer.decoded) + ' could not be decoded.' : '.');
             if (this.options.model.profile.vision) image = { data: answer.base64, mediaType: 'image/jpeg', note: 'The sheet of pictures from the file, with the time of each on its label.' };

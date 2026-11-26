@@ -41,6 +41,9 @@ const SHOULD: Array<[string, string]> = [
   ['my google ad is disapproved for a policy violation, appeal or request an exemption', 'google-ads-policy-disapprovals'],
   ['use the google ads keyword planner for keyword ideas and forecast clicks', 'google-ads-keyword-planner'],
   ['build a lookalike custom audience and a carousel creative for facebook and instagram ads', 'meta-ads-audiences-and-creative'],
+  ['how loud is this podcast mp3 and where are the silences, and what is the tempo of the song', 'media-files-listen-look-and-transcribe'],
+  ['make a short intro video with a title card, a photo and background music and save it as mp4', 'making-a-video-on-the-device'],
+  ['does this site offer webmcp tools for agents, list the registered page tools and call one', 'tools-a-page-offers-an-agent'],
 ];
 
 // Near-misses: the words overlap a skill, the need is another one. None of them should put the skill that shares its words first.

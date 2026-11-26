@@ -1,5 +1,6 @@
 // The offscreen document: it does the things the worker cannot.
 import type { OutlineEntry, PdfTextItem } from '@src/agent/pdf-structure';
+import { fetchRetry } from '@src/extension/net';
 //  - Turn text into a Blob and a URL for chrome.downloads, and revoke the URL when the worker says the download ended (uses only the runtime API).
 //  - Recognise text in a picture (the `ocr` tool): the Tesseract engine and its English model are vendored in public/ocr and run in a Web Worker started from here,
 //    because a service worker cannot start workers. Nothing leaves the device. The engine is loaded on the first request and let go after a minute without one.
@@ -378,7 +379,7 @@ function speechPipeline(multilingual: boolean): Promise<SpeechPipeline> {
 }
 
 async function transcribe(url: string, seconds: number, multilingual: boolean) {
-  const response = await fetch(url, { credentials: 'omit' });
+  const response = await fetchRetry(url, { credentials: 'omit' });
   if (!response.ok) throw new Error(`the file answered ${response.status}`);
   const declared = Number(response.headers.get('content-length') ?? 0);
   if (declared > MAX_AUDIO_BYTES) throw new Error(`the file is ${Math.round(declared / 1048576)} MB; the limit is ${MAX_AUDIO_BYTES / 1048576} MB`);
@@ -441,7 +442,7 @@ async function openMedia(mb: Mb, url: string): Promise<{ input: MbInput; bytes?:
     return { input };
   } catch {
     // a server without range requests: the whole file, within a limit
-    const response = await fetch(url, { credentials: 'omit' });
+    const response = await fetchRetry(url, { credentials: 'omit' });
     if (!response.ok) throw new Error(`the file answered ${response.status}`);
     const declared = Number(response.headers.get('content-length') ?? 0);
     if (declared > MAX_MEDIA_BYTES) throw new Error(`the file is ${Math.round(declared / 1048576)} MB; the limit is ${MAX_MEDIA_BYTES / 1048576} MB`);
@@ -453,13 +454,13 @@ async function openMedia(mb: Mb, url: string): Promise<{ input: MbInput; bytes?:
   }
 }
 
-async function decodeSound(mb: Mb, track: MbTrack, seconds: number) {
+async function decodeSound(mb: Mb, track: MbTrack, from: number, seconds: number) {
   const sink = new mb.AudioBufferSink(track);
   const parts: Float32Array[][] = [];
   let rate = 0;
   let channels = 0;
   let frames = 0;
-  for await (const { buffer } of sink.buffers(0, seconds)) {
+  for await (const { buffer } of sink.buffers(from, from + seconds)) {
     rate = buffer.sampleRate;
     channels = Math.min(2, buffer.numberOfChannels);
     parts.push(Array.from({ length: channels }, (_, c) => buffer.getChannelData(c).slice()));
@@ -476,7 +477,7 @@ async function decodeSound(mb: Mb, track: MbTrack, seconds: number) {
   return { channels: out, rate };
 }
 
-async function mediaWork(url: string, action: string, o: { seconds: number; count: number; times?: number[]; width: number; thresholdDb: number; minSeconds: number }) {
+async function mediaWork(url: string, action: string, o: { from: number; seconds: number; count: number; times?: number[]; width: number; thresholdDb: number; minSeconds: number }) {
   const mb = (await import(/* @vite-ignore */ chrome.runtime.getURL('media/mediabunny.min.mjs'))) as unknown as Mb;
   const A = await import('@src/agent/media-analysis');
   const { input, bytes } = await openMedia(mb, url);
@@ -494,23 +495,24 @@ async function mediaWork(url: string, action: string, o: { seconds: number; coun
       const format = await input.getFormat();
       return { kind: 'info', format: format.name, mime: format.mimeType, duration, tags: clean, tracks, bytes };
     }
-    const span = Math.min(o.seconds, Math.max(1, duration || o.seconds), MAX_ANALYSIS_SECONDS);
+    const from = Math.min(Math.max(0, o.from), Math.max(0, duration - 1));
+    const span = Math.min(o.seconds, Math.max(1, (duration || o.seconds + from) - from), MAX_ANALYSIS_SECONDS);
     if (action === 'audio' || action === 'beats') {
       const track = await input.getPrimaryAudioTrack();
       if (!track) throw new Error('this file has no sound track');
-      const { channels, rate } = await decodeSound(mb, track, span);
+      const { channels, rate } = await decodeSound(mb, track, from, span);
       const seconds = channels[0]!.length / rate;
       if (action === 'beats') {
         const factor = Math.max(1, Math.round(rate / 11025));
         const beats = A.trackBeats(A.decimate(A.toMono(channels), factor), rate / factor);
-        return { kind: 'beats', seconds, beats };
+        return { kind: 'beats', from, seconds, beats: { ...beats, beats: beats.beats.map(t => Math.round((t + from) * 1000) / 1000) } };
       }
       const mono = A.toMono(channels);
       const env = A.computeEnvelope(mono, rate, 0.05);
       let sum = 0;
       for (let i = 0; i < mono.length; i++) sum += mono[i]! * mono[i]!;
       const report = { seconds, sampleRate: rate, channels: channels.length, loudnessLufs: A.integratedLoudness(channels, rate), peakDb: A.samplePeakDb(channels), rmsDb: Math.round(A.toDb(Math.sqrt(sum / Math.max(1, mono.length))) * 10) / 10, silences: A.detectSilences(env, { thresholdDb: o.thresholdDb, minSeconds: o.minSeconds }), line: A.waveformLine(env, 60) };
-      return { kind: 'audio', report };
+      return { kind: 'audio', from, report: { ...report, silences: report.silences.map(x => ({ start: Math.round((x.start + from) * 100) / 100, end: Math.round((x.end + from) * 100) / 100 })) } };
     }
     const video = await input.getPrimaryVideoTrack();
     if (!video) throw new Error('this file has no picture track');
@@ -521,7 +523,7 @@ async function mediaWork(url: string, action: string, o: { seconds: number; coun
       let prev: Uint8Array | undefined;
       let last = -1;
       const step = Math.max(0.25, span / 600);
-      for await (const { canvas, timestamp } of sink.canvases(0, span)) {
+      for await (const { canvas, timestamp } of sink.canvases(from, from + span)) {
         if (timestamp - last < step) continue;
         last = timestamp;
         const px = (canvas.getContext('2d') as OffscreenCanvasRenderingContext2D).getImageData(0, 0, canvas.width, canvas.height).data;
@@ -533,7 +535,7 @@ async function mediaWork(url: string, action: string, o: { seconds: number; coun
         }
         prev = grey;
       }
-      return { kind: 'scenes', seconds: span, sampled: times.length + 1, cuts: A.detectCuts(times, diffs) };
+      return { kind: 'scenes', from, seconds: span, sampled: times.length + 1, cuts: A.detectCuts(times, diffs) };
     }
     if (action === 'frames') {
       const stamps = o.times?.length ? o.times : Array.from({ length: o.count }, (_, i) => (duration * (i + 0.5)) / o.count);
@@ -597,6 +599,7 @@ chrome.runtime.onMessage.addListener((message, _sender, reply) => {
     const n = (v: unknown, d: number) => (typeof v === 'number' && Number.isFinite(v) ? v : d);
     Promise.race([
       mediaWork(String(message.url), String(message.action), {
+        from: Math.max(0, n(message.from, 0)),
         seconds: Math.min(MAX_ANALYSIS_SECONDS, Math.max(5, n(message.seconds, 300))),
         count: Math.min(24, Math.max(1, Math.floor(n(message.count, 8)))),
         times: Array.isArray(message.times) ? (message.times as unknown[]).filter((t): t is number => typeof t === 'number' && t >= 0).slice(0, 24) : undefined,

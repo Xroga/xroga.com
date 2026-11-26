@@ -9,7 +9,7 @@ export const COMPOSE_TOOL: AgentTool = {
   source: 'agent',
   group: 'files',
   description:
-    'Make a short video (MP4, or WebM when the browser has no H.264) from a spec and save it in Downloads; asks first in Ask mode. spec: { width?, height? (default 1280x720, at most 1920x1080), fps? (default 30), clips: [{ duration (seconds), transition?: { name: fade|fadeblack|directional-left|directional-right|directional-up|directional-down|zoom-in|none, duration }, layers: [ { type: fill-color, color } | { type: linear-gradient|radial-gradient, colors: [a,b] } | { type: title|subtitle|title-background|news-title|slide-in-text, text, textColor, position: top|center|bottom, fontSize } | { type: image, url, resizeMode: contain|cover|stretch, zoom: in|out|left|right } | { type: image-overlay, url, x, y, width, height (0 to 1) } | { type: video, url, cutFrom, cutTo, resizeMode, volume } ] } ], audioTracks?: [{ url, start?, cutFrom?, cutTo?, volume?, loop? }], keepSourceAudio? }. Up to 3 minutes, 60 clips, https addresses only. Only when the person asked for a video.',
+    'Make a short video (MP4, or WebM when the browser has no H.264) from a spec and save it in Downloads; asks first in Ask mode. spec: { width?, height? (default 1280x720, at most 1920x1080), fps? (default 30), clips: [{ duration (seconds), transition?: { name: fade|fadeblack|directional-left|directional-right|directional-up|directional-down|zoom-in|none, duration }, layers: [ { type: fill-color, color } | { type: linear-gradient|radial-gradient, colors: [a,b] } | { type: title|subtitle|title-background|news-title|slide-in-text, text, textColor, position: top|center|bottom, fontSize } | { type: image, url, resizeMode: contain|cover|stretch, zoom: in|out|left|right } | { type: image-overlay, url, x, y, width, height (0 to 1) } | { type: video, url, cutFrom, cutTo, resizeMode, volume, speed (0.25 to 4) } ] } ], audioTracks?: [{ url, start?, cutFrom?, cutTo?, volume?, loop? }], keepSourceAudio? }. Up to 3 minutes, 60 clips, https addresses only. Only when the person asked for a video.',
   parameters: {
     type: 'object',
     properties: {
@@ -31,7 +31,7 @@ export type Layer =
   | { type: 'text'; style: 'title' | 'subtitle' | 'title-background' | 'news-title' | 'slide-in-text'; text: string; color: string; background: string; position: Position; fontSize: number; start: number; stop?: number }
   | { type: 'image'; url: string; resizeMode: ResizeMode; zoom: 'none' | 'in' | 'out' | 'left' | 'right'; zoomAmount: number; start: number; stop?: number }
   | { type: 'image-overlay'; url: string; x: number; y: number; width: number; height: number; start: number; stop?: number }
-  | { type: 'video'; url: string; cutFrom: number; cutTo?: number; resizeMode: ResizeMode; volume: number; start: number; stop?: number };
+  | { type: 'video'; url: string; cutFrom: number; cutTo?: number; resizeMode: ResizeMode; volume: number; speed: number; start: number; stop?: number };
 export interface Transition {
   name: string;
   duration: number;
@@ -136,7 +136,7 @@ export function normalizeSpec(raw: unknown): Normalized {
       } else if (type === 'video') {
         const url = httpsOnly(L.url ?? L.path);
         if (!url) errors.push(`${at} (video) needs an https address in url.`);
-        layers.push({ type: 'video', url: url ?? '', cutFrom: num(L.cutFrom, 0, 0, 36000), ...(typeof L.cutTo === 'number' && Number.isFinite(L.cutTo) ? { cutTo: Math.max(0, L.cutTo) } : {}), resizeMode: (['contain', 'cover', 'stretch'].includes(str(L.resizeMode)) ? str(L.resizeMode) : 'contain') as ResizeMode, volume: num(L.mixVolume ?? L.volume, 1, 0, 4), ...timing });
+        layers.push({ type: 'video', url: url ?? '', cutFrom: num(L.cutFrom, 0, 0, 36000), ...(typeof L.cutTo === 'number' && Number.isFinite(L.cutTo) ? { cutTo: Math.max(0, L.cutTo) } : {}), resizeMode: (['contain', 'cover', 'stretch'].includes(str(L.resizeMode)) ? str(L.resizeMode) : 'contain') as ResizeMode, volume: num(L.mixVolume ?? L.volume, 1, 0, 4), speed: num(L.speed, 1, 0.25, 4), ...timing });
       } else errors.push(`${at} has the type "${type}": use fill-color, linear-gradient, radial-gradient, title, subtitle, title-background, news-title, slide-in-text, image, image-overlay or video.`);
     });
     const hasVideo = layers.some(l => l.type === 'video');
@@ -167,7 +167,7 @@ export function resolveDurations(spec: ComposeSpec, probe: (url: string) => numb
   const clips = spec.clips.map(c => {
     if (c.duration !== undefined) return c;
     const v = c.layers.find((l): l is Extract<Layer, { type: 'video' }> => l.type === 'video');
-    const length = v ? Math.max(0.2, (v.cutTo ?? probe(v.url)) - v.cutFrom) : 3;
+    const length = v ? Math.max(0.2, ((v.cutTo ?? probe(v.url)) - v.cutFrom) / v.speed) : 3;
     return { ...c, duration: Math.min(length, LIMITS.maxSeconds) };
   });
   return { ...spec, clips };

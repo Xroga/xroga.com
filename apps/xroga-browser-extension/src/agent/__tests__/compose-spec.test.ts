@@ -51,6 +51,12 @@ describe('normalizeSpec', () => {
     expect(LIMITS.maxSeconds).toBe(180);
   });
 
+  it('speeds a video layer up or down, within 0.25 to 4, and its clip follows', () => {
+    const spec = ok({ clips: [{ layers: [{ type: 'video', url: 'https://x.test/v.mp4', cutFrom: 0, cutTo: 8, speed: 2 }] }, { layers: [{ type: 'video', url: 'https://x.test/v.mp4', cutFrom: 0, cutTo: 4, speed: 0.5 }] }, { layers: [{ type: 'video', url: 'https://x.test/v.mp4', cutFrom: 0, cutTo: 4, speed: 99 }] }, { layers: [{ type: 'video', url: 'https://x.test/v.mp4', cutFrom: 0, cutTo: 4 }] }] });
+    expect(spec.clips.map(c => (c.layers[0] as { speed: number }).speed)).toEqual([2, 0.5, 4, 1]);
+    expect(resolveDurations(spec, () => 99).clips.map(c => c.duration)).toEqual([4, 8, 1, 4]);
+  });
+
   it('lets a clip with a video take its length from it', () => {
     const spec = ok({ clips: [{ layers: [{ type: 'video', url: 'https://x.test/v.mp4', cutFrom: 2 }] }, { layers: [{ type: 'video', url: 'https://x.test/w.mp4', cutFrom: 1, cutTo: 4 }] }] });
     expect(spec.clips[0]!.duration).toBeUndefined();

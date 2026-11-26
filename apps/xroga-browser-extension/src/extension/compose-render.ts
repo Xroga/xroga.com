@@ -2,6 +2,7 @@
 // unmodified in public/media) encodes with WebCodecs: MP4 with H.264 and AAC where the browser can encode them, WebM with VP9 (or VP8) and Opus where it cannot.
 import { normalizeSpec, resolveDurations, timeline, type ComposeSpec, type Layer, type ResizeMode } from '@src/agent/compose-spec';
 import { drawFrame, type Assets, type Picture } from './compose-draw';
+import { fetchRetry } from './net';
 
 interface Track {
   codedWidth?: number;
@@ -48,7 +49,7 @@ const MAX_ASSET_BYTES = 150 * 1024 * 1024;
 const RATE = 48000;
 
 async function bytesOf(url: string): Promise<ArrayBuffer> {
-  const response = await fetch(url, { credentials: 'omit' });
+  const response = await fetchRetry(url, { credentials: 'omit' });
   if (!response.ok) throw new Error(`${url} answered ${response.status}`);
   const declared = Number(response.headers.get('content-length') ?? 0);
   if (declared > MAX_ASSET_BYTES) throw new Error(`${url} is ${Math.round(declared / 1048576)} MB; the limit for one file is ${MAX_ASSET_BYTES / 1048576} MB`);
@@ -130,7 +131,7 @@ export async function renderComposition(raw: unknown, loadMb: () => Promise<unkn
 
   // ---- the sound: video layers' own sound and the audio tracks, mixed offline into one buffer
   const total = tl.total;
-  const parts: Array<{ buffer: AudioBuffer; when: number; offset: number; duration?: number; gain: number; loop?: { from: number; to: number } }> = [];
+  const parts: Array<{ buffer: AudioBuffer; when: number; offset: number; duration?: number; gain: number; rate?: number; loop?: { from: number; to: number } }> = [];
   const decoder = new OfflineAudioContext(2, 1, RATE);
   for (const t of spec.audioTracks) {
     const buffer = await decoder.decodeAudioData(await bytesOf(t.url));
@@ -142,7 +143,7 @@ export async function renderComposition(raw: unknown, loadMb: () => Promise<unkn
         const v = videos.get(layer.url)!;
         const audioTrack = await v.input.getPrimaryAudioTrack();
         if (!audioTrack || layer.volume <= 0) continue;
-        const to = Math.min(layer.cutTo ?? v.duration, layer.cutFrom + (clip.duration! - layer.start));
+        const to = Math.min(layer.cutTo ?? v.duration, layer.cutFrom + (clip.duration! - layer.start) * layer.speed);
         const chunks: Float32Array[][] = [];
         let frames = 0;
         let rate = RATE;
@@ -159,7 +160,7 @@ export async function renderComposition(raw: unknown, loadMb: () => Promise<unkn
           for (let k = 0; k < channels; k++) joined.copyToChannel(ch[k]! as Float32Array<ArrayBuffer>, k, at);
           at += ch[0]!.length;
         }
-        parts.push({ buffer: joined, when: tl.starts[ci]! + layer.start, offset: 0, duration: joined.duration, gain: layer.volume });
+        parts.push({ buffer: joined, when: tl.starts[ci]! + layer.start, offset: 0, duration: joined.duration / layer.speed, gain: layer.volume, rate: layer.speed });
       }
     }
   }
@@ -174,6 +175,7 @@ export async function renderComposition(raw: unknown, loadMb: () => Promise<unkn
     for (const p of parts) {
       const src = ctx.createBufferSource();
       src.buffer = p.buffer;
+      if (p.rate && p.rate !== 1) src.playbackRate.value = p.rate; // a sped-up or slowed video's sound changes pitch with it
       const g = ctx.createGain();
       g.gain.value = p.gain;
       src.connect(g).connect(master);
@@ -183,7 +185,7 @@ export async function renderComposition(raw: unknown, loadMb: () => Promise<unkn
         src.loopEnd = p.loop.to;
         src.start(p.when, p.offset);
         src.stop(total);
-      } else src.start(p.when, p.offset, p.duration);
+      } else src.start(p.when, p.offset, p.rate && p.rate !== 1 ? p.duration! * p.rate : p.duration);
     }
     mixed = await ctx.startRendering();
   }

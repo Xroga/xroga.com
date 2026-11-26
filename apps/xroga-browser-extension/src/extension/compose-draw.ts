@@ -116,7 +116,7 @@ async function drawLayer(ctx: Ctx, layer: Layer, at: number, clipDuration: numbe
       return;
     }
     case 'video': {
-      const pic = await assets.frame(layer.url, layer.resizeMode, layer.cutFrom + Math.max(0, local));
+      const pic = await assets.frame(layer.url, layer.resizeMode, layer.cutFrom + Math.max(0, local) * layer.speed);
       if (pic) drawFit(ctx, pic, layer.resizeMode, W, H);
       return;
     }

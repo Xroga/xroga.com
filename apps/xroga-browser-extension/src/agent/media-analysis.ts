@@ -375,8 +375,8 @@ export interface AudioReport {
   line: string;
 }
 
-export function describeAudio(r: AudioReport, options: { thresholdDb: number; minSeconds: number }): string {
-  const out = [`Sound of ${clock(r.seconds)} (${r.channels} channel${r.channels === 1 ? '' : 's'}, ${r.sampleRate} Hz): ${r.loudnessLufs === null ? 'too quiet to measure' : `integrated loudness ${r.loudnessLufs} LUFS`}, sample peak ${r.peakDb} dBFS, average level ${r.rmsDb} dBFS.`];
+export function describeAudio(r: AudioReport, options: { thresholdDb: number; minSeconds: number; from?: number }): string {
+  const out = [`Sound ${options.from ? `from ${clock(options.from)} for ` : 'of '}${clock(r.seconds)} (${r.channels} channel${r.channels === 1 ? '' : 's'}, ${r.sampleRate} Hz): ${r.loudnessLufs === null ? 'too quiet to measure' : `integrated loudness ${r.loudnessLufs} LUFS`}, sample peak ${r.peakDb} dBFS, average level ${r.rmsDb} dBFS.`];
   out.push(`Level over time (quiet ▁ to loud █): ${r.line}`);
   if (!r.silences.length) out.push(`No silence of ${options.minSeconds} s or more below ${options.thresholdDb} dB.`);
   else {
@@ -386,13 +386,15 @@ export function describeAudio(r: AudioReport, options: { thresholdDb: number; mi
   return out.join('\n');
 }
 
-export function describeBeats(b: Beats, seconds: number): string {
-  if (!b.beats.length || b.bpm <= 0) return `No steady beat found in ${clock(seconds)} (speech, ambience or too short).`;
+export function describeBeats(b: Beats, seconds: number, from = 0): string {
+  const part = from ? `${clock(seconds)} from ${clock(from)}` : clock(seconds);
+  if (!b.beats.length || b.bpm <= 0) return `No steady beat found in ${part} (speech, ambience or too short).`;
   const shown = b.beats.slice(0, 48).map(t => clock(t)).join(' ');
-  return `Tempo about ${b.bpm} BPM (regularity ${b.confidence}), ${b.beats.length} beats in ${clock(seconds)}. Beat times: ${shown}${b.beats.length > 48 ? ' …' : ''}`;
+  return `Tempo about ${b.bpm} BPM (regularity ${b.confidence}), ${b.beats.length} beats in ${part}. Beat times: ${shown}${b.beats.length > 48 ? ' …' : ''}`;
 }
 
-export function describeScenes(cuts: number[], seconds: number, sampled: number): string {
-  if (!cuts.length) return `No cut found in ${clock(seconds)} (${sampled} frames compared): one continuous shot, or only slow changes.`;
-  return `${cuts.length} cut${cuts.length === 1 ? '' : 's'} in ${clock(seconds)} (${sampled} frames compared): ${cuts.slice(0, 80).map(clock).join(', ')}${cuts.length > 80 ? ', …' : ''}. Shots: ${cuts.length + 1}.`;
+export function describeScenes(cuts: number[], seconds: number, sampled: number, from = 0): string {
+  const part = from ? `${clock(seconds)} from ${clock(from)}` : clock(seconds);
+  if (!cuts.length) return `No cut found in ${part} (${sampled} frames compared): one continuous shot, or only slow changes.`;
+  return `${cuts.length} cut${cuts.length === 1 ? '' : 's'} in ${part} (${sampled} frames compared): ${cuts.slice(0, 80).map(clock).join(', ')}${cuts.length > 80 ? ', …' : ''}. Shots: ${cuts.length + 1}.`;
 }

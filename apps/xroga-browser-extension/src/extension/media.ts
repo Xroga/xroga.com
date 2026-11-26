@@ -5,15 +5,16 @@ import type { AudioReport, Beats } from '@src/agent/media-analysis';
 
 export type MediaAnswer =
   | ({ kind: 'info' } & MediaInfo)
-  | { kind: 'audio'; report: AudioReport }
-  | { kind: 'beats'; seconds: number; beats: Beats }
-  | { kind: 'scenes'; seconds: number; sampled: number; cuts: number[] }
+  | { kind: 'audio'; from: number; report: AudioReport }
+  | { kind: 'beats'; from: number; seconds: number; beats: Beats }
+  | { kind: 'scenes'; from: number; seconds: number; sampled: number; cuts: number[] }
   | { kind: 'frames'; base64: string; width: number; height: number; times: number[]; decoded: number };
 
 export interface MediaRequest {
   url: string;
   action: 'info' | 'audio' | 'beats' | 'scenes' | 'frames';
   seconds?: number;
+  from?: number;
   count?: number;
   times?: number[];
   width?: number;
