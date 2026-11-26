@@ -81,9 +81,86 @@ async function recognize(base64: string, mimeType: string, lang: string) {
 
 // Reading a PDF (the read_pdf tool): the file is fetched here (an extension page may read any address the extension has access to, as the person's own tab did), pdf.js (vendored in
 // public/pdf, Apache-2.0) gives each page's text, and a page with no text, or all pages when asked, is drawn to a canvas and read with the same text recognition as above.
+// Page layout (read_pdf with layout true): Docling's layout model (Heron, Apache-2.0, RT-DETR v2, about 171 MB, ONNX) finds the regions of a drawn page (title, heading, text, list item,
+// table, picture, caption, formula, code, header, footer); the words come from the PDF's text layer (or from text recognition for a scanned page) and src/agent/layout-assemble.ts puts them together.
+const LAYOUT_MODEL = 'docling-project/docling-layout-heron-onnx';
+const LAYOUT_PAGES = 8;
+type Detect = (canvas: OffscreenCanvas, options: { threshold: number }) => Promise<Array<{ score: number; label: string; box: { xmin: number; ymin: number; xmax: number; ymax: number } }>>;
+const LAYOUT_SIDE = 640;
+let layoutDetect: Promise<Detect> | undefined;
+function layoutDetector(): Promise<Detect> {
+  layoutDetect ??= (async () => {
+    const tf = await loadTransformers();
+    // The exported model takes `images` (1x3x640x640, red-green-blue, whole numbers 0 to 255) and `orig_target_sizes`, and returns labels, boxes (corners, in that size) and scores.
+    const model = await tf.AutoModelForObjectDetection.from_pretrained(LAYOUT_MODEL, { subfolder: '', dtype: 'fp32', device: 'wasm' });
+    const session = model.sessions.model;
+    const detect: Detect = async (canvas, { threshold }) => {
+      const small = new OffscreenCanvas(LAYOUT_SIDE, LAYOUT_SIDE);
+      const ctx = small.getContext('2d')!;
+      ctx.drawImage(canvas, 0, 0, LAYOUT_SIDE, LAYOUT_SIDE);
+      const rgba = ctx.getImageData(0, 0, LAYOUT_SIDE, LAYOUT_SIDE).data;
+      const plane = LAYOUT_SIDE * LAYOUT_SIDE;
+      const chw = new Uint8Array(3 * plane);
+      for (let i = 0; i < plane; i++) {
+        chw[i] = rgba[i * 4]!;
+        chw[plane + i] = rgba[i * 4 + 1]!;
+        chw[2 * plane + i] = rgba[i * 4 + 2]!;
+      }
+      const feeds: Record<string, unknown> = {
+        [session.inputNames.find(n => /image/i.test(n)) ?? 'images']: new tf.Tensor('uint8', chw, [1, 3, LAYOUT_SIDE, LAYOUT_SIDE]).ort_tensor,
+        [session.inputNames.find(n => /size/i.test(n)) ?? 'orig_target_sizes']: new tf.Tensor('int64', BigInt64Array.from([BigInt(LAYOUT_SIDE), BigInt(LAYOUT_SIDE)]), [1, 2]).ort_tensor,
+      };
+      const out = await session.run(feeds);
+      const named = (re: RegExp) => out[session.outputNames.find(n => re.test(n)) ?? ''];
+      const labels = named(/label/i);
+      const boxes = named(/box/i);
+      const scores = named(/score/i);
+      if (!labels || !boxes || !scores) throw new Error('the layout model answered with ' + session.outputNames.join(', ') + ' (expected labels, boxes, scores)');
+      const sx = canvas.width / LAYOUT_SIDE;
+      const sy = canvas.height / LAYOUT_SIDE;
+      const found: Awaited<ReturnType<Detect>> = [];
+      for (let i = 0; i < scores.data.length; i++) {
+        const score = Number(scores.data[i]);
+        if (score < threshold) continue;
+        const b = boxes.data;
+        found.push({ score, label: model.config.id2label[String(Number(labels.data[i]))] ?? 'text', box: { xmin: Number(b[i * 4]) * sx, ymin: Number(b[i * 4 + 1]) * sy, xmax: Number(b[i * 4 + 2]) * sx, ymax: Number(b[i * 4 + 3]) * sy } });
+      }
+      return found;
+    };
+    return detect;
+  })();
+  layoutDetect.catch(() => (layoutDetect = undefined));
+  return layoutDetect;
+}
+const LAYOUT_SCALE = 2;
+async function layoutPage(page: PdfPageLike, n: number, textItems: Array<{ str?: string; transform: number[]; width?: number; height?: number }> | undefined, lang: string) {
+  const { assembleLayout } = await import('@src/agent/layout-assemble');
+  const viewport = page.getViewport({ scale: LAYOUT_SCALE });
+  const canvas = new OffscreenCanvas(Math.ceil(viewport.width), Math.ceil(viewport.height));
+  await Promise.race([page.render({ canvasContext: canvas.getContext('2d') as unknown as CanvasRenderingContext2D, viewport }).promise, new Promise<never>((_, reject) => setTimeout(() => reject(new Error('drawing page ' + n + ' took more than 40 seconds')), 40_000))]);
+  const blob = await canvas.convertToBlob({ type: 'image/png' });
+  const found = await (await layoutDetector())(canvas, { threshold: 0.35 });
+  const hasText = (textItems ?? []).filter(i => typeof i.str === 'string' && i.str.trim()).length >= 5;
+  let items: Array<{ str: string; x0: number; y0: number; x1: number; y1: number }>;
+  if (hasText) {
+    items = (textItems ?? [])
+      .filter(i => typeof i.str === 'string' && i.str.trim() && Math.abs(i.transform[1]!) <= 0.2 * Math.abs(i.transform[0]!))
+      .map(i => {
+        const h = (Math.abs(i.transform[3]!) || i.height || 10) * LAYOUT_SCALE;
+        const base = viewport.height - i.transform[5]! * LAYOUT_SCALE;
+        return { str: i.str as string, x0: i.transform[4]! * LAYOUT_SCALE, x1: (i.transform[4]! + (i.width ?? 0)) * LAYOUT_SCALE, y0: base - h, y1: base + 0.2 * h };
+      });
+  } else {
+    const read = await recognize(await blobToBase64(blob), 'image/png', lang);
+    items = read.lines.filter(l => l.text).map(l => ({ str: l.text, x0: l.bbox.x0, y0: l.bbox.y0, x1: l.bbox.x1, y1: l.bbox.y1 }));
+  }
+  const out = assembleLayout(found.map(f => ({ label: f.label, score: f.score, x0: f.box.xmin, y0: f.box.ymin, x1: f.box.xmax, y1: f.box.ymax })), items, { width: viewport.width, height: viewport.height });
+  return { text: out.markdown, source: hasText ? ('text' as const) : ('picture' as const) };
+}
+
 const MAX_PDF_BYTES = 60 * 1024 * 1024;
 const pdfSteps: string[] = [];
-async function readPdf(url: string, spec: string | undefined, forcePicture: boolean, lang: string, structure = false) {
+async function readPdf(url: string, spec: string | undefined, forcePicture: boolean, lang: string, structure = false, useLayout = false) {
   pdfSteps.length = 0;
   pdfSteps.push('start');
   // A hidden document never gets a screen refresh, and pdf.js draws a page on the next one: make the refresh a timer here, as it is not seen by anyone.
@@ -112,11 +189,14 @@ async function readPdf(url: string, spec: string | undefined, forcePicture: bool
   const wanted = parsePages(spec, doc.numPages);
   const pages: Array<{ page: number; text: string; source: 'text' | 'picture' }> = [];
   const layout = new Map<number, { items: PdfTextItem[]; width: number }>();
+  let layoutLeft = useLayout ? LAYOUT_PAGES : 0;
   for (const n of wanted) {
     const page = await doc.getPage(n);
     let text = '';
+    let textItems: Array<{ str?: string; transform: number[]; width?: number; height?: number }> | undefined;
     if (!forcePicture) {
       const content = await page.getTextContent();
+      textItems = content.items;
       if (structure) {
         layout.set(n, {
           width: page.getViewport({ scale: 1 }).width,
@@ -134,7 +214,11 @@ async function readPdf(url: string, spec: string | undefined, forcePicture: bool
       }
       text = text.replace(/[ \t]+/g, ' ').trim();
     }
-    if (forcePicture || text.length < 20) {
+    if (layoutLeft > 0) {
+      layoutLeft--;
+      const laid = await layoutPage(page, n, forcePicture ? undefined : textItems, lang);
+      pages.push({ page: n, text: laid.text || text, source: laid.source });
+    } else if (forcePicture || text.length < 20) {
       const viewport = page.getViewport({ scale: 2 });
       // An off-screen canvas: a page drawn on a canvas of the document waits for the next screen refresh, which a hidden document never gets.
       const canvas = new OffscreenCanvas(Math.ceil(viewport.width), Math.ceil(viewport.height));
@@ -191,6 +275,7 @@ async function readOutline(doc: PdfDoc): Promise<OutlineEntry[]> {
   if (nodes) await walk(nodes, 1);
   return out;
 }
+type PdfPageLike = Awaited<ReturnType<PdfDoc['getPage']>>;
 interface PdfDoc {
   numPages: number;
   getOutline(): Promise<PdfOutlineNode[] | null>;
@@ -212,20 +297,39 @@ const MAX_AUDIO_BYTES = 200 * 1024 * 1024;
 type SpeechPipeline = (audio: Float32Array, options: object) => Promise<{ text: string; chunks?: Array<{ timestamp: [number, number | null]; text: string }> }>;
 const speechPipelines = new Map<string, Promise<SpeechPipeline>>();
 
+interface Transformers {
+  env: { allowLocalModels: boolean; backends: { onnx: { wasm: { wasmPaths: string; numThreads: number; proxy: boolean } } } };
+  pipeline(task: string, model: string, options: object): Promise<unknown>;
+  AutoModelForObjectDetection: { from_pretrained(id: string, options: object): Promise<{ sessions: { model: OrtSession }; config: { id2label: Record<string, string> } }> };
+  Tensor: new (type: string, data: ArrayLike<number> | BigInt64Array, dims: number[]) => { ort_tensor: unknown };
+}
+interface OrtSession {
+  inputNames: string[];
+  outputNames: string[];
+  run(feeds: Record<string, unknown>): Promise<Record<string, { data: ArrayLike<number | bigint>; dims: number[] }>>;
+}
+let transformers: Promise<Transformers> | undefined;
+/** transformers.js and its ONNX runtime, vendored in public/speech, loaded once; the models themselves are downloaded on first use and kept by the browser cache. */
+function loadTransformers(): Promise<Transformers> {
+  transformers ??= (async () => {
+    const tf = (await import(/* @vite-ignore */ chrome.runtime.getURL('speech/transformers.min.js'))) as Transformers;
+    tf.env.allowLocalModels = false;
+    tf.env.backends.onnx.wasm.wasmPaths = chrome.runtime.getURL('speech/');
+    tf.env.backends.onnx.wasm.numThreads = 1;
+    tf.env.backends.onnx.wasm.proxy = false;
+    return tf;
+  })();
+  transformers.catch(() => (transformers = undefined));
+  return transformers;
+}
+
 function speechPipeline(multilingual: boolean): Promise<SpeechPipeline> {
   const model = multilingual ? 'onnx-community/whisper-tiny' : 'onnx-community/whisper-tiny.en';
   let pending = speechPipelines.get(model);
   if (!pending) {
     pending = (async () => {
-      const tf = (await import(/* @vite-ignore */ chrome.runtime.getURL('speech/transformers.min.js'))) as {
-        env: { allowLocalModels: boolean; backends: { onnx: { wasm: { wasmPaths: string; numThreads: number; proxy: boolean } } } };
-        pipeline(task: string, model: string, options: object): Promise<SpeechPipeline>;
-      };
-      tf.env.allowLocalModels = false;
-      tf.env.backends.onnx.wasm.wasmPaths = chrome.runtime.getURL('speech/');
-      tf.env.backends.onnx.wasm.numThreads = 1;
-      tf.env.backends.onnx.wasm.proxy = false;
-      return tf.pipeline('automatic-speech-recognition', model, { dtype: 'q8', device: 'wasm' });
+      const tf = await loadTransformers();
+      return (await tf.pipeline('automatic-speech-recognition', model, { dtype: 'q8', device: 'wasm' })) as SpeechPipeline;
     })();
     pending.catch(() => speechPipelines.delete(model));
     speechPipelines.set(model, pending);
@@ -274,8 +378,8 @@ chrome.runtime.onMessage.addListener((message, _sender, reply) => {
     reply({ held: urls.size });
   } else if (message.type === 'pdf') {
     Promise.race([
-      readPdf(String(message.url), message.pages as string | undefined, message.picture === true, /^[a-z_]{3,8}$/.test(String(message.lang)) ? String(message.lang) : 'eng', message.structure === true),
-      new Promise<never>((_, reject) => setTimeout(() => reject(new Error('the PDF reader stalled (' + pdfSteps.join('; ') + ')')), 100_000)),
+      readPdf(String(message.url), message.pages as string | undefined, message.picture === true, /^[a-z_]{3,8}$/.test(String(message.lang)) ? String(message.lang) : 'eng', message.structure === true, message.layout === true),
+      new Promise<never>((_, reject) => setTimeout(() => reject(new Error('the PDF reader stalled (' + pdfSteps.join('; ') + ')')), message.layout === true ? 600_000 : 100_000)),
     ]).then(
       result => reply({ ok: true, ...result }),
       error => reply({ ok: false, error: error instanceof Error ? error.message : String(error) }),

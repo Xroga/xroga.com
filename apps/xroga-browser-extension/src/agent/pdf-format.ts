@@ -8,7 +8,7 @@ export const READ_PDF_TOOL: AgentTool = {
   source: 'agent',
   group: 'reading',
   description:
-    'Read the text of a PDF: the one open in the tab (default) or a public address. pages like "1-3,7" reads only those (default the first 5); find returns only the lines that contain that text, with their page; ocr true reads pages as pictures (for scans); structure true returns headings, lists, tables and columns in reading order as Markdown, with its outline. Pages with no text are read as pictures automatically. Read-only; nothing leaves the browser.',
+    'Read the text of a PDF: the one open in the tab (default) or a public address. pages like "1-3,7" reads only those (default the first 5); find returns only the lines that contain that text, with their page; ocr true reads pages as pictures (for scans); structure true returns headings, lists, tables and columns in reading order as Markdown, with its outline; layout true finds the regions of each drawn page with a layout model (first use downloads about 170 MB; first 8 pages; slower, best for tables, columns and scans). Pages with no text are read as pictures automatically. Read-only; nothing leaves the browser.',
   parameters: {
     type: 'object',
     properties: {
@@ -17,6 +17,7 @@ export const READ_PDF_TOOL: AgentTool = {
       find: { type: 'string', maxLength: 120 },
       ocr: { type: 'boolean' },
       structure: { type: 'boolean' },
+      layout: { type: 'boolean' },
       language: { type: 'string', enum: ['english', 'arabic', 'urdu', 'hindi', 'spanish', 'french', 'german', 'portuguese', 'russian', 'chinese'] },
       tabId: { type: 'number' },
     },

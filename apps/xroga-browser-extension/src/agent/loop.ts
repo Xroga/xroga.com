@@ -2626,7 +2626,7 @@ ${renderSkill(top)}`);
       } else {
         try {
           const { readPdfFile } = await import('@src/extension/pdf');
-          const result = await readPdfFile(address, { pages: typeof args.pages === 'string' ? args.pages : undefined, picture: args.ocr === true, structure: args.structure === true, lang: OCR_LANGUAGES[String(args.language ?? 'english')] ?? 'eng' });
+          const result = await readPdfFile(address, { pages: typeof args.pages === 'string' ? args.pages : undefined, picture: args.ocr === true, structure: args.structure === true, layout: args.layout === true, lang: OCR_LANGUAGES[String(args.language ?? 'english')] ?? 'eng' });
           let host = 'a PDF';
           try { host = new URL(address).hostname; } catch { /* keep */ }
           outcome = { call, kind, text: this.options.layer.wrap(describePdf(result, { find: typeof args.find === 'string' ? args.find : undefined, requested: parsePages(typeof args.pages === 'string' ? args.pages : undefined, result.pageCount) }), { site: host }), isError: false };

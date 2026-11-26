@@ -43,6 +43,7 @@ import './read-file-real';
 import './site-map';
 import './block-requests';
 import './transcribe';
+import './pdf-layout';
 import './infinite-scroll';
 import './ocr-picture';
 import './image-and-language';
