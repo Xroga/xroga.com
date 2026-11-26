@@ -281,6 +281,77 @@ export function correctExplicitCurrencyReadouts(prose: string, readouts: ReturnT
   return lines.map(parts => parts.join('')).join('\n');
 }
 
+const readoutAmountPattern = '[+-]?(?:\\d{1,3}(?:,\\d{3})+|\\d+)(?:\\.\\d+)?';
+const displayedAmount = new RegExp('^([$€£])[ \\t]*(' + readoutAmountPattern + ')$');
+const balanceDifference = new RegExp('^([$€£]?)(' + readoutAmountPattern + ')[ \\t]+[−-][ \\t]+([$€£]?)(' + readoutAmountPattern + ')[ \\t]*$');
+const explicitReadoutShare = new RegExp(
+  '^([\\p{L}][\\p{L}\\p{N} \\-]{0,79}?)(?:[ \\t]*:[ \\t]*|[ \\t]+is[ \\t]+)' +
+  '(?:([\\d,.$€£+−*/÷× \\-]{1,120})=[ \\t]*)?([$€£]?)[ \\t]*(' + readoutAmountPattern + ')' +
+  '(?:,[ \\t]+which[ \\t]+is[ \\t]+|[ \\t]+\\()(?:(?:about|approximately)[ \\t]+)?' +
+  '([+-]?\\d{1,9}(?:\\.\\d{1,8})?)%[ \\t]+of[ \\t]+(?:the[ \\t]+)?' +
+  '([\\p{L}][\\p{L}\\p{N} \\-]{0,79}?)(?=[ \\t]*(?:[.!?)]|$|\\band[ \\t]+(?:an?[ \\t]+)?[+-]?\\d+(?:\\.\\d+)?%))', 'iu',
+);
+
+/** Recalculate a share only when both explicitly named initial readouts
+ * identify one value in the same unit and the prose quotes the numerator. */
+export function correctExplicitReadoutShares(prose: string, readouts: ReturnType<typeof initialNativeReadouts>): string {
+  if (!prose.includes('%') || readouts.length < 2) return prose;
+  const nameKey = (label: string) => metricLabelKey(label).replace(/^the\s+/i, '');
+  const amount = (label: string, allowBalanceAlias = false) => {
+    const key = nameKey(label);
+    const matches = readouts.filter(row => {
+      const name = nameKey(row.label);
+      return name === key || (allowBalanceAlias && key === 'final balance' && name === 'projected balance');
+    });
+    if (matches.length !== 1) return;
+    const match = displayedAmount.exec(matches[0].value);
+    if (!match) return;
+    const value = Number(match[2].replace(/,/g, ''));
+    if (Number.isFinite(value)) return { readout: matches[0], unit: match[1], value, alias: nameKey(matches[0].label) !== key,
+      rounding: 0.5 * 10 ** -(match[2].split('.')[1]?.length ?? 0) };
+  };
+  let fence: string | undefined;
+  let example = false;
+  return prose.split('\n').map(line => {
+    const marker = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line);
+    if (marker) {
+      if (!fence) fence = marker[1];
+      else if (fence[0] === marker[1][0] && fence.length <= marker[1].length && !marker[2].trim()) fence = undefined;
+      return line;
+    }
+    if (fence) return line;
+    if (!line.trim()) example = false;
+    if (readoutExampleBlock.test(line)) example = true;
+    if (example || /^(?: {4}|\t|\s*[>|])|[`*_[\]]/.test(line)) return line;
+    return line.split(/(?<=[.!?])([ \t]+)(?=\S)/).map(sentence => {
+      const match = explicitReadoutShare.exec(sentence);
+      if (!match) return sentence;
+      const [claim, label, equation, statedUnit, statedAmount, percentage, denominatorLabel] = match;
+      const numerator = amount(label), denominator = amount(denominatorLabel, Boolean(equation));
+      if (!numerator || !denominator || numerator.readout === denominator.readout || numerator.unit !== denominator.unit || (statedUnit && statedUnit !== numerator.unit)
+          || numerator.value !== Number(statedAmount.replace(/,/g, '')) || denominator.value <= denominator.rounding) return sentence;
+      // "Final balance" and "projected balance" can refer to different
+      // periods. Require the same balance and a consistent subtraction.
+      if (denominator.alias) {
+        const difference = balanceDifference.exec(equation);
+        if (!difference) return sentence;
+        const [, balanceUnit, balanceText, startingUnit, startingText] = difference;
+        if ([balanceUnit, startingUnit].some(unit => unit && unit !== numerator.unit)) return sentence;
+        const balance = Number(balanceText.replace(/,/g, '')), starting = Number(startingText.replace(/,/g, ''));
+        if (balance !== denominator.value || Math.abs(balance - starting - numerator.value) > numerator.rounding) return sentence;
+      }
+      const share = numerator.value / denominator.value;
+      const decimals = percentage.split('.')[1]?.length ?? 0;
+      const error = (numerator.rounding + Math.abs(share) * denominator.rounding) / (denominator.value - denominator.rounding) * 100;
+      if (Math.abs(Number(percentage) - share * 100) <= 0.5 * 10 ** -decimals + error + 1e-8) return sentence;
+      const replacement = (share * 100).toFixed(decimals);
+      if (!/^[+-]?\d{1,9}(?:\.\d+)?$/.test(replacement)) return sentence;
+      const start = claim.lastIndexOf(percentage + '%');
+      return sentence.slice(0, start) + replacement + sentence.slice(start + percentage.length);
+    }).join('');
+  }).join('\n');
+}
+
 /** Compare explicit currency claims to the corresponding labeled readout. An
  * unrelated example, input amount or uncategorized number is never rewritten. */
 export function conflictingNativeReadouts(prose: string, readouts: ReturnType<typeof initialNativeReadouts>) {

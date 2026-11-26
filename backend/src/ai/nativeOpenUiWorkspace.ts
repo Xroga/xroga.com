@@ -2,9 +2,9 @@ import { publicCompletionState } from './completionDiagnostics.js';
 import { NATIVE_UI_FORMAT, PARTIAL_NATIVE_PRESENTATION_NOTE, missingNativeFormats, nativeSourceMarkers, recoverNativeWorkspaceProgram, recoverNativeMonthlyChart, recoverTruncatedNativeWorkspaceProgram, restrictNativeWorkspaceProgram, splitNativeOpenUiAnswer, supplementNativeProse, validateNativeWorkspaceProgram, type NativeUiDiagnostic, type NativeUiValidation, type RequiredNativeFormat } from './nativeOpenUi.js';
 import { nativeAnswerReviewReason, nativeFactualGuidance, nativeTechnicalCorrections, repairNativePlainAnswer, retainReviewedTechnicalProse, suppliedMonthlyComparison } from './nativeOpenUiAccuracy.js';
 import { checklistFromProse, requestsEditableChecklist, suppliedPeriodicSeries } from './nativeOpenUiRecovery.js';
-import { conflictingNativeReadouts, correctExplicitCurrencyReadouts, initialNativeReadouts, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
+import { conflictingNativeReadouts, correctExplicitCurrencyReadouts, correctExplicitReadoutShares, initialNativeReadouts, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
 import { recoverNativeReadoutExplanations } from './nativeOpenUi.js';
-import { bindNativeAnswerText, removeRepeatedCalculatorFormulas } from './nativeOpenUi.js';
+import { bindNativeAnswerText, prioritizeNativeCalculator, removeRepeatedCalculatorFormulas } from './nativeOpenUi.js';
 import { reviewEditorialProse } from './nativeOpenUiEditorial.js';
 import { nativeMarkdownTables } from './nativeMarkdown.js';
 import { compactNativeDocumentProse, requestedNativeDocumentFormat } from './nativeDocumentDownload.js';
@@ -191,8 +191,12 @@ export function completeNativeWorkspaceAnswer(
   const validation = repair?.validation ?? original;
   const deduplicated = finishReason === 'stop' && validation?.ok && requiredFormats.includes('calculator')
     ? removeRepeatedCalculatorFormulas(candidate, prose) : candidate;
-  const program = deduplicated !== candidate && validateNativeWorkspaceProgram(deduplicated, evidenceIds, prose,
+  const compatibleProgram = deduplicated !== candidate && validateNativeWorkspaceProgram(deduplicated, evidenceIds, prose,
     undefined, { request: prompt }).ok ? deduplicated : candidate;
+  const ordered = finishReason === 'stop' && validation?.ok && requiredFormats.includes('calculator')
+    ? prioritizeNativeCalculator(compatibleProgram, formatPrompt) : compatibleProgram;
+  const program = ordered !== compatibleProgram && validateNativeWorkspaceProgram(ordered, evidenceIds, prose,
+    undefined, { request: prompt }).ok ? ordered : compatibleProgram;
   const missing = missingNativeFormats(validation?.ok ? program : '', requiredFormats).filter(format =>
     format !== 'table' || (presentation?.requiresTableControls ?? requestsNativeTableControls(prompt ?? ''))
       || !nativeMarkdownTables(prose).length);
@@ -271,8 +275,13 @@ export function completeNativeWorkspaceAnswer(
   const proseMultipleConflict = multiples && multiples.repairProse(response) !== response;
   const multipleConflict = proseMultipleConflict || (multiples?.conflictingNotes.size ?? 0) > 0;
   const proseReadoutConflict = conflictingNativeReadouts(response, readouts).length > 0;
-  const visualReadoutConflict = readouts.length > 0 && conflictingNativeReadouts(supplementNativeProse('', program, true), readouts).length > 0;
-  if (valid && (proseReadoutConflict || multipleConflict || visualReadoutConflict)) {
+  const projectedReadouts = readouts.length > 0 ? supplementNativeProse('', program, true) : '';
+  const visualReadoutConflict = conflictingNativeReadouts(projectedReadouts, readouts).length > 0;
+  const canCorrectLocalReadouts = valid && !evidenceIds?.size && !repair?.partial && !missing.length && requiredFormats.includes('calculator');
+  const editableReadouts = canCorrectLocalReadouts ? initialNativeReadouts(program, true) : [];
+  const correctedShares = correctExplicitReadoutShares(response, editableReadouts);
+  const shareConflict = correctedShares !== response || correctExplicitReadoutShares(projectedReadouts, editableReadouts) !== projectedReadouts;
+  if (valid && (proseReadoutConflict || multipleConflict || visualReadoutConflict || shareConflict)) {
     const optionalCalculator = !requiredFormats.length && !missingNativeFormats(program, ['calculator']).length;
     // The complete prose can stand on its own when only an optional calculator
     // supplied the contradictory content. Keep requested or relied-on visuals partial.
@@ -281,8 +290,8 @@ export function completeNativeWorkspaceAnswer(
         && withoutControlClaims(response) === response.trim()) {
       return { response, completion, responseSource: { format: NATIVE_UI_FORMAT, text: '' } };
     }
-    if (!evidenceIds?.size && !multipleConflict && !repair?.partial && !missing.length && requiredFormats.includes('calculator')) {
-      const correctedProse = correctExplicitCurrencyReadouts(response, initialNativeReadouts(program, true));
+    if (canCorrectLocalReadouts && !multipleConflict) {
+      const correctedProse = correctExplicitCurrencyReadouts(correctedShares, editableReadouts);
       const correctedProgram = recoverNativeReadoutExplanations(program, true);
       // Exact replacements in both representations preserve all instructions
       // and leave the model's validated controls and formulas intact.
@@ -291,7 +300,7 @@ export function completeNativeWorkspaceAnswer(
           && !missingNativeFormats(correctedProgram, requiredFormats).length
           && !conflictingNativeReadouts(supplementNativeProse('', correctedProgram, true), readouts).length) {
         const projection = supplementNativeProse(correctedProse, correctedProgram, true);
-        if (!conflictingNativeReadouts(projection, readouts).length) return {
+        if (!conflictingNativeReadouts(projection, readouts).length && correctExplicitReadoutShares(projection, editableReadouts) === projection) return {
           response: projection,
           completion: { status: 'complete' as const },
           responseSource: { format: NATIVE_UI_FORMAT, text: correctedProgram },
@@ -300,11 +309,11 @@ export function completeNativeWorkspaceAnswer(
     }
     // Preserve independent prose and the calculator when its corrected
     // presentation agrees with the evaluated readouts.
-    const safeProse = recoverNativeReadoutProse(response, readouts, multiples);
+    const safeProse = recoverNativeReadoutProse(correctedShares, readouts, multiples);
     const correctedProgram = recoverNativeReadoutExplanations(program);
     const corrected = validateNativeWorkspaceProgram(correctedProgram, evidenceIds, '');
     const projected = corrected.ok ? supplementNativeProse(safeProse, correctedProgram, true) : '';
-    const readable = corrected.ok ? recoverNativeReadoutProse(projected, readouts, multiples)
+    const readable = corrected.ok ? recoverNativeReadoutProse(correctExplicitReadoutShares(projected, editableReadouts), readouts, multiples)
       : [safeProse, ...readouts.map(row => row.label + ': ' + row.value)].filter(Boolean).join('\n\n');
     const keepVisual = corrected.ok && readable === projected;
     const controlsUnavailable = !keepVisual && (optionalCalculator || requiredFormats.includes('calculator') || promisesInlineControls);

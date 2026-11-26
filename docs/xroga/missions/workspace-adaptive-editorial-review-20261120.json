@@ -72,6 +72,8 @@
       "Remove directions to unavailable calculator inputs while retaining the worked calculation and unrelated content.",
       "Keep calculator sensitivity and boundary examples distinct from the active result being checked.",
       "Keep a sensitivity chart's computed series separate from the calculator's selected value while still checking explicit labeled scalar rows.",
+      "Correct an explicit local percentage when its numerator and denominator identify unique evaluated calculator readouts in the same unit. Preserve the correction in both the rendered program and the saved answer.",
+      "Place a directly requested primary calculator before background prose when it is the first validated interactive block, preserving deliberate reading order and the complete written answer.",
       "Apply a verified local factual correction in place when it resolves the only flagged issue in an ordinary plain answer.",
       "Reuse an unchanged native answer tree during unrelated Workspace updates.",
       "Keep native boxes within the reading column and let their contents determine height.",
@@ -126,6 +128,12 @@
       "scope": "Preserve independent content and withhold conflicting prose, branches, tables and prerequisite order.",
       "negative": true,
       "reference": "backend/src/ai/nativeOpenUiEditorial.test.ts"
+    },
+    {
+      "command": "tsx --test backend/src/ai/nativeOpenUiValues.test.ts",
+      "scope": "Repair explicit calculator ratios through native presentation and Share while leaving mixed units, ambiguous metrics and independent examples intact.",
+      "negative": true,
+      "reference": "backend/src/ai/nativeOpenUiValues.test.ts"
     },
     {
       "command": "tsx --test backend/src/ai/researchAnswer.test.ts",

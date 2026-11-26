@@ -8,7 +8,7 @@ import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
 import { readNativeOpenUiRun } from './nativeOpenUiRun.js';
 import { completeNativeWorkspaceAnswer, usesNativeWorkspacePresentation } from './nativeOpenUiWorkspace.js';
 import { requiredNativeFormats } from './answerCoverage.js';
-import { bindNativeAnswerText, nativeReadableTextKey, removeRepeatedCalculatorFormulas, supplementNativeProse } from './nativeOpenUi.js';
+import { bindNativeAnswerText, nativeReadableTextKey, prioritizeNativeCalculator, removeRepeatedCalculatorFormulas, supplementNativeProse } from './nativeOpenUi.js';
 
 test('native Markdown references the complete readable answer without generating a second explanation', () => {
   const prose = '## Answer\n\nUse **Basic** for one seat.\n\n1. Read the terms.\n2. Compare the total.\n\nLiteral example: `_xroga_answer = "example"`.';
@@ -22,6 +22,36 @@ test('native Markdown references the complete readable answer without generating
   assert.equal(bindNativeAnswerText(program + '\n_xroga_answer = "Existing saved content"', prose), program + '\n_xroga_answer = "Existing saved content"');
   const invalid = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + 'root = Unknown(_xroga_answer)', 'stop');
   assert.ok(invalid.response.includes(prose), 'Invalid visuals retain every readable paragraph');
+});
+
+test('a requested primary calculator precedes its full readable fallback with saved ordering', () => {
+  const prose = '# Monthly estimate\n\nEnter the monthly units and unit price.\n\n## Estimate\n\nAt 4 units and USD 8 each the total is USD 32.\n\n## Assumptions\n\nThe price excludes tax.';
+  const formula = [
+    '$units = 4',
+    '$price = 8',
+    'cost = $units * $price',
+    'estimate = Section("Estimate", [Card([Controls([Input($units, "Monthly units", "number"), Input($price, "Unit price", "number"), Button("Reset", @Reset($units, $price))], "Estimate inputs"), Metric("Total", @Format(cost, "currency", 2, "USD"))])])',
+    'details = Text("Review the billing month separately.")',
+  ].join('\n');
+  const program = bindNativeAnswerText('root = Col([Markdown(_xroga_answer), estimate, details])\n' + formula, prose);
+  const prompt = 'Build an interactive monthly cost calculator. Let me edit the units and the unit price. Include a worked example.';
+  assert.deepEqual(validateNativeWorkspaceProgram(program, undefined, prose), { ok: true });
+  const ordered = prioritizeNativeCalculator(program, prompt);
+  assert.equal(ordered, program.replace('[Markdown(_xroga_answer), estimate, details]', '[estimate, Markdown(_xroga_answer), details]'));
+  assert.deepEqual(validateNativeWorkspaceProgram(ordered, undefined, prose), { ok: true });
+  assert.deepEqual(readNativeOpenUiShare(buildNativeOpenUiShare(prose, ordered) ?? '')?.text, prose);
+  assert.equal(readNativeOpenUiShare(buildNativeOpenUiShare(prose, ordered) ?? '')?.program, ordered);
+  for (const request of [
+    'Explain the assumptions first, then build an interactive monthly cost calculator.',
+    'Build an interactive monthly cost calculator. Put the explanation before the calculator.',
+    'Build an interactive monthly cost calculator. Keep the controls after the bigger comparison chart.',
+    'Build an interactive monthly cost calculator at the bottom of the answer.',
+    'Build a comparison table and an interactive monthly cost calculator.',
+    'Build a report with an interactive monthly cost calculator.',
+    'How does an interactive monthly cost calculator work?',
+  ]) assert.equal(prioritizeNativeCalculator(program, request), program, request);
+  const mixed = program.replace('estimate, details', 'details, estimate');
+  assert.equal(prioritizeNativeCalculator(mixed, prompt), mixed);
 });
 
 test('long bound Markdown survives validation and Share without expanding other widget strings', () => {

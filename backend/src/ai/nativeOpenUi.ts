@@ -4,7 +4,7 @@ import { DIAGRAM_NODE_TONES, hasRenderableDiagramTopology } from './nativeDiagra
 import { nativeMarkdownOutline, nativeMarkdownTables, nativeTableDecimalKey, type NativeMarkdownTable } from './nativeMarkdown.js';
 import { reviewEditorialVisuals } from './nativeOpenUiEditorial.js';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
-import { correctExplicitCurrencyReadouts, formatInitialNativeCurrency, initialNativeReadouts, initialNativeValueReader, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
+import { correctExplicitCurrencyReadouts, correctExplicitReadoutShares, formatInitialNativeCurrency, initialNativeReadouts, initialNativeValueReader, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
 
 export const NATIVE_UI_FORMAT = 'xroga-openui-v1' as const;
 export const NATIVE_UI_LIBRARY = 'xroga-native-v1' as const;
@@ -172,7 +172,10 @@ export type RequiredNativeFormat = 'table' | 'chart' | 'graph' | 'calculator' | 
 function hasReactiveCalculator(program: string) {
   const symbols = new Map(split(tokenize(program)).map(statement => [statement.id, parseExpression(statement.tokens)]));
   const root = symbols.get('root');
-  if (!root) return false;
+  return root ? subtreeHasReactiveCalculator(root, symbols) : false;
+}
+
+function subtreeHasReactiveCalculator(root: ASTNode, symbols: ReadonlyMap<string, ASTNode>) {
   const inputs = new Set<string>();
   const outputs = new Set<string>();
   function inspect(start: ASTNode, see: (node: ASTNode) => void) {
@@ -876,6 +879,39 @@ function printRecoveryExpression(node: ASTNode): string {
   }
 }
 
+/** Keep a directly requested working calculator ahead of its fallback when
+ * the model emits it as the first native sibling after the bound Markdown. */
+export function prioritizeNativeCalculator(program: string, prompt: string): string {
+  const opening = /^\s*(?:please\s+)?(?:(?:can|could|would)\s+you\s+)?(?:build|create|make|design|show(?:\s+me)?|give\s+me|provide(?:\s+me\s+with)?)\s+([^.!?;\n]+)/iu.exec(prompt)?.[1];
+  const artifact = opening && /\b(?:calculator|(?:interactive|adjustable|editable)\s+(?:estimator|simulator|calculation))\b/iu.exec(opening);
+  const differentDeliverable = /\b(?:and|with|including|alongside|plus|report|guide|document|spreadsheet|dashboard|diagram|table|chart)\b/iu;
+  const sequence = /\b(?:first|then|last|followed\s+by|follow\s+it\s+with)\b/iu;
+  const position = /\b(?:before|after|above|below|under|start\s+with|begin\s+with|lead\s+with)\s+(?:[\p{L}-]+\s+){0,4}(?:background|intro(?:duction)?|explanation|assumptions|walkthrough|overview|examples?|formula(?:s)?|controls?|calculator|charts?|tables?)\b/iu;
+  const answerPosition = /\b(?:at|near)\s+the\s+(?:top|bottom|end)\s+of\s+(?:the|your|this)\s+(?:answer|response|output|page|message)\b/iu;
+  const explicitOrder = sequence.test(prompt) || position.test(prompt) || answerPosition.test(prompt);
+  if (!artifact || differentDeliverable.test(opening?.slice(0, artifact.index) ?? '') || explicitOrder) return program;
+  try {
+    const statements = split(tokenize(program));
+    const symbols = new Map(statements.map(statement => [statement.id, parseExpression(statement.tokens)]));
+    const entry = statements.find(statement => statement.id === 'root');
+    const root = symbols.get('root');
+    if (entry?.start === undefined || entry.end === undefined || root?.k !== 'Comp' || root.name !== 'Col') return program;
+    const children = root.args[0];
+    if (children?.k !== 'Arr') return program;
+    const [first, second, ...rest] = children.els;
+    const markdown = resolveRecoveryReference(first, symbols);
+    if (markdown?.k !== 'Comp' || markdown.name !== 'Markdown' || markdown.args[0]?.k !== 'Ref'
+      || markdown.args[0].n !== '_xroga_answer' || !second
+      || !subtreeHasReactiveCalculator(second, symbols) || rest.some(child => subtreeHasReactiveCalculator(child, symbols))) return program;
+    const ordered = { ...root, args: [{ ...children, els: [second, first, ...rest] }, ...root.args.slice(1)] };
+    const expression = printRecoveryExpression(ordered);
+    if (JSON.stringify(parseExpression(tokenize(expression))) !== JSON.stringify(ordered)) return program;
+    return program.slice(0, entry.start) + 'root = ' + expression + program.slice(entry.end);
+  } catch {
+    return program;
+  }
+}
+
 /** Keep formulas in the authoritative Markdown when a calculator also
  * includes a copy in its introduction or metric caption. */
 export function removeRepeatedCalculatorFormulas(program: string, prose: string): string {
@@ -959,10 +995,14 @@ export function recoverNativeReadoutExplanations(program: string, replaceExactRe
       const body = resolveRecoveryReference(node.args[0],symbols);
       if (body?.k !== 'Str') return;
       const corrected = replaceExactReadoutsOnly
-        ? correctExplicitCurrencyReadouts(body.v, readouts)
+        ? correctExplicitCurrencyReadouts(correctExplicitReadoutShares(body.v, readouts), readouts)
         : recoverNativeReadoutProse(body.v, readouts, multiples);
       if (corrected !== body.v) {
-        body.v = corrected;
+        // Ordinary refs can also serve Code or other components. Only the
+        // host-owned Markdown binding mirrors the canonical answer globally.
+        const argument = node.args[0];
+        if (argument?.k === 'Ref' && argument.n === '_xroga_answer') body.v = corrected;
+        else node.args[0] = { k: 'Str', v: corrected };
         changed = true;
       }
     });
