@@ -26,6 +26,18 @@ export interface Command {
   params: object;
 }
 
+/**
+ * Address patterns of what each kind of download looks like, for Network.setBlockedURLs (the idea of Crawlee's blockRequests, Apache-2.0:
+ * images, media, fonts and styles by file ending, trackers and advertising by host). A query string after the ending is covered by the second form.
+ */
+export const BLOCK_PATTERNS: Record<string, string[]> = {
+  images: ['png', 'jpg', 'jpeg', 'gif', 'webp', 'avif', 'apng', 'bmp', 'ico', 'cur', 'jfif', 'tif', 'tiff', 'svg'].flatMap(e => [`*.${e}`, `*.${e}?*`]),
+  media: ['mp4', 'webm', 'mp3', 'ogg', 'wav', 'm4a', 'm3u8', 'mpd', 'mov'].flatMap(e => [`*.${e}`, `*.${e}?*`]),
+  fonts: ['woff', 'woff2', 'ttf', 'otf', 'eot'].flatMap(e => [`*.${e}`, `*.${e}?*`]),
+  styles: ['*.css', '*.css?*'],
+  trackers: ['*google-analytics.com*', '*googletagmanager.com*', '*googlesyndication.com*', '*doubleclick.net*', '*facebook.net/*', '*connect.facebook.com*', '*hotjar.com*', '*segment.io*', '*segment.com/analytics*', '*mixpanel.com*', '*clarity.ms*', '*amplitude.com*', '*fullstory.com*', '*adservice.google.*', '*taboola.com*', '*outbrain.com*'],
+};
+
 /** The DevTools commands for the requested settings, and a plain description of each; pure so it can be tested without a browser. */
 export function emulationCommands(args: EmulateArgs): { commands: Command[]; summary: string[] } {
   const commands: Command[] = [];
@@ -39,6 +51,7 @@ export function emulationCommands(args: EmulateArgs): { commands: Command[]; sum
       { method: 'Emulation.setCPUThrottlingRate', params: { rate: 1 } },
       { method: 'Emulation.setTimezoneOverride', params: { timezoneId: '' } },
       { method: 'Emulation.setLocaleOverride', params: { locale: '' } },
+      { method: 'Network.setBlockedURLs', params: { urls: [] } },
     );
     summary.push('everything reset to the browser defaults');
     return { commands, summary };
@@ -79,6 +92,11 @@ export function emulationCommands(args: EmulateArgs): { commands: Command[]; sum
     commands.push({ method: 'Emulation.setTimezoneOverride', params: { timezoneId: args.timezone } });
     summary.push(args.timezone ? `time zone ${args.timezone}` : 'time zone back to the system');
   }
+  if (args.block !== undefined) {
+    const kinds = [...new Set(args.block)];
+    commands.push({ method: 'Network.setBlockedURLs', params: { urls: kinds.flatMap(k => BLOCK_PATTERNS[k] ?? []) } });
+    summary.push(kinds.length ? `downloads of ${kinds.join(', ')} blocked (reload the page to see the effect; addresses without a file ending are not caught)` : 'downloads no longer blocked');
+  }
   if (args.locale !== undefined) {
     commands.push({ method: 'Emulation.setLocaleOverride', params: { locale: args.locale } });
     summary.push(args.locale ? `language ${args.locale}` : 'language back to the system');
@@ -89,7 +107,7 @@ export function emulationCommands(args: EmulateArgs): { commands: Command[]; sum
 export async function emulate(ctx: ToolContext, args: EmulateArgs): Promise<ToolOutcome> {
   const { commands, summary } = emulationCommands(args);
   if (!commands.length) {
-    return { data: { applied: [] }, lines: ['emulate · nothing to change: give a device or size, colorScheme, reducedMotion, media, network, cpuSlowdown, timezone, locale, or reset'] };
+    return { data: { applied: [] }, lines: ['emulate · nothing to change: give a device or size, colorScheme, reducedMotion, media, network, block, cpuSlowdown, timezone, locale, or reset'] };
   }
   const attachment = await ctx.attach();
   const failed: string[] = [];

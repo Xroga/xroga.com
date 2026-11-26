@@ -261,6 +261,7 @@ export const EmulateArgsSchema = z.strictObject({
   cpuSlowdown: z.number().min(1).max(20).optional(),
   timezone: z.string().max(60).optional().describe('IANA name, e.g. Asia/Tokyo'),
   locale: z.string().max(20).optional().describe('e.g. de-DE'),
+  block: z.array(z.enum(['images', 'media', 'fonts', 'styles', 'trackers'])).optional().describe('stop these downloads in the tab (faster reading; may change the look); [] undoes it'),
   reset: z.boolean().optional(),
 });
 

@@ -16,6 +16,25 @@ describe('emulationCommands', () => {
     expect(emulationCommands({ width: 800 }).commands[0]!.params).toMatchObject({ width: 800, height: 800 });
   });
 
+  it('blocks the downloads of the kinds asked for, and an empty list lifts the block', () => {
+    const { commands, summary } = emulationCommands({ block: ['images', 'fonts', 'images'] });
+    expect(commands).toHaveLength(1);
+    expect(commands[0]!.method).toBe('Network.setBlockedURLs');
+    const urls = (commands[0]!.params as { urls: string[] }).urls;
+    expect(urls).toContain('*.png');
+    expect(urls).toContain('*.jpg?*');
+    expect(urls).toContain('*.woff2');
+    expect(urls).not.toContain('*.css');
+    expect(new Set(urls).size).toBe(urls.length);
+    expect(summary[0]).toBe('downloads of images, fonts blocked (reload the page to see the effect; addresses without a file ending are not caught)');
+    expect(emulationCommands({ block: [] }).commands[0]!.params).toEqual({ urls: [] });
+    expect(emulationCommands({ block: ['trackers'] }).commands[0]!.params).toMatchObject({ urls: expect.arrayContaining(['*googletagmanager.com*']) });
+  });
+
+  it('lifts the block on reset', () => {
+    expect(methods({ reset: true })).toContain('Network.setBlockedURLs');
+  });
+
   it('puts scheme, motion and print into one emulated-media command', () => {
     const { commands } = emulationCommands({ colorScheme: 'dark', reducedMotion: true, media: 'print' });
     expect(commands).toEqual([
@@ -34,7 +53,7 @@ describe('emulationCommands', () => {
   it('reset clears every setting and ignores the others', () => {
     const { commands, summary } = emulationCommands({ reset: true, device: 'ipad', network: 'offline' });
     expect(commands.map(c => c.method)).toEqual([
-      'Emulation.clearDeviceMetricsOverride', 'Emulation.setEmulatedMedia', 'Network.emulateNetworkConditions', 'Emulation.setCPUThrottlingRate', 'Emulation.setTimezoneOverride', 'Emulation.setLocaleOverride',
+      'Emulation.clearDeviceMetricsOverride', 'Emulation.setEmulatedMedia', 'Network.emulateNetworkConditions', 'Emulation.setCPUThrottlingRate', 'Emulation.setTimezoneOverride', 'Emulation.setLocaleOverride', 'Network.setBlockedURLs',
     ]);
     expect(commands[2]!.params).toMatchObject({ offline: false, downloadThroughput: -1, uploadThroughput: -1 });
     expect(commands[1]!.params).toMatchObject({ media: '', features: [{ name: 'prefers-color-scheme', value: '' }, { name: 'prefers-reduced-motion', value: '' }] });
