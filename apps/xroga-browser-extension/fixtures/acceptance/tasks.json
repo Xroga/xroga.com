@@ -1,50 +1,38 @@
 [
   {
-    "name": "A1-xlsx-orders",
-    "url": "http://localhost:8787/docs/orders.xlsx",
-    "text": "A spreadsheet of customer orders is at http://localhost:8787/docs/orders.xlsx. Read it and tell me which customer has not paid yet, and the date of the most recent order in the sheet. Quote the row numbers you used.",
-    "expect": { "type": "contains_all", "values": ["Bolt & Nut", "2026-03-01"], "forbidden": ["Acme Corp has not paid"] }
+    "name": "R1-csv-airtravel",
+    "url": "https://www.google.com/",
+    "text": "A public data file is at https://people.sc.fsu.edu/~jburkardt/data/csv/airtravel.csv (monthly airline passengers). Read it and tell me which month had the most passengers in 1960 and how many, and how many more passengers July 1960 had than July 1958.",
+    "expect": { "type": "all", "parts": [{ "type": "contains_all", "values": ["JUL", "622"] }, { "type": "number", "value": 131, "tolerance": 0 }] }
   },
   {
-    "name": "A2-docx-agreement",
-    "url": "http://localhost:8787/docs/agreement.docx",
-    "text": "Read the supplier agreement at http://localhost:8787/docs/agreement.docx. Give me the price per pallet of the Express tier, how many pallets are delivered per quarter, the third step of the escalation order and how many days after the invoice date payment is due.",
-    "expect": { "type": "contains_all", "values": ["19.80", "1,200", "Managing board", "45"] }
+    "name": "R2-xlsx-rows",
+    "url": "https://www.google.com/",
+    "text": "A public Excel file is at https://freetestdata.com/wp-content/uploads/2021/09/Free_Test_Data_100KB_XLSX.xlsx. Tell me the column headings of its first sheet and exactly how many data rows it has (not counting the heading row or empty rows).",
+    "expect": { "type": "contains_all", "values": ["NAME", "GENDER", "AGE", "DATE", "COUNTRY", "2721"] }
   },
   {
-    "name": "A3-article-fees",
-    "url": "http://localhost:8787/article-news.html",
-    "text": "This tab shows a news article. Report the new channel depth at low tide, the monthly berthing fee for a boat of 12 to 18 metres, who the harbour master is, and the email address to write to for questions. Do not include anything from the advertising or the trending box.",
-    "expect": { "type": "contains_all", "values": ["4.2", "790", "Tomas Reyes", "harbour@gazette.example"], "forbidden": ["two boats", "Ten cheap flights"] }
+    "name": "R3-pptx-slide",
+    "url": "https://www.google.com/",
+    "text": "A public PowerPoint file is at https://github.com/scanny/python-pptx/raw/master/features/steps/test_files/test.pptx. How many slides does it have, and what are the title and the subtitle text on the slide?",
+    "expect": { "type": "contains_all", "values": ["Presentation Title Text", "Subtitle Text"] }
   },
   {
-    "name": "A4-hold-reveal",
-    "url": "http://localhost:8787/hold-button.html",
-    "text": "This page hides an access code behind a button that must be pressed and held for about a second. Reveal the code and tell me exactly what it is.",
-    "expect": { "type": "contains_all", "values": ["4821"] }
+    "name": "R4-article-essay",
+    "url": "https://paulgraham.com/greatwork.html",
+    "text": "This tab shows a long essay. Give me its title, the month and year it was published, and the three qualities the essay says the work you choose needs to have. Work from the essay text only.",
+    "expect": { "type": "contains_all", "values": ["How to Do Great Work", "July 2023", "natural aptitude", "deep interest", "scope"] }
   },
   {
-    "name": "A5-endless-feed",
-    "url": "http://localhost:8787/infinite-feed.html",
-    "text": "This page is an endless feed of reports that loads more as you scroll. Load all of them and tell me the number of the very last report.",
-    "expect": { "type": "contains_all", "values": ["60"], "forbidden": ["Report #10", "Report #20", "last report is 30"] }
+    "name": "R5-page-data",
+    "url": "https://www.python.org/",
+    "text": "On this page find the data the site publishes about itself: its social media profile links and the titles of the RSS feeds it offers. List them exactly.",
+    "expect": { "type": "contains_all", "values": ["ThePSF", "python-software-foundation", "Python Software Foundation News", "Python Job Opportunities", "Python Enhancement Proposals"] }
   },
   {
-    "name": "A6-epub-storm",
-    "url": "http://localhost:8787/docs/lighthouse.epub",
-    "text": "Read the book at http://localhost:8787/docs/lighthouse.epub. On what date was the storm and what barometer reading did the keeper record? Name the chapter.",
-    "expect": { "type": "contains_all", "values": ["14 April", "951", "Storm of April"] }
-  },
-  {
-    "name": "A7-pptx-results",
-    "url": "http://localhost:8787/docs/deck.pptx",
-    "text": "Read the presentation at http://localhost:8787/docs/deck.pptx and tell me the Q4 revenue, the growth percentage and the churn rate, and which slide each fact is on.",
-    "expect": { "type": "contains_all", "values": ["4.2", "11", "2.1", "slide 1"] }
-  },
-  {
-    "name": "A8-csv-analysis",
-    "url": "http://localhost:8787/docs/sales.csv",
-    "text": "The sales table is at http://localhost:8787/docs/sales.csv. Which region sold the most units in total across all rows, and what is that total? Show the rows you added.",
-    "expect": { "type": "all", "parts": [{ "type": "contains_all", "values": ["East"] }, { "type": "number", "value": 295, "tolerance": 0 }] }
+    "name": "R6-endless-quotes",
+    "url": "https://quotes.toscrape.com/scroll",
+    "text": "This page is an endless list of quotes that loads more as you scroll. Load all of them. Tell me how many quotes there are in total and the author of the very last one.",
+    "expect": { "type": "all", "parts": [{ "type": "number", "value": 100, "tolerance": 0 }, { "type": "contains_all", "values": ["George R.R. Martin"] }] }
   }
 ]

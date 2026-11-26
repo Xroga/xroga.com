@@ -110,6 +110,16 @@ describe('other formats and safety', () => {
     const bomb = makeZip({ 'big.txt': 'A'.repeat(3_000_000) });
     expect(() => listZip(new Uint8Array(bomb), { maxMembers: 10, maxMemberBytes: 1_000_000, maxTotalBytes: 5e6 })).toThrow(/more than the limit/);
   });
+  it('reads real-world shapes: a newline after the xml declaration, and quotes after spaces in a csv', async () => {
+    const xlsx = makeZip({
+      'xl/workbook.xml': '<?xml version="1.0" encoding="UTF-8"?>\r\n<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="S" sheetId="1" r:id="rId1"/></sheets></workbook>',
+      'xl/_rels/workbook.xml.rels': '<?xml version="1.0" encoding="UTF-8"?>\r\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Target="worksheets/sheet1.xml"/></Relationships>',
+      'xl/worksheets/sheet1.xml': '<?xml version="1.0"?>\r\n<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>h</t></is></c></row><row r="2"><c r="A2"><v>7</v></c></row></sheetData></worksheet>',
+    });
+    const r = await readFileContents(new Uint8Array(xlsx), { name: 'x.xlsx' });
+    expect(r.text).toMatch(/\| 2 \| 7 \|/);
+    expect(parseDelimited('"Month", "1958", "1959"\n"JAN",  340,  360\n').rows).toEqual([['Month', '1958', '1959'], ['JAN', '  340', '  360']]);
+  });
   it('detects kinds and ranges', () => {
     expect(detectKind(new TextEncoder().encode('<html><body>x'), 'a')).toBe('html');
     expect(detectKind(new TextEncoder().encode('a,b\n1,2'), 'data.csv')).toBe('csv');

@@ -101,8 +101,11 @@ export function parseDelimited(text: string): { rows: string[][]; delimiter: str
           i++;
         } else quoted = false;
       } else field += ch;
-    } else if (ch === '"' && field === '') quoted = true;
-    else if (ch === delimiter) {
+    } else if (ch === '"' && field.trim() === '') {
+      // A quote after only spaces (a, "x") still opens the quoted field.
+      field = '';
+      quoted = true;
+    } else if (ch === delimiter) {
       row.push(field);
       field = '';
     } else if (ch === '\n' || ch === '\r') {
@@ -132,8 +135,10 @@ function splitLine(line: string, d: string): string[] {
           i++;
         } else q = false;
       } else f += ch;
-    } else if (ch === '"' && f === '') q = true;
-    else if (ch === d) {
+    } else if (ch === '"' && f.trim() === '') {
+      f = '';
+      q = true;
+    } else if (ch === d) {
       out.push(f);
       f = '';
     } else f += ch;

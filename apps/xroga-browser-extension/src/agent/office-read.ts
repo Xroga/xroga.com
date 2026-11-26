@@ -85,7 +85,8 @@ async function relMap(zip: ZipFile, path: string): Promise<Map<string, string>> 
   const xml = await zip.text(file);
   const out = new Map<string, string>();
   if (!xml) return out;
-  for (const r of kids(parseXml(xml).children[0] as XNode, 'Relationship')) if (r.attrs.Id) out.set(r.attrs.Id, r.attrs.Target ?? '');
+  // The root is the first element: a real file has a newline after the declaration, which is a text child.
+  for (const r of kids(kids(parseXml(xml))[0], 'Relationship')) if (r.attrs.Id) out.set(r.attrs.Id, r.attrs.Target ?? '');
   return out;
 }
 const resolvePath = (base: string, target: string): string => {

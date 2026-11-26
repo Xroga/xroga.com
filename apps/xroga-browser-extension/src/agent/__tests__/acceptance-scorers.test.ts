@@ -36,14 +36,12 @@ describe('acceptance scorers', () => {
   });
   it('has a scorable expectation in every registered task, and a perfect answer scores 1', () => {
     const perfect: Record<string, string> = {
-      'A1-xlsx-orders': 'Bolt & Nut Ltd has not paid (row 3); last order 2026-03-01 in row 4',
-      'A2-docx-agreement': 'Express 19.80 EUR; 1,200 pallets; Managing board; 45 days',
-      'A3-article-fees': '4.2 metres, 790 euros, harbour master Tomas Reyes, harbour@gazette.example',
-      'A4-hold-reveal': 'The code is 4821',
-      'A5-endless-feed': 'The last report is Report #60',
-      'A6-epub-storm': 'The storm of April chapter, 14 April, 951 millibars (The Storm of April)',
-      'A7-pptx-results': 'Slide 1: Q4 results: revenue 4.2M up 11 percent, churn 2.1 percent',
-      'A8-csv-analysis': 'East sold the most: 143 + 152 = 295',
+      'R1-csv-airtravel': 'JUL 1960 had the most, 622; July 1960 had 131 more than July 1958 (491)',
+      'R2-xlsx-rows': 'Columns: SR., NAME, GENDER, AGE, DATE, COUNTRY; 2721 data rows',
+      'R3-pptx-slide': '1 slide: Presentation Title Text and Subtitle Text',
+      'R4-article-essay': 'How to Do Great Work, July 2023: natural aptitude, deep interest, scope to do great work',
+      'R5-page-data': 'x.com/ThePSF, linkedin python-software-foundation; feeds: Python Software Foundation News, Python Job Opportunities, Python Enhancement Proposals',
+      'R6-endless-quotes': '100 quotes; the last is by George R.R. Martin',
     };
     for (const t of tasks as unknown as Array<{ name: string; expect: never }>) {
       expect(perfect[t.name], t.name).toBeTruthy();
