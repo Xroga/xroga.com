@@ -976,6 +976,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     await expect(legacyPublicTurn.getByRole('button', { name: 'Confirm action' })).toHaveCount(0);
     await expect(legacyPublicTurn.getByRole('button', { name: 'Cancel', exact: true })).toHaveCount(0);
     await expect(legacyPublicTurn.getByRole('link', { name: 'Review details' })).toHaveCount(0);
+    await expect(legacyPublicTurn.getByText('Suggested next steps', { exact: true })).toHaveCount(0);
     await expect(legacyPublicTurn).not.toContainText(/\$0\.00575|Web evidence|Share a web research request/);
   };
   await checkSkippedSearch();

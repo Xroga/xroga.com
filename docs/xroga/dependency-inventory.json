@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "746208e8cfa5e5b5aca8405ae77cf67ebaef1543",
+  "source_sha": "ca7e2b0f403c9f71f80c7eb9ae07a7bb69325112",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -24068,7 +24068,7 @@
     },
     {
       "path": "frontend/src/lib/messageHelpers.ts",
-      "sha256": "b627f48b81c2960e62948321316f15799998b846456c46f6ae7175e2d4bcefb2"
+      "sha256": "34fde87aa6e18eec312614d8d4d781679c1148683aa95a3e98b083699318e209"
     },
     {
       "path": "frontend/src/lib/messageRehydration.ts",

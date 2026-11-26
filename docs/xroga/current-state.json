@@ -111394,6 +111394,10 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
+        "frontend/src/app/(shell)/dashboard/automations/page.tsx",
+        "frontend/src/app/(shell)/dashboard/projects/page.tsx",
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/native-answer-evaluation/page.tsx",
         "frontend/src/app/os-preview/rich-results/page.tsx",
@@ -111402,6 +111406,8 @@
       "callers": [
         "frontend/src/lib/connectedAppResult.test.ts:3",
         "frontend/src/lib/formatAiMarkdown.tsx:34",
+        "frontend/src/lib/messageHelpers.test.ts:4",
+        "frontend/src/lib/messageHelpers.ts:2",
         "frontend/src/lib/publicAnswerText.ts:5"
       ],
       "reachable": true,
@@ -111415,7 +111421,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "frontend/src/lib/connectedAppResult.test.ts"
+        "frontend/src/lib/connectedAppResult.test.ts",
+        "frontend/src/lib/messageHelpers.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -111601,7 +111608,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/lib/messageHelpers.ts:2"
+        "frontend/src/lib/messageHelpers.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -114753,10 +114760,11 @@
       "id": "surface:8c3cd48b2512bdeeff28",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/messageHelpers.ts",
-      "sha256": "b627f48b81c2960e62948321316f15799998b846456c46f6ae7175e2d4bcefb2",
+      "sha256": "34fde87aa6e18eec312614d8d4d781679c1148683aa95a3e98b083699318e209",
       "symbols": [
         "MessageSuggestions",
         "analysis",
+        "answer",
         "automationWork",
         "codeWork",
         "followUps",
@@ -114775,10 +114783,12 @@
         "type"
       ],
       "imports": [
+        "./connectedAppResult",
         "./creationIntelligence",
         "./promptClassifier"
       ],
       "runtimeImports": [
+        "frontend/src/lib/connectedAppResult.ts",
         "frontend/src/lib/creationIntelligence.ts",
         "frontend/src/lib/promptClassifier.ts"
       ],
@@ -152451,86 +152461,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:92e685adf9212e056bc5",
+      "id": "frontend-call:fd897b1fccaa7e05e7b8",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1067,
+      "line": 1068,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:dd87c60af56fac64cf0a",
+      "id": "frontend-call:f6f33477ac9aff63710b",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1070,
+      "line": 1071,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:e21b6b756101db6d3e34",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1840,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:06fe82533609ab87cfd3",
+      "id": "frontend-call:92f6eb4b5dc2230e0d73",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1841,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:9195f022abfab03a7e56",
+      "id": "frontend-call:e50fdab42680a6220749",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1846,
+      "line": 1842,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:0475084b66a8541c2a3b",
+      "id": "frontend-call:1680f954a04d29abccdf",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1847,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:521c6f36bf0b00c8110e",
+      "id": "frontend-call:95be5704ae9da4f0d285",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1853,
+      "line": 1848,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:45c0718e99fa8032156f",
+      "id": "frontend-call:3a238d1432db4c08ac3b",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1858,
+      "line": 1854,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:d2614d307251813c2bc8",
+      "id": "frontend-call:69372b85d0b2883eb61b",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1915,
+      "line": 1859,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:7566ad300caa78592554",
+      "id": "frontend-call:25c97116fcadb486b613",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1916,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:25c5d0c14a756b099727",
+      "id": "frontend-call:1fc39a1593074c8130f0",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1923,
+      "line": 1917,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:bde698dc4d10aa4ff0b7",
+      "id": "frontend-call:e5d1c51f06a886b1a8b0",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1937,
+      "line": 1924,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:de79311f9afeb51e2a13",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1938,
       "callee": "fetch",
       "reachable": false
     },
@@ -162234,7 +162244,7 @@
     {
       "id": "test-suite:94d04da642998f3a8d7d",
       "sourcePath": "frontend/src/lib/messageHelpers.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -38,6 +38,8 @@
     "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
     "frontend/src/components/native-openui/upstream/components/markdown.tsx",
     "frontend/src/lib/formatAiMarkdown.tsx",
+    "frontend/src/lib/messageHelpers.test.ts",
+    "frontend/src/lib/messageHelpers.ts",
     "frontend/src/lib/xrogaFileExports.test.ts",
     "frontend/src/lib/xrogaFileExports.ts",
     "scripts/verify-native-openui-browser.mjs"
@@ -62,7 +64,7 @@
       "Reuse an unchanged native answer tree during unrelated Workspace updates.",
       "Keep native boxes within the reading column and let their contents determine height.",
       "Respect explicit prose-only or excluded presentation formats in final response assembly.",
-      "Show a plain status when the owner’s saved research cannot be reviewed."
+      "Show a plain status when the owner’s saved research cannot be reviewed, without unrelated follow-ups."
     ],
     "replace": [],
     "deprecate": []
