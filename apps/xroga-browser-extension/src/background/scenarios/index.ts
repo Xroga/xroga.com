@@ -44,6 +44,7 @@ import './site-map';
 import './block-requests';
 import './transcribe';
 import './pdf-layout';
+import './webmcp';
 import './infinite-scroll';
 import './ocr-picture';
 import './image-and-language';

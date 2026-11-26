@@ -2650,6 +2650,42 @@ ${renderSkill(top)}`);
           outcome = { call, kind, text: 'error: the speech could not be read (' + (error instanceof Error ? error.message : String(error)).slice(0, 200) + '). The address may need a sign-in, not be a sound file, or be too large.', isError: true };
         }
       }
+    } else if (call.toolName === 'webmcp') {
+      let tabId = typeof args.tabId === 'number' ? args.tabId : this.#boundTab;
+      if (tabId === null || tabId === undefined) {
+        try { tabId = (await this.options.layer.tabs())?.activeTabId ?? null; } catch { tabId = null; }
+      }
+      if (tabId === null || tabId === undefined) {
+        outcome = { call, kind, text: 'error: webmcp needs an open page: open the site first.', isError: true };
+      } else {
+        try {
+          const [bridge, format] = await Promise.all([import('@src/extension/webmcp'), import('./webmcp')]);
+          let host = 'the page';
+          try { const here = (await this.options.layer.tabs())?.tabs.find(t => t.tabId === tabId)?.url; if (here) host = new URL(here).hostname; } catch { /* keep */ }
+          if (args.reload === true) await bridge.reloadTab(tabId);
+          const listing = await bridge.listPageTools(tabId);
+          if (args.action === 'call') {
+            const name = typeof args.name === 'string' ? args.name : '';
+            const tool = listing.tools.find(t => t.name === name);
+            if (!tool) {
+              outcome = { call, kind, text: this.options.layer.wrap(format.describeListing(listing) + ' error: no tool named "' + name + '" is offered by this page.', { site: host }), isError: true };
+            } else if (!tool.readOnly && args.confirmed !== true) {
+              outcome = { call, kind, text: 'error: "' + name + '" is not marked read-only, so it may change data on ' + host + '. If the person asked for this, call again with confirmed true; if it matters (sending, deleting, paying), ask them first. Nothing was run.', isError: true };
+            } else {
+              const input = args.input && typeof args.input === 'object' && !Array.isArray(args.input) ? (args.input as Record<string, unknown>) : {};
+              const done = await bridge.callPageTool(tabId, name, input);
+              this.#changedPages = this.#changedPages || !tool.readOnly;
+              outcome = done.ok
+                ? { call, kind, text: this.options.layer.wrap('webmcp ' + name + ': ' + format.describeCallResult(done.value), { site: host }), isError: false }
+                : { call, kind, text: 'error: the tool "' + name + '" failed (' + done.error.slice(0, 300) + ').', isError: true };
+            }
+          } else {
+            outcome = { call, kind, text: this.options.layer.wrap(format.describeListing(listing), { site: host }), isError: false };
+          }
+        } catch (error) {
+          outcome = { call, kind, text: 'error: the tools of this page could not be read (' + (error instanceof Error ? error.message : String(error)).slice(0, 200) + ').', isError: true };
+        }
+      }
     } else if (call.toolName === 'site_map') {
       const address = typeof args.url === 'string' ? args.url : '';
       if (!/^https?:\/\//i.test(address)) {

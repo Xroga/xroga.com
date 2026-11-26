@@ -2,6 +2,7 @@
 // its clients are in-process (the extension's agent, the test panel) and, later, an MCP bridge.
 import { installBlobHook, removeBlobHook } from './blob-capture';
 import { installPaintHook, removePaintHook } from './painted-text';
+import { installWebMcpHook, removeWebMcpHook } from './webmcp-hook';
 import { isLayerError, LayerError } from '../protocol/errors';
 import type { ErrorCode, ProtocolError } from '../protocol/errors';
 import { isReadOnly, listTools, toolSpec } from '../protocol/catalogue';
@@ -305,6 +306,8 @@ export class Controller {
           void installBlobHook(attachment.cdp);
           // Text a page paints on a canvas has no element: its exact words and positions are remembered so a label can be targeted, not read off a picture (painted-text.ts).
           void installPaintHook(attachment.cdp);
+          // Tools a page offers an agent through navigator.modelContext (WebMCP) are listed, so the webmcp tool can call them (webmcp-hook.ts).
+          void installWebMcpHook(attachment.cdp);
           // Any navigation ends the reuse of the last capture.
           attachment.topology.onFrameEvent(event => {
             if (event.type !== 'attached') state.last = undefined;
@@ -418,6 +421,7 @@ export class Controller {
     if (state?.attachment) {
       await removeBlobHook(state.attachment.cdp);
       await removePaintHook(state.attachment.cdp);
+      await removeWebMcpHook(state.attachment.cdp);
       await state.attachment.close().catch(() => undefined);
     }
     this.registry.tabDetached(tabId);
