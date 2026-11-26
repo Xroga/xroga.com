@@ -211,7 +211,9 @@ export function presentTerminalEvent(event: TerminalEvent): XrogaActivityPresent
   const detail = command ? redactTerminalText(command).trim().slice(0, 1000) :
     publicActivityText(redactTerminalText(rawDetail));
   // Output is already bounded and redacted by Agent V2. Preserve its line breaks.
-  const body = operation === 'command.output' ? redactTerminalText(event.body ?? '').slice(-8000) :
+  // The request summary is a short list the Workspace built itself; its lines are kept.
+  const body = event.canonical?.activityId === 'client-understand' ? redactTerminalText(event.body ?? '').slice(0, 4000) :
+    operation === 'command.output' ? redactTerminalText(event.body ?? '').slice(-8000) :
     operation === 'command.completed' ? '' :
     // File text keeps its line breaks, like command output. It is redacted and bounded.
     operation?.toString().startsWith('file.') ? redactTerminalText(event.body ?? '').slice(0, 4000) : publicActivityText(redactTerminalText(event.canonical?.details ?? event.body ?? ''));

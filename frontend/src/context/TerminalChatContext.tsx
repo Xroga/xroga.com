@@ -2879,7 +2879,7 @@ const stopRequestedRunIdRef =
           useProjectWorkspaceStore.getState().activeProjectContext,
           freshProductIntent,
         );
-        pushTerminalEvent('progress', clientStepFrame(CLIENT_UNDERSTAND, 'running', 'Understanding your request'));
+        pushTerminalEvent('progress', clientStepFrame(CLIENT_UNDERSTAND, 'running', 'Reading your request'));
         openClientStepRef.current = { id: CLIENT_UNDERSTAND, failed: 'Could not understand the request' };
         const semanticPlan = await api.phase1.plan(
           displayPrompt,

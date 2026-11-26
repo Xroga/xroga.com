@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "ab21d72a6f4f3c25bfe53d49c1233fc36235ffac",
+  "source_sha": "f423d1adb18bcd853addc1d9a9f6aad2363f6378",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -23947,7 +23947,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "f79feff6dd2b6a8033d321908b4801c3dd50766221465ef40446b0af92700b08"
+      "sha256": "da36025b48e685c0fc2036d93cefc2ab6f2431e632d6e7e5e2adf83b6c61a420"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -24863,7 +24863,7 @@
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "sha256": "a2ec4622c4022b57a4e012b0ba338cb083d9e068485b13fec20717b5a15b42cd"
+      "sha256": "60239d08dd8018ccaeabb12f6a6982e8d8f7b58b48a76b9b7bc990ff9bc92a7e"
     },
     {
       "path": "frontend/src/lib/terminal/activityTimeline.ts",
@@ -41842,35 +41842,35 @@
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 248,
+      "line": 250,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 249,
+      "line": 251,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 289,
+      "line": 291,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 290,
+      "line": 292,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 302,
+      "line": 304,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
