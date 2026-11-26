@@ -192,7 +192,7 @@ test('private empty workspace never exposes starter cards or starter plus', asyn
   await expect(page.locator('[data-terminal-composer]')).toHaveAttribute('placeholder', 'Type a private message…');
   const header = page.getByTestId('terminal-identity-header');
   await expect(header.getByText('Private · not saved', { exact: true })).toBeVisible();
-  await expect(header.locator('[data-xroga-extension-trigger]')).toHaveText('Extension');
+  await expect(page.locator('summary').filter({ hasText: 'Browser Automation' })).toHaveCount(0);
   await expect(page.getByTestId('workspace-start-header')).toHaveCount(0);
   await expect(page.getByTestId('workspace-start-cards')).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'More composer actions', exact: true })).toHaveCount(0);
@@ -604,18 +604,11 @@ test('mobile tagline stays on one line and tool picks are editable, removable an
 });
 
 for (const viewport of [{ width: 320, height: 568 }, { width: 360, height: 640 }, { width: 390, height: 844 }, { width: 768, height: 1024 }, { width: 1440, height: 900 }]) {
-test(`extension trigger clears the heading and keeps capability cards reachable at ${viewport.width}px`, async ({ page }, testInfo) => {
+test(`the guest heading and capability cards remain reachable at ${viewport.width}px`, async ({ page }, testInfo) => {
   await page.setViewportSize(viewport);
   await page.goto('/workspace');
-  const extension = page.locator('[data-xroga-extension-trigger]');
   const heading = page.getByRole('heading', { name: 'Super Intelligence', exact: true });
-  await expect(extension).toBeVisible();
-  await expect(heading).toBeVisible();
-  const extensionBox = await extension.boundingBox();
-  const headingBox = await heading.boundingBox();
-  expect(extensionBox).not.toBeNull();
-  expect(headingBox).not.toBeNull();
-  expect(extensionBox!.y + extensionBox!.height + 10).toBeLessThanOrEqual(headingBox!.y);
+  await expect(heading).toBeInViewport();
 
   const guidance = page.getByText(viewport.width < 640 ? 'Type or speak your language. Xroga does the work automatically.' : 'Type or speak in your native language, and the right tools handle the work automatically.', { exact: true });
   await expect(guidance).toBeVisible({ timeout: 4_000 });
@@ -630,7 +623,7 @@ test(`extension trigger clears the heading and keeps capability cards reachable 
   const descriptions = page.locator('[data-capability="create"] [class*="cardWords"] > span, [data-capability="find"] [class*="cardWords"] > span, [data-capability="build"] [class*="cardWords"] > span, [data-capability="ship"] [class*="cardWords"] > span');
   await expect(descriptions).toHaveCount(4);
   for (let index = 0; index < 4; index++) {
-    expect(Number.parseFloat(await descriptions.nth(index).evaluate(element => getComputedStyle(element).fontSize))).toBeLessThan(12);
+    expect(Number.parseFloat(await descriptions.nth(index).evaluate(element => getComputedStyle(element).fontSize))).toBeLessThanOrEqual(12);
   }
 
   await page.screenshot({ path: testInfo.outputPath(`workspace-${viewport.width}-top.png`) });

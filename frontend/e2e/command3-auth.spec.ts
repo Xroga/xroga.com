@@ -844,42 +844,23 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     await architectureSharePage.close();
     await dialog.getByRole('button', { name: 'Close share dialog' }).click();
   }
-  const installDisclosure = page.locator('summary[data-xroga-extension-trigger]');
-  await expect(installDisclosure).toBeVisible();
-  await expect(installDisclosure).toHaveText('Extension');
-  const installNotice = installDisclosure.locator('..').getByText('Coming soon', { exact: true });
-  const workspaceUrl = page.url();
-  await expect(installNotice).toBeHidden();
-  await installDisclosure.focus();
-  await installDisclosure.press('Enter');
-  await expect(installNotice).toBeVisible();
-  const noticeBounds = (await installNotice.boundingBox())!;
-  const scrollBounds = (await page.getByTestId('terminal-scroll').boundingBox())!;
-  expect(noticeBounds.y + noticeBounds.height).toBeLessThanOrEqual(scrollBounds.y + 1);
-  await expect(installDisclosure.locator('..').getByRole('link')).toHaveCount(0);
-  await expect(page).toHaveURL(workspaceUrl);
-  await installDisclosure.press('Enter');
-  await expect(installNotice).toBeHidden();
-
+  let browserOperatorRequests = 0;
+  await page.route('**/api/browser/local/**', route => {
+    browserOperatorRequests += 1;
+    return route.abort();
+  });
   const pairingWorkspace = new URL('/workspace', page.url());
   pairingWorkspace.searchParams.set('conversation', architectureSession);
   pairingWorkspace.searchParams.set('browserExtension', 'abcdefghijklmnopabcdefghijklmnop');
   pairingWorkspace.searchParams.set('browserPair', '11111111-1111-4111-8111-111111111111');
   await page.goto(pairingWorkspace.href);
-  const browserOperator = page.locator('summary[data-xroga-extension-trigger]');
-  await expect(browserOperator).toBeVisible();
   await expect(renderedArchitecture.locator('.react-flow__edge')).toHaveCount(1, { timeout: 20_000 });
   await page.mouse.move(0, 0);
   await expect(page.getByText('Conversation restored', { exact: true })).toHaveCount(0, { timeout: 10_000 });
   const transcript = page.getByTestId('terminal-scroll');
+  const header = page.getByTestId('terminal-identity-header');
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 900 });
-    await expect(browserOperator).toHaveCount(1);
-    const panel = browserOperator.locator('..');
-    await expect(panel).toHaveJSProperty('open', true);
-    const expanded = (await panel.boundingBox())!;
-    const transcriptTop = (await transcript.boundingBox())!.y;
-    const header = browserOperator.locator('xpath=ancestor::header[1]');
     const headerBounds = (await header.boundingBox())!;
     await expect(header).not.toHaveAttribute('data-scrolled');
     const fade = transcript.locator('..').getByTestId('workspace-transcript-fade');
@@ -905,23 +886,38 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     await expect.poll(() => transcript.evaluate(element => element.scrollTop)).toBeLessThan(end);
     await page.mouse.wheel(0, 1000);
     await expect.poll(() => transcript.evaluate(element => Math.ceil(element.scrollTop))).toBeGreaterThanOrEqual(Math.floor(end));
-    expect(expanded.y).toBeGreaterThanOrEqual(headerBounds.y - 1);
-    expect(expanded.y + expanded.height).toBeLessThanOrEqual(transcriptTop + 1);
-    expect(expanded.x).toBeGreaterThanOrEqual(headerBounds.x - 1);
-    expect(expanded.x + expanded.width).toBeLessThanOrEqual(width + 1);
-    await browserOperator.click();
+
+    // The extension owns pairing and consent. Workspace only shows the signed-in
+    // connection state in the sidebar, including the unavailable fixture state.
+    const mobile = width < 1024;
+    const transcriptTop = (await transcript.boundingBox())!.y;
+    if (mobile) await page.getByRole('button', { name: 'Open sidebar', exact: true }).click();
+    const sidebar = page.locator(mobile ? '.xv-sidebar-floating--mobile' : '.xv-sidebar-root');
+    const browserOperator = sidebar.locator('summary').filter({ hasText: 'Browser Automation' });
+    await expect(browserOperator).toBeVisible();
+    await expect(page.locator('summary:visible').filter({ hasText: 'Browser Automation' })).toHaveCount(1);
+    await expect(header.getByText('Browser Automation', { exact: true })).toHaveCount(0);
+    const panel = browserOperator.locator('..');
+    const status = panel.getByRole('status');
     await expect(panel).toHaveJSProperty('open', false);
-    const collapsed = (await panel.boundingBox())!;
-    const collapsedHeader = (await header.boundingBox())!;
-    const collapsedTranscript = (await transcript.boundingBox())!;
-    expect(collapsed.width).toBeLessThan(expanded.width);
-    expect(collapsed.y + collapsed.height).toBeLessThanOrEqual(collapsedTranscript.y + 1);
-    expect(Math.abs((collapsedTranscript.y - collapsedHeader.y - collapsedHeader.height)
-      - (transcriptTop - headerBounds.y - headerBounds.height))).toBeLessThanOrEqual(1);
+    await expect(status).toBeHidden();
     await browserOperator.press('Enter');
     await expect(panel).toHaveJSProperty('open', true);
+    await expect(status).toHaveText('Browser Automation is unavailable in this Workspace release.');
+    await expect(status).toBeInViewport();
+    await expect(panel.getByRole('button', { name: 'Reconnect', exact: true })).toBeEnabled();
+    await expect(panel.getByRole('link')).toHaveCount(0);
+    const expanded = (await panel.boundingBox())!;
+    const sidebarBounds = (await sidebar.boundingBox())!;
+    expect(expanded.x).toBeGreaterThanOrEqual(sidebarBounds.x - 1);
+    expect(expanded.x + expanded.width).toBeLessThanOrEqual(Math.min(width, sidebarBounds.x + sidebarBounds.width) + 1);
+    await browserOperator.press('Enter');
+    await expect(status).toBeHidden();
+    if (mobile) await sidebar.getByRole('button', { name: 'Close sidebar', exact: true }).click();
     await expect.poll(async () => Math.abs((await transcript.boundingBox())!.y - transcriptTop)).toBeLessThanOrEqual(1);
+    await expect(page).toHaveURL(pairingWorkspace.href);
   }
+  expect(browserOperatorRequests).toBe(0);
   expect(chatCalls).toBe(9);
   await page.goto('/workspace?conversation=' + architectureSession);
   await expect(composer).toHaveAttribute('data-draft-restoring', 'false', { timeout: 20_000 });

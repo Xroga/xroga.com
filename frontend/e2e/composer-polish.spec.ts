@@ -26,23 +26,25 @@ test('Workspace keeps its compact, accessible header controls on desktop and mob
   }
 });
 
-test('the expanded Extension panel fits the header on phone and desktop', async ({ page }) => {
-  await page.goto('/workspace?browserExtension=abcdefghijklmnopabcdefghijklmnop&browserPair=11111111-1111-4111-8111-111111111111');
-  const header = page.getByTestId('terminal-identity-header');
-  const extension = header.locator('summary[data-xroga-extension-trigger]');
-  const panel = extension.locator('..');
-  await expect(panel.getByRole('status')).toBeVisible();
-  await expect(panel).toHaveJSProperty('open', true);
+test('a pairing URL exposes no browser connection controls or authenticated requests to guests', async ({ page }) => {
+  let requests = 0;
+  await page.route('**/api/browser/local/**', route => {
+    requests += 1;
+    return route.abort();
+  });
 
   for (const width of [320, 390, 1440]) {
     await page.setViewportSize({ width, height: 900 });
-    const headerBox = (await header.boundingBox())!;
-    const panelBox = (await panel.boundingBox())!;
-    expect(panelBox.x).toBeGreaterThanOrEqual(headerBox.x - 1);
-    expect(panelBox.x + panelBox.width).toBeLessThanOrEqual(Math.min(width, headerBox.x + headerBox.width) + 1);
-    expect(panelBox.y + panelBox.height).toBeLessThanOrEqual(headerBox.y + headerBox.height + 1);
+    await page.goto('/workspace?browserExtension=abcdefghijklmnopabcdefghijklmnop&browserPair=11111111-1111-4111-8111-111111111111');
+    await expect(page.locator('[data-terminal-composer]')).toHaveAttribute('data-draft-restoring', 'false');
+    const header = page.getByTestId('terminal-identity-header');
     await expect(header.getByRole('button', { name: 'Fullscreen terminal' })).toBeInViewport();
+    if (width < 1024) await page.getByRole('button', { name: 'Open sidebar', exact: true }).click();
+    await expect(page.locator('nav#xv-sidebar-navigation:visible')).toBeVisible();
+    await expect(page.locator('summary').filter({ hasText: 'Browser Automation' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Reconnect', exact: true })).toHaveCount(0);
   }
+  expect(requests).toBe(0);
 });
 
 test('feedback ratings are named icon buttons and Send stays inside the message field', async ({ page }) => {
