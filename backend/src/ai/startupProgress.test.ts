@@ -102,3 +102,12 @@ test('no line asks the user to do engineering work', () => {
     assert.doesNotMatch(startupProgress(step).message, /npm|install|TypeScript|terminal|run\s+the/i, step);
   }
 });
+
+test('understandingProgress turns intent notes into one bounded status line, or nothing', async () => {
+  const { understandingProgress } = await import('./startupProgress.js');
+  assert.equal(understandingProgress([]), null);
+  const line = understandingProgress(['Reads as "landing page".', 'Client-only build.']);
+  assert.equal(line?.status, 'understanding_request');
+  assert.equal(line?.message, 'Reads as "landing page". Client-only build.');
+  assert.ok((understandingProgress(['x'.repeat(900)])?.message.length ?? 0) <= 280);
+});

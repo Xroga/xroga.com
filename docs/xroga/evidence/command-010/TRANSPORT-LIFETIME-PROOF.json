@@ -120,8 +120,8 @@
     }
   ],
   "counts": {
-    "total": 150,
-    "reviewed": 150,
+    "total": 151,
+    "reviewed": 151,
     "pending": 0,
     "unresolvedHighRiskReviewCandidates": 0
   },
@@ -247,7 +247,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "d5924883b7e10022953a8dbf8401d1b2a5b4d39e0e304fafe2e66cf747aa2473",
+      "sha256": "10782dd57d4d7e3f507cf115b653a7d3fee8611fc57df5580892fb2fed28a438",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/black-hole/webIntelligence.ts",
         "sha256": "f7ee10618d7993cc8e827b7f77d23eec06e663232d26a44c598a48825fbb6b7d"
@@ -711,7 +711,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "8fc37cada11db34659cca31efa804ff99bcac3d076d83c6deabd52142662381f",
+      "sha256": "87e7dabf51f9e1a78f7b1d7f33e12e3ba7c0d5e32883aa85039c7f1e5f51f8ba",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/services/integrations/businessAction.ts",
         "sha256": "79fa4e23cd501826f0425aaa01bcdc79a14b2d457f57f2f56a29b0fde021c0a3"
@@ -761,7 +761,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "sha256": "bf6525099f63f61c7bc2586bc24d52285312a825266d8eea3bf0d483d8d552fa",
+      "sha256": "a2f18f24f9ce73a4947c9bbfc3112cc42fbf4a4fd8590a0bbbcaaf75bab776c9",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/services/integrations/businessRead.ts",
         "sha256": "c051a5b6418a6ec659d62b693c1dec64b3a03a5b81a1a341e83ede8ca2cd24a7"
@@ -969,5 +969,38 @@
     "baseRef": "origin/main",
     "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
     "basis": "currentSourceBindings were re-bound to the branch sources after the egress register was re-verified call by call (REBIND-REPORT.json): every reviewed egress call hash is unchanged or manually reviewed, 149 of 149 reviewed, none pending. counts follow the regenerated egress inventory (one retired Gemini call). No acceptance is promoted."
+  },
+  "workspaceProcessingStreamContinuation": {
+    "baseline": "c28ce013f",
+    "previousProofSha256": "f7c19d49f9d3433032b7f5bc8a1489acbaab698e6e9b05953527cae38f4e1024",
+    "ownerApproval": "The repository owner approved this proof update in the working session on 2026-11-26, and authorized completing the release on 2026-11-27.",
+    "scope": "CURRENT_SOURCE_BINDING_FOR_DISPLAY_ONLY_PROGRESS_REPORTING_NOT_NEW_SECURITY_ACCEPTANCE. The existing web research call and the two existing connected-app calls are wrapped by a reporter that returns their result and errors unchanged. Outbound dispatch targets and arguments, authority permits, approval, persistence, accounting and credential handling are unchanged; the research decision is still made once and passed to the same lane. New output goes only to the requesting user's own event stream: the planned search words with secrets redacted, public source titles and addresses, and the connected app and action name. Live acceptance is not verified.",
+    "bindings": [
+      {
+        "path": "backend/src/ai/black-hole/webIntelligence.ts",
+        "previousSha256": "d5924883b7e10022953a8dbf8401d1b2a5b4d39e0e304fafe2e66cf747aa2473",
+        "currentSha256": "10782dd57d4d7e3f507cf115b653a7d3fee8611fc57df5580892fb2fed28a438"
+      },
+      {
+        "path": "backend/src/services/integrations/businessAction.ts",
+        "previousSha256": "8fc37cada11db34659cca31efa804ff99bcac3d076d83c6deabd52142662381f",
+        "currentSha256": "87e7dabf51f9e1a78f7b1d7f33e12e3ba7c0d5e32883aa85039c7f1e5f51f8ba"
+      },
+      {
+        "path": "backend/src/services/integrations/businessRead.ts",
+        "previousSha256": "bf6525099f63f61c7bc2586bc24d52285312a825266d8eea3bf0d483d8d552fa",
+        "currentSha256": "a2f18f24f9ce73a4947c9bbfc3112cc42fbf4a4fd8590a0bbbcaaf75bab776c9"
+      }
+    ],
+    "countCorrection": {
+      "previousProofSha256": "c91e2c207880a5895f0b301150a7821a8ae8d5f0074a08d505dbd07f4d35d564",
+      "priorCounts": {
+        "total": 150,
+        "reviewed": 150,
+        "pending": 0,
+        "unresolvedHighRiskReviewCandidates": 0
+      },
+      "reason": "The source of one public platform catalog GET was already in the serving commit but absent from its register. The existing team review (id e079c51ab00e88b88aa7) and its test are carried over unchanged for the identical source. No new transport is introduced by this release for that caller."
+    }
   }
 }

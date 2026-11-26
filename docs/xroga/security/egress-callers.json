@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "d59a57ebdc1cbcca2ef99e9d2a64693d69eba5ec67cd02bc87581ba03268b377",
+  "sourceTreeDigest": "a9be59483597b64a4eaf1612f403462a08e42db39eac77532a889e64d4a4ee34",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -4727,6 +4727,28 @@
       ]
     },
     {
+      "id": "e079c51ab00e88b88aa7",
+      "file": "frontend/src/lib/publicConnectCatalog.ts",
+      "line": 21,
+      "entryPoint": "publicConnectCatalogPage",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "12ce03fb625377d4806972e2c62595cdfe78d3bf27b8cdd5da645d9ce5663494",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "PUBLIC_READ_ONLY_PLATFORM_CATALOG_METADATA_AT_EXISTING_DEPLOYMENT_ORIGIN_NO_PROVIDER_DESTINATION",
+      "tenantAuthority": "PUBLIC_SHARED_METADATA_ONLY_GET_CREDENTIALS_OMIT_NO_BEARER_COOKIE_BODY_OR_ACCOUNT_SCOPE_CURSOR_ENCODED_AS_QUERY_VALUE_12_SECOND_TIMEOUT_NO_RETRY",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/publicConnectCatalog.test.ts",
+          "marker": "public catalog reads use only the configured platform origin without account credentials",
+          "sha256": "1c5f1783b1005263c9ac7ba2be7e59d994a3c6d3efb76ba9740e9f2bf656dbb3"
+        }
+      ]
+    },
+    {
       "id": "20618341b2f95ca0ba5e",
       "file": "frontend/src/lib/setProfileFromImage.ts",
       "line": 21,
@@ -4965,6 +4987,7 @@
         "d836bcd400bd13ddac6c",
         "c09bb8607fa4d00f23b7",
         "3b970c32a8efb294a7fd",
+        "e079c51ab00e88b88aa7",
         "20618341b2f95ca0ba5e",
         "805931ff0dc022677403",
         "195e486260bf940789dd",
@@ -5108,8 +5131,8 @@
     }
   ],
   "counts": {
-    "total": 150,
-    "reviewed": 150,
+    "total": 151,
+    "reviewed": 151,
     "pending": 0,
     "unresolvedHighRiskBypasses": 0
   }

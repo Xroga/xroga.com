@@ -34,6 +34,7 @@ import v1Router from './routes/v1.js';
 import phase1Router from './routes/phase1.js';
 import guestChatRouter from './routes/guestChat.js';
 import phase1BusinessPreflightRouter from './routes/phase1BusinessPreflight.js';
+import phase1ChatProgressRouter from './routes/phase1ChatProgress.js';
 import businessAutomationsRouter from './routes/businessAutomations.js';
 import businessAutomationWebhookRouter from './routes/businessAutomationWebhook.js';
 import businessAutomationSchedulerRouter from './routes/businessAutomationScheduler.js';
@@ -224,6 +225,7 @@ app.use('/api/v1', authMiddleware, v1Router);
 app.use(
   '/api/phase1',
   phase1AuthMiddleware,
+  phase1ChatProgressRouter,
   phase1BusinessPreflightRouter,
   businessAutomationsRouter,
   phase1Router,
