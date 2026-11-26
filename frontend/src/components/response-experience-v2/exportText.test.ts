@@ -64,7 +64,7 @@ test('reopening and Copy or Share retain the incomplete-answer warning and exact
   const enhanced=enhanceAiResponse(source,'partial-export',{status:'partial',reason:'output_limit'});
   const saved=JSON.parse(JSON.stringify({id:'partial-export',content:enhanced.content,featureOutput:enhanced.output}));
   const exported=responseTextV2(saved)!;
-  assert.match(exported,/output limit and is incomplete/);
+  assert.ok(exported.startsWith('The answer stopped at its output limit.\n\n'));
   assert.ok(exported.endsWith(source));
   assert.ok(serializeAssistantCopy(exported).includes('tenant_id = auth.uid()'));
   assert.equal(saved.featureOutput.sourceText,source);

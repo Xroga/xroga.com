@@ -42,6 +42,7 @@
     "frontend/src/components/native-openui/upstream/components/layout.tsx",
     "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
     "frontend/src/components/native-openui/upstream/components/markdown.tsx",
+    "frontend/src/components/response-experience-v2/exportText.test.ts",
     "frontend/src/lib/assistantCopy.test.ts",
     "frontend/src/lib/connectedAppResult.test.ts",
     "frontend/src/lib/connectedAppResult.ts",
