@@ -255,6 +255,23 @@ export function nativeReadableTextKey(text: string): string {
     .join('').replace(/\s+/g, ' ').trim();
 }
 
+/** Compare one complete labeled amount with the renderer's en-US currency
+ * notation. Keep the authored line, currency and decimal precision intact. */
+export function nativeReadableMetricKey(line: string): string {
+  const text = nativeReadableTextKey(line);
+  const coded = /^([\p{L}][^:\n]{0,79}:) ([A-Z]{3}) ([+-]?(?:\d{1,3}(?:,\d{3}){1,7}|\d{1,24})(?:\.\d{1,10})?)$/u.exec(text);
+  if (!coded) return text;
+  const [label, currency, amount] = coded.slice(1);
+  const [whole, fraction = ''] = amount.replace(/^[+-]|,/gu, '').split('.');
+  // Borrow the formatter's currency placement without rounding the input.
+  const parts = new Intl.NumberFormat('en-US', { style: 'currency', currency,
+    minimumFractionDigits: fraction.length, maximumFractionDigits: fraction.length })
+    .formatToParts(amount.startsWith('-') ? -0 : 0);
+  const groups = whole.replace(/\B(?=(\d{3})+(?!\d))/gu, ',');
+  const formatted = parts.map(({ type, value }) => type === 'integer' ? groups : type === 'fraction' ? fraction : value).join('');
+  return label + ' ' + formatted.replace(/\s+/g, ' ');
+}
+
 function readableTaskKeys(prose: string): Set<string> {
   const tasks = new Set<string>();
   let fence: string | undefined;
@@ -320,6 +337,7 @@ export function supplementNativeProse(prose: string, program: string, includeAll
     JSON.stringify([head, rows.map(row => row.map(nativeTableDecimalKey))]);
   const scopeLabel = (value: string) => /\x60|\]\(/.test(value) ? value.trim() : nativeReadableTextKey(value);
   const outline = nativeMarkdownOutline(prose);
+  const authoredReadouts = new Set(readouts.length ? outline.readoutLines.map(nativeReadableMetricKey) : []);
   const authoredHeadings = new Map<string, string[]>();
   for (const heading of outline.headings) {
     const path = heading.map(scopeLabel);
@@ -491,7 +509,10 @@ export function supplementNativeProse(prose: string, program: string, includeAll
     } else if (node.typeName === 'Metric') {
       const label = scalar(props.label);
       const initial = readouts.find(row => row.label === label);
-      if (initial && !metricHasReadableValue(initial.label, initial.value, scope)) add(initial.label + ': ' + initial.value);
+      if (initial) {
+        const readout = initial.label + ': ' + initial.value;
+        if (!authoredReadouts.has(nativeReadableMetricKey(readout)) && !metricHasReadableValue(initial.label, initial.value, scope)) add(readout);
+      }
       add(scalar(props.note));
     } else if (node.typeName === 'Table') {
       const headings = initialValue(props.columns);

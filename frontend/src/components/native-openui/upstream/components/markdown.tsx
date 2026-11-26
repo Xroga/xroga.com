@@ -7,7 +7,7 @@ import { staticChartTable } from "./chart";
 import { CodePanel } from "./code-panel";
 import { SortableTableView, tableCellHasLinks, tableCellText } from "./table-view";
 import type { RenderEvidenceCitation } from "../../evidence";
-import { nativeReadableTextKey } from "../../../../../../backend/src/ai/nativeOpenUi";
+import { nativeReadableMetricKey, nativeReadableTextKey } from "../../../../../../backend/src/ai/nativeOpenUi";
 import { nativeTableDecimalKey, readNativeMarkdownTable } from "../../../../../../backend/src/ai/nativeMarkdown";
 
 // Markdown builds React elements. Formula HTML comes only from untrusted KaTeX.
@@ -86,7 +86,8 @@ export function inline(text: string, key = "i", renderCitation?: RenderEvidenceC
 }
 
 type Block =
-  | { kind: "p" | "quote"; text: string }
+  | { kind: "p"; text: string; lines: string[] }
+  | { kind: "quote"; text: string }
   | { kind: "h"; level: number; text: string }
   | { kind: "list"; ordered: boolean; start: number; items: string[] }
   | { kind: "code"; text: string; language?: string }
@@ -301,7 +302,7 @@ export function nativeMarkdownMatches(root: unknown, readInitial: (value: unknow
       if (typeof label === "string" && (typeof value === "string" || typeof value === "number")) {
         const readout = citationTextKey(label + ': ' + value);
         paragraphs.add(readout);
-        if (!hidden && node.hasDynamicProps) liveReadouts.add(readout);
+        if (!hidden && node.hasDynamicProps) liveReadouts.add(nativeReadableMetricKey(label + ': ' + value));
       }
       if (typeof note === "string") paragraphs.add(citationTextKey(note));
     }
@@ -529,7 +530,7 @@ function blocks(source: string): Block[] {
     }
     const body: string[] = [];
     for (; i < lines.length && lines[i].trim() && !LIST_ITEM.test(lines[i]) && !/^(#{1,4})\s|^ {0,3}(?:\x60{3,}|~{3,})|^\s*>/.test(lines[i]); i++) body.push(lines[i].trim());
-    out.push({ kind: "p", text: body.join(" ") });
+    out.push({ kind: "p", text: body.join(" "), lines: body });
   }
   return out;
 }
@@ -664,7 +665,8 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
           case "p":
             if (i === 0 && /^(?:\*\*[^*\n]+\*\*|__[^_\n]+__)$/.test(b.text)
               && nativeHeadingTitles?.has(headingKey(b.text))) return null;
-            if (matches?.paragraphs.has(citationTextKey(b.text)) || nativeReadouts?.has(citationTextKey(b.text))) return null;
+            if (matches?.paragraphs.has(citationTextKey(b.text)) || (nativeReadouts?.size && b.lines.length
+              && b.lines.every(line => nativeReadouts.has(nativeReadableMetricKey(line))))) return null;
             return <p key={k}>{inline(b.text, k, renderCitation)}</p>;
           case "quote":
             if (matches?.paragraphs.has(citationTextKey(b.text))) return null;
@@ -705,7 +707,7 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
             }
             const entries = b.ordered ? b.items : b.items.filter(item =>
               !matches?.relationships.has(textKey(item)) && !matches?.listItems.has(citationTextKey(item))
-              && !matches?.paragraphs.has(citationTextKey(item)) && !nativeReadouts?.has(citationTextKey(item)));
+              && !matches?.paragraphs.has(citationTextKey(item)) && !nativeReadouts?.has(nativeReadableMetricKey(item)));
             if (!entries.length) return null;
             const elements = entries.map((item, j) => <li key={j}>{inline(item, `${k}-${j}`, renderCitation)}</li>);
             return b.ordered ? (
