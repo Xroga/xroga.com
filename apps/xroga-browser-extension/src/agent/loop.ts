@@ -2240,6 +2240,8 @@ Routine "${name}" did not run through: the site may have changed. Take a snapsho
 
   /** Site recognition: when the page matches a site-scoped skill (strict origin rule), say so in one short receipt. The skill body is NOT loaded; it stays optional. */
   async #announceSite(url: string, request: string): Promise<void> {
+    // Comparison builds only (WXT_AUTORUN_NO_SKILLS): no skill, guide or site hint is offered, to measure what skills add. Never set in a product build.
+    if (import.meta.env.WXT_AUTORUN_NO_SKILLS === '1') return;
     const id = identify(url);
     if (id && !this.#routinesNoted.has(id.origin)) {
       this.#routinesNoted.add(id.origin);

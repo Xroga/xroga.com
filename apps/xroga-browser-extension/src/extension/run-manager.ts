@@ -1826,13 +1826,17 @@ export class RunManager {
         // Every run may point at a place inside an element and use the canvas tool: a painted editor (timeline, design tool, game, map) is recognised only on the page,
         // never from the request, so gating this on vision or on a keyword skill left unfamiliar canvas apps without a way to click. The cost is about 500 cached tokens.
         const pointAt = true;
-        const fullToolList = toolsForRun({
+        // Comparison builds only (WXT_AUTORUN_NO_SKILLS): the skill tools are not offered either.
+        const skillTool = new Set(['find_skill', 'read_skill', 'save_skill', 'site_action']);
+        const noSkills = import.meta.env.WXT_AUTORUN_NO_SKILLS === '1';
+        const allTools = toolsForRun({
           pointAt,
           vision: model.profile.vision, localScreenshots: !!canonical,
           agentTools: isWorker
             ? [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, PLAN_TOOL, RECORD_DEMO_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL, DATA_OPS_TOOL, MACRO_TOOL, BROWSER_DATA_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, SAVE_SKILL_TOOL, READ_PDF_TOOL, READ_FILE_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, MEMORY_TOOL, LIGHTHOUSE_TOOL] : [])]
             : [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, PLAN_TOOL, RECORD_DEMO_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL, DATA_OPS_TOOL, MACRO_TOOL, BROWSER_DATA_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, SAVE_SKILL_TOOL, READ_PDF_TOOL, READ_FILE_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, SITE_SCAN_TOOL, MEMORY_TOOL, LIGHTHOUSE_TOOL, REPO_RUN_TOOL, CHANGE_REPO_TOOL, PYTHON_REPL_TOOL] : []), ...(canonical?.plugins ? [...PLUGIN_TOOLS, PLUGIN_CHAIN_TOOL, PLUGIN_CONNECT_TOOL] : []), ...PARALLEL_TOOLS],
         });
+        const fullToolList = noSkills ? allTools.filter(t => !skillTool.has(t.name)) : allTools;
         // A request that only reads starts with the small tool list; the model switches to the full one if it needs to act.
         const { tools, full: fullTools } = startingTools(
           fullToolList,

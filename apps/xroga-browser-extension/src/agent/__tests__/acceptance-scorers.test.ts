@@ -42,6 +42,12 @@ describe('acceptance scorers', () => {
       'R4-article-essay': 'How to Do Great Work, July 2023: natural aptitude, deep interest, scope to do great work',
       'R5-page-data': 'x.com/ThePSF, linkedin python-software-foundation; feeds: Python Software Foundation News, Python Job Opportunities, Python Enhancement Proposals',
       'R6-endless-quotes': '100 quotes; the last is by George R.R. Martin',
+      'N1-npm-express': 'express 5.3.0, licence MIT',
+      'N2-pypi-requests': 'requests 2.34.2, requires Python >=3.10, Apache-2.0',
+      'N3-wiki-go': 'Robert Griesemer, Rob Pike and Ken Thompson; first appeared in 2009',
+      'N4-selenium-form': 'The form says Received!',
+      'N5-github-react': 'v19.3.1 published 2026-10-14',
+      'N6-python-functools': 'New in version 3.9; equivalent to lru_cache(maxsize=None)',
     };
     for (const t of tasks as unknown as Array<{ name: string; expect: never }>) {
       expect(perfect[t.name], t.name).toBeTruthy();
