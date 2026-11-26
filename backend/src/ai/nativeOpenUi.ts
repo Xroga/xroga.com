@@ -4,13 +4,16 @@ import { DIAGRAM_NODE_TONES, hasRenderableDiagramTopology } from './nativeDiagra
 import { nativeMarkdownOutline, nativeMarkdownTables, nativeTableDecimalKey, type NativeMarkdownTable } from './nativeMarkdown.js';
 import { reviewEditorialVisuals } from './nativeOpenUiEditorial.js';
 import catalog from './nativeOpenUiCatalog.json' with { type: 'json' };
-import { correctExplicitCurrencyReadouts, formatInitialNativeCurrency, initialNativeReadouts, initialNativeValueReader, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
+import { correctExplicitCurrencyReadouts, correctExplicitReadoutShares, formatInitialNativeCurrency, initialNativeReadouts, initialNativeValueReader, nativePrincipalMultipleReview, recoverNativeReadoutProse } from './nativeOpenUiValues.js';
 
 export const NATIVE_UI_FORMAT = 'xroga-openui-v1' as const;
 export const NATIVE_UI_LIBRARY = 'xroga-native-v1' as const;
 export const NATIVE_UI_MARKER = '\n<<<XROGA_OPENUI_V1>>>\n';
 export const PARTIAL_NATIVE_PRESENTATION_NOTE = 'Some visuals could not be validated. The available explanation and verified visuals are shown below.';
 export const MAX_PROGRAM_CHARS = 24000;
+const MAX_NATIVE_ANSWER_PROSE_CHARS = 200_000;
+const nativeAnswerBinding = '\n_xroga_answer = ';
+const compactNativeAnswerBinding = nativeAnswerBinding + '""';
 // Expanded depth includes both layout nesting and shared formula references.
 // Keep it bounded for evaluation, without rejecting ordinary composed calculators
 // at the former 28-level limit. Node work, source size and cycles stay independent.
@@ -31,13 +34,20 @@ const nativeAssignmentStart = /^\$?[a-z_]\w*[ \t]*=/iu;
 const nativeRootAssignment = /^ {0,3}root[ \t]*=[ \t]*[A-Z][A-Za-z0-9]*[ \t]*\(/;
 
 export function splitNativeOpenUiAnswer(raw: string, streaming = false) {
-  return scanNativeOpenUiAnswer(raw, streaming, true);
+  const { text, program } = scanNativeOpenUiAnswer(raw, streaming, true);
+  return { text, program };
 }
 
-/** Bind the existing Markdown component to the same complete readable answer.
- * The saved program stays self-contained. No model call or client-only state. */
+export function splitNativeOpenUiContinuation(previous: string, addition: string) {
+  const draft = scanNativeOpenUiAnswer(previous, false, true);
+  const extension = scanNativeOpenUiAnswer(addition, false, true, draft.fence);
+  return { draft, extension, insideCodeBlock: Boolean(draft.fence) };
+}
+
+/** Bind Markdown to workspace prose. Keep large canonical prose out of the DSL
+ * budget: the response already stores it alongside the program. */
 export function bindNativeAnswerText(program: string, prose: string): string {
-  if (!prose || program.length > MAX_PROGRAM_CHARS) return program;
+  if (!prose || prose.length > MAX_NATIVE_ANSWER_PROSE_CHARS || program.length > MAX_PROGRAM_CHARS) return program;
   try {
     const tokens = tokenize(program);
     if (tokens.length > 4800) return program;
@@ -55,18 +65,29 @@ export function bindNativeAnswerText(program: string, prose: string): string {
     for (const statement of statements) walkAST(parseExpression(statement.tokens), node => {
       if (node.k === 'Ref' && node.n === '_xroga_answer') referenced = true;
     });
-    return referenced ? program + '\n_xroga_answer = ' + JSON.stringify(prose) : program;
+    if (!referenced) return program;
+    const binding = nativeAnswerBinding + JSON.stringify(prose);
+    return program + (program.length + binding.length > MAX_PROGRAM_CHARS ? compactNativeAnswerBinding : binding);
   } catch {
     return program; // Existing validation and readable recovery remain authoritative.
   }
 }
 
-function scanNativeOpenUiAnswer(raw: string, streaming: boolean, allowJsonEnvelope: boolean): { text: string; program: string } {
+/** Supply separately persisted prose after validating the compact program.
+ * This only replaces the exact reserved string literal with a JSON literal. */
+export function materializeNativeAnswerText(program: string, prose: string): string {
+  if (!program.endsWith(compactNativeAnswerBinding) || !prose || prose.length > MAX_NATIVE_ANSWER_PROSE_CHARS) return program;
+  return program.slice(0, -2) + JSON.stringify(prose);
+}
+
+function scanNativeOpenUiAnswer(raw: string, streaming: boolean, allowJsonEnvelope: boolean, continuationFence?: string): {
+  text: string; program: string; fence?: string;
+} {
   const normalized = raw.replace(/\r\n/g, '\n');
   const marker = NATIVE_UI_MARKER.trim();
   const lines = normalized.split('\n');
   const prose: string[] = [];
-  let fence: string | undefined;
+  let fence = continuationFence;
   let fencedProgram: string | undefined;
   const envelope = (text: string, source: string) => {
     let program = source.trim().replace(deepSeekToolClosingSuffix, '').trimEnd().replace(strayPresentationClosingLines, '').trim();
@@ -76,15 +97,16 @@ function scanNativeOpenUiAnswer(raw: string, streaming: boolean, allowJsonEnvelo
       const close = new RegExp(`\\n[ \\t]*${wrapper[1]}${wrapper[1][0]}*[ \\t]*$`);
       program = program.replace(close, '').trim();
     }
-    return { text: text.trim(), program };
+    return { text: continuationFence ? text.trimEnd() : text.trim(), program, fence };
   };
-  if (allowJsonEnvelope && /^\s*\{/.test(normalized) && normalized.length <= 100_000) {
+  if (allowJsonEnvelope && !continuationFence && /^\s*\{/.test(normalized) && normalized.length <= 100_000) {
     try {
       const candidate: unknown = JSON.parse(normalized);
       if (candidate && typeof candidate === 'object' && 'format' in candidate && candidate.format === NATIVE_UI_FORMAT) {
         const text = 'text' in candidate && typeof candidate.text === 'string' ? candidate.text : '';
         const program = 'program' in candidate && typeof candidate.program === 'string' ? candidate.program : '';
         const readable = scanNativeOpenUiAnswer(text, streaming, false);
+        fence = readable.fence;
         return envelope(readable.text, program || readable.program);
       }
     } catch { /* Plain code or prose still goes through the line scanner. */ }
@@ -150,7 +172,10 @@ export type RequiredNativeFormat = 'table' | 'chart' | 'graph' | 'calculator' | 
 function hasReactiveCalculator(program: string) {
   const symbols = new Map(split(tokenize(program)).map(statement => [statement.id, parseExpression(statement.tokens)]));
   const root = symbols.get('root');
-  if (!root) return false;
+  return root ? subtreeHasReactiveCalculator(root, symbols) : false;
+}
+
+function subtreeHasReactiveCalculator(root: ASTNode, symbols: ReadonlyMap<string, ASTNode>) {
   const inputs = new Set<string>();
   const outputs = new Set<string>();
   function inspect(start: ASTNode, see: (node: ASTNode) => void) {
@@ -191,6 +216,16 @@ function* nativeElements(root: unknown) {
     if (element.type === 'element' && element.typeName) yield { typeName: element.typeName, props: element.props };
     pending.push(...Object.values(value));
   }
+}
+
+/** The caller has already validated every Source against the current evidence. */
+export function nativeSourceMarkers(program: string): string[] {
+  const markers = new Set<string>();
+  for (const { typeName, props } of nativeElements(parseProgram.parse(program).root)) {
+    const id = typeName === 'Source' && typeof props?.id === 'string' ? /^source-(\d+)$/.exec(props.id)?.[1] : undefined;
+    if (id) markers.add('[' + id + ']');
+  }
+  return [...markers];
 }
 
 /** Inspect only the renderer tree, so unused declarations do not satisfy a request. */
@@ -677,6 +712,8 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
     let budget = 6000;
     const reviewStrings = new Set<string>();
     const boundAnswer = symbols.get('_xroga_answer');
+    const compactAnswer = program.endsWith(compactNativeAnswerBinding) && boundAnswer?.k === 'Str' && boundAnswer.v === '';
+    let compactReferences = 0;
     let reason: Extract<NativeUiValidation, { ok: false }>['reason'] = 'authority';
     function visit(node: ASTNode, active: Set<string>, depth = 0, allowBoundAnswer = false): boolean {
       expandedDepth = Math.max(expandedDepth, depth);
@@ -712,6 +749,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
             referenceIssue = target ? 'cycle' : 'missing';
             return false;
           }
+          if (compactAnswer && target === boundAnswer && (!allowBoundAnswer || node.k !== 'Ref' || ++compactReferences > 1)) return false;
           return visit(target, new Set([...active, node.n]), depth + 1,
             allowBoundAnswer && node.k === 'Ref' && target === boundAnswer);
         }
@@ -739,6 +777,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
       // Re-auditing a shared dependency must not consume another declaration's
       // allowance. The statement count still bounds the total audit work.
       budget = 6000;
+      compactReferences = 0;
       if (key.startsWith('$') && !['Num', 'Str', 'Bool', 'Null'].includes(node.k)) {
         authorityIssue = 'non_scalar_state';
         return fail('authority');
@@ -840,6 +879,39 @@ function printRecoveryExpression(node: ASTNode): string {
   }
 }
 
+/** Keep a directly requested working calculator ahead of its fallback when
+ * the model emits it as the first native sibling after the bound Markdown. */
+export function prioritizeNativeCalculator(program: string, prompt: string): string {
+  const opening = /^\s*(?:please\s+)?(?:(?:can|could|would)\s+you\s+)?(?:build|create|make|design|show(?:\s+me)?|give\s+me|provide(?:\s+me\s+with)?)\s+([^.!?;\n]+)/iu.exec(prompt)?.[1];
+  const artifact = opening && /\b(?:calculator|(?:interactive|adjustable|editable)\s+(?:estimator|simulator|calculation))\b/iu.exec(opening);
+  const differentDeliverable = /\b(?:and|with|including|alongside|plus|report|guide|document|spreadsheet|dashboard|diagram|table|chart)\b/iu;
+  const sequence = /\b(?:first|then|last|followed\s+by|follow\s+it\s+with)\b/iu;
+  const position = /\b(?:before|after|above|below|under|start\s+with|begin\s+with|lead\s+with)\s+(?:[\p{L}-]+\s+){0,4}(?:background|intro(?:duction)?|explanation|assumptions|walkthrough|overview|examples?|formula(?:s)?|controls?|calculator|charts?|tables?)\b/iu;
+  const answerPosition = /\b(?:at|near)\s+the\s+(?:top|bottom|end)\s+of\s+(?:the|your|this)\s+(?:answer|response|output|page|message)\b/iu;
+  const explicitOrder = sequence.test(prompt) || position.test(prompt) || answerPosition.test(prompt);
+  if (!artifact || differentDeliverable.test(opening?.slice(0, artifact.index) ?? '') || explicitOrder) return program;
+  try {
+    const statements = split(tokenize(program));
+    const symbols = new Map(statements.map(statement => [statement.id, parseExpression(statement.tokens)]));
+    const entry = statements.find(statement => statement.id === 'root');
+    const root = symbols.get('root');
+    if (entry?.start === undefined || entry.end === undefined || root?.k !== 'Comp' || root.name !== 'Col') return program;
+    const children = root.args[0];
+    if (children?.k !== 'Arr') return program;
+    const [first, second, ...rest] = children.els;
+    const markdown = resolveRecoveryReference(first, symbols);
+    if (markdown?.k !== 'Comp' || markdown.name !== 'Markdown' || markdown.args[0]?.k !== 'Ref'
+      || markdown.args[0].n !== '_xroga_answer' || !second
+      || !subtreeHasReactiveCalculator(second, symbols) || rest.some(child => subtreeHasReactiveCalculator(child, symbols))) return program;
+    const ordered = { ...root, args: [{ ...children, els: [second, first, ...rest] }, ...root.args.slice(1)] };
+    const expression = printRecoveryExpression(ordered);
+    if (JSON.stringify(parseExpression(tokenize(expression))) !== JSON.stringify(ordered)) return program;
+    return program.slice(0, entry.start) + 'root = ' + expression + program.slice(entry.end);
+  } catch {
+    return program;
+  }
+}
+
 /** Keep formulas in the authoritative Markdown when a calculator also
  * includes a copy in its introduction or metric caption. */
 export function removeRepeatedCalculatorFormulas(program: string, prose: string): string {
@@ -923,10 +995,14 @@ export function recoverNativeReadoutExplanations(program: string, replaceExactRe
       const body = resolveRecoveryReference(node.args[0],symbols);
       if (body?.k !== 'Str') return;
       const corrected = replaceExactReadoutsOnly
-        ? correctExplicitCurrencyReadouts(body.v, readouts)
+        ? correctExplicitCurrencyReadouts(correctExplicitReadoutShares(body.v, readouts), readouts)
         : recoverNativeReadoutProse(body.v, readouts, multiples);
       if (corrected !== body.v) {
-        body.v = corrected;
+        // Ordinary refs can also serve Code or other components. Only the
+        // host-owned Markdown binding mirrors the canonical answer globally.
+        const argument = node.args[0];
+        if (argument?.k === 'Ref' && argument.n === '_xroga_answer') body.v = corrected;
+        else node.args[0] = { k: 'Str', v: corrected };
         changed = true;
       }
     });
@@ -935,7 +1011,7 @@ export function recoverNativeReadoutExplanations(program: string, replaceExactRe
   return changed ? repaired : program;
 }
 
-function resolveRecoveryReference(node: ASTNode | undefined, symbols: ReadonlyMap<string, ASTNode>) {
+function resolveRecoveryReference(node: ASTNode | undefined, symbols: ReadonlyMap<string, ASTNode | undefined>) {
   const followed = new Set<string>();
   while (node?.k === 'Ref') {
     if (followed.has(node.n)) return;
@@ -1066,6 +1142,78 @@ export function recoverTruncatedNativeWorkspaceProgram(program: string, evidence
 }
 
 const layoutChildren = new Map([['Col', 0], ['Row', 0], ['Grid', 0], ['Card', 0], ['Box', 0], ['Controls', 0], ['Section', 1]]);
+
+/** Project an already validated program to the requested components. The caller
+ * validates the projected program again before displaying it or reading prose. */
+export function restrictNativeWorkspaceProgram(program: string, keep: (component: string) => boolean): string {
+  const statements = split(tokenize(program));
+  const original = new Map(statements.map(statement => [statement.id, parseExpression(statement.tokens)]));
+  const projected = new Map<string, ASTNode | undefined>();
+  const declaration = (name: string): ASTNode | undefined => {
+    if (!projected.has(name)) {
+      // The validated source is acyclic. Leave a defensive sentinel before
+      // following references and reject an incomplete projection downstream.
+      projected.set(name, undefined);
+      const value = original.get(name);
+      if (value) projected.set(name, project(value));
+    }
+    return projected.get(name);
+  };
+  function project(node: ASTNode): ASTNode | undefined {
+    if (node.k === 'Ref') return declaration(node.n) ? node : undefined;
+    if (node.k === 'Arr') {
+      const els = node.els.map(project).filter((item): item is ASTNode => item !== undefined);
+      return els.length === node.els.length && els.every((item, index) => item === node.els[index]) ? node : { ...node, els };
+    }
+    if (node.k === 'Obj') {
+      const entries = node.entries.flatMap(([key, item]): [string, ASTNode][] => {
+        const value = project(item);
+        return value ? [[key, value]] : [];
+      });
+      return entries.length === node.entries.length && entries.every(([, item], index) => item === node.entries[index][1])
+        ? node : { ...node, entries };
+    }
+    if (node.k === 'Comp') {
+      if (components.has(node.name) && !keep(node.name)) return;
+      const args = node.args.map(project);
+      if (!args.every((arg): arg is ASTNode => arg !== undefined)) return;
+      const index = layoutChildren.get(node.name);
+      const child = index === undefined ? undefined : resolveRecoveryReference(args[index], projected);
+      if (child?.k === 'Arr' && !child.els.length) return;
+      return args.every((arg, index) => arg === node.args[index]) ? node : { ...node, args };
+    }
+    if (node.k === 'Ternary') {
+      const then = project(node.then), otherwise = project(node.else);
+      if (!then || !otherwise) return;
+      return then === node.then && otherwise === node.else ? node : { ...node, then, else: otherwise };
+    }
+    return node;
+  }
+  if (!declaration('root')) return '';
+  const reachable = new Set<string>();
+  function visit(name: string) {
+    if (reachable.has(name)) return;
+    const node = declaration(name);
+    if (!node) return;
+    reachable.add(name);
+    // Walk retained expressions for references from formulas and state bindings.
+    walkAST(node, part => {
+      if (part.k === 'Ref' || part.k === 'StateRef') visit(part.n);
+    });
+  }
+  visit('root');
+  return statements.flatMap(statement => {
+    if (!reachable.has(statement.id)) return [];
+    const node = projected.get(statement.id);
+    if (!node) return [];
+    if (node === original.get(statement.id) && statement.start !== undefined && statement.end !== undefined) {
+      return [program.slice(statement.start, statement.end)];
+    }
+    const printed = printRecoveryExpression(node);
+    if (JSON.stringify(parseExpression(tokenize(printed))) !== JSON.stringify(node)) throw new Error('OpenUI projection changed expression semantics');
+    return [statement.id + ' = ' + printed];
+  }).join('\n');
+}
 
 /** Every recovered candidate passes the full authority, schema and data checks.
  * Reachable branches with unresolved references may be omitted from the view. */

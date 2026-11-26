@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { initialNativeReadouts, initialNativeValueReader, conflictingNativeReadouts, nativePrincipalMultipleReview } from './nativeOpenUiValues.js';
+import { initialNativeReadouts, initialNativeValueReader, conflictingNativeReadouts, correctExplicitReadoutShares, nativePrincipalMultipleReview } from './nativeOpenUiValues.js';
 import { parseExpression, tokenize } from '@openuidev/lang-core';
 import { completeNativeWorkspaceAnswer } from './nativeOpenUiWorkspace.js';
-import { NATIVE_UI_MARKER, supplementNativeProse } from './nativeOpenUi.js';
+import { NATIVE_UI_MARKER, recoverNativeReadoutExplanations, supplementNativeProse } from './nativeOpenUi.js';
 import { nativeTechnicalCorrections } from './nativeOpenUiAccuracy.js';
 import { buildNativeOpenUiShare, readNativeOpenUiShare } from './nativeOpenUiShare.js';
 
@@ -103,6 +103,64 @@ test('currency review compares a labeled equation result rather than its operand
     'Team per seat: $2 and another price is $25 / 5 = $5.00.',
     'Team per seat: $25 / 5 seats = €5.00.',
   ]) assert.deepEqual(conflictingNativeReadouts(text, rows), rows, text);
+});
+
+test('explicit shares compare the displayed numerator with the named denominator', () => {
+  const readouts = [{ label: 'Approved expenses', value: '€420.00' }, { label: 'Final budget', value: '€1,200.00' }];
+  const prose = 'Approved expenses: €420.00 (42% of the final budget).';
+  assert.equal(correctExplicitReadoutShares(prose, readouts), 'Approved expenses: €420.00 (35% of the final budget).');
+  for (const text of [
+    prose.replace('42%', '35.00%'), prose.replace('€420.00', '€1,420.00'),
+    prose.replace('€420.00', '$420.00'), prose.replace('final budget', 'starting budget'),
+    `For example:\n${prose}`, `\`\`\`text\n${prose}\n\`\`\``,
+  ]) assert.equal(correctExplicitReadoutShares(text, readouts), text);
+  assert.equal(correctExplicitReadoutShares(prose, [readouts[0], { label: 'Projected budget', value: '€1,200.00' }]), prose);
+  assert.equal(correctExplicitReadoutShares(prose, [...readouts, { label: 'Final budget', value: '€1,320.00' }]), prose);
+  const qualified = 'Approved expenses is €420.00, which is 42% of the final budget, excluding operating expenses.';
+  assert.equal(correctExplicitReadoutShares(qualified, readouts), qualified);
+  const huge = prose.replace('€420.00', '€10000000000000000000000.00');
+  assert.equal(correctExplicitReadoutShares(huge, [{ ...readouts[0], value: '€10000000000000000000000.00' }, { ...readouts[1], value: '€1.00' }]), huge);
+  for (const value of ['€0.00', '€-1,200.00', '$1,200.00', '1,200.00']) {
+    assert.equal(correctExplicitReadoutShares(prose, [readouts[0], { label: 'Final budget', value }]), prose);
+  }
+});
+
+test('native answer and Share use the same corrected percentage without changing interactive data', () => {
+  const wrong = 'Interest earned is 14,060.80 − 12,500 = 1,560.80, which is 12.49% of the final balance and a 12.4864% total return on the principal.';
+  const corrected = wrong.replace('12.49%', '11.10%');
+  const prose = 'Working: 12,500 × 1.04³ = 14,060.80. ' + wrong + '\n\nCompounded annually.';
+  const source = [
+    'root = Col([Markdown(_xroga_answer), Card([Controls([Input($principal, "Principal (USD)", "number"), Input($rate, "Rate (%)", "number"), Input($term, "Years", "number"), Button("Reset inputs", @Reset($principal, $rate, $term))], "Calculator inputs"), Metric("Projected balance", @Format(balance, "currency", 2, "USD")), Metric("Interest earned", @Format(balance - $principal, "currency", 2, "USD"))])])',
+    '$principal = 12500', '$rate = 4', '$term = 3', 'balance = $principal * @Pow(1 + $rate / 100, $term)',
+  ].join('\n');
+  const answer = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + source, 'stop', undefined,
+    'Build an interactive compound-interest calculator.', undefined, ['calculator']);
+  assert.deepEqual(answer.completion, { status: 'complete' });
+  assert.ok(answer.response.includes(corrected));
+  assert.ok(answer.responseSource.text.includes(corrected));
+  assert.doesNotMatch(answer.response, /12\.49%/);
+  assert.doesNotMatch(answer.responseSource.text, /12\.49%/);
+  const readouts = initialNativeReadouts(source, true);
+  assert.deepEqual(initialNativeReadouts(answer.responseSource.text, true), readouts);
+  for (const claim of [wrong.replace('14,060.80 − 12,500 = ', ''), wrong.replace('12,500 = ', '10,000 = '),
+    wrong.replace('14,060.80 − ', '16,060.80 − '), wrong.replace('14,060.80 − ', '€14,060.80 − ')]) {
+    assert.equal(correctExplicitReadoutShares(claim, readouts), claim);
+  }
+  const snapshot = buildNativeOpenUiShare(answer.response, answer.responseSource.text);
+  assert.ok(snapshot);
+  assert.equal(readNativeOpenUiShare(snapshot)?.text, answer.response);
+});
+
+test('repaired prose does not change a code example using a shared string', () => {
+  const note = 'Approved expenses is $50.00, which is 48% of the final budget.';
+  const source = [
+    'root = Col([Input($cost, "Cost", "number"), Text(note), Code(note, "text"), Metric("Approved expenses", @Format($cost, "currency", 2, "USD")), Metric("Final budget", @Format(100 + $cost - $cost, "currency", 2, "USD"))])',
+    '$cost = 50', 'note = ' + JSON.stringify(note),
+  ].join('\n');
+  const corrected = recoverNativeReadoutExplanations(source, true);
+  assert.ok(corrected.includes('Text(' + JSON.stringify(note.replace('48%', '50%')) + ')'));
+  assert.ok(corrected.includes('Code(note, "text")'));
+  assert.ok(corrected.includes('note = ' + JSON.stringify(note)));
 });
 
 test('correct per-seat calculation remains complete through native answer and Share', () => {

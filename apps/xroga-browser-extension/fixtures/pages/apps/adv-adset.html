@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Ads Manager ad set (replica)</title>
+<style>
+body{font:14px sans-serif;margin:16px}
+section{border:1px solid #ccc;border-radius:6px;padding:10px 14px;margin:10px 0;max-width:640px}
+label{display:block;margin:6px 0}
+input,select,textarea{padding:5px}
+ul[role=listbox]{list-style:none;margin:0;padding:0;width:320px;border:1px solid #999;background:#fff}
+ul[role=listbox] li{padding:5px 8px;cursor:pointer}
+.chip{display:inline-block;background:#e4ecff;border-radius:10px;padding:2px 8px;margin:2px}
+.dlg{position:fixed;left:15%;top:12%;width:520px;background:#fff;border:2px solid #333;padding:14px;z-index:5}
+.err{color:#b00}
+footer{position:sticky;bottom:0;background:#fff;border-top:1px solid #ccc;padding:8px 0;max-width:660px}
+</style></head>
+<body><div id="app">Loading…</div>
+<script src="lib.js"></script>
+<script>
+// An ad-set editor replica. Every edit autosaves 1.2 s after the last one; the status says "Verifying your edits…" and only the server's answer turns it into "All edits saved".
+// Closing the editor before the save is acknowledged drops the edit. The server holds the truth (/__replica/state); the page never does.
+const API = (a, b) => fetch('/__replica/api/adset/' + a, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(b || {}) }).then(async r => ({ status: r.status, body: await r.json() }));
+mount(async app => {
+  if (Q.get('reset') && !sessionStorage.getItem('replica-reset')) { sessionStorage.setItem('replica-reset', '1'); await fetch('/__replica/reset', { method: 'POST' }); }
+  let d = (await API('get')).body, timer = null;
+  const status = h('span', { role: 'status' }, 'All edits saved'), err = h('p', { class: 'err', role: 'alert' });
+  const dlg = h('div');
+  const persist = async patch => {
+    Object.assign(d, patch); status.textContent = 'Verifying your edits…'; clearTimeout(timer);
+    timer = setTimeout(async () => {
+      const r = await API('save', { patch: d });
+      if (r.status === 200) { status.textContent = 'All edits saved'; err.textContent = ''; } else { status.textContent = 'Edits not saved'; err.textContent = r.body.error; }
+    }, 1200);
+  };
+  const name = h('input', { 'aria-label': 'Ad set name', value: d.name }); name.addEventListener('input', () => persist({ name: name.value }));
+  const type = h('select', { 'aria-label': 'Budget type' }, h('option', { value: 'daily' }, 'Daily budget'), h('option', { value: 'lifetime' }, 'Lifetime budget')); type.value = d.budgetType; type.addEventListener('change', () => persist({ budgetType: type.value }));
+  const budget = h('input', { 'aria-label': 'Budget amount (PKR)', value: d.budget || '' }); budget.addEventListener('input', () => persist({ budget: Number(budget.value) || 0 }));
+  const start = h('input', { type: 'date', 'aria-label': 'Start date', value: d.start }); start.addEventListener('change', () => persist({ start: start.value }));
+  const end = h('input', { type: 'date', 'aria-label': 'End date', value: d.end }); end.addEventListener('change', () => persist({ end: end.value }));
+  const age = h('select', { 'aria-label': 'Minimum age' }, [18, 21, 25, 30, 35, 45, 55, 65].map(n => h('option', { value: n }, String(n)))); age.value = String(d.ageMin); age.addEventListener('change', () => persist({ ageMin: Number(age.value) }));
+  const locs = h('div'), ints = h('div');
+  const chips = (el, list, key) => { el.innerHTML = ''; for (const x of list) el.append(h('span', { class: 'chip' }, x, ' ', h('button', { type: 'button', 'aria-label': 'Remove ' + x, onclick: () => { persist({ [key]: list.filter(y => y !== x) }); chips(el, d[key], key); } }, 'x'))); };
+  const bulk = () => {
+    const ta = h('textarea', { 'aria-label': 'Locations to add', rows: 6, cols: 40 }), out = h('p'), add = h('button', { type: 'button', disabled: true }, 'Add locations');
+    let found = [];
+    dlg.innerHTML = '';
+    dlg.append(h('div', { class: 'dlg', role: 'dialog', 'aria-label': 'Add locations in bulk' }, h('h2', {}, 'Add locations in bulk'), h('p', {}, 'One city per line or separated by commas.'), ta,
+      h('p', {}, h('button', { type: 'button', onclick: async () => { const r = (await API('match', { text: ta.value })).body; found = r.matched; out.textContent = r.matched.length + ' matched, ' + r.unmatched.length + ' not found'; add.disabled = !found.length; add.textContent = 'Add ' + found.length + ' locations'; } }, 'Review list')), out,
+      add, ' ', h('button', { type: 'button', onclick: () => { dlg.innerHTML = ''; } }, 'Cancel')));
+    add.addEventListener('click', () => { persist({ locations: [...new Set([...d.locations, ...found])] }); chips(locs, d.locations, 'locations'); dlg.innerHTML = ''; });
+  };
+  const q = h('input', { role: 'combobox', 'aria-label': 'Search detailed targeting', 'aria-expanded': 'false', autocomplete: 'off' }), lb = h('ul', { role: 'listbox', 'aria-label': 'Targeting suggestions', hidden: true });
+  q.addEventListener('input', async () => { const r = (await API('interests', { q: q.value })).body; lb.innerHTML = ''; for (const x of r) lb.append(h('li', { role: 'option', onclick: () => { persist({ interests: [...new Set([...d.interests, x])] }); chips(ints, d.interests, 'interests'); lb.hidden = true; q.value = ''; } }, x)); lb.hidden = !r.length; q.setAttribute('aria-expanded', String(!lb.hidden)); });
+  const placements = ['Facebook Feed', 'Facebook Stories', 'Instagram Feed', 'Instagram Reels', 'Audience Network'].map(p => { const c = h('input', { type: 'checkbox', 'aria-label': p }); c.checked = d.placements.includes(p); c.addEventListener('change', () => persist({ placements: placements.filter(x => x.c.checked).map(x => x.p) })); return { p, c }; });
+  const wa = h('div'); const waState = h('p');
+  const waOpen = () => { const code = h('input', { 'aria-label': 'Verification code' }); wa.innerHTML = ''; wa.append(h('div', { class: 'dlg', role: 'dialog', 'aria-label': 'Link WhatsApp Business Account' }, h('h2', {}, 'Link WhatsApp Business Account'), h('p', {}, 'A verification code was sent to your WhatsApp Business app.'), code, h('p', {}, h('button', { type: 'button', onclick: async () => { const r = await API('whatsapp', { code: code.value }); waState.textContent = r.status === 200 ? 'WhatsApp linked' : r.body.error; wa.innerHTML = ''; } }, 'Continue'), ' ', h('button', { type: 'button', onclick: () => { wa.innerHTML = ''; } }, 'Cancel')))); };
+  chips(locs, d.locations, 'locations'); chips(ints, d.interests, 'interests');
+  app.append(h('h1', {}, 'Edit ad set'),
+    h('section', {}, h('h2', {}, 'Ad set'), h('label', {}, 'Name ', name)),
+    h('section', {}, h('h2', {}, 'Budget and schedule'), h('label', {}, type), h('label', {}, 'Amount (PKR) ', budget), h('label', {}, 'Start date ', start), h('label', {}, 'End date ', end)),
+    h('section', {}, h('h2', {}, 'Audience'), h('p', {}, 'Locations: ', locs), h('button', { type: 'button', onclick: bulk }, 'Add locations in bulk'), h('label', {}, 'Minimum age ', age), h('p', {}, 'Detailed targeting: ', ints), q, lb),
+    h('section', {}, h('h2', {}, 'Placements'), placements.map(x => h('label', {}, x.c, ' ', x.p))),
+    h('section', {}, h('h2', {}, 'WhatsApp'), h('button', { type: 'button', onclick: waOpen }, 'Link WhatsApp Business Account'), waState, wa),
+    dlg, err,
+    h('footer', {}, status, ' ', h('button', { type: 'button', onclick: () => { clearTimeout(timer); status.textContent = 'Closed'; } }, 'Close'), ' ', h('button', { type: 'button', onclick: async () => { await API('publish'); status.textContent = 'Published'; } }, 'Publish')));
+});
+</script></body></html>

@@ -8,6 +8,7 @@ import {MODELS,type ModelId} from './models.js';
 import {createTenantContext} from '../security/tenantContext.js';
 import {withTenantModelReservation} from './tenantModelDispatch.js';
 import {presentationResponseFormat} from './responsePresentation.js';
+import {workspaceAnswerOutputChars} from './workspaceAnswerBudget.js';
 
 
 function mockProviderHttp(t:TestContext, handler:(_path:unknown, options:unknown)=>Promise<any>){
@@ -338,6 +339,81 @@ test('SDK and wire deadlines preserve the canonical buffered generation window w
   assert.ok(timeouts.includes(MODEL_PROVIDER_TIMEOUT_MS));
   assert.ok(!timeouts.includes(180_000));
   assert.equal(settlements.length,1);
+});
+
+test('opted-in continuations preserve the first line of code in both provider transports', async t => {
+  for (const streaming of [false, true]) {
+    await t.test(streaming ? 'streaming' : 'buffered', async test => {
+      const previous = process.env.ZURELAY_STREAM_USAGE_VERIFIED;
+      process.env.ZURELAY_STREAM_USAGE_VERIFIED = streaming ? '1' : '0';
+      test.after(() => {
+        if (previous === undefined) delete process.env.ZURELAY_STREAM_USAGE_VERIFIED;
+        else process.env.ZURELAY_STREAM_USAGE_VERIFIED = previous;
+      });
+      const content = '    second = 2\n    print(second)\n';
+      const settlements: number[] = [];
+      const run = admitted(test, 'deepseek_v4_1_flash_1017', settlements);
+      mockProviderHttp(test, async (_, options) => {
+        assert.equal(Boolean((options as { body: { stream?: boolean } }).body.stream), streaming);
+        const usage = { prompt_tokens: 20, completion_tokens: 10 };
+        if (streaming) return (async function* () {
+          yield { id: 'synthetic-continuation', choices: [{ delta: { content }, finish_reason: 'stop' }], usage };
+        })();
+        return { id: 'synthetic-continuation', choices: [{ message: { content }, finish_reason: 'stop' }], usage };
+      });
+      const messages = [{ role: 'user' as const, content: 'Continue the example procedure.' }];
+      assert.equal((await run(chatCompletionStream, messages, { maxTokens: 64 })).text, content.trim());
+      assert.equal((await run(chatCompletionStream, messages, {
+        maxTokens: 64, preserveLeadingWhitespace: true,
+      })).text, content.trimEnd());
+      assert.equal(settlements.length, 2);
+    });
+  }
+});
+
+test('an admitted long Workspace stream uses the attempt buffer and settles exactly once', async t => {
+  const previous = process.env.ZURELAY_STREAM_USAGE_VERIFIED;
+  process.env.ZURELAY_STREAM_USAGE_VERIFIED = '1';
+  t.after(() => {
+    if (previous === undefined) delete process.env.ZURELAY_STREAM_USAGE_VERIFIED;
+    else process.env.ZURELAY_STREAM_USAGE_VERIFIED = previous;
+  });
+  const modelId = 'deepseek_v4_1_flash_1017';
+  const maximumOutputTokens = 200_000;
+  const maximumOutputChars = workspaceAnswerOutputChars(modelId, maximumOutputTokens);
+  const settlements: number[] = [];
+  const run = admitted(t, modelId, settlements);
+  const delegate = globalThis.fetch;
+  let dispatches = 0;
+  t.mock.method(globalThis, 'fetch', async (input: Parameters<typeof fetch>[0], init?: RequestInit) => {
+    if (new URL(String(input)).origin !== 'https://api.zurelay.com') return delegate(input, init);
+    dispatches++;
+    const body = JSON.parse(String(init?.body));
+    assert.equal(body.max_tokens, maximumOutputTokens);
+    assert.equal(body.stream, true);
+    const model = 'deepseek-v4.1-flash-1017';
+    const frames = [
+      { model, choices: [{ delta: { content: 'x'.repeat(800_000) } }] },
+      { model, choices: [{ delta: { content: 'y'.repeat(800_000) }, finish_reason: 'stop' }],
+        usage: { prompt_tokens: 20, completion_tokens: maximumOutputTokens, total_tokens: maximumOutputTokens + 20 } },
+    ];
+    const encoder = new TextEncoder();
+    const bodyStream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        for (const frame of frames) controller.enqueue(encoder.encode('data: ' + JSON.stringify(frame) + '\n\n'));
+        controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+        controller.close();
+      },
+    });
+    return new Response(bodyStream, { headers: { ...HEADERS, 'content-type': 'text/event-stream' } });
+  });
+  const options = { maxTokens: maximumOutputTokens, maxOutputChars: maximumOutputChars };
+  const result = await run(chatCompletionStream, [{ role: 'user', content: 'Generate a long example answer.' }], options);
+  assert.ok(result.text.length > DEFAULT_BUILDER_BUDGET.maxOutputChars);
+  assert.equal(result.text.length, maximumOutputChars);
+  assert.equal(result.finishReason, 'stop');
+  assert.equal(dispatches, 1);
+  assert.equal(settlements.length, 1);
 });
 
 test('single-response transport sends one non-streaming request, settles from the provider receipt and publishes text once', async t => {

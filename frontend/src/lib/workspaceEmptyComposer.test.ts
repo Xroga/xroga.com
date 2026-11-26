@@ -350,20 +350,19 @@ test('the top scroll fade stays inside the conversation pane, never on the toolb
   assert.match(POLISH, /\.transcriptFade\[data-scrolled='true'\]\s*\{ opacity: 1; \}/);
 });
 
-test('Chrome extension control sits inline in the workspace header and does not add a transcript row', () => {
-  const POLISH = read('../components/dashboard/WorkspaceScrollPolish.module.css');
+test('browser extension uses one layout provider and stays separate from ordinary Workspace chat', () => {
+  const LAYOUT = read('../app/(workspace)/layout.tsx');
+  const WORKSPACE = read('../app/(workspace)/workspace/page.tsx');
   const OPERATOR = read('../components/browser/WorkspaceBrowserOperator.tsx');
-  assert.match(DASHBOARD, /<header[\s\S]*?className=\{scrollPolish\.browserControl\}>\{browserOperator\}[\s\S]*?<\/header>/);
-  assert.doesNotMatch(DASHBOARD, /<\/header>\s*\{browserOperator\}/);
-  assert.match(DASHBOARD, /Private · not saved<\/span>\s*\{browserOperator \? <div className=\{scrollPolish\.browserControl\}>/);
-  assert.match(POLISH, /\.browserControl\s*\{[^}]*position:\s*relative/);
-  assert.match(POLISH, /\.browserControl > details > \[role='status'\]\s*\{[^}]*position:\s*static/);
-  assert.match(OPERATOR, /<span>Extension<\/span>/);
-  assert.match(OPERATOR, /supported local browser automation tasks/);
-  assert.match(OPERATOR, /!showConnection[\s\S]*?Coming soon/);
-  assert.doesNotMatch(OPERATOR, /chromewebstore\.google\.com|Connect from the Xroga side panel in Chrome\./);
-  assert.match(POLISH, /terminal-skin-gray[^\n]*\[data-xroga-extension-trigger\][\s\S]*?border: 0/);
-  assert.match(POLISH, /terminal-skin-dark[^\n]*\[data-xroga-extension-trigger\][\s\S]*?background: #fff/);
+
+  assert.equal((LAYOUT.match(/<WorkspaceBrowserOperator[\s>]/g) ?? []).length, 1);
+  assert.doesNotMatch(WORKSPACE, /WorkspaceBrowserOperator/);
+  assert.doesNotMatch(DASHBOARD, /WorkspaceBrowserConnection|browserOperator/);
+  assert.match(OPERATOR, /url\.searchParams\.get\('browserExtension'\)/);
+  assert.match(OPERATOR, /url\.searchParams\.get\('browserPair'\)/);
+  assert.match(SIDEBAR, /\{!isGuest && !incognito && <WorkspaceBrowserConnection \/>\}/);
+  assert.match(OPERATOR, /export function isLocalChromeRequest\(_text: string\)\s*\{\s*return false;/);
+  assert.match(OPERATOR, /export function WorkspaceBrowserProgress\([^\n]*\)\s*\{\s*return null;/);
 });
 
 test('workspace scroll navigation stays compact and horizontal with Uiverse motion', () => {

@@ -1,0 +1,188 @@
+import { describe, expect, it } from 'vitest';
+import {
+  completedBrowserTools,
+  hasUncertainBrowserWrite,
+  INTERRUPTED_MUTATION,
+  INTERRUPTED_READ,
+  planRestore,
+  SKIPPED_RESTART,
+  takenOver,
+} from '../restore';
+import type { Entry, EntryBody, RunRecord } from '@src/store/types';
+import { EMPTY_GUARDS, ZERO_USAGE } from '@src/store/types';
+
+let n = 0;
+const e = (body: EntryBody): Entry =>
+  ({ ...body, id: `e${++n}`, parentId: null, conversationId: 'c', at: '' }) as Entry;
+const reply = (...calls: Array<[string, string, unknown?]>) =>
+  e({
+    type: 'message',
+    message: {
+      role: 'assistant',
+      parts: calls.map(([id, name, input]) => ({
+        type: 'tool-call' as const,
+        toolCallId: id,
+        toolName: name,
+        input: input ?? {},
+      })),
+    },
+  });
+const intent = (id: string, tool: string) => e({ type: 'intent', toolCallId: id, tool, args: {} });
+const result = (id: string, tool: string) =>
+  e({
+    type: 'message',
+    message: {
+      role: 'tool',
+      parts: [{ type: 'tool-result', toolCallId: id, toolName: tool, text: 'ok', isError: false }],
+    },
+  });
+
+const run = (patch: Partial<RunRecord>): RunRecord => ({
+  conversationId: 'c',
+  runId: 'r',
+  leafEntryId: null,
+  status: 'running',
+  steering: [],
+  turns: 1,
+  usage: ZERO_USAGE,
+  debt: [],
+  guards: EMPTY_GUARDS,
+  tabs: [1],
+  startedAt: '',
+  updatedAt: '',
+  ...patch,
+});
+
+describe('the restore plan', () => {
+  it('does not rebind an old numeric tab or reopen a canonical write prompt after restart', () => {
+    const plan = planRestore(
+      run({
+        status: 'awaiting_user',
+        canonicalBrowserRunId: 'canonical',
+        pendingPrompt: {
+          kind: 'handover',
+          request: { tabId: 1 },
+          answers: { toolCallId: 'x', partialResult: {} },
+          openedAt: '',
+        },
+      }),
+      [reply(['x', 'fill_form']), intent('x', 'fill_form')],
+    );
+    expect(plan.status).toBe('interrupted');
+    expect(plan.reopen).toBeUndefined();
+    expect(plan.results[0]?.text).toBe(INTERRUPTED_MUTATION);
+  });
+
+  it('scopes durable action receipts and unknown writes to their exact run', () => {
+    const withResult = (runId: string, id: string, tool: string, outcome: unknown) =>
+      ({
+        ...result(id, tool),
+        meta: { runId },
+        result: outcome,
+      }) as Entry;
+    const entries = [
+      intent('x', 'click'),
+      withResult('r', 'x', 'click', { ok: false, error: { delivered: 'unknown' } }),
+      withResult('r', 'y', 'read', { ok: true }),
+      withResult('r', 'z', 'click', { ok: true, receipt: { dispatched: false } }),
+      withResult('different-run', 'w', 'navigate', { ok: true }),
+    ];
+    expect(completedBrowserTools('r', entries)).toEqual(['read']);
+    expect(hasUncertainBrowserWrite('r', entries)).toBe(true);
+    expect(hasUncertainBrowserWrite('different-run', entries)).toBe(false);
+  });
+
+  it('an interrupted navigation is a read to repeat, not an uncertain write, so a run can continue after an interruption mid-navigation', () => {
+    const interrupted = (tool: string) =>
+      ({ ...result('n', tool), meta: { runId: 'r' }, result: { ok: false, error: { delivered: 'unknown' } } }) as Entry;
+    expect(hasUncertainBrowserWrite('r', [intent('n', 'navigate'), interrupted('navigate')])).toBe(false);
+    expect(hasUncertainBrowserWrite('r', [intent('n', 'tabs'), interrupted('tabs')])).toBe(false);
+    // A click whose delivery is unknown is still protected.
+    expect(hasUncertainBrowserWrite('r', [intent('n', 'click'), interrupted('click')])).toBe(true);
+  });
+
+  it('rejects unknown dispatch even if the tool envelope says ok', () => {
+    const entry = {
+      ...result('x', 'click'),
+      meta: { runId: 'r' },
+      result: { ok: true, receipt: { dispatched: 'unknown' } },
+    } as Entry;
+    const branch = [intent('x', 'click'), entry];
+    expect(completedBrowserTools('r', branch)).toEqual([]);
+    expect(hasUncertainBrowserWrite('r', branch)).toBe(true);
+  });
+
+  it('a running run becomes interrupted; an intent with no result is INTERRUPTED; a call that never started is skipped', () => {
+    const branch = [
+      reply(['a', 'snapshot'], ['b', 'click', { target: { ref: 'a1' } }], ['c', 'click']),
+      intent('a', 'snapshot'),
+      intent('b', 'click'),
+    ];
+    const plan = planRestore(run({ status: 'running' }), branch);
+    expect(plan.status).toBe('interrupted');
+    expect(plan.results).toEqual([
+      { toolCallId: 'a', toolName: 'snapshot', text: INTERRUPTED_READ, isError: true },
+      { toolCallId: 'b', toolName: 'click', text: INTERRUPTED_MUTATION, isError: true },
+      { toolCallId: 'c', toolName: 'click', text: SKIPPED_RESTART, isError: true },
+    ]);
+    expect(plan.reopen).toBeUndefined();
+  });
+
+  it('a hand-over that fill_form met after setting two fields reopens only its card; nothing is sent again', () => {
+    const partial = { ok: false, error: { code: 'USER_STEP' }, data: { receipts: [{}, {}], submitted: false } };
+    const branch = [reply(['f', 'fill_form'], ['g', 'click']), intent('f', 'fill_form')];
+    const plan = planRestore(
+      run({
+        status: 'awaiting_user',
+        pendingPrompt: {
+          kind: 'handover',
+          request: { details: { reason: 'pay' }, tabId: 1 },
+          openedAt: '',
+          answers: { toolCallId: 'f', partialResult: partial },
+        },
+      }),
+      branch,
+    );
+    expect(plan.status).toBe('awaiting_user');
+    expect(plan.reopen).toMatchObject({ kind: 'handover', toolCallId: 'f', answers: { partialResult: partial } });
+    // The fill_form call gets no INTERRUPTED result: the hand-over answers it. The call after it never started.
+    expect(plan.results).toEqual([{ toolCallId: 'g', toolName: 'click', text: SKIPPED_RESTART, isError: true }]);
+  });
+
+  it('an open write card is recovered like an interrupted mutation', () => {
+    const plan = planRestore(
+      run({ status: 'awaiting_user', pendingPrompt: { kind: 'write-card', request: {}, openedAt: '' } }),
+      [reply(['s', 'click']), intent('s', 'click')],
+    );
+    expect(plan.status).toBe('interrupted');
+    expect(plan.results[0].text).toBe(INTERRUPTED_MUTATION);
+  });
+
+  it('an ask_user question opens again', () => {
+    const plan = planRestore(
+      run({
+        status: 'awaiting_user',
+        pendingPrompt: { kind: 'ask-user', request: { kind: 'input', message: 'Which account?' }, openedAt: '' },
+      }),
+      [reply(['q', 'ask_user']), intent('q', 'ask_user')],
+    );
+    expect(plan.status).toBe('awaiting_user');
+    expect(plan.reopen).toMatchObject({ kind: 'ask-user', toolCallId: 'q' });
+    expect(plan.results).toEqual([]);
+  });
+
+  it('an interrupted run is restored as it was, and a finished reply needs nothing', () => {
+    const branch = [reply(['a', 'read']), intent('a', 'read'), result('a', 'read')];
+    expect(planRestore(run({ status: 'interrupted' }), branch).status).toBe('interrupted');
+  });
+
+  it('a run stored as paused by the Take over the panel once had is restored as stopped', () => {
+    const branch = [reply(['a', 'read']), intent('a', 'read'), result('a', 'read')];
+    const paused = run({ status: 'paused' as RunRecord['status'], reason: 'take-over' });
+    expect(takenOver(paused)).toBe(true);
+    const plan = planRestore(paused, branch);
+    expect(plan).toMatchObject({ status: 'stopped', results: [] });
+    expect(plan.reason).toBeUndefined();
+    expect(takenOver(run({ status: 'interrupted' }))).toBe(false);
+  });
+});

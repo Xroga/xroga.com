@@ -1,5 +1,6 @@
 import { NATIVE_SHARE_PREFIX, readNativeOpenUiShare, readNativeOpenUiShareText } from '../../../../../backend/src/ai/nativeOpenUiShare';
 import { splitNativeOpenUiAnswer } from '../../../../../backend/src/ai/nativeOpenUi';
+import { MAX_SHARED_RESPONSE_CHARS } from '../../../../../backend/src/lib/messageShareLimits';
 import { NativeWorkspaceAnswer } from '@/components/native-openui/NativeWorkspaceAnswer';
 import { publicAnswerExportText, publicAnswerText } from '@/lib/publicAnswerText';
 import type { Metadata } from 'next';
@@ -66,7 +67,7 @@ const loadShare = cache(async (token: string): Promise<ShareResult> => {
     const payload = JSON.parse(Buffer.concat(chunks).toString('utf8')) as { share?: PublicShare };
     const share=payload?.share;
     if(!share||share.token!==token||!['public','private'].includes(share.visibility)||!['response','exchange'].includes(share.scope)
-      ||typeof share.prompt!=='string'||share.prompt.length>20000||typeof share.response!=='string'||share.response.length>100000)return{status:'missing'};
+      ||typeof share.prompt!=='string'||share.prompt.length>20000||typeof share.response!=='string'||share.response.length>MAX_SHARED_RESPONSE_CHARS)return{status:'missing'};
     // Current API exposes text plus an optional snapshot. Older compatible API
     // revisions return the snapshot in response. Both retain the same share ACL.
     const snapshot = typeof share.richResponse === 'string' ? share.richResponse : share.response;

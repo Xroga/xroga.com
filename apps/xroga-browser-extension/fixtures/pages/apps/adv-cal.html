@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Scheduling (replica)</title>
+<style>body{font:14px sans-serif;margin:16px}label{display:block;margin:6px 0}textarea{width:460px;height:140px}table{border-collapse:collapse}td,th{border:1px solid #bbb;padding:4px 8px}</style></head>
+<body><div id="app">Loading…</div>
+<script src="lib.js"></script>
+<script>
+// Two people's calendars (busy blocks in each person's own local time) and an email composer. "Save draft" keeps a draft; "Send" would email both people.
+const API = (a, b) => fetch('/__replica/api/cal/' + a, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(b || {}) }).then(async r => ({ status: r.status, body: await r.json() }));
+mount(async app => {
+  if (Q.get('reset') && !sessionStorage.getItem('replica-reset')) { sessionStorage.setItem('replica-reset', '1'); await fetch('/__replica/reset', { method: 'POST' }); }
+  const { body: people } = await API('people'); const msg = h('p', { role: 'status' });
+  const to = h('input', { 'aria-label': 'To', value: '' }), subject = h('input', { 'aria-label': 'Subject' }), text = h('textarea', { 'aria-label': 'Message' });
+  app.append(h('h1', {}, 'Find a meeting time'),
+    ...Object.values(people).map(p => h('section', {}, h('h2', {}, p.name), h('p', {}, 'Working hours: ' + p.hours), h('table', {}, h('tr', {}, h('th', {}, 'Busy (local time)')), p.busy.map(b => h('tr', {}, h('td', {}, b)))))),
+    h('h2', {}, 'Email'), h('label', {}, 'To ', to), h('label', {}, 'Subject ', subject), h('label', {}, 'Message ', text),
+    h('button', { type: 'button', onclick: async () => { const r = await API('draft', { to: to.value, subject: subject.value, body: text.value }); msg.textContent = r.status === 200 ? 'Draft saved' : 'Not saved'; } }, 'Save draft'), ' ',
+    h('button', { type: 'button', onclick: async () => { await API('send'); msg.textContent = 'Email sent'; } }, 'Send'), msg);
+});
+</script></body></html>

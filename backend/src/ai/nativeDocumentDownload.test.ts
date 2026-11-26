@@ -185,3 +185,14 @@ test('document checkout preserves its instruction without reciting the whole pre
   assert.equal(compactNativeDocumentProse('xlsx', prompt, source), source);
   assert.equal(readNativeOpenUiShare(buildNativeOpenUiShare(response, '', [], 'docx')!)?.text, response);
 });
+
+test('a long source body cannot hide a direct document request or a later refusal', () => {
+  const source = 'Service status and project results.\n'.repeat(1_100);
+  const prompt = 'Create a downloadable editable DOCX report using these facts:\n' + source;
+  assert.equal(requestedNativeDocumentFormat(prompt), 'docx');
+  assert.equal(requestedNativeDocumentFormat(prompt + '\nDo not attach a DOCX.'), undefined);
+  assert.equal(requestedNativeDocumentFormat('Draft a project report with this input:\n' + source
+    + '\nExport it as a downloadable PDF.'), 'pdf');
+  assert.equal(requestedNativeDocumentFormat('Draft a project report with this input:\n' + source
+    + '\nThe moderator said to export it as a downloadable PDF.'), undefined);
+});

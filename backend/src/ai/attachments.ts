@@ -24,6 +24,7 @@ export interface PreparedAttachments {
   documents: Array<{ name: string; mimeType: string; text: string; chars: number }>;
   /** Concatenated doc text for prompts */
   documentBlock: string;
+  documentContextPartial?: boolean;
   hasImages: boolean;
   hasDocuments: boolean;
 }
@@ -164,15 +165,16 @@ async function extractDocxText(buf: Buffer): Promise<string> {
 
 export async function prepareAttachments(
   raw: unknown,
-  opts?: { maxImages?: number; maxDocs?: number; maxDocChars?: number },
+  opts?: { maxImages?: number; maxDocs?: number; maxDocChars?: number; maxDocumentUtf8Bytes?: number },
 ): Promise<PreparedAttachments> {
   const maxImages = opts?.maxImages ?? 4;
   const maxDocs = opts?.maxDocs ?? 4;
-  const maxDocChars = opts?.maxDocChars ?? 80_000;
+  const maxDocChars = opts?.maxDocChars ?? opts?.maxDocumentUtf8Bytes ?? 80_000;
 
   const list = Array.isArray(raw) ? raw : [];
   const images: PreparedAttachments['images'] = [];
   const documents: PreparedAttachments['documents'] = [];
+  let skippedDocument = false;
 
   for (const item of list) {
     if (!item || typeof item !== 'object') continue;
@@ -186,7 +188,12 @@ export async function prepareAttachments(
       continue;
     }
 
-    if (documents.length >= maxDocs) continue;
+    if (documents.length >= maxDocs) {
+      if (mime === 'application/pdf' || mime.includes('wordprocessingml') || /\.(?:pdf|docx)$/i.test(name) || isTextishMime(mime, name)) {
+        skippedDocument = true;
+      }
+      continue;
+    }
 
     try {
       if (mime === 'application/pdf' || /\.pdf$/i.test(name)) {
@@ -234,21 +241,34 @@ export async function prepareAttachments(
     }
   }
 
-  const documentBlock = documents
+  const fullDocumentBlock = documents
     .map(
       (d) =>
         `--- FILE: ${d.name} (${d.mimeType}, ${d.chars} chars) ---\n${d.text || '(empty / scanned PDF with no extractable text)'}`,
     )
-    .join('\n\n')
-    .slice(0, maxDocChars);
+    .join('\n\n');
+  const characterBounded = fullDocumentBlock.slice(0, maxDocChars);
+  const documentBlock = opts?.maxDocumentUtf8Bytes === undefined ? characterBounded
+    : utf8Prefix(characterBounded, opts.maxDocumentUtf8Bytes);
+  const documentContextPartial = skippedDocument || documentBlock.length < fullDocumentBlock.length
+    || documents.some(document => document.text.length < document.chars);
 
   return {
     images,
     documents,
     documentBlock,
+    ...(documentContextPartial ? { documentContextPartial } : {}),
     hasImages: images.length > 0,
     hasDocuments: documents.length > 0,
   };
+}
+
+function utf8Prefix(text: string, maximumBytes: number): string {
+  const bytes = Buffer.from(text);
+  if (bytes.length <= maximumBytes) return text;
+  let end = maximumBytes;
+  while (end > 0 && (bytes[end]! & 0xc0) === 0x80) end -= 1;
+  return bytes.toString('utf8', 0, end);
 }
 
 /** Pick vision / doc model per product rules. */

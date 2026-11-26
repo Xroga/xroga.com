@@ -70,6 +70,13 @@ test('research retains the full output budget when the user requests a report', 
   );
 });
 
+test('research synthesis retains source evidence and delimiters beyond the old cutoff', () => {
+  const gathered = '<evidence>\n' + 'Source excerpt.\n'.repeat(2_800)
+    + '[25] Additional source with its own citation.\n</evidence>';
+  assert.ok(gathered.length > 40_000);
+  assert.ok(researchSynthesisPrompt('Write a sourced comparison.', gathered).includes(gathered));
+});
+
 test('unqualified research comparisons follow the scope of the question', () => {
   const prompt = researchSynthesisPrompt('Compare two approaches using their official documentation.', 'Evidence excerpts.');
   assert.match(prompt, /More retrieved material does not make the question broader/);

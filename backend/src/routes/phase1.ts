@@ -18,6 +18,7 @@ import type {
 import {
   runChatPipeline,
 } from '../ai/pipeline.js';
+import { readWorkspaceHistory } from '../ai/workspaceConversation.js';
 
 import {
   assertHasQuota,
@@ -59,9 +60,7 @@ import {
   selectRepositoryChatEvidence,
 } from '../ai/universal/repositoryChatEvidence.js';
 
-import {
-  boundedSemanticHistory,
-} from '../ai/universal/semanticHistory.js';
+import { semanticHistory } from '../ai/universal/semanticHistory.js';
 
 import {
   readBusinessData,
@@ -522,7 +521,7 @@ router.post(
             message,
 
             history:
-              boundedSemanticHistory(
+              semanticHistory(
                 req.body
                   ?.history,
               ),
@@ -704,24 +703,7 @@ router.post(
         );
     }
 
-    const history =
-      Array.isArray(
-        req.body
-          ?.history,
-      )
-        ? (
-            req.body
-              .history as
-              Array<{
-                role:
-                  | 'user'
-                  | 'assistant';
-
-                content:
-                  string;
-              }>
-          )
-        : [];
+    const history = readWorkspaceHistory(req.body?.history);
 
     const semanticGoal =
       goalContractSchema

@@ -33,6 +33,21 @@ test('assistant copy converts markdown tables into readable tab-separated text',
   );
 });
 
+test('copy preserves literal pipes in inline code and one-column table cells', () => {
+  const source = [
+    '| Example | Result |',
+    '| --- | --- |',
+    '| `MASK | FLAG` | kept |',
+    '| ``text `name` | tail`` | kept too |',
+    '',
+    '| Identifier |',
+    '| --- |',
+    '| `layer | scope` |',
+  ].join('\n');
+  assert.equal(serializeAssistantCopy(source),
+    'Example\tResult\nMASK | FLAG\tkept\ntext `name` | tail\tkept too\n\nIdentifier\nlayer | scope');
+});
+
 test('native copy collapses equivalent tables but keeps unique figures and source URLs', () => {
   const table = '| Plan | Cost | Evidence |\n|---|---:|---|\n| Basic | $10 | [Terms](https://example.org/current) |';
   const duplicate = table.replace('|---|---:|---|', '| --- | --- | --- |');
@@ -91,13 +106,17 @@ test('saved research exports omit the private action URL and keep the existing a
   const link = '[Review action](/dashboard/actions/confirm/9d2d8830-8daa-4d5e-9b52-6ba547a118b8)';
   const legacy = `Review the exact research request before it is sent: ${link}. No live evidence has been retrieved.`;
   const evidence = 'The official result is [documented](https://example.com/evidence).';
-  assert.equal(publicAnswerExportText(`${legacy}\n\n${evidence}`), `This search was awaiting review in Workspace.\n\n${evidence}`);
-  assert.equal(serializeAssistantCopy(legacy), 'This search was awaiting review in Workspace.');
+  const status = 'This saved search has no sources.';
+  assert.equal(publicAnswerExportText(`${legacy}\n\n${evidence}`), `${status}\n\n${evidence}`);
+  assert.equal(serializeAssistantCopy(legacy), status);
   assert.equal(publicAnswerExportText(`You:\nLook up the answer.\n\nXroga:\n${legacy}`),
-    'You:\nLook up the answer.\n\nXroga:\nThis search was awaiting review in Workspace.');
+    `You:\nLook up the answer.\n\nXroga:\n${status}`);
   assert.equal(publicAnswerExportText(`Sensitive write requires review. ${link}`), 'Sensitive write requires review. Review in Workspace');
   assert.equal(publicAnswerExportText(`Review the request before Xroga searches the web: ${link}\n\n${evidence}`),
-    `Web search didn’t run for this request. Try sending the prompt again.\n\n${evidence}`);
+    `${status}\n\n${evidence}`);
+  const retry = 'Web search didn’t run for this request. Try sending the prompt again.';
+  assert.equal(publicAnswerExportText(`Xroga:\n${retry}\n\n${evidence}`), `Xroga:\n${status}\n\n${evidence}`);
+  assert.equal(publicAnswerExportText(`~~~text\n${retry}\n~~~`), `~~~text\n${retry}\n~~~`);
 });
 
 test('action export filtering preserves literal code and unrelated external sources', () => {

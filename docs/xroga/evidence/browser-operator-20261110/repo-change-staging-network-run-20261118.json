@@ -1,0 +1,89 @@
+{
+  "repository": "more-itertools/more-itertools",
+  "commit": "4998a257373f36e91edef7324572ed8df10f39d1",
+  "pinnedMatches": true,
+  "files": [
+    {
+      "path": "more_itertools/recipes.py",
+      "kind": "modified",
+      "additions": 1,
+      "deletions": 1
+    },
+    {
+      "path": "requirements.txt",
+      "kind": "created",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "path": "tests/test_xroga_staging.py",
+      "kind": "created",
+      "additions": 7,
+      "deletions": 0
+    }
+  ],
+  "verdict": "verified",
+  "verdictReason": "The repository's own tests passed on the pinned commit and on the edited copy. 1 test run passed (pytest).",
+  "baseline": {
+    "status": "passed",
+    "summary": "1 test run passed (unittest).",
+    "stages": [
+      {
+        "id": "test:.",
+        "exitCode": 0,
+        "durationMs": 3013,
+        "tail": "ue_everseen (more_itertools.recipes)\nDoctest: more_itertools.recipes.unique_everseen ... ok\nunique_justseen (more_itertools.recipes)\nDoctest: more_itertools.recipes.unique_justseen ... ok\n\n----------------------------------------------------------------------\nRan 817 tests in 2.703s\n\nOK (skipped=1)\n"
+      }
+    ]
+  },
+  "after": {
+    "status": "passed",
+    "summary": "1 test run passed (pytest).",
+    "stages": [
+      {
+        "id": "install:.:requirements.txt",
+        "exitCode": 0,
+        "durationMs": 4460,
+        "tail": "TH or, if you prefer to suppress this warning, use --no-warn-script-location.\nWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv\n"
+      },
+      {
+        "id": "test:.",
+        "exitCode": 0,
+        "durationMs": 3648,
+        "tail": "_itertools/more.py:1742: DeprecationWarning: zip_equal will be removed in a future version of more-itertools. Use the builtin zip function with strict=True instead.\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n664 passed, 1 skipped, 8 warnings in 3.34s\n"
+      }
+    ]
+  },
+  "diff": "diff --git a/more_itertools/recipes.py b/more_itertools/recipes.py\n--- a/more_itertools/recipes.py\n+++ b/more_itertools/recipes.py\n@@ -95,7 +95,7 @@\n _sumprod = getattr(math, 'sumprod', lambda x, y: dotproduct(x, y))\n \n \n-def take(n, iterable):\n+def take(n, iterable):  # edited by an Xroga staging run\n     \"\"\"Return first *n* items of the iterable as a list.\n \n         >>> take(3, range(10))\ndiff --git a/requirements.txt b/requirements.txt\nnew file mode 100644\n--- /dev/null\n+++ b/requirements.txt\n@@ -0,0 +1,1 @@\n+pytest==8.3.3\ndiff --git a/tests/test_xroga_staging.py b/tests/test_xroga_staging.py\nnew file mode 100644\n--- /dev/null\n+++ b/tests/test_xroga_staging.py\n@@ -0,0 +1,7 @@\n+from unittest import TestCase\n+from more_itertools import take\n+\n+\n+class XrogaStagingTests(TestCase):\n+    def test_take(self):\n+        self.assertEqual(take(2, range(10)), [0, 1])\n",
+  "wallMs": 20500,
+  "ledgerRows": [
+    {
+      "reserved": {
+        "runId": "7ac6f92b-069f-4eaf-898b-8dba1a450587",
+        "category": "sandbox_compute_seconds",
+        "units": 240,
+        "key": "meter-984d50b0-97d4-4865-8a24-118f6420a9bb",
+        "cap": 1000000000000000,
+        "windowSeconds": 86400
+      }
+    },
+    {
+      "settled": 4,
+      "resource": "cloud-run-sandbox;mem=1024MB"
+    },
+    {
+      "reserved": {
+        "runId": "7ac6f92b-069f-4eaf-898b-8dba1a450587",
+        "category": "sandbox_compute_seconds",
+        "units": 480,
+        "key": "meter-56a87818-2064-46a2-a264-f94c4dd92b88",
+        "cap": 1000000000000000,
+        "windowSeconds": 86400
+      }
+    },
+    {
+      "settled": 9,
+      "resource": "cloud-run-sandbox;mem=1024MB"
+    }
+  ]
+}

@@ -70,13 +70,14 @@ test('unscoped browser cache cannot appear as another account history or migrate
  assert.doesNotMatch(sidebar,/Opened terminal — start chatting or building/);
 });
 
-test('a queued sidebar save cannot move a previous account’s conversation to the new account', async () => {
+test('a queued sidebar save preserves long history and cannot move it to a different account', async () => {
  let activeUser = 'account-a';
  const timers: Array<() => void> = [];
- const writes: Array<{ user_id: string; id: string }> = [];
+ type ChatRow = { user_id: string; id: string; messages: Array<{ role: string; content: string }>; message_count: number };
+ const writes: ChatRow[] = [];
  const client = {
   auth: { getUser: async () => ({ data: { user: { id: activeUser } } }) },
-  from: () => ({ upsert: async (row: { user_id: string; id: string }) => { writes.push(row); return {}; } }),
+  from: () => ({ upsert: async (row: ChatRow) => { writes.push(row); return {}; } }),
  };
  const exports: Record<string, (...args: unknown[]) => void> = {};
  const code = ts.transpileModule(read('./sidebarOrganization.ts'), {
@@ -93,7 +94,11 @@ test('a queued sidebar save cannot move a previous account’s conversation to t
   },
   setTimeout: (callback: () => void) => timers.push(callback), clearTimeout() {},
  });
- const entry = { id: 'conversation', title: 'Conversation', messages: [{ role: 'assistant', content: 'Private response' }] };
+ const messages = Array.from({ length: 320 }, (_, index) => ({
+  role: index % 2 ? 'assistant' : 'user',
+  content: `Private turn ${index}`,
+ }));
+ const entry = { id: 'conversation', title: 'Conversation', messages };
  exports.scheduleSidebarChatSave('account-a', entry);
  activeUser = 'account-b';
  timers.shift()!();
@@ -103,4 +108,6 @@ test('a queued sidebar save cannot move a previous account’s conversation to t
  timers.shift()!();
  await new Promise<void>(resolve => setImmediate(resolve));
  assert.deepEqual(writes.map(({ user_id, id }) => [user_id, id]), [['account-b', 'conversation']]);
+ assert.equal(writes[0]?.message_count, 320);
+ assert.deepEqual(writes[0]?.messages, messages);
 });

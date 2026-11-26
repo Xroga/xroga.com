@@ -1,0 +1,152 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { streamTurn } from '@src/llm';
+
+const requests: Array<{ op: string; value: unknown }> = [];
+let turnFails: unknown;
+vi.mock('../bridge', () => ({
+  workspaceRequest: vi.fn(async (op: string, value: unknown) => {
+    requests.push({ op, value });
+    if (op === 'start') return { runId: '11111111-1111-4111-8111-111111111111', turns: 0, maxTurns: 48, remainingMs: 2_400_000 };
+    if (op === 'extend') return { maxTurns: 96, remainingMs: 4_800_000 };
+    if (op === 'turn') {
+      if (turnFails) throw turnFails;
+      return { id: 'x', model: 'm', choice: { finish_reason: 'stop', message: { content: 'ok' } }, usage: { prompt_tokens: 1, completion_tokens: 1, total_tokens: 2 } };
+    }
+    return {};
+  }),
+}));
+
+import { startXrogaModelRun } from '../model';
+
+beforeEach(() => {
+  requests.length = 0;
+  turnFails = undefined;
+});
+
+describe('a canonical run', () => {
+  it('asks the server for its next segment and reports the turns and time granted; there is no client-side ceiling', async () => {
+    const run = await startXrogaModelRun('goal', 'https://example.com', new AbortController().signal, 0);
+    expect(run.remainingTurns).toBe(48);
+    expect(await run.extend()).toEqual({ turns: 48, remainingMs: 4_800_000 });
+    // The server's own answer is not second-guessed by a fixed ceiling in the extension.
+    expect(requests.some(r => r.op === 'extend')).toBe(true);
+  });
+
+  it('keeps going to very large allowances the server may one day grant', async () => {
+    const bridge = await import('../bridge');
+    (bridge.workspaceRequest as unknown as ReturnType<typeof vi.fn>).mockImplementationOnce(async () => ({ runId: '11111111-1111-4111-8111-111111111111', turns: 100, maxTurns: 5_000, remainingMs: 90 * 3_600_000 }));
+    const run = await startXrogaModelRun('goal', 'https://example.com', new AbortController().signal, 0, '11111111-1111-4111-8111-111111111111');
+    expect(run.remainingTurns).toBe(4_900);
+    expect(run.remainingMs).toBe(90 * 3_600_000);
+  });
+
+  it('treats a refused entitlement as a clean, resumable stop: not an unverified request', async () => {
+    const run = await startXrogaModelRun('goal', 'https://example.com', new AbortController().signal, 0);
+    turnFails = Object.assign(new Error('x'), { code: 'BROWSER_ALLOWANCE_EXHAUSTED' });
+    const reply = await streamTurn({ chat: run.model.chat, system: 's', messages: [{ role: 'user', content: 'hi' }], tools: {}, signal: new AbortController().signal } as never);
+    expect(reply.error).toBeTruthy();
+    expect(run.allowanceExhausted).toBe(true);
+    expect(run.requestInterrupted).toBe(false);
+  });
+
+  it('treats a request over the server size cap as an overflow to compact, not as an unverified request, and gives the turn back', async () => {
+    const run = await startXrogaModelRun('goal', 'https://example.com', new AbortController().signal, 0);
+    turnFails = Object.assign(new Error('x'), { code: 'BROWSER_CONTEXT_TOO_LARGE' });
+    const reply = await streamTurn({ chat: run.model.chat, system: 's', messages: [{ role: 'user', content: 'hi' }], tools: {}, signal: new AbortController().signal } as never);
+    expect(reply.error).toBeTruthy();
+    expect(run.requestInterrupted).toBe(false);
+    // The next request after compaction reuses the same turn number: the server never counted the refused one.
+    turnFails = undefined;
+    await streamTurn({ chat: run.model.chat, system: 's', messages: [{ role: 'user', content: 'hi' }], tools: {}, signal: new AbortController().signal } as never);
+    const turns = requests.filter(r => r.op === 'turn').map(r => (r.value as { body: { turn: number } }).body.turn);
+    expect(turns).toEqual([1, 1]);
+  });
+
+  it('renews the segment before a request that would pass its end, even when the loop did not count that request (compaction summary)', async () => {
+    const run = await startXrogaModelRun('goal', 'https://example.com', new AbortController().signal, 0);
+    const ask = () => streamTurn({ chat: run.model.chat, system: 's', messages: [{ role: 'user', content: 'hi' }], tools: {}, signal: new AbortController().signal } as never);
+    for (let i = 0; i < 48; i++) await ask();
+    expect(requests.some(r => r.op === 'extend')).toBe(false);
+    await ask();
+    const ops = requests.map(r => r.op);
+    expect(ops.slice(-2)).toEqual(['extend', 'turn']);
+    const turns = requests.filter(r => r.op === 'turn').map(r => (r.value as { body: { turn: number } }).body.turn);
+    expect(turns.at(-1)).toBe(49);
+  });
+
+  it('waits and asks again when the shared model gate is full (nothing was charged), instead of failing the task', async () => {
+    vi.useFakeTimers();
+    try {
+      const run = await startXrogaModelRun('goal', 'https://example.com', new AbortController().signal, 0);
+      turnFails = Object.assign(new Error('busy'), { code: 'BROWSER_MODEL_BUSY' });
+      const pending = streamTurn({ chat: run.model.chat, system: 's', messages: [{ role: 'user', content: 'hi' }], tools: {}, signal: new AbortController().signal } as never);
+      await vi.advanceTimersByTimeAsync(2_500);
+      turnFails = undefined;
+      await vi.advanceTimersByTimeAsync(5_000);
+      const reply = await pending;
+      expect(reply.error).toBeFalsy();
+      expect(run.requestInterrupted).toBe(false);
+      const turns = requests.filter(r => r.op === 'turn').map(r => (r.value as { body: { turn: number } }).body.turn);
+      expect(turns.length).toBeGreaterThanOrEqual(2);
+      expect(new Set(turns).size).toBe(turns.length);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('still treats any other failed model request as unverified and never retries it', async () => {
+    const run = await startXrogaModelRun('goal', 'https://example.com', new AbortController().signal, 0);
+    turnFails = new Error('network');
+    await streamTurn({ chat: run.model.chat, system: 's', messages: [{ role: 'user', content: 'hi' }], tools: {}, signal: new AbortController().signal } as never);
+    expect(run.requestInterrupted).toBe(true);
+    expect(run.allowanceExhausted).toBe(false);
+    expect(requests.filter(r => r.op === 'turn')).toHaveLength(1);
+  });
+});
+
+describe('a model request that stalls', () => {
+  it('is asked again under the next turn number (up to three times) instead of pausing the task', async () => {
+    vi.useFakeTimers();
+    try {
+      const run = await startXrogaModelRun('goal', 'https://example.com', new AbortController().signal, 0);
+      turnFails = Object.assign(new Error('x'), { code: 'BROWSER_GATEWAY_UNAVAILABLE' });
+      const pending = streamTurn({ chat: run.model.chat, system: 's', messages: [{ role: 'user', content: 'hi' }], tools: {}, signal: new AbortController().signal } as never);
+      await vi.advanceTimersByTimeAsync(2_500);
+      turnFails = undefined;
+      await vi.advanceTimersByTimeAsync(5_000);
+      const reply = await pending;
+      expect(reply.error).toBeFalsy();
+      expect(run.requestInterrupted).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('still pauses after three stalls in a row, so a real outage does not loop', async () => {
+    vi.useFakeTimers();
+    try {
+      const run = await startXrogaModelRun('goal', 'https://example.com', new AbortController().signal, 0);
+      turnFails = Object.assign(new Error('x'), { code: 'BROWSER_GATEWAY_UNAVAILABLE' });
+      const pending = streamTurn({ chat: run.model.chat, system: 's', messages: [{ role: 'user', content: 'hi' }], tools: {}, signal: new AbortController().signal } as never);
+      await vi.advanceTimersByTimeAsync(60_000);
+      const reply = await pending;
+      expect(reply.error).toBeTruthy();
+      expect(run.requestInterrupted).toBe(true);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});
+
+describe('turn renewal', () => {
+  it('credits the agent loop with turns the model path already renewed on the server, so a long task is not stopped at "turn limit"', async () => {
+    const run = await startXrogaModelRun('goal', 'https://example.com', new AbortController().signal, 0);
+    const ask = () => streamTurn({ chat: run.model.chat, system: 's', messages: [{ role: 'user', content: 'hi' }], tools: {}, signal: new AbortController().signal } as never);
+    for (let i = 0; i < 49; i++) await ask(); // the 49th request renews the segment inside the model path
+    expect(requests.filter(r => r.op === 'extend')).toHaveLength(1);
+    // The loop reaches its own cap of 48 and asks: the server answers 96 again, which is 48 more turns than the loop was given.
+    expect(await run.extend()).toEqual({ turns: 48, remainingMs: 4_800_000 });
+    // A further ask with nothing new from the server is correctly zero.
+    expect((await run.extend()).turns).toBe(0);
+  });
+});

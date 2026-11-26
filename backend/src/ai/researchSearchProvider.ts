@@ -24,6 +24,45 @@ export const DEEPSEEK_DISCOVERY_RESULTS = 25;
 export const DEEPSEEK_PRIMARY_PAGE_RESULTS = 12;
 export const DEEPSEEK_PRIMARY_PAGE_EXCERPT = 3_200;
 
+const searchQueryTerms = (query: string) => query.match(/(?:[^\s"]|"[^"]*"|"[^"]*$)+/gu) ?? [];
+const positiveSiteFilter = /^\(*site:[^\s)]+\)*$/iu;
+
+/** Fit the provider request without dropping trailing domain, language or date filters. */
+export function fitDeepseekSearchQuery(query: string): string | undefined {
+  const text = query.trim();
+  if (!text) return;
+  if ([...text].length <= DEEPSEEK_QUERY_MAX) return text;
+  const tokens = searchQueryTerms(text);
+  const filter = /^-?(?:site|lang|after|before):\S+$/iu;
+  const filters = tokens.filter(token => filter.test(token));
+  const sites = filters.filter(token => /^site:/iu.test(token));
+  const qualifiers = [...filters.filter(token => !/^site:/iu.test(token)), sites.join(' OR ')].filter(Boolean).join(' ');
+  const capacity = DEEPSEEK_QUERY_MAX - (qualifiers ? [...qualifiers].length + 1 : 0);
+  if (capacity < 1) return;
+  const terms = tokens.filter((token, index) => !filter.test(token)
+    && !(token === 'OR' && /^site:/iu.test(tokens[index - 1] ?? '') && /^site:/iu.test(tokens[index + 1] ?? '')));
+  // Preserve complete quoted phrases, exclusions and their explicit alternatives
+  // before filling the remaining space with ordinary topic words.
+  const selected = terms.map((term, index) => term.includes('"') || term.startsWith('-')
+    || term === 'OR' || terms[index - 1] === 'OR' || terms[index + 1] === 'OR');
+  const sizes = terms.map(term => [...term].length + 1);
+  let available = capacity + 1 - sizes.reduce((sum, size, index) => sum + (selected[index] ? size : 0), 0);
+  if (available < 0) return;
+  for (const [index, size] of sizes.entries()) {
+    if (selected[index]) continue;
+    if (size > available) break;
+    selected[index] = true;
+    available -= size;
+  }
+  const result = terms.filter((_, index) => selected[index]);
+  if (result.at(-1) === 'OR') result.pop();
+  // Unsegmented writing has no word boundary to cut at.
+  const unsegmented = terms.length === 1 && !selected[0]
+    ? [...terms[0]].slice(0, capacity).join('') : '';
+  const topic = result.some(term => term !== 'OR' && !term.startsWith('-')) ? result.join(' ') : unsegmented;
+  return topic ? [topic, qualifiers].filter(Boolean).join(' ') : undefined;
+}
+
 export function officialResearchDomains(domains: readonly string[]): string[] {
   return [...new Set(domains.map(domain => domain.trim().toLowerCase().replace(/^www\./, '').replace(/\.$/, ''))
     .filter(domain => /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z][a-z0-9-]{1,62}$/.test(domain)))];
@@ -45,9 +84,11 @@ export function scopeOfficialSearchQuery(query: string, domains: readonly string
   }
   if (!sites.length) return;
   const operators = sites.join(' OR ');
-  const terms = query.replace(/-?site:\S+/gi, '').replace(/\bOR\b/gi, ' ').replace(/["()]/g, ' ').replace(/\s+/g, ' ').trim();
-  const scopedTerms = [...terms].slice(0, limit - operators.length - 1).join('').trimEnd();
-  return scopedTerms ? `${scopedTerms} ${operators}` : operators;
+  const tokens = searchQueryTerms(query);
+  const topic = tokens.filter((term, index) => !positiveSiteFilter.test(term)
+    && !(term === 'OR' && (positiveSiteFilter.test(tokens[index - 1] ?? '')
+      || positiveSiteFilter.test(tokens[index + 1] ?? '')))).join(' ');
+  return topic ? fitDeepseekSearchQuery(`${topic} ${operators}`) : operators;
 }
 
 /** The dedicated server-side search credential, or undefined when research search is unavailable. */
@@ -74,25 +115,65 @@ export interface SearchResult {
 }
 const retrievalWords = /^(?:find|original|primary|final|source|publication|standard|dataset|paper|report|rule|official)$/iu;
 
+function pageReferenceSections(content: string, identifiers: readonly string[]): string[] {
+  // A publisher index often repeats all its reference numbers in a table of
+  // contents. Prefer the actual headings and their bodies over that index.
+  const headings = [...content.matchAll(/^ {0,3}(?:(#{1,6})[ \t]+|(?=\d+(?:\.\d+){2,}[.:)]?\s+\p{L}))(.*)$/gmu)];
+  const sections = new Map<string, { prose: string; explicitHeading: boolean }>();
+  headings.forEach((heading, index) => {
+    const reference = /^(\d+(?:\.\d+)+)[.:)]?\s+/u.exec(heading[2])?.[1];
+    if (!reference || !identifiers.includes(reference)) return;
+    const level = heading[1]?.length ?? 1;
+    const nextHeading = headings.find((next, offset) => offset > index && (next[1]?.length ?? 1) <= level);
+    const contentEnd = nextHeading?.index ?? content.length;
+    const start = (heading.index ?? 0) + heading[0].length;
+    const body = content.slice(start, contentEnd).trim();
+    if (!body) return;
+    const rule = /^(?:(?:[\p{L}\p{N}-]+[ \t]+){0,2}success criteri(?:on|a)|normative (?:text|requirements?)):[ \t]*\r?$/imu.exec(body);
+    const prose = heading[2] + '\n' + (rule ? body.slice(rule.index + rule[0].length).trim() : body);
+    const previous = sections.get(reference);
+    const explicitHeading = Boolean(heading[1]);
+    if (!previous || (explicitHeading && !previous.explicitHeading)
+      || (explicitHeading === previous.explicitHeading && prose.length > previous.prose.length)) {
+      sections.set(reference, { prose, explicitHeading });
+    }
+  });
+  return identifiers.flatMap(reference => sections.get(reference)?.prose ?? []);
+}
+
 export function matchingPageParagraphs(content: string, question: string): string {
   const words = (text: string) => (text.toLowerCase().match(/[\p{L}\p{N}]{4,}/gu) ?? [])
     .map(word => word.length > 4 ? word.replace(/s$/u, '') : word);
   const terms = [...new Set(words(question).filter(word => !retrievalWords.test(word)))];
-  const focus = terms.at(-1);
-  if (!focus) return '';
+  const identifiers = [...new Set(question.match(/\b\d+(?:\.\d+)+\b/g) ?? [])];
+  if (!terms.length && !identifiers.length) return '';
   let best = '', score = 0;
   const text = content.trim().replace(/[^\S\r\n]+/gu, ' ');
+  const sections = pageReferenceSections(text, identifiers);
+  if (sections.length >= 2 || (sections.length === 1 && identifiers.length === 1)) {
+    const separators = (sections.length - 1) * 2;
+    const excerpts = sections.map(section => section.replace(/\s+/gu, ' '));
+    const minimumShare = Math.floor((DEEPSEEK_PRIMARY_PAGE_EXCERPT - separators) / excerpts.length);
+    const spare = excerpts.reduce((available, prose) => available + Math.max(0, minimumShare - prose.length), 0);
+    const longSections = excerpts.filter(prose => prose.length > minimumShare).length;
+    const share = minimumShare + (longSections ? Math.floor(spare / longSections) : 0);
+    return excerpts.map(prose => {
+      return prose.length <= share ? prose : prose.slice(0, share).replace(/\s+\S*$/u, '');
+    }).join('\n\n');
+  }
   for (let start = 0; start < text.length; start += 400) {
     const end = start + DEEPSEEK_PRIMARY_PAGE_EXCERPT;
     const passage = text.slice(start, end)
       .replace(start ? /^\S*\s+/u : /^$/u, '').replace(end < text.length ? /\s+\S*$/u : /^$/u, '');
     const passageWords = words(passage);
     const matches = new Set(passageWords);
-    const focusMatches = passageWords.filter(word => word === focus).length;
-    if (!focusMatches) continue;
+    const matchedTerms = terms.filter(word => matches.has(word)).length;
+    const foundIdentifiers = new Set(passage.match(/\b\d+(?:\.\d+)+\b/g) ?? []);
+    const matchedIdentifiers = identifiers.filter(id => foundIdentifiers.has(id)).length;
+    if (matchedTerms === 0 && matchedIdentifiers === 0) continue;
     const definitions = passage.match(/(?:^|\s)[•▪◦]\s+\p{L}[\p{L}\p{N}\s()[\]_-]{0,55}?(?:\s[–—]\s|:\s)/gu)?.length ?? 0;
-    const relevant = terms.filter(word => matches.has(word)).length + Math.min(8, focusMatches) + 4 * definitions;
-    if (relevant > score) {
+    const relevant = matchedTerms + 6 * matchedIdentifiers + Math.min(3, definitions);
+    if (relevant > score || (relevant === score && passage.length < best.length)) {
       score = relevant;
       best = passage;
     }

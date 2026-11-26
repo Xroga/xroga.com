@@ -31,6 +31,7 @@ test('CommonMark content renders links, emphasis, fenced code, and tables with e
       '| name | value | note |',
       '| --- | --- | --- |',
       '| alpha | | verified |',
+      '| beta | 42 | The reference describes which conditions the operator should check before deciding whether the example applies. |',
       '',
       '<img src=x onerror=alert(1)>',
     ].join('\n'),
@@ -44,6 +45,9 @@ test('CommonMark content renders links, emphasis, fenced code, and tables with e
   assert.match(html, /const ready = true;/);
   assert.match(html, /TypeScript/);
   assert.match(html, /tabindex="0" role="group" aria-label="Answer table"/);
+  assert.match(html, /<th scope="col"[^>]*>name<\/th>/);
+  assert.equal((html.match(/data-answer-table-long-text=""/g) ?? []).length, 1);
+  assert.match(html, /data-answer-table-long-text=""[^>]*>The reference describes/);
   assert.match(html, /aria-label="Copy code"/);
   assert.match(html, /<td[^>]*><\/td>/, 'the empty GFM cell must remain in the table');
   assert.doesNotMatch(html, /onerror|src="x"/i);

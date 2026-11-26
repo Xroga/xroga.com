@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Same option in a dialog and outside it</title></head>
+<body>
+<h1>Settings</h1>
+<ul role="listbox" aria-label="Page country codes"><li role="option" onclick="document.getElementById('s').textContent='page list'">GB +44</li><li role="option">US +1</li></ul>
+<div role="dialog" aria-label="Link WhatsApp Business Account">
+  <h2>Link WhatsApp Business Account</h2>
+  <ul role="listbox" aria-label="Phone number country"><li role="option" onclick="document.getElementById('s').textContent='dialog list'">GB +44</li><li role="option">US +1</li></ul>
+</div>
+<p id="s" role="status">none</p>
+</body></html>

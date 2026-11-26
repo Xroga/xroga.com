@@ -1,0 +1,77 @@
+{
+  "names": [
+    "panel-real"
+  ],
+  "args": {
+    "model": "deepseek-v4.1-flash-1017",
+    "baseUrl": "https://api.zurelay.com/v1",
+    "tasks": [
+      {
+        "name": "files-c3-revoked",
+        "url": "http://localhost:8787/f-export.html?t=c3&revoke=1",
+        "text": "On this page export the orders file. Then open http://localhost:8787/f-import.html and upload that exact exported file there and press Import. Tell me the confirmation the import page shows.",
+        "posts": {
+          "count": 1,
+          "includes": [
+            "ORD-c3",
+            "orders-c3"
+          ]
+        },
+        "answer": {
+          "matches": "imported"
+        }
+      },
+      {
+        "name": "files-d4-revoked",
+        "url": "http://localhost:8787/f-export.html?t=d4&revoke=1",
+        "text": "On this page export the orders file. Then open http://localhost:8787/f-import.html and upload that exact exported file there and press Import. Tell me the confirmation the import page shows.",
+        "posts": {
+          "count": 1,
+          "includes": [
+            "ORD-d4",
+            "orders-d4"
+          ]
+        },
+        "answer": {
+          "matches": "imported"
+        }
+      }
+    ],
+    "maxSeconds": 200
+  },
+  "timedOut": false,
+  "reports": [
+    {
+      "name": "panel-real",
+      "ok": true,
+      "startedAt": "2026-11-21T21:11:39.308Z",
+      "durationMs": 171856,
+      "result": {
+        "model": "deepseek-v4.1-flash-1017",
+        "runs": [
+          {
+            "name": "files-c3-revoked",
+            "ms": 71375,
+            "ok": true,
+            "failures": [],
+            "posts": 1,
+            "conversations": 1,
+            "tail": "ttp://localhost:8787/f-import.html and pressed Import.\n\nThe import page's confirmation reads:\n\nImported orders-c3 (3).csv (37 bytes)\n\n(The \"Nothing imported\" status was replaced by that message, and the POST to /submit returned 200.)\n\nnow\nDone\nAccounting import\nAuto\ndeepseek-v4.1-flash-1017\n· Medium",
+            "transcript": "On this page export the orders file. Then open http://localhost:8787/f-import.html and upload that exact exported file there and press Import. Tell me the confirmation the import page shows.\n1 minute ago\nWorked for 1m 10s\n\nExported the orders file from the Shop reports page (orders-c3.csv, 37 bytes — saved by the browser as orders-c3 (3).csv), uploaded that same file to http://localhost:8787/f-import.html and pressed Import.\n\nThe import page's confirmation reads:\n\nImported orders-c3 (3).csv (37 bytes)\n\n(The \"Nothing imported\" status was replaced by that message, and the POST to /submit returned 200.)\n\nnow"
+          },
+          {
+            "name": "files-d4-revoked",
+            "ms": 95806,
+            "ok": true,
+            "failures": [],
+            "posts": 1,
+            "conversations": 1,
+            "tail": "rders-d4 (1).csv\" next to the Chose File button) and pressed Import. The POST to /submit returned 200.\n\nConfirmation the import page shows: \"Imported orders-d4 (1).csv (37 bytes)\" — it replaced the previous \"Nothing imported\" status.\n\nnow\nDone\nAccounting import\nAuto\ndeepseek-v4.1-flash-1017\n· Medium",
+            "transcript": "On this page export the orders file. Then open http://localhost:8787/f-import.html and upload that exact exported file there and press Import. Tell me the confirmation the import page shows.\n1 minute ago\nWorked for 1m 34s\n\nI'll export the orders file first.\n\nThe file is attached as \"orders-d4 (1).csv\". Now pressing Import.\n\nDone — exported the orders file from the report page and imported that exact file on the import page.\n\nExport: On «http://localhost:8787/f-export.html?t=d4&revoke=1» (Orders report, \"Orders this month: 3\") I pressed Export orders. The page showed \"Export started\" and the download finished: orders-d4 (1).csv, 37 bytes, text/csv (sha256 2d7e523f30b4b21a…). Note the browser saved it as \"orders-d4 (1).csv\" — the \"(1)\" suggests a file with that name was already in your Downloads folder.\nImport: Opened http://localhost:8787/f-import.html, chose that downloaded file (the page showed \"orders-d4 (1).csv\" next to the Chose File button) and pressed Import. The POST to /submit returned 200.\n\nConfirmation the import page shows: \"Imported orders-d4 (1).csv (37 bytes)\" — it replaced the previous \"Nothing imported\" status.\n\nnow"
+          }
+        ]
+      }
+    }
+  ],
+  "console": []
+}

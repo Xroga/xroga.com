@@ -120,8 +120,8 @@
     }
   ],
   "counts": {
-    "total": 161,
-    "reviewed": 161,
+    "total": 167,
+    "reviewed": 167,
     "pending": 0,
     "unresolvedHighRiskReviewCandidates": 0
   },
@@ -215,7 +215,7 @@
     },
     {
       "path": "scripts/security/source-lifetime-bindings.test.mjs",
-      "sha256": "7d3c3af8176a838c9b1f3de5e75630ca8c4d26e634d886ff8c0975d5157a9640",
+      "sha256": "52bab3d72c3d1afd62ba30988a7f946382bbae97b1885f85b02257f097d91508",
       "previousGenericSdkBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "71eaca46f240f51b1ac490fd9e137cafbe0d0423313991de7b1bc0f57e588bcb",
@@ -251,7 +251,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "b3dc5f4a46dc5c86bcd6964dd0740c103b9a322ad161bd67b5188f340da899e7",
+      "sha256": "1dc6c0ef9be8280f4534e83baa0bf2b72bd50a7f3480284d8ee4c5dd3c2b40e8",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/black-hole/webIntelligence.ts",
         "sha256": "f7ee10618d7993cc8e827b7f77d23eec06e663232d26a44c598a48825fbb6b7d"
@@ -290,7 +290,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.egress.test.ts",
-      "sha256": "34bd84f5aacee796d3dfa2ff83cfd227a24c41d19fc50c4c51abf88fd6e80a46",
+      "sha256": "dfa82ee38d803b4e7838f617e288697f37cc38e3fec698dbdede9d869ac9e1e6",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/openaiCompat.egress.test.ts",
         "sha256": "649092d8bd97b3fed5a12305399a7d577b2c1b4a35ac3e952149cf6a5f834e0a"
@@ -302,7 +302,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "c68442eb8d29d7aaa6d1ccbbfbff9c33e3d40701cd2254e689fee0d40fee2d4d",
+      "sha256": "daf86f2c5c9e445f684d4ed5e3510a0bb115f37cc46f4d9bf74415221171e0c1",
       "previousGenericSdkBinding": {
         "sha256": "0a418cef1bdbdadb77f14288c4298990900a111fbc0def0050756a9b146914ca",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -322,7 +322,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "b598c509dacca47546033b195b3d7618cde4bc634f60aa88106c07797c968cd5",
+      "sha256": "a1849efca55ecf29dca9453dea64fec3f657782ee286c1dd43ba73ad7ec07945",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -693,7 +693,7 @@
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.test.ts",
-      "sha256": "66f5a6492e6dcc9bcd8662fa2aba180d94127155d62ca41d456ddf0f93b4ee5a",
+      "sha256": "6daaf4ac8cf8fc4c013897356306861e41928316608b555e01f2aaac466f4b95",
       "beforeNamedDocumentPromptFixtureSha256": "6468973bd3fb562124f9f9e16d83fd1ce23c67cf276060c04aab4fb6a5158483",
       "previousGenericSdkBinding": {
         "sha256": "acb7d3ee286d862c38e386380a20a7632415cd454510076abedca054016f2959",
@@ -745,7 +745,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "3559ca76cdec97bf90e5ab0d511215d0d2b8265bea47e0fac21be78be984673e",
+      "sha256": "374cd50c687e90cc0035cd985da340336a2cd05cbd35dbf728170c386feeeff3",
       "beforeTxtDownloadRoutingSha256": "450d77c6f89e9334ef2345d316895580732bda5b614ad3d87d42f4d4643f75fa",
       "beforeInlineCalculatorRoutingSha256": "58e3fa0ea9ec46ed2aa0be0c7aa6ca0777c213059c12f3cd6ecf04a6a2ab6e29",
       "beforePlannerCompletionDiagnosticsSha256": "6ca81b0c9234195e6159d1e03735a21ce50d50cf1e8f71b53cb62199bf95cb26",
@@ -835,7 +835,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "e7b2d58206f77b539954bd123f6deac582cdb61cff40e81c3b71608ec3b7004f",
+      "sha256": "d7ac0222f724ad09cf42e5d9afa5e4f40fe8f9a6fd76041c8fcffbf451fd2dff",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/services/integrations/businessAction.ts",
         "sha256": "79fa4e23cd501826f0425aaa01bcdc79a14b2d457f57f2f56a29b0fde021c0a3"
@@ -881,7 +881,11 @@
         "previousSha256": "52834ccc98c469b80c2f14419d79fe66e39c7ff475ef5885e7d1be463153abcf"
       },
       "expoWorkflowContinuation": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json",
-      "previousSha256": "98ce8ce7042d42f4d136c1e3ab0f17b618f92c3bdf6c8f4cfedd3da2875939d0"
+      "previousSha256": "98ce8ce7042d42f4d136c1e3ab0f17b618f92c3bdf6c8f4cfedd3da2875939d0",
+      "beforeBrowserPluginActions": {
+        "path": "backend/src/services/integrations/businessAction.ts",
+        "sha256": "8fc37cada11db34659cca31efa804ff99bcac3d076d83c6deabd52142662381f"
+      }
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
@@ -1213,5 +1217,12 @@
   "workspacePublisherReadContinuation": {
     "baseline": "84b288e3193fc0f285e699c8785c210d47937f16",
     "scope": "One additive reviewed public publisher GET call site. Only scoped public URLs reach the DNS-pinned, credential-free transport after a persisted owner READ decision. The original paid Search dispatch and the private exact-consent action are unchanged. This static continuity does not certify live acceptance."
+  },
+  "localChromeCurrentSourceReconciliation": {
+    "scope": "CURRENT_SOURCE_METADATA_NOT_NEW_SECURITY_ACCEPTANCE",
+    "previousProofSha256": "f7c19d49f9d3433032b7f5bc8a1489acbaab698e6e9b05953527cae38f4e1024",
+    "verifiedEgressCandidates": 155,
+    "guardChange": "Hosted browser execution rejects local Chrome runs before task or egress processing. Current model SDK caller was separately rebound.",
+    "workspacePortReview": "Five previously reviewed local Workspace port sends remain exact; the current source review binds those sends to the authenticated Workspace and existing API ownership fence."
   }
 }

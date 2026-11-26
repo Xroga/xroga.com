@@ -3,7 +3,38 @@ import { inflateRawSync } from 'node:zlib';
 import ExcelJS from 'exceljs';
 
 const require = createRequire(import.meta.url);
-type PdfPage = { getTextContent(options: { normalizeWhitespace: boolean }): Promise<{ items: Array<{ str: string }> }> };
+type PdfItem = { str: string; width?: number; transform?: number[] };
+type PdfPage = { getTextContent(options: { normalizeWhitespace: boolean }): Promise<{ items: PdfItem[] }> };
+
+/** Why a document could not be read: a short code the extension shows to the person, never a raw library message. */
+export class DocumentError extends Error {
+  constructor(readonly reason: 'encrypted' | 'no_text' | 'invalid', message: string) { super(message); this.name = 'DocumentError'; }
+}
+
+/**
+ * Page text in reading order with its layout kept: text at the same height is one line, and a wide gap inside a line becomes a tab,
+ * so the columns of a table stay columns and its rows stay rows (joining every item with a space merged them into one line).
+ */
+export function pageText(items: PdfItem[]): string {
+  const words = items.filter(item => item.str.trim());
+  if (words.some(item => !Array.isArray(item.transform))) return words.map(item => item.str.trim()).join(' ');
+  const rows: Array<{ y: number; cells: PdfItem[] }> = [];
+  for (const item of [...words].sort((a, b) => b.transform![5]! - a.transform![5]!)) {
+    const row = rows.find(r => Math.abs(r.y - item.transform![5]!) <= 2.5);
+    if (row) row.cells.push(item); else rows.push({ y: item.transform![5]!, cells: [item] });
+  }
+  return rows.map(row => {
+    let line = '';
+    let end = 0;
+    row.cells.sort((a, b) => a.transform![4]! - b.transform![4]!).forEach((cell, index) => {
+      const x = cell.transform![4]!;
+      if (index > 0) line += x - end > 12 ? '\t' : ' ';
+      line += cell.str.trim();
+      end = x + (cell.width ?? 0);
+    });
+    return line;
+  }).join('\n');
+}
 const pdf = require('pdf-parse/lib/pdf.js/v2.0.550/build/pdf.js') as {
   getDocument(options: { data: Uint8Array; isEvalSupported: false; disableFontFace: true; verbosity: 0 }): {
     promise: Promise<{ numPages: number; getPage(page: number): Promise<PdfPage> }>;
@@ -12,6 +43,7 @@ const pdf = require('pdf-parse/lib/pdf.js/v2.0.550/build/pdf.js') as {
 };
 const MAX_EXPANDED = 12 * 1024 * 1024;
 const MAX_TEXT = 500_000;
+const MAX_PAGES = 400;
 
 // Validate every stream before giving the same archive to an Office reader.
 // The central directory covers archives that use ZIP data descriptors.
@@ -60,17 +92,27 @@ function decodeXml(text: string) {
 export async function readBrowserDocument(name: string, data: Buffer): Promise<string> {
   let text: string;
   if (/\.pdf$/i.test(name)) {
-    if (data.toString('ascii', 0, 5) !== '%PDF-') throw Error('Invalid PDF');
+    if (data.toString('ascii', 0, 5) !== '%PDF-') throw new DocumentError('invalid', 'Invalid PDF');
     const task = pdf.getDocument({ data: Uint8Array.from(data), isEvalSupported: false, disableFontFace: true, verbosity: 0 });
     try {
       const document = await task.promise;
-      if (document.numPages > 100) throw Error('Split PDFs longer than 100 pages');
       text = '';
-      for (let page = 1; page <= document.numPages; page++) {
+      const last = Math.min(document.numPages, MAX_PAGES);
+      for (let page = 1; page <= last; page++) {
         const content = await (await document.getPage(page)).getTextContent({ normalizeWhitespace: true });
-        text += `[Page ${page}]\n${content.items.map(item => item.str).join(' ')}\n\n`;
-        if (text.length > MAX_TEXT) throw Error('Split large PDFs');
+        const block = `[Page ${page}]\n${pageText(content.items)}\n\n`;
+        // A long document is read as far as the limits allow and says where it stopped, instead of being refused.
+        if (text.length + block.length > MAX_TEXT) {
+          text += `[Stopped before page ${page} of ${document.numPages}: the text limit was reached]\n`;
+          break;
+        }
+        text += block;
+        if (page === last && last < document.numPages) text += `[Stopped after page ${last} of ${document.numPages}: the page limit was reached]\n`;
       }
+    } catch (error) {
+      if (error instanceof DocumentError) throw error;
+      if (/password/i.test(`${(error as { name?: string } | null)?.name} ${(error as Error | null)?.message}`)) throw new DocumentError('encrypted', 'This PDF is password-protected.');
+      throw new DocumentError('invalid', 'This PDF could not be read.');
     } finally {
       await task.destroy();
     }
@@ -104,6 +146,7 @@ export async function readBrowserDocument(name: string, data: Buffer): Promise<s
     throw Error('Unsupported document format');
   }
   text = text.trim();
-  if (!text || !text.replace(/\[Page \d+\]/g, '').trim() || text.length > MAX_TEXT) throw Error('Document has no readable text or exceeds the text limit');
+  if (!text || !text.replace(/\[Page \d+\]/g, '').trim()) throw new DocumentError('no_text', 'The document has no readable text (a scanned or image-only file).');
+  if (text.length > MAX_TEXT + 200) throw new DocumentError('invalid', 'The document text is over the limit.');
   return text;
 }

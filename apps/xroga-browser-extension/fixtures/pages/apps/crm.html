@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Contacts</title>
+<style>body{font:14px sans-serif;margin:16px}table{border-collapse:collapse}td,th{border:1px solid #bbb;padding:4px 8px}label{display:block;margin:6px 0}</style></head>
+<body><div id="app">Loading…</div>
+<script src="lib.js"></script>
+<script>
+// CRM: a contact list with search and an add/edit form. One contact already exists (same email as the one in the task), so the right move is to update it.
+const state = __state; state.contacts = [{ id: 1, name: 'Grace Hopper', email: 'grace@example.test', phone: '555-0100', company: 'Navy' }, { id: 2, name: 'Alan Turing', email: 'alan@example.test', phone: '555-0111', company: 'Bletchley' }]; state.saves = 0;
+const fieldLabels = pick([['Name', 'Email', 'Phone', 'Company'], ['Full name', 'E-mail address', 'Telephone', 'Organisation']]);
+mount(app => {
+  const table = h('table');
+  const draw = () => { table.innerHTML = ''; table.append(h('tr', {}, h('th', {}, 'Name'), h('th', {}, 'Email'), h('th', {}, 'Phone'), h('th', {}, 'Company'), h('th', {}, ''))); for (const c of state.contacts) table.append(h('tr', {}, h('td', {}, c.name), h('td', {}, c.email), h('td', {}, c.phone), h('td', {}, c.company), h('td', {}, h('button', { type: 'button', onclick: () => fill(c) }, 'Edit ' + c.name)))); };
+  const inputs = {}; let editing = null;
+  const form = h('form', { onsubmit: e => { e.preventDefault(); const v = Object.fromEntries(Object.entries(inputs).map(([k, i]) => [k, i.value]));
+    if (editing) Object.assign(editing, v); else state.contacts.push({ id: state.contacts.length + 1, ...v }); state.saves++; editing = null; form.reset(); draw(); } },
+    ...['name', 'email', 'phone', 'company'].map((k, i) => h('label', {}, fieldLabels[i] + ' ', inputs[k] = h('input', { name: k, type: k === 'email' ? 'email' : 'text' }))),
+    h('button', { type: 'submit' }, 'Save contact'));
+  const fill = c => { editing = c; for (const k of Object.keys(inputs)) inputs[k].value = c[k]; };
+  const search = h('input', { type: 'search', 'aria-label': 'Search contacts', oninput: e => { const q = e.target.value.toLowerCase(); for (const r of [...table.rows].slice(1)) r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none'; } });
+  app.append(h('h1', {}, 'Contacts'), h('label', {}, 'Search ', search), table, h('h2', {}, 'Contact'), form); draw();
+});
+</script></body></html>

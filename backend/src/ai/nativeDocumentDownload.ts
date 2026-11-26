@@ -35,10 +35,10 @@ const priorExport = new RegExp('^(?:please\\s+)?(?:(?:can|could|would)\\s+you\\s
   + '\\s+(?:into|as|to|in)\\s+(?:(?:a|an|editable|downloadable|printable)\\s+){0,3}' + fileFormat + '\\b', 'iu');
 const documentDeliverable = new RegExp(beforePrefix
   + '(?:(?!(?:with|from|using|for|about|that|by|through|as|in|and|or)\\b)' + descriptionWord + '){0,5}' + document + '\\b', 'iu');
-const followupExport = new RegExp('(?:^|[.!?]\\s+|\\n+)\\s*(?:please\\s+)?(?:provide|attach|export|save|include)\\s+'
+const followupExport = new RegExp('(?<!\\S)(?:please\\s+)?(?:provide|attach|export|save|include)\\s+'
   + '(?:it|the\\s+' + document + ')\\s+(?:as|in)\\s+(?:(?:a|an)\\s+)?(?:downloadable\\s+)?' + fileFormat + '\\b', 'giu');
 const downloadableText = /^(?:(?:a|an|the)\s+)?downloadable\s+(?:plain[- ]text|UTF-8 text)\b(?:\s+UTF-8\b)?\s+/iu;
-const explicitTextExport = /(?:^|[.!?]\s+|\n+)(?:please\s+)?(?:export|save|download|attach)\s+(?:(?:it|this|the (?:answer|document|file))\s+)?as\s+(?:a\s+)?(?:downloadable\s+plain[- ]text(?:\s+UTF-8)?|plain[- ]text\s+file)(?=\s*(?:[.!?]|$))/iu;
+const explicitTextExport = /(?<!\S)(?:please\s+)?(?:export|save|download|attach)\s+(?:(?:it|this|the (?:answer|document|file))\s+)?as\s+(?:a\s+)?(?:downloadable\s+plain[- ]text(?:\s+UTF-8)?|plain[- ]text\s+file)(?=\s*(?:[.!?]|$))/giu;
 const declinesDownload = /\b(?:no|do\s+not|don['’]t|without)\s+(?:(?:create|export|give|make|generate|attach|include|provide|a|an|the)\s+)*(?:files?|downloads?|docx|pdf|xlsx|pptx|txt)\b/i;
 const conciseFormat = new RegExp('^(?:(?:downloadable|editable|printable|[\\p{L}\\p{N}]+-(?:page|slide))\\s+){0,2}(' + extensions + ')\\s+', 'iu');
 
@@ -54,18 +54,37 @@ function conciseDeliverable(text: string): RegExpExecArray | null {
   return /:\s*\S|\s[+-]?\d+(?:[\s,.;]|$)/.test(details) ? format : null;
 }
 
+function startsDocumentDirective(text: string, index: number): boolean {
+  for (let previous = index - 1; previous >= 0; previous--) {
+    const char = text[previous];
+    if (char === '\n' || char === '\r' || /[.!?]/u.test(char)) return true;
+    if (!/\s/u.test(char)) return false;
+  }
+  return true;
+}
+
+function findDocumentDirectives(text: string, pattern: RegExp, limit: number): RegExpMatchArray[] {
+  const directives: RegExpMatchArray[] = [];
+  for (const match of text.matchAll(pattern)) {
+    if (!startsDocumentDirective(text, match.index ?? 0)) continue;
+    directives.push(match);
+    if (directives.length === limit) break;
+  }
+  return directives;
+}
+
+
 export function requestedNativeDocumentFormat(prompt: string): NativeDocumentFormat | undefined {
   const text = prompt.trim();
-  if (text.length > 32_000) return;
   const direct = exportFormat.exec(text) ?? priorExport.exec(text);
   const body = direct ? text : text.replace(request, '');
   const inline = direct ?? (body !== text ? beforeFormat.exec(body) ?? beforeNamedFormat.exec(body) ?? afterFormat.exec(body) : conciseDeliverable(text));
-  const followups = body !== text && documentDeliverable.test(body) ? [...body.matchAll(followupExport)] : [];
+  const followups = body !== text && documentDeliverable.test(body) ? findDocumentDirectives(body, followupExport, 2) : [];
   if (followups.length > 1 || inline && followups.length) return;
   const selection = inline ?? followups[0];
   const textPrefix = body !== text ? downloadableText.exec(body) : null;
   const textRequested = Boolean(textPrefix && documentDeliverable.test(body.slice(textPrefix[0].length)))
-    || Boolean(explicitTextExport.test(text) && (body === text || documentDeliverable.test(body)));
+    || Boolean(findDocumentDirectives(text, explicitTextExport, 1).length && (body === text || documentDeliverable.test(body)));
   if (textRequested && !selection && !declinesDownload.test(text)) return 'txt';
   if (textRequested && selection && !/^\.?txt$/i.test(selection[1] ?? '')) return;
   if (!selection) return;
@@ -73,7 +92,7 @@ export function requestedNativeDocumentFormat(prompt: string): NativeDocumentFor
   if (raw === 'word' && !direct && /\b(?:as|in)\s+(?:a|an)\s+word\s*$/i.test(selection[0])) return;
   const candidate = raw === 'word' ? 'docx' : raw === 'excel' ? 'xlsx' : raw === 'powerpoint' ? 'pptx' : raw;
   if (!isNativeDocumentFormat(candidate)) return;
-  const trailing = body.slice(selection.index + selection[0].length);
+  const trailing = body.slice((selection.index ?? 0) + selection[0].length);
   if (competingFormat.test(selection[0]) || competingFormat.test(trailing)
       || declinesDownload.test(followups.length ? body : trailing)) return;
   return candidate;

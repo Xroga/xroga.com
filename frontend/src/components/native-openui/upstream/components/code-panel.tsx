@@ -3,6 +3,7 @@
 import { Check, Code2, Copy } from "lucide-react";
 import React, { useEffect, useState, type CSSProperties } from "react";
 import type { HighlightedToken } from "@/lib/codeHighlight";
+import { copyTextToClipboard } from "@/lib/clipboard";
 import { isPresentationLanguage } from "@/lib/publicAnswerText";
 
 const languageLabels: Record<string, string> = {
@@ -17,7 +18,8 @@ const languageLabels: Record<string, string> = {
 };
 
 export function CodePanel({ code, language }: { code: string; language?: string }) {
-  const [copied, setCopied] = useState(false);
+  const [copyResult, setCopyResult] = useState<{ code: string; copied: boolean }>();
+  const copyStatus = copyResult?.code === code ? copyResult.copied ? "copied" : "failed" : "idle";
   const key = language?.toLowerCase() ?? "";
   const label = Object.hasOwn(languageLabels, key) ? languageLabels[key] : language || "Code";
   const copyLabel = label === "Plain text" ? "Copy text" : "Copy code";
@@ -31,22 +33,24 @@ export function CodePanel({ code, language }: { code: string; language?: string 
     }).catch(() => {});
     return () => { current = false; };
   }, [code, internal, language]);
+  useEffect(() => {
+    if (!copyResult?.copied) return;
+    const timer = window.setTimeout(() => setCopyResult(undefined), 1500);
+    return () => window.clearTimeout(timer);
+  }, [copyResult]);
   if (internal) return null;
   const colored = highlight?.code === code && highlight.language === language ? highlight.lines : undefined;
-  const copy = () =>
-    void navigator.clipboard?.writeText(code).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    }).catch(() => {});
+  const copy = async () => setCopyResult({ code, copied: await copyTextToClipboard(code) });
   return (
     <div className="iui-codeblock">
       <div className="iui-codeblock-head">
         <span className="iui-codeblock-language"><Code2 size={15} aria-hidden="true" />{label}</span>
-        <button type="button" onClick={copy} aria-label={copyLabel}>
-          {copied ? <Check size={14} /> : <Copy size={14} />}
-          {copied ? "Copied" : copyLabel}
+        <button type="button" onClick={() => void copy()} aria-label={copyLabel}>
+          {copyStatus === "copied" ? <Check size={14} aria-hidden="true" /> : <Copy size={14} aria-hidden="true" />}
+          <span aria-live="polite">{copyStatus === "copied" ? "Copied" : copyLabel}</span>
         </button>
       </div>
+      {copyStatus === "failed" && <p className="px-3 text-sm" role="status">Could not copy. Select the text to copy it manually.</p>}
       <pre tabIndex={0} role="group" aria-label="Code block">
         <code className={language && /^[\w+#.-]+$/.test(language) ? "language-" + language : undefined}>{colored ? colored.map((line, i) => (
           <span key={i}>{line.map((token, j) => <span key={j} className="iui-code-token" style={{

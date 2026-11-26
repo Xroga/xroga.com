@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Check, Copy, Share2 } from 'lucide-react';
 import { MessageShareModal } from '@/components/terminal/MessageShareModal';
 import { serializeAssistantCopy } from '@/lib/assistantCopy';
+import { copyTextToClipboard } from '@/lib/clipboard';
 import { publicAnswerExportText } from '@/lib/publicAnswerText';
 import styles from './conversation-v2.module.css';
 import type { ResponseInputV2 } from './document';
@@ -18,12 +19,10 @@ function TurnActions({ role, content, prompt, message, richResponse }: { role: '
     collapseDuplicateTables: richResponse?.startsWith(NATIVE_SHARE_PREFIX),
   }) : content;
   async function copy() {
-    try {
-      await navigator.clipboard.writeText(copiedText);
-      setCopyState('copied');
-      clearTimeout(timer.current);
-      timer.current = setTimeout(() => setCopyState('idle'), 1800);
-    } catch { setCopyState('failed'); }
+    const success = Boolean(copiedText) && await copyTextToClipboard(copiedText);
+    clearTimeout(timer.current);
+    setCopyState(success ? 'copied' : 'failed');
+    if (success) timer.current = setTimeout(() => setCopyState('idle'), 1800);
   }
   if (!content.trim()) return null;
   const snapshot = role === 'assistant' && message && publicAnswerExportText(message.content) === message.content

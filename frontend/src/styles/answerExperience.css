@@ -37,7 +37,10 @@
 .xv-formatted-response .xv-answer-quote { max-width:700px; margin:1.25em 0; border-left:4px solid var(--answer-sky); border-radius:0 13px 13px 0; background:color-mix(in srgb,var(--card) 91%,var(--answer-sky) 9%); }
 .xv-formatted-response .xv-answer-quote p { margin:0; }
 .xv-formatted-response .xv-answer-divider { margin:1.75em 0; border:0; height:1px; max-width:700px; background:color-mix(in srgb,var(--foreground) 12%,transparent); }
+.xv-formatted-response .xv-answer-table-scroll { max-inline-size: 100%; overflow-x: auto; }
 .xv-formatted-response table { border-collapse:separate; border-spacing:0; width:100%; }
+.xv-formatted-response table tbody td { vertical-align: top; }
+.xv-formatted-response td[data-answer-table-long-text] { min-inline-size: 12rem; overflow-wrap: anywhere; }
 .xv-formatted-response table th { background:color-mix(in srgb,var(--card) 78%,var(--answer-sky) 22%); font-weight:700; }
 .xv-formatted-response table th,.xv-formatted-response table td { padding:12px 14px; border-bottom:1px solid color-mix(in srgb,var(--foreground) 10%,transparent); }
 .xv-formatted-response :where(pre) { margin:1.25em 0; }

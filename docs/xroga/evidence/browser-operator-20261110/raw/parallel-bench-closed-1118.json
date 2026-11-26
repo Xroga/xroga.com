@@ -1,0 +1,94 @@
+{
+  "names": [
+    "parallel-bench"
+  ],
+  "args": {},
+  "timedOut": false,
+  "reports": [
+    {
+      "name": "parallel-bench",
+      "ok": true,
+      "startedAt": "2026-11-18T14:30:02.885Z",
+      "durationMs": 57285,
+      "result": {
+        "workerModelMs": 3000,
+        "activeRunLimit": 13,
+        "maxActiveWorkers": {
+          "one": 1,
+          "three": 3,
+          "five": 5,
+          "six": 6,
+          "closed": 5
+        },
+        "phases": [
+          {
+            "name": "one",
+            "workers": 1,
+            "ms": 6084,
+            "start": 1795012204560,
+            "end": 1795012210644,
+            "status": "Done",
+            "done": 1,
+            "failed": 0,
+            "closedWorker": false,
+            "maxActive": 1
+          },
+          {
+            "name": "three",
+            "workers": 3,
+            "ms": 7560,
+            "start": 1795012213682,
+            "end": 1795012221242,
+            "status": "Done",
+            "done": 3,
+            "failed": 0,
+            "closedWorker": false,
+            "maxActive": 3
+          },
+          {
+            "name": "five",
+            "workers": 5,
+            "ms": 8926,
+            "start": 1795012224273,
+            "end": 1795012233199,
+            "status": "Done",
+            "done": 5,
+            "failed": 0,
+            "closedWorker": false,
+            "maxActive": 5
+          },
+          {
+            "name": "six",
+            "workers": 6,
+            "ms": 9169,
+            "start": 1795012236235,
+            "end": 1795012245404,
+            "status": "Done",
+            "done": 6,
+            "failed": 0,
+            "closedWorker": false,
+            "maxActive": 6
+          },
+          {
+            "name": "closed",
+            "workers": 6,
+            "ms": 9163,
+            "start": 1795012248444,
+            "end": 1795012257607,
+            "status": "Done",
+            "done": 5,
+            "failed": 1,
+            "closedWorker": true,
+            "maxActive": 5
+          }
+        ],
+        "threeVsOne": 1.24,
+        "fiveVsOne": 1.47,
+        "sixVsOne": 1.51,
+        "serialThreeWouldBe": 12884,
+        "serialSixWouldBe": 23084
+      }
+    }
+  ],
+  "console": []
+}

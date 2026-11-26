@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Shop reports</title></head>
+<body>
+<h1>Orders report</h1>
+<p>Orders this month: 3</p>
+<button type="button" id="b">Export orders</button>
+<p id="s" role="status"></p>
+<script>
+// A page-made CSV with a content marker taken from ?t=, so a check can tell that exactly this file reached the other site.
+const t = new URLSearchParams(location.search).get('t') || 'plain';
+document.getElementById('b').addEventListener('click', () => {
+  const csv = 'id,total\nORD-' + t + ',42.00\nORD-' + t + '-2,17.50\n';
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: 'orders-' + t + '.csv' });
+  document.body.append(a); a.click(); a.remove();
+  // ?revoke=1: the page discards the file at once, as many export buttons do.
+  if (new URLSearchParams(location.search).get('revoke') === '1') setTimeout(() => URL.revokeObjectURL(a.href), 0);
+  document.getElementById('s').textContent = 'Export started';
+});
+</script></body></html>

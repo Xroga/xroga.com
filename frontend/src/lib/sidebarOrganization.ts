@@ -51,7 +51,7 @@ export async function loadSidebarChatById(userId:string,id:string):Promise<Termi
 }
 export async function saveSidebarChat(userId:string,entry:TerminalHistoryEntry):Promise<void>{
  if(entry.githubRepoName?.includes('/')||!entry.messages?.length) return;
- const messages=sidebarMessagesForStorage(entry.messages).slice(-300);
+ const messages=sidebarMessagesForStorage(entry.messages);
  if(!messages.length) return;
  const {error}=await owned(userId).from('xroga_sidebar_chats').upsert({
   user_id:userId,id:entry.id,title:meaningfulSidebarTitle(entry.title,entry.prompt),prompt:(entry.prompt||'').slice(0,20000),

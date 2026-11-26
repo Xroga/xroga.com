@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { answerObligationsSchema, assessPresentationCoverage, presentationPlanSchema } from '../responsePresentation.js';
 import { DEEPSEEK_QUERY_MAX } from '../researchSearchProvider.js';
+import { plannedPublicQuery } from '../workspacePublicSearch.js';
 
 export const SEMANTIC_INTENTS = [
   'ANSWER',
@@ -571,7 +572,7 @@ export function normalizePlannerDecisionCandidate(
     ...input.attachments.map(file => file.name)];
   const includesContext = contextIdentifiers.some(identifier => identifier && /[./\\]/u.test(identifier) && identifier.length > 3
     && query.toLowerCase().includes(identifier.toLowerCase()) && !input.message.toLowerCase().includes(identifier.toLowerCase()));
-  const publicWebQuery = query && [...query].length <= DEEPSEEK_QUERY_MAX && !includesContext ? query : null;
+  const publicWebQuery = includesContext ? null : plannedPublicQuery(query) ?? null;
 
   const strings = (
     candidate: unknown,

@@ -86,18 +86,18 @@ export function publicRuntimeFailure(error: unknown): {
   body: { error: string; code: RuntimeFailureCode | 'RUNTIME_FAILED'; retryable: boolean };
 } {
   if(error&&typeof error==='object'&&(error as {status?:unknown}).status===429){
-    return {status:429,body:{error:'The model provider is temporarily rate limited. No automatic retry or alternate model was used.',
+    return {status:429,body:{error:'Answers are temporarily unavailable.',
       code:'PROVIDER_UNAVAILABLE',retryable:false}};
   }
   // An empty upstream completion is a provider failure, not an internal bug or
-  // a policy refusal. Keep the raw payload private and require a deliberate retry.
+  // a policy refusal. Keep the raw payload private and avoid a second dispatch.
   // This mapping must not release the existing uncertain-spend reservation.
   if (error && typeof error === 'object' &&
       (error as { code?: unknown }).code === 'EMPTY_PROVIDER_RESPONSE') {
     return {
       status: 502,
       body: {
-        error: "The model provider returned no answer. Your request wasn't completed.",
+        error: 'No answer was generated for this request.',
         code: 'PROVIDER_UNAVAILABLE',
         retryable: false,
       },

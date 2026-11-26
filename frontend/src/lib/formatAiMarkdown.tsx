@@ -13,6 +13,7 @@ import { PluginPermissionControl } from '@/components/integrations/PluginPermiss
 
 import ReactMarkdown, {
   type Components,
+  type ExtraProps,
   type UrlTransform,
 } from 'react-markdown';
 
@@ -31,7 +32,7 @@ import {
 } from './oauthPopupResult';
 
 import { xrogaConnect } from './xrogaConnect';
-import { compactConnectedAppConfirmationMarkdown, readableActionResult, readableActionSpend, workspaceReviewId } from './connectedAppResult';
+import { compactConnectedAppConfirmationMarkdown, readableActionResult, readableActionSpend, WEB_SEARCH_NOT_RUN, workspaceReviewId } from './connectedAppResult';
 import { RESEARCH_RECEIPT_AVAILABLE } from './researchHandoff';
 
 function joinClasses(
@@ -451,6 +452,19 @@ export function BusinessActionConfirmationInline({
     expired: 'This request expired.',
   };
 
+  // Wait for the owned record before showing review controls. A legacy
+  // research record without reviewable fields cannot authorize a request.
+  if (!confirmation) {
+    return <span role={failed ? 'alert' : 'status'} className="text-[var(--foreground)]/75">
+      {failed ? 'The saved request details are unavailable.' : 'Loading action…'}
+    </span>;
+  }
+  if (savedSearch && (confirmation.status !== 'pending' || !confirmation.researchReview?.length)) {
+    return <span role="status" className="text-[var(--foreground)]/75">
+      {confirmation.status === 'pending' ? WEB_SEARCH_NOT_RUN : (notice || statusMessage[confirmation.status])}
+    </span>;
+  }
+
   return (
     <span aria-busy={Boolean(busy)} className="my-2 flex w-full max-w-xl flex-col gap-2 rounded-xl border border-[var(--card-border)]/70 bg-[var(--foreground)]/[0.025] p-3 align-top">
       <span className="flex min-w-0 flex-wrap items-start gap-2">
@@ -458,7 +472,7 @@ export function BusinessActionConfirmationInline({
           <PluginBrandLogo id={confirmation.toolkit} name={toolkitLabel(confirmation.toolkit)} toolkit={confirmation.toolkit} size="micro" />
         ) : null}
         <span className="min-w-0 flex-1 text-[13px] leading-relaxed text-[var(--foreground)]">
-          {confirmation ? (savedSearch ? 'Share a web research request' : confirmation.summary) : !failed ? 'Loading action…' : null}
+          {savedSearch ? 'Share a web research request' : confirmation.summary}
         </span>
         {status === 'pending' && confirmation && !confirmation.toolkit.startsWith('xroga-') ? (
           <PluginPermissionControl toolkit={confirmation.toolkit} pluginName={toolkitLabel(confirmation.toolkit)} buttonOnly compact />
@@ -1385,6 +1399,13 @@ function XrogaConnectionCard({
   );
 }
 
+type MarkdownTableCellContent = NonNullable<ExtraProps['node']>['children'][number];
+
+function markdownTableCellText(node: MarkdownTableCellContent): string {
+  if (node.type === 'text') return node.value;
+  return 'children' in node ? node.children.map(markdownTableCellText).join('') : '';
+}
+
 const components:
   Components = {
     h1: ({
@@ -1608,7 +1629,7 @@ const components:
         tabIndex={0}
         role="group"
         aria-label="Answer table"
-        className="overflow-x-auto rounded-xl border border-[var(--card-border)]/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
+        className="xv-answer-table-scroll rounded-xl border border-[var(--card-border)]/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
       >
         <table className="w-full text-[13px] sm:text-[14px]">
           {children}
@@ -1627,18 +1648,22 @@ const components:
     th: ({
       children,
     }) => (
-      <th className="px-3 py-2 text-left font-semibold text-[var(--foreground)]">
+      <th scope="col" className="px-3 py-2 text-left font-semibold text-[var(--foreground)]">
         {children}
       </th>
     ),
 
-    td: ({
-      children,
-    }) => (
-      <td className="border-t border-[var(--card-border)]/30 px-3 py-2 text-[var(--foreground)]/90">
-        {children}
-      </td>
-    ),
+    td: ({ children, node }) => {
+      const text = node?.children.map(markdownTableCellText).join('').replace(/\s+/g, ' ').trim() ?? '';
+      return (
+        <td
+          data-answer-table-long-text={text.length >= 72 ? '' : undefined}
+          className="border-t border-[var(--card-border)]/30 px-3 py-2 text-[var(--foreground)]/90"
+        >
+          {children}
+        </td>
+      );
+    },
   };
 
 export function FormattedAiMarkdown({

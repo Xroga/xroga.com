@@ -324,8 +324,11 @@ test('one exact research approval completes its original rich answer, saves evid
    searches++;assert.equal(init?.redirect,'manual');assert.ok(!JSON.stringify(body).includes('answerRequest'));
    if(mode.startsWith('automatic')){
     if(mode==='automatic-official'){
-      assert.deepEqual(Object.keys(body).sort(),['count','query']);
-      assert.equal(body.count,10);
+      assert.deepEqual(Object.keys(body).sort(),['count','need_content','ori_question','query']);
+      assert.equal(body.count,12);
+      assert.equal(body.need_content,true);
+      assert.match(body.ori_question,/difference between solar and lunar eclipses/);
+      assert.doesNotMatch(body.ori_question,/site:/);
       assert.match(body.query,/difference between solar and lunar eclipses/);
       assert.match(body.query,/ site:nasa\.gov$/);
       assert.ok([...body.query].length<=128);
@@ -341,12 +344,13 @@ test('one exact research approval completes its original rich answer, saves evid
    }
    const results=mode==='automatic-no-sources'?[]:[
     ...(mode==='automatic-official'?[{title:'NASA Eclipses',url:'https://science.nasa.gov/eclipses/',summary:'Public source excerpt',
+      content:'Public source excerpt. A solar eclipse occurs when the Moon passes between the Sun and Earth.',
       site_name:'NASA Science',site_icon:'https://cdn.deepseek.com/site-icons/science.nasa.gov'}]:[]),
     {title:'Public documentation',url:'https://example.com/docs',summary:'Public source excerpt',
      site_name:'Example Exchange',site_icon:'https://cdn.deepseek.com/site-icons/example.com'},
     {title:'Same page',url:'https://example.com/docs#section',summary:'Public source excerpt'},
     ...(mode==='automatic'?[{title:'Archived quote',url:'https://example.org/archive',summary:'Old valuation snapshot',date:'2023-01-01T12:00:00Z'}]:[]),
-    ...(mode==='automatic-ranking-expanded-evidence'?Array.from({length:9},(_,index)=>({
+    ...(mode==='automatic-ranking-expanded-evidence'?Array.from({length:14},(_,index)=>({
      title:`Independent public report ${index+1}`,url:`https://example.org/report/${index+1}`,
      summary:`Public source excerpt for report ${index+1}. `+'Présentation comparative des capacités et résultats vérifiés. '.repeat(28),
     })):[]),
@@ -372,6 +376,12 @@ test('one exact research approval completes its original rich answer, saves evid
     assert.match(JSON.stringify(body.messages),/UNRELATED_PRIOR_NASA_TURN/);
     assert.equal(body.messages.length,3);
     assert.equal(body.reasoning_effort,undefined);
+    if(mode==='automatic-official'){
+     assert.match(body.messages[2].content,/Moon passes between the Sun and Earth/);
+     assert.match(body.messages[2].content,/same subject, scope, thresholds, comparisons, and applicable exceptions as the rule/);
+     assert.match(body.messages[2].content,/same pass or fail decision that the cited rule requires/);
+     assert.match(body.messages[2].content,/Keep optional advice separate from the pass condition/);
+    }
     if(mode==='automatic'){
      assert.equal(body.max_tokens,16_384);
      assert.match(body.messages[0].content,/Return only the answer, without an OpenUI program/);
@@ -380,18 +390,31 @@ test('one exact research approval completes its original rich answer, saves evid
      assert.match(body.messages[2].content,/Never average or combine stale/);
     }else if(mode==='automatic-ranking-expanded-evidence'){
      assert.ok(body.max_tokens>20_480,'Keep the planned output budget for a detailed sourced answer');
-     assert.match(JSON.stringify(body.messages),/Independent public report 9/);
+     assert.match(JSON.stringify(body.messages),/Independent public report 14/);
      assert.match(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>/);
     }else if(mode!=='automatic-parity'){
      assert.equal(body.max_tokens,20_480);
      assert.match(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>/);
      assert.doesNotMatch(body.messages[2].content,/one or two short paragraphs/);
     }
-   }else{
+   }else if(mode!=='automatic-continuation'){
     assert.equal(body.max_tokens,4096);
     assert.ok(['json_object','json_schema'].includes(body.response_format.type));
    }
    if(mode==='drop')throw Object.assign(Error('Synthetic dispatch uncertainty'),{name:'AbortError'});
+   if(mode==='automatic-continuation'){
+    assert.match(JSON.stringify(body.messages),/Public source excerpt/);
+    assert.equal(body.max_tokens,16_384);
+    const continuing=body.messages.at(-1).content.includes('generation stopped at its output boundary');
+    if(continuing)assert.equal(body.messages.at(-2).content,'The public page documents the answer [1].');
+    const content=continuing
+      ? 'The public page documents the answer [1].\n\nThe publication describes its reference methodology [1].'
+      : 'The public page documents the answer [1].';
+    const answer='data: '+JSON.stringify({id:'synthetic-answer-'+models,model:body.model,
+      choices:[{index:0,delta:{content},finish_reason:continuing?'stop':'length'}],
+      usage:{prompt_tokens:100,completion_tokens:40,total_tokens:140}})+'\n\ndata: [DONE]\n\n';
+    return new Response(answer,{headers:{'content-type':'text/event-stream','x-request-id':'synthetic-answer-'+models,'x-zurelay-model':body.model}});
+   }
    if(mode.startsWith('automatic-ranking'))assert.ok(body.messages[2].content.includes(rankingPrompt));
    const content=mode==='automatic-ranking-status'?'Web search finished.'
      :mode.startsWith('automatic')?'The public page documents the answer [1](https://wrong.example/page).':raw;
@@ -507,7 +530,12 @@ test('one exact research approval completes its original rich answer, saves evid
  assert.equal(searches,4);assert.equal(models,3);
 
  mode='automatic-no-sources';
- await assert.rejects(runChatPipeline(automaticRequest),{code:'TOOL_UNAVAILABLE'});
+ const emptyAnswer=publicWorkspaceResearchAnswer(await runChatPipeline(automaticRequest));
+ assert.equal(emptyAnswer.intent,'research_unavailable');
+ assert.equal(emptyAnswer.response,'The search returned no public sources that met your request.');
+ assert.deepEqual(emptyAnswer.webSources,[]);
+ assert.equal(emptyAnswer.publicWebRetrieved,undefined);
+ assert.deepEqual(emptyAnswer.responseSource,{format:'xroga-openui-v1',text:''});
  assert.equal(searches,5);assert.equal(models,3);assert.equal(automaticAuditCount,2);
  const emptySearch=[...reservations.values()].find(row=>row.provider_request_id==='synthetic-search-5');
  assert.equal(emptySearch?.settled_micro_usd,0);assert.equal(emptySearch?.search_calls,1);
@@ -561,8 +589,9 @@ test('one exact research approval completes its original rich answer, saves evid
  mode='automatic-ranking-status';
  const partial=await runChatPipeline(ranking);
  assert.equal(partial.completion?.status,'partial');
- assert.match(partial.response,/couldn’t finish the answer/);
- assert.doesNotMatch(partial.response,/Review action|Web search finished/);
+ assert.equal(partial.response,'I found these public sources for your question.');
+ assert.doesNotMatch(partial.response,/Review action|Web search finished|resend/i);
+ assert.deepEqual(partial.responseSource,{format:'xroga-openui-v1',text:''});
  assert.equal(partial.publicWebRetrieved,true);
  assert.ok(partial.webSources?.length);
  assert.equal(confirmation.row,lastConfirmation);
@@ -616,7 +645,7 @@ test('one exact research approval completes its original rich answer, saves evid
  assert.equal(expanded.publicWebRetrieved,true);
  assert.deepEqual(expanded.completion,{status:'partial',reason:'source_coverage'},
   'Having enough retrieved pages does not deliver the official links requested for each row');
- assert.equal(expanded.webSources?.length,10);
+ assert.equal(expanded.webSources?.length,15);
  assert.equal(searches,13);
  assert.equal(models,10,'A full public source set reaches exactly one synthesis call');
  assert.equal(confirmation.row,lastConfirmation);
@@ -678,6 +707,20 @@ test('one exact research approval completes its original rich answer, saves evid
  assert.equal(noPublicSubject.intent,'research_unavailable');
  assert.equal(searches,17,'An explicit null query never falls back to raw text');
  assert.equal(confirmation.row,lastConfirmation);
+
+ mode='automatic-continuation';
+ const resumed=await runChatPipeline(automaticRequest);
+ assert.equal(resumed.publicWebRetrieved,true);
+ assert.deepEqual(resumed.completion,{status:'complete'});
+ assert.equal(resumed.response.match(/The public page documents the answer/g)?.length,1);
+ assert.match(resumed.response,/The publication describes its reference methodology/);
+ assert.equal(resumed.response.match(/\[1\]/g)?.length,2);
+ assert.equal(publicWorkspaceResearchAnswer(resumed).webSources?.[0]?.url,'https://example.com/docs');
+ assert.equal(searches,18,'Output continuation reuses the original retrieval');
+ assert.equal(models,16,'Each answer segment has its own metered synthesis call');
+ assert.equal([...reservations.values()].filter(row=>row.status==='settled' &&
+   ['synthetic-answer-15','synthetic-answer-16'].includes(row.provider_request_id)).length,2);
+ assert.equal(confirmation.row,lastConfirmation);
 });
 
 test('public topics work across subjects without screening out individual words', () => {
@@ -712,6 +755,11 @@ test('planner queries support translation, public identifiers and DeepSeek opera
 
 test('planned Search honors offline requests, credential boundaries and explicit publisher scope', () => {
  assert.equal(workspacePublicSearchQuery('Research public airline fares. Do not browse.',false,'airline fares'),undefined);
+ assert.equal(workspacePublicSearchQuery('Do not browse. Explain what owl pellets reveal.',false,'owl pellets'),undefined);
+ assert.equal(workspacePublicSearchQuery('Busca sobre rapaces. Sin buscar en internet.',false,'rapaces'),undefined);
+ assert.deepEqual(workspacePublicSearchQuery('Search the web for what “no web search” means in browser settings.'), {
+  query:'what “no web search” means in browser settings',officialDomains:[],
+ });
  for (const credentialQuery of ['travel fares SYNTHETIC_TEST_TOKEN', 'read https://example.org/info?token=abcdef',
    'read https://viewer:password@example.org/info']) {
   assert.equal(workspacePublicSearchQuery('Compare public fares.',false,credentialQuery),undefined);
@@ -876,6 +924,22 @@ test('combined research and presentation preserve publisher scope and precise re
   assert.match(nasa?.query ?? '', /^compare Artemis II and Artemis III.*site:nasa\.gov$/u);
   assert.equal(workspacePublicSearchQuery(criteria + ' Use the attached internal audit as well.', true), undefined);
   assert.equal(workspacePublicSearchQuery('Find published streamflow data. Use only Fictional Laboratory sources.', true), undefined);
+});
+
+test('a cited answer with a stated coverage gap is partial, while examples in code remain literal', () => {
+  const sources = [{ url: 'https://example.org/handbook' }];
+  const prompt = 'Use official sources to compare two named requirements.';
+  const answer = '| Requirement | Rule |\n| --- | --- |\n| One | The documented rule [1]. |\n'
+    + '| Two | **Not established by the retrieved excerpts.** |';
+  const presented = presentPublicResearchAnswer(answer, { status: 'complete' }, sources, prompt);
+  assert.deepEqual(presented.completion, { status: 'partial', reason: 'source_coverage' });
+  assert.match(presented.response, /Not established by the retrieved excerpts/);
+
+  const code = String.fromCharCode(96);
+  const literal = 'Here is the documented syntax [1].\n\n' + code.repeat(3) + 'txt\n'
+    + 'Not established by the retrieved excerpts.\n' + code.repeat(3);
+  assert.deepEqual(presentPublicResearchAnswer(literal, { status: 'complete' }, sources, prompt).completion,
+    { status: 'complete' });
 });
 
 test('a guide about a named publication cannot substitute for the requested original', () => {

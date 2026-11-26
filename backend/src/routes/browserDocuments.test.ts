@@ -26,3 +26,25 @@ test('browser document ingestion preserves page, sheet and cell references and r
   await assert.rejects(readBrowserDocument('oversized.xlsx', damaged), /Unsafe Office entry/);
   await assert.rejects(readBrowserDocument('wrong.pdf', bytes), /Invalid PDF/);
 });
+
+test('a PDF table keeps its rows and columns, a long PDF is read as far as the limits allow, and unreadable files say why', async () => {
+  const table = await PDFDocument.create();
+  const page = table.addPage();
+  const rows = [['Name', 'Email', 'City'], ['Ali Khan', 'ali@example.com', 'Lahore'], ['Sara Noor', 'sara@example.com', 'Karachi']];
+  rows.forEach((row, r) => row.forEach((cell, c) => page.drawText(cell, { x: 40 + c * 170, y: 700 - r * 22, size: 11 })));
+  const text = await readBrowserDocument('table.pdf', Buffer.from(await table.save({ useObjectStreams: false })));
+  assert.match(text, /Name\tEmail\tCity\nAli Khan\tali@example\.com\tLahore\nSara Noor\tsara@example\.com\tKarachi/);
+
+  const long = await PDFDocument.create();
+  for (let i = 1; i <= 450; i++) long.addPage().drawText(`page ${i}`);
+  const partial = await readBrowserDocument('long.pdf', Buffer.from(await long.save({ useObjectStreams: false })));
+  assert.match(partial, /\[Page 400\]\npage 400/);
+  assert.match(partial, /\[Stopped after page 400 of 450: the page limit was reached\]/);
+  assert.doesNotMatch(partial, /\[Page 401\]/);
+
+  const blank = await PDFDocument.create();
+  blank.addPage();
+  await assert.rejects(readBrowserDocument('blank.pdf', Buffer.from(await blank.save({ useObjectStreams: false }))), (error: unknown) => (error as { reason?: string }).reason === 'no_text');
+  await assert.rejects(readBrowserDocument('wrong.pdf', Buffer.from('not a pdf')), (error: unknown) => (error as { reason?: string }).reason === 'invalid');
+  await assert.rejects(readBrowserDocument('broken.pdf', Buffer.from('%PDF-1.4 broken')), (error: unknown) => (error as { reason?: string }).reason === 'invalid');
+});

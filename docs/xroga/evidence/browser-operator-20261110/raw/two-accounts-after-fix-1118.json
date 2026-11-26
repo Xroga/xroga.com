@@ -1,0 +1,381 @@
+14:20:55 enroll A
+14:21:05 A enrolled
+14:21:15 A task
+14:21:28 A task done
+14:21:30 sign out A
+14:21:45 signed out
+14:21:52 enroll B
+14:22:44 enroll A again
+{
+ "steps": {
+  "state A before it did anything": {
+   "siteRules": {},
+   "storageKeys": {
+    "browserControl.epoch": 1,
+    "nb.analytics": 49,
+    "nb.analytics.counts": 2,
+    "nb.analytics.queue": 2,
+    "xroga-browser-account": 38,
+    "xroga-browser-device-profile": 38,
+    "xroga-browser-device-v1": 158,
+    "xroga-local-state-owner": 38
+   },
+   "activeDb": "nanobrowser",
+   "hints": null,
+   "workerJobs": [],
+   "perfEntries": 0,
+   "dbs": [
+    {
+     "name": "nanobrowser",
+     "conversations": []
+    },
+    {
+     "name": "nanobrowser-signed-out",
+     "conversations": []
+    }
+   ],
+   "plugins": {
+    "connected": {
+     "items": []
+    },
+    "permission": {
+     "mode": "full_access"
+    },
+    "gmail": {
+     "toolkit": "gmail",
+     "mode": "full_access"
+    },
+    "catalog": [
+     "gmail",
+     "googlecalendar",
+     "outlook",
+     "hubspot",
+     "slackbot",
+     "googletasks",
+     "calendly",
+     "brevo"
+    ]
+   }
+  },
+  "titles A before it did anything": [],
+  "state A after working": {
+   "defaultMode": "auto",
+   "siteRules": {
+    "a-only.example": {
+     "rule": "allow",
+     "setAt": "2026-11-18T14:21:14.509Z"
+    }
+   },
+   "storageKeys": {
+    "browserControl.epoch": 1,
+    "nb.analytics": 74,
+    "nb.analytics.counts": 132,
+    "nb.analytics.queue": 2,
+    "nb.rating": 116,
+    "nb.settings": 22,
+    "nb.siteRules": 70,
+    "xroga-browser-account": 38,
+    "xroga-browser-device-profile": 38,
+    "xroga-browser-device-v1": 158,
+    "xroga-local-state-owner": 38,
+    "xroga_parallel_jobs_v1": 2,
+    "xroga_perf_v1": 829
+   },
+   "activeDb": "nanobrowser",
+   "hints": null,
+   "workerJobs": [],
+   "perfEntries": 1,
+   "dbs": [
+    {
+     "name": "nanobrowser",
+     "conversations": [
+      "Open example.com and tell me its heading (account A task)"
+     ]
+    },
+    {
+     "name": "nanobrowser-signed-out",
+     "conversations": []
+    }
+   ],
+   "plugins": {
+    "connected": {
+     "items": []
+    },
+    "permission": {
+     "mode": "full_access"
+    },
+    "gmail": {
+     "toolkit": "gmail",
+     "mode": "full_access"
+    },
+    "catalog": [
+     "gmail",
+     "googlecalendar",
+     "outlook",
+     "hubspot",
+     "slackbot",
+     "googletasks",
+     "calendly",
+     "brevo"
+    ]
+   }
+  },
+  "titles A after working": [
+   "Open example.com and tell me its heading (account A task)"
+  ],
+  "signOutReply": true,
+  "state signed out": {
+   "defaultMode": "auto",
+   "siteRules": {
+    "a-only.example": {
+     "rule": "allow",
+     "setAt": "2026-11-18T14:21:14.509Z"
+    }
+   },
+   "storageKeys": {
+    "browserControl.epoch": 1,
+    "nb.analytics": 74,
+    "nb.analytics.counts": 132,
+    "nb.analytics.queue": 2,
+    "nb.rating": 116,
+    "nb.settings": 22,
+    "nb.siteRules": 70,
+    "xroga-browser-device-profile": 38,
+    "xroga-browser-explicit-signout": 4,
+    "xroga-local-state-owner": 38,
+    "xroga_parallel_jobs_v1": 2,
+    "xroga_perf_v1": 829
+   },
+   "activeDb": "nanobrowser-signed-out",
+   "hints": null,
+   "workerJobs": [],
+   "perfEntries": 1,
+   "dbs": [
+    {
+     "name": "nanobrowser",
+     "conversations": [
+      "Open example.com and tell me its heading (account A task)"
+     ]
+    },
+    {
+     "name": "nanobrowser-signed-out",
+     "conversations": []
+    }
+   ],
+   "plugins": {
+    "connected": {
+     "error": "Sign in to Xroga to use plugins."
+    },
+    "permission": {
+     "error": "Sign in to Xroga to use plugins."
+    },
+    "gmail": {
+     "error": "Sign in to Xroga to use plugins."
+    },
+    "catalog": {
+     "error": "Sign in to Xroga to use plugins."
+    }
+   }
+  },
+  "titles signed out": [],
+  "state B right after signing in": {
+   "siteRules": {},
+   "storageKeys": {
+    "browserControl.epoch": 1,
+    "nb.analytics": 74,
+    "nb.analytics.counts": 132,
+    "nb.analytics.queue": 2,
+    "nb.rating": 116,
+    "xroga-account-state-e8d60408-7a6f-437f-a96a-822f4325966e": 998,
+    "xroga-browser-account": 38,
+    "xroga-browser-device-profile": 38,
+    "xroga-browser-device-v1": 158,
+    "xroga-browser-explicit-signout": 4,
+    "xroga-local-state-owner": 38
+   },
+   "activeDb": "nanobrowser-fa56cf7b-3c41-4278-984d-79e2f2bfc677",
+   "hints": null,
+   "workerJobs": [],
+   "perfEntries": 0,
+   "dbs": [
+    {
+     "name": "nanobrowser",
+     "conversations": [
+      "Open example.com and tell me its heading (account A task)"
+     ]
+    },
+    {
+     "name": "nanobrowser-fa56cf7b-3c41-4278-984d-79e2f2bfc677",
+     "conversations": []
+    },
+    {
+     "name": "nanobrowser-signed-out",
+     "conversations": []
+    }
+   ],
+   "plugins": {
+    "connected": {
+     "items": []
+    },
+    "permission": {
+     "mode": "low_risk"
+    },
+    "gmail": {
+     "toolkit": "gmail",
+     "mode": "low_risk"
+    },
+    "catalog": [
+     "gmail",
+     "googlecalendar",
+     "outlook",
+     "hubspot",
+     "slackbot",
+     "googletasks",
+     "calendly",
+     "brevo"
+    ]
+   }
+  },
+  "titles B right after signing in": [],
+  "state B after working": {
+   "siteRules": {},
+   "storageKeys": {
+    "browserControl.epoch": 1,
+    "nb.analytics": 74,
+    "nb.analytics.counts": 132,
+    "nb.analytics.queue": 2,
+    "nb.rating": 116,
+    "xroga-account-state-e8d60408-7a6f-437f-a96a-822f4325966e": 998,
+    "xroga-browser-account": 38,
+    "xroga-browser-device-profile": 38,
+    "xroga-browser-device-v1": 158,
+    "xroga-browser-explicit-signout": 4,
+    "xroga-local-state-owner": 38,
+    "xroga_parallel_jobs_v1": 2,
+    "xroga_perf_v1": 479
+   },
+   "activeDb": "nanobrowser-fa56cf7b-3c41-4278-984d-79e2f2bfc677",
+   "hints": null,
+   "workerJobs": [],
+   "perfEntries": 1,
+   "dbs": [
+    {
+     "name": "nanobrowser",
+     "conversations": [
+      "Open example.com and tell me its heading (account A task)"
+     ]
+    },
+    {
+     "name": "nanobrowser-fa56cf7b-3c41-4278-984d-79e2f2bfc677",
+     "conversations": [
+      "Open iana.org and tell me its title (account B task)"
+     ]
+    },
+    {
+     "name": "nanobrowser-signed-out",
+     "conversations": []
+    }
+   ],
+   "plugins": {
+    "connected": {
+     "items": []
+    },
+    "permission": {
+     "mode": "low_risk"
+    },
+    "gmail": {
+     "toolkit": "gmail",
+     "mode": "low_risk"
+    },
+    "catalog": [
+     "gmail",
+     "googlecalendar",
+     "outlook",
+     "hubspot",
+     "slackbot",
+     "googletasks",
+     "calendly",
+     "brevo"
+    ]
+   }
+  },
+  "titles B after working": [
+   "Open iana.org and tell me its title (account B task)"
+  ],
+  "state A signed in again": {
+   "defaultMode": "auto",
+   "siteRules": {
+    "a-only.example": {
+     "rule": "allow",
+     "setAt": "2026-11-18T14:21:14.509Z"
+    }
+   },
+   "storageKeys": {
+    "browserControl.epoch": 1,
+    "nb.analytics": 74,
+    "nb.analytics.counts": 132,
+    "nb.analytics.queue": 2,
+    "nb.rating": 116,
+    "nb.settings": 22,
+    "nb.siteRules": 70,
+    "xroga-account-state-fa56cf7b-3c41-4278-984d-79e2f2bfc677": 525,
+    "xroga-browser-account": 38,
+    "xroga-browser-device-profile": 38,
+    "xroga-browser-device-v1": 158,
+    "xroga-browser-explicit-signout": 4,
+    "xroga-local-state-owner": 38,
+    "xroga_parallel_jobs_v1": 2,
+    "xroga_perf_v1": 829
+   },
+   "activeDb": "nanobrowser",
+   "hints": null,
+   "workerJobs": [],
+   "perfEntries": 1,
+   "dbs": [
+    {
+     "name": "nanobrowser",
+     "conversations": [
+      "Open example.com and tell me its heading (account A task)"
+     ]
+    },
+    {
+     "name": "nanobrowser-fa56cf7b-3c41-4278-984d-79e2f2bfc677",
+     "conversations": [
+      "Open iana.org and tell me its title (account B task)"
+     ]
+    },
+    {
+     "name": "nanobrowser-signed-out",
+     "conversations": []
+    }
+   ],
+   "plugins": {
+    "connected": {
+     "items": []
+    },
+    "permission": {
+     "mode": "full_access"
+    },
+    "gmail": {
+     "toolkit": "gmail",
+     "mode": "full_access"
+    },
+    "catalog": [
+     "gmail",
+     "googlecalendar",
+     "outlook",
+     "hubspot",
+     "slackbot",
+     "googletasks",
+     "calendly",
+     "brevo"
+    ]
+   }
+  },
+  "titles A signed in again": [
+   "Open example.com and tell me its heading (account A task)"
+  ]
+ },
+ "leaks": [],
+ "ok": true
+}

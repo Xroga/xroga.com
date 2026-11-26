@@ -22,7 +22,20 @@ export const productionExecutionPort: ExecutionPort = {
     const { executeSandboxed, selectSandboxProvider } = await import('../../sandbox/sandboxRuntime.js');
     // A plain container runtime starts an empty container: it never copies the project's files in and cannot run a staged test plan, so the
     // project's tests would "fail" with no output. That is a missing runtime, not a failing test, and must be reported as unavailable.
-    const { availability } = await selectSandboxProvider();
+    const { availability, runtime } = await selectSandboxProvider();
+    // The remote isolation worker CAN run a project's files, one offline command per request, so a staged plan is run stage by stage there.
+    // An install stage (needs a package registry) is reported as not run until a verified restricted-network worker exists.
+    const { RemoteSandboxRuntime } = await import('../../sandbox/remoteSandbox.js');
+    if (runtime instanceof RemoteSandboxRuntime) {
+      const { createWorkerExecutionPort } = await import('../../sandbox/workerExecutionPort.js');
+      return createWorkerExecutionPort({
+        runtime: async () => runtime,
+        owner: async () => {
+          const { captureCurrentRunAttempt } = await import('../../ai/runStore.js');
+          try { const a = captureCurrentRunAttempt(); return { userId: a.userId, runId: a.runId }; } catch { return undefined; }
+        },
+      }).execute(request);
+    }
     if (request.stages || ['docker', 'podman'].includes(availability.runtime)) {
       throw new ExistingSourceError('EXECUTION_UNAVAILABLE', 'This deployment has no isolated runtime that can run a project\'s files, so nothing was run.');
     }

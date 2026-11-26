@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "583943afa9d6e9e0bcc361c02eda6ba180dab988",
+  "source_sha": "7eac1d713544758b0cf4eede5df60ca953670128",
   "assessment": "AVAILABLE_SOURCE_RECONCILIATION",
   "requirements": [
     {
@@ -2090,6 +2090,8 @@
       "classification": "backend",
       "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
       "current_paths": [
+        "backend/src/sandbox/agentSkill.ts",
+        "backend/src/sandbox/dependencyAcquisition.ts",
         "backend/src/sandbox/flyMachineSandbox.ts",
         "backend/src/sandbox/google/executionBinding.ts",
         "backend/src/sandbox/google/gceMachineControl.ts",
@@ -2098,10 +2100,12 @@
         "backend/src/sandbox/google/orphanReconciler.ts",
         "backend/src/sandbox/meteredExecution.ts",
         "backend/src/sandbox/remoteSandbox.ts",
+        "backend/src/sandbox/repoRun.ts",
         "backend/src/sandbox/sandboxEnvironment.ts",
         "backend/src/sandbox/sandboxProviders.ts",
         "backend/src/sandbox/sandboxRuntime.ts",
-        "backend/src/sandbox/sandboxTypes.ts"
+        "backend/src/sandbox/sandboxTypes.ts",
+        "backend/src/sandbox/workerExecutionPort.ts"
       ],
       "implementation_owner_command": "MISSION-014",
       "priority": "P1",
@@ -3473,6 +3477,7 @@
         "backend/src/security/ownedRunPersistence.ts",
         "backend/src/security/ownedTerminalPersistence.ts",
         "backend/src/security/ownership.ts",
+        "backend/src/security/publicBodyText.ts",
         "backend/src/security/runtimeProjectBinding.ts",
         "backend/src/security/serviceRoleGuard.ts",
         "backend/src/security/tenantContext.ts",

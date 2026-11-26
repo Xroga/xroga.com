@@ -1,0 +1,122 @@
+[
+  {
+    "saved": 1,
+    "dialogClosed": true,
+    "coveredSaveAttempts": 1,
+    "turns": 7,
+    "wallMs": 31487,
+    "strategyNote": true,
+    "diagnosisNote": false,
+    "notes": [
+      "[Nanobrowser note: The tab you already have open (name) is now this run's tab. Work in it; do not open another copy.]",
+      "[Nanobrowser note: Method chosen from what the page shows: VISUAL_GUI (fallback that reads the screenshot; the outline is nearly empty, the page is painted or s",
+      "<browser-state>\ntime: 2026-11-20 18:08 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:08 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:09 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:09 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:09 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:09 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:09 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>"
+    ],
+    "log": [
+      "click:Close",
+      "click:Save"
+    ]
+  },
+  {
+    "saved": 1,
+    "dialogClosed": true,
+    "coveredSaveAttempts": 1,
+    "turns": 7,
+    "wallMs": 31317,
+    "strategyNote": true,
+    "diagnosisNote": false,
+    "notes": [
+      "[Nanobrowser note: The tab you already have open (name) is now this run's tab. Work in it; do not open another copy.]",
+      "[Nanobrowser note: Method chosen from what the page shows: VISUAL_GUI (fallback that reads the screenshot; the outline is nearly empty, the page is painted or s",
+      "<browser-state>\ntime: 2026-11-20 18:09 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:09 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:09 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:09 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:09 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:09 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:09 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>"
+    ],
+    "log": [
+      "click:Close",
+      "click:Save"
+    ]
+  },
+  {
+    "saved": 1,
+    "dialogClosed": true,
+    "coveredSaveAttempts": 1,
+    "turns": 9,
+    "wallMs": 42367,
+    "strategyNote": true,
+    "diagnosisNote": false,
+    "notes": [
+      "[Nanobrowser note: The tab you already have open (name) is now this run's tab. Work in it; do not open another copy.]",
+      "[Nanobrowser note: Method chosen from what the page shows: VISUAL_GUI (fallback that reads the screenshot; the outline is nearly empty, the page is painted or s",
+      "<browser-state>\ntime: 2026-11-20 18:09 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:10 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:10 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:10 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:10 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:10 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:10 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:10 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:10 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>"
+    ],
+    "log": [
+      "click:Close",
+      "click:Save"
+    ]
+  },
+  {
+    "saved": 1,
+    "dialogClosed": true,
+    "coveredSaveAttempts": 1,
+    "turns": 5,
+    "wallMs": 21955,
+    "strategyNote": true,
+    "diagnosisNote": false,
+    "notes": [
+      "[Nanobrowser note: The tab you already have open (name) is now this run's tab. Work in it; do not open another copy.]",
+      "[Nanobrowser note: Method chosen from what the page shows: VISUAL_GUI (fallback that reads the screenshot; the outline is nearly empty, the page is painted or s",
+      "<browser-state>\ntime: 2026-11-20 18:10 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:10 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:10 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:10 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:10 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>"
+    ],
+    "log": [
+      "click:Close",
+      "click:Save"
+    ]
+  },
+  {
+    "saved": 1,
+    "dialogClosed": true,
+    "coveredSaveAttempts": 1,
+    "turns": 7,
+    "wallMs": 27991,
+    "strategyNote": true,
+    "diagnosisNote": false,
+    "notes": [
+      "[Nanobrowser note: The tab you already have open (name) is now this run's tab. Work in it; do not open another copy.]",
+      "[Nanobrowser note: Method chosen from what the page shows: VISUAL_GUI (fallback that reads the screenshot; the outline is nearly empty, the page is painted or s",
+      "<browser-state>\ntime: 2026-11-20 18:10 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:11 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:11 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:11 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:11 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:11 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:11 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>"
+    ],
+    "log": [
+      "click:Close",
+      "click:Save"
+    ]
+  }
+]

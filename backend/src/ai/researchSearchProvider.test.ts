@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {deepseekSearchCredential,researchSearchMicroUsd,deepseekSearchBody,normaliseDeepseekSearch,scopeOfficialSearchQuery,DEEPSEEK_SEARCH_MICRO_USD} from './researchSearchProvider.js';
+import {deepseekSearchCredential,researchSearchMicroUsd,deepseekSearchBody,fitDeepseekSearchQuery,matchingPageParagraphs,normaliseDeepseekSearch,scopeOfficialSearchQuery,DEEPSEEK_SEARCH_MICRO_USD} from './researchSearchProvider.js';
 
 test('search uses only the dedicated DeepSeek credential; without it search is unavailable, never rerouted', () => {
   const saved = process.env.DEEPSEEK_WEBSEARCH_FETCH_API;
@@ -27,7 +27,7 @@ test('one bounded DeepSeek request respects the documented 128-character limits'
 test('official-only queries send the approved domains and fit the provider limit', () => {
   assert.equal(scopeOfficialSearchQuery('pathlib read_text OR site:forum.example (read_bytes)', [
     'WWW.DOCS.PYTHON.ORG.', 'docs.python.org', 'https://unrelated.example', 'python.org/path', 'developer.mozilla.org',
-  ]), 'pathlib read_text read_bytes site:docs.python.org OR site:developer.mozilla.org');
+  ]), 'pathlib read_text (read_bytes) site:docs.python.org OR site:developer.mozilla.org');
   const terms = '文件'.repeat(120) + '🌍';
   const query = scopeOfficialSearchQuery(terms, ['docs.python.org'])!;
   const body = deepseekSearchBody({ objective: '🌍'.repeat(150), search_queries: [query] });
@@ -36,6 +36,34 @@ test('official-only queries send the approved domains and fit the provider limit
   assert.equal(body.query, query);
   assert.ok(body.query.endsWith(' site:docs.python.org'));
   assert.equal(scopeOfficialSearchQuery('reserve no search', ['http://docs.python.org', 'local']), undefined);
+});
+
+test('official scoping preserves public phrases, alternatives, and exclusions while replacing unrelated sites', () => {
+  const terms = 'WCAG "focus not obscured" OR "target size" -"working draft" -deprecated lang:en';
+  const query = scopeOfficialSearchQuery(terms + ' (site:forums.example OR site:articles.example)', ['w3.org']);
+  assert.equal(query, terms + ' site:w3.org');
+  assert.equal(scopeOfficialSearchQuery('"weather or climate" -site:drafts.noaa.gov', ['noaa.gov']),
+    '"weather or climate" -site:drafts.noaa.gov site:noaa.gov');
+  assert.equal(scopeOfficialSearchQuery('"site: prefix" -"draft OR working copy"', ['example.org']),
+    '"site: prefix" -"draft OR working copy" site:example.org');
+});
+
+test('official scoping keeps constrained terms when adding the publisher pushes a query over the wire length', () => {
+  const unscoped = 'WCAG updates impact teams migrating interfaces "focus not obscured" OR "target size" -"working draft" -deprecated lang:en';
+  assert.ok([...unscoped].length <= 128 && [...unscoped, ...' site:w3.org'].length > 128);
+  const scoped = scopeOfficialSearchQuery(unscoped, ['w3.org']);
+  assert.ok(scoped && [...scoped].length <= 128);
+  assert.match(scoped, /^WCAG\b/);
+  assert.match(scoped, /"focus not obscured" OR "target size" -"working draft" -deprecated lang:en site:w3\.org$/);
+  assert.equal(deepseekSearchBody({ objective: 'WCAG scoped check', search_queries: [scoped] }).query, scoped);
+});
+
+test('official scoping fits unsegmented Unicode while preserving a language filter', () => {
+  const unscoped = 'アクセシビリティ'.repeat(20) + ' lang:ja';
+  const scoped = scopeOfficialSearchQuery(unscoped, ['w3.org']);
+  assert.ok(scoped && [...scoped].length === 128);
+  assert.match(scoped, /^アクセシビリティ.* lang:ja site:w3\.org$/u);
+  assert.match(fitDeepseekSearchQuery(unscoped) ?? '', /^アクセシビリティ.* lang:ja$/u);
 });
 
 test('DeepSeek results become the existing result shape with real URLs, dates and the trace receipt', () => {
@@ -80,4 +108,41 @@ test('primary evidence uses relevant text from the retrieved page and preserves 
   assert.ok((original.results[0]?.excerpts[0]?.length ?? 0) < result.content.length);
   const empty = normaliseDeepseekSearch({ results: [{ ...result, content: '' }] }, trace, question);
   assert.deepEqual(empty.results[0]?.excerpts, [summary]);
+});
+
+test('a long provider query retains complete terms and all publisher and date filters', () => {
+  const long = '"Climate Data Guide" station calibration adjustments for measured precipitation published monthly in ' +
+    'public weather archives including technical annexes and instrument maintenance guidance after:2025-01-01 ' +
+    'site:example.org OR site:example.net lang:en';
+  const fitted = fitDeepseekSearchQuery(long);
+  assert.ok(fitted && [...fitted].length <= 128);
+  assert.match(fitted, /^"Climate Data Guide" station calibration adjustments\b/);
+  assert.match(fitted, /after:2025-01-01 lang:en site:example\.org OR site:example\.net$/);
+});
+
+test('a standard excerpt favors exact clause coverage over a repeated last query word', () => {
+  const navigation = 'Latest information. Browse this site for news. '.repeat(150);
+  const noisy = 'Coverage metrics overview ' + 'overview '.repeat(150);
+  const primary = '4.1.8 Switch layout\n\nA fixed dock must allow the active switch to stay visible.' +
+    '\n\n4.1.9 Target spacing\n\nThe individual target or an equivalent control must have enough space.';
+  const result = matchingPageParagraphs(navigation + primary + '\n\n' + navigation + noisy,
+    'connector standard 4.1.8 and 4.1.9 switch layout overview');
+  assert.match(result, /4\.1\.8.*4\.1\.9.*equivalent control/);
+});
+
+test('official references use each requested section body instead of the shared contents list', () => {
+  const longBetween = 'Unrelated supporting examples. '.repeat(210);
+  const text = '## Contents\n4.1.7 Readable state\n4.1.9 Input limits\n6.3.8 Confirmation choices\n\n'
+    + '### 4.1.7 Readable state\n\nDisplay the current state alongside the active control.\n\n'
+    + '### 4.1.8 Unrelated topic\n\n' + longBetween + '\n\n'
+    + '### 4.1.9 Input limits\n\nShow the permitted range beside the field.\n\n'
+    + '### 4.2.1 Unrelated topic\n\n' + longBetween + '\n\n'
+    + '### 6.3.8 Confirmation choices\n\n' + longBetween + '\n\nNormative requirements:\n'
+    + 'Provide an alternative that does not rely on recalling a code.';
+  const result = matchingPageParagraphs(text, 'Requirements handbook 2.2 references 4.1.7, 4.1.9, and 6.3.8');
+  assert.match(result, /4\.1\.7 Readable state Display the current state/);
+  assert.match(result, /4\.1\.9 Input limits Show the permitted range/);
+  assert.match(result, /6\.3\.8 Confirmation choices Provide an alternative/);
+  assert.doesNotMatch(result, /Contents|Unrelated/);
+  assert.ok(result.length <= 3200);
 });

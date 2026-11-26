@@ -5,6 +5,7 @@ import { getTenantSupabaseAdmin, getGlobalSupabaseAdmin } from '../security/serv
 import { requireTenantContext } from '../security/tenantContext.js';
 import { authMiddleware, verifyAccessToken, type AuthRequest } from '../middleware/auth.js';
 import { cleanSharedText } from '../lib/messageShareText.js';
+import { MAX_SHARED_RESPONSE_CHARS } from '../lib/messageShareLimits.js';
 import { projectRichShare } from '../lib/richShareSnapshot.js';
 
 const router = Router();
@@ -14,7 +15,7 @@ const createSchema = z.object({
   visibility: z.enum(['private', 'public']),
   scope: z.enum(['response', 'exchange']),
   prompt: z.string().max(20_000).optional().default(''),
-  response: z.string().min(1).max(100_000),
+  response: z.string().min(1).max(MAX_SHARED_RESPONSE_CHARS),
   literalContent: z.boolean().optional().default(false),
 });
 

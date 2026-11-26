@@ -1,0 +1,37 @@
+{
+  "names": [
+    "scenarios"
+  ],
+  "args": {
+    "ids": [
+      "I-block-limit",
+      "I-block-main"
+    ]
+  },
+  "timedOut": false,
+  "reports": [
+    {
+      "name": "scenarios",
+      "ok": true,
+      "startedAt": "2026-11-22T04:26:55.591Z",
+      "durationMs": 1203,
+      "result": {
+        "summary": [
+          "PASS I-block-limit (1151 ms): frame line: [a6] iframe \"Embedded widget\" (site 127.0.0.1:8787); click: click · [a7] button «Remove item» · pointer · delete: allowed by Auto mode · dispatched"
+        ],
+        "results": [
+          {
+            "id": "I-block-limit",
+            "set": "I",
+            "title": "The limit of Block, pinned: a blocked host in a frame is readable and actionable, and the outline names it",
+            "ms": 1151,
+            "expected": "the outline names the frame and its site (127.0.0.1:8787); the click in it runs",
+            "actual": "frame line: [a6] iframe \"Embedded widget\" (site 127.0.0.1:8787); click: click · [a7] button «Remove item» · pointer · delete: allowed by Auto mode · dispatched",
+            "pass": true
+          }
+        ]
+      }
+    }
+  ],
+  "console": []
+}

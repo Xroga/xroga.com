@@ -1,0 +1,38 @@
+[
+  {
+    "name": "R1-csv-airtravel",
+    "url": "https://www.google.com/",
+    "text": "A public data file is at https://people.sc.fsu.edu/~jburkardt/data/csv/airtravel.csv (monthly airline passengers). Read it and tell me which month had the most passengers in 1960 and how many, and how many more passengers July 1960 had than July 1958.",
+    "expect": { "type": "all", "parts": [{ "type": "contains_all", "values": ["JUL", "622"] }, { "type": "number", "value": 131, "tolerance": 0 }] }
+  },
+  {
+    "name": "R2-xlsx-rows",
+    "url": "https://www.google.com/",
+    "text": "A public Excel file is at https://freetestdata.com/wp-content/uploads/2021/09/Free_Test_Data_100KB_XLSX.xlsx. Tell me the column headings of its first sheet and exactly how many data rows it has (not counting the heading row or empty rows).",
+    "expect": { "type": "contains_all", "values": ["NAME", "GENDER", "AGE", "DATE", "COUNTRY", "2721"] }
+  },
+  {
+    "name": "R3-pptx-slide",
+    "url": "https://www.google.com/",
+    "text": "A public PowerPoint file is at https://github.com/scanny/python-pptx/raw/master/features/steps/test_files/test.pptx. How many slides does it have, and what are the title and the subtitle text on the slide?",
+    "expect": { "type": "contains_all", "values": ["Presentation Title Text", "Subtitle Text"] }
+  },
+  {
+    "name": "R4-article-essay",
+    "url": "https://paulgraham.com/greatwork.html",
+    "text": "This tab shows a long essay. Give me its title, the month and year it was published, and the three qualities the essay says the work you choose needs to have. Work from the essay text only.",
+    "expect": { "type": "contains_all", "values": ["How to Do Great Work", "July 2023", "natural aptitude", "deep interest", "scope"] }
+  },
+  {
+    "name": "R5-page-data",
+    "url": "https://www.python.org/",
+    "text": "On this page find the data the site publishes about itself: its social media profile links and the titles of the RSS feeds it offers. List them exactly.",
+    "expect": { "type": "contains_all", "values": ["ThePSF", "python-software-foundation", "Python Software Foundation News", "Python Job Opportunities", "Python Enhancement Proposals"] }
+  },
+  {
+    "name": "R6-endless-quotes",
+    "url": "https://quotes.toscrape.com/scroll",
+    "text": "This page is an endless list of quotes that loads more as you scroll. Load all of them. Tell me how many quotes there are in total and the author of the very last one.",
+    "expect": { "type": "all", "parts": [{ "type": "number", "value": 100, "tolerance": 0 }, { "type": "contains_all", "values": ["George R.R. Martin"] }] }
+  }
+]

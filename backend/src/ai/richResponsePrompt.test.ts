@@ -49,6 +49,12 @@ test('chat answers may request safe rich output without fabricating visual data'
   assert.match(CHAT_SYSTEM, /authorization headers, cookies, tokens, or secrets/i);
 });
 
+test('an exact bullet request calls for actual list markers and respects omitted prose', () => {
+  const system = chatPresentationSystem('Explain what a DNS record is in exactly three bullet points. Do not add an introduction or conclusion.');
+  assert.match(system, /write the exact requested number of Markdown list items beginning with "- "/);
+  assert.match(system, /Omit the introduction and conclusion when the user asks/);
+});
+
 test('every compact rich-output example is strict JSON', () => {
   const examples = CHAT_SYSTEM.split('\n').map((line) => line.trim()).filter((line) => line.startsWith('{'));
   assert.ok(examples.length >= 10);

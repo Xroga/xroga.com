@@ -31,6 +31,87 @@ function customDetailHref(toolkit: string): string {
   return `/dashboard/integrations/${encodeURIComponent(toolkit)}`;
 }
 
+type PinInfo = { toolkit: string; toolSlug: string; riskClass: 'read' | 'write' };
+
+/** The tools a server synced, with the pin that lets the browser agent be offered one read tool (each call is still approved on its own). */
+function CustomMcpToolsPanel({ toolkit, onReview }: { toolkit: string; onReview: (url: string) => void }) {
+  const [tools, setTools] = useState<Array<{ slug: string; name?: string; description?: string }> | null>(null);
+  const [pins, setPins] = useState<PinInfo[]>([]);
+  const [enabled, setEnabled] = useState(false);
+  const [busy, setBusy] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    try {
+      const [page, pinned] = await Promise.all([xrogaConnect.catalogTools(toolkit, { limit: 100 }), xrogaConnect.customMcp.pins()]);
+      setTools(page.items);
+      setPins(pinned.pins);
+      setEnabled(pinned.enabled);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Could not load tools');
+      setTools([]);
+    }
+  }, [toolkit]);
+  useEffect(() => { void load(); }, [load]);
+
+  async function pin(slug: string | string[]) {
+    setBusy(Array.isArray(slug) ? '*' : slug);
+    try {
+      const result = await xrogaConnect.customMcp.pin(toolkit, slug);
+      if ('needsConfirmation' in result) { onReview(connectReviewUrl(result)); return; }
+      await load();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Could not prepare the pin');
+    } finally { setBusy(null); }
+  }
+  async function unpin(slug: string) {
+    setBusy(slug);
+    try { await xrogaConnect.customMcp.unpin(toolkit, slug); await load(); }
+    catch (error) { toast.error(error instanceof Error ? error.message : 'Could not revoke the pin'); }
+    finally { setBusy(null); }
+  }
+
+  if (tools === null) return <p className="mt-3 text-xs text-[var(--text-secondary)]">Loading tools…</p>;
+  return (
+    <div className="mt-3 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3">
+      <p className="text-xs leading-5 text-[var(--text-secondary)]">
+        {enabled
+          ? 'Pin a tool to let the browser agent use it: read tools to look things up, other tools to create, run or generate things with your own account. You review the exact definitions first, every call still needs your approval showing its arguments, and a change on the server revokes the pin. Tools that delete data, move money or change access are never pinned. Any cost is on your own account with that server.'
+          : 'Running custom MCP tools is switched off on this deployment. Tools stay registered but cannot run.'}
+      </p>
+      {enabled && tools.length > 1 ? (
+        <button type="button" disabled={busy !== null} onClick={() => void pin(tools.map(t => t.slug))}
+          className="mt-2 rounded-token-sm border border-[var(--border-subtle)] px-2.5 py-1 text-[11px] font-semibold text-[var(--text-primary)] disabled:opacity-50">
+          Pin all tools
+        </button>
+      ) : null}
+      <ul className="mt-2 divide-y divide-[var(--border-subtle)]">
+        {tools.slice(0, 100).map(tool => {
+          const pinned = pins.some(p => p.toolkit === toolkit && p.toolSlug === tool.slug);
+          return (
+            <li key={tool.slug} className="flex items-center justify-between gap-3 py-2">
+              <span className="min-w-0">
+                <span className="block truncate text-xs font-semibold text-[var(--text-primary)]">{tool.name ?? tool.slug}</span>
+                <span className="block truncate text-[11px] text-[var(--text-muted)]">{tool.description ?? tool.slug}</span>
+              </span>
+              {pinned ? (
+                <button type="button" disabled={busy !== null} onClick={() => void unpin(tool.slug)}
+                  className="shrink-0 rounded-token-sm border border-[var(--border-subtle)] px-2.5 py-1 text-[11px] font-semibold text-[var(--text-primary)] disabled:opacity-50">
+                  {pins.find(p => p.toolkit === toolkit && p.toolSlug === tool.slug)?.riskClass === 'write' ? 'Pinned (can change data) · Revoke' : 'Pinned (read) · Revoke'}
+                </button>
+              ) : (
+                <button type="button" disabled={busy !== null || !enabled} onClick={() => void pin(tool.slug)}
+                  className="shrink-0 rounded-token-sm border border-[var(--border-subtle)] px-2.5 py-1 text-[11px] font-semibold text-[var(--text-primary)] disabled:opacity-50">
+                  Pin tool
+                </button>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
 export function CustomMcpCreateForm({
   onCreated,
   onBack,
@@ -253,6 +334,7 @@ export function CustomMcpManager() {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<string | null>(null);
   const [removeConfirm, setRemoveConfirm] = useState<string | null>(null);
+  const [toolsOpen, setToolsOpen] = useState<string | null>(null);
   const [showCreate, setShowCreate] = useState(false);
   const [review,setReview]=useState<string|null>(null);
 
@@ -493,6 +575,13 @@ export function CustomMcpManager() {
                         {syncBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />}
                         Sync
                       </button>
+                      <button
+                        type="button"
+                        onClick={() => setToolsOpen(toolsOpen === item.slug ? null : item.slug)}
+                        className="inline-flex min-h-9 items-center gap-1.5 rounded-token-sm border border-[var(--border-subtle)] px-3 text-xs font-semibold text-[var(--text-primary)]"
+                      >
+                        Tools
+                      </button>
                       <Link
                         href={customDetailHref(item.slug)}
                         className="inline-flex h-9 w-9 items-center justify-center rounded-full text-[var(--text-primary)] hover:bg-[var(--surface-inset)]"
@@ -511,6 +600,8 @@ export function CustomMcpManager() {
                       </button>
                     </div>
                   </div>
+
+                  {toolsOpen === item.slug ? <CustomMcpToolsPanel toolkit={item.slug} onReview={setReview} /> : null}
 
                   {removeConfirm === item.slug ? (
                     <div className="mt-3 flex flex-col gap-2 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3 sm:flex-row sm:items-center sm:justify-between">

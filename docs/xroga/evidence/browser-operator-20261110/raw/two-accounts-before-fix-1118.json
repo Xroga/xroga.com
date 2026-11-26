@@ -1,0 +1,289 @@
+14:13:20 enroll A
+14:13:35 A enrolled
+14:13:43 A task
+14:14:01 A task done
+14:14:01 sign out A
+14:14:11 signed out
+14:14:19 enroll B
+14:14:56 enroll A again
+{
+ "steps": {
+  "state A before it did anything": {
+   "siteRules": {},
+   "storageKeys": {
+    "browserControl.epoch": 1,
+    "nb.analytics": 49,
+    "nb.analytics.counts": 2,
+    "nb.analytics.queue": 2,
+    "xroga-browser-account": 38,
+    "xroga-browser-device-profile": 38,
+    "xroga-browser-device-v1": 158
+   },
+   "hints": null,
+   "workerJobs": [],
+   "perfEntries": 0,
+   "dbs": [
+    {
+     "name": "nanobrowser",
+     "conversations": []
+    },
+    {
+     "name": "nanobrowser-signed-out",
+     "conversations": []
+    }
+   ],
+   "plugins": {}
+  },
+  "state A after working": {
+   "defaultMode": "auto",
+   "siteRules": {
+    "a-only.example": {
+     "rule": "allow",
+     "setAt": "2026-11-18T14:13:43.141Z"
+    }
+   },
+   "storageKeys": {
+    "browserControl.epoch": 1,
+    "nb.analytics": 74,
+    "nb.analytics.counts": 150,
+    "nb.analytics.queue": 2,
+    "nb.rating": 116,
+    "nb.settings": 22,
+    "nb.siteRules": 70,
+    "xroga-browser-account": 38,
+    "xroga-browser-device-profile": 38,
+    "xroga-browser-device-v1": 158,
+    "xroga_parallel_jobs_v1": 2,
+    "xroga_perf_v1": 899
+   },
+   "hints": null,
+   "workerJobs": [],
+   "perfEntries": 1,
+   "dbs": [
+    {
+     "name": "nanobrowser",
+     "conversations": [
+      "Open example.com and tell me its heading (account A task)"
+     ]
+    },
+    {
+     "name": "nanobrowser-signed-out",
+     "conversations": []
+    }
+   ],
+   "plugins": {}
+  },
+  "state signed out": {
+   "defaultMode": "auto",
+   "siteRules": {
+    "a-only.example": {
+     "rule": "allow",
+     "setAt": "2026-11-18T14:13:43.141Z"
+    }
+   },
+   "storageKeys": {
+    "browserControl.epoch": 1,
+    "nb.analytics": 74,
+    "nb.analytics.counts": 150,
+    "nb.analytics.queue": 2,
+    "nb.rating": 116,
+    "nb.settings": 22,
+    "nb.siteRules": 70,
+    "xroga-browser-account": 38,
+    "xroga-browser-device-profile": 38,
+    "xroga-browser-device-v1": 158,
+    "xroga_parallel_jobs_v1": 2,
+    "xroga_perf_v1": 899
+   },
+   "hints": null,
+   "workerJobs": [],
+   "perfEntries": 1,
+   "dbs": [
+    {
+     "name": "nanobrowser",
+     "conversations": [
+      "Open example.com and tell me its heading (account A task)"
+     ]
+    },
+    {
+     "name": "nanobrowser-signed-out",
+     "conversations": []
+    }
+   ],
+   "plugins": {}
+  },
+  "state B right after signing in": {
+   "defaultMode": "auto",
+   "siteRules": {
+    "a-only.example": {
+     "rule": "allow",
+     "setAt": "2026-11-18T14:13:43.141Z"
+    }
+   },
+   "storageKeys": {
+    "browserControl.epoch": 1,
+    "nb.analytics": 74,
+    "nb.analytics.counts": 150,
+    "nb.analytics.queue": 2,
+    "nb.rating": 116,
+    "nb.settings": 22,
+    "nb.siteRules": 70,
+    "xroga-browser-account": 38,
+    "xroga-browser-device-profile": 38,
+    "xroga-browser-device-v1": 158,
+    "xroga_parallel_jobs_v1": 2,
+    "xroga_perf_v1": 899
+   },
+   "hints": null,
+   "workerJobs": [],
+   "perfEntries": 1,
+   "dbs": [
+    {
+     "name": "nanobrowser",
+     "conversations": [
+      "Open example.com and tell me its heading (account A task)"
+     ]
+    },
+    {
+     "name": "nanobrowser-fa56cf7b-3c41-4278-984d-79e2f2bfc677",
+     "conversations": []
+    },
+    {
+     "name": "nanobrowser-signed-out",
+     "conversations": []
+    }
+   ],
+   "plugins": {}
+  },
+  "state B after working": {
+   "defaultMode": "auto",
+   "siteRules": {
+    "a-only.example": {
+     "rule": "allow",
+     "setAt": "2026-11-18T14:13:43.141Z"
+    }
+   },
+   "storageKeys": {
+    "browserControl.epoch": 1,
+    "nb.analytics": 74,
+    "nb.analytics.counts": 150,
+    "nb.analytics.queue": 2,
+    "nb.rating": 116,
+    "nb.settings": 22,
+    "nb.siteRules": 70,
+    "xroga-browser-account": 38,
+    "xroga-browser-device-profile": 38,
+    "xroga-browser-device-v1": 158,
+    "xroga_parallel_jobs_v1": 2,
+    "xroga_perf_v1": 1609
+   },
+   "hints": null,
+   "workerJobs": [],
+   "perfEntries": 2,
+   "dbs": [
+    {
+     "name": "nanobrowser",
+     "conversations": [
+      "Open example.com and tell me its heading (account A task)"
+     ]
+    },
+    {
+     "name": "nanobrowser-fa56cf7b-3c41-4278-984d-79e2f2bfc677",
+     "conversations": [
+      "Open iana.org and tell me its title (account B task)"
+     ]
+    },
+    {
+     "name": "nanobrowser-signed-out",
+     "conversations": []
+    }
+   ],
+   "plugins": {}
+  },
+  "state A signed in again": {
+   "defaultMode": "auto",
+   "siteRules": {
+    "a-only.example": {
+     "rule": "allow",
+     "setAt": "2026-11-18T14:13:43.141Z"
+    }
+   },
+   "storageKeys": {
+    "browserControl.epoch": 1,
+    "nb.analytics": 74,
+    "nb.analytics.counts": 150,
+    "nb.analytics.queue": 2,
+    "nb.rating": 116,
+    "nb.settings": 22,
+    "nb.siteRules": 70,
+    "xroga-browser-account": 38,
+    "xroga-browser-device-profile": 38,
+    "xroga-browser-device-v1": 158,
+    "xroga_parallel_jobs_v1": 2,
+    "xroga_perf_v1": 1609
+   },
+   "hints": null,
+   "workerJobs": [],
+   "perfEntries": 2,
+   "dbs": [
+    {
+     "name": "nanobrowser",
+     "conversations": [
+      "Open example.com and tell me its heading (account A task)"
+     ]
+    },
+    {
+     "name": "nanobrowser-fa56cf7b-3c41-4278-984d-79e2f2bfc677",
+     "conversations": [
+      "Open iana.org and tell me its title (account B task)"
+     ]
+    },
+    {
+     "name": "nanobrowser-signed-out",
+     "conversations": []
+    }
+   ],
+   "plugins": {}
+  }
+ },
+ "leaks": [
+  {
+   "what": "B sees A's conversation right after signing in",
+   "detail": [
+    "Open example.com and tell me its heading (account A task)"
+   ]
+  },
+  {
+   "what": "B sees A's conversation after working",
+   "detail": [
+    "Open example.com and tell me its heading (account A task)",
+    "Open iana.org and tell me its title (account B task)"
+   ]
+  },
+  {
+   "what": "A sees B's conversation after signing in again",
+   "detail": [
+    "Open example.com and tell me its heading (account A task)",
+    "Open iana.org and tell me its title (account B task)"
+   ]
+  },
+  {
+   "what": "B starts with the permission mode A chose (auto)",
+   "detail": "auto"
+  },
+  {
+   "what": "B inherits A's site rule",
+   "detail": {
+    "a-only.example": {
+     "rule": "allow",
+     "setAt": "2026-11-18T14:13:43.141Z"
+    }
+   }
+  },
+  {
+   "what": "B inherits A's run timings",
+   "detail": 1
+  }
+ ],
+ "ok": false
+}

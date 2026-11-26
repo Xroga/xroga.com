@@ -159,7 +159,10 @@ test('native headings, lists, and tables keep citations beside the supported tex
   assert.match(html, /Default: enabled <a [^>]*data-source-citation/);
   assert.equal((html.match(/href="https:\/\/example\.org\/guide"/g) ?? []).length, 7);
   assert.equal((html.match(/aria-label="Open source 1: Verified setup guide"/g) ?? []).length, 7);
-  assert.match(html, /<th[^>]*><button[^>]*>Documented value\s*<\/button><a [^>]*data-source-citation/);
+  const header = /<th\b[^>]*>([\s\S]*?)<\/th>/.exec(html)?.[1];
+  assert.ok(header);
+  assert.match(header, /^Documented value\s*<a [^>]*data-source-citation/);
+  assert.match(header, /<\/a>\s*<button[^>]*aria-label="Sort by Documented value"[^>]*>Sort<\/button>$/);
   assert.match(html, /Missing: \[9\]/);
   assert.match(html, /Literal: <code class="iui-code">\[1\]<\/code>/);
   assert.doesNotMatch(html, /href="https:\/\/elsewhere\.test/);

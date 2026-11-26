@@ -49,10 +49,18 @@ it('keeps translated public queries and excludes unrelated workspace identifiers
     const contract = goalContractSchema.parse(normalizePlannerDecisionCandidate({ ...decision, publicWebQuery: query }, input));
     assert.equal(contract.publicWebQuery, query);
   }
-  for (const query of [null, '𠀀'.repeat(129), 'Norway rail fares Internal itinerary.txt', 'rail fares synthetic-org/internal-project']) {
+  for (const query of [null, 'Norway rail fares Internal itinerary.txt', 'rail fares synthetic-org/internal-project',
+    'Norway rail fares '.repeat(10) + 'Internal itinerary.txt',
+    'Norway rail fares '.repeat(10) + ' SYNTHETIC_TEST_TOKEN']) {
     const contract = goalContractSchema.parse(normalizePlannerDecisionCandidate({ ...decision, publicWebQuery: query }, input));
     assert.equal(contract.publicWebQuery, null);
   }
+  const long = 'Norway rail fares trip planning high season transport '.repeat(4) + 'site:vy.no after:2026-01-01';
+  const contract = goalContractSchema.parse(normalizePlannerDecisionCandidate({ ...decision, publicWebQuery: long }, input));
+  assert.ok(contract.publicWebQuery);
+  assert.ok([...contract.publicWebQuery].length <= 128);
+  assert.match(contract.publicWebQuery, /^Norway rail fares.*after:2026-01-01.*site:vy\.no$/u);
+  assert.equal(goalContractSchema.parse(normalizePlannerDecisionCandidate({ ...decision, publicWebQuery: '𠀀'.repeat(129) }, input)).publicWebQuery, '𠀀'.repeat(128));
 });
 
 function goal(overrides: Partial<GoalContract> = {}): GoalContract {
@@ -259,6 +267,15 @@ describe('semantic request dispatch', () => {
       message: 'Make a calculator in this answer with a slider for quantity.', attachments: [],
     });
     assert.deepEqual(inline.requiredCapabilities, ['conversation.respond']);
+
+    for (const message of [
+      'Build an interactive paint coverage calculator. Start with 48 square metres of wall, 2 coats, 11 square metres per litre, and 10% extra. Let me change all four values and reset them. Show litres to two decimals and how many whole 2.5 L tins to buy.',
+      'Build an interactive compound-interest calculat or with principal, interest rate and years.',
+    ]) {
+      const answer = enforceInlineAnswerIntent(planned, { message, attachments: [] });
+      assert.equal(dispatchForGoal(answer, answer.requiredCapabilities), 'chat');
+      assert.deepEqual(answer.requiredCapabilities, ['conversation.respond']);
+    }
   });
 
   it('keeps software deliverables, external actions and explicit project controls on their existing routes', () => {
@@ -269,6 +286,8 @@ describe('semantic request dispatch', () => {
       'Build a calculator with a slider and chart from the notes, then deploy it.',
       'Build a calculator with a slider and chart from the notes and send the result.',
       'Build a calculator with a slider.',
+      'Build an interactive paint coverage calculator in the existing app.',
+      'Build an interactive loan calculator and deploy it.',
     ]) assert.equal(enforceInlineAnswerIntent(planned, { message, attachments }), planned);
 
     const message = 'Make a calculator in this answer with a slider.';

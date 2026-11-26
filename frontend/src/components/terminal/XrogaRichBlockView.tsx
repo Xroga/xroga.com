@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type ColumnDef } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Funnel, FunnelChart, LabelList, Legend, Line, LineChart, Pie, PieChart, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer, Scatter, ScatterChart, Tooltip, Treemap, XAxis, YAxis, ZAxis } from 'recharts';
@@ -11,6 +12,7 @@ import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, Circle, Copy, Download, 
 import { safeArtifactUri } from '@/lib/universalOutput';
 import { shouldVirtualizeRows } from '@/lib/xrogaPresentation';
 import { csvFilename, tableToCsv } from '@/lib/xrogaCsv';
+import { copyTextToClipboard } from '@/lib/clipboard';
 import { downloadExportedFile, exportDocumentDocx, exportDocumentPdf, exportPresentationPptx, exportTableXlsx, type XrogaExportFile } from '@/lib/xrogaFileExports';
 import { useXrogaArtifactContext } from '@/lib/xrogaArtifactContext';
 import type { XrogaBlock } from '@/lib/xrogaBlocks';
@@ -87,7 +89,10 @@ function TableRenderer({ block }: { block: TableBlock }) {
   const selectedIds = Object.keys(rowSelection).filter((key) => rowSelection[key]);
   const useSelection = () => addSelection({ artifactId: block.artifactId ?? block.id, blockId: block.id, kind: 'rows', label: `${selectedIds.length} selected row${selectedIds.length === 1 ? '' : 's'} from ${block.title ?? 'table'}`, recordIds: selectedIds });
   const csv = () => tableToCsv(block.columns, block.rows);
-  const copyCsv = async () => { await navigator.clipboard.writeText(csv()); };
+  const copyCsv = async () => {
+    if (await copyTextToClipboard(csv())) toast.success('CSV copied');
+    else toast.error('Could not copy the table. Use Download CSV to save it.');
+  };
   const downloadCsv = () => {
     const url = URL.createObjectURL(new Blob(['\uFEFF', csv()], { type: 'text/csv;charset=utf-8' }));
     const anchor = document.createElement('a');

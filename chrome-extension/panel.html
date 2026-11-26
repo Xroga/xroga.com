@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Xroga Browser Automation</title>
+  <link rel="stylesheet" href="panel.css">
+  <script type="module" src="panel.mjs"></script>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="brand">XROGA</p>
+      <h1>Browser automation</h1>
+      <p>Read the Chrome tab you choose. Requests and results stay in this panel on your device.</p>
+    </header>
+    <form id="task-form">
+      <label for="request">What should Xroga collect?</label>
+      <textarea id="request" maxlength="250" rows="3" required placeholder="Collect the headings and links"></textarea>
+      <button id="prepare" type="submit">Review task</button>
+    </form>
+    <section id="review" hidden aria-labelledby="review-heading">
+      <h2 id="review-heading">Review tab access</h2>
+      <p id="target"></p>
+      <ul id="steps"></ul>
+      <div class="actions">
+        <button type="button" id="run">Read this tab</button>
+        <button type="button" class="secondary" id="stop">Cancel</button>
+      </div>
+    </section>
+    <p id="status" role="status" aria-live="polite"></p>
+    <section id="results" hidden aria-labelledby="results-heading">
+      <div class="actions result-heading">
+        <h2 id="results-heading">Results</h2>
+        <button type="button" class="secondary" id="clear">Clear</button>
+      </div>
+      <div id="report"></div>
+    </section>
+  </main>
+</body>
+</html>

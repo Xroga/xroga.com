@@ -267,6 +267,25 @@ describe(
 describe(
   'prepareAttachments',
   () => {
+    it('retains document text beyond the legacy character budget when the model has room', async () => {
+      const text = 'A note with substantive context. '.repeat(3_000) + 'Exact final clause.';
+      const url = `data:text/plain;base64,${Buffer.from(text).toString('base64')}`;
+      const prepared = await prepareAttachments([{ url, name: 'notes.txt' }], { maxDocumentUtf8Bytes: 200_000 });
+      assert.equal(prepared.documentContextPartial, undefined);
+      assert.ok(prepared.documentBlock.endsWith('Exact final clause.'));
+      assert.equal(prepared.documents[0]!.text, text);
+    });
+
+    it('marks limited document evidence without splitting a UTF-8 character', async () => {
+      const text = '界'.repeat(1_000);
+      const url = `data:text/plain;base64,${Buffer.from(text).toString('base64')}`;
+      const prepared = await prepareAttachments([{ url, name: 'notes.txt' }], { maxDocumentUtf8Bytes: 502 });
+      assert.equal(prepared.documentContextPartial, true);
+      assert.ok(Buffer.byteLength(prepared.documentBlock) <= 502);
+      assert.match(prepared.documentBlock, /界$/);
+      assert.doesNotMatch(prepared.documentBlock, /\uFFFD/);
+    });
+
     it(
       'reads text data URLs as documents',
       async () => {

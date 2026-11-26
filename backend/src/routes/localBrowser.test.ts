@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { once } from 'node:events';
 import { test } from 'node:test';
 import express from 'express';
@@ -16,6 +17,10 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
     SUPABASE_URL: 'http://127.0.0.1:1', SUPABASE_JWT_SECRET: 'test-only-local-browser-signing-secret',
     SUPABASE_SERVICE_ROLE_KEY: '', REQUIRE_REMOTE_AUTH_CHECK: '0',
     XROGA_LOCAL_BROWSER_ALLOWED_USER_IDS: `${owner},${other}`,
+    XROGA_LOCAL_BROWSER_VISION_PROBE: '',
+    ZURELAY_DEEPSEEK_VISION_VERIFIED: '',
+    // This test covers the approval card itself; automatic approval has its own test.
+    XROGA_LOCAL_BROWSER_AUTO_APPROVE: 'off',
   };
   const before = Object.fromEntries(Object.keys(env).map(key => [key, process.env[key]]));
   Object.assign(process.env, env);
@@ -31,25 +36,72 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
   const [ownerToken, otherToken] = await Promise.all([tokenFor(owner), tokenFor(other)]);
   const runs = new MemoryBrowserRunStore();
   const leases = new MemoryLeaseStore();
-  const received: Array<{ runId: string; idempotency: string }> = [];
+  const received: Array<{ runId: string; idempotency: string; messages: unknown }> = [];
   const app = express();
   app.use(express.json());
   app.use(authMiddleware);
+  let pluginRevoked = false;
+  let busy = false;
+  let exhausted = false;
+  let pluginConfirmations = 0;
+  const approvalId = '00000000-0000-4000-8000-000000000003';
+  const receiptId = '00000000-0000-4000-8000-000000000004';
+  app.use((req: import('./localBrowserDevice.js').BrowserDeviceRequest, _res, next) => {
+    if (req.get('x-fixture-device') === '1') req.revalidateBrowserDevice = async () => !pluginRevoked;
+    next();
+  });
   app.use(createLocalBrowserRouter(() => ({ runs, leases }), async request => {
     await request.authority?.revalidate();
+    if (exhausted) throw Object.assign(new Error('capacity'), { code: 'PAID_PROVIDER_CAPACITY_UNAVAILABLE', nextUnlockAt: '2026-11-12T00:00:00.000Z' });
+    // The shared model gate is full: no provider call was made, nothing is charged, the route answers 429 BROWSER_MODEL_BUSY with a short Retry-After.
+    if (busy) throw Object.assign(new Error('Model temporarily busy'), { code: 'MODEL_PROVIDER_BUSY', status: 429 });
     assert.equal(request.modelId, 'deepseek_v4_1_flash_1017');
-    assert.equal(request.platformCostCeiling, 3_000);
+    // The default browser turn reasons at `high` and gets the high policy's output room and spend ceiling; a picture probe stays at `none`.
+    const expected = request.body.reasoning_effort === 'none' ? { ceiling: 3_000, maxTokens: [2_048, 512] } : request.body.reasoning_effort === 'high' ? { ceiling: 120_000, maxTokens: [64_000] } : { ceiling: 150_000, maxTokens: [96_000] };
+    assert.equal(request.platformCostCeiling, expected.ceiling);
+    assert.ok(expected.maxTokens.includes(request.body.max_tokens as number), `max_tokens ${String(request.body.max_tokens)} for ${String(request.body.reasoning_effort)}`);
     assert.equal(request.body.stream, false);
-    received.push({ runId: request.job.runId, idempotency: request.idempotencyKey });
+    received.push({ runId: request.job.runId, idempotency: request.idempotencyKey, messages: request.body.messages });
     return { id: 'fixture-model', choices: [{ finish_reason: 'stop', message: { content: 'Read the catalog.' } }],
       usage: { prompt_tokens: 40, completion_tokens: 10, total_tokens: 50 } };
+  }, {
+    configured: () => true,
+    discover: async (user, _query, context) => {
+      assert.equal(user, owner);
+      assert.equal(context?.userId, owner);
+      return { sessionId: 'fixture-plugin-session', toolkits: [
+        { toolkit: 'googlesheets', connected: true, noAuth: false },
+        { toolkit: 'private_other_app', connected: false, noAuth: false },
+      ], tools: [
+        { slug: 'GOOGLESHEETS_LIST_ROWS', toolkit: 'googlesheets', risk: 'read', inputSchema: { type: 'object' } },
+        { slug: 'GOOGLESHEETS_DELETE_ROW', toolkit: 'googlesheets', risk: 'destructive', inputSchema: {} },
+        { slug: 'PRIVATE_OTHER_APP_LIST', toolkit: 'private_other_app', risk: 'read', inputSchema: {} },
+      ] } as Awaited<ReturnType<typeof import('../services/integrations/composioClient.js').searchComposioTools>>;
+    },
+    prepare: async (user, data) => {
+      assert.equal(user, owner);
+      assert.equal(data.sessionId, 'fixture-plugin-session');
+      assert.equal(data.toolSlug, 'GOOGLESHEETS_LIST_ROWS');
+      return { needsConfirmation: true, confirmation: { id: approvalId, summary: 'Read rows',
+        approval: { accountReference: 'fixture-user-connection' } } } as Awaited<ReturnType<typeof import('../services/integrations/composioClient.js').executeComposioReadTool>>;
+    },
+    confirm: async (context, id, expected) => {
+      assert.equal(context.userId, owner);
+      assert.equal(id, approvalId);
+      assert.deepEqual(expected, { toolkit: 'googlesheets', toolSlug: 'GOOGLESHEETS_LIST_ROWS' });
+      pluginConfirmations++;
+      return { confirmation: { receipt: { id: receiptId } }, execution: {
+        toolSlug: 'GOOGLESHEETS_LIST_ROWS', resultText: 'Verified fixture rows',
+      } } as Awaited<ReturnType<typeof import('../services/integrations/businessActionConfirmations.js').confirmBusinessAction>>;
+    },
+    cancel: async () => { throw new Error('Unexpected cancellation'); },
   }));
   const server = app.listen(0, '127.0.0.1');
   await once(server, 'listening');
   const address = server.address();
   assert.ok(address && typeof address !== 'string');
-  const send = (path: string, method = 'GET', data?: unknown, crossTenant = false) => fetch(`http://127.0.0.1:${address.port}${path}`, {
-    method, headers: { 'content-type': 'application/json', authorization: `Bearer ${crossTenant ? otherToken : ownerToken}` },
+  const send = (path: string, method = 'GET', data?: unknown, crossTenant = false, device = false) => fetch(`http://127.0.0.1:${address.port}${path}`, {
+    method, headers: { 'content-type': 'application/json', authorization: `Bearer ${crossTenant ? otherToken : ownerToken}`, ...(device ? { 'x-fixture-device': '1' } : {}) },
     body: data === undefined ? undefined : JSON.stringify(data),
   });
   try {
@@ -66,12 +118,48 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
     const request = { turn: 1, messages: [{ role: 'user', content: 'Read the catalog.' }] };
     assert.equal((await send(path, 'GET', undefined, true)).status, 404);
     assert.equal((await send(`${path}/turn`, 'POST', request, true)).status, 404);
+    assert.equal((await send('/plugins/catalog')).status, 403);
+    const pluginSearch = (device = true) => send(`${path}/plugin-search`, 'POST', { query: 'List spreadsheet rows' }, false, device);
+    const pluginRead = (slug: string) => send(`${path}/plugin-read`, 'POST', { slug, arguments: {} }, false, true);
+    const review = (run: string, crossTenant = false) =>
+      send(`${run}/plugin-review`, 'POST', { approvalId, decision: 'approve' }, crossTenant, true);
+    assert.equal((await pluginSearch(false)).status, 403);
+    assert.equal((await pluginRead('GOOGLESHEETS_LIST_ROWS')).status, 403);
+    const discovery = await pluginSearch();
+    assert.equal(discovery.status, 200);
+    assert.deepEqual((await discovery.json() as { tools: { slug: string }[] }).tools.map(item => item.slug), ['GOOGLESHEETS_LIST_ROWS']);
+    assert.equal((await pluginSearch()).status, 409);
+    assert.equal((await pluginRead('GOOGLESHEETS_DELETE_ROW')).status, 403);
+    const read = await pluginRead('GOOGLESHEETS_LIST_ROWS');
+    assert.equal(read.status, 200);
+    assert.equal((await read.json() as { approval: { id: string } }).approval.id, approvalId);
+    assert.equal(pluginConfirmations, 0);
+    assert.equal((await review(path, true)).status, 404);
+    const another = await send('/runs', 'POST', { goal: 'Unrelated run', startUrl: 'https://example.com' });
+    assert.equal(another.status, 201);
+    const { runId: anotherRun } = await another.json() as { runId: string };
+    assert.equal((await review('/runs/' + anotherRun)).status, 409);
+    pluginRevoked = true;
+    assert.equal((await review(path)).status, 403);
+    assert.equal(pluginConfirmations, 0);
+    pluginRevoked = false;
+    const approved = await review(path);
+    assert.equal(approved.status, 200);
+    assert.deepEqual(await approved.json(), { receiptId, result: 'Verified fixture rows' });
+    assert.equal((await review(path)).status, 409);
+    assert.equal(pluginConfirmations, 1);
     assert.deepEqual(await runs.listRecoverable(0, 10), []);
     assert.equal((await send(`${path}/turn`, 'POST', { ...request, messages: [{ role: 'user', content: [{ type: 'image_url', image_url: { url: 'https://example.com/private.png' } }] }] })).status, 400);
     assert.equal((await send(`${path}/turn`, 'POST', { ...request, messages: [{ role: 'user', content: 'Bearer example-secret-token' }] })).status, 400);
     assert.equal(received.length, 0);
     assert.equal((await send(`${path}/turn`, 'POST', request)).status, 200);
     assert.equal((await send(`${path}/turn`, 'POST', request)).status, 409);
+    busy = true;
+    const queued = await send(`${path}/turn`, 'POST', { ...request, turn: 2 });
+    assert.equal(queued.status, 429);
+    assert.equal(queued.headers.get('retry-after'), '3');
+    assert.match(JSON.stringify(await queued.json()), /BROWSER_MODEL_BUSY/);
+    busy = false;
     assert.equal((await send(path, 'DELETE')).status, 200);
     assert.equal((await send(`${path}/turn`, 'POST', { ...request, turn: 2 })).status, 409);
     const finished = await send(`${path}/finish`, 'POST', { status: 'completed', result: 'Late result' });
@@ -82,10 +170,30 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
     assert.equal(snapshot.result, null);
     assert.deepEqual(received.map(item => item.runId), [runId]);
 
+    // A read answered from the page with no model turn may complete, and only that: nothing that changes anything can.
+    const readRun = await send('/runs', 'POST', { goal: 'Open example.com and read the first visible heading', startUrl: 'https://example.com/' });
+    const { runId: directRun } = await readRun.json() as { runId: string };
+    const directPath = `/runs/${directRun}`;
+    const finish = (body: unknown, crossTenant = false) => send(`${directPath}/finish`, 'POST', body, crossTenant);
+    const answer = 'The first heading on example.com is "Example Domain".';
+    assert.equal((await finish({ status: 'completed', result: answer, actions: ['navigate', 'read'] })).status, 400, 'no model turn and not marked direct');
+    assert.equal((await finish({ status: 'completed', result: answer, actions: ['navigate', 'click'], direct: true })).status, 400, 'a change is never a direct result');
+    assert.equal((await finish({ status: 'completed', result: answer, actions: [], direct: true })).status, 400, 'a direct result needs its actions');
+    assert.equal((await finish({ status: 'completed', result: 'x'.repeat(601), actions: ['navigate', 'read'], direct: true })).status, 400, 'a direct result is short');
+    assert.equal((await finish({ status: 'completed', result: answer, actions: ['navigate', 'read'], direct: true }, true)).status, 404, 'another account cannot finish it');
+    assert.equal((await finish({ status: 'completed', result: 'The first heading is "Example Domain".', actions: ['navigate', 'read'], direct: true })).status, 400, 'the answer has to name the site the run started on');
+    const completed = await finish({ status: 'completed', result: answer, actions: ['navigate', 'read'], direct: true });
+    assert.equal(completed.status, 200);
+    assert.deepEqual(await completed.json(), { status: 'completed' });
+    // A run whose recorded goal is anything else cannot be completed this way, whatever the flag and the actions say.
+    const other = await send('/runs', 'POST', { goal: 'Open example.com, read the heading and then click the first link', startUrl: 'https://example.com/' });
+    const { runId: otherRun } = await other.json() as { runId: string };
+    assert.equal((await send(`/runs/${otherRun}/finish`, 'POST', { status: 'completed', result: answer, actions: ['navigate', 'read'], direct: true })).status, 400, 'an ineligible goal');
+
     const extended = await send('/runs', 'POST', { goal: 'Read the attached specification', startUrl: 'https://example.com/', attachmentCount: 1 });
     const accepted = await extended.json() as { runId: string; maxTurns: number; remainingMs: number };
     assert.ok(accepted.maxTurns > 12);
-    assert.equal(accepted.remainingMs, 90 * 60_000);
+    assert.equal(accepted.remainingMs, 180 * 60_000);
     const longPath = `/runs/${accepted.runId}`;
     for (let turn = 1; turn <= 15; turn++) {
       assert.equal((await send(`${longPath}/turn`, 'POST', { ...request, turn })).status, 200);
@@ -96,6 +204,77 @@ test('local Chrome shares canonical ownership, turn fencing, cancellation and re
     assert.equal(resumed.turns, 15);
     assert.equal((await send(`${longPath}/turn`, 'POST', { ...request, turn: 15 })).status, 409);
     assert.equal((await send(`${longPath}/turn`, 'POST', { ...request, turn: 16 })).status, 200);
+
+    // A run is admitted in segments: the next one is granted only at the end of the current one, to the owner, and the turn fence holds.
+    const segPath = `/runs/${anotherRun}`;
+    const early = await (await send(`${segPath}/extend`, 'POST', {})).json() as { maxTurns: number; granted: number };
+    assert.equal(early.granted, 0);
+    const firstMax = early.maxTurns;
+    for (let turn = 1; turn <= firstMax - 3; turn++) {
+      assert.equal((await send(`${segPath}/turn`, 'POST', { ...request, turn })).status, 200);
+    }
+    assert.equal((await send(`${segPath}/extend`, 'POST', {}, true)).status, 404);
+    const grant = await (await send(`${segPath}/extend`, 'POST', {})).json() as { maxTurns: number; granted: number; remainingMs: number; turns: number };
+    assert.equal(grant.granted, 96);
+    assert.equal(grant.maxTurns, firstMax + 96);
+    assert.equal(grant.turns, firstMax - 3);
+    assert.ok(grant.remainingMs > 30 * 60_000);
+    assert.equal((await send(`${segPath}/turn`, 'POST', { ...request, turn: firstMax - 2 })).status, 200);
+
+    // No total ceiling: segments keep being granted past the old 48, 100, 120 and 400 turn marks. The turn fence still holds each turn.
+    let turn = firstMax - 1;
+    let max = grant.maxTurns;
+    while (turn <= 450) {
+      if (turn - 1 >= max - 3) {
+        const next = await (await send(`${segPath}/extend`, 'POST', {})).json() as { maxTurns: number; granted: number };
+        assert.equal(next.granted, 96);
+        max = next.maxTurns;
+      }
+      assert.equal((await send(`${segPath}/turn`, 'POST', { ...request, turn })).status, 200);
+      turn++;
+    }
+    assert.ok(max > 450);
+    assert.equal((await send(`${segPath}/turn`, 'POST', { ...request, turn: 400 })).status, 409);
+
+    // The wall-clock segment is renewed too, and a run whose segment has already ended resumes instead of failing.
+    const row = await runs.load(owner, anotherRun);
+    assert.ok(row);
+    row!.state.createdAt = new Date(Date.now() - 7 * 3_600_000).toISOString();
+    const ended = await (await send(`${segPath}/resume`, 'POST', {})).json() as { remainingMs: number; turns: number };
+    assert.ok(ended.remainingMs > 30 * 60_000, 'an ended segment is renewed on resume');
+    assert.equal(ended.turns, 450);
+    const timeOnly = await (await send(`${segPath}/extend`, 'POST', {})).json() as { granted: number };
+    assert.equal(timeOnly.granted, 0, 'nothing to renew while the segment is fresh');
+
+    // The owner's entitlement ledger refusing a turn is a clean, resumable stop: nothing is charged and no run limit is reported.
+    exhausted = true;
+    const refused = await send(`${segPath}/turn`, 'POST', { ...request, turn: 451 });
+    assert.equal(refused.status, 402);
+    assert.deepEqual(await refused.json(), { error: 'BROWSER_ALLOWANCE_EXHAUSTED', nextUnlockAt: '2026-11-12T00:00:00.000Z' });
+    exhausted = false;
+
+    const probeRun = await (await send('/runs', 'POST', { goal: 'Inspect a synthetic image', startUrl: 'https://example.com/' })).json() as { runId: string };
+    const probePath = `/runs/${probeRun.runId}/turn`;
+    const png = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+VODsAAAAASUVORK5CYII=';
+    const probe = { ...request, vision_probe_png: png, tools: [{ type: 'function',
+      function: { name: 'snapshot', parameters: { type: 'object', properties: {} } } }] };
+    assert.equal((await send(probePath, 'POST', probe)).status, 400);
+    const hash = createHash('sha256').update(Buffer.from(png, 'base64')).digest('hex');
+    process.env.XROGA_LOCAL_BROWSER_VISION_PROBE = `${probeRun.runId}:${hash}`;
+    assert.equal((await send(probePath, 'POST', probe)).status, 400);
+    process.env.ZURELAY_DEEPSEEK_VISION_VERIFIED = 'true';
+    assert.equal((await send(probePath, 'POST', probe, true)).status, 404);
+    assert.equal((await send(probePath, 'POST', { ...probe, vision_probe_png: png.replace('AAAB', 'AAAC') })).status, 400);
+    assert.equal((await send(probePath, 'POST', { ...probe, max_tokens: 513 })).status, 400);
+    assert.equal((await send(probePath, 'POST', probe)).status, 200);
+    assert.deepEqual(received.at(-1)?.messages, [{ role: 'user', content: [
+      { type: 'text', text: 'Read the catalog.' },
+      { type: 'image_url', image_url: { url: `data:image/png;base64,${png}`, detail: 'low' } },
+    ] }]);
+    assert.equal((await send(probePath, 'POST', probe)).status, 409);
+    const savedProbe = await runs.load(owner, probeRun.runId);
+    assert.ok(savedProbe);
+    assert.ok(!JSON.stringify(savedProbe).includes(png));
   } finally {
     await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
   }

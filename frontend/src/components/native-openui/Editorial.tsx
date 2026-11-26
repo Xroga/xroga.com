@@ -4,6 +4,7 @@ import { isElementNode } from '@openuidev/lang-core';
 import { defineComponent, useIsStreaming } from '@openuidev/react-lang';
 import { useContext, useRef, useState, type CSSProperties } from 'react';
 import { z } from 'zod/v4';
+import { copyTextToClipboard } from '@/lib/clipboard';
 import { children } from './upstream/components/style';
 import { Glyph } from './upstream/components/glyph';
 import { inline, NativeSectionTitle, NativeVisualContent } from './upstream/components/markdown';
@@ -110,10 +111,8 @@ export const Controls = defineComponent({
       setFeedback('');
       setCopying(true);
       try {
-        await navigator.clipboard.writeText(draft);
-        setFeedback('Filled fields copied.');
-      } catch {
-        setFeedback('Clipboard unavailable. Select the fields to copy manually.');
+        const copied = await copyTextToClipboard(draft);
+        setFeedback(copied ? 'Filled fields copied.' : 'Clipboard unavailable. Select the fields to copy manually.');
       } finally {
         setCopying(false);
       }

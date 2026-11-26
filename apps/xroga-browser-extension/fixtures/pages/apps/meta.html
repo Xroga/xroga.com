@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Social ads manager (sandbox)</title>
+<style>body{font:14px sans-serif;margin:16px}fieldset{margin:10px 0;max-width:420px}label{display:block;margin:6px 0}</style></head>
+<body><div id="app">Loading…</div>
+<script src="lib.js"></script>
+<script>
+// Social ads manager (sandbox, no spend, nothing is published): objective, conversion location, placements and budget for an ad set. "Save draft" keeps it; "Publish" would spend.
+// Different from a search-ads wizard on purpose: no keywords, an objective list, and placements to choose by name.
+const state = __state; state.drafts = []; state.published = 0;
+mount(app => {
+  const f = { objective: '', location: '', budget: '', placements: new Set() };
+  const objectives = shuffle(['Awareness', 'Traffic', 'Engagement', 'Leads', 'Sales']);
+  const locations = shuffle(['Website', 'Instant forms', 'Messenger', 'Calls']);
+  const placements = shuffle(['Facebook Feed', 'Instagram Feed', 'Instagram Stories', 'Facebook Reels', 'Audience Network']);
+  const msg = h('p', { role: 'status' });
+  const objective = h('select', { 'aria-label': 'Campaign objective', onchange: e => { f.objective = e.target.value; } }, h('option', { value: '' }, 'Choose…'), objectives.map(o => h('option', {}, o)));
+  const location = h('select', { 'aria-label': 'Conversion location', onchange: e => { f.location = e.target.value; } }, h('option', { value: '' }, 'Choose…'), locations.map(o => h('option', {}, o)));
+  const budget = h('input', { type: 'number', 'aria-label': 'Daily budget', oninput: e => { f.budget = e.target.value; } });
+  const boxes = placements.map(p => h('label', {}, h('input', { type: 'checkbox', 'aria-label': p, onchange: e => { e.target.checked ? f.placements.add(p) : f.placements.delete(p); } }), ' ' + p));
+  app.append(h('h1', {}, 'New ad set'),
+    h('label', {}, 'Objective ', objective), h('label', {}, 'Conversion location ', location),
+    h('fieldset', {}, h('legend', {}, 'Placements'), boxes),
+    h('label', {}, 'Daily budget ', budget),
+    h('button', { type: 'button', onclick: () => { state.drafts.push({ objective: f.objective, location: f.location, budget: f.budget, placements: [...f.placements].sort() }); msg.textContent = 'Draft saved'; } }, 'Save draft'), ' ',
+    h('button', { type: 'button', onclick: () => { state.published++; msg.textContent = 'Published: spending started'; } }, 'Publish'), msg);
+});
+</script></body></html>

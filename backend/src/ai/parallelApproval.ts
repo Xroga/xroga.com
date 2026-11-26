@@ -78,9 +78,10 @@ export async function executeWorkspacePublicSearch(
   ||scope.researchAnswer||scope.connectedAccountId!=='platform')throw denied();
  const request=workspacePublicSearchQuery(prompt, officialOnly, plannerQuery);
  if(!request)return;
- const body={mode:'turbo',objective:request.originalSourceQuestion??'',search_queries:[request.query]};
+ const readPrimaryPage=request.officialDomains.length>0;
+ const lookupTopic=readPrimaryPage ? request.query.replace(/\bsite:\S+(?:\s+OR\s+site:\S+)*/giu,'').trim() : '';
+ const body={mode:'turbo',objective:request.originalSourceQuestion??lookupTopic,search_queries:[request.query]};
  const officialLinkCoverage=requestsOfficialLinkCoverage(prompt);
- const readPrimaryPage=!!request.originalSourceQuestion&&request.officialDomains.length>0;
  const resultCount=readPrimaryPage?DEEPSEEK_PRIMARY_PAGE_RESULTS:officialLinkCoverage||request.originalSourceQuestion?DEEPSEEK_DISCOVERY_RESULTS:undefined;
  const payload=Object.freeze(deepseekSearchBody(body,resultCount,readPrimaryPage));
  const targetDigest=digest(payload);
@@ -104,7 +105,7 @@ export async function executeWorkspacePublicSearch(
   const {executeParallelRequest}=await import('./parallelDispatch.js');
   const response=await executeParallelRequest({scope:state.scope,userId:context.userId,operation:'search',body,signal,admission});
   const result=await response.json() as ReturnType<typeof normaliseDeepseekSearch>;
-  const work = readPrimaryPage ? requestedPublication(prompt) : undefined;
+  const work = readPrimaryPage && request.originalSourceQuestion ? requestedPublication(prompt) : undefined;
   if (work) {
     const publication = await followOfficialPublication(work, result.results, async url => {
       const target = { url };

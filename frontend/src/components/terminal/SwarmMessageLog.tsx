@@ -518,6 +518,9 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
             const nativeShare = nativeProse && (nativeAnswer?.program || msg.webSources?.length || nativeAnswer?.documentDownload)
               ? buildNativeOpenUiShare(nativeProse, nativeAnswer?.program ?? '', msg.webSources, nativeAnswer?.documentDownload) : undefined;
             const nativeCopy = nativeProse ? appendCitationReferences(nativeProse, msg.webSources) : undefined;
+            const copyContent = msg.role === 'assistant'
+              ? nativeCopy ?? responseTextV2(msg) ?? [publicAnswerText(msg.content), shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')
+              : msg.content;
             const webSourceCount = retrievedWebSourceCount(msg);
             const webEvidence = webSourceCount > 0 ? (
               <p className="mb-2 flex items-center gap-1.5 text-xs leading-normal text-[var(--foreground)]/70">
@@ -619,7 +622,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                   <ConversationTurnV2 role={msg.role} content={msg.content}
                     message={msg}
                     richResponse={nativeShare}
-                    copyContent={nativeCopy ?? responseTextV2(msg) ?? [publicAnswerText(msg.content), shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')}
+                    copyContent={copyContent}
                     prompt={promptByAssistantId.get(msg.id)}
                     streaming={msg.id === animatingId && loading}
                     controls={msg.buildStopped || msg.capacityUnavailable || msg.updateTrail || (currentTurn && openInteractionsForTurn(terminalRun.events, msg.content).length) ? <>{msg.buildStopped || msg.capacityUnavailable || msg.updateTrail ? taskControls : null}{currentTurn ? <RequiredInteractionCards interactions={openInteractionsForTurn(terminalRun.events, msg.content)} /> : null}</> : undefined}
@@ -669,7 +672,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                         <MessageBubbleActions
                           role="assistant"
                           richResponse={nativeShare}
-                          content={nativeCopy ?? [publicAnswerText(msg.content), shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')}
+                          content={copyContent}
                           messageId={msg.id}
                           createdAt={msg.createdAt}
                           prompt={promptByAssistantId.get(msg.id)}
@@ -678,7 +681,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                       {!msg.content && msg.featureOutput && (
                         <MessageBubbleActions
                           role="assistant"
-                          content={shareableDocumentText(msg.featureOutput)}
+                          content={copyContent}
                           messageId={msg.id}
                           createdAt={msg.createdAt}
                           prompt={promptByAssistantId.get(msg.id)}

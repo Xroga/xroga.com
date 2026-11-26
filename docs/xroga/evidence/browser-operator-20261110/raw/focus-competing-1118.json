@@ -1,0 +1,41 @@
+{
+  "names": [
+    "focus-competing"
+  ],
+  "args": {},
+  "timedOut": false,
+  "reports": [
+    {
+      "name": "focus-competing",
+      "ok": true,
+      "startedAt": "2026-11-18T19:23:33.341Z",
+      "durationMs": 14711,
+      "result": {
+        "focusedWindowDuringRun": true,
+        "phase1": {
+          "ownRows": 2,
+          "rivalRows": 0,
+          "status": "Done"
+        },
+        "phase2": {
+          "status": "done",
+          "rivalRows": 0,
+          "clickResults": [
+            {
+              "error": true
+            },
+            {
+              "error": true
+            }
+          ]
+        },
+        "phase3": {
+          "foreignTabClickRefused": true,
+          "ownRows": 1,
+          "rivalRows": 0
+        }
+      }
+    }
+  ],
+  "console": []
+}

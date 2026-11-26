@@ -13,7 +13,12 @@ const require=createRequire(new URL('../../package.json',import.meta.url)),ts=re
 // to replace UI-only leaves, never Share parsing or founder-access policy.
 const nativeShareId='../../../../../backend/src/ai/nativeOpenUiShare';
 const nativePresentationId='../../../../../backend/src/ai/nativeOpenUi';
+const shareLimitsId='../../../../../backend/src/lib/messageShareLimits';
+const shareLimitsPath='../../backend/src/lib/messageShareLimits.ts';
 const pureSources={
+  [shareLimitsId]:shareLimitsPath,
+  '../../../../backend/src/lib/messageShareLimits':shareLimitsPath,
+  '../lib/messageShareLimits.js':shareLimitsPath,
   [nativeShareId]:'../../backend/src/ai/nativeOpenUiShare.ts',
   [nativePresentationId]:'../../backend/src/ai/nativeOpenUi.ts',
   '../../../backend/src/ai/nativeOpenUi':'../../backend/src/ai/nativeOpenUi.ts',
@@ -79,6 +84,7 @@ function fixture(origin,authenticated=true){
     '@/lib/hostedWorkspaceBridge.mjs':{hostedWorkspaceRequest},
     [nativeShareId]:pureModule(nativeShareId),
     [nativePresentationId]:pureModule(nativePresentationId),
+    [shareLimitsId]:pureModule(shareLimitsId),
     '@/lib/publicAnswerText':pureModule('@/lib/publicAnswerText'),
     '@/components/native-openui/NativeWorkspaceAnswer':{NativeWorkspaceAnswer(){throw Error('UI rendering is outside this transport fixture');}},
     '@/components/terminal/SourceLogo':{SourceLogo(){throw Error('UI rendering is outside this transport fixture');}},
@@ -156,7 +162,7 @@ test('real Share loader validates both snapshot API versions without changing te
     payload={...payload,response:`Review the exact research request before it is sent: [Review action](${review}). No live evidence has been retrieved.`+requestedCode};
     const savedReview=await f.loadShare(token);
     assert.equal(savedReview.status,'ok');
-    assert.equal(savedReview.share.response,'This search was awaiting review in Workspace.'+requestedCode);
+    assert.equal(savedReview.share.response,'This saved search has no sources.'+requestedCode);
   }finally{api.closeAllConnections();await new Promise(r=>api.close(r));}
 });
 
@@ -202,5 +208,16 @@ test('real Share loader preserves authoritative text and rejects unsafe native p
     assert.equal(recovered.native,undefined);
     assert.equal(recovered.share.richUnavailable,true);
     assert.equal(calls,5);
+
+    const longResponse = Array.from({length: 1_100}, (_, index) => 'Long verified answer paragraph '+index+' with its own independently readable detail.').join('\n\n');
+    const longSnapshot = buildNativeOpenUiShare(longResponse, program, [{title:'Evidence',url:'https://example.com/evidence'}]);
+    assert.ok(longResponse.length > 60_000);
+    assert.ok(longSnapshot);
+    payload={...base,response:longResponse,richResponse:longSnapshot};
+    const longShare=await f.loadShare(token);
+    assert.equal(longShare.status,'ok');
+    assert.equal(longShare.share.response,longResponse);
+    assert.equal(longShare.native?.program,program);
+    assert.equal(calls,6);
   }finally{api.closeAllConnections();await new Promise(r=>api.close(r));}
 });

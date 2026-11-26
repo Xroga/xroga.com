@@ -5,8 +5,8 @@ import { publicRuntimeFailure, RuntimeFailure } from './runtimeFailure.js';
 test('a genuine provider 429 is a truthful rate-limit error without raw provider data or automatic retry',()=>{
   const result=publicRuntimeFailure(Object.assign(Error('secret provider response'),{status:429}));
   assert.equal(result.status,429);assert.equal(result.body.code,'PROVIDER_UNAVAILABLE');
-  assert.equal(result.body.retryable,false);assert.match(result.body.error,/rate limited/);
-  assert.doesNotMatch(result.body.error,/secret provider response/);
+  assert.equal(result.body.retryable,false);
+  assert.equal(result.body.error,'Answers are temporarily unavailable.');
 });
 
 test('only a real safety decision returns safety language', () => {
@@ -36,6 +36,5 @@ test('empty provider completions have a safe operational error without automatic
   assert.equal(failure.status, 502);
   assert.equal(failure.body.code, 'PROVIDER_UNAVAILABLE');
   assert.equal(failure.body.retryable, false);
-  assert.match(failure.body.error, /returned no answer/);
-  assert.doesNotMatch(failure.body.error, /private upstream|internal runtime|safety/i);
+  assert.equal(failure.body.error, 'No answer was generated for this request.');
 });

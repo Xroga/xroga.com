@@ -1,0 +1,35 @@
+{
+ "steps": {
+  "enrolled": {
+   "configured": true,
+   "saved": true,
+   "verified": true,
+   "ready": true
+  },
+  "mode": "offline",
+  "workStarted": true,
+  "offlineAt": "2026-11-18T15:16:31.055Z",
+  "networkBack": true,
+  "workerBack": true,
+  "resumeOffered": true,
+  "pressedResume": true,
+  "resumeTimedOut": true,
+  "settledAfterInterruption": true,
+  "titlesAfterResume": [
+   "Guido van Rossum",
+   "James Gosling"
+  ],
+  "followUpSent": true,
+  "titlesFinal": [
+   "Guido van Rossum",
+   "James Gosling",
+   "Hoare",
+   "Griesemer"
+  ],
+  "answerTail": "d found no such field. The article text says Graydon Hoare created Rust in 2006 while at Mozilla) Go (programming language) November 10, 2009 Robert Griesemer, Rob Pike, Ken Thompson Copy Save as CSV Notes: Only the \"First appeared\" and \"Designed by\" values come from the infoboxes; the \"created 2006\" detail for Rust comes from the article body, not the infobox, and is flagged as such. On Go, the infobox label is \"Designed by\"; Python and Java infoboxes use the same field for their designers. now"
+ },
+ "ok": false,
+ "failures": [
+  "the resumed run did not settle"
+ ]
+}

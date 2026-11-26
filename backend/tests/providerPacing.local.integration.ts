@@ -9,7 +9,7 @@ import pg from 'pg';
 test('real PostgreSQL provider admission excludes competing workers, fences replay and preserves accounting',async t=>{
   assert.equal(process.env.XB01_DISPOSABLE_DATABASE,'1');
   const url=new URL(process.env.XB01_PACING_TEST_DATABASE_URL!);
-  assert.equal(url.hostname,'127.0.0.1');assert.equal(url.port,'5432');assert.equal(url.pathname,'/xb01_tenant_test');
+  assert.equal(url.hostname,'127.0.0.1');assert.ok(['5432','55437'].includes(url.port));assert.equal(url.pathname,'/xb01_tenant_test');
   const admin=new pg.Client({connectionString:url.href});await admin.connect();
   const name='xroga_pacing_'+randomUUID().replaceAll('-','');
   await admin.query(`CREATE DATABASE ${name}`);url.pathname='/'+name;
@@ -34,11 +34,11 @@ test('real PostgreSQL provider admission excludes competing workers, fences repl
   for(const id of reservations)await pool.query("INSERT INTO public.xroga_provider_reservations VALUES($1,$2,$3,'reserved','deepseek_v4_1_flash_1017',1000,NULL)",[id,cycle,owner]);
   const sql=readFileSync(new URL('../../docs/operations/zurelay-product-pacing-20261104/provider-request-pacing.sql',import.meta.url),'utf8');
   await pool.query(sql);
-  const claim=async(index:number,who=owner,role='service_role')=>{
+  const claim=async(index:number,who=owner,role='service_role', fingerprint=key)=>{
     assert.ok(['service_role','anon','authenticated'].includes(role));
     const client=await pool.connect();
     try{await client.query('BEGIN');await client.query(`SET LOCAL ROLE ${role}`);
-      const result=await client.query('SELECT public.claim_xroga_model_request($1,$2,$3,$4) AS receipt',[who,reservations[index],key,tokens[index]]);
+      const result=await client.query('SELECT public.claim_xroga_model_request($1,$2,$3,$4) AS receipt',[who,reservations[index],fingerprint,tokens[index]]);
       await client.query('COMMIT');return result.rows[0].receipt as {granted:boolean;retry_after_ms:number};
     }finally{await client.query('ROLLBACK');client.release();}
   };
@@ -93,4 +93,25 @@ test('real PostgreSQL provider admission excludes competing workers, fences repl
   await pool.query(rollback);
   await pool.query(sql);
   assert.equal((await claim(30)).granted,true,'The forward migration can be re-applied after a rollback');
+  const v2=readFileSync(new URL('../../docs/operations/zurelay-product-pacing-20261104/provider-request-capacity-v2.sql',import.meta.url),'utf8');
+  await pool.query(v2);
+  assert.equal((await claim(29)).granted,false,'Existing lease remains live after migration');
+  await release(tokens[30]);
+  const fastKey='b'.repeat(64);
+  await pool.query('INSERT INTO public.xroga_model_request_capacity (key_fingerprint,dispatch_interval_ms,max_in_flight,max_per_user) VALUES ($1,600,8,2)',[fastKey]);
+  const secondOwner=randomUUID(), secondCycle=randomUUID();
+  await pool.query("INSERT INTO public.xroga_billing_cycles VALUES($1,$2,'active',now()-interval '1 day',now()+interval '1 day')",[secondCycle,secondOwner]);
+  await pool.query('UPDATE public.xroga_provider_reservations SET user_id=$1,cycle_id=$2 WHERE id=$3',[secondOwner,secondCycle,reservations[31]]);
+  const advance=()=>pool.query("UPDATE public.xroga_model_request_capacity SET next_dispatch_at='-infinity' WHERE key_fingerprint=$1",[fastKey]);
+  assert.equal((await claim(0,owner,'service_role',fastKey)).granted,true);
+  const pacing=await claim(1,owner,'service_role',fastKey);
+  assert.equal(pacing.granted,false);assert.ok(pacing.retry_after_ms>0&&pacing.retry_after_ms<=600);
+  await advance();
+  assert.equal((await claim(1,owner,'service_role',fastKey)).granted,true,'One owner can use two slots');
+  await advance();
+  assert.equal((await claim(2,owner,'service_role',fastKey)).granted,false,'An owner cannot consume the next slot');
+  assert.equal((await claim(31,secondOwner,'service_role',fastKey)).granted,true,'Another owner can progress without waiting for completion');
+  await pool.query('SELECT public.release_xroga_model_request($1,$2,$3)',[fastKey,tokens[31],10]);
+  assert.ok((await claim(2,owner,'service_role',fastKey)).retry_after_ms>9_000,'A provider 429 holds the whole key');
+  await assert.rejects(claim(2,owner,'authenticated',fastKey),/permission denied/);
 });

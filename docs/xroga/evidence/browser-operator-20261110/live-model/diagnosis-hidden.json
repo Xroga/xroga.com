@@ -1,0 +1,179 @@
+[
+  {
+    "saved": 0,
+    "dialogClosed": false,
+    "coveredSaveAttempts": 0,
+    "turns": 11,
+    "wallMs": 41586,
+    "strategyNote": true,
+    "diagnosisNote": false,
+    "notes": [
+      "[Nanobrowser note: The tab you already have open (name) is now this run's tab. Work in it; do not open another copy.]",
+      "[Nanobrowser note: Method chosen from what the page shows: VISUAL_GUI (fallback that reads the screenshot; the outline is nearly empty, the page is painted or s",
+      "<browser-state>\ntime: 2026-11-20 18:14 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:14 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:14 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:14 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:14 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:14 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:14 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:14 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:14 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:14 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "[Nanobrowser note: the run is stopping: the run reached its turn limit. Only done is available now: call done with \"partial\" or \"failed\" and an honest summary o",
+      "<browser-state>\ntime: 2026-11-20 18:14 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>"
+    ],
+    "log": [
+      "click:e1"
+    ]
+  },
+  {
+    "saved": 1,
+    "dialogClosed": true,
+    "coveredSaveAttempts": 2,
+    "turns": 11,
+    "wallMs": 51990,
+    "strategyNote": true,
+    "diagnosisNote": false,
+    "notes": [
+      "[Nanobrowser note: The tab you already have open (name) is now this run's tab. Work in it; do not open another copy.]",
+      "[Nanobrowser note: Method chosen from what the page shows: VISUAL_GUI (fallback that reads the screenshot; the outline is nearly empty, the page is painted or s",
+      "<browser-state>\ntime: 2026-11-20 18:14 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:15 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:15 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:15 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:15 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:15 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:15 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:15 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:15 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:15 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "[Nanobrowser note: the run is stopping: the run reached its turn limit. Only done is available now: call done with \"partial\" or \"failed\" and an honest summary o",
+      "<browser-state>\ntime: 2026-11-20 18:15 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>"
+    ],
+    "log": [
+      "click:Save",
+      "click:Close",
+      "click:Save"
+    ]
+  },
+  {
+    "saved": 0,
+    "dialogClosed": true,
+    "coveredSaveAttempts": 1,
+    "turns": 11,
+    "wallMs": 36340,
+    "strategyNote": true,
+    "diagnosisNote": false,
+    "notes": [
+      "[Nanobrowser note: The tab you already have open (name) is now this run's tab. Work in it; do not open another copy.]",
+      "[Nanobrowser note: Method chosen from what the page shows: VISUAL_GUI (fallback that reads the screenshot; the outline is nearly empty, the page is painted or s",
+      "<browser-state>\ntime: 2026-11-20 18:15 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:15 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:15 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:15 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:15 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:16 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:16 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:16 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:16 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:16 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "[Nanobrowser note: the run is stopping: the run reached its turn limit. Only done is available now: call done with \"partial\" or \"failed\" and an honest summary o",
+      "<browser-state>\ntime: 2026-11-20 18:16 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>"
+    ],
+    "log": [
+      "click:Save",
+      "click:Close"
+    ]
+  },
+  {
+    "saved": 1,
+    "dialogClosed": true,
+    "coveredSaveAttempts": 2,
+    "turns": 11,
+    "wallMs": 49477,
+    "strategyNote": true,
+    "diagnosisNote": false,
+    "notes": [
+      "[Nanobrowser note: The tab you already have open (name) is now this run's tab. Work in it; do not open another copy.]",
+      "[Nanobrowser note: Method chosen from what the page shows: VISUAL_GUI (fallback that reads the screenshot; the outline is nearly empty, the page is painted or s",
+      "<browser-state>\ntime: 2026-11-20 18:16 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:16 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:16 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:16 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:16 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:16 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:16 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:16 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:16 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:16 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "[Nanobrowser note: the run is stopping: the run reached its turn limit. Only done is available now: call done with \"partial\" or \"failed\" and an honest summary o",
+      "<browser-state>\ntime: 2026-11-20 18:17 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>"
+    ],
+    "log": [
+      "click:Save",
+      "click:Close",
+      "click:Save"
+    ]
+  },
+  {
+    "saved": 1,
+    "dialogClosed": true,
+    "coveredSaveAttempts": 2,
+    "turns": 11,
+    "wallMs": 39589,
+    "strategyNote": true,
+    "diagnosisNote": false,
+    "notes": [
+      "[Nanobrowser note: The tab you already have open (name) is now this run's tab. Work in it; do not open another copy.]",
+      "[Nanobrowser note: Method chosen from what the page shows: VISUAL_GUI (fallback that reads the screenshot; the outline is nearly empty, the page is painted or s",
+      "<browser-state>\ntime: 2026-11-20 18:17 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:17 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:17 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:17 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:17 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:17 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:17 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:17 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:17 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:17 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "[Nanobrowser note: the run is stopping: the run reached its turn limit. Only done is available now: call done with \"partial\" or \"failed\" and an honest summary o",
+      "<browser-state>\ntime: 2026-11-20 18:17 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>"
+    ],
+    "log": [
+      "click:Save",
+      "click:Close",
+      "click:Save"
+    ]
+  },
+  {
+    "saved": 1,
+    "dialogClosed": true,
+    "coveredSaveAttempts": 2,
+    "turns": 11,
+    "wallMs": 52371,
+    "strategyNote": true,
+    "diagnosisNote": false,
+    "notes": [
+      "[Nanobrowser note: The tab you already have open (name) is now this run's tab. Work in it; do not open another copy.]",
+      "[Nanobrowser note: Method chosen from what the page shows: VISUAL_GUI (fallback that reads the screenshot; the outline is nearly empty, the page is painted or s",
+      "<browser-state>\ntime: 2026-11-20 18:17 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:17 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:18 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:18 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:18 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:18 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:18 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:18 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:18 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "<browser-state>\ntime: 2026-11-20 18:18 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>",
+      "[Nanobrowser note: the run is stopping: the run reached its turn limit. Only done is available now: call done with \"partial\" or \"failed\" and an honest summary o",
+      "<browser-state>\ntime: 2026-11-20 18:18 (Asia/Karachi) · mode: ask\nactive tab: [1] «Profile» «https://shop.example.test/profile» · rev 3\n</browser-state>"
+    ],
+    "log": [
+      "click:Save",
+      "click:Close",
+      "click:Save"
+    ]
+  }
+]

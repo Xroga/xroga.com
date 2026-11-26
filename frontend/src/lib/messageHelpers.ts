@@ -1,4 +1,5 @@
 import { isTrivialConversation, isTrivialPrompt } from './promptClassifier';
+import { isSavedSearchStatus, savedSearchReviewLink } from './connectedAppResult';
 import {
   analyzeCreation,
   hasDeployableCreation,
@@ -18,7 +19,10 @@ export interface MessageSuggestions {
 }
 
 export function generateMessageSuggestions(userText: string, aiText: string): MessageSuggestions {
-  if (!aiText.trim()) return { followUps: [], refine: [], deploy: [], creationType: 'chat', creationLabel: 'Chat' };
+  const answer = aiText.trim();
+  if (!answer || isSavedSearchStatus(answer) || savedSearchReviewLink(answer)) {
+    return { followUps: [], refine: [], deploy: [], creationType: 'chat', creationLabel: 'Chat' };
+  }
   const analysis = analyzeCreation(userText, aiText);
   const trivial = isTrivialConversation(userText, aiText);
   const type = trivial ? 'chat' : analysis.creationType;

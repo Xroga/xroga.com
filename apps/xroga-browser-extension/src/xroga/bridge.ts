@@ -1,0 +1,507 @@
+import { getWorkspaceExtensionStatus, isWorkspaceSender, WORKSPACE_URL } from './workspace';
+import { deviceProof, deviceRequest, directConfigured, directReady, enrollDevice, PAIR_KEY, DEVICE_PROFILE,
+  revokeDevice, savedDevice, verifyDevice } from './device';
+
+const CONNECT = 'xroga.browser.connect.v1';
+const STATUS = 'xroga.browser.paired.v1';
+const CONNECTION = 'xroga.browser.connection.v1';
+const PORT = 'xroga-browser-v1';
+const SIGNED_OUT = 'xroga-browser-explicit-signout';
+const PAIR_TAB_KEY = 'xroga-browser-workspace-tab';
+const VERIFIED_TAB_KEY = 'xroga-browser-verified-workspace-tab';
+const UUID = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
+
+interface WorkspaceMessage {
+  type?: string;
+  nonce?: string;
+  account?: string;
+  device?: boolean;
+  id?: string;
+  ok?: boolean;
+  value?: unknown;
+}
+
+type Operation = 'start' | 'resume' | 'extend' | 'turn' | 'finish' | 'document' | 'voice' | 'authorize-device'
+  | 'plugin-search' | 'plugin-read' | 'plugin-review' | 'plugin-action-search' | 'plugin-act' | 'plugin-act-review' | 'public-get' | 'plugin-connect' | 'repo-run' | 'repo-change';
+type Pending = { succeed: (value: unknown) => void; fail: (error: Error) => void };
+type PairFailure = 'sign-in' | 'unavailable' | 'extension-id' | 'account' | 'failed';
+let pairing: { nonce: string; tabId: number; expires: number; started: number } | undefined;
+let pairFailure: PairFailure | undefined;
+let opening: Promise<void> | undefined;
+let autoAttempted = false;
+let pairTabId: number | undefined;
+let workspace: chrome.runtime.Port | undefined;
+let deviceMode = false;
+let enrolling = false;
+let signingOut = false;
+let restoredDevice = false;
+const pending = new Map<string, Pending>();
+const disconnectHandlers = new Set<() => void>();
+export type WorkspaceTextFile = { name: string; text: string };
+let taskHandler: ((goal: string, startUrl: string, files: WorkspaceTextFile[]) => Promise<void>) | undefined;
+let cancelHandler: ((runId: string) => void) | undefined;
+let controlHandler: ((type: 'pause-task' | 'resume-task', runId: string) => Promise<void>) | undefined;
+let connectedHandler: (() => Promise<void>) | undefined;
+let activityHandler: ((runId: string) => Promise<void>) | undefined;
+
+export function workspacePaired() {
+  return !signingOut && !enrolling && (deviceMode ? directReady() : !!workspace);
+}
+export function onWorkspaceDisconnect(handler: () => void) {
+  disconnectHandlers.add(handler);
+  return () => disconnectHandlers.delete(handler);
+}
+
+function panelSender(sender: chrome.runtime.MessageSender) {
+  if (sender.id !== chrome.runtime.id || !sender.url) return false;
+  const url = new URL(sender.url);
+  return (
+    url.protocol === 'chrome-extension:' && url.hostname === chrome.runtime.id && url.pathname === '/sidepanel.html'
+  );
+}
+
+async function openPairing(manual: boolean) {
+  if (signingOut) return;
+  if (directConfigured() && await savedDevice()) {
+    deviceMode = true;
+    if (await verifyDevice() || !manual) return;
+    workspace?.disconnect();
+    workspace = undefined;
+  }
+  if (!manual && directConfigured() && (await chrome.storage.local.get(SIGNED_OUT))[SIGNED_OUT]) return;
+  if (workspace) return;
+  if (!manual && autoAttempted) return;
+  autoAttempted = true;
+  if (opening) return opening;
+  if (pairing && Date.now() < pairing.expires && pairFailure !== 'failed' && pairFailure !== 'unavailable') {
+    if (manual && pairFailure === 'sign-in') {
+      await chrome.tabs.update(pairing.tabId, { active: true });
+      return;
+    }
+    if (!pairFailure && Date.now() - pairing.started < 25_000) return;
+  }
+  opening = startPairing(manual).finally(() => {
+    opening = undefined;
+  });
+  return opening;
+}
+
+async function startPairing(manual: boolean) {
+  const nonce = crypto.randomUUID();
+  const storedTab = pairTabId ?? (await chrome.storage.session.get(PAIR_TAB_KEY))[PAIR_TAB_KEY];
+  const previous = typeof storedTab === 'number' ? await chrome.tabs.get(storedTab).catch(() => undefined) : undefined;
+  const origin = new URL(WORKSPACE_URL).origin;
+  const isWorkspace = (url?: string) => isWorkspaceSender({ origin, url, frameId: 0 });
+  // A browser startup can leave our tab blank while its first navigation is pending.
+  // Only reuse our tab while both its committed and pending URLs are safe to replace.
+  const canReuse =
+    previous &&
+    (!previous.url || previous.url === 'about:blank' || isWorkspace(previous.url)) &&
+    (!previous.pendingUrl || previous.pendingUrl === 'about:blank' || isWorkspace(previous.pendingUrl));
+  const tab = canReuse ? previous : await chrome.tabs.create({ url: 'about:blank', active: false });
+  if (tab.id === undefined) throw new Error('Could not open Workspace.');
+  pairTabId = tab.id;
+  await chrome.storage.session.set({ [PAIR_TAB_KEY]: tab.id });
+  const started = Date.now();
+  pairing = { nonce, tabId: tab.id, started, expires: started + 5 * 60_000 };
+  pairFailure = undefined;
+  const url = new URL(WORKSPACE_URL);
+  url.searchParams.set('browserExtension', chrome.runtime.id);
+  url.searchParams.set('browserPair', nonce);
+  try {
+    await chrome.tabs.update(tab.id, { url: url.href, ...(manual ? { active: true } : {}) });
+  } catch (error) {
+    if (pairing?.nonce === nonce) pairing = undefined;
+    throw error;
+  }
+}
+
+export function listenForWorkspace(
+  start: (goal: string, startUrl: string, files: WorkspaceTextFile[]) => Promise<void>,
+  cancel: (runId: string) => void,
+  control: (type: 'pause-task' | 'resume-task', runId: string) => Promise<void>,
+  connected: () => Promise<void>,
+  activity: (runId: string) => Promise<void>,
+) {
+  taskHandler = start;
+  cancelHandler = cancel;
+  controlHandler = control;
+  connectedHandler = connected;
+  activityHandler = activity;
+  chrome.tabs.onRemoved.addListener(tabId => {
+    if (tabId === pairTabId) {
+      pairTabId = undefined;
+      void chrome.storage.session.remove(PAIR_TAB_KEY).catch(() => undefined);
+    }
+    if (tabId === pairing?.tabId) pairing = undefined;
+    void chrome.storage.session
+      .get(VERIFIED_TAB_KEY)
+      .then(async stored => {
+        if (stored[VERIFIED_TAB_KEY] === tabId) await chrome.storage.session.remove(VERIFIED_TAB_KEY);
+      })
+      .catch(() => undefined);
+  });
+  chrome.runtime.onMessage.addListener(
+    (message: { type?: string; name?: unknown; base64?: unknown; automatic?: boolean }, sender, reply) => {
+      if (!panelSender(sender)) return;
+      if (message?.type === STATUS) reply(workspacePaired());
+      if (message?.type === 'xroga.browser.plugins.v1') {
+        const input = message as typeof message & { op?: string; toolkit?: unknown; search?: unknown; cursor?: unknown; mode?: unknown };
+        void (async () => {
+          const device = await savedDevice();
+          if (!device || signingOut) return reply({ error: 'Sign in to Xroga to use plugins.' });
+          if (input.op === 'catalog') {
+            const query = new URLSearchParams();
+            if (typeof input.search === 'string') query.set('search', input.search.slice(0, 120));
+            if (typeof input.cursor === 'string') query.set('cursor', input.cursor.slice(0, 1000));
+            return reply(await deviceRequest(device, '/plugins/catalog?' + query.toString(), 'GET'));
+          }
+          if (input.op === 'connected') return reply(await deviceRequest(device, '/plugins/connected', 'GET'));
+          // The account-wide choice has no app: Full access for every app.
+          if (input.op === 'permission' && !input.toolkit) return reply(await deviceRequest(device, '/plugins/permission', 'GET'));
+          if (input.op === 'setPermission' && !input.toolkit && (input.mode === 'always_ask' || input.mode === 'full_access' || input.mode === 'low_risk')) {
+            return reply(await deviceRequest(device, '/plugins/permission', 'POST', { mode: input.mode }));
+          }
+          if (typeof input.toolkit === 'string' && /^[a-z0-9_-]{2,80}$/i.test(input.toolkit)) {
+            if (input.op === 'details') return reply(await deviceRequest(device, '/plugins/details/' + input.toolkit, 'GET'));
+            if (input.op === 'link') return reply(await deviceRequest(device, '/plugins/link', 'POST', { toolkit: input.toolkit }));
+            if (input.op === 'permission') return reply(await deviceRequest(device, '/plugins/permission/' + input.toolkit, 'GET'));
+            if (input.op === 'setPermission' && (input.mode === 'always_ask' || input.mode === 'read_only' || input.mode === 'low_risk' || input.mode === 'full_access')) {
+              return reply(await deviceRequest(device, '/plugins/permission', 'POST', { toolkit: input.toolkit, mode: input.mode }));
+            }
+          }
+          return reply({ error: 'Invalid plugin request.' });
+        })().catch(error => reply({ error: error?.code === 'BROWSER_PLUGIN_NOT_CONFIGURED'
+          ? 'Plugins are not configured on this release.' : 'Xroga could not load plugins. Check your connection and retry.' }));
+        return true;
+      }
+      if (message?.type === 'xroga.browser.sign-out.v1' && deviceMode && !enrolling && !signingOut) {
+        signingOut = true;
+        void (async () => {
+          await chrome.storage.local.set({ [SIGNED_OUT]: true });
+          for (const handler of disconnectHandlers) handler();
+          await revokeDevice();
+          await chrome.storage.session.remove([VERIFIED_TAB_KEY, PAIR_TAB_KEY]);
+          pairing = undefined;
+          workspace?.disconnect();
+          reply(true);
+          // Drop in-memory tabs, journals and panel subscriptions at the account boundary.
+          setTimeout(() => chrome.runtime.reload(), 50);
+        })().catch(() => { signingOut = false; reply(false); });
+        return true;
+      }
+      if (message?.type === CONNECTION) {
+        void (async () => {
+          if (directConfigured() && await savedDevice()) {
+            deviceMode = true;
+            const wasReady = directReady();
+            const ready = await verifyDevice();
+            if (ready && !restoredDevice) {
+              restoredDevice = true;
+              void connectedHandler?.().catch(() => undefined);
+            } else if (wasReady && !ready) {
+              for (const handler of disconnectHandlers) handler();
+            }
+          }
+          const waiting = pairing && Date.now() - pairing.started < 25_000;
+          reply({
+            paired: !signingOut && workspacePaired(),
+            direct: deviceMode,
+            voice: !!workspace,
+            connecting: enrolling || (!pairFailure && !!waiting),
+            failure: pairFailure ?? (pairing && !waiting ? 'timeout' : undefined),
+          });
+        })().catch(() => reply({ paired: false, connecting: false, failure: 'failed' }));
+        return true;
+      }
+      if (
+        message?.type === 'xroga.browser.voice.v1' &&
+        typeof message.base64 === 'string' &&
+        message.base64.length >= 684 &&
+        message.base64.length <= 5_140_000 &&
+        message.base64.startsWith('UklGR')
+      ) {
+        void workspaceRequest('voice', { body: message.base64 }).then(
+          value => reply(value),
+          () => reply(null),
+        );
+        return true;
+      }
+      if (
+        message?.type === 'xroga.browser.document.v1' &&
+        typeof message.name === 'string' &&
+        /\.(?:pdf|docx|xlsx)$/i.test(message.name) &&
+        typeof message.base64 === 'string' &&
+        message.base64.length <= 34_952_536
+      ) {
+        void workspaceRequest('document', { body: { name: message.name, base64: message.base64 } }).then(
+          value => reply(value),
+          // The reason (password-protected, no text, invalid) reaches the panel so it can say what is wrong with the file.
+          (error: { detail?: { reason?: unknown } } | null) => {
+            const code = Array.isArray(error?.detail?.reason) ? error.detail.reason[0] : undefined;
+            const reason = typeof code === 'string' && /^DOC_[A-Z_]{1,20}$/.test(code) ? code.slice(4).toLowerCase() : undefined;
+            reply(reason ? { reason } : null);
+          },
+        );
+        return true;
+      }
+      if (message?.type === CONNECT) {
+        void openPairing(message.automatic !== true).then(
+          () => reply(true),
+          () => reply(false),
+        );
+        return true;
+      }
+      return;
+    },
+  );
+  chrome.runtime.onMessageExternal.addListener((message: unknown, sender, reply) => {
+    const status = getWorkspaceExtensionStatus(message, sender);
+    if (status) reply({ ...status, paired: workspace?.sender?.tab?.id === sender.tab?.id && !!workspace });
+    const resume = message as { type?: unknown } | null;
+    const tabId = sender.tab?.id;
+    if (resume?.type === 'xroga.browser.reconnect.v1' && isWorkspaceSender(sender) && typeof tabId === 'number') {
+      void (async () => {
+        const stored = await chrome.storage.session.get(VERIFIED_TAB_KEY);
+        const signedOut = directConfigured() && (await chrome.storage.local.get(SIGNED_OUT))[SIGNED_OUT];
+        if (signingOut || signedOut || workspace || (pairing && Date.now() < pairing.expires)) return null;
+        if (stored[VERIFIED_TAB_KEY] !== tabId) {
+          // After Chrome restarts there is no remembered tab. Only an enrolled,
+          // currently valid device can link an optional new Workspace tab.
+          if (!directConfigured() || !await savedDevice() || !await verifyDevice()) return null;
+          deviceMode = true;
+          if (signingOut || workspace || (pairing && Date.now() < pairing.expires)) return null;
+        }
+        const started = Date.now();
+        const nonce = crypto.randomUUID();
+        pairing = { nonce, tabId, started, expires: started + 5 * 60_000 };
+        pairFailure = undefined;
+        return { nonce };
+      })().then(reply, () => reply(null));
+      return true;
+    }
+    const failure = message as { type?: unknown; nonce?: unknown; reason?: unknown } | null;
+    if (
+      failure?.type === 'xroga.browser.pair-failed.v1' &&
+      isWorkspaceSender(sender) &&
+      pairing &&
+      sender.tab?.id === pairing.tabId &&
+      failure.nonce === pairing.nonce &&
+      Date.now() < pairing.expires &&
+      (failure.reason === 'sign-in' ||
+        failure.reason === 'unavailable' ||
+        failure.reason === 'extension-id' ||
+        failure.reason === 'failed')
+    ) {
+      pairFailure = failure.reason;
+      reply(true);
+    }
+    return undefined;
+  });
+  chrome.runtime.onConnectExternal.addListener(port => {
+    if (port.name !== PORT || !isWorkspaceSender(port.sender) || port.sender?.tab?.id !== pairing?.tabId) {
+      port.disconnect();
+      return;
+    }
+    let authorizing = false;
+    const expires = setTimeout(() => {
+      if (workspace !== port) port.disconnect();
+    }, 15_000);
+    port.onMessage.addListener(
+      (message: WorkspaceMessage & { goal?: string; startUrl?: string; runId?: string; files?: unknown }) => {
+        if (!message || typeof message !== 'object') return;
+        if (workspace === port) {
+          if (message.type === 'result' && typeof message.id === 'string') {
+            const current = pending.get(message.id);
+            if (!current) return;
+            if (message.ok === true) current.succeed(message.value);
+            else current.fail(new Error('Workspace rejected the browser request.'));
+          }
+          if (enrolling || signingOut) return;
+          if (
+            message.type === 'start-task' &&
+            typeof message.goal === 'string' &&
+            message.goal.trim() &&
+            message.goal.length <= 16_000 &&
+            (message.startUrl === undefined ||
+              (typeof message.startUrl === 'string' && message.startUrl.length <= 2_048))
+          ) {
+            const files = message.files ?? [];
+            if (
+              !Array.isArray(files) ||
+              files.length > 5 ||
+              !files.every(
+                file =>
+                  file &&
+                  typeof file === 'object' &&
+                  typeof file.name === 'string' &&
+                  file.name.length <= 200 &&
+                  typeof file.text === 'string' &&
+                  file.text.length > 0 &&
+                  new TextEncoder().encode(file.text).byteLength <= 2 * 1024 * 1024,
+              )
+            ) {
+              postWorkspace({ type: 'task-error' });
+              return;
+            }
+            void taskHandler?.(message.goal.trim(), message.startUrl ?? '', files).catch(() =>
+              postWorkspace({ type: 'task-error' }),
+            );
+          }
+          if (message.type === 'cancel-task' && typeof message.runId === 'string' && UUID.test(message.runId)) {
+            cancelHandler?.(message.runId);
+          }
+          if (message.type === 'activity-history' && typeof message.runId === 'string' && UUID.test(message.runId)) {
+            void activityHandler?.(message.runId).catch(() => undefined);
+          }
+          if (
+            (message.type === 'pause-task' || message.type === 'resume-task') &&
+            typeof message.runId === 'string' &&
+            UUID.test(message.runId)
+          ) {
+            const runId = message.runId;
+            void controlHandler?.(message.type, runId).catch(() =>
+              postWorkspace({ type: 'resume-unavailable', runId }),
+            );
+          }
+          return;
+        }
+        const challenge = pairing;
+        if (
+          authorizing ||
+          workspace ||
+          message.type !== 'pair' ||
+          !challenge ||
+          Date.now() >= challenge.expires ||
+          message.nonce !== challenge.nonce ||
+          !message.account ||
+          !UUID.test(message.account)
+        ) {
+          port.disconnect();
+          return;
+        }
+        authorizing = true;
+        pairing = undefined;
+        const account = message.account;
+        void (async () => {
+          const stored = (await chrome.storage.local.get(PAIR_KEY))[PAIR_KEY];
+          if (stored && stored !== account) {
+            pairFailure = 'account';
+            port.postMessage({ type: 'pair-rejected', status: 'account' });
+            port.disconnect();
+            return;
+          }
+          if (message.device && directConfigured()) {
+            workspace = port; // The pending port may answer only the authorization request until enrollment succeeds.
+            deviceMode = true;
+            enrolling = true;
+            try {
+              const saved = await savedDevice();
+              if (saved?.account !== account || !await verifyDevice()) {
+                const proof = await deviceProof();
+                const approval = await relayRequest('authorize-device', { body: proof.challenge });
+                await enrollDevice(account, proof.verifier, approval);
+              }
+              await chrome.storage.local.remove(SIGNED_OUT);
+              restoredDevice = true;
+            } finally {
+              enrolling = false;
+            }
+          } else {
+            if (deviceMode || (directConfigured() && (await chrome.storage.local.get(SIGNED_OUT))[SIGNED_OUT])) {
+              throw new Error('Standalone Xroga sign-in is unavailable on this Workspace.');
+            }
+            const profile = (await chrome.storage.local.get(DEVICE_PROFILE))[DEVICE_PROFILE];
+            await chrome.storage.local.set({ [PAIR_KEY]: account, [DEVICE_PROFILE]: profile ?? account });
+          }
+          await chrome.storage.session.set({ [VERIFIED_TAB_KEY]: challenge.tabId });
+          port.postMessage({ type: 'paired' });
+          workspace = port;
+          autoAttempted = false;
+          pairFailure = undefined;
+          clearTimeout(expires);
+          void connectedHandler?.().catch(() => undefined);
+        })().catch(() => {
+          pairFailure = 'failed';
+          try {
+            port.disconnect();
+          } catch {
+            /* already closed */
+          }
+        });
+      },
+    );
+    port.onDisconnect.addListener(() => {
+      clearTimeout(expires);
+      if (workspace !== port) return;
+      workspace = undefined;
+      for (const request of pending.values()) request.fail(new Error('Workspace disconnected.'));
+      if (!deviceMode) for (const handler of disconnectHandlers) handler();
+    });
+  });
+}
+
+export function postWorkspace(value: Record<string, unknown>) {
+  try {
+    workspace?.postMessage(value);
+  } catch {
+    /* the disconnect listener stops pending work */
+  }
+}
+
+export async function workspaceRequest(op: Operation, value: unknown, signal?: AbortSignal): Promise<unknown> {
+  if (directConfigured() && op !== 'voice' && op !== 'authorize-device') {
+    const device = await savedDevice();
+    if (device || deviceMode) {
+      if (!device) throw new Error('Sign in to Xroga to run browser tasks.');
+      const { runId, body } = value as { runId?: string; body?: unknown };
+      const path = op === 'start' ? '/runs' : op === 'document' ? '/documents' : '/runs/' + runId + '/' + op;
+      if (op !== 'start' && op !== 'document' && (!runId || !UUID.test(runId))) throw new Error('Invalid Xroga run.');
+      return deviceRequest(device, path, 'POST', op === 'start' ? value : body, signal);
+    }
+  }
+  if (op === 'plugin-search' || op === 'plugin-read' || op === 'plugin-review' || op === 'plugin-action-search' || op === 'plugin-act' || op === 'plugin-act-review') {
+    throw new Error('Sign in to the Xroga extension to use connected apps.');
+  }
+  return relayRequest(op, value, signal);
+}
+
+function relayRequest(op: Operation, value: unknown, signal?: AbortSignal): Promise<unknown> {
+  const port = workspace;
+  if (!port) return Promise.reject(new Error('Connect the Xroga Workspace first.'));
+  return new Promise((resolve, reject) => {
+    const id = crypto.randomUUID();
+    const timer = setTimeout(() => stop(), 85_000);
+    const cleanup = () => {
+      clearTimeout(timer);
+      pending.delete(id);
+      signal?.removeEventListener('abort', stop);
+    };
+    const stop = () => {
+      cleanup();
+      try {
+        port.postMessage({ type: 'abort', id });
+      } catch {
+        /* already closed */
+      }
+      reject(new Error('Browser request stopped or timed out.'));
+    };
+    pending.set(id, {
+      succeed: result => {
+        cleanup();
+        resolve(result);
+      },
+      fail: error => {
+        cleanup();
+        reject(error);
+      },
+    });
+    if (signal?.aborted) return stop();
+    signal?.addEventListener('abort', stop, { once: true });
+    try {
+      port.postMessage({ type: 'request', id, op, value });
+    } catch {
+      stop();
+    }
+  });
+}

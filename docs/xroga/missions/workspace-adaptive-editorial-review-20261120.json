@@ -10,6 +10,8 @@
   "risk": "high",
   "scope": "Validate explicit procedure decisions across representations, admit independently public Workspace research, preserve explicitly requested document downloads, and keep native answers responsive without changing model routing or execution boundaries.",
   "changedFiles": [
+    "backend/src/ai/answerCoverage.ts",
+    "backend/src/ai/answerFormat.ts",
     "backend/src/ai/black-hole/webIntelligence.ts",
     "backend/src/ai/nativeDocumentDownload.test.ts",
     "backend/src/ai/nativeDocumentDownload.ts",
@@ -27,15 +29,31 @@
     "backend/src/ai/pipeline.ts",
     "backend/src/ai/researchAnswer.test.ts",
     "backend/src/ai/tenantModelDispatch.test.ts",
+    "backend/src/ai/universal/runtimeFailure.test.ts",
+    "backend/src/ai/universal/runtimeFailure.ts",
+    "backend/src/ai/workspaceAnswerContinuation.test.ts",
+    "backend/src/ai/workspaceAnswerContinuation.ts",
     "backend/src/ai/workspacePublicSearch.ts",
     "frontend/e2e/command3-auth.spec.ts",
     "frontend/e2e/phase4-admin-share.security.mjs",
+    "frontend/src/components/native-openui/NativeSurface.tsx",
     "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
+    "frontend/src/components/native-openui/surface.css",
+    "frontend/src/components/native-openui/upstream/components/layout.tsx",
     "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
     "frontend/src/components/native-openui/upstream/components/markdown.tsx",
+    "frontend/src/components/response-experience-v2/exportText.test.ts",
+    "frontend/src/lib/assistantCopy.test.ts",
+    "frontend/src/lib/connectedAppResult.test.ts",
+    "frontend/src/lib/connectedAppResult.ts",
     "frontend/src/lib/formatAiMarkdown.tsx",
+    "frontend/src/lib/messageHelpers.test.ts",
+    "frontend/src/lib/messageHelpers.ts",
+    "frontend/src/lib/publicAnswerText.ts",
     "frontend/src/lib/xrogaFileExports.test.ts",
     "frontend/src/lib/xrogaFileExports.ts",
+    "frontend/src/lib/xrogaResponseDocument.test.ts",
+    "frontend/src/lib/xrogaResponseDocument.ts",
     "scripts/verify-native-openui-browser.mjs"
   ],
   "decisions": {
@@ -54,8 +72,16 @@
       "Remove directions to unavailable calculator inputs while retaining the worked calculation and unrelated content.",
       "Keep calculator sensitivity and boundary examples distinct from the active result being checked.",
       "Keep a sensitivity chart's computed series separate from the calculator's selected value while still checking explicit labeled scalar rows.",
+      "Correct an explicit local percentage when its numerator and denominator identify unique evaluated calculator readouts in the same unit. Preserve the correction in both the rendered program and the saved answer.",
+      "Place a directly requested primary calculator before background prose when it is the first validated interactive block, preserving deliberate reading order and the complete written answer.",
       "Apply a verified local factual correction in place when it resolves the only flagged issue in an ordinary plain answer.",
-      "Reuse an unchanged native answer tree during unrelated Workspace updates."
+      "Reuse an unchanged native answer tree during unrelated Workspace updates.",
+      "Keep native boxes within the reading column and let their contents determine height.",
+      "Respect explicit prose-only or excluded presentation formats in final response assembly.",
+      "Show a plain status when the owner’s saved research cannot be reviewed, without unrelated follow-ups or a retry instruction.",
+      "Keep available evidence visible when an ordinary Search has no answer, and preserve a valid continuation when a native presentation stops mid-program.",
+      "Render recovered native Markdown and literal duplicate code once while keeping canonical text available for Copy and Share.",
+      "Keep provider diagnostics and retry details out of public failure messages."
     ],
     "replace": [],
     "deprecate": []
@@ -104,6 +130,12 @@
       "reference": "backend/src/ai/nativeOpenUiEditorial.test.ts"
     },
     {
+      "command": "tsx --test backend/src/ai/nativeOpenUiValues.test.ts",
+      "scope": "Repair explicit calculator ratios through native presentation and Share while leaving mixed units, ambiguous metrics and independent examples intact.",
+      "negative": true,
+      "reference": "backend/src/ai/nativeOpenUiValues.test.ts"
+    },
+    {
       "command": "tsx --test backend/src/ai/researchAnswer.test.ts",
       "scope": "Verify public query projection, settled and tenant-private evidence before synthesis, failure without repeat dispatch, and the approval barrier for private context.",
       "negative": true,
@@ -117,9 +149,15 @@
     },
     {
       "command": "playwright test -c frontend/playwright.config.ts command3-auth.spec.ts",
-      "scope": "Verify signed-in rendered responses, Copy, Share revocation and Reopen on isolated accounts.",
+      "scope": "Verify signed-in rendered responses, Copy, Share revocation and Reopen, including obsolete and reviewable research records on isolated accounts.",
       "negative": true,
       "reference": "frontend/e2e/command3-auth.spec.ts"
+    },
+    {
+      "command": "node scripts/verify-native-openui-browser.mjs",
+      "scope": "Verify oversized boxes reflow, short model dimensions keep prose visible, and SVG geometry remains intact across viewport widths.",
+      "negative": true,
+      "reference": "scripts/verify-native-openui-browser.mjs"
     }
   ],
   "architecture": {

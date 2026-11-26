@@ -1,0 +1,205 @@
+/**
+ * On-demand use of a public GitHub repository: fetch it at an exact commit into memory, hand its files (and any extra files the caller
+ * supplies, such as a small script) to the isolated sandbox worker, run one command there, and return the real output and files.
+ *
+ * Nothing is installed or kept: the checkout exists only inside one worker request and is removed when it ends. The run has NO network
+ * (the worker enforces and verifies this), so it can use the repository's own code and the language's standard library but cannot
+ * install packages or fetch data; anything that needs the network belongs to a separately verified restricted-network stage.
+ * Retrieval here uses the bounded public reader (public https only, no private ranges, size and time limits) against two GitHub hosts.
+ */
+import { gunzipSync } from 'node:zlib';
+import { boundedPublicGet } from '../security/boundedPublicGet.js';
+import type { ProjectFile } from '../ai/patches.js';
+import { selectSandboxProvider } from './sandboxProviders.js';
+import type { SandboxArtifact } from './sandboxTypes.js';
+import { meterRemoteWorkerRun, type RemoteRunOwner } from './meteredExecution.js';
+import { buildAcquisitionPlan, AcquisitionError, type Ecosystem, type PinnedPackage, type ResolvedPackage } from './dependencyAcquisition.js';
+import { createWorkerExecutionPort } from './workerExecutionPort.js';
+import { inspectAgentSkill, type SkillReport } from './agentSkill.js';
+import { SandboxUnavailableError } from './sandboxTypes.js';
+
+export class RepoRunError extends Error {
+  constructor(readonly code: string, message: string) { super(message); this.name = 'RepoRunError'; }
+}
+
+const MAX_TARBALL_BYTES = 12 * 1024 * 1024;
+const MAX_FILE_BYTES = 1024 * 1024;
+const MAX_TOTAL_BYTES = 8 * 1024 * 1024;
+const MAX_FILES = 2_000;
+const COMMANDS = new Set(['python3', 'node', 'sh']);
+
+export function parseRepositoryUrl(raw: string): { owner: string; repo: string } {
+  const match = /^https:\/\/github\.com\/([A-Za-z0-9_.-]{1,100})\/([A-Za-z0-9_.-]{1,100}?)(?:\.git)?\/?$/.exec(raw.trim());
+  if (!match || match[1] === '.' || match[2] === '.' || match[1] === '..' || match[2] === '..') throw new RepoRunError('REPO_URL_INVALID', 'Only a public https://github.com/OWNER/REPO address is supported.');
+  return { owner: match[1], repo: match[2] };
+}
+
+/** A minimal tar reader: regular files only, with pax long-path support (GitHub archives use it). Never follows links. */
+export function readTarball(tar: Buffer, meta: { commit?: string } = {}): Array<{ path: string; data: Buffer }> {
+  const files: Array<{ path: string; data: Buffer }> = [];
+  let offset = 0;
+  let paxPath: string | undefined;
+  const text = (start: number, length: number) => tar.toString('utf8', start, start + length).replace(/\0[\s\S]*$/, '');
+  while (offset + 512 <= tar.length) {
+    const start = offset;
+    if (tar.subarray(start, start + 512).every(byte => byte === 0)) break;
+    const size = parseInt(text(start + 124, 12).trim() || '0', 8);
+    const type = String.fromCharCode(tar[start + 156] || 48);
+    if (!Number.isFinite(size) || size < 0) throw new RepoRunError('REPO_ARCHIVE_INVALID', 'The repository archive is malformed.');
+    const body = tar.subarray(start + 512, start + 512 + size);
+    offset = start + 512 + Math.ceil(size / 512) * 512;
+    if (type === 'x') {
+      paxPath = /(?:^|\n)\d+ path=([^\n]*)\n/.exec(body.toString('utf8'))?.[1];
+      continue;
+    }
+    if (type === 'g') {
+      // GitHub puts the exact commit of the archive in its global header: that is the version, with no API call.
+      const sha = /(?:^|\n)\d+ comment=([0-9a-f]{40})\n/.exec(body.toString('utf8'))?.[1];
+      if (sha) meta.commit = sha;
+      continue;
+    }
+    const prefix = text(start + 345, 155);
+    const name = paxPath ?? (prefix ? `${prefix}/${text(start, 100)}` : text(start, 100));
+    paxPath = undefined;
+    if (type !== '0') continue; // directories, links and special files are never extracted
+    const relative = name.split('/').slice(1).join('/'); // drop the archive's top directory
+    if (!relative || relative.startsWith('.git/') || relative.split('/').includes('..') || relative.startsWith('/')) continue;
+    files.push({ path: relative, data: Buffer.from(body) });
+  }
+  return files;
+}
+
+export function textFiles(entries: Array<{ path: string; data: Buffer }>): { files: ProjectFile[]; omitted: number } {
+  const files: ProjectFile[] = [];
+  let omitted = 0;
+  let total = 0;
+  for (const entry of entries) {
+    if (files.length >= MAX_FILES || entry.data.length > MAX_FILE_BYTES || total + entry.data.length > MAX_TOTAL_BYTES || entry.data.includes(0)) { omitted++; continue; }
+    total += entry.data.length;
+    files.push({ path: entry.path, content: entry.data.toString('utf8') });
+  }
+  return { files, omitted };
+}
+
+/** Fetches a public repository at a branch, tag or commit into memory; returns its text files and the exact 40-character commit. */
+export async function fetchRepositoryFiles(owner: string, repo: string, ref: string): Promise<{ files: ProjectFile[]; omitted: number; commit: string }> {
+  const archive = await boundedPublicGet(`https://codeload.github.com/${owner}/${repo}/tar.gz/${encodeURIComponent(ref)}`, { maxBytes: MAX_TARBALL_BYTES, timeoutMs: 30_000, maxRedirects: 2, allowHttpErrors: true });
+  if (archive.statusCode === 404) throw new RepoRunError('REPO_NOT_FOUND', `That public repository or version (${ref}) was not found. Check the owner and name; leave the version out to use the repository's default branch, or give an existing branch, tag or full commit.`);
+  if (archive.statusCode !== 200) throw new RepoRunError('REPO_ARCHIVE_UNAVAILABLE', `The repository archive could not be fetched (${archive.statusCode}).`);
+  const meta: { commit?: string } = {};
+  const { files, omitted } = textFiles(readTarball(gunzipSync(archive.bytes, { maxOutputLength: 64 * 1024 * 1024 }), meta));
+  const commit = meta.commit ?? '';
+  if (!/^[0-9a-f]{40}$/.test(commit)) throw new RepoRunError('REPO_VERSION_UNRESOLVED', 'The exact version could not be determined from the archive.');
+
+  return { files, omitted, commit };
+}
+
+export interface RepoRunInput {
+  url: string;
+  ref?: string;
+  command: string;
+  args: string[];
+  files?: ProjectFile[];
+  timeoutMs?: number;
+  /** The verified owner and run the compute is recorded against (from the route's tenant context and leased run, never the body). */
+  owner?: RemoteRunOwner;
+  /** Exact-pinned packages to install first, hash-checked and licence-reviewed, behind the egress allowlist (see dependencyAcquisition.ts). */
+  dependencies?: { ecosystem: Ecosystem; packages: PinnedPackage[]; acknowledgedLicences?: string[] };
+  /** Further public repositories placed in their own subdirectories of the same run (at most 3), each at its own exact version. */
+  repositories?: Array<{ url: string; ref?: string; directory: string }>;
+  /** A directory (in the main repository, or a listed one) whose SKILL.md and scripts are inspected, never executed by the inspection. */
+  inspectSkill?: string;
+}
+
+export interface RepoRunResult {
+  repository: string;
+  commit: string;
+  filesSent: number;
+  omittedFiles: number;
+  exitCode: number | null;
+  stdout: string;
+  stderr: string;
+  timedOut: boolean;
+  durationMs: number;
+  artifacts: readonly SandboxArtifact[];
+  runtime: string;
+  stages?: ReadonlyArray<{ id: string; exitCode: number | null; durationMs: number; timedOut: boolean }>;
+  repositories?: ReadonlyArray<{ repository: string; commit: string; directory: string }>;
+  skill?: SkillReport;
+  /** What the installed packages (transitive ones included) declare as licences, from an offline report stage. */
+  licenceReport?: string;
+  dependencies?: ReadonlyArray<Pick<ResolvedPackage, 'name' | 'version' | 'licence' | 'licenceClass'> & { hashes: number }>;
+}
+
+export async function runRepository(input: RepoRunInput): Promise<RepoRunResult> {
+  const { owner, repo } = parseRepositoryUrl(input.url);
+  if (!COMMANDS.has(input.command)) throw new RepoRunError('REPO_COMMAND_UNSUPPORTED', 'The command must be python3, node or sh.');
+  const ref = (input.ref ?? 'HEAD').trim();
+  if (!/^[A-Za-z0-9._-]{1,100}$/.test(ref) || ref.includes('..')) throw new RepoRunError('REPO_REF_INVALID', 'The version must be a branch, tag or commit name without slashes.');
+
+  // The isolation must be available before anything is fetched or sent.
+  const selected = await selectSandboxProvider();
+  if (!selected.runtime) throw new RepoRunError('SANDBOX_UNAVAILABLE', selected.availability.detail ?? 'No isolated execution worker is available.');
+
+  const { files, omitted, commit } = await fetchRepositoryFiles(owner, repo, ref);
+
+  const extra: Array<{ repository: string; commit: string; directory: string }> = [];
+  for (const more of (input.repositories ?? []).slice(0, 3)) {
+    const dir = more.directory.replace(/^\/+|\/+$/g, '');
+    if (!/^[A-Za-z0-9_.-]{1,60}(?:\/[A-Za-z0-9_.-]{1,60}){0,2}$/.test(dir) || dir.split('/').some(part => part === '..' || part === '.') || dir.startsWith('xroga-out')) throw new RepoRunError('REPO_DIRECTORY_INVALID', 'A repository directory must be a short relative path.');
+    const parsed = parseRepositoryUrl(more.url);
+    const moreRef = (more.ref ?? 'HEAD').trim();
+    if (!/^[A-Za-z0-9._-]{1,100}$/.test(moreRef) || moreRef.includes('..')) throw new RepoRunError('REPO_REF_INVALID', 'The version must be a branch, tag or commit name without slashes.');
+    const got = await fetchRepositoryFiles(parsed.owner, parsed.repo, moreRef);
+    for (const file of got.files) files.push({ path: `${dir}/${file.path}`, content: file.content });
+    extra.push({ repository: `${parsed.owner}/${parsed.repo}`, commit: got.commit, directory: dir });
+  }
+  const skill = input.inspectSkill === undefined ? undefined : inspectAgentSkill(files, input.inspectSkill);
+  const own = (input.files ?? []).filter(file => /^[A-Za-z0-9_./-]{1,200}$/.test(file.path) && !file.path.split('/').includes('..') && !file.path.startsWith('/') && !file.path.startsWith('xroga-out'));
+  const byPath = new Map<string, ProjectFile>(files.map(file => [file.path, file]));
+  for (const file of own) byPath.set(file.path, file); // the caller's own files win over a repository file of the same name
+
+  const runtime = selected.runtime;
+  const timeoutMs = Math.min(300_000, Math.max(1_000, input.timeoutMs ?? 120_000));
+  // Node's engine reserves address space it never touches, so its data-segment allowance is larger; the cap still bounds the process.
+  const limits = { memoryMb: input.dependencies?.ecosystem === 'npm' || input.command === 'node' ? 2048 : 1024, cpuSeconds: 120, diskMb: 256, maxProcesses: 128 };
+  const environment: Record<string, string> = { PYTHONDONTWRITEBYTECODE: '1', PYTHONPATH: '.', ...(input.dependencies?.ecosystem === 'npm' ? { NODE_PATH: '.xroga-deps/node_modules' } : {}) };
+
+  if (input.dependencies) {
+    let plan;
+    try { plan = await buildAcquisitionPlan({ ...input.dependencies }); }
+    catch (error) { if (error instanceof AcquisitionError) throw new RepoRunError(`DEPENDENCY_${error.code}`, error.message); throw error; }
+    if (!plan.ready) throw new RepoRunError('DEPENDENCY_LICENCE_REVIEW', `These packages need a licence review before they can be installed: ${plan.needsReview.map(p => `${p.name} (${p.licence})`).join('; ')}. Acknowledge them by name to proceed.`);
+    for (const file of plan.files) byPath.set(file.path, { path: file.path, content: file.content });
+    const port = createWorkerExecutionPort({ runtime: async () => runtime, owner: async () => input.owner });
+    let result;
+    try {
+      result = await port.execute({
+        files: [...byPath.values()], command: input.command, args: input.args, timeoutMs, networkPolicy: 'registry-only', environment, limits,
+        stages: [...plan.stages, { id: 'run', command: input.command, args: input.args, networkPolicy: 'none', timeoutMs }],
+      });
+    } catch (error) {
+      if (error instanceof SandboxUnavailableError) throw new RepoRunError('SANDBOX_UNAVAILABLE', error.message);
+      throw error;
+    }
+    const stages = result.stages ?? [];
+    return {
+      repository: `${owner}/${repo}`, commit, filesSent: byPath.size, omittedFiles: omitted,
+      exitCode: result.exitCode, stdout: result.stdout, stderr: result.stderr, timedOut: result.timedOut, durationMs: result.durationMs,
+      artifacts: result.artifacts ?? [], runtime: runtime.name, ...(extra.length ? { repositories: extra } : {}), ...(skill ? { skill } : {}),
+      stages: stages.map(st => ({ id: st.id, exitCode: st.exitCode, durationMs: st.durationMs, timedOut: st.timedOut })),
+      licenceReport: stages.find(st => st.id.startsWith('licences:'))?.stdout.trim().slice(0, 4000),
+      dependencies: plan.packages.map(p => ({ name: p.name, version: p.version, licence: p.licence, licenceClass: p.licenceClass, hashes: p.hashes.length })),
+    };
+  }
+
+  const result = await meterRemoteWorkerRun(input.owner, { timeoutMs, memoryMb: limits.memoryMb, worker: runtime.name }, () => runtime.execute({
+    files: [...byPath.values()], command: input.command, args: input.args, timeoutMs,
+    networkPolicy: 'none', environment, limits,
+  }));
+  return {
+    repository: `${owner}/${repo}`, commit, filesSent: byPath.size, omittedFiles: omitted,
+    exitCode: result.exitCode, stdout: result.stdout, stderr: result.stderr, timedOut: result.timedOut, durationMs: result.durationMs,
+    artifacts: result.artifacts ?? [], runtime: selected.runtime.name, ...(extra.length ? { repositories: extra } : {}), ...(skill ? { skill } : {}),
+  };
+}

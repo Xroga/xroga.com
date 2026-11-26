@@ -7,6 +7,7 @@ import remarkMath from 'remark-math';
 import { normalizeMathDelimitersV2, remarkMathPresentationV2 } from './mathSyntax';
 import { Copy, Check } from 'lucide-react';
 import { highlightCode, isLightColor, type HighlightedToken } from '@/lib/codeHighlight';
+import { copyTextToClipboard } from '@/lib/clipboard';
 import { InlineImageV2, SourceLinkV2, SourceMarkV2 } from './SourceV2';
 import { citationLabelNumber, numberedCitation, type CitationSource } from '@/lib/xrogaCitations';
 import { remarkCitationsV2 } from './sourceRegistry';
@@ -26,12 +27,12 @@ export function CodeV2({ text, language }: { text: string; language?: string }) 
 }
 
 function PlainCodeV2({ text, language }: { text: string; language?: string }) {
-  const [copied, setCopied] = useState(false);
-  const [failed, setFailed] = useState(false);
+  const [copyResult, setCopyResult] = useState<{ text: string; copied: boolean }>();
+  const copied = copyResult?.text === text && copyResult.copied;
+  const failed = copyResult?.text === text && !copyResult.copied;
   const [lines, setLines] = useState<HighlightedToken[][] | null>(null);
   const [onDark, setOnDark] = useState(false);
   const figure = useRef<HTMLElement>(null);
-  useEffect(() => { setCopied(false); setFailed(false); }, [text]);
   // Highlight lazily. The plain code is shown immediately and stays if highlighting is unavailable for any reason.
   useEffect(() => {
     let cancelled = false;
@@ -42,7 +43,7 @@ function PlainCodeV2({ text, language }: { text: string; language?: string }) {
   // The palette follows the theme actually in use: light text means a dark theme.
   useEffect(() => { if (figure.current) setOnDark(isLightColor(getComputedStyle(figure.current).color)); }, [lines]);
   return <figure ref={figure} className={styles.code}><figcaption><span>{language || 'Code'}</span><button type="button" onClick={async () => {
-    try { await navigator.clipboard.writeText(text); setCopied(true); setFailed(false); } catch { setFailed(true); }
+    setCopyResult({ text, copied: await copyTextToClipboard(text) });
   }}>{copied ? <Check size={14} /> : <Copy size={14} />}{copied ? 'Copied' : 'Copy code'}</button></figcaption><pre tabIndex={0}><code>{lines ? lines.map((line, row) => <span key={row} className={styles.codeLine}>{line.map((token, index) => <span key={index} style={{ color: (onDark ? token.dark : token.light) || undefined }}>{token.content}</span>)}{row < lines.length - 1 ? '\n' : ''}</span>) : text}</code></pre>{failed && <p role="status">Copy unavailable. Select the code to copy it.</p>}</figure>;
 }
 

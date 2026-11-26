@@ -44,3 +44,37 @@ export async function meterCanonicalSandbox<T>(caller: SandboxCaller, request: {
   if (!meter) return run();
   return meter.measure({ category: categoryFor(caller), runId: attempt.runId, estimateUnits: estimatedSeconds(request) }, run);
 }
+
+/**
+ * Meters one run on the remote isolation worker (the repository runner and the coding path) against the same ledger.
+ *
+ * Unlike the canonical seam, these callers are not inside an admitted run attempt, so the owner and run are passed explicitly by the route that
+ * already verified them (the issued tenant context and the leased run), never read from a request body. The held estimate is the call's own
+ * timeout; the settled amount is the worker's measured duration (falling back to the elapsed wall clock when the worker gave none). The memory
+ * limit and the worker are recorded in the reservation's provider-resource field so a reviewer can price the seconds.
+ */
+export interface RemoteRunOwner { readonly userId: string; readonly runId: string }
+
+export function remoteWorkerResourceLabel(worker: string, memoryMb: number): string {
+  return `${worker.replace(/[^A-Za-z0-9._-]/g, '').slice(0, 60) || 'worker'};mem=${Math.max(0, Math.floor(memoryMb))}MB`;
+}
+
+export async function meterRemoteWorkerRun<T extends { durationMs?: number | null }>(
+  owner: RemoteRunOwner | undefined,
+  run: { timeoutMs: number; memoryMb: number; worker: string },
+  execute: () => Promise<T>,
+  deps: Pick<MeteredCallDeps, 'config' | 'meterFor'> = defaultDeps,
+): Promise<T> {
+  if (!owner) return execute();
+  const config = deps.config();
+  if (!config.enabled) return execute();
+  const meter = deps.meterFor(owner.userId, config);
+  if (!meter) return execute();
+  const label = remoteWorkerResourceLabel(run.worker, run.memoryMb);
+  return meter.measure(
+    { category: 'sandbox_compute_seconds', runId: owner.runId, estimateUnits: estimatedSeconds({ timeoutMs: run.timeoutMs }) },
+    execute,
+    (result, elapsed) => (result && typeof result.durationMs === 'number' && Number.isFinite(result.durationMs) && result.durationMs >= 0 ? result.durationMs / 1000 : elapsed),
+    () => label,
+  );
+}

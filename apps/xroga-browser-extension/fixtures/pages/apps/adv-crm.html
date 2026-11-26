@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>CRM (replica)</title>
+<style>body{font:14px sans-serif;margin:16px}table{border-collapse:collapse}td,th{border:1px solid #bbb;padding:4px 8px}.ok{color:#070}</style></head>
+<body><div id="app">Loading…</div>
+<script src="lib.js"></script>
+<script>
+// CRM replica: contacts across organisations (the same name can be two different people at different companies). Merge keeps the FIRST ticked record and folds the second one into it.
+const API = (a, b) => fetch('/__replica/api/crm/' + a, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(b || {}) }).then(async r => ({ status: r.status, body: await r.json() }));
+mount(async app => {
+  // Reset once per tab (a reload by the agent must not wipe the server state the grader reads).
+  if (Q.get('reset') && !sessionStorage.getItem('replica-reset')) { sessionStorage.setItem('replica-reset', '1'); await fetch('/__replica/reset', { method: 'POST' }); }
+  const view = h('div'), msg = h('p', { role: 'status' }); let ticked = [];
+  const render = async () => {
+    const { body } = await API('list'); view.innerHTML = ''; ticked = ticked.filter(id => body.some(c => c.id === id));
+    view.append(h('h1', {}, 'Contacts'), h('table', {}, h('tr', {}, h('th', {}, ''), h('th', {}, 'Name'), h('th', {}, 'Email'), h('th', {}, 'Organisation'), h('th', {}, 'Notes')),
+      shuffle(body).sort((a, b) => a.name.localeCompare(b.name) || a.org.localeCompare(b.org)).map(c => h('tr', {}, h('td', {}, h('input', { type: 'checkbox', 'aria-label': `Select ${c.name}, ${c.org}, ${c.email}`, checked: ticked.includes(c.id), onchange: e => { e.target.checked ? ticked.push(c.id) : ticked = ticked.filter(x => x !== c.id); } })),
+        h('td', {}, c.name), h('td', {}, c.email), h('td', {}, c.org), h('td', {}, c.notes.join(' | '))))),
+      h('p', {}, h('button', { type: 'button', onclick: async () => {
+        if (ticked.length !== 2) { msg.textContent = 'Tick exactly two contacts to merge'; return; }
+        const r = await API('merge', { keepId: ticked[0], dropId: ticked[1] }); ticked = []; msg.className = r.status === 200 ? 'ok' : ''; msg.textContent = r.status === 200 ? 'Merged' : 'Merge failed'; render();
+      } }, 'Merge selected')));
+  };
+  // Rename one contact: its own small form (the write the chaos checks interrupt).
+  const who = h('select', { 'aria-label': 'Contact to rename' }), nn = h('input', { 'aria-label': 'New name' });
+  const fill = async () => { const { body } = await API('list'); who.innerHTML = ''; body.forEach(c => who.append(h('option', { value: c.id }, c.name + ' (' + c.org + ')'))); };
+  const rename = h('form', { onsubmit: async e => { e.preventDefault(); const r = await API('update', { id: who.value, name: nn.value }); msg.textContent = r.status === 200 ? 'Contact saved' : 'Not saved (' + r.status + ')'; render(); fill(); } },
+    h('h2', {}, 'Rename a contact'), h('label', {}, 'Contact to rename ', who), ' ', h('label', {}, 'New name ', nn), ' ', h('button', { type: 'submit' }, 'Save contact'));
+  app.append(view, msg, rename); await render(); await fill();
+});
+</script></body></html>

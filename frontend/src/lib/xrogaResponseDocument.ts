@@ -270,20 +270,20 @@ export function enhanceAiResponse(content: string, documentId: string, completio
   const partialReason = completion?.status === 'partial' ? completion.reason : 'presentation_contract';
   if (rejected) blocks.push({ schemaVersion: 1, id: `${safeIdPart(documentId)}-completion`, type: 'notice', tone: 'warning',
     text: partialReason === 'presentation_contract'
-      ? 'This answer may not cover every part of your request. The available content is preserved below.'
+      ? 'Some requested details or formatting are unavailable.'
       : partialReason === 'authorization_review'
-      ? 'Authorization guidance needs review. This answer contains a known unsafe authorization claim. Privileged database roles can bypass RLS, and JWT claims alone do not prove immediate revocation. Verify current server-owned tenant membership and permissions. The original answer is preserved. No automatic retry was made.'
+      ? 'Authorization guidance needs review. Privileged database roles can bypass RLS, and JWT claims alone do not prove immediate revocation. Verify current server-owned tenant membership and permissions.'
       : partialReason === 'data_review'
       ? 'A written comparison disagreed with the plotted data. Check the figures against the original source.'
       : partialReason === 'factual_review'
       ? 'This answer contains a technical claim that needs review. The original answer is preserved below.'
       : partialReason === 'source_attribution'
-      ? 'Some numbered citations could not be matched to a retrieved source. Linked citations are verified; treat any unlinked number as unverified. No automatic retry was made.'
+      ? 'Some numbered citations could not be matched to a retrieved source. Treat unlinked citations as unverified.'
       : partialReason === 'source_coverage'
-      ? 'Some requested official links could not be verified from the retrieved sources.'
+      ? 'Some requested details could not be verified from the retrieved sources.'
       : partialReason === 'output_limit'
-      ? 'This answer reached its output limit and is incomplete. The received content is preserved. No automatic retry was made.'
-      : 'The provider did not confirm a complete answer. The received content is preserved. No automatic retry was made.' });
+      ? 'The answer stopped at its output limit.'
+      : 'The response stopped before completion.' });
   // Native answers already own their visual program. Legacy extraction can
   // reject valid Markdown, such as comparison tables with an empty corner cell.
   // Keep authoritative prose intact for persistence and renderer recovery.

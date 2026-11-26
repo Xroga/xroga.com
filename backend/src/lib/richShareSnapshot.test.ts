@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { projectRichShare } from './richShareSnapshot.js';
 import { buildNativeOpenUiShare, NATIVE_SHARE_PREFIX, readNativeOpenUiShare } from '../ai/nativeOpenUiShare.js';
+import { bindNativeAnswerText } from '../ai/nativeOpenUi.js';
+import { MAX_SHARED_RESPONSE_CHARS } from './messageShareLimits.js';
 
 test('old clients receive full text and new clients can independently validate the read-only snapshot', () => {
   const snapshot='XROGA_RESPONSE_V2\n'+JSON.stringify({version:2,text:'Full answer with tenant_id.',document:{version:2,nodes:[{kind:'prose',text:'Full answer with tenant_id.'}]}});
@@ -23,6 +25,19 @@ test('a sourced native answer keeps citations through the share API even without
   assert.deepEqual(readNativeOpenUiShare(snapshot)?.sources, sources);
   assert.equal(buildNativeOpenUiShare(text, ''), undefined);
   assert.equal(buildNativeOpenUiShare(text, '', [{ title: 'Unsafe', url: 'javascript:alert(1)' }]), undefined);
+});
+
+test('long canonical text, its program and sources survive inside the existing shared envelope limit', () => {
+  const text = '# Field notes\n\n' + 'Detailed prose from the user-requested report.\n\n'.repeat(1_550) + 'End of report.';
+  const program = bindNativeAnswerText('root = Col([Markdown(_xroga_answer), Source("source-1")])', text);
+  const sources = [{ title: 'Primary evidence', url: 'https://example.com/evidence' }];
+  assert.ok(text.length > 60_000);
+  const snapshot = buildNativeOpenUiShare(text, program, sources);
+  assert.ok(snapshot);
+  assert.ok(snapshot.length <= MAX_SHARED_RESPONSE_CHARS);
+  assert.deepEqual(projectRichShare(snapshot), { response: text, richResponse: snapshot });
+  assert.deepEqual(readNativeOpenUiShare(snapshot), { format: 'xroga-openui-v1', text, program, sources });
+  assert.equal(buildNativeOpenUiShare('a'.repeat(MAX_SHARED_RESPONSE_CHARS), program, sources), undefined);
 });
 
 test('broken native share programs preserve readable text without exposing the internal envelope', () => {

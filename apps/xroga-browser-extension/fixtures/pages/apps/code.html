@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Code workspace</title>
+<style>body{font:14px sans-serif;margin:16px}textarea{width:520px;height:160px;font:13px monospace}pre{background:#111;color:#9f9;padding:8px;width:520px;min-height:60px}.f button{display:block}</style></head>
+<body><div id="app">Loading…</div>
+<script src="lib.js"></script>
+<script>
+// Web coding environment: a file list, an editor and a test runner. Two files; the bug is in the one the task names. The runner evaluates the CURRENT editor text.
+const state = __state; const BUGS = [['function add(a, b) { return a - b; }', 'add', 'add(2, 3) === 5'], ['function max(a, b) { return a < b ? a : b; }', 'max', 'max(2, 9) === 9']][SEED % 2];
+state.files = { 'util.js': BUGS[0], 'notes.md': '# Notes\nNothing here.' }; state.passed = false; state.runs = 0;
+mount(app => {
+  let current = 'util.js'; const ed = h('textarea', { 'aria-label': 'Editor', oninput: e => { state.files[current] = e.target.value; } }), out = h('pre', { 'aria-label': 'Test output' }, 'No test run yet.');
+  const open = n => { current = n; ed.value = state.files[n]; title.textContent = n; };
+  const title = h('h2', {}, 'util.js');
+  const list = h('div', { class: 'f' }, ...Object.keys(state.files).map(n => h('button', { type: 'button', onclick: () => open(n) }, n)));
+  const run = () => { state.runs++; try { const fn = new Function(state.files['util.js'] + '; return ' + BUGS[2] + ';'); state.passed = !!fn(); out.textContent = state.passed ? 'PASS 1 test' : 'FAIL: ' + BUGS[2]; } catch (e) { state.passed = false; out.textContent = 'ERROR: ' + e.message; } };
+  app.append(h('h1', {}, 'Workspace'), list, title, ed, h('p', {}, h('button', { type: 'button', onclick: run }, 'Run tests')), out); open('util.js');
+});
+</script></body></html>

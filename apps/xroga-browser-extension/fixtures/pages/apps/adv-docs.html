@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Team drive (replica)</title>
+<style>body{font:14px sans-serif;margin:16px}table{border-collapse:collapse}td,th{border:1px solid #bbb;padding:4px 8px}textarea{width:460px;height:160px}label{display:block;margin:6px 0}</style></head>
+<body><div id="app">Loading…</div>
+<script src="lib.js"></script>
+<script>
+// A team drive replica: search, open documents, create a new document. Documents live on the server.
+const API = (a, b) => fetch('/__replica/api/docs/' + a, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(b || {}) }).then(async r => ({ status: r.status, body: await r.json() }));
+mount(async app => {
+  if (Q.get('reset') && !sessionStorage.getItem('replica-reset')) { sessionStorage.setItem('replica-reset', '1'); await fetch('/__replica/reset', { method: 'POST' }); }
+  const view = h('div'), msg = h('p', { role: 'status' });
+  const list = async q => {
+    const { body } = await API('list', { q }); view.innerHTML = '';
+    const search = h('input', { 'aria-label': 'Search documents', value: q || '' });
+    view.append(h('h1', {}, 'Documents'), h('label', {}, 'Search ', search, ' ', h('button', { type: 'button', onclick: () => list(search.value) }, 'Search')),
+      h('table', {}, h('tr', {}, h('th', {}, 'Title'), h('th', {}, 'Owner'), h('th', {}, 'Modified'), h('th', {}, '')), body.map(d => h('tr', {}, h('td', {}, d.title), h('td', {}, d.owner), h('td', {}, d.modified), h('td', {}, h('button', { type: 'button', onclick: () => open(d.id) }, 'Open ' + d.title))))),
+      h('p', {}, h('button', { type: 'button', onclick: compose }, 'New document')));
+  };
+  const open = async id => { const { body: d } = await API('get', { id }); view.innerHTML = ''; view.append(h('h1', {}, d.title), h('p', {}, 'Owner: ' + d.owner + ' · Modified: ' + d.modified), h('p', {}, d.body), h('p', {}, h('button', { type: 'button', onclick: () => list('') }, 'Back to documents'))); };
+  const compose = () => {
+    const title = h('input', { 'aria-label': 'Document title' }), body = h('textarea', { 'aria-label': 'Document body' }); view.innerHTML = '';
+    view.append(h('h1', {}, 'New document'), h('label', {}, 'Title ', title), h('label', {}, 'Body ', body),
+      h('button', { type: 'button', onclick: async () => { const r = await API('create', { title: title.value, body: body.value }); msg.textContent = r.status === 200 ? 'Document saved' : 'Not saved: ' + (r.body.error || r.status); } }, 'Save document'), ' ', h('button', { type: 'button', onclick: () => list('') }, 'Back to documents'));
+  };
+  app.append(view, msg); await list('');
+});
+</script></body></html>

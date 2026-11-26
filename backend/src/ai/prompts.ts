@@ -1,5 +1,7 @@
 /** System prompts for Converter → Builder (no template catalogs). */
 
+import { requestsUnadornedAnswer, unadornedAnswerInstruction } from './answerFormat.js';
+
 export const CONVERTER_SYSTEM = `You are a prompt engineer for a senior full-stack developer AI.
 Convert ANY user request into one detailed, professional instruction.
 
@@ -263,6 +265,7 @@ Adapt to the requested outcome instead of forcing every request into coding.
 Never imply an external action happened unless the runtime supplied verification evidence.
 Describe Xroga capabilities in clear user language. Never expose internal capability IDs, authority IDs, provider routes, model names, tool-call IDs, runtime-session IDs, raw tool arguments, or hidden planning data.
 Be direct. Prefer concrete next steps over fluff.
+Honor requested length and format, including answer-only, code-only, and fixed counts. A direct result needs no title or framing. For a one-time calculation or conversion, give the result with only the working the user needs. Add a table for a real comparison or a calculator when changing inputs is useful.
 
 ${SAFE_RICH_OUTPUT_GUIDE}`;
 
@@ -281,7 +284,8 @@ export function chatPresentationSystem(request: string): string {
     seen.add(example.type);
     return true;
   });
-  return `${lines.join('\n')}
+  const formatInstruction = requestsUnadornedAnswer(request) ? '\n' + unadornedAnswerInstruction : '';
+  return `${lines.join('\n')}${formatInstruction}
 Before finishing this same answer, check that every explicitly requested visual is present at its reading position as a valid xroga-ui block. For a conceptual diagram, use the relationships described in your explanation, unique node IDs and edges whose source and target exist. Do not substitute ASCII, an empty heading or a promise. If the information is insufficient, explain that limitation instead of inventing connections.
 Calculators may include optional derivedResults: each has id, label, operation, operands (original input IDs, "$result", or finite constants), optional rounding (floor/ceil/round), unit and precision. Supported operations are sum, difference, product, quotient, average, percentage (first operand times second divided by 100), percentage-change, loan-payment, compound-growth, minimum and maximum. Derived results cannot reference each other. State each result's formula, units and assumptions. Never emit executable formula code. A calculator applies exactly ONE operation to its inputs: sum, difference, product, average, minimum and maximum accept any number of inputs, while quotient, percentage and percentage-change need exactly two. loan-payment takes exactly three inputs in this order: loan amount, annual interest rate in percent, term in years, and returns the monthly payment (standard amortization); compound-growth takes exactly three inputs in this order: starting amount, annual growth rate in percent, number of years, and returns the final amount with yearly compounding. Use these two for mortgages, loans, savings and investment growth instead of approximating them. A formula with several steps is not one operation, so put the earlier steps in as inputs that hold their computed values and apply one operation (for shares = (account x risk%) / (entry - stop), use inputs riskBudget = 100 and riskPerShare = 5 with operation quotient to get 20). If a formula cannot be expressed this way, explain it in text instead of emitting an invalid calculator.
 All example values are schema illustrations, not facts to reuse. Do not claim execution, source verification or secure implementation without evidence. Keep the substantive explanation complete and do not repeat it in each visual. No separate formatting request is needed.
@@ -327,10 +331,12 @@ export function researchSynthesisPrompt(query: string, gathered: string, directL
 ${query}
 
 Research materials:
-${gathered.slice(0, 40000)}
+${gathered}
 
 Requirements:
 - Follow the user's requested length, format, and number of items as far as the supplied evidence supports. For a ranking, state the basis, give each supported item once, and explain any evidence gap. Link an official website only when the supplied evidence establishes it.
+- Keep the requested reading order. When the user specifies a final section, end there. Preserve the requested table or list as the place to give each result. Add a separate visual only when it contributes information or an interaction that the requested blocks do not already supply.
+- For a request about several named or numbered references, match each one to its own supporting passage. Use the body of the referenced section and its relevant exceptions, rather than relying on an index entry or title. If a requested detail has insufficient evidence, label it "Not established by the retrieved sources" where the user expects that detail.
 - Check that the source measures the same entity and criterion the user asked about. A tool, model, product, or channel ranking does not establish how its owning organization ranks. For subjective comparisons, state a consistent basis, use direct evidence for the entries you can support, and label an illustrative shortlist or incomplete result honestly. Do not promote a discovery-only post into a definitive ranking, even if it has the exact number of rows. For measurements, price, ownership, or financial figures, verify the definition and time period and include only what matters to the request.
 - When official links are requested for multiple entries, include a dedicated site/link field for every requested entry in the same list or table. Use a clickable exact HTTPS URL from the supplied evidence where the source title, URL or excerpt actually identifies that entity's official site. Cite the source that verifies that link next to it. A page about an entity is not its official site. Record "Official link not verified" for each entry whose link is missing or ambiguous. Check every row before finishing. Never construct a plausible domain from a name.
 - Keep website verification in those entries. Omit a separate count or recap of verified and missing links. Apply the stated ranking criteria to every entry, and omit extra lists, repeat tables, and valuation or runner-up sections that the user did not request.
@@ -346,6 +352,7 @@ Requirements:
 - Cite sources inline where claims come from the research. Use one authoritative supplied source when it fully supports the claim. Cite additional sources when they add independent evidence or cover a different fact. Prefer the requested language and relevant version of equivalent documentation.
 - When the user asks for a primary source, prefer the original publication, dataset, standard, or announcement that directly supports the claim. A summary, draft, or third-party document hosted by the publisher does not establish that the original was found. State briefly when the supplied evidence cannot verify the requested primary source.
 - For official requirements, distinguish the normative rule from examples or explanatory notes. Check which exceptions actually apply and preserve the full set when the primary evidence supplies it. When the source only illustrates selected exceptions, label them as examples and avoid claiming a complete list or exact count. Use a direct citation for each applicable rule or exception group.
+- When turning a cited rule into a test, example, table row, or checklist step, use the same subject, scope, thresholds, comparisons, and applicable exceptions as the rule. For that scenario, check that the proposed steps would reach the same pass or fail decision that the cited rule requires. Keep optional advice separate from the pass condition. Treat an alternative as satisfying a requirement only when it meets the cited condition on its own. If the evidence is missing a condition needed to decide the outcome, identify that gap and leave the outcome undetermined.
 - Use the supplied source numbers exactly, with citations next to the supported sentence; do not invent a source number or bury all sources at the end.
 ${directLookup
     ? `- Lead with the answer in one or two short paragraphs. Omit headings, comparison tables, charts, and recaps of discarded results. Use the best supporting citation rather than citing every returned page.

@@ -1,0 +1,385 @@
+{
+  "names": [
+    "restart-restore",
+    "panel-runs",
+    "two-runs",
+    "parallel-workers",
+    "assumptions"
+  ],
+  "args": {},
+  "timedOut": false,
+  "reports": [
+    {
+      "name": "restart-restore",
+      "ok": true,
+      "startedAt": "2026-11-18T19:11:01.887Z",
+      "durationMs": 937,
+      "result": {
+        "takenOver": {
+          "status": "stopped",
+          "handed": true
+        },
+        "cutOffKept": [
+          "queued before the restart"
+        ],
+        "cutOff": {
+          "status": "interrupted",
+          "r": "error INTERRUPTED (nothing dispatched; safe to retry)\nThe extension restarted during this call; nothing was changed. Call it again if needed.",
+          "m": "error INTERRUPTED (delivery unknown; look before retrying)\nThe extension restarted during this action; delivered: unknown. Observe before retrying.",
+          "n": "skipped: the extension restarted before this call ran."
+        },
+        "cards": [
+          true,
+          true
+        ],
+        "handover": [
+          "fill_form: 2 fields were set before the step.",
+          "hand-over: the user did the step (pay) and gave the tab back."
+        ],
+        "nameField": "[a4] textbox \"Name on card\"",
+        "tabGone": "fill_form: 2 fields were set before the step.\noutcome unknown: the tab is gone, and the step may have been completed; do not repeat it; ask the user."
+      }
+    },
+    {
+      "name": "panel-runs",
+      "ok": true,
+      "startedAt": "2026-11-18T19:11:02.830Z",
+      "durationMs": 8831,
+      "result": {
+        "activity": [
+          "Clicked button «Send»no effectsubmit · allowed by you",
+          "Went to http://localhost:8787/c-text.html",
+          "Address written by the agent"
+        ],
+        "answerLine": true,
+        "restarted": true,
+        "edited": true,
+        "editedSent": true,
+        "retried": true,
+        "panelImage": "C:\\xr-int\\apps\\xroga-browser-extension\\fixtures\\.results\\2026-11-18T19-11-47-271Z-restart-restore+panel-runs+two-runs+parallel-workers+assumptions-1.png",
+        "generalPage": true,
+        "turnCap": true,
+        "generalImage": "C:\\xr-int\\apps\\xroga-browser-extension\\fixtures\\.results\\2026-11-18T19-11-47-271Z-restart-restore+panel-runs+two-runs+parallel-workers+assumptions-2.png",
+        "siteAdded": true,
+        "siteBlocked": true,
+        "permissionsImage": "C:\\xr-int\\apps\\xroga-browser-extension\\fixtures\\.results\\2026-11-18T19-11-47-271Z-restart-restore+panel-runs+two-runs+parallel-workers+assumptions-3.png"
+      }
+    },
+    {
+      "name": "two-runs",
+      "ok": true,
+      "startedAt": "2026-11-18T19:11:11.680Z",
+      "durationMs": 3969,
+      "result": {
+        "Add a row on page 2": {
+          "status": "done",
+          "clicks": 1,
+          "clickAtMs": [
+            1812
+          ]
+        },
+        "Add a row on page 1": {
+          "status": "done",
+          "clicks": 1,
+          "clickAtMs": [
+            1791
+          ]
+        },
+        "oneWindow": true,
+        "overlap": true
+      }
+    },
+    {
+      "name": "parallel-workers",
+      "ok": true,
+      "startedAt": "2026-11-18T19:11:15.654Z",
+      "durationMs": 6963,
+      "result": {
+        "parentStatus": "Done",
+        "workers": [
+          "done",
+          "done",
+          "done"
+        ],
+        "parentResults": [
+          "start_parallel_tasks: {\"started\":[{\"id\":\"t1\",\"task\":\"WORKER-A: read the heading of this pa",
+          "parallel_task_status: {\"workers\":[{\"id\":\"t1\",\"task\":\"WORKER-A: read the heading of this pa",
+          "parallel_task_status: {\"workers\":[{\"id\":\"t1\",\"task\":\"WORKER-A: read the heading of this pa",
+          "parallel_task_status: {\"workers\":[{\"id\":\"t1\",\"task\":\"WORKER-A: read the heading of this pa",
+          "parallel_task_status: {\"workers\":[{\"id\":\"t1\",\"task\":\"WORKER-A: read the heading of this pa",
+          "done: done: the run ends."
+        ],
+        "resultsOk": true,
+        "workersHaveNoSpawn": true,
+        "parentHasSpawn": true,
+        "windows": {
+          "before": 1,
+          "after": 1
+        },
+        "stored": [
+          "completed",
+          "completed",
+          "completed"
+        ]
+      }
+    },
+    {
+      "name": "assumptions",
+      "ok": true,
+      "startedAt": "2026-11-18T19:11:22.620Z",
+      "durationMs": 22254,
+      "result": {
+        "backendNodeIdStable": {
+          "holds": true,
+          "detail": {
+            "first": 461,
+            "second": 461,
+            "afterPushState": 461,
+            "afterReinsert": 461,
+            "resolved": "button#counted",
+            "afterReload": "failed: CdpCommandError: DOM.resolveNode: {\"code\":-32000,\"message\":\"Node with given id does not belong to the document\"}",
+            "newDocumentId": 515
+          }
+        },
+        "quadsAndHitTestShareSpace": {
+          "holds": false,
+          "detail": {
+            "fallbackHolds": true,
+            "innerFrameSession": "pageTargetSessionId",
+            "Counted button@0": {
+              "point": {
+                "x": 69.5859375,
+                "y": 103.078125
+              },
+              "viewport": {
+                "innerHeight": 748,
+                "innerWidth": 1262,
+                "scrollX": 0,
+                "scrollY": 0
+              },
+              "target": 545,
+              "hit": 545,
+              "hitFrame": "AD205561CD13A7B6CEDC710C951214E6",
+              "inside": true,
+              "withScrollOffset": {
+                "hit": 545,
+                "inside": true
+              }
+            },
+            "Inner button@0": {
+              "point": {
+                "x": 68.578125,
+                "y": 295.078125
+              },
+              "viewport": {
+                "innerHeight": 748,
+                "innerWidth": 1262,
+                "scrollX": 0,
+                "scrollY": 0
+              },
+              "target": 558,
+              "hit": 558,
+              "hitFrame": "6BEAE6C53D1C3295A026C43B6982BE4B",
+              "inside": true,
+              "withScrollOffset": {
+                "hit": 558,
+                "inside": true
+              }
+            },
+            "Bottom button@1500": {
+              "point": {
+                "x": 65.5,
+                "y": 476.078125
+              },
+              "viewport": {
+                "innerHeight": 748,
+                "innerWidth": 1262,
+                "scrollX": 0,
+                "scrollY": 1500
+              },
+              "error": "CdpCommandError: DOM.getNodeForLocation: {\"code\":-32000,\"message\":\"No node found at given location\"}",
+              "withScrollOffset": {
+                "hit": 561,
+                "inside": true
+              }
+            }
+          }
+        },
+        "oopifConversionAndRouting": {
+          "holds": true,
+          "detail": {
+            "conversion": true,
+            "routedClick": true,
+            "buttonText": "Clicked",
+            "steps": [
+              {
+                "frame": "http://[::1]:8787/frames-grandchild.html",
+                "point": {
+                  "x": 76.6171875,
+                  "y": 68.890625
+                },
+                "hit": 3,
+                "target": 3
+              },
+              {
+                "frame": "http://127.0.0.1:8787/frames-child.html",
+                "point": {
+                  "x": 93.6171875,
+                  "y": 157.28125
+                },
+                "owner": 9,
+                "hit": 9
+              },
+              {
+                "frame": "http://localhost:8787/frames-nested.html",
+                "point": {
+                  "x": 110.6171875,
+                  "y": 245.671875
+                },
+                "owner": 583,
+                "hit": 583
+              }
+            ]
+          }
+        },
+        "oopifScrolledConversion": {
+          "holds": true,
+          "detail": {
+            "ownSession": true,
+            "local": {
+              "x": 51.578125,
+              "y": 19.5
+            },
+            "parentPoint": {
+              "x": 68.578125,
+              "y": 515.078125
+            },
+            "owner": 622,
+            "parentHit": 622,
+            "conversion": true,
+            "text": "Inner clicked"
+          }
+        },
+        "partialMatchesFull": {
+          "holds": true,
+          "detail": {
+            "compared": 48,
+            "mismatches": []
+          }
+        },
+        "isolatedGuardCancels": {
+          "holds": false,
+          "error": "no checkbox \"Guarded checkbox\" in http://localhost:8787/assumptions.html\nError: no checkbox \"Guarded checkbox\" in http://localhost:8787/assumptions.html\n    at i5 (chrome-extension://pdjljkmhokmflkojheoiflkfgfgpdefj/background.js:458:34520)\n    at async chrome-extension://pdjljkmhokmflkojheoiflkfgfgpdefj/background.js:467:120\n    at async W3 (chrome-extension://pdjljkmhokmflkojheoiflkfgfgpdefj/background.js:397:10987)\n    at async Object.run (chrome-extension://pdjljkmhokmflkojheoiflkfgfgpdefj/background.js:467:5222)\n    at async L3 (chrome-extension://pdjljkmhokmflkojheoiflkfgfgpdefj/background.js:397:9315)\n    at async uTe (chrome-extension://pdjljkmhokmflkojheoiflkfgfgpdefj/background.js:578:1428)"
+        },
+        "fetchInterceptsRedirectHops": {
+          "holds": false,
+          "detail": {
+            "BlockedByClient": {
+              "paused": [
+                {
+                  "url": "http://localhost:8787/redirect?to=http%3A%2F%2F127.0.0.1%3A8787%2Fnetwork-landed.html",
+                  "frameId": "7A755228001533EC19B193F344DC6C2A",
+                  "decision": "continue"
+                },
+                {
+                  "url": "http://127.0.0.1:8787/network-landed.html",
+                  "frameId": "7A755228001533EC19B193F344DC6C2A",
+                  "decision": "BlockedByClient"
+                },
+                {
+                  "url": "http://127.0.0.1:8787/network-landed.html",
+                  "frameId": "7A755228001533EC19B193F344DC6C2A",
+                  "decision": "BlockedByClient"
+                }
+              ],
+              "tabUrlAfterBlock": "http://127.0.0.1:8787/network-landed.html",
+              "puppeteerUrlAfterBlock": "http://127.0.0.1:8787/network-landed.html",
+              "allowedNavigationLanded": "http://127.0.0.1:8787/network-landed.html",
+              "mainFrameId": "7A755228001533EC19B193F344DC6C2A",
+              "reachedDenied": 2,
+              "blocked": false,
+              "pageStayed": false
+            },
+            "Aborted": {
+              "paused": [
+                {
+                  "url": "http://localhost:8787/redirect?to=http%3A%2F%2F127.0.0.1%3A8787%2Fnetwork-landed.html",
+                  "frameId": "6E75E9780F7FD3F9A7B6D941777F6456",
+                  "decision": "continue"
+                },
+                {
+                  "url": "http://127.0.0.1:8787/network-landed.html",
+                  "frameId": "6E75E9780F7FD3F9A7B6D941777F6456",
+                  "decision": "Aborted"
+                },
+                {
+                  "url": "http://127.0.0.1:8787/network-landed.html",
+                  "frameId": "6E75E9780F7FD3F9A7B6D941777F6456",
+                  "decision": "Aborted"
+                }
+              ],
+              "tabUrlAfterBlock": "http://127.0.0.1:8787/network-landed.html",
+              "puppeteerUrlAfterBlock": "http://127.0.0.1:8787/network-landed.html",
+              "allowedNavigationLanded": "http://127.0.0.1:8787/network-landed.html",
+              "mainFrameId": "6E75E9780F7FD3F9A7B6D941777F6456",
+              "reachedDenied": 2,
+              "blocked": false,
+              "pageStayed": false
+            }
+          }
+        },
+        "keyboardIntoOopif": {
+          "holds": false,
+          "error": "no textbox \"Child field\" in http://127.0.0.1:8787/frames-child.html\nError: no textbox \"Child field\" in http://127.0.0.1:8787/frames-child.html\n    at i5 (chrome-extension://pdjljkmhokmflkojheoiflkfgfgpdefj/background.js:458:34520)\n    at async chrome-extension://pdjljkmhokmflkojheoiflkfgfgpdefj/background.js:467:2574\n    at async W3 (chrome-extension://pdjljkmhokmflkojheoiflkfgfgpdefj/background.js:397:10987)\n    at async Object.run (chrome-extension://pdjljkmhokmflkojheoiflkfgfgpdefj/background.js:467:5222)\n    at async L3 (chrome-extension://pdjljkmhokmflkojheoiflkfgfgpdefj/background.js:397:9315)\n    at async uTe (chrome-extension://pdjljkmhokmflkojheoiflkfgfgpdefj/background.js:578:1428)"
+        },
+        "isolatedHandleInClosedShadow": {
+          "holds": true,
+          "detail": {
+            "host": "closed-widget",
+            "mode": "closed",
+            "text": "Shadow button",
+            "visible": true
+          }
+        },
+        "webdriverUnset": {
+          "holds": true,
+          "detail": {
+            "webdriver": false
+          }
+        },
+        "puppeteerAccessors": {
+          "holds": false,
+          "detail": {
+            "idsAgree": true,
+            "loaderIdsSet": false,
+            "frames": [
+              {
+                "frameId": "D465739BD3112489FB06CD18A0306D12",
+                "session": "root",
+                "puppeteerLoaderId": "",
+                "treeLoaderId": "36A0DC49832AA52225BDD81485FD3125"
+              },
+              {
+                "frameId": "CA5048D197CBE066A1C027D7C944C6F9",
+                "session": "B20ED0C7B3E452EEBDF0FB333027BE13",
+                "puppeteerLoaderId": "",
+                "treeLoaderId": "9530109A21D35E59BF41E35428A7192D"
+              },
+              {
+                "frameId": "FF656F3289B4B31F25D0F4AD1E20C09E",
+                "session": "164165785481A67977DEE87D2651B3D1",
+                "puppeteerLoaderId": "",
+                "treeLoaderId": "95BC063B01218763C3E7333B074FC38C"
+              }
+            ],
+            "afterNavigation": {
+              "puppeteerLoaderId": "7EDC3A18265A73F18BB9D01FABE4892D",
+              "treeLoaderId": "7EDC3A18265A73F18BB9D01FABE4892D"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "console": []
+}

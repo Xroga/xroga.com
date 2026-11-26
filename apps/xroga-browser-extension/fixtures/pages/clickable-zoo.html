@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Clickable zoo</title>
+<style>body{font:14px sans-serif;padding:16px}.row{margin:8px 0}.p{cursor:pointer;display:inline-block;padding:4px;border:1px solid #888}</style></head>
+<body>
+<h1>Clickable zoo</h1>
+<!-- Controls that do not use a button or link element. Each one adds its name to #hits when activated. A heading and plain text are included as non-clickable decoys. -->
+<div class="row"><div id="a1" class="p">Div with onclick</div></div>
+<div class="row"><span id="a2" class="p">Pointer span</span></div>
+<div class="row"><div id="a3" role="button" tabindex="0" class="p">Role button div</div></div>
+<div class="row"><a id="a4" class="p">Anchor without href</a></div>
+<div class="row"><ul><li id="a5" tabindex="0" class="p">Tab list item</li></ul></div>
+<div class="row"><img id="a6" alt="Image button" width="60" height="24" style="cursor:pointer;background:#cde" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="></div>
+<div class="row"><my-btn id="a7"></my-btn></div>
+<div class="row"><label id="a8" class="p"><input type="checkbox" id="a8c"> Label with checkbox</label></div>
+<div class="row"><details><summary id="a9">Details summary</summary><p>More text</p></details></div>
+<div class="row"><svg id="a10" width="140" height="30" role="img" aria-label="SVG strip"><g id="a10g" style="cursor:pointer"><rect x="0" y="0" width="140" height="30" fill="#fdb"/><title>SVG shape button</title><text x="8" y="20">SVG shape</text></g></svg></div>
+<div class="row"><p>Plain decoy text, not clickable.</p></div>
+<p id="hits" role="status">hits:</p>
+<script>
+const hit = n => { const p = document.getElementById('hits'); p.textContent += ' ' + n; };
+document.getElementById('a1').onclick = () => hit('div');
+document.getElementById('a2').addEventListener('click', () => hit('span'));
+document.getElementById('a3').addEventListener('click', () => hit('rolebutton'));
+document.getElementById('a4').onclick = () => hit('anchor');
+document.getElementById('a5').addEventListener('click', () => hit('li'));
+document.getElementById('a6').onclick = () => hit('image');
+document.getElementById('a8c').addEventListener('change', () => hit('checkbox'));
+document.getElementById('a9').addEventListener('click', () => hit('summary'));
+document.getElementById('a10g').addEventListener('click', () => hit('svg'));
+class MyBtn extends HTMLElement { connectedCallback() { const r = this.attachShadow({ mode: 'open' }); r.innerHTML = '<button type="button">Shadow button</button>'; r.querySelector('button').addEventListener('click', () => hit('shadow')); } }
+customElements.define('my-btn', MyBtn);
+</script>
+</body></html>

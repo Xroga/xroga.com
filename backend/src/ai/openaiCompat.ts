@@ -187,7 +187,8 @@ export function resolveEndpoint(modelId: ModelId, credentialOverride?: string): 
   };
 }
 
-export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispatch?:(wireBody:string)=>Promise<void>,reservationGuard=beforeDispatch): OpenAI {
+export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispatch?:(wireBody:string)=>Promise<void>,reservationGuard=beforeDispatch,
+  onTiming?: (phase: 'queue' | 'provider_headers', elapsedMs: number) => void): OpenAI {
   publicHttpsUrl(endpoint.baseUrl);
   assertModelProviderDestination(endpoint.provider,endpoint.baseUrl);
   // The SDK wraps thrown fetch errors as retryable connection failures. Return
@@ -211,6 +212,7 @@ export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispa
       let lease:Awaited<ReturnType<typeof acquireModelRequestLease>>|undefined;
       let cooldown=0;
       const release=async()=>{try{await lease?.release(cooldown);}catch{console.warn('[model-pacing] release unavailable; bounded lease remains conservative');}};
+      const queuedAt = performance.now();
       if(process.env.NODE_ENV==='production'){
         try{
           const binding=admittedModelReservation(reservationGuard);
@@ -220,6 +222,7 @@ export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispa
             {status:429,headers:{'x-should-retry':'false','retry-after':'60'}}) as unknown as Awaited<ReturnType<NonNullable<ClientOptions['fetch']>>>;
         }
       }
+      onTiming?.('queue', performance.now() - queuedAt);
       try {
         if (!beforeDispatch) modelAdmissionDenied();
         validateZurelayRequest(JSON.parse(init.body), endpoint.apiModel);
@@ -234,10 +237,12 @@ export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispa
       const headers = new Headers(init.headers as Record<string, string>);
       headers.set('x-zurelay-fallback', 'off');
       let response:Response;
+      const providerStarted = performance.now();
       try{
         const signal=AbortSignal.any([...(init.signal?[init.signal as AbortSignal]:[]),AbortSignal.timeout(MODEL_PROVIDER_TIMEOUT_MS)]);
         response=await globalThis.fetch(url,{method:'POST',body:init.body,headers,signal,redirect:'manual'});
       }catch(error){await release();throw error;}
+      onTiming?.('provider_headers', performance.now() - providerStarted);
       if(response.status===429){cooldown=providerCooldownSeconds(response.headers.get('retry-after'));await release();}
       if(response.redirected||(response.status>=300&&response.status<400)){
         await response.body?.cancel().catch(()=>undefined);
@@ -310,6 +315,8 @@ export async function chatCompletion(
     responseFormat?: PresentationResponseFormat;
     /** Provider-specific reasoning control for compact structured workloads. */
     reasoningMode?: ReasoningMode;
+    /** A continuation may begin inside an indented code block. */
+    preserveLeadingWhitespace?: boolean;
     signal?: AbortSignal;
     /** Single-response transport only: visible text is released through the admission gate after the receipt is verified. */
     publishAfterVerification?: (text: string) => void;
@@ -354,7 +361,8 @@ export async function chatCompletion(
     diagnostics.observe(completion, false);
     const usage = completion.usage;
     if (!usage) throw new PostCompletionAccountingError();
-    const text = (completion.choices[0]?.message?.content ?? '').trim();
+    const content = completion.choices[0]?.message?.content ?? '';
+    const text = opts.preserveLeadingWhitespace ? content.trimEnd() : content.trim();
     const result:ChatResult = {
       text,
       finishReason: completion.choices[0]?.finish_reason ?? null,
@@ -395,6 +403,10 @@ export async function chatCompletionStream(
     onActivity?: (answerCharacters?:number) => void;
     /** Provider-specific reasoning control. Used only by direct-output workloads. */
     reasoningMode?: ReasoningMode;
+    /** A continuation may begin inside an indented code block. */
+    preserveLeadingWhitespace?: boolean;
+    /** In-process buffer guard owned by the calling attempt. */
+    maxOutputChars?: number;
     /** Ask the compatible endpoint to constrain the response to one JSON object. */
     json?: boolean;
     responseFormat?: PresentationResponseFormat;
@@ -449,6 +461,7 @@ export async function chatCompletionStream(
     );
 
     let text = '';
+    const maximumOutputChars = opts.maxOutputChars ?? DEFAULT_BUILDER_BUDGET.maxOutputChars;
     const diagnostics = new CompletionDiagnostics();
     let finishReason: string | null = null;
     let usage: OpenAI.Chat.Completions.ChatCompletionChunk['usage'];
@@ -478,7 +491,9 @@ export async function chatCompletionStream(
       }
       finishReason = choice?.finish_reason ?? finishReason;
       if (delta) {
-        if(text.length+delta.length>DEFAULT_BUILDER_BUDGET.maxOutputChars)throw Object.assign(Error('Provider exceeded the bounded output buffer'),{code:'BUILDER_OUTPUT_LIMIT'});
+        if (text.length + delta.length > maximumOutputChars) {
+          throw Object.assign(Error('Provider exceeded the bounded output buffer'), { code: 'BUILDER_OUTPUT_LIMIT' });
+        }
         text += delta;
       }
 
@@ -490,7 +505,7 @@ export async function chatCompletionStream(
     }
 
     if (!usage) throw new PostCompletionAccountingError();
-    text = text.trim();
+    text = opts.preserveLeadingWhitespace ? text.trimEnd() : text.trim();
     const result:ChatResult = {
       text,
       finishReason,

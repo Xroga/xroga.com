@@ -10,7 +10,12 @@ import { tsImport } from 'tsx/esm/api';
 import JSZip from 'jszip';
 import { PDFDocument } from 'pdf-lib';
 
+const citedServiceWindows = '| Window | Duration (min) [2] |\n| --- | --- |\n| North | 195.0 [1] |\n| East | 50 [1] |\n| West | 230 [1] |\n| South | 0 [1] |';
 const cases = {
+  citedSortableTable: {
+    text: citedServiceWindows,
+    program: 'root = Col([Markdown(' + JSON.stringify(citedServiceWindows) + '), Table(["Window", "Duration (min)"], [["North", 195], ["East", 50], ["West", 230], ["South", 0]])])',
+  },
   openingTitle: {
     raw: '**Sortable table — time by color**\n\nThree recorded times in seconds.\n\n| Color | Time (s) |\n| --- | --- |\n| Green | 1.15 |\n| Red | 9.2 |\n| Blue | 12.8 |\n<<<XROGA_OPENUI_V1>>>\nroot = Col([Title("Sortable table: time by color", "lg"), Markdown(_xroga_answer), Table(["Color", "Time (s)"], [["Green",1.15],["Red",9.2],["Blue",12.8]])])',
     completion: 'complete',
@@ -36,6 +41,15 @@ const cases = {
     program: 'root = Col([Code(' + JSON.stringify('monthlyPayment = principal * monthlyRate * (1 + monthlyRate) ** paymentCount / ((1 + monthlyRate) ** paymentCount - 1)') + ', "text"), Markdown(' + JSON.stringify('```python\nmonthlyPayment = principal * monthlyRate * (1 + monthlyRate) ** paymentCount / ((1 + monthlyRate) ** paymentCount - 1)\n```') + ')])',
   },
   short: { text: 'Paris is the capital of France.' },
+  responsiveBoxes: {
+    text: 'Read the release notes and inspect the illustration.',
+    program: [
+      'root = Col([wide, notes, drawing])',
+      'wide = Box([Text("Check the release scope.")], "col", 1, 1, "surface", 10, true, 1600, 1800)',
+      'notes = Box([Text("Read the compatibility requirements and contact the maintainer if anything is unclear."), Text("Retain both review steps.")], "col", 1, 1, "surface", 10, true, 240, 1)',
+      'drawing = Box([Svg([Circle(40, 20, 10, "info")], "0 0 80 40", 240, 120, "Review illustration")], "col", 1, 1, "surface", 10, true, 1600, 600)',
+    ].join('\n'),
+  },
   metricGrid: {
     text: 'These supplied loan results stay readable inside a narrow answer.',
     program: 'root = Col([Grid([Metric("Monthly payment", "$405.53"), Metric("Total interest", "$4,331.67"), Metric("Total paid", "$24,331.67")], 3)])',
@@ -67,6 +81,19 @@ const cases = {
   recoveredDecisionTable: {
     text: 'Some visuals could not be validated. The available explanation and verified visuals are shown below.\n\nChoose Birch. It is the only room within budget with step-free access and 18 seats.\n\n| Room | Seats | Access | Cost | Decision |\n| --- | --- | --- | --- | --- |\n| Alder | 24 | Stairs | $50 | Fails accessibility |\n| Birch | 18 | Step-free | $65 | Meets every requirement |\n| Cedar | 30 | Step-free | $85 | Over budget |\n\nBirch has no spare seats.',
     program: 'root = Col([Markdown(body)])\nbody = "Choose Birch. It is the only room within budget with step-free access and 18 seats.\\n\\n| Room | Seats | Access | Cost | Decision |\\n| --- | --- | --- | --- | --- |\\n| Alder | 24 | Stairs | $50 | Fails accessibility |\\n| Birch | 18 | Step-free | $65 | Meets every requirement |\\n| Cedar | 30 | Step-free | $85 | Over budget |\\n\\nBirch has no spare seats."',
+  },
+  recoveredCompactProse: {
+    raw: [
+      'Start the inspection here.',
+      ...Array.from({ length: 170 }, (_, index) =>
+        `## Inspection detail ${index + 1}\n\nRecord only observations sufficient to demonstrate that the work complies with the published requirements. Keep independent notes on the changes made to the item.`),
+      '1. Keep the marked draft.\n2. Hand it to the reviewer.',
+      '```typescript\nwriteReport()\n```',
+      '```javascript\nwriteReport()\n```',
+      '```bash\nshow-review-log\n```',
+      '```typescript\nreadArchivedReport()\n```',
+      'Complete the inspection here.',
+    ].join('\n\n') + '\n<<<XROGA_OPENUI_V1>>>\nroot = Col([Markdown(_xroga_answer), Table(["Decision"]), Code("writeReport()", "typescript"), Flashcard("Archive example", Code("readArchivedReport()", "typescript"))])',
   },
   compactEditableEstimate: {
     text: 'At the initial values, the total is 9.60 L and four 2.5 L tins.',
@@ -197,7 +224,7 @@ const cases = {
 const failedEquation='{'.repeat(3500)+'x'+'}'.repeat(3500)+'<img src=x onerror="window.__xrogaMathProbe=1">';
 cases.mathFailure={text:'$$'+failedEquation+'$$\n\nThe complete answer stays available.'};
 const { completeNativeWorkspaceAnswer } = await tsImport('../backend/src/ai/nativeOpenUiWorkspace.ts', import.meta.url);
-const { validateNativeOpenUi } = await tsImport('../backend/src/ai/nativeOpenUi.ts', import.meta.url);
+const { PARTIAL_NATIVE_PRESENTATION_NOTE, validateNativeOpenUi } = await tsImport('../backend/src/ai/nativeOpenUi.ts', import.meta.url);
 const { nativeDocumentDelivery, requestedNativeDocumentFormat } = await tsImport('../backend/src/ai/nativeDocumentDownload.ts', import.meta.url);
 const documentFixtures = {
   docx: { prompt: 'Draft a workshop proposal with editable sections. Provide it as a downloadable DOCX.', text: '# Workshop Proposal\n\n## Scope\n\nDiscuss the training plan.\n\n| Task | Evidence |\n| --- | --- |\n| User navigation | [Unverified claim](https://fake.example/report) |' },
@@ -223,6 +250,11 @@ for (const [name, fixture] of Object.entries(cases)) {
   if (!fixture.raw) continue;
   const answer = completeNativeWorkspaceAnswer(fixture.raw, fixture.finish ?? 'stop', undefined, fixture.prompt, undefined, fixture.requiredFormats);
   assert.equal(answer.completion.status, fixture.completion ?? 'partial', name + ' completion status');
+  if (name === 'recoveredCompactProse') {
+    assert.equal(answer.completion.reason, 'presentation_contract');
+    assert.ok(answer.response.startsWith(PARTIAL_NATIVE_PRESENTATION_NOTE + '\n\n'));
+    assert.ok(answer.responseSource.text.endsWith('\n_xroga_answer = ""'));
+  }
   cases[name] = { text: answer.response, program: answer.responseSource.text };
 }
 const captured = process.argv[3] ? JSON.parse(await readFile(resolve(process.argv[3]), "utf8")) : null;
@@ -376,6 +408,33 @@ try {
       await open('short');
       await page.getByText(cases.short.text, { exact: true }).waitFor();
       assert.equal(await page.getByRole('slider').count(), 0);
+      await open('responsiveBoxes');
+      const boxes = page.locator('.xroga-native-openui .iui-box');
+      await boxes.nth(2).waitFor();
+      assert.equal(await boxes.count(), 3);
+      const boxGeometry = await boxes.evaluateAll(elements => elements.map(element => {
+        const frame = element.getBoundingClientRect();
+        const parent = element.parentElement.getBoundingClientRect();
+        const content = [...element.children].map(child => child.getBoundingClientRect());
+        return {
+          width: frame.width,
+          height: frame.height,
+          fitsWidth: frame.left >= parent.left - 1 && frame.right <= parent.right + 1,
+          contentVisible: content.every(child => child.height > 0 && child.top >= frame.top - 1 && child.bottom <= frame.bottom + 1),
+        };
+      }));
+      assert.ok(boxGeometry.every(box => box.fitsWidth && box.contentVisible), JSON.stringify(boxGeometry));
+      assert.ok(boxGeometry[0].height <= 80, 'One line must not reserve a tall authored panel');
+      assert.ok(boxGeometry[1].height > 40, 'A short authored height must not clip the notes');
+      const drawing = boxes.nth(2).getByRole('img', { name: 'Review illustration' });
+      assert.equal(await drawing.getAttribute('viewBox'), '0 0 80 40');
+      assert.equal(await drawing.locator('circle').getAttribute('r'), '10');
+      const drawingBounds = await drawing.boundingBox();
+      assert.ok(drawingBounds.width > 0 && drawingBounds.height > 0 && drawingBounds.width <= boxGeometry[2].width);
+      if ([390, 1440].includes(viewport.width)) {
+        await page.getByRole('region', { name: 'Answer', exact: true })
+          .screenshot({ path: resolve(output, channel + '-responsive-boxes-' + viewport.width + '-' + theme + '.png') });
+      }
       for (const name of ['themeControl','themeControlRight']) {
         await open(name);
         await page.waitForFunction(expected=>document.querySelector('output')?.textContent===expected,theme==='dark'?'black':'white');
@@ -507,6 +566,37 @@ try {
       await page.getByRole('cell', { name: 'Meets every requirement', exact: true }).waitFor();
       assert.equal(await page.getByRole('table').count(), 1);
       assert.equal(await page.getByText('Birch has no spare seats.', { exact: true }).count(), 1);
+      await open('recoveredCompactProse');
+      const nativeCode = page.locator('.iui-codeblock .language-typescript').filter({ hasText: 'writeReport()' });
+      await nativeCode.first().waitFor();
+      assert.equal(await nativeCode.count(), 1, 'The visible native Code renders once');
+      assert.equal(await page.locator('.iui-codeblock .language-javascript').filter({ hasText: 'writeReport()' }).count(), 1, 'The alternate language remains');
+      assert.equal(await page.locator('.iui-codeblock .language-bash').filter({ hasText: 'show-review-log' }).count(), 1, 'Markdown-only code remains');
+      assert.equal(await page.locator('.iui-markdown .language-typescript').filter({ hasText: 'readArchivedReport()' }).count(), 1, 'Hidden native code keeps its visible Markdown copy');
+      assert.equal(await page.locator('.iui-flashcard-face[aria-hidden="true"] .language-typescript').filter({ hasText: 'readArchivedReport()' }).count(), 1);
+      for (const paragraph of [PARTIAL_NATIVE_PRESENTATION_NOTE, 'Start the inspection here.', 'Complete the inspection here.']) {
+        assert.equal(await page.getByText(paragraph, { exact: true }).count(), 1, paragraph);
+      }
+      assert.equal(await page.getByRole('heading', { name: 'Inspection detail 170', exact: true }).count(), 1);
+      assert.equal(await page.getByText('Keep the marked draft.', { exact: true }).count(), 1);
+      assert.equal(await page.getByRole('table').count(), 0);
+      await open('citedSortableTable');
+      const citedTable = page.getByRole('table');
+      const sortDuration = citedTable.getByRole('button', { name: 'Sort by Duration (min)' });
+      const citedRowNames = () => citedTable.locator('tbody tr td:first-child').allTextContents();
+      assert.deepEqual(await citedRowNames(), ['North', 'East', 'West', 'South']);
+      const reference = citedTable.getByRole('columnheader', { name: /Duration/ }).getByRole('link');
+      assert.equal(await reference.getAttribute('href'), 'https://www.w3.org/TR/');
+      assert.equal(await sortDuration.getByRole('link').count(), 0);
+      await sortDuration.press('Enter');
+      assert.deepEqual(await citedRowNames(), ['South', 'East', 'North', 'West']);
+      assert.equal(await citedTable.getByRole('columnheader', { name: /Duration/ }).getAttribute('aria-sort'), 'ascending');
+      await sortDuration.press('Enter');
+      assert.deepEqual(await citedRowNames(), ['West', 'North', 'East', 'South']);
+      assert.equal(await citedTable.getByRole('columnheader', { name: /Duration/ }).getAttribute('aria-sort'), 'descending');
+      const north = citedTable.getByRole('row', { name: /North/ });
+      assert.match(await north.textContent(), /195\.0/);
+      assert.equal(await north.getByRole('link').getAttribute('href'), 'https://www.postgresql.org/docs/current/ddl-rowsecurity.html');
       await open('compactEditableEstimate');
       const fields = page.getByRole('group', { name: 'Paint job inputs', exact: true });
       const initial = page.locator('.native-answer-metric-value').first();

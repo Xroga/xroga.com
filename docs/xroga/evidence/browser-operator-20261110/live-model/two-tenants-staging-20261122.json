@@ -1,0 +1,29 @@
+{
+ "enrolled": true,
+ "runs": {
+  "a": 201,
+  "b": 201
+ },
+ "turns": {
+  "a": {
+   "status": 200,
+   "text": "ALPHA",
+   "effort": "high"
+  },
+  "b": {
+   "status": 200,
+   "text": "BRAVO",
+   "effort": "high"
+  }
+ },
+ "noMixing": true,
+ "crossStatuses": [
+  404
+ ],
+ "crossAllDenied": true,
+ "crossCount": 40,
+ "ownersStillOk": [
+  200,
+  200
+ ]
+}
