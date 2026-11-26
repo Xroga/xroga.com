@@ -8,6 +8,8 @@ export interface LayoutRegion {
   y0: number;
   x1: number;
   y1: number;
+  /** For a table: its inner structure (rows, columns, header rows, spanning cells) in page coordinates, from the table-structure model. */
+  cells?: LayoutRegion[];
 }
 export interface LayoutItem {
   str: string;
@@ -100,9 +102,91 @@ function paragraph(lines: string[]): string {
 
 const esc = (s: string) => s.replace(/\|/g, '\\|');
 
-/** Cells by the empty vertical channels between the words of the rows; a line with nothing in its first cell continues the row above. */
-export function tableToMarkdown(items: LayoutItem[]): string {
+/** A pdf.js text item (its transform, in page units) as a box on the drawn page, whatever the page rotation or scale: `view` is the viewport's own transform. */
+export function itemBox(item: { str: string; transform: number[]; width?: number; height?: number }, view: number[]): (LayoutItem & { horizontal: boolean }) | undefined {
+  if (!item.str.trim()) return undefined;
+  const t = item.transform;
+  const [m0, m1, m2, m3, m4, m5] = view as [number, number, number, number, number, number];
+  const a = m0 * t[0]! + m2 * t[1]!;
+  const b = m1 * t[0]! + m3 * t[1]!;
+  const c = m0 * t[2]! + m2 * t[3]!;
+  const d = m1 * t[2]! + m3 * t[3]!;
+  const e = m0 * t[4]! + m2 * t[5]! + m4;
+  const f = m1 * t[4]! + m3 * t[5]! + m5;
+  const scale = Math.hypot(m0, m1) || 1;
+  const size = Math.hypot(c, d) || (item.height ?? 10) * scale;
+  const w = (item.width ?? 0) * scale;
+  const horizontal = Math.abs(b) <= 0.2 * Math.abs(a);
+  if (horizontal) {
+    const x0 = a >= 0 ? e : e - w;
+    return { str: item.str, x0, x1: x0 + w, y0: f - size, y1: f + 0.2 * size, horizontal };
+  }
+  // text running up or down the page: its box is tall and narrow
+  const y0 = b >= 0 ? f : f - w;
+  return { str: item.str, x0: e - size, x1: e + 0.2 * size, y0, y1: y0 + w, horizontal };
+}
+
+const shareOf = (inner: [number, number], outer: [number, number]) => Math.max(0, Math.min(inner[1], outer[1]) - Math.max(inner[0], outer[0])) / Math.max(1e-6, inner[1] - inner[0]);
+
+/** Cells from the table-structure model's rows and columns: each word goes where its row and column cross; a spanning cell joins the cells under it. Null when the model found no usable grid. */
+export function gridFromStructure(items: LayoutItem[], structure: LayoutRegion[]): string[][] | null {
+  // the model also returns the whole table as a box named just "table": it is not a part of the grid, and it must not swallow the rows and columns inside it
+  const clean = cleanRegions(structure.filter(s => s.score >= 0.5 && s.label.startsWith('table ')));
+  const rows = clean.filter(s => s.label === 'table row').sort((a, b) => a.y0 - b.y0);
+  const cols = clean.filter(s => s.label === 'table column').sort((a, b) => a.x0 - b.x0);
+  if (rows.length < 2 || cols.length < 2) return null;
+  const h = median(items.map(i => i.y1 - i.y0)) || 10;
+  const cellItems: LayoutItem[][][] = rows.map(() => cols.map(() => []));
+  const spanning = clean.filter(s => s.label === 'table spanning cell');
+  const spanCells = new Map<LayoutRegion, LayoutItem[]>();
+  const nearest = (list: LayoutRegion[], v: number, lo: 'y0' | 'x0', hi: 'y1' | 'x1') => {
+    let best = -1;
+    let dist = Infinity;
+    list.forEach((r, i) => {
+      const gap = v < r[lo] ? r[lo] - v : v > r[hi] ? v - r[hi] : 0;
+      if (gap < dist) {
+        dist = gap;
+        best = i;
+      }
+    });
+    return dist <= 1.5 * h ? best : -1;
+  };
+  for (const it of items) {
+    const cx = (it.x0 + it.x1) / 2;
+    const cy = (it.y0 + it.y1) / 2;
+    const sp = spanning.find(s => cx >= s.x0 && cx <= s.x1 && cy >= s.y0 && cy <= s.y1);
+    if (sp) {
+      spanCells.set(sp, [...(spanCells.get(sp) ?? []), it]);
+      continue;
+    }
+    const ri = nearest(rows, cy, 'y0', 'y1');
+    const ci = nearest(cols, cx, 'x0', 'x1');
+    if (ri >= 0 && ci >= 0) cellItems[ri]![ci]!.push(it);
+  }
+  const grid = cellItems.map(r => r.map(c => textLines(c).join(' ')));
+  for (const [sp, its] of spanCells) {
+    const ris = rows.flatMap((r, i) => (shareOf([r.y0, r.y1], [sp.y0, sp.y1]) > 0.5 ? [i] : []));
+    const cis = cols.flatMap((c, i) => (shareOf([c.x0, c.x1], [sp.x0, sp.x1]) > 0.5 ? [i] : []));
+    if (!ris.length || !cis.length) continue;
+    for (const ri of ris) for (const ci of cis) grid[ri]![ci] = '';
+    grid[ris[0]!]![cis[0]!] = textLines(its).join(' ');
+  }
+  return grid.filter(r => r.some(Boolean));
+}
+
+function gridToMarkdown(grid: string[][]): string {
+  const width = Math.max(...grid.map(r => r.length));
+  const pad = (r: string[]) => Array.from({ length: width }, (_, i) => esc(r[i] ?? ''));
+  const out = [`| ${pad(grid[0]!).join(' | ')} |`, `| ${pad(grid[0]!).map(() => '---').join(' | ')} |`];
+  for (const r of grid.slice(1)) out.push(`| ${pad(r).join(' | ')} |`);
+  return out.join('\n');
+}
+
+/** Cells by the empty vertical channels between the words of the rows; a line with nothing in its first cell continues the row above. Rows and columns from the structure model win when given. */
+export function tableToMarkdown(items: LayoutItem[], structure?: LayoutRegion[]): string {
   if (!items.length) return '';
+  const grid = structure?.length ? gridFromStructure(items, structure) : null;
+  if (grid?.length) return gridToMarkdown(grid);
   const h = median(items.map(i => i.y1 - i.y0)) || 10;
   const spans = items.map(i => [i.x0, i.x1] as [number, number]).sort((a, b) => a[0] - b[0]);
   const cols: Array<[number, number]> = [];
@@ -245,7 +329,7 @@ export function assembleLayout(rawRegions: LayoutRegion[], items: LayoutItem[], 
       }
       case 'table': {
         tables++;
-        const md = tableToMarkdown(its);
+        const md = tableToMarkdown(its, r.cells);
         blocks.push(md || '[table with no text]');
         break;
       }

@@ -84,7 +84,6 @@ async function recognize(base64: string, mimeType: string, lang: string) {
 // Page layout (read_pdf with layout true): Docling's layout model (Heron, Apache-2.0, RT-DETR v2, about 171 MB, ONNX) finds the regions of a drawn page (title, heading, text, list item,
 // table, picture, caption, formula, code, header, footer); the words come from the PDF's text layer (or from text recognition for a scanned page) and src/agent/layout-assemble.ts puts them together.
 const LAYOUT_MODEL = 'docling-project/docling-layout-heron-onnx';
-const LAYOUT_PAGES = 8;
 type Detect = (canvas: OffscreenCanvas, options: { threshold: number }) => Promise<Array<{ score: number; label: string; box: { xmin: number; ymin: number; xmax: number; ymax: number } }>>;
 const LAYOUT_SIDE = 640;
 let layoutDetect: Promise<Detect> | undefined;
@@ -132,9 +131,37 @@ function layoutDetector(): Promise<Detect> {
   layoutDetect.catch(() => (layoutDetect = undefined));
   return layoutDetect;
 }
+// Table structure: Microsoft's Table Transformer (MIT, DETR, 30 MB quantised; the Xenova ONNX conversion) finds the rows, columns, header rows and spanning cells inside each table region.
+const TABLE_MODEL = 'Xenova/table-transformer-structure-recognition-v1.1-all';
+type TableDetect = (image: string, options: { threshold: number }) => Promise<Array<{ score: number; label: string; box: { xmin: number; ymin: number; xmax: number; ymax: number } }>>;
+let tableDetect: Promise<TableDetect> | undefined;
+function tableDetector(): Promise<TableDetect> {
+  tableDetect ??= (async () => (await (await loadTransformers()).pipeline('object-detection', TABLE_MODEL, { dtype: 'q8', device: 'wasm' })) as TableDetect)();
+  tableDetect.catch(() => (tableDetect = undefined));
+  return tableDetect;
+}
+/** The structure of one table: crop it from the drawn page with a margin, ask the model, and put the answers back in page coordinates. */
+async function tableStructure(canvas: OffscreenCanvas, box: { x0: number; y0: number; x1: number; y1: number }) {
+  const pad = 12;
+  const x0 = Math.max(0, Math.floor(box.x0 - pad));
+  const y0 = Math.max(0, Math.floor(box.y0 - pad));
+  const x1 = Math.min(canvas.width, Math.ceil(box.x1 + pad));
+  const y1 = Math.min(canvas.height, Math.ceil(box.y1 + pad));
+  if (x1 - x0 < 20 || y1 - y0 < 20) return [];
+  const crop = new OffscreenCanvas(x1 - x0, y1 - y0);
+  crop.getContext('2d')!.drawImage(canvas, x0, y0, x1 - x0, y1 - y0, 0, 0, x1 - x0, y1 - y0);
+  const url = URL.createObjectURL(await crop.convertToBlob({ type: 'image/png' }));
+  try {
+    const found = await (await tableDetector())(url, { threshold: 0.5 });
+    return found.map(r => ({ label: r.label, score: r.score, x0: r.box.xmin + x0, y0: r.box.ymin + y0, x1: r.box.xmax + x0, y1: r.box.ymax + y0 }));
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
 const LAYOUT_SCALE = 2;
-async function layoutPage(page: PdfPageLike, n: number, textItems: Array<{ str?: string; transform: number[]; width?: number; height?: number }> | undefined, lang: string) {
-  const { assembleLayout } = await import('@src/agent/layout-assemble');
+async function layoutPage(page: PdfPageLike, n: number, notes: string[], textItems: Array<{ str?: string; transform: number[]; width?: number; height?: number }> | undefined, lang: string) {
+  const { assembleLayout, itemBox } = await import('@src/agent/layout-assemble');
   const viewport = page.getViewport({ scale: LAYOUT_SCALE });
   const canvas = new OffscreenCanvas(Math.ceil(viewport.width), Math.ceil(viewport.height));
   await Promise.race([page.render({ canvasContext: canvas.getContext('2d') as unknown as CanvasRenderingContext2D, viewport }).promise, new Promise<never>((_, reject) => setTimeout(() => reject(new Error('drawing page ' + n + ' took more than 40 seconds')), 40_000))]);
@@ -143,18 +170,31 @@ async function layoutPage(page: PdfPageLike, n: number, textItems: Array<{ str?:
   const hasText = (textItems ?? []).filter(i => typeof i.str === 'string' && i.str.trim()).length >= 5;
   let items: Array<{ str: string; x0: number; y0: number; x1: number; y1: number }>;
   if (hasText) {
-    items = (textItems ?? [])
-      .filter(i => typeof i.str === 'string' && i.str.trim() && Math.abs(i.transform[1]!) <= 0.2 * Math.abs(i.transform[0]!))
-      .map(i => {
-        const h = (Math.abs(i.transform[3]!) || i.height || 10) * LAYOUT_SCALE;
-        const base = viewport.height - i.transform[5]! * LAYOUT_SCALE;
-        return { str: i.str as string, x0: i.transform[4]! * LAYOUT_SCALE, x1: (i.transform[4]! + (i.width ?? 0)) * LAYOUT_SCALE, y0: base - h, y1: base + 0.2 * h };
-      });
+    // the viewport's own transform carries the page rotation, so a page set sideways reads as it looks
+    items = (textItems ?? []).flatMap(i => {
+      const box = typeof i.str === 'string' ? itemBox({ str: i.str, transform: i.transform, width: i.width, height: i.height }, viewport.transform) : undefined;
+      return box && box.horizontal ? [{ str: box.str, x0: box.x0, y0: box.y0, x1: box.x1, y1: box.y1 }] : [];
+    });
   } else {
     const read = await recognize(await blobToBase64(blob), 'image/png', lang);
     items = read.lines.filter(l => l.text).map(l => ({ str: l.text, x0: l.bbox.x0, y0: l.bbox.y0, x1: l.bbox.x1, y1: l.bbox.y1 }));
   }
-  const out = assembleLayout(found.map(f => ({ label: f.label, score: f.score, x0: f.box.xmin, y0: f.box.ymin, x1: f.box.xmax, y1: f.box.ymax })), items, { width: viewport.width, height: viewport.height });
+  const regions: Array<{ label: string; score: number; x0: number; y0: number; x1: number; y1: number; cells?: Awaited<ReturnType<typeof tableStructure>> }> = found.map(f => ({ label: f.label, score: f.score, x0: f.box.xmin, y0: f.box.ymin, x1: f.box.xmax, y1: f.box.ymax }));
+  let tableNo = 0;
+  for (const r of regions) {
+    if (r.label !== 'table') continue;
+    tableNo++;
+    try {
+      r.cells = await tableStructure(canvas, r);
+      const rows = r.cells.filter(c => c.label === 'table row' && c.score >= 0.5).length;
+      const cols = r.cells.filter(c => c.label === 'table column' && c.score >= 0.5).length;
+      notes.push(`page ${n} table ${tableNo}: table model found ${rows} rows and ${cols} columns${rows >= 2 && cols >= 2 ? '' : ', too few, so the gaps between words were used instead'}`);
+    } catch (error) {
+      r.cells = [];
+      notes.push(`page ${n} table ${tableNo}: table model failed (${(error instanceof Error ? error.message : String(error)).slice(0, 120)}), the gaps between words were used instead`);
+    }
+  }
+  const out = assembleLayout(regions, items, { width: viewport.width, height: viewport.height });
   return { text: out.markdown, source: hasText ? ('text' as const) : ('picture' as const) };
 }
 
@@ -189,8 +229,8 @@ async function readPdf(url: string, spec: string | undefined, forcePicture: bool
   const wanted = parsePages(spec, doc.numPages);
   const pages: Array<{ page: number; text: string; source: 'text' | 'picture' }> = [];
   const layout = new Map<number, { items: PdfTextItem[]; width: number }>();
-  let layoutLeft = useLayout ? LAYOUT_PAGES : 0;
-  for (const n of wanted) {
+  const notes: string[] = [];
+    for (const n of wanted) {
     const page = await doc.getPage(n);
     let text = '';
     let textItems: Array<{ str?: string; transform: number[]; width?: number; height?: number }> | undefined;
@@ -214,9 +254,8 @@ async function readPdf(url: string, spec: string | undefined, forcePicture: bool
       }
       text = text.replace(/[ \t]+/g, ' ').trim();
     }
-    if (layoutLeft > 0) {
-      layoutLeft--;
-      const laid = await layoutPage(page, n, forcePicture ? undefined : textItems, lang);
+    if (useLayout) {
+      const laid = await layoutPage(page, n, notes, forcePicture ? undefined : textItems, lang);
       pages.push({ page: n, text: laid.text || text, source: laid.source });
     } else if (forcePicture || text.length < 20) {
       const viewport = page.getViewport({ scale: 2 });
@@ -245,7 +284,7 @@ async function readPdf(url: string, spec: string | undefined, forcePicture: bool
   const meta = await doc.getMetadata().catch(() => undefined);
   const title = (meta?.info as { Title?: string } | undefined)?.Title;
   await doc.destroy();
-  return { pageCount: doc.numPages, title, pages, ...(outline?.length ? { outline } : {}) };
+  return { pageCount: doc.numPages, title, pages, ...(outline?.length ? { outline } : {}), ...(notes.length ? { notes } : {}) };
 }
 async function blobToBase64(blob: Blob): Promise<string> {
   const bytes = new Uint8Array(await blob.arrayBuffer());
@@ -283,7 +322,7 @@ interface PdfDoc {
   getPageIndex(ref: object): Promise<number>;
   getPage(n: number): Promise<{
     getTextContent(): Promise<{ items: Array<{ str?: string; transform: number[]; width?: number; height?: number }> }>;
-    getViewport(o: { scale: number }): { width: number; height: number };
+    getViewport(o: { scale: number }): { width: number; height: number; transform: number[] };
     render(o: object): { promise: Promise<void> };
     cleanup(): void;
   }>;
@@ -298,7 +337,7 @@ type SpeechPipeline = (audio: Float32Array, options: object) => Promise<{ text: 
 const speechPipelines = new Map<string, Promise<SpeechPipeline>>();
 
 interface Transformers {
-  env: { allowLocalModels: boolean; backends: { onnx: { wasm: { wasmPaths: string; numThreads: number; proxy: boolean } } } };
+  env: { allowLocalModels: boolean; backends: { onnx: { wasm: { wasmPaths: string | { mjs: string; wasm: string }; numThreads: number; proxy: boolean } } } };
   pipeline(task: string, model: string, options: object): Promise<unknown>;
   AutoModelForObjectDetection: { from_pretrained(id: string, options: object): Promise<{ sessions: { model: OrtSession }; config: { id2label: Record<string, string> } }> };
   Tensor: new (type: string, data: ArrayLike<number> | BigInt64Array, dims: number[]) => { ort_tensor: unknown };
@@ -314,7 +353,8 @@ function loadTransformers(): Promise<Transformers> {
   transformers ??= (async () => {
     const tf = (await import(/* @vite-ignore */ chrome.runtime.getURL('speech/transformers.min.js'))) as Transformers;
     tf.env.allowLocalModels = false;
-    tf.env.backends.onnx.wasm.wasmPaths = chrome.runtime.getURL('speech/');
+    // the plain WebAssembly build (no graphics-card backend): half the size of the one transformers.js points at by default
+    tf.env.backends.onnx.wasm.wasmPaths = { mjs: chrome.runtime.getURL('speech/ort-wasm-simd-threaded.mjs'), wasm: chrome.runtime.getURL('speech/ort-wasm-simd-threaded.wasm') };
     tf.env.backends.onnx.wasm.numThreads = 1;
     tf.env.backends.onnx.wasm.proxy = false;
     return tf;
@@ -379,7 +419,7 @@ chrome.runtime.onMessage.addListener((message, _sender, reply) => {
   } else if (message.type === 'pdf') {
     Promise.race([
       readPdf(String(message.url), message.pages as string | undefined, message.picture === true, /^[a-z_]{3,8}$/.test(String(message.lang)) ? String(message.lang) : 'eng', message.structure === true, message.layout === true),
-      new Promise<never>((_, reject) => setTimeout(() => reject(new Error('the PDF reader stalled (' + pdfSteps.join('; ') + ')')), message.layout === true ? 600_000 : 100_000)),
+      new Promise<never>((_, reject) => setTimeout(() => reject(new Error('the PDF reader stalled (' + pdfSteps.join('; ') + ')')), message.layout === true ? 3_600_000 : 100_000)),
     ]).then(
       result => reply({ ok: true, ...result }),
       error => reply({ ok: false, error: error instanceof Error ? error.message : String(error) }),

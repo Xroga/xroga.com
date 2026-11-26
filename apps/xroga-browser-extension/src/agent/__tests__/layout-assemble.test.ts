@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { assembleLayout, cleanRegions, readingOrder, tableToMarkdown, type LayoutItem, type LayoutRegion } from '../layout-assemble';
+import { assembleLayout, cleanRegions, gridFromStructure, itemBox, readingOrder, tableToMarkdown, type LayoutItem, type LayoutRegion } from '../layout-assemble';
 
 const region = (label: string, x0: number, y0: number, x1: number, y1: number, score = 0.9): LayoutRegion => ({ label, score, x0, y0, x1, y1 });
 // a word 10 high; width follows its length
@@ -80,5 +80,43 @@ describe('layout assembly', () => {
   it('keeps one column in order when nothing sits beside anything', () => {
     const order = readingOrder([region('text', 50, 300, 550, 400), region('text', 50, 100, 550, 200)], 600);
     expect(order.map(r => r.y0)).toEqual([100, 300]);
+  });
+
+  it('turns a text item into a box on an upright page, a page turned 90 degrees, and sideways text', () => {
+    const item = { str: 'Hello', transform: [10, 0, 0, 10, 100, 700], width: 30 };
+    // upright page, scale 2, 800 tall: y goes down from the top
+    const upright = itemBox(item, [2, 0, 0, -2, 0, 1600])!;
+    expect(upright.horizontal).toBe(true);
+    expect([upright.x0, upright.x1, upright.y0]).toEqual([200, 260, 180]);
+    // the same page turned 90 degrees clockwise: the drawn text now runs down the page
+    const turned = itemBox(item, [0, 2, 2, 0, 0, 0])!;
+    expect(turned.horizontal).toBe(false);
+    // a page whose own text is set sideways (its transform runs up) and the view turns it back: reads horizontally
+    const sideways = { str: 'Side', transform: [0, 10, -10, 0, 300, 100], width: 24 };
+    const back = itemBox(sideways, [0, 2, 2, 0, 0, 0])!;
+    expect(back.horizontal).toBe(true);
+    expect(back.x1 - back.x0).toBe(48);
+    expect(itemBox({ str: '  ', transform: [1, 0, 0, 1, 0, 0] }, [1, 0, 0, 1, 0, 0])).toBeUndefined();
+  });
+
+  it('builds a table from the structure model: rows, columns, a spanning header and a wrapped cell', () => {
+    const items = [
+      ...sentence('Layer', 50, 100), ...sentence('Output', 200, 100), ...sentence('Notes', 350, 100),
+      ...sentence('conv1', 50, 130), ...sentence('112', 200, 130), ...sentence('3x3, 64', 350, 130), ...sentence('stride 2', 350, 142),
+      ...sentence('conv2', 50, 170), ...sentence('56', 200, 170), ...sentence('1x1, 64', 350, 170),
+    ];
+    const structure: LayoutRegion[] = [
+      region('table', 35, 85, 455, 195, 0.99), // the whole table, as the model returns it
+      region('table row', 40, 95, 450, 115), region('table row', 40, 125, 450, 155), region('table row', 40, 165, 450, 185),
+      region('table column', 40, 90, 150, 190), region('table column', 190, 90, 300, 190), region('table column', 340, 90, 450, 190),
+    ];
+    expect(gridFromStructure(items, structure)).toEqual([['Layer', 'Output', 'Notes'], ['conv1', '112', '3x3, 64 stride 2'], ['conv2', '56', '1x1, 64']]);
+    expect(tableToMarkdown(items, structure).split(String.fromCharCode(10))[2]).toBe('| conv1 | 112 | 3x3, 64 stride 2 |');
+    // a spanning header over two columns keeps its text in the first cell
+    const span = [...sentence('Group', 200, 80), ...items.slice(0, 0)];
+    const withSpan = gridFromStructure([...span, ...items], [...structure, region('table spanning cell', 190, 75, 450, 95)]);
+    expect(withSpan).not.toBeNull();
+    // too few rows from the model: no grid, the caller falls back to the word-gap method
+    expect(gridFromStructure(items, [region('table row', 40, 95, 450, 115)])).toBeNull();
   });
 });
