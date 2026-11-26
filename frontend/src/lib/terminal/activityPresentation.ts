@@ -1,3 +1,4 @@
+import { CLIENT_THOUGHT } from './clientSteps';
 import type { TerminalEvent } from './terminalEvent';
 import { redactTerminalText } from './terminalRedaction';
 
@@ -211,9 +212,7 @@ export function presentTerminalEvent(event: TerminalEvent): XrogaActivityPresent
   const detail = command ? redactTerminalText(command).trim().slice(0, 1000) :
     publicActivityText(redactTerminalText(rawDetail));
   // Output is already bounded and redacted by Agent V2. Preserve its line breaks.
-  // The request summary is a short list the Workspace built itself; its lines are kept.
-  const body = event.canonical?.activityId === 'client-understand' ? redactTerminalText(event.body ?? '').slice(0, 4000) :
-    operation === 'command.output' ? redactTerminalText(event.body ?? '').slice(-8000) :
+  const body = operation === 'command.output' ? redactTerminalText(event.body ?? '').slice(-8000) :
     operation === 'command.completed' ? '' :
     // File text keeps its line breaks, like command output. It is redacted and bounded.
     operation?.toString().startsWith('file.') ? redactTerminalText(event.body ?? '').slice(0, 4000) : publicActivityText(redactTerminalText(event.canonical?.details ?? event.body ?? ''));
@@ -251,7 +250,8 @@ export function coalesceActivity(
   const seen = new Set<string>();
   for (const event of events) {
     if (event.kind === 'output' || event.kind === 'result' || event.kind === 'session') continue;
-    if (isGenericPlaceholderActivity(event.text)) continue;
+    // The Workspace's own Thinking line is a real, timed step, not filler.
+    if (isGenericPlaceholderActivity(event.text) && event.canonical?.activityId !== CLIENT_THOUGHT) continue;
     const canonical = event.canonical;
     const identity = canonical ? `${canonical.runId ?? ''}:${canonical.eventId}` : `sequence:${event.seq}`;
     if (seen.has(identity)) continue;

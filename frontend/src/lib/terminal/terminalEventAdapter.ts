@@ -893,6 +893,8 @@ export function adaptTerminalEvent(
     });
   };
 
+  if (event === 'progress' && payload.status === 'understanding_request') return rows;
+
   /*
    * Permission gates must be processed before keepalive suppression.
    */

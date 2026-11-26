@@ -1,63 +1,37 @@
 /**
- * Steps the Workspace itself can vouch for, shown for every prompt whatever the backend streams:
- * it sent the request to be understood, it asked for the answer, and what came back. Each one starts
- * when the call starts and ends only when that call ends.
+ * The one line the Workspace can vouch for on every prompt, whatever the backend streams: it is thinking
+ * while the request is out, and afterwards how long that really took and which pages came back. No text
+ * about the request is composed here. Real work the backend reports appears beneath it.
  */
 
-export const CLIENT_UNDERSTAND = 'client-understand';
-export const CLIENT_ANSWER = 'client-answer';
+export const CLIENT_THOUGHT = 'client-thought';
 
 export type ClientStepStatus = 'running' | 'completed' | 'failed';
 
-export function clientStepFrame(
-  id: string, status: ClientStepStatus, text: string,
-  extra: { detail?: string; sources?: Array<{ title: string; url: string }> } = {},
+export function thoughtFrame(
+  status: ClientStepStatus, text: string,
+  extra: { sources?: Array<{ title: string; url: string }> } = {},
 ): Record<string, unknown> {
-  return { agent: 'session', status: 'step', activityId: id, activityStatus: status, message: text, swarmActivity: text, ...extra };
+  return { agent: 'session', status: 'step', activityId: CLIENT_THOUGHT, activityStatus: status, message: text, swarmActivity: text, ...extra };
 }
 
-interface PlanLike {
-  dispatch?: string;
-  goalContract?: {
-    desiredOutcome?: string;
-    acceptance?: readonly string[];
-    constraints?: readonly string[];
-    requiredCapabilities?: readonly string[];
-    freshnessRequirement?: string;
-    deliverables?: ReadonlyArray<{ description?: string }>;
-  };
+export const THINKING = 'Thinking';
+
+function seconds(ms: number): string {
+  const total = Math.max(1, Math.round(ms / 1000));
+  return total < 60 ? `${total}s` : `${Math.floor(total / 60)}m ${total % 60}s`;
 }
 
-const line = (value: unknown): string => (typeof value === 'string' ? value.replace(/\s+/g, ' ').trim().slice(0, 220) : '');
-
-/** What the planner returned about the request, in plain lines. Its private rationale is never shown. */
-export function understandingDetail(plan: PlanLike): string {
-  const goal = plan.goalContract ?? {};
-  const list = (title: string, values: readonly unknown[] | undefined) => {
-    const items = (values ?? []).map(line).filter(Boolean).slice(0, 5);
-    return items.length ? `${title}\n${items.map(item => `• ${item}`).join('\n')}` : '';
-  };
-  const needs = (goal.requiredCapabilities ?? [])
-    .filter(id => id !== 'conversation.respond')
-    .map(id => id.replace(/[._-]+/g, ' '));
-  return [
-    line(goal.desiredOutcome) ? `Goal: ${line(goal.desiredOutcome)}` : '',
-    list('What you should get', goal.deliverables?.map(item => item.description)),
-    list('Will be checked', goal.acceptance),
-    list('Limits', goal.constraints),
-    list('Needs', needs),
-    goal.freshnessRequirement === 'CURRENT_REQUIRED' ? 'Needs current information.' : '',
-  ].filter(Boolean).join('\n\n');
-}
-
-export function answeredStep(sources: ReadonlyArray<{ title?: string; url?: string }> | undefined) {
+/** Measured time, plus the number of pages the answer really came with. */
+export function thoughtDone(elapsedMs: number, sources?: ReadonlyArray<{ title?: string; url?: string }>) {
   const listed = (sources ?? [])
     .filter(source => typeof source.url === 'string' && /^https?:\/\//i.test(source.url))
     .slice(0, 8)
-    .map(source => ({ title: line(source.title) || source.url!, url: source.url! }));
+    .map(source => ({ title: (source.title ?? '').replace(/\s+/g, ' ').trim().slice(0, 160) || source.url!, url: source.url! }));
   const count = listed.length;
+  const time = `Thought for ${seconds(elapsedMs)}`;
   return {
-    text: count ? `Wrote the answer using ${count} ${count === 1 ? 'source' : 'sources'}` : 'Wrote the answer',
+    text: count ? `${time} · ${count} ${count === 1 ? 'source' : 'sources'}` : time,
     sources: count ? listed : undefined,
   };
 }

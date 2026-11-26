@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import {
-  AlertTriangle, CheckCircle2, ChevronDown, CircleX, CirclePause, Database, FilePen, FileSearch, FileText,
+  AlertTriangle, Brain, CheckCircle2, ChevronDown, CircleX, CirclePause, Database, FilePen, FileSearch, FileText,
   Clock, Globe, Hand, ListTodo, Plug, Rocket, Search, ShieldCheck, SquareTerminal, type LucideIcon,
 } from 'lucide-react';
 import type { XrogaActivityPresentation } from '@/lib/terminal/activityPresentation';
@@ -121,6 +121,15 @@ export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel
   // A finished run folds into one quiet header so the answer under it stays the focus.
   if (!running) {
     if (!settled.length && state !== 'failed' && state !== 'stopped') return null;
+    // A prompt that only needed thinking keeps one quiet line: there is nothing to open.
+    const only = stream.length === 1 && stream[0]!.type === 'step' ? stream[0] : null;
+    if (state === 'done' && only?.type === 'step' && only.id.endsWith(':client-thought') && !only.evidence?.sources) {
+      return (
+        <section className={styles.timeline} aria-label="Activity" data-state={state} data-testid="activity-timeline">
+          <p className={`${styles.row} ${styles.header}`} data-static="true"><Brain className={styles.icon} aria-hidden="true" /><span className={styles.text}>{only.text}</span></p>
+        </section>
+      );
+    }
     const steps = model.total;
     const summary = [
       model.completed > 0 ? `${model.completed} completed` : '',

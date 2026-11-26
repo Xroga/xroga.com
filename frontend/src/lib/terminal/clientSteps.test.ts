@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { conversationActivityV2 } from '../../components/response-experience-v2/conversation';
 import { coalesceActivity } from './activityPresentation';
-import { CLIENT_ANSWER, CLIENT_UNDERSTAND, answeredStep, clientStepFrame, understandingDetail } from './clientSteps';
+import { THINKING, thoughtDone, thoughtFrame } from './clientSteps';
 import { buildProcessingStream, groupStream } from './processingStream';
 import { adaptTerminalEvent } from './terminalEventAdapter';
 import type { TerminalEvent } from './terminalEvent';
@@ -18,42 +18,29 @@ function run(frames: Array<Record<string, unknown>>) {
   return coalesceActivity(events);
 }
 
-test('a plain question shows understanding and answering, openable, never folded away', () => {
-  const rows = run([
-    clientStepFrame(CLIENT_UNDERSTAND, 'running', 'Understanding your request'),
-    clientStepFrame(CLIENT_UNDERSTAND, 'completed', 'Understood your request', { detail: 'Goal: explain why the sky is blue' }),
-    clientStepFrame(CLIENT_ANSWER, 'running', 'Writing the answer'),
-  ]);
-  const live = buildProcessingStream(rows, true);
-  assert.deepEqual(live.map(e => [e.text, e.type === 'step' ? e.state : '']), [['Understood your request', 'done'], ['Writing the answer', 'live']]);
-  assert.match((live[0] as { evidence?: { notes?: string } }).evidence?.notes ?? '', /Goal: explain why the sky is blue/);
-  const running = run([clientStepFrame(CLIENT_UNDERSTAND, 'running', 'Reading your request')]);
-  assert.deepEqual(buildProcessingStream(running, true).map(e => e.text), ['Reading your request'], 'the first line is not filtered as filler');
-  const lines = run([clientStepFrame(CLIENT_UNDERSTAND, 'completed', 'Understood your request', { detail: 'Goal: a thing\n\nWill be checked\n• one' })]);
-  assert.match((buildProcessingStream(lines, false)[0] as { evidence?: { notes?: string } }).evidence?.notes ?? '', /thing\n\nWill be checked\n• one/);
-  const done = run([
-    clientStepFrame(CLIENT_UNDERSTAND, 'completed', 'Understood your request'),
-    clientStepFrame(CLIENT_ANSWER, 'completed', 'Wrote the answer'),
-  ]);
-  assert.equal(groupStream(buildProcessingStream(done, false)).length, 2);
-  assert.equal(conversationActivityV2(done).length, 2, 'both stay with the saved answer');
+test('a plain prompt shows one live Thinking line that settles into the measured time', () => {
+  const live = buildProcessingStream(run([thoughtFrame('running', THINKING)]), true);
+  assert.deepEqual(live.map(e => [e.text, e.type === 'step' ? e.state : '']), [['Thinking', 'live']]);
+  const done = run([thoughtFrame('running', THINKING), thoughtFrame('completed', thoughtDone(9200).text)]);
+  assert.deepEqual(buildProcessingStream(done, false).map(e => e.text), ['Thought for 9s']);
+  assert.equal(conversationActivityV2(done).length, 1, 'it stays with the saved answer');
 });
 
-test('when real work steps arrive the generic answering line steps aside unless it carries sources', () => {
-  const search = { agent: 'session', status: 'step', activityId: 's1', activityStatus: 'running', swarmActivity: 'Searching the web' };
-  const rows = run([clientStepFrame(CLIENT_UNDERSTAND, 'completed', 'Understood your request'), clientStepFrame(CLIENT_ANSWER, 'running', 'Writing the answer'), search]);
-  assert.deepEqual(buildProcessingStream(rows, true).map(e => e.text), ['Understood your request', 'Searching the web']);
-  const answered = answeredStep([{ title: 'Node', url: 'https://nodejs.org/' }, { title: 'x', url: 'javascript:1' }]);
-  assert.equal(answered.text, 'Wrote the answer using 1 source');
-  const withSources = run([{ ...search, activityStatus: 'completed' }, clientStepFrame(CLIENT_ANSWER, 'completed', answered.text, { sources: answered.sources })]);
-  assert.ok(buildProcessingStream(withSources, false).some(e => e.text === answered.text));
+test('real work appears under the line, which is never folded into a group', () => {
+  const step = (id: string, text: string) => ({ agent: 'session', status: 'step', activityId: id, activityStatus: 'completed', swarmActivity: text });
+  const rows = run([thoughtFrame('running', THINKING), step('a', 'Searched the web'), step('b', 'Read sources')]);
+  const grouped = groupStream(buildProcessingStream(rows, true));
+  assert.deepEqual(grouped.map(e => e.type), ['step', 'group']);
 });
 
-test('the understanding detail lists the plan in plain words and hides the generic capability', () => {
-  const text = understandingDetail({ goalContract: { desiredOutcome: 'A comparison', acceptance: ['Both versions named'], requiredCapabilities: ['conversation.respond', 'research.public-web'], freshnessRequirement: 'CURRENT_REQUIRED' } });
-  assert.match(text, /Goal: A comparison/);
-  assert.match(text, /• Both versions named/);
-  assert.match(text, /• research public web/);
-  assert.doesNotMatch(text, /conversation respond/);
-  assert.equal(understandingDetail({}), '');
+test('the finished line counts only real web pages and composes nothing about the request', () => {
+  const done = thoughtDone(75_000, [{ title: 'Node', url: 'https://nodejs.org/' }, { title: 'x', url: 'javascript:1' }]);
+  assert.equal(done.text, 'Thought for 1m 15s · 1 source');
+  assert.equal(done.sources?.length, 1);
+  assert.equal(thoughtDone(200).text, 'Thought for 1s');
+});
+
+test('the mechanical reading of a request is not shown', () => {
+  const rows = adaptTerminalEvent('progress', { agent: 'session', status: 'understanding_request', swarmActivity: 'Reads as "a question answered".' }, { fromSeq: 0 });
+  assert.equal(rows.length, 0);
 });

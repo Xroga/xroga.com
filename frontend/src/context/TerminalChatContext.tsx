@@ -73,7 +73,7 @@ import {
 } from '@/lib/workLanes';
 import { runLightLaneChat } from '@/lib/runLightLaneChat';
 import { runGuestLaneChat } from '@/lib/runGuestLaneChat';
-import { CLIENT_ANSWER, CLIENT_UNDERSTAND, answeredStep, clientStepFrame, understandingDetail } from '@/lib/terminal/clientSteps';
+import { THINKING, thoughtDone, thoughtFrame } from '@/lib/terminal/clientSteps';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
 import { useWorkspaceAuthGate } from '@/components/workspace/WorkspaceAuthGate';
 import { GitHubBuildGateModal } from '@/components/terminal/GitHubBuildGateModal';
@@ -702,8 +702,24 @@ export function TerminalChatProvider({
     terminalEventIds.current.clear();
     dispatchTerminalRun({ type: 'run-started' });
   }, []);
-  /** The Workspace's own step still running, so a failure can end it truthfully. */
-  const openClientStepRef = useRef<{ id: string; failed: string } | null>(null);
+  /** When the current prompt started thinking; null once that line has ended. */
+  const thinkingSinceRef = useRef<number | null>(null);
+  const startThinking = useCallback(() => {
+    thinkingSinceRef.current = Date.now();
+    pushTerminalEvent('progress', thoughtFrame('running', THINKING));
+  }, [pushTerminalEvent]);
+  const finishThinking = useCallback((sources?: Array<{ title: string; url: string }>) => {
+    const since = thinkingSinceRef.current;
+    if (since === null) return;
+    thinkingSinceRef.current = null;
+    const done = thoughtDone(Date.now() - since, sources);
+    pushTerminalEvent('progress', thoughtFrame('completed', done.text, { sources: done.sources }));
+  }, [pushTerminalEvent]);
+  const failThinking = useCallback(() => {
+    if (thinkingSinceRef.current === null) return;
+    thinkingSinceRef.current = null;
+    pushTerminalEvent('progress', thoughtFrame('failed', 'Could not finish thinking'));
+  }, [pushTerminalEvent]);
   const [githubGateOpen, setGithubGateOpen] = useState(false);
   const [vercelGateOpen, setVercelGateOpen] = useState(false);
   const [githubActivation, setGithubActivation] = useState<{ open: boolean; username?: string }>({
@@ -2337,7 +2353,7 @@ const stopRequestedRunIdRef =
       lightAbortRef.current = controller;
 
       startTerminalRun();
-      pushTerminalEvent('progress', clientStepFrame(CLIENT_ANSWER, 'running', 'Writing the answer'));
+      startThinking();
       const keepActivity = () => {
         const activity = coalesceActivity(terminalEventsRef.current);
         setMessages((current) => current.map((row) => (row.id === assistantId ? { ...row, executionActivity: activity } : row)));
@@ -2359,7 +2375,7 @@ const stopRequestedRunIdRef =
           },
         });
         const enhanced = enhanceAiResponse(result.response, assistantId);
-        pushTerminalEvent('progress', clientStepFrame(CLIENT_ANSWER, 'completed', 'Wrote the answer'));
+        finishThinking();
         pushTerminalEvent('complete', { success: true });
         keepActivity();
         setMessages((current) => current.map((message) =>
@@ -2369,7 +2385,7 @@ const stopRequestedRunIdRef =
         ));
       } catch (error) {
         if (error instanceof DOMException && error.name === 'AbortError') { dispatchTerminalRun({ type: 'interrupted' }); return; }
-        pushTerminalEvent('progress', clientStepFrame(CLIENT_ANSWER, 'failed', 'Could not write the answer'));
+        failThinking();
         pushTerminalEvent('error', { error: error instanceof Error ? error.message : 'Guest chat failed' });
         keepActivity();
         const apiError = error instanceof ApiError ? error : null;
@@ -2879,8 +2895,7 @@ const stopRequestedRunIdRef =
           useProjectWorkspaceStore.getState().activeProjectContext,
           freshProductIntent,
         );
-        pushTerminalEvent('progress', clientStepFrame(CLIENT_UNDERSTAND, 'running', 'Reading your request'));
-        openClientStepRef.current = { id: CLIENT_UNDERSTAND, failed: 'Could not understand the request' };
+        startThinking();
         const semanticPlan = await api.phase1.plan(
           displayPrompt,
           history,
@@ -2895,8 +2910,6 @@ const stopRequestedRunIdRef =
           { hasExistingPreview: Boolean(priorSite), isUpdate: isBuildUpdate },
           controller.signal,
         );
-        openClientStepRef.current = null;
-        pushTerminalEvent('progress', clientStepFrame(CLIENT_UNDERSTAND, 'completed', 'Understood your request', { detail: understandingDetail(semanticPlan) }));
         /*
  * Clicking Retry on a stopped build is explicit execution intent.
  *
@@ -3002,6 +3015,8 @@ if (
           ));
         }
 
+        if (!usePhase1Engine) finishThinking();
+
         if (usePhase1Engine) {
           setPipelineCompact(false);
           setHeavyBuildActive(false);
@@ -3022,14 +3037,10 @@ if (
               kind: needsCurrentSources || semanticPlan.goalContract.requiredCapabilities.includes('research.public-web')
                 ? 'source-backed' : 'standard',
             });
-            pushTerminalEvent('progress', clientStepFrame(CLIENT_ANSWER, 'running', 'Writing the answer'));
-            openClientStepRef.current = { id: CLIENT_ANSWER, failed: 'Could not write the answer' };
             const result = await phase1ChatWithProgress({ message: displayPrompt, history, ...(attachments?.length ? { attachments } : {}), ...(semanticPlan.goalContract ? { goalContract: semanticPlan.goalContract } : {}) }, { signal: controller.signal, onProgress: (frame) => pushTerminalEvent('progress', frame) })
               .finally(() => setPendingReply((current) => current?.messageId === assistantId ? null : current));
             if (controller.signal.aborted || sessionIdRef.current !== originatingSessionId) return;
-            openClientStepRef.current = null;
-            const answered = answeredStep(result.webSources);
-            pushTerminalEvent('progress', clientStepFrame(CLIENT_ANSWER, 'completed', answered.text, { sources: answered.sources }));
+            finishThinking(result.webSources);
             const rawReply = (result.response || '').trim();
             fullReply = rawReply;
             // Empty Phase 1 must never leave a blank bubble or silently change execution paths.
@@ -3077,6 +3088,7 @@ if (
             const code =
               phase1Err instanceof ApiError ? String(phase1Err.data?.code ?? '') : '';
             if (code === 'USE_BUILD_PIPELINE' || (phase1Err instanceof ApiError && phase1Err.status === 409)) {
+              finishThinking();
               runSwarmBuild = true;
               setPipelineMessage('Switching to XROGA build swarm…');
               pushSwarmTerminalLine(
@@ -4284,9 +4296,7 @@ active.applyBuild({
           // — spread it through so the adapter can append the unlock time instead of
           // just the bare sentence.
           const errData = err instanceof ApiError ? err.data : {};
-          const open = openClientStepRef.current;
-          openClientStepRef.current = null;
-          if (open) pushTerminalEvent('progress', clientStepFrame(open.id, 'failed', open.failed));
+          failThinking();
           pushTerminalEvent('error', {
             error: err instanceof Error ? err.message : 'Run failed',
             ...errData,
