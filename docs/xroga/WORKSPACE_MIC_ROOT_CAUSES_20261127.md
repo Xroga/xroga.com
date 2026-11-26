@@ -24,19 +24,32 @@ that particular failure.
 
 ## Mixed English, Urdu and Hindi (not repaired by this change)
 
-- Each segment is one Whisper request. `voiceFree.ts` sends no `language`, so the model picks one language for the
-  audio and decodes the whole request under it.
-- The only `initial_prompt` is a list of English product terms. Its effect on mixed speech has not been measured.
-- A segment is cut only at a pause after six seconds, so a switch inside a short sentence stays in one request.
-  The measurements noted in `voiceSegmenter.ts` found that a mixed window can keep as little as none of one
-  language. They were not re-run here.
-- The browser sends audio only. No frontend change can alter how a request is decoded without splitting speech
-  below the six second minimum, which that same note records as harming Hindi.
+Cause in the product path:
 
-A repair needs a change to `backend/src/routes/voiceFree.ts`, which is bound by manual security review records, a
-backend release, and real provider measurements on English, Urdu, Hindi and mixed audio. Each needs founder
-approval. No transcription quality claim is made here.
+- Each segment is one Whisper request. `voiceFree.ts` sends no `language`, so the model picks one language for the
+  audio and decodes the request under it.
+- A segment is cut only at a pause after six seconds, so a switch inside a short sentence stays in one request.
+
+Local reproduction on November 27 with founder approval: whisper.cpp large-v3-turbo q5_0 on eight spliced mixed
+clips from public FLEURS recordings, plus two single-language clips each. This is not Cloudflare, not a microphone and
+not natural code switching. Receipt: `evidence/workspace-mic-20261127/local-whisper-comparison.json`.
+
+A mixed clip counts as kept when every spoken language appears as what was said, in any script. This is a manual
+reading of the receipt.
+
+| Setting | Mixed clips kept | Single-language effect |
+| --- | --- | --- |
+| Current vocabulary prompt | 3 of 8 | Urdu sometimes written in Devanagari |
+| Prompt with three scripts | 2 of 8, one other clip translated | An Urdu clip moved to Devanagari |
+| Romanised mixed prompt | 4 of 8, one other clip translated | An Urdu clip rewritten in Latin letters |
+| Language forced to Urdu | Drops or garbles English | English clips lost |
+| Language forced to Hindi | Drops or garbles part of most clips | English clips lost |
+
+Three mixed clips lost a whole language under all three prompts. **No prompt or forced language setting is adopted.**
+A repair needs a different recognition approach, most likely a model that handles switches inside one request. No
+such model has been measured here. Any model change needs founder approval for provider and cost, a backend release
+and rebinding the security review records of the voice route.
 
 ## Untested
 
-Physical iPhone or Safari, real microphone speech, real provider calls, and any mixed-language accuracy.
+Physical iPhone or Safari, real microphone speech, real provider calls, and mixed-language behaviour of the production provider.

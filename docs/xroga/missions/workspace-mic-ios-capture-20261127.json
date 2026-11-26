@@ -8,6 +8,7 @@
   "scope": "Repair iOS Safari voice capture and upload failures in the existing Workspace dictation flow. Record the mixed-language root cause without changing transcription.",
   "changedFiles": [
     "docs/xroga/WORKSPACE_MIC_ROOT_CAUSES_20261127.md",
+    "docs/xroga/evidence/workspace-mic-20261127/local-whisper-comparison.json",
     "docs/xroga/missions/workspace-mic-ios-capture-20261127.json",
     "docs/xroga/security/egress-caller-reviews.json",
     "frontend/src/lib/voiceApi.security.test.ts",
@@ -36,7 +37,7 @@
   "rollback": "Re-promote the previous verified frontend build; no database changes.",
   "knownGaps": ["Mixed English, Urdu and Hindi transcription is not repaired.", "No physical iOS, Safari, real speech or real provider verification."],
   "placeholderClaimsRemaining": [],
-  "evidenceRefs": ["docs/xroga/WORKSPACE_MIC_ROOT_CAUSES_20261127.md"],
+  "evidenceRefs": ["docs/xroga/WORKSPACE_MIC_ROOT_CAUSES_20261127.md", "docs/xroga/evidence/workspace-mic-20261127/local-whisper-comparison.json"],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
   "release": {"state": "BLOCKED", "blockers": ["Physical iPhone microphone acceptance on the candidate build."], "authenticatedE2e": "BLOCKED", "stagedSecurity": "NOT_APPLICABLE", "liveUrl": null, "deployedSha": null}
