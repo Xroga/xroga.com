@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "fb14112c590007faa0184547446816ddf54cd67e",
+  "source_sha": "298b9dd7a88318cdf128f373508d88b9e6b201f3",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -23947,7 +23947,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "c5fceeb704970bb1bb9338e2ee64f0f7d205409c2bd244fb14475a7ed17473f7"
+      "sha256": "cc830ffe84060f6cdf55328f327116268fe4461ba614b6fbbaada895326ae127"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -24867,11 +24867,11 @@
     },
     {
       "path": "frontend/src/lib/terminal/activityTimeline.ts",
-      "sha256": "22b9d64222dbbc91e096ba3faefe53ddf283bef92c4cffe9a1fc2ca767e18374"
+      "sha256": "ff1a2394804a015930e38a804ea3b9b81d683ef40b7395c5f0a375de0b81e392"
     },
     {
       "path": "frontend/src/lib/terminal/clientSteps.ts",
-      "sha256": "19deb673333a79bb9b754fb9d8ccdbea880afb83fa6ef0eed0dbecd983cafbde"
+      "sha256": "13b3b035fe95ec9cb3347abc8629d736e16bee8b700f1017bc319e7409eadd0c"
     },
     {
       "path": "frontend/src/lib/terminal/dictation.ts",
@@ -31181,7 +31181,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4138,
+      "line": 4150,
       "credentialsInUrl": false
     },
     {
@@ -41317,14 +41317,14 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2183,
+      "line": 2195,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2216,
+      "line": 2228,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

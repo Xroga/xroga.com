@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { conversationActivityV2 } from '../../components/response-experience-v2/conversation';
 import { coalesceActivity } from './activityPresentation';
-import { CLIENT_READ, READING, thoughtDone, thoughtFrame, workingText } from './clientSteps';
+import { buildActivityTimeline } from './activityTimeline';
+import { CLIENT_READ, READING, thoughtDone, thoughtFrame, thoughtStopped, workingText } from './clientSteps';
 import { buildProcessingStream, groupStream } from './processingStream';
 import { adaptTerminalEvent } from './terminalEventAdapter';
 import type { TerminalEvent } from './terminalEvent';
@@ -58,4 +59,13 @@ test('each request reads in its own words and keeps both lines as history', () =
   ]);
   assert.deepEqual(buildProcessingStream(rows, false).map(e => e.text), ['Read your message', 'Thought for 8s']);
   assert.equal(conversationActivityV2(rows).length, 2);
+});
+
+test('a stopped reply reports its time and one failure is counted once', () => {
+  assert.equal(thoughtStopped(5200), 'Stopped after 5s');
+  const failed = run([thoughtFrame('running', READING), thoughtFrame('failed', 'Could not finish the answer')]);
+  const error = adaptTerminalEvent('error', { error: 'Service unavailable' }, { fromSeq: 10 });
+  const rows = [...failed, ...coalesceActivity(error)];
+  assert.equal(buildActivityTimeline(rows, { outcome: 'failure' }).failed, 1);
+  assert.equal(buildActivityTimeline(failed, { outcome: 'failure' }).failed, 1);
 });

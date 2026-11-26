@@ -39,6 +39,13 @@ function seconds(ms: number): string {
   return total < 60 ? `${total}s` : `${Math.floor(total / 60)}m ${total % 60}s`;
 }
 
+/** What a reply stopped by the reader says: how long it had been working. */
+export function thoughtStopped(elapsedMs: number): string {
+  return `Stopped after ${seconds(elapsedMs)}`;
+}
+
+export const STOPPED_REPLY = 'You stopped this reply.';
+
 /** Measured time, plus the number of pages the answer really came with. */
 export function thoughtDone(elapsedMs: number, sources?: ReadonlyArray<{ title?: string; url?: string }>) {
   const listed = (sources ?? [])
