@@ -46,6 +46,7 @@ export function nativeMarkdownOutline(text: string) {
   const tables: NativeMarkdownTableBlock[] = [];
   const paths: string[][] = [];
   const orderedItems: Array<{ text: string; headings: string[] }> = [];
+  const readoutLines: string[] = [];
   const headings: Array<{ level: number; text: string }> = [];
   let fence: string | undefined;
   let math: string | undefined;
@@ -100,9 +101,10 @@ export function nativeMarkdownOutline(text: string) {
     }
     const ordered = /^ {0,3}\d{1,9}[.)][ \t]+(.+)$/.exec(line);
     if (ordered) orderedItems.push({ text: ordered[1], headings: headings.map(item => item.text) });
+    if (!heading && !ordered && !indentedCode.test(line) && /:[ \t]+\S/u.test(line)) readoutLines.push(line.trim());
     blockStart = !line.trim() || startsNewBlock.test(line) || /^\s*([-*_])(\s*\1){2,}\s*$/.test(line);
   }
-  return { tables, headings: paths, orderedItems };
+  return { tables, headings: paths, orderedItems, readoutLines };
 }
 
 /** A fenced example or empty grid delivers no rows. */
