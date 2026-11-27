@@ -104168,7 +104168,7 @@
       "id": "surface:3a6e395bda32efc304e5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sha256": "c9012e95a471135020ab400e0b1bcbd28a6a4bf628d715b33599169df818006d",
+      "sha256": "971692b317bb237ab649f70450bbd12cfc5df9e231297f098e140d167f5b48c8",
       "symbols": [
         "COMPOSER_PLACEHOLDERS",
         "MIN_INPUT_H",
@@ -104187,6 +104187,7 @@
         "composerMaxHeight",
         "composerSignalTimer",
         "composingRef",
+        "contentHeight",
         "draftRef",
         "dt",
         "el",
@@ -153784,9 +153785,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:51230322aff841ca67d9",
+      "id": "finding:034d0498393d9d5a1b8a",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 779,
+      "line": 785,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -153794,9 +153795,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:38bbeae0c337d1413c74",
+      "id": "finding:c4264db140b9e6fd66af",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 787,
+      "line": 793,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -153804,9 +153805,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:2037236f1bcde2904c21",
+      "id": "finding:447948487edfc4005f46",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 787,
+      "line": 793,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -165602,7 +165603,7 @@
     {
       "id": "test-suite:f9b95f863eb644ed88a9",
       "sourcePath": "frontend/e2e/chat-turn-rail.spec.ts",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

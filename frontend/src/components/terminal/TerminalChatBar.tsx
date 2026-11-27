@@ -456,11 +456,17 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
   const resizeComposer = useCallback(() => {
     const el = textareaRef.current;
     if (!el) return;
+    if (!el.value) {
+      el.style.height = `${MIN_INPUT_H}px`;
+      el.style.overflowY = 'hidden';
+      return;
+    }
     el.style.height = 'auto';
+    const contentHeight = el.scrollHeight;
     const maxH = composerMaxHeight();
-    const nextH = Math.max(MIN_INPUT_H, Math.min(el.scrollHeight, maxH));
+    const nextH = Math.max(MIN_INPUT_H, Math.min(contentHeight, maxH));
     el.style.height = `${nextH}px`;
-    el.style.overflowY = el.scrollHeight > maxH ? 'auto' : 'hidden';
+    el.style.overflowY = contentHeight > maxH ? 'auto' : 'hidden';
   }, []);
 
   useEffect(() => {

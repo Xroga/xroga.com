@@ -29485,13 +29485,13 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sourceSha256": "c9012e95a471135020ab400e0b1bcbd28a6a4bf628d715b33599169df818006d",
+      "sourceSha256": "971692b317bb237ab649f70450bbd12cfc5df9e231297f098e140d167f5b48c8",
       "callIds": [
         "590dbb7d21550effa467"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
-      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. The exact native FileList conversion and its enclosing handler are unchanged. The browser-operator branch and any upload or egress remain outside this classification.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. The exact native FileList conversion and its enclosing handler are unchanged. The browser-operator branch and any upload or egress remain outside this classification. Refreshed for textarea sizing only. The entire FileList handler stays byte-identical and the scanner reports the same persistence candidate ID.",
       "evidence": [
         {
           "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
