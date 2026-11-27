@@ -1,0 +1,1154 @@
+{
+ "scope": "LOCAL_WHISPER_CPP_ON_PUBLIC_SPLICED_AUDIO_NOT_CLOUDFLARE_NOT_REAL_MICROPHONE",
+ "engine": {
+  "release": "ggml-org/whisper.cpp b5907 whisper-bin-x64.zip",
+  "archiveSha256": "ecca07b277d943e9b9f4712856a144b857271a6b333104e511e1988e80db582b",
+  "model": "ggml-large-v3-turbo-q5_0.bin",
+  "modelSha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2",
+  "beamSize": 5,
+  "vad": false
+ },
+ "audio": {
+  "source": "Google FLEURS validation split, CC-BY 4.0, not committed",
+  "clips": [
+   {
+    "file": "en_us-0.wav",
+    "config": "en_us",
+    "id": 1607,
+    "seconds": 3.84,
+    "reference": "it's worth half an hour to stroll about the intriguing village"
+   },
+   {
+    "file": "en_us-1.wav",
+    "config": "en_us",
+    "id": 1578,
+    "seconds": 4.14,
+    "reference": "then lakkha singh took the lead in singing the bhajans"
+   },
+   {
+    "file": "en_us-2.wav",
+    "config": "en_us",
+    "id": 1531,
+    "seconds": 4.44,
+    "reference": "the east african islands are in the indian ocean off the eastern coast of africa"
+   },
+   {
+    "file": "en_us-3.wav",
+    "config": "en_us",
+    "id": 1652,
+    "seconds": 4.92,
+    "reference": "the major religion in moldova is orthodox christian"
+   },
+   {
+    "file": "ur_pk-0.wav",
+    "config": "ur_pk",
+    "id": 1607,
+    "seconds": 4.44,
+    "reference": "دلچسپ گاؤں دیکھنے کے لیے آدھا گھنٹہ پیدل جانا پڑے گا"
+   },
+   {
+    "file": "ur_pk-1.wav",
+    "config": "ur_pk",
+    "id": 1554,
+    "seconds": 5.64,
+    "reference": "اس نے کہا کہ اس نے ایک وائی فائی ڈور بیل اختراع کیا ہے"
+   },
+   {
+    "file": "ur_pk-2.wav",
+    "config": "ur_pk",
+    "id": 1555,
+    "seconds": 5.7,
+    "reference": "کلیسا کے صحن میں کچھ مقبروں پر سنگ مرمر سے بنے فاختاؤں دلچسپ مجسمے ہیں"
+   },
+   {
+    "file": "ur_pk-3.wav",
+    "config": "ur_pk",
+    "id": 1513,
+    "seconds": 5.76,
+    "reference": "ارجنٹائن دنیا میں سب سے بہترین پولو ٹیموں اور کھلاڑیوں کی وجہ سے مشہور ہے"
+   },
+   {
+    "file": "hi_in-0.wav",
+    "config": "hi_in",
+    "id": 1636,
+    "seconds": 5.28,
+    "reference": "स्पेन के लोगों ने उपनिवेश काल की शुरुआत की जो तीन शताब्दियों तक जारी रहा"
+   },
+   {
+    "file": "hi_in-1.wav",
+    "config": "hi_in",
+    "id": 1561,
+    "seconds": 5.94,
+    "reference": "ज़्यादातर जिलों में छोटी जापानी कोस्टर बसें चलती हैं जो आरामदायक और मज़बूत होती हैं"
+   },
+   {
+    "file": "hi_in-2.wav",
+    "config": "hi_in",
+    "id": 1552,
+    "seconds": 5.94,
+    "reference": "प्लॉटिंग एनालिसिस का परिणाम पब्लिक वेबसाइट पर पोस्ट करना होगा"
+   },
+   {
+    "file": "hi_in-3.wav",
+    "config": "hi_in",
+    "id": 1607,
+    "seconds": 6.42,
+    "reference": "कुतूहल गांव में आधे घंटे टहलना समय की हानि नहीं है"
+   }
+  ],
+  "mixed": "Edge-silence trimmed clips joined with a 0.1 s gap, in the order named by the clip id."
+ },
+ "recallMeaning": "Percent of reference words found in order, in the reference script. Text written in another script scores zero.",
+ "prompts": {
+  "current": "Production VOICE_VOCABULARY",
+  "nativeScripts": "Greeting in English, Urdu script and Devanagari, then the vocabulary",
+  "roman": "Romanised mixed sentence, then the vocabulary"
+ },
+ "promptRuns": [
+  {
+   "variant": "current",
+   "clip": "en_us-0",
+   "kind": "en_us",
+   "heard": "It's worth half an hour to stroll about the intriguing village.",
+   "recall": [
+    {
+     "lang": "en_us",
+     "percent": 100
+    }
+   ]
+  },
+  {
+   "variant": "current",
+   "clip": "en_us-2",
+   "kind": "en_us",
+   "heard": "The East African Islands are in the Indian Ocean off the eastern coast of Africa.",
+   "recall": [
+    {
+     "lang": "en_us",
+     "percent": 100
+    }
+   ]
+  },
+  {
+   "variant": "current",
+   "clip": "ur_pk-0",
+   "kind": "ur_pk",
+   "heard": "गिल्चस्क काउं देखने के लिए आदा हंटा पैदल जाना पड़ेगा.",
+   "recall": [
+    {
+     "lang": "ur_pk",
+     "percent": 0
+    }
+   ]
+  },
+  {
+   "variant": "current",
+   "clip": "ur_pk-2",
+   "kind": "ur_pk",
+   "heard": "قریصہ کے سین میں کچھ مقبروں پر سنگ مربر سے بنا فاقت و دلچسپ جسمیں ہیں",
+   "recall": [
+    {
+     "lang": "ur_pk",
+     "percent": 60
+    }
+   ]
+  },
+  {
+   "variant": "current",
+   "clip": "hi_in-0",
+   "kind": "hi_in",
+   "heard": "Spain के लोगों ने उपनिवेस काल की सुरुआत की जो तीन सत्याब्दियों तक चारी रहा.",
+   "recall": [
+    {
+     "lang": "hi_in",
+     "percent": 67
+    }
+   ]
+  },
+  {
+   "variant": "current",
+   "clip": "hi_in-2",
+   "kind": "hi_in",
+   "heard": "Plotting Analysis का परिणाम Public West Type पर पोस्ट करना होगा.",
+   "recall": [
+    {
+     "lang": "hi_in",
+     "percent": 60
+    }
+   ]
+  },
+  {
+   "variant": "current",
+   "clip": "mix_en_us-0+ur_pk-1",
+   "kind": "mixed",
+   "heard": "It's worth half an hour to stroll about the intriguing village.",
+   "recall": [
+    {
+     "lang": "en_us",
+     "percent": 100
+    },
+    {
+     "lang": "ur_pk",
+     "percent": 0
+    }
+   ]
+  },
+  {
+   "variant": "current",
+   "clip": "mix_en_us-3+ur_pk-0",
+   "kind": "mixed",
+   "heard": "The major religion in Moldova is Orthodox Christian.",
+   "recall": [
+    {
+     "lang": "en_us",
+     "percent": 100
+    },
+    {
+     "lang": "ur_pk",
+     "percent": 0
+    }
+   ]
+  },
+  {
+   "variant": "current",
+   "clip": "mix_ur_pk-1+en_us-2",
+   "kind": "mixed",
+   "heard": "The East African islands are in the Indian Ocean off the eastern coast of Africa.",
+   "recall": [
+    {
+     "lang": "ur_pk",
+     "percent": 0
+    },
+    {
+     "lang": "en_us",
+     "percent": 100
+    }
+   ]
+  },
+  {
+   "variant": "current",
+   "clip": "mix_en_us-1+hi_in-2",
+   "kind": "mixed",
+   "heard": "Then Laka Singh to the lead and singing the pashans. Plotting analysis ka parinam, public website par host karna hoga.",
+   "recall": [
+    {
+     "lang": "en_us",
+     "percent": 60
+    },
+    {
+     "lang": "hi_in",
+     "percent": 0
+    }
+   ]
+  },
+  {
+   "variant": "current",
+   "clip": "mix_en_us-2+hi_in-0",
+   "kind": "mixed",
+   "heard": "The East African Islands are in the Indian Ocean off the eastern coast of Africa. Spain के लोगों ने उपनीवे स्काल की सुरुआत की जो तीन सत्याब्दियों तक चारी रहा.",
+   "recall": [
+    {
+     "lang": "en_us",
+     "percent": 100
+    },
+    {
+     "lang": "hi_in",
+     "percent": 60
+    }
+   ]
+  },
+  {
+   "variant": "current",
+   "clip": "mix_hi_in-1+en_us-0",
+   "kind": "mixed",
+   "heard": "It's worth half an hour to stroll about the intriguing village.",
+   "recall": [
+    {
+     "lang": "hi_in",
+     "percent": 0
+    },
+    {
+     "lang": "en_us",
+     "percent": 100
+    }
+   ]
+  },
+  {
+   "variant": "current",
+   "clip": "mix_en_us-0+ur_pk-0+hi_in-2",
+   "kind": "mixed",
+   "heard": "It's worth half an hour to stroll up out the intriguing village. Glchusk kaon dekhne ke liya aadha hanta pedal jana padega. Plotting analysis ka peri naam, public waste type per host karna hoga.",
+   "recall": [
+    {
+     "lang": "en_us",
+     "percent": 91
+    },
+    {
+     "lang": "ur_pk",
+     "percent": 0
+    },
+    {
+     "lang": "hi_in",
+     "percent": 0
+    }
+   ]
+  },
+  {
+   "variant": "current",
+   "clip": "mix_en_us-3+hi_in-0+ur_pk-1",
+   "kind": "mixed",
+   "heard": "The major religion in Moldova is Orthodox Christian.",
+   "recall": [
+    {
+     "lang": "en_us",
+     "percent": 100
+    },
+    {
+     "lang": "hi_in",
+     "percent": 0
+    },
+    {
+     "lang": "ur_pk",
+     "percent": 0
+    }
+   ]
+  },
+  {
+   "variant": "nativeScripts",
+   "clip": "en_us-0",
+   "kind": "en_us",
+   "heard": "It's worth half an hour to stroll about the intriguing village.",
+   "recall": [
+    {
+     "lang": "en_us",
+     "percent": 100
+    }
+   ]
+  },
+  {
+   "variant": "nativeScripts",
+   "clip": "en_us-2",
+   "kind": "en_us",
+   "heard": "The East African Islands are in the Indian Ocean off the eastern coast of Africa.",
+   "recall": [
+    {
+     "lang": "en_us",
+     "percent": 100
+    }
+   ]
+  },
+  {
+   "variant": "nativeScripts",
+   "clip": "ur_pk-0",
+   "kind": "ur_pk",
+   "heard": "गिल्चस्क काउन देखने के लिए आदा हंटा पैदल जाना पड़ेगा.",
+   "recall": [
+    {
+     "lang": "ur_pk",
+     "percent": 0
+    }
+   ]
+  },
+  {
+   "variant": "nativeScripts",
+   "clip": "ur_pk-2",
+   "kind": "ur_pk",
+   "heard": "करीसा के सैन में कुछ मकबरों पर संगे मरबर से बना फाक्तो दिल्चस्म जस्मे हैं.",
+   "recall": [
+    {
+     "lang": "ur_pk",
+     "percent": 0
+    }
+   ]
+  },
+  {
+   "variant": "nativeScripts",
+   "clip": "hi_in-0",
+   "kind": "hi_in",
+   "heard": "Spain के लोगों ने उपनिवेस काल की सुरूआत की जो तीन सत्यापदियों तक चारी रहा.",
+   "recall": [
+    {
+     "lang": "hi_in",
+     "percent": 67
+    }
+   ]
+  },
+  {
+   "variant": "nativeScripts",
+   "clip": "hi_in-2",
+   "kind": "hi_in",
+   "heard": "Plotting Analysis का परिणाम, Public West Type पर पोस्ट करना होगा.",
+   "recall": [
+    {
+     "lang": "hi_in",
+     "percent": 60
+    }
+   ]
+  },
+  {
+   "variant": "nativeScripts",
+   "clip": "mix_en_us-0+ur_pk-1",
+   "kind": "mixed",
+   "heard": "It's worth half an hour to stroll about the intriguing village.",
+   "recall": [
+    {
+     "lang": "en_us",
+     "percent": 100
+    },
+    {
+     "lang": "ur_pk",
+     "percent": 0
+    }
+   ]
+  },
+  {
+   "variant": "nativeScripts",
+   "clip": "mix_en_us-3+ur_pk-0",
+   "kind": "mixed",
+   "heard": "The major religion in Moldova is Orthodox Christian.",
+   "recall": [
+    {
+     "lang": "en_us",
+     "percent": 100
+    },
+    {
+     "lang": "ur_pk",
+     "percent": 0
+    }
+   ]
+  },
+  {
+   "variant": "nativeScripts",
+   "clip": "mix_ur_pk-1+en_us-2",
+   "kind": "mixed",
+   "heard": "The East African Islands are in the Indian Ocean off the eastern coast of Africa.",
+   "recall": [
+    {
+     "lang": "ur_pk",
+     "percent": 0
+    },
+    {
+     "lang": "en_us",
+     "percent": 100
+    }
+   ]
+  },
+  {
+   "variant": "nativeScripts",
+   "clip": "mix_en_us-1+hi_in-2",
+   "kind": "mixed",
+   "heard": "Then, Lakha sings to the lead and singing the Bashans. Plotting analysis ka parinam, public website par host karna hoga.",
+   "recall": [
+    {
+     "lang": "en_us",
+     "percent": 50
+    },
+    {
+     "lang": "hi_in",
+     "percent": 0
+    }
+   ]
+  },
+  {
+   "variant": "nativeScripts",
+   "clip": "mix_en_us-2+hi_in-0",
+   "kind": "mixed",
+   "heard": "The East African Islands are in the Indian Ocean off the eastern coast of Africa. Spain's people have started their own days, which took three days.",
+   "recall": [
+    {
+     "lang": "en_us",
+     "percent": 100
+    },
+    {
+     "lang": "hi_in",
+     "percent": 0
+    }
+   ]
+  },
+  {
+   "variant": "nativeScripts",
+   "clip": "mix_hi_in-1+en_us-0",
+   "kind": "mixed",
+   "heard": "It's worth half an hour to stroll about the intriguing village.",
+   "recall": [
+    {
+     "lang": "hi_in",
+     "percent": 0
+    },
+    {
+     "lang": "en_us",
+     "percent": 100
+    }
+   ]
+  },
+  {
+   "variant": "nativeScripts",
+   "clip": "mix_en_us-0+ur_pk-0+hi_in-2",
+   "kind": "mixed",
+   "heard": "It's worth half an hour to stroll about the intriguing village. Gilchusk kaon dekhne ke liya aadha hanta pedal jana padega. Ploting analysis ka peri naam, public waste type per host karna ho ga.",
+   "recall": [
+    {
+     "lang": "en_us",
+     "percent": 100
+    },
+    {
+     "lang": "ur_pk",
+     "percent": 0
+    },
+    {
+     "lang": "hi_in",
+     "percent": 0
+    }
+   ]
+  },
+  {
+   "variant": "nativeScripts",
+   "clip": "mix_en_us-3+hi_in-0+ur_pk-1",
+   "kind": "mixed",
+   "heard": "The major religion in Moldova is Orthodox Christian.",
+   "recall": [
+    {
+     "lang": "en_us",
+     "percent": 100
+    },
+    {
+     "lang": "hi_in",
+     "percent": 0
+    },
+    {
+     "lang": "ur_pk",
+     "percent": 0
+    }
+   ]
+  },
+  {
+   "variant": "roman",
+   "clip": "en_us-0",
+   "kind": "en_us",
+   "heard": "It's worth half an hour to stroll about the intriguing village.",
+   "recall": [
+    {
+     "lang": "en_us",
+     "percent": 100
+    }
+   ]
+  },
+  {
+   "variant": "roman",
+   "clip": "en_us-2",
+   "kind": "en_us",
+   "heard": "The East African Islands are in the Indian Ocean off the eastern coast of Africa.",
+   "recall": [
+    {
+     "lang": "en_us",
+     "percent": 100
+    }
+   ]
+  },
+  {
+   "variant": "roman",
+   "clip": "ur_pk-0",
+   "kind": "ur_pk",
+   "heard": "गिल्चस्क काउं देखने के लिए आदा हंटा पैदल जाना पड़ेगा.",
+   "recall": [
+    {
+     "lang": "ur_pk",
+     "percent": 0
+    }
+   ]
+  },
+  {
+   "variant": "roman",
+   "clip": "ur_pk-2",
+   "kind": "ur_pk",
+   "heard": "Kariisa ke sayin mein kuchh makbaro par sange marbaro se bana faqt o dilčas mucasme hai hai.",
+   "recall": [
+    {
+     "lang": "ur_pk",
+     "percent": 0
+    }
+   ]
+  },
+  {
+   "variant": "roman",
+   "clip": "hi_in-0",
+   "kind": "hi_in",
+   "heard": "Spain के लोगों ने उपनिवे स्काल की सुरुआत की जो तीन सत्यापदियों तक चारी रहा.",
+   "recall": [
+    {
+     "lang": "hi_in",
+     "percent": 60
+    }
+   ]
+  },
+  {
+   "variant": "roman",
+   "clip": "hi_in-2",
+   "kind": "hi_in",
+   "heard": "Plotting Analysis का परिणाम Public West Type पर पोस्ट करना होगा.",
+   "recall": [
+    {
+     "lang": "hi_in",
+     "percent": 60
+    }
+   ]
+  },
+  {
+   "variant": "roman",
+   "clip": "mix_en_us-0+ur_pk-1",
+   "kind": "mixed",
+   "heard": "It's worth half an hour to stroll about the intriguing village. Usnei kaha ke ek wifi doorbell ikhtera kiya hai.",
+   "recall": [
+    {
+     "lang": "en_us",
+     "percent": 100
+    },
+    {
+     "lang": "ur_pk",
+     "percent": 0
+    }
+   ]
+  },
+  {
+   "variant": "roman",
+   "clip": "mix_en_us-3+ur_pk-0",
+   "kind": "mixed",
+   "heard": "The major religion in Moldova is Orthodox Christian.",
+   "recall": [
+    {
+     "lang": "en_us",
+     "percent": 100
+    },
+    {
+     "lang": "ur_pk",
+     "percent": 0
+    }
+   ]
+  },
+  {
+   "variant": "roman",
+   "clip": "mix_ur_pk-1+en_us-2",
+   "kind": "mixed",
+   "heard": "Usne kaha ke ek wifi doorbell ikhtera kiya hai. The East African Islands are in the Indian Ocean off the eastern coast of Africa.",
+   "recall": [
+    {
+     "lang": "ur_pk",
+     "percent": 0
+    },
+    {
+     "lang": "en_us",
+     "percent": 100
+    }
+   ]
+  },
+  {
+   "variant": "roman",
+   "clip": "mix_en_us-1+hi_in-2",
+   "kind": "mixed",
+   "heard": "Then Laka sing to the lead in singing the pashans. Plotting analysis ka parinam, public website par host karna hoga.",
+   "recall": [
+    {
+     "lang": "en_us",
+     "percent": 60
+    },
+    {
+     "lang": "hi_in",
+     "percent": 0
+    }
+   ]
+  },
+  {
+   "variant": "roman",
+   "clip": "mix_en_us-2+hi_in-0",
+   "kind": "mixed",
+   "heard": "The East African islands are in the Indian Ocean off the eastern coast of Africa. Spain's people have started their own scale, which has been closed for three months.",
+   "recall": [
+    {
+     "lang": "en_us",
+     "percent": 100
+    },
+    {
+     "lang": "hi_in",
+     "percent": 0
+    }
+   ]
+  },
+  {
+   "variant": "roman",
+   "clip": "mix_hi_in-1+en_us-0",
+   "kind": "mixed",
+   "heard": "It's worth half an hour to stroll about the intriguing village.",
+   "recall": [
+    {
+     "lang": "hi_in",
+     "percent": 0
+    },
+    {
+     "lang": "en_us",
+     "percent": 100
+    }
+   ]
+  },
+  {
+   "variant": "roman",
+   "clip": "mix_en_us-0+ur_pk-0+hi_in-2",
+   "kind": "mixed",
+   "heard": "It's worth half an hour to stroll up out the intriguing village. Gilchusp kaon dekhne ke liya aadha hanta paidal jana padega. Plotting analysis ka peri naam public waste type per host karna hoga.",
+   "recall": [
+    {
+     "lang": "en_us",
+     "percent": 91
+    },
+    {
+     "lang": "ur_pk",
+     "percent": 0
+    },
+    {
+     "lang": "hi_in",
+     "percent": 0
+    }
+   ]
+  },
+  {
+   "variant": "roman",
+   "clip": "mix_en_us-3+hi_in-0+ur_pk-1",
+   "kind": "mixed",
+   "heard": "The major religion in Moldova is Orthodox Christian.",
+   "recall": [
+    {
+     "lang": "en_us",
+     "percent": 100
+    },
+    {
+     "lang": "hi_in",
+     "percent": 0
+    },
+    {
+     "lang": "ur_pk",
+     "percent": 0
+    }
+   ]
+  }
+ ],
+ "forcedLanguageRuns": {
+  "note": "Production vocabulary prompt was passed but disabled by -mc 0 in this pass.",
+  "results": [
+   {
+    "variant": "forcedUr",
+    "clip": "en_us-0",
+    "kind": "en_us",
+    "heard": "موسیقی",
+    "recall": [
+     {
+      "lang": "en_us",
+      "percent": 0
+     }
+    ]
+   },
+   {
+    "variant": "forcedUr",
+    "clip": "en_us-2",
+    "kind": "en_us",
+    "heard": "موسیقی",
+    "recall": [
+     {
+      "lang": "en_us",
+      "percent": 0
+     }
+    ]
+   },
+   {
+    "variant": "forcedUr",
+    "clip": "ur_pk-0",
+    "kind": "ur_pk",
+    "heard": "گلچسک کاؤں دیکھنے کے لیے آدھا ہنٹا پیدل جانا پڑے گا",
+    "recall": [
+     {
+      "lang": "ur_pk",
+      "percent": 73
+     }
+    ]
+   },
+   {
+    "variant": "forcedUr",
+    "clip": "ur_pk-2",
+    "kind": "ur_pk",
+    "heard": "قریصہ کے سین میں کچھ مقبروں پر سنگ مربر سے بنا فاقت و دلچسپ مجسمیں ہیں",
+    "recall": [
+     {
+      "lang": "ur_pk",
+      "percent": 60
+     }
+    ]
+   },
+   {
+    "variant": "forcedUr",
+    "clip": "hi_in-0",
+    "kind": "hi_in",
+    "heard": "سپین کے لوگوں نے اپنی ویس کال کی شروعات کی جو تین ستیابدیوں تک چاری رہا",
+    "recall": [
+     {
+      "lang": "hi_in",
+      "percent": 0
+     }
+    ]
+   },
+   {
+    "variant": "forcedUr",
+    "clip": "hi_in-2",
+    "kind": "hi_in",
+    "heard": "پلوٹنگ اینالیسز کا پرینام پبلک ویسٹ ٹائپ پر پوشٹ کرنا ہوگا",
+    "recall": [
+     {
+      "lang": "hi_in",
+      "percent": 0
+     }
+    ]
+   },
+   {
+    "variant": "forcedUr",
+    "clip": "mix_en_us-0+ur_pk-1",
+    "kind": "mixed",
+    "heard": "اس نے کہا کہ ایک وائ فائی ڈور بیل اخترا کیا ہے",
+    "recall": [
+     {
+      "lang": "en_us",
+      "percent": 0
+     },
+     {
+      "lang": "ur_pk",
+      "percent": 71
+     }
+    ]
+   },
+   {
+    "variant": "forcedUr",
+    "clip": "mix_en_us-3+ur_pk-0",
+    "kind": "mixed",
+    "heard": "مجھے ریلیجن ملدول ویس ارثوڈاکس کرسیان",
+    "recall": [
+     {
+      "lang": "en_us",
+      "percent": 0
+     },
+     {
+      "lang": "ur_pk",
+      "percent": 0
+     }
+    ]
+   },
+   {
+    "variant": "forcedUr",
+    "clip": "mix_ur_pk-1+en_us-2",
+    "kind": "mixed",
+    "heard": "اس نے کہا کہ ایک وائفائی دور بیل اخترا کیا ہے۔",
+    "recall": [
+     {
+      "lang": "ur_pk",
+      "percent": 57
+     },
+     {
+      "lang": "en_us",
+      "percent": 0
+     }
+    ]
+   },
+   {
+    "variant": "forcedUr",
+    "clip": "mix_en_us-1+hi_in-2",
+    "kind": "mixed",
+    "heard": "لکھا سنگیت تلید اور سنگیت بازشان پلوٹن اینالیسیس کا پرنام پبلک ویسائب پر پوست کرنا ہوگا",
+    "recall": [
+     {
+      "lang": "en_us",
+      "percent": 0
+     },
+     {
+      "lang": "hi_in",
+      "percent": 0
+     }
+    ]
+   },
+   {
+    "variant": "forcedUr",
+    "clip": "mix_en_us-2+hi_in-0",
+    "kind": "mixed",
+    "heard": "سپین کے لوگوں نے اپنی ویسکال کی سروعت کی جو تین ستیابدیوں تک چاری رہا",
+    "recall": [
+     {
+      "lang": "en_us",
+      "percent": 0
+     },
+     {
+      "lang": "hi_in",
+      "percent": 0
+     }
+    ]
+   },
+   {
+    "variant": "forcedUr",
+    "clip": "mix_hi_in-1+en_us-0",
+    "kind": "mixed",
+    "heard": "زیادہ تک جلوں میں چھوٹی جاپانی کوشٹر بسیں چلتی ہیں جو آرام دائک اور مجبوت ہوتی ہیں۔",
+    "recall": [
+     {
+      "lang": "hi_in",
+      "percent": 0
+     },
+     {
+      "lang": "en_us",
+      "percent": 0
+     }
+    ]
+   },
+   {
+    "variant": "forcedUr",
+    "clip": "mix_en_us-0+ur_pk-0+hi_in-2",
+    "kind": "mixed",
+    "heard": "گلچسپ کاؤں دیکھنے کے لیے آدھا ہنٹا پیدل جانا پڑے گا پلوٹنگ اینالیسز کا پرینام پبلک ویسٹائپ پر پوست کرنا ہوگا",
+    "recall": [
+     {
+      "lang": "en_us",
+      "percent": 0
+     },
+     {
+      "lang": "ur_pk",
+      "percent": 73
+     },
+     {
+      "lang": "hi_in",
+      "percent": 0
+     }
+    ]
+   },
+   {
+    "variant": "forcedUr",
+    "clip": "mix_en_us-3+hi_in-0+ur_pk-1",
+    "kind": "mixed",
+    "heard": "اس نے کہا کہ ایک وائ فائی ڈور بیل اخترا کیا ہے",
+    "recall": [
+     {
+      "lang": "en_us",
+      "percent": 0
+     },
+     {
+      "lang": "hi_in",
+      "percent": 0
+     },
+     {
+      "lang": "ur_pk",
+      "percent": 71
+     }
+    ]
+   },
+   {
+    "variant": "forcedHi",
+    "clip": "en_us-0",
+    "kind": "en_us",
+    "heard": "इस रहाफ आफ आफ आफ आफ आफ तरोल पाफ इंट्रीग इंट्रीग जिलग",
+    "recall": [
+     {
+      "lang": "en_us",
+      "percent": 0
+     }
+    ]
+   },
+   {
+    "variant": "forcedHi",
+    "clip": "en_us-2",
+    "kind": "en_us",
+    "heard": "इस अफरिकन इसलें इसलें इसलें आफ इसलें इसलें इसलें इसलें आफरिका",
+    "recall": [
+     {
+      "lang": "en_us",
+      "percent": 0
+     }
+    ]
+   },
+   {
+    "variant": "forcedHi",
+    "clip": "ur_pk-0",
+    "kind": "ur_pk",
+    "heard": "गिल्चस्क काउं देखने के लिए आदा हंटा पैदल जाना पड़ेगा",
+    "recall": [
+     {
+      "lang": "ur_pk",
+      "percent": 0
+     }
+    ]
+   },
+   {
+    "variant": "forcedHi",
+    "clip": "ur_pk-2",
+    "kind": "ur_pk",
+    "heard": "करीसा के सैन में कुछ मकबरों पर संगे मरबर से बना फाक्तो दिल्चस्म जस्मे हैं",
+    "recall": [
+     {
+      "lang": "ur_pk",
+      "percent": 0
+     }
+    ]
+   },
+   {
+    "variant": "forcedHi",
+    "clip": "hi_in-0",
+    "kind": "hi_in",
+    "heard": "स्पेन के लोगों ने उपनिवेस काल की सुरुवत की जो तीन सत्यापदियों तक चारी रहा।",
+    "recall": [
+     {
+      "lang": "hi_in",
+      "percent": 73
+     }
+    ]
+   },
+   {
+    "variant": "forcedHi",
+    "clip": "hi_in-2",
+    "kind": "hi_in",
+    "heard": "प्लोटिंग एनलिसिस का परिणाम पब्लिक वेस्टाइप पर पोस्ट करना होगा।",
+    "recall": [
+     {
+      "lang": "hi_in",
+      "percent": 70
+     }
+    ]
+   },
+   {
+    "variant": "forcedHi",
+    "clip": "mix_en_us-0+ur_pk-1",
+    "kind": "mixed",
+    "heard": "उसने कहा कि एक वाइफाइ डॉर बेल इखतरा किया है",
+    "recall": [
+     {
+      "lang": "en_us",
+      "percent": 0
+     },
+     {
+      "lang": "ur_pk",
+      "percent": 0
+     }
+    ]
+   },
+   {
+    "variant": "forcedHi",
+    "clip": "mix_en_us-3+ur_pk-0",
+    "kind": "mixed",
+    "heard": "गिल्चस काउन देखने के लिया आदा हंटा पैगल जाना पड़ेगा",
+    "recall": [
+     {
+      "lang": "en_us",
+      "percent": 0
+     },
+     {
+      "lang": "ur_pk",
+      "percent": 0
+     }
+    ]
+   },
+   {
+    "variant": "forcedHi",
+    "clip": "mix_ur_pk-1+en_us-2",
+    "kind": "mixed",
+    "heard": "उसने कहा कि एक Wi-Fi doorbell इखतरा किया है। The East African Islands are in the Indian Ocean off the eastern coast of Africa.",
+    "recall": [
+     {
+      "lang": "ur_pk",
+      "percent": 0
+     },
+     {
+      "lang": "en_us",
+      "percent": 100
+     }
+    ]
+   },
+   {
+    "variant": "forcedHi",
+    "clip": "mix_en_us-1+hi_in-2",
+    "kind": "mixed",
+    "heard": "देन लाका सेंग तुदुलीट और पाश्यम्स प्लोटिंग अनलेसिस का परिणाम पब्लीक वेस्टाइप पर पोस्ट करना होगा",
+    "recall": [
+     {
+      "lang": "en_us",
+      "percent": 0
+     },
+     {
+      "lang": "hi_in",
+      "percent": 60
+     }
+    ]
+   },
+   {
+    "variant": "forcedHi",
+    "clip": "mix_en_us-2+hi_in-0",
+    "kind": "mixed",
+    "heard": "The East African Islands are in the Indian Ocean off the Eastern Coast of Africa. Spain के लोगों ने उपनीवे स्काल की सुरुवत की जो तीन सत्याब्दियों तक चारी रहा.",
+    "recall": [
+     {
+      "lang": "en_us",
+      "percent": 100
+     },
+     {
+      "lang": "hi_in",
+      "percent": 60
+     }
+    ]
+   },
+   {
+    "variant": "forcedHi",
+    "clip": "mix_hi_in-1+en_us-0",
+    "kind": "mixed",
+    "heard": "ज्यादा तर जिलों में छोटी जापानी कोश्टर बसें चलती हैं जो आरामदायक और मजबूत होती हैं.",
+    "recall": [
+     {
+      "lang": "hi_in",
+      "percent": 80
+     },
+     {
+      "lang": "en_us",
+      "percent": 0
+     }
+    ]
+   },
+   {
+    "variant": "forcedHi",
+    "clip": "mix_en_us-0+ur_pk-0+hi_in-2",
+    "kind": "mixed",
+    "heard": "गल्चस्प काउं देखने के लिए आदा हंटा पैदल जाना पड़ेगा. प्लोटिंग एनलिसिस का परिणाम पब्लिक वेस्टाइप पर पोस्ट करना होगा.",
+    "recall": [
+     {
+      "lang": "en_us",
+      "percent": 0
+     },
+     {
+      "lang": "ur_pk",
+      "percent": 0
+     },
+     {
+      "lang": "hi_in",
+      "percent": 70
+     }
+    ]
+   },
+   {
+    "variant": "forcedHi",
+    "clip": "mix_en_us-3+hi_in-0+ur_pk-1",
+    "kind": "mixed",
+    "heard": "The major religion in Moldova is Orthodox Christian. Spain के लोगों ने उपनिवे स्काल की सुरुवात की जो तीन सत्याब्दियों तक चारी रहा. उसने कहा के एक वाइफाई डॉर बेल इखतेरा किया है.",
+    "recall": [
+     {
+      "lang": "en_us",
+      "percent": 100
+     },
+     {
+      "lang": "hi_in",
+      "percent": 60
+     },
+     {
+      "lang": "ur_pk",
+      "percent": 0
+     }
+    ]
+   }
+  ]
+ }
+}
