@@ -11,6 +11,8 @@ export const MIN_SEGMENT_SECONDS = 0.25;
 export const MAX_CONCURRENT_UPLOADS = 2;
 export const MAX_RETAINED_SEGMENTS = 8;
 export const MAX_RECORDING_SECONDS = 30 * 60;
+/** Waits before a segment is sent again after a passing failure. */
+export const TRANSIENT_RETRY_DELAYS_MS = [800, 2500] as const;
 
 type State = 'queued' | 'sending' | 'done' | 'failed' | 'silent';
 interface Item { state: State; wav?: Blob; text?: string; error?: unknown; seconds: number; ms?: number }
@@ -23,11 +25,23 @@ export function isBlockingVoiceError(error: unknown): boolean {
   return status(error) === 401 || code(error) === 'VOICE_QUOTA_EXHAUSTED' || code(error) === 'VOICE_SESSION_CHANGED';
 }
 
+/** A dropped connection, a busy server or a provider that is briefly unavailable. Security,
+ * sign-in, quota, cancellation and unverified results are never sent again automatically. */
+export function isTransientVoiceError(error: unknown): boolean {
+  if (error instanceof TypeError) return true;
+  if (status(error) === 429) return code(error) !== 'VOICE_QUOTA_EXHAUSTED';
+  if (status(error) === 502 || status(error) === 504) return true;
+  return status(error) === 503 && code(error) === 'VOICE_PROVIDER_UNAVAILABLE';
+}
+
+const pause = (ms: number) => new Promise<void>(resolve => { setTimeout(resolve, ms); });
+
 export function createDictationPipeline(options: {
   transcribe: TranscribeSegment;
   signal: AbortSignal;
   onChange?: () => void;
   now?: () => number;
+  wait?: (ms: number) => Promise<void>;
 }) {
   const items = new Map<number, Item>();
   const now = options.now ?? (() => performance.now());
@@ -44,7 +58,19 @@ export function createDictationPipeline(options: {
     item.state = 'sending';
     active++;
     const started = now();
-    options.transcribe(item.wav!, options.signal).then(text => {
+    const wait = options.wait ?? pause;
+    const send = async (): Promise<string> => {
+      for (let attempt = 0; ; attempt++) {
+        try { return await options.transcribe(item.wav!, options.signal); } catch (error) {
+          // The server found no speech in this piece: it is quiet audio, not a failed recording.
+          if (code(error) === 'VOICE_NO_SPEECH') return '';
+          if (attempt >= TRANSIENT_RETRY_DELAYS_MS.length || !isTransientVoiceError(error)) throw error;
+          await wait(TRANSIENT_RETRY_DELAYS_MS[attempt]);
+          if (disposed || halted !== undefined || options.signal.aborted || !item.wav) throw error;
+        }
+      }
+    };
+    send().then(text => {
       item.text = text.trim();
       item.state = 'done';
       item.wav = undefined;

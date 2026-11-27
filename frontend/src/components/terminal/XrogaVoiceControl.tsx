@@ -8,6 +8,7 @@ import { transcribeVoiceAudio, warmVoiceBackend } from '@/lib/voiceApi';
 import { openVoiceCapture, prepareVoiceAudioContext, voiceCaptureSupported, type VoiceCapture } from '@/lib/voiceCapture';
 import { createVoiceSegmenter } from '@/lib/voiceSegmenter';
 import { createDictationPipeline, MAX_RECORDING_SECONDS, type DictationPipeline } from '@/lib/voiceDictation';
+import { describeVoiceFailure, describeVoiceStartFailure } from '@/lib/voiceMessages';
 import {
   DICTATION_ERROR_MESSAGES,
   DictationController,
@@ -41,19 +42,6 @@ type SpeechWindow = { SpeechRecognition?: DictationConstructor; webkitSpeechReco
 const preferBrowserSpeech = process.env.NEXT_PUBLIC_VOICE_ENGINE === 'browser';
 const cloudSupported = () => !preferBrowserSpeech && voiceCaptureSupported();
 const RETRY_WINDOW_MS = 300000;
-
-function describeFailure(failure: unknown): string {
-  const name = failure instanceof Error ? failure.name : '';
-  const status = (failure as { status?: number } | null)?.status;
-  const code = (failure as { data?: { code?: unknown } } | null)?.data?.code;
-  if (name === 'NotAllowedError' || name === 'SecurityError') return 'Allow microphone access in your browser to start recording.';
-  if (name === 'NotFoundError') return 'No microphone was found. Connect one and try again.';
-  if (name === 'NotReadableError') return 'The microphone is busy or unavailable. Close other apps using it and try again.';
-  if (status === 401 || code === 'VOICE_SESSION_CHANGED') return 'Please sign in again to use voice input. Your typed text is unchanged.';
-  if (status === 429 && failure instanceof Error) return failure.message;
-  if (failure instanceof TypeError) return 'Connection lost. Your recording is kept for a few minutes; retry when you are back online.';
-  return 'Part of this recording could not be transcribed. Retry or record again. Your typed text is unchanged.';
-}
 
 /** Dictation only. Submission belongs exclusively to the composer's Send action. */
 export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
@@ -115,7 +103,7 @@ export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
         // A signed-out or switched account can never resume this audio, so it is dropped.
         const accountLost = (result.error as { status?: number } | null)?.status === 401
           || (result.error as { data?: { code?: unknown } } | null)?.data?.code === 'VOICE_SESSION_CHANGED';
-        setError(describeFailure(result.error));
+        setError(describeVoiceFailure(result.error));
         if (accountLost) { release(current); return; }
         kept.current = current; setRetryable(true);
         clearTimeout(retryExpiry.current);
@@ -136,7 +124,7 @@ export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
       publish.current(result.text);
     } catch (failure) {
       if (session.current !== current || current.abort.signal.aborted) return;
-      setError(describeFailure(failure)); release(current);
+      setError(describeVoiceFailure(failure)); release(current);
     } finally {
       if (session.current === current) { session.current = null; setMode('idle'); }
     }
@@ -149,9 +137,13 @@ export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
     activeMode.current = 'finalizing';
     setMode('finalizing'); setNotice(message);
     current.stoppedAt = performance.now();
-    current.capture?.stop();
-    current.segmenter?.flush();
-    void settle(current);
+    void (async () => {
+      // The last words are still inside the audio engine when Stop is pressed.
+      await current.capture?.finish();
+      if (session.current !== current || current.abort.signal.aborted) return;
+      current.segmenter?.flush();
+      await settle(current);
+    })();
   }, [settle]);
 
   useEffect(() => {
@@ -247,7 +239,7 @@ export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
       if (session.current !== current || current.abort.signal.aborted) return;
       session.current = null;
       release(current);
-      setError(describeFailure(failure));
+      setError(describeVoiceStartFailure(failure));
       setMode('idle');
     }
   };

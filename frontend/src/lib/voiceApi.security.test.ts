@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import ts from 'typescript';
-import {voiceClientAwait, voiceDeadline, isTerminalVoiceFailure} from './voiceRequestPolicy';
+import {sameVoiceAccount, voiceClientAwait, voiceDeadline, isTerminalVoiceFailure} from './voiceRequestPolicy';
 
 /** AbortSignal as shipped by Safari before iOS 17.4: no static any(). */
 const olderIosAbortSignal = {timeout: (ms: number) => AbortSignal.timeout(ms)};
@@ -13,7 +13,7 @@ function actualVoiceApi(mode: string, freeOnly = false, abortSignal: unknown = A
   class ApiError extends Error {constructor(message: string, public status: number, public data: unknown = {}) {super(message);}}
   const context: Record<string, unknown> = {exports: {}, AbortSignal: abortSignal, Blob, Response, TextDecoder, Uint8Array, Error,
     require: (name: string) => {
-      if (name === './voiceRequestPolicy') return {voiceClientAwait, voiceDeadline};
+      if (name === './voiceRequestPolicy') return {sameVoiceAccount, voiceClientAwait, voiceDeadline};
       if (name === './voicePcm') return {normalizeVoiceAudio: async () => {
         if (mode === 'changeDuringNormalize') token = 'different-account-token';
         if (mode === 'logoutDuringNormalize') token = null;

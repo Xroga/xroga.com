@@ -43,6 +43,8 @@ async function microphone(): Promise<MediaStream> {
 /** How long the microphone audio engine may take to start, or to come back after Safari pauses it. */
 export const AUDIO_START_TIMEOUT_MS = 4000;
 export const AUDIO_RECOVERY_TIMEOUT_MS = 2000;
+/** How long to wait for the audio engine to hand over the last samples after Stop. */
+export const AUDIO_FLUSH_TIMEOUT_MS = 250;
 
 /** resume() can stay pending forever on iOS while another app or the system owns the audio session, so
  * it is bounded. True only when the context really is running afterwards. */
@@ -65,6 +67,8 @@ export interface VoiceCapture {
   rate: number;
   /** Starts delivering sample batches. Resolves when the first batch arrives. */
   begin(onSamples: (samples: Float32Array) => void): Promise<void>;
+  /** Delivers the samples still held by the audio engine, then stops. */
+  finish(): Promise<void>;
   stop(): void;
 }
 
@@ -107,14 +111,18 @@ export async function openVoiceCapture(onInterrupted: () => void, signal: AbortS
   };
   // Safari can garbage-collect audio nodes that nothing references, which silently ends capture.
   const graph: AudioNode[] = [];
+  let tap: AudioWorkletNode | undefined, flushed: (() => void) | undefined;
   return {
     rate: audio.sampleRate,
     begin(onSamples) {
       return new Promise<void>((resolve, reject) => {
         let first = true;
         const timer = setTimeout(() => { stop(); reject(new Error('The microphone did not start.')); }, 5000);
-        const node = new AudioWorkletNode(audio, 'xroga-voice-tap', { numberOfInputs: 1, numberOfOutputs: 1, channelCount: 1 });
+        // "explicit" mixes every microphone channel into one; the default would keep only the first.
+        const node = new AudioWorkletNode(audio, 'xroga-voice-tap', { numberOfInputs: 1, numberOfOutputs: 1, channelCount: 1, channelCountMode: 'explicit' });
+        tap = node;
         node.port.onmessage = ({ data }: MessageEvent<unknown>) => {
+          if (data === 'flushed') { flushed?.(); return; }
           if (stopped || !(data instanceof Float32Array)) return;
           if (first) { first = false; clearTimeout(timer); resolve(); }
           onSamples(data);
@@ -127,6 +135,18 @@ export async function openVoiceCapture(onInterrupted: () => void, signal: AbortS
         node.connect(mute);
         mute.connect(audio.destination);
       });
+    },
+    async finish() {
+      if (!stopped && tap && audio.state === 'running') {
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        await new Promise<void>(resolve => {
+          flushed = resolve;
+          timer = setTimeout(resolve, AUDIO_FLUSH_TIMEOUT_MS);
+          try { tap!.port.postMessage('flush'); } catch { resolve(); }
+        });
+        clearTimeout(timer);
+      }
+      stop();
     },
     stop,
   };

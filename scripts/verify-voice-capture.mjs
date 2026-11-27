@@ -78,7 +78,7 @@ try {
     await capture.begin(samples => segmenter.push(samples));
     const recordingMs = performance.now() - clickAt;
     await new Promise(resolve => setTimeout(resolve, recordSeconds * 1000));
-    capture.stop(); segmenter.flush();
+    await capture.finish(); segmenter.flush();
     const stopAt = performance.now();
     await pipeline.settle();
     const result = pipeline.result();

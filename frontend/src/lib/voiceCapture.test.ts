@@ -155,3 +155,76 @@ test('a resume that never settles ends in a clear failure and releases the micro
     assert.equal(context.closed, true);
   } finally { env.restore(); }
 });
+
+function workletHarness() {
+  const env = install({constraints: []});
+  const nodes: Array<{options: Record<string, unknown>; port: {onmessage: ((e: {data: unknown}) => void) | null; posted: unknown[]; postMessage(m: unknown): void}}> = [];
+  g.AudioWorkletNode = class {
+    port = {onmessage: null as ((e: {data: unknown}) => void) | null, posted: [] as unknown[], postMessage(m: unknown) { this.posted.push(m); }};
+    constructor(_c: unknown, _n: string, public options: Record<string, unknown>) { nodes.push(this); }
+    connect() {}
+  };
+  const Context = g.AudioContext as {prototype: Record<string, unknown>};
+  Context.prototype.createGain = () => ({gain: {value: 1}, connect() {}});
+  Context.prototype.createMediaStreamSource = () => ({connect() {}});
+  return {env, nodes};
+}
+async function started() {
+  const {env, nodes} = workletHarness();
+  const capture = await openVoiceCapture(() => {}, new AbortController().signal, prepareVoiceAudioContext());
+  const heard: number[] = [];
+  const begun = capture.begin(samples => heard.push(samples.length));
+  nodes[0].port.onmessage!({data: new Float32Array(2048)});
+  await begun;
+  return {env, node: nodes[0], capture, heard};
+}
+
+test('a stereo or multi-channel microphone is mixed down instead of keeping only one channel', async () => {
+  const job = await started();
+  try {
+    assert.equal(job.node.options.channelCount, 1);
+    assert.equal(job.node.options.channelCountMode, 'explicit');
+    job.capture.stop();
+  } finally { job.env.restore(); }
+});
+
+test('finishing keeps the last spoken fraction of a second before releasing the microphone', async () => {
+  const job = await started();
+  try {
+    const done = job.capture.finish();
+    assert.deepEqual(job.node.port.posted, ['flush']);
+    assert.equal(job.env.track.stopped, false);
+    job.node.port.onmessage!({data: new Float32Array(300)});
+    job.node.port.onmessage!({data: 'flushed'});
+    await done;
+    assert.deepEqual(job.heard, [2048, 300]);
+    assert.equal(job.env.track.stopped, true);
+  } finally { job.env.restore(); }
+});
+
+test('finishing still releases the microphone when the audio engine never answers', async () => {
+  const job = await started();
+  try {
+    await job.capture.finish();
+    assert.equal(job.env.track.stopped, true);
+  } finally { job.env.restore(); }
+});
+
+test('the worklet posts its partial batch when asked to flush', async () => {
+  const {readFileSync} = await import('node:fs');
+  const {runInNewContext} = await import('node:vm');
+  const posted: unknown[] = [];
+  let Processor!: new () => {process(inputs: Float32Array[][]): boolean; port: {onmessage?: (e: {data: unknown}) => void}};
+  runInNewContext(readFileSync(new URL('../../public/voice-capture-worklet.js', import.meta.url), 'utf8'), {
+    Float32Array,
+    AudioWorkletProcessor: class { port = {postMessage: (m: unknown) => posted.push(m)}; },
+    registerProcessor: (_n: string, value: typeof Processor) => { Processor = value; },
+  });
+  const processor = new Processor();
+  processor.process([[new Float32Array(128).fill(0.5)]]);
+  assert.equal(posted.length, 0);
+  processor.port.onmessage!({data: 'flush'});
+  assert.equal((posted[0] as Float32Array).length, 128);
+  assert.equal((posted[0] as Float32Array)[127], 0.5);
+  assert.equal(posted[1], 'flushed');
+});
