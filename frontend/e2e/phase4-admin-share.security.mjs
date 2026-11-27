@@ -13,6 +13,7 @@ const require=createRequire(new URL('../../package.json',import.meta.url)),ts=re
 // to replace UI-only leaves, never Share parsing or founder-access policy.
 const nativeShareId='../../../../../backend/src/ai/nativeOpenUiShare';
 const nativePresentationId='../../../../../backend/src/ai/nativeOpenUi';
+const nativeMarkdownPath='../../backend/src/ai/nativeMarkdown.ts';
 const shareLimitsId='../../../../../backend/src/lib/messageShareLimits';
 const shareLimitsPath='../../backend/src/lib/messageShareLimits.ts';
 const pureSources={
@@ -22,6 +23,7 @@ const pureSources={
   [nativeShareId]:'../../backend/src/ai/nativeOpenUiShare.ts',
   [nativePresentationId]:'../../backend/src/ai/nativeOpenUi.ts',
   '../../../backend/src/ai/nativeOpenUi':'../../backend/src/ai/nativeOpenUi.ts',
+  '../../../backend/src/ai/nativeMarkdown':nativeMarkdownPath,
   '../../../backend/src/ai/nativeDocumentDownload':'../../backend/src/ai/nativeDocumentDownload.ts',
   '@/lib/publicAnswerText':'lib/publicAnswerText.ts',
   './connectedAppResult':'lib/connectedAppResult.ts',
@@ -31,7 +33,7 @@ const pureSources={
   './nativeDiagramTopology.js':'../../backend/src/ai/nativeDiagramTopology.ts',
   './nativeOpenUiAccuracy.js':'../../backend/src/ai/nativeOpenUiAccuracy.ts',
   './nativeOpenUiEditorial.js':'../../backend/src/ai/nativeOpenUiEditorial.ts',
-  './nativeMarkdown.js':'../../backend/src/ai/nativeMarkdown.ts',
+  './nativeMarkdown.js':nativeMarkdownPath,
   './nativeOpenUiValues.js':'../../backend/src/ai/nativeOpenUiValues.ts',
   './nativeOpenUiFunctions.generated.js':'../../backend/src/ai/nativeOpenUiFunctions.generated.ts',
   './answerAuthorizationReview.js':'../../backend/src/ai/answerAuthorizationReview.ts',
