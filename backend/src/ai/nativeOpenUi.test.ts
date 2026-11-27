@@ -48,7 +48,7 @@ test('long bound Markdown survives validation and Share without expanding other 
   }
   const unsafe = bindNativeAnswerText(program + '\nunreachable = Fetch("https://example.invalid")', prose);
   assert.deepEqual(validateNativeOpenUi(unsafe), { ok: false, reason: 'authority' });
-  assert.deepEqual(validateNativeOpenUi(bindNativeAnswerText(program, prose.repeat(2))),
+  assert.deepEqual(validateNativeOpenUi(bindNativeAnswerText(program, prose.repeat(16))),
     { ok: false, reason: 'budget' });
 });
 
@@ -195,11 +195,13 @@ test('the model gets instructions from the native registry and may answer in tex
   }
   for (const name of ['Col(', 'Chart(', 'Slider(', 'Svg(', 'Diagram(', 'Section(', 'Table(', 'Payment(', 'Source(']) assert.ok(nativeOpenUiPrompt.includes(name), name);
   for (const prompt of [nativeOpenUiPlainPrompt, nativeOpenUiPrompt]) {
-    assert.match(prompt, /understands the answer within a few seconds/);
-    assert.match(prompt, /Go longer when the user asks for detail, a word count, a document or code/);
+    assert.match(prompt, /judging depth and form from the request/);
+    assert.match(prompt, /There is no length limit in either direction/);
+    assert.doesNotMatch(prompt, /\d+ to \d+ words|under \d+ words/);
   }
-  assert.match(nativeOpenUiPrompt, /first write the short readable answer in Markdown/);
+  assert.match(nativeOpenUiPrompt, /first write the readable answer in Markdown/);
   assert.match(nativeOpenUiPrompt, /Each figure has one visible home/);
+  assert.match(nativeOpenUiPrompt, /donut Chart for parts of a whole/);
   assert.match(nativeOpenUiPrompt, /never write a duplicate table, value list or formula as a backup/);
   assert.doesNotMatch(nativeOpenUiPrompt, /formulas, initial inputs and initial results|complete readable answer/);
   assert.match(nativeOpenUiPrompt, /do not copy or paraphrase the explanation/);
@@ -352,7 +354,7 @@ test('a requested editable checklist recovers local controls from a complete pro
   const sections = Array.from({length: 5}, (_, index) => '**Group ' + index + '**\n' +
     Array.from({length: 8}, (_, item) => '- [ ] Review item ' + index + '.' + item).join('\n'));
   const prose = ['Check before publishing.', ...sections, '~~~md\n- Copy this sample code as written\n~~~'].join('\n\n');
-  const invalid = ['root = Col([Text("Checklist")])', ...Array.from({length: 97}, (_, index) => '$label' + index + ' = false')].join('\n');
+  const invalid = ['root = Col([Text("Checklist")])', ...Array.from({length: 601}, (_, index) => '$label' + index + ' = false')].join('\n');
   const formats = requiredNativeFormats(prompt);
   const result = completeNativeWorkspaceAnswer(prose + NATIVE_UI_MARKER + invalid, 'stop', undefined, prompt, undefined, formats);
   assert.deepEqual(formats, ['checklist']);

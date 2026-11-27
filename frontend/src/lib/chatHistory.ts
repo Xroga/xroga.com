@@ -15,7 +15,7 @@ export interface CompletedChatHistoryTurn {
  */
 export function buildCompletedChatHistory(
   messages: ChatHistoryMessage[],
-  limit = 10,
+  limit = 200,
 ): CompletedChatHistoryTurn[] {
   const completed: CompletedChatHistoryTurn[] = [];
   let pendingUser: CompletedChatHistoryTurn | null = null;

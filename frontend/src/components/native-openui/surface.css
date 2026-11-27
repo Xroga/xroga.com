@@ -339,3 +339,46 @@
 .native-chart-data[open] > summary { margin-block-end: .375rem; }
 .native-chart-data caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .xroga-native-openui .iui-table .is-numeric { text-align: end; }
+
+/* Tables read as rows on the page: thin lines, no box and no filled header. */
+.xroga-native-openui .iui-table-scroll { border: 0; border-radius: 0; }
+.xroga-native-openui .iui-table th { background: transparent; border-block-end: 1px solid var(--native-line); }
+.xroga-native-openui .iui-table-bounded thead th { background: var(--iui-canvas); }
+.xroga-native-openui .iui-table :is(td, th):first-child { padding-inline-start: 0; }
+.xroga-native-openui .iui-table :is(td, th):last-child { padding-inline-end: 0; }
+.xroga-native-openui .iui-table tbody tr:hover { background: color-mix(in srgb, var(--iui-ink) 4%, transparent); }
+/* Charts sit directly on the page. */
+.xroga-native-openui .native-chart-frame { padding: 0; border-radius: 0; background: transparent; }
+/* Headline numbers are tiles. */
+.xroga-native-openui .iui-grid > .native-answer-metric,
+.xroga-native-openui .iui-flow:not(.iui-card) > .native-answer-metric:not(:has(+ .native-answer-controls), .native-answer-controls + *) {
+  padding: .75rem .875rem; border: 1px solid var(--native-line); border-radius: 12px;
+}
+/* A one-line takeaway stands out without a box. */
+.xroga-native-openui .iui-markdown blockquote {
+  padding: 0; border: 0; border-radius: 0; background: transparent; color: var(--iui-success); font-weight: 550;
+}
+.xroga-native-openui .iui-markdown hr { margin-block: .625rem; }
+.xroga-native-openui .iui-markdown > hr + .iui-md-h { margin-block-start: .875rem; }
+/* Ticks are round, as in a task list. */
+.xroga-native-openui .iui-check > input[type="checkbox"] { inline-size: 1.05rem; block-size: 1.05rem; border-radius: 999px; }
+/* Step-by-step flows: full-width blocks, one colour per role, joined downwards. */
+.native-diagram-stack { padding: .75rem; }
+.native-diagram-rows { display: grid; gap: .375rem; margin: 0; padding: 0; list-style: none; }
+.native-diagram-rows > li { display: grid; gap: .375rem; }
+.native-diagram-arrow { display: grid; justify-items: center; gap: .125rem; color: var(--iui-muted); font-size: .8125rem; line-height: 1.4; text-align: center; }
+.native-diagram-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); gap: .5rem; }
+.native-diagram-block { display: grid; justify-items: center; align-content: center; gap: .125rem; min-width: 0; padding: .75rem .875rem; border: 1px solid var(--native-line); border-radius: 10px; background: var(--native-panel); text-align: center; overflow-wrap: anywhere; }
+.native-diagram-block.native-diagram-node-info { border-color: transparent; background: color-mix(in srgb, var(--native-accent) 20%, transparent); }
+.native-diagram-block.native-diagram-node-success { border-color: transparent; background: color-mix(in srgb, var(--iui-success) 20%, transparent); }
+.native-diagram-block.native-diagram-node-purple { border-color: transparent; background: color-mix(in srgb, var(--iui-purple) 22%, transparent); }
+.native-diagram-block.native-diagram-node-warning { border-color: transparent; background: color-mix(in srgb, var(--iui-warning) 20%, transparent); }
+.native-diagram-stack > .native-diagram-relationships { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.xroga-native-openui .native-diagram-rows, .xroga-native-openui .native-diagram-rows > li { list-style: none; padding-inline: 0; }
+.xroga-native-openui .iui-table :is(th, th button) { font-family: var(--iui-font); }
+.xroga-native-openui .iui-check > input[type="checkbox"] {
+  appearance: none; flex-shrink: 0; margin: .3em 0 0; border: 1.5px solid var(--iui-muted); background: transparent; cursor: pointer;
+}
+.xroga-native-openui .iui-check > input[type="checkbox"]:checked {
+  border-color: var(--iui-success); background: radial-gradient(circle, var(--iui-success) 0 45%, transparent 50%);
+}

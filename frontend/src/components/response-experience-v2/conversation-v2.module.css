@@ -47,3 +47,5 @@
 .turn .userMessage[data-script=arabic] { line-height: 2; }
 .turn [data-script=devanagari] :where(p, li, td, th),
 .turn [data-script=devanagari] :global(:is(.iui-markdown, .xv-response-text)) :where(p, li, td, th) { line-height: 1.8; }
+/* The written answer shown while visuals load looks like the finished one, so nothing appears to jump. */
+.answer :global(.xv-response-text) blockquote { margin-inline: 0; padding: 0; border: 0; background: transparent; color: var(--success, #3ecf8e); font-weight: 550; }

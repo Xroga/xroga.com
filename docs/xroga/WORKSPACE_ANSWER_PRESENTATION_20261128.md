@@ -16,3 +16,22 @@ calculator, web research, Urdu plan; desktop dark theme and one phone-width chec
 
 Not verified: real model answers under the new instructions (needs a deployment), the turn spacer in the signed-in
 Workspace, a physical phone, and the light theme. Plans and model-written notes are handled by the parent change.
+
+## Second pass: comparator recordings
+
+The owner supplied six recordings of the comparator and asked for the same adaptive presentation and for the answer
+and search limits to be removed. The word guidance added earlier the same day was replaced: the model now judges
+depth, and is told which visual suits which content. Tables lost their box, headline numbers became tiles, charts
+sit on the page, step-by-step flows are blocks and task ticks are round.
+
+| Limit | Before | Now |
+| --- | --- | --- |
+| Earlier chat sent by the browser | 10 messages, 1,200 characters each | 200 messages, whole |
+| Earlier chat sent on to the model | 12 messages, 8,000 characters each | unchanged, awaiting approval |
+| Answer program that keeps its visuals | 24,000 characters | 200,000 |
+| Search results per request | 10 | 25 |
+| Text kept per search result | 2,000 to 3,200 characters | 8,000 to 10,000 |
+
+Unchanged on purpose: monthly user budget, approved-research spending cap, guest limits, private-data search filter.
+Verified locally with fixture answers that pass the real answer path, desktop and phone widths, and the browser
+acceptance script. Not verified: real model answers, which need a deployment.

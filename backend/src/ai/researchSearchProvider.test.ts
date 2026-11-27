@@ -20,7 +20,7 @@ test('one bounded DeepSeek request respects the documented 128-character limits'
   const body = deepseekSearchBody({ objective: long, search_queries: [long, 'second query is not sent'] });
   assert.equal(body.query.length, 128);
   assert.equal(body.ori_question?.length, 128);
-  assert.equal(body.count, 10);
+  assert.equal(body.count, 25);
   assert.deepEqual(Object.keys(deepseekSearchBody({ objective: '  ', search_queries: ['Next.js 15 release'] })).sort(), ['count', 'query']);
 });
 
@@ -67,7 +67,7 @@ test('a scoped primary lookup requests page content in the same Search call', ()
 test('primary evidence uses relevant text from the retrieved page and preserves its source', () => {
   const summary = 'Find the connector specification on the publisher site.';
   const result = { title: 'Connector Specification', url: 'https://example.org/standards/connector',
-    summary, content: 'Connector Specification. ' + 'Publisher website navigation and press announcements. '.repeat(110)
+    summary, content: 'Connector Specification. ' + 'Publisher website navigation and press announcements. '.repeat(320)
       + 'Connector safety steps. These steps are mandatory. Step 1: disconnect power. Step 2: inspect the enclosure.' };
   const trace = 'ef4ad084bbd155ace992b62bcef1f796';
   const question = 'Find the original standard for connector safety steps.';

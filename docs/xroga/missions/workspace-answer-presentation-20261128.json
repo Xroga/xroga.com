@@ -1,20 +1,29 @@
 {
   "version": "1.0",
   "missionId": "WORKSPACE-ANSWER-PRESENTATION-20261128",
-  "baseSha": "df901fb7463cefae6d7c1966d51864b737c88196",
+  "baseSha": "8659a20965c787ec491427cdc68c908912492c5d",
   "requirementIds": [
     "XR-ORIGINAL-F076"
   ],
   "state": "CODE_COMPLETE",
-  "risk": "low",
-  "scope": "Repair how Workspace answers read: shorter instructions that give each figure one home, no second copy of a visual on screen, list markers, one typography, calculator and chart sizing, right-to-left rhythm, a false calculator conflict, and a stable view while an answer is written.",
+  "risk": "medium",
+  "scope": "Make Workspace answers read and look like a leading chat assistant: adaptive depth with no word limit, visuals placed under their own headings, borderless tables, metric tiles, block flow diagrams, one typography, right-to-left rhythm, no repeated copy of a visual and a stable view while answering. At the owner's request on 28 November, raise answer-program, chat-history and public-search size limits. Money limits and the private-data search filter are unchanged.",
   "changedFiles": [
+    "backend/src/ai/nativeDiagramTopology.ts",
     "backend/src/ai/nativeOpenUi.test.ts",
+    "backend/src/ai/nativeOpenUi.ts",
     "backend/src/ai/nativeOpenUiPrompt.ts",
     "backend/src/ai/nativeOpenUiValues.test.ts",
     "backend/src/ai/nativeOpenUiValues.ts",
+    "backend/src/ai/parallelWeb.security.test.ts",
+    "backend/src/ai/research.ts",
+    "backend/src/ai/researchAnswer.test.ts",
+    "backend/src/ai/researchSearchProvider.test.ts",
+    "backend/src/ai/researchSearchProvider.ts",
     "docs/xroga/WORKSPACE_ANSWER_PRESENTATION_20261128.md",
     "docs/xroga/missions/workspace-answer-presentation-20261128.json",
+    "frontend/src/components/native-openui/Diagram.test.ts",
+    "frontend/src/components/native-openui/Diagram.tsx",
     "frontend/src/components/native-openui/NativeSurface.tsx",
     "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
     "frontend/src/components/native-openui/generatedCopy.ts",
@@ -26,6 +35,12 @@
     "frontend/src/components/response-experience-v2/conversation.test.ts",
     "frontend/src/components/response-experience-v2/conversation.ts",
     "frontend/src/components/terminal/SwarmMessageLog.tsx",
+    "frontend/src/context/TerminalChatContext.tsx",
+    "frontend/src/lib/chatHistory.ts",
+    "frontend/src/lib/longConversationPerformance.test.ts",
+    "frontend/src/lib/xrogaBlocks.ts",
+    "frontend/src/lib/xrogaResponseDocument.test.ts",
+    "frontend/src/lib/xrogaResponseDocument.ts",
     "scripts/verify-native-openui-browser.mjs"
   ],
   "decisions": {
@@ -33,7 +48,11 @@
       "The existing answer validators, saved answer text, Copy, Share, renderer library and model route"
     ],
     "extend": [
-      "Answer instructions with one concision rule by request type",
+      "Answer instructions let the model judge depth and use the whole visual library",
+      "Step-by-step diagrams are drawn as joined blocks; routed graphs keep the canvas",
+      "The browser sends up to 200 earlier messages whole instead of 1,200 characters each",
+      "Answer programs up to 200,000 characters keep their visuals",
+      "Public search asks for 25 results and keeps longer excerpts",
       "The newest exchange keeps room under its prompt while it is answered",
       "Reading rhythm for Arabic-script and Devanagari answers"
     ],
@@ -72,12 +91,12 @@
       "description": "No credential changes."
     },
     "egress": {
-      "changed": false,
-      "description": "No destination or request body changes beyond the instruction text sent to the existing model."
+      "changed": true,
+      "description": "Same destinations. Chat requests to the existing model carry more of the signed-in user's own conversation. Search requests ask for 25 results instead of 10. The private-data search filter is unchanged."
     },
     "cost": {
-      "changed": false,
-      "description": "No extra model calls and no output limit change."
+      "changed": true,
+      "description": "No extra calls. Longer history raises input tokens and longer answers raise output tokens, both inside the existing per-user budget reservation and settlement. Search is billed per request, so its price is unchanged."
     },
     "billing": {
       "changed": false,
@@ -108,12 +127,26 @@
       "scope": "Script rhythm follows the dominant script and ignores a quoted word or plain numbers.",
       "negative": true,
       "reference": "frontend/src/components/response-experience-v2/conversation.test.ts"
+    },
+    {
+      "command": "tsx --tsconfig frontend/tsconfig.json --test frontend/src/components/native-openui/Diagram.test.ts",
+      "scope": "Downward flows become blocks; bypass, return and same-row links keep the routed graph.",
+      "negative": true,
+      "reference": "frontend/src/components/native-openui/Diagram.test.ts"
+    },
+    {
+      "command": "node scripts/verify-native-openui-browser.mjs",
+      "scope": "Real browser acceptance of answers in both themes and phone to desktop widths, with no accessibility violations or external requests.",
+      "negative": true,
+      "reference": "scripts/verify-native-openui-browser.mjs"
     }
   ],
   "rollout": "Backend and frontend together, after the parent chat release. Check real answers on a candidate before promotion.",
   "rollback": "Re-promote the previous verified backend revision and frontend build; no database changes.",
   "knownGaps": [
     "Real model answers under the new instructions are not verified.",
+    "The server still sends the model the last 12 messages and 8,000 characters of each; raising it edits security-reviewed pipeline.ts and awaits the owner's approval to rebind those records.",
+    "Images, logos beyond the product registry and live market charts need new data providers.",
     "The turn spacer is not verified in the signed-in Workspace or on a physical phone."
   ],
   "placeholderClaimsRemaining": [],

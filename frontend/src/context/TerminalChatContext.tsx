@@ -2490,10 +2490,7 @@ const stopRequestedRunIdRef =
       const history = buildCompletedChatHistory(
         messages.map((m) => ({
           role: m.role,
-          content:
-            (m.content ?? '').length > 1200
-              ? `${(m.content ?? '').slice(0, 1200)}…`
-              : (m.content ?? ''),
+          content: m.content ?? '',
         })),
       );
 
@@ -2920,7 +2917,6 @@ const stopRequestedRunIdRef =
                     content = output.summary ?? `Built website: ${output.deployUrl ?? 'preview ready'}`;
                   }
                 }
-                if (content.length > 1200) content = `${content.slice(0, 1200)}…`;
                 return { role: m.role, content };
               }),
             );

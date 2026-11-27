@@ -354,6 +354,8 @@ try {
       const context = await browser.newContext({ viewport, reducedMotion: 'reduce', permissions: ['clipboard-read', 'clipboard-write'] });
       context.setDefaultTimeout(12000);
       const page = await context.newPage();
+      // Chart figures open on request. The checks below read them, so each chart is opened as it appears.
+      await page.addInitScript(() => { new MutationObserver(() => { for (const figures of document.querySelectorAll('details.native-chart-data:not([data-opened])')) { figures.dataset.opened = ''; figures.open = true; } }).observe(document, { childList: true, subtree: true }); });
       const errors = [], external = [];
       const checked = new Set();
       page.on('pageerror', error => errors.push(error.message));
@@ -497,7 +499,7 @@ try {
         await page.screenshot({ path: resolve(output, channel + '-shared-answer-' + viewport.width + '-' + theme + '.png'), fullPage: true });
       }
       await open('recovered');
-      await page.getByText(/Some visuals could not be validated/).waitFor();
+      assert.equal(await page.getByText(/Some visuals could not be validated/).count(), 0);
       await page.getByText('The API verifies organization membership before reading rows.', { exact: true }).waitFor();
       await page.getByRole('cell', { name: 'Membership', exact: true }).waitFor();
       if ([390, 1440].includes(viewport.width)) {
@@ -554,7 +556,6 @@ try {
       assert.deepEqual(labelAudit.violations.map(({ id }) => id), []);
       if ([390, 1440].includes(viewport.width)) await page.screenshot({ path: resolve(output, 'formatted-checklist-' + viewport.width + '-' + theme + '.png'), fullPage: true });
       await open('rebuiltSignedChart');
-      await page.getByText('View data', { exact: true }).click();
       const signedTable = page.getByRole('table', { name: 'Chart data' });
       await signedTable.getByRole('cell', { name: '-800', exact: true }).waitFor();
       for (const value of ['0', '500']) assert.equal(await signedTable.getByRole('cell', { name: value, exact: true }).count(), 1);
@@ -579,7 +580,6 @@ try {
       for (const index of [0, 3]) assert.ok(geometry.bars[index].top < geometry.zero && geometry.bars[index].height > 0);
       for (const index of [1, 2]) assert.ok(geometry.bars[index].top >= geometry.zero && geometry.bars[index].height > 0);
       if (geometry.width < 440) assert.ok(geometry.height <= 317, 'Compact panes constrain tall charts');
-      await page.getByText('View data', { exact: true }).click();
       await page.getByRole('table', { name: 'Chart data' }).getByRole('cell', { name: '-$2,000.00', exact: true }).waitFor();
       if ([390, 1440].includes(viewport.width)) {
         await page.getByRole('region', { name: 'Answer', exact: true }).screenshot({ path: resolve(output, 'signed-stacked-' + viewport.width + '-' + theme + '.png') });
@@ -728,12 +728,11 @@ try {
       assert.deepEqual(graphAccessibility.violations.map(({id}) => id), []);
       await page.screenshot({ path: resolve(output, channel + '-architecture-' + viewport.width + '-' + theme + '.png'), fullPage: true });
       await open('diagramRecovery');
-      const recoveredEdge = page.locator('.react-flow__edge-path');
-      await recoveredEdge.waitFor({ state: 'attached' });
-      assert.ok(await recoveredEdge.evaluate(path => path.getTotalLength() > 0 && getComputedStyle(path).stroke !== 'none'));
+      // A two-step flow is drawn as joined blocks rather than a graph canvas.
+      await page.locator('.native-diagram-arrow').first().waitFor();
       await page.locator('.native-diagram-node-neutral').getByText('Web', { exact: true }).waitFor();
       await page.locator('.native-diagram-node-purple').getByText('API', { exact: true }).waitFor();
-      await page.getByText('Web → API', { exact: true }).waitFor();
+      await page.getByText('Web → API', { exact: true }).waitFor({ state: 'attached' });
       await page.getByRole('cell', { name: 'API', exact: true }).waitFor();
       assert.equal(await page.getByText(/Some visuals could not be validated/).count(), 0);
       await open('flow');

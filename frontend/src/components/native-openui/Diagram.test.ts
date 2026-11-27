@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { Diagram, layoutDiagram } from './Diagram';
+import { Diagram, layoutDiagram, stackedDiagramRows } from './Diagram';
 import { NativeSectionTitle } from './upstream/components/markdown';
 
 function layout(rows: string[][], links: Array<[string, string]>, compact: boolean) {
@@ -64,5 +64,15 @@ test('plain chains retain their handles and reciprocal bypasses take different o
     assert.deepEqual(graph.edges.map(edge => [edge.sourceHandle, edge.targetHandle]), [[null, null], [null, null]]);
     const reciprocal = layout([['start'], ['step'], ['finish']], [['start', 'finish'], ['finish', 'start']], compact);
     assert.deepEqual(reciprocal.edges.map(edge => [edge.sourceHandle, edge.targetHandle]), [['left', 'left'], ['right', 'right']]);
+  }
+});
+
+test('a step by step flow is drawn as joined blocks, and routed graphs keep the canvas', () => {
+  const nodes = [{ id: 'a', label: 'Web', level: 0 }, { id: 'b', label: 'API', level: 1 }, { id: 'c', label: 'Billing', level: 1 }, { id: 'd', label: 'Database', level: 3 }];
+  const base = { title: 'Request path', description: 'How a request moves.', nodes };
+  const rows = stackedDiagramRows({ ...base, links: [{ from: 'a', to: 'b', label: 'HTTPS' }, { from: 'a', to: 'c', label: 'HTTPS' }, { from: 'b', to: 'd' }] });
+  assert.deepEqual(rows?.map(row => [row.nodes.map(node => node.id), row.incoming]), [[['a'], []], [['b', 'c'], ['HTTPS']], [['d'], []]]);
+  for (const link of [{ from: 'a', to: 'd' }, { from: 'd', to: 'b' }, { from: 'b', to: 'c' }]) {
+    assert.equal(stackedDiagramRows({ ...base, links: [{ from: 'a', to: 'b' }, link] }), null);
   }
 });
