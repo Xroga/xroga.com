@@ -95,6 +95,28 @@ test('active reading marker follows both scroll directions and no rail appears f
   await expect(active).toHaveAttribute('aria-label', topActive!);
 });
 
+test('the empty composer stays compact at 320px after sending a long prompt', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  await page.goto('/workspace', { waitUntil: 'load' });
+  const composer = page.locator('[data-terminal-composer]');
+  await expect(composer).toHaveAttribute('data-draft-restoring', 'false');
+  const height = () => composer.evaluate(element => element.getBoundingClientRect().height);
+  const prompt = 'Compare the options and explain the tradeoffs with a short example. '.repeat(14).trim();
+  await composer.fill(prompt);
+  await expect.poll(height).toBeGreaterThan(100);
+  await composer.press('Enter');
+  await expect(page.getByText('Answer marker 1', { exact: false }).first()).toBeVisible();
+  await expect(composer).toHaveValue('');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await expect.poll(height).toBeLessThan(60);
+  await page.setViewportSize({ width: 320, height: 900 });
+  await expect.poll(height).toBeLessThan(60);
+  await composer.fill(prompt);
+  await expect.poll(height).toBeGreaterThan(100);
+  await composer.clear();
+  await expect.poll(height).toBeLessThan(60);
+});
+
 for (const width of [390, 1366]) {
   test(`Enter keeps the newest prompt in view as its answer arrives at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 768 });

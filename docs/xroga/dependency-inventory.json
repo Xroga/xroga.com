@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "cbe9790146c0888c794eb68c88a51f8f707fc6e9",
+  "source_sha": "c0acae42af48c060190f24a8cae853715d8b6dc2",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -23603,7 +23603,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sha256": "c9012e95a471135020ab400e0b1bcbd28a6a4bf628d715b33599169df818006d"
+      "sha256": "971692b317bb237ab649f70450bbd12cfc5df9e231297f098e140d167f5b48c8"
     },
     {
       "path": "frontend/src/components/terminal/TerminalDock.tsx",
@@ -23727,7 +23727,7 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sha256": "778082159fdc39b4dffb8ce1b3de60be0d502b06c67191658533fea01d431bb6"
+      "sha256": "bfad45774e4c9cba5da59da9711b9bd956a18357469def835e81c7165581d0b2"
     },
     {
       "path": "frontend/src/components/terminal/builder/BuilderDatabase.tsx",
@@ -24975,19 +24975,15 @@
     },
     {
       "path": "frontend/src/lib/voiceApi.ts",
-      "sha256": "444770d2d31f4752b12a0933d8a59ad4d4c1979d0396d6ea0c99fb034669660b"
+      "sha256": "236afeb38215ed1279bdf8acb3041877bb84e30cae989068e226f386f33bc44d"
     },
     {
       "path": "frontend/src/lib/voiceCapture.ts",
-      "sha256": "96761de0768e92a430ced03fc8c098ccbd8c51a53588b337b8a80dfb52f0fcb3"
+      "sha256": "43b394ec936088ee3de7aa7f29d09aed9a40e339dc1ae6e4ba1b28a6038edab0"
     },
     {
       "path": "frontend/src/lib/voiceDictation.ts",
-      "sha256": "208fce2d7e1633ca9a80f3e341e392d35bdd6643284dac56fdbb0b65f43d6f41"
-    },
-    {
-      "path": "frontend/src/lib/voiceMessages.ts",
-      "sha256": "16478886f99d98264e4aecf0ae52ec6d211bcdfb5ede19a366311f09aa309b1e"
+      "sha256": "1e04bcd6669d67b7f5baa5491d60b1990000f3dfab0ea02c2a22551f653c75b7"
     },
     {
       "path": "frontend/src/lib/voicePcm.ts",
@@ -24995,7 +24991,7 @@
     },
     {
       "path": "frontend/src/lib/voiceRequestPolicy.ts",
-      "sha256": "c060e2d0d0ff17b1c3ad4d3737f2d70f220ea58bdd415f02c47ff75a5bbefb6d"
+      "sha256": "39d5b47f4f9bb6eeb7fc8444a814a33c9329811ee0d61f66cd2e7b9b046c4b9b"
     },
     {
       "path": "frontend/src/lib/voiceSegmenter.ts",
@@ -41986,7 +41982,7 @@
     },
     {
       "path": "frontend/src/lib/voiceDictation.ts",
-      "line": 46,
+      "line": 32,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
