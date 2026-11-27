@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a1275a5b1376e535afc6d694c406b0bf5ea4df90",
+  "source_sha": "0adc8eb3f3d1a1522248a5b931e62987f8eb2e12",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -24660,7 +24660,7 @@
     },
     {
       "path": "frontend/src/lib/voiceSegmenter.ts",
-      "sha256": "c73176a55e776661d1374be102e9b46b42fbd160122407941203a059408f5b47"
+      "sha256": "19f3c8ef02e52f1f0341cd902ba56ae4c5f34274f8e8e0f561fa60661d7cf767"
     },
     {
       "path": "frontend/src/lib/voiceWarmup.ts",
