@@ -33,5 +33,6 @@ sit on the page, step-by-step flows are blocks and task ticks are round.
 | Text kept per search result | 2,000 to 3,200 characters | 8,000 to 10,000 |
 
 Unchanged on purpose: monthly user budget, approved-research spending cap, guest limits, private-data search filter.
-Verified locally with fixture answers that pass the real answer path, desktop and phone widths, and the browser
+Twelve kinds of fixture answer (greeting to long plan) were then checked on desktop and phone width; text-only
+tables were restyled to match. Verified locally with fixture answers that pass the real answer path, and the browser
 acceptance script. Not verified: real model answers, which need a deployment.

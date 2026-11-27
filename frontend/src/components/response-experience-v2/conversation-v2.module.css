@@ -49,3 +49,10 @@
 .turn [data-script=devanagari] :global(:is(.iui-markdown, .xv-response-text)) :where(p, li, td, th) { line-height: 1.8; }
 /* The written answer shown while visuals load looks like the finished one, so nothing appears to jump. */
 .answer :global(.xv-response-text) blockquote { margin-inline: 0; padding: 0; border: 0; background: transparent; color: var(--success, #3ecf8e); font-weight: 550; }
+/* Text-only answers use the same tables as answers with visuals: rows on the page, with room around them. */
+.answer :global(.xv-response-text [aria-label="Answer table"]) { margin-block: 1rem; border: 0; border-radius: 0; }
+.answer :global(.xv-response-text [aria-label="Answer table"]) :where(th) { background: transparent !important; border-block-end: 1px solid color-mix(in srgb, var(--foreground) 22%, transparent); }
+.answer :global(.xv-response-text [aria-label="Answer table"]) :where(th, td) { text-align: start; }
+.answer :global(.xv-response-text [aria-label="Answer table"]) :where(th, td):first-child { padding-inline-start: 0; }
+.answer :global(.xv-response-text [aria-label="Answer table"]) :where(th, td):last-child { padding-inline-end: 0; }
+.answer :global(.xv-response-text [aria-label="Answer table"] :is(tr, th, td)) { border-color: color-mix(in srgb, var(--foreground) 14%, transparent) !important; }
