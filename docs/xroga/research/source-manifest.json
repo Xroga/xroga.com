@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "256106f50caa81636eaead4f583aa721c45f4593",
+  "source_sha": "28943ccf2be670f5f0f87cf7e8d545cd7dc54194",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -6416,9 +6416,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "1a009c5d73ee4b8d510d502ea9b234e002202b2689965bf28241d7740ec9cc0a",
+      "sha256": "6b5f3c305e3bb49a4c20fd164b4ae744fabe7f4b937c5b91b389ed210e2fe5ac",
       "byte_size": 5952464,
-      "modified_timestamp": "2026-11-27T19:45:18.670Z",
+      "modified_timestamp": "2026-11-27T20:31:07.990Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -25812,9 +25812,9 @@
       "source_id": "SRC-d57670e245a2278f",
       "filename": "TerminalLiveActivity.tsx",
       "path_or_url": "frontend/src/components/terminal/TerminalLiveActivity.tsx",
-      "sha256": "b69c68aa72a29076deb5f8b3aa58d6a4a630616f0d40252be84d1459d8309adf",
-      "byte_size": 4025,
-      "modified_timestamp": "2026-11-27T19:03:52.371Z",
+      "sha256": "f9e7360d991960182b6737b54bf5c4430012126f05f2cb00cc7fafd0e347ffec",
+      "byte_size": 4153,
+      "modified_timestamp": "2026-11-27T20:22:23.113Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",

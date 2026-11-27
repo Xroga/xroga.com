@@ -1,6 +1,6 @@
 # Xroga repository truth map
 
-Source SHA: `256106f50caa81636eaead4f583aa721c45f4593`. Branch observed: `claude/fast-chat-20261127`. Audit started: 2026-11-27T19:45:18.398Z.
+Source SHA: `28943ccf2be670f5f0f87cf7e8d545cd7dc54194`. Branch observed: `claude/fast-chat-20261127`. Audit started: 2026-11-27T20:31:05.938Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 
