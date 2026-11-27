@@ -5,6 +5,35 @@ const delimiter = /^\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)*\|?\s*$/;
 const fenceMarker = /^ {0,3}(\x60{3,}|~{3,})(.*)$/;
 const startsNewBlock = /^(?:#{1,4}\s|\s*>)/;
 const indentedCode = /^(?: {4}|\t)/;
+const inlineCodeOrCitationSuperscript = /((?<!\x60)(\x60+)(?!\x60)[\s\S]*?(?<!\x60)\2(?!\x60))|(?<!\\)<sup>[ \t]*((?:\[\d{1,3}\](?:\((?:<[^<>\r\n]+>|[^)\s]+)\))?[ \t]*)+)<\/sup>/giu;
+
+/** Keep source references as Markdown when a model wraps them in HTML. */
+export function normalizeCitationSuperscripts(text: string): string {
+  if (!/<sup>/iu.test(text)) return text;
+  const unwrap = (prose: string) => prose.replace(inlineCodeOrCitationSuperscript,
+    (_whole, code: string, _ticks, references: string) => code ?? references.trimEnd());
+  const lines = text.split('\n');
+  const output: string[] = [];
+  let fence: string | undefined;
+  let proseStart = 0;
+  for (const [index, line] of lines.entries()) {
+    const marker = fenceMarker.exec(line);
+    if (fence) {
+      output.push(line);
+      if (marker && marker[1][0] === fence[0] && marker[1].length >= fence.length && !marker[2].trim()) {
+        fence = undefined;
+        proseStart = index + 1;
+      }
+    } else if (marker || indentedCode.test(line)) {
+      if (index > proseStart) output.push(unwrap(lines.slice(proseStart, index).join('\n')));
+      output.push(line);
+      fence = marker?.[1];
+      proseStart = index + 1;
+    }
+  }
+  if (!fence && proseStart < lines.length) output.push(unwrap(lines.slice(proseStart).join('\n')));
+  return output.join('\n');
+}
 
 /** Compare decimal formatting without rounding or changing the displayed cell. */
 export function nativeTableDecimalKey(value: string): string {

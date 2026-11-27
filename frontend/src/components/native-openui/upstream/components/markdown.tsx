@@ -5,10 +5,10 @@ import { isPresentationLanguage, publicAnswerText } from "@/lib/publicAnswerText
 import { cx, isLongAnswerTable, webUrl } from "./style";
 import { staticChartTable } from "./chart";
 import { CodePanel } from "./code-panel";
-import { SortableTableView, tableCellHasLinks, tableCellText } from "./table-view";
+import { isLongAnswerTableCell, SortableTableView, tableCellHasLinks, tableCellText } from "./table-view";
 import type { RenderEvidenceCitation } from "../../evidence";
 import { nativeReadableMetricKey, nativeReadableTextKey } from "../../../../../../backend/src/ai/nativeOpenUi";
-import { nativeTableDecimalKey, readNativeMarkdownTable } from "../../../../../../backend/src/ai/nativeMarkdown";
+import { nativeTableDecimalKey, normalizeCitationSuperscripts, readNativeMarkdownTable } from "../../../../../../backend/src/ai/nativeMarkdown";
 
 // Markdown builds React elements. Formula HTML comes only from untrusted KaTeX.
 // Inline: **bold**, *italic*, ~~strike~~, `code`, [text](https://...).
@@ -32,7 +32,7 @@ export function MathExpression({ tex, inline = false }: { tex: string; inline?: 
 
 export function inline(text: string, key = "i", renderCitation?: RenderEvidenceCitation, cluster = new Set<string>()): ReactNode {
   const out: ReactNode[] = [];
-  let rest = text;
+  let rest = normalizeCitationSuperscripts(text);
   let n = 0;
   while (rest) {
     const m = INLINE.exec(rest);
@@ -739,7 +739,11 @@ export function MarkdownBlocks({ text, renderCitation, deduplicateTables = false
                   </thead>
                   <tbody>
                     {b.rows.map((r, j) => (
-                      <tr key={j}>{r.map((c, m) => <td key={m}>{inline(c, `${k}-${j}-${m}`, renderCitation)}</td>)}</tr>
+                      <tr key={j}>{r.map((c, m) => (
+                        <td key={m} data-answer-table-long-text={isLongAnswerTableCell(c) ? '' : undefined}>
+                          {inline(c, `${k}-${j}-${m}`, renderCitation)}
+                        </td>
+                      ))}</tr>
                     ))}
                   </tbody>
                 </table>

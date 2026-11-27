@@ -73,6 +73,7 @@ import {
 } from '@/lib/workLanes';
 import { runLightLaneChat } from '@/lib/runLightLaneChat';
 import { runGuestLaneChat } from '@/lib/runGuestLaneChat';
+import { CLIENT_READ, READING, STOPPED_REPLY, thoughtDone, thoughtFrame, thoughtStopped, workingText } from '@/lib/terminal/clientSteps';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
 import { useWorkspaceAuthGate } from '@/components/workspace/WorkspaceAuthGate';
 import { GitHubBuildGateModal } from '@/components/terminal/GitHubBuildGateModal';
@@ -701,6 +702,55 @@ export function TerminalChatProvider({
     terminalEventIds.current.clear();
     dispatchTerminalRun({ type: 'run-started' });
   }, []);
+  /** When the current prompt started thinking; null once that line has ended. */
+  const thinkingSinceRef = useRef<number | null>(null);
+  const readingRef = useRef(false);
+  const startThinking = useCallback(() => {
+    thinkingSinceRef.current = Date.now();
+    readingRef.current = true;
+    pushTerminalEvent('progress', thoughtFrame('running', READING, {}, CLIENT_READ));
+  }, [pushTerminalEvent]);
+  /** The request has been read: say what is now being prepared, in this request's own words. */
+  const workOnThought = useCallback((text: string) => {
+    if (thinkingSinceRef.current === null) return;
+    if (readingRef.current) {
+      readingRef.current = false;
+      pushTerminalEvent('progress', thoughtFrame('completed', 'Read your message', {}, CLIENT_READ));
+    }
+    pushTerminalEvent('progress', thoughtFrame('running', text));
+  }, [pushTerminalEvent]);
+  const finishThinking = useCallback((sources?: Array<{ title: string; url: string }>) => {
+    const since = thinkingSinceRef.current;
+    if (since === null) return;
+    if (readingRef.current) {
+      readingRef.current = false;
+      pushTerminalEvent('progress', thoughtFrame('completed', 'Read your message', {}, CLIENT_READ));
+    }
+    thinkingSinceRef.current = null;
+    const done = thoughtDone(Date.now() - since, sources);
+    pushTerminalEvent('progress', thoughtFrame('completed', done.text, { sources: done.sources }));
+  }, [pushTerminalEvent]);
+  /** The reader pressed Stop: close the running line truthfully instead of leaving nothing behind. */
+  const stopThinking = useCallback(() => {
+    const since = thinkingSinceRef.current;
+    if (since === null) return;
+    thinkingSinceRef.current = null;
+    if (readingRef.current) {
+      readingRef.current = false;
+      pushTerminalEvent('progress', thoughtFrame('completed', 'Stopped while reading your message', {}, CLIENT_READ));
+      return;
+    }
+    pushTerminalEvent('progress', thoughtFrame('completed', thoughtStopped(Date.now() - since)));
+  }, [pushTerminalEvent]);
+  const failThinking = useCallback(() => {
+    if (thinkingSinceRef.current === null) return;
+    thinkingSinceRef.current = null;
+    const wasReading = readingRef.current;
+    readingRef.current = false;
+    pushTerminalEvent('progress', wasReading
+      ? thoughtFrame('failed', 'Could not read your message', {}, CLIENT_READ)
+      : thoughtFrame('failed', 'Could not finish the answer'));
+  }, [pushTerminalEvent]);
   const [githubGateOpen, setGithubGateOpen] = useState(false);
   const [vercelGateOpen, setVercelGateOpen] = useState(false);
   const [githubActivation, setGithubActivation] = useState<{ open: boolean; username?: string }>({
@@ -2333,6 +2383,14 @@ const stopRequestedRunIdRef =
       const controller = new AbortController();
       lightAbortRef.current = controller;
 
+      startTerminalRun();
+      startThinking();
+      workOnThought('Writing your answer');
+      const keepActivity = () => {
+        const activity = coalesceActivity(terminalEventsRef.current);
+        setMessages((current) => current.map((row) => (row.id === assistantId ? { ...row, executionActivity: activity } : row)));
+      };
+
       try {
         const result = await runGuestLaneChat({
           prompt: displayPrompt,
@@ -2349,13 +2407,19 @@ const stopRequestedRunIdRef =
           },
         });
         const enhanced = enhanceAiResponse(result.response, assistantId);
+        finishThinking();
+        pushTerminalEvent('complete', { success: true });
+        keepActivity();
         setMessages((current) => current.map((message) =>
           message.id === assistantId
             ? { ...message, content: enhanced.content, featureOutput: enhanced.output, agent: 'Xroga AI' }
             : message
         ));
       } catch (error) {
-        if (error instanceof DOMException && error.name === 'AbortError') return;
+        if (error instanceof DOMException && error.name === 'AbortError') { dispatchTerminalRun({ type: 'interrupted' }); return; }
+        failThinking();
+        pushTerminalEvent('error', { error: error instanceof Error ? error.message : 'Guest chat failed' });
+        keepActivity();
         const apiError = error instanceof ApiError ? error : null;
         const guestCode = String(apiError?.data?.code ?? '');
         const limitReached = [
@@ -2863,6 +2927,7 @@ const stopRequestedRunIdRef =
           useProjectWorkspaceStore.getState().activeProjectContext,
           freshProductIntent,
         );
+        startThinking();
         const semanticPlan = await api.phase1.plan(
           displayPrompt,
           history,
@@ -2982,6 +3047,9 @@ if (
           ));
         }
 
+        if (usePhase1Engine) workOnThought(workingText(semanticPlan));
+        else finishThinking();
+
         if (usePhase1Engine) {
           setPipelineCompact(false);
           setHeavyBuildActive(false);
@@ -3005,6 +3073,7 @@ if (
             const result = await phase1ChatWithProgress({ message: displayPrompt, history, ...(attachments?.length ? { attachments } : {}), ...(semanticPlan.goalContract ? { goalContract: semanticPlan.goalContract } : {}) }, { signal: controller.signal, onProgress: (frame) => pushTerminalEvent('progress', frame) })
               .finally(() => setPendingReply((current) => current?.messageId === assistantId ? null : current));
             if (controller.signal.aborted || sessionIdRef.current !== originatingSessionId) return;
+            finishThinking(result.webSources);
             const rawReply = (result.response || '').trim();
             fullReply = rawReply;
             // Empty Phase 1 must never leave a blank bubble or silently change execution paths.
@@ -3052,6 +3121,7 @@ if (
             const code =
               phase1Err instanceof ApiError ? String(phase1Err.data?.code ?? '') : '';
             if (code === 'USE_BUILD_PIPELINE' || (phase1Err instanceof ApiError && phase1Err.status === 409)) {
+              finishThinking();
               runSwarmBuild = true;
               setPipelineMessage('Switching to XROGA build swarm…');
               pushSwarmTerminalLine(
@@ -4253,12 +4323,14 @@ active.applyBuild({
         if (err instanceof DOMException && err.name === 'AbortError') {
           // A user-initiated stop is an interruption, not a failure — the run did
           // not fail on its own, and labelling it an error would misreport it.
+          if (interruptRef.current) stopThinking();
           dispatchTerminalRun({ type: 'interrupted' });
         } else {
           // ApiError.data carries `code` and, for CAPACITY_UNAVAILABLE, `nextUnlockAt`
           // — spread it through so the adapter can append the unlock time instead of
           // just the bare sentence.
           const errData = err instanceof ApiError ? err.data : {};
+          failThinking();
           pushTerminalEvent('error', {
             error: err instanceof Error ? err.message : 'Run failed',
             ...errData,
@@ -4449,6 +4521,12 @@ active.applyBuild({
     stopRequestedRunIdRef.current =
       null;
 
+    // A stopped reply stays in the conversation, saying so, with the work done up to that point.
+    const stoppedActivity = coalesceActivity(terminalEventsRef.current);
+    setMessages((current) => current.map((message) =>
+      message.id === assistantId && !message.content && !message.featureOutput
+        ? { ...message, content: STOPPED_REPLY, executionActivity: stoppedActivity }
+        : message));
     cleanupInProgressAssistant();
 
     return;

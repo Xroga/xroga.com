@@ -21,7 +21,8 @@ test('AI responses share one compact activity view in both Workspace layouts', (
   assert.match(liveActivity, /coalesceActivity\(run\.events\)/);
   assert.doesNotMatch(liveActivity, /thinkingSteps|pendingIntent/);
   assert.match(liveActivity, /ActivityTimeline/);
-  assert.match(liveActivity, /STALLED_AFTER_MS/);
+  // The running line says what is happening; it never counts seconds of silence at the reader.
+  assert.doesNotMatch(liveActivity, /No new update/);
   // The redesign shows one quiet timeline: no request panel, no branding block and no capability claims.
   assert.doesNotMatch(liveActivity, /Your request|BlackHoleMark|BlackHoleWordmark|ExecutionShimmerText|Ready to use|Observed:/);
   assert.doesNotMatch(liveActivity, /SearchScanner|UniversalExecutionOrb|Globe2/);

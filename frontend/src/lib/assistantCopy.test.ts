@@ -65,7 +65,7 @@ test('native copy collapses equivalent tables but keeps unique figures and sourc
 test('a copied research answer keeps the source number, title and exact URL', () => {
   const first = 'https://example.org/_reference_(guide)?section=copy';
   const third = 'https://example.org/_edition_?language=en';
-  const text = appendCitationReferences('A verified claim [1]. A separate claim [3].', [
+  const text = appendCitationReferences('A verified claim <sup>[1]</sup>. A separate claim [3].', [
     { title: 'A report [v2] with *literal* characters', url: first },
     { title: 'Excluded', url: 'javascript:alert(1)' },
     { title: 'A reference', url: third },

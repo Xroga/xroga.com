@@ -49,7 +49,8 @@ test('an event-stream client gets real progress frames, then the same answer as 
     const progress = all.filter((frame) => frame.event === 'progress');
     assert.ok(progress.some((frame) => frame.data.status === 'understanding_request'));
     assert.equal(progress[0]?.data.status, 'preparing_answer');
-    assert.equal(progress.at(-1)?.data.status, 'understanding_request', 'the reading is the last line, so it stays on screen during the wait');
+    assert.equal(progress.at(-1)?.data.activityStatus, 'completed', 'the preparing step ends when the answer arrives');
+    assert.equal(progress.at(-1)?.data.activityId, progress[0]?.data.activityId);
     assert.ok(!JSON.stringify(progress).includes('%'), 'no percentages');
   });
 });
@@ -61,5 +62,16 @@ test('a refusal keeps its status so the client still sees a refusal', async () =
     assert.equal(result?.event, 'result');
     assert.equal(result?.data.status, 402);
     assert.equal(result?.data.body.code, 'OUT_OF_ACTIONS');
+  });
+});
+
+test('attached files are reported by name as received', async () => {
+  await serve(async (base) => {
+    const res = await fetch(`${base}/api/phase1/chat`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream' },
+      body: JSON.stringify({ message: 'hello there', attachments: [{ name: 'brief.pdf', url: 'x' }] }),
+    });
+    const step = frames(await res.text()).find((frame) => frame.data.activityId === 'attached-files');
+    assert.equal(step?.data.message, 'Received 1 attached file: brief.pdf');
   });
 });

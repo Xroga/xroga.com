@@ -1,4 +1,5 @@
 import { NATIVE_UI_MARKER, splitNativeOpenUiAnswer } from '../../../backend/src/ai/nativeOpenUi';
+import { normalizeCitationSuperscripts } from '../../../backend/src/ai/nativeMarkdown';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import type { Nodes } from 'mdast';
@@ -14,7 +15,8 @@ export function isPresentationLanguage(language?: string): boolean {
 export function publicAnswerText(text: string, streaming = false): string {
   const markerTail = streaming && /<{1,3}[A-Z0-9_>]*[ \t]*$/u.exec(text)?.[0]?.trimEnd();
   const partialMarker = markerTail && NATIVE_UI_MARKER.trim().startsWith(markerTail);
-  return presentationSyntax.test(text) || partialMarker ? splitNativeOpenUiAnswer(text, streaming).text : text;
+  const prose = presentationSyntax.test(text) || partialMarker ? splitNativeOpenUiAnswer(text, streaming).text : text;
+  return normalizeCitationSuperscripts(prose);
 }
 
 /** Private action links stay available in Workspace and out of read-only exports. */
