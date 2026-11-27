@@ -5213,7 +5213,7 @@
       "id": "surface:e305dd7a26ee4137b77a",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeDiagramTopology.ts",
-      "sha256": "3cc5295a2d9e905341047bc3bcef54095971cca864130908d333ab9210bb6f85",
+      "sha256": "77ae13bc8eaa1a964ec8f956b298da5693ed1f6a6f86c4dab2eda8dd0093a58d",
       "symbols": [
         "DIAGRAM_NODE_TONES",
         "count",
@@ -5566,7 +5566,7 @@
       "id": "surface:456e62cb099b42e5c2a2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUi.ts",
-      "sha256": "cdfa61e5be0fa51a5d38a674c318cb75f284c049f82833328a757205405bde72",
+      "sha256": "142a4ae58083ad17573a23ec605413566cf7ce3779decf4217b395fffd31fc66",
       "symbols": [
         "EditorialContext",
         "MAX_EXPANDED_EXPRESSION_DEPTH",
@@ -6410,15 +6410,15 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "2fecf34441a4e10f342197ba71fab7ff82a20bf0bec5b377bf3f0c2c3a843122",
+      "sha256": "1c90bb3499a8a18b08c907a143b1fed5309dcc4965c37c3ac9c2c485a5a966b7",
       "symbols": [
         "accessibilityRule",
+        "adaptiveAnswerRule",
         "answerScopeRule",
         "artifactPriorityRule",
         "buildNativeOpenUiPrompt",
         "comparisonConsistencyRule",
         "componentSelectionRule",
-        "concisionRule",
         "dataConsistencyRule",
         "general",
         "iconSelectionRule",
@@ -6432,6 +6432,7 @@
         "selected",
         "sharedDecisionRule",
         "technicalPrecisionRule",
+        "visualRepertoireRule",
         "withoutSources",
         "workspaceNativeOpenUiPrompt"
       ],
@@ -10135,7 +10136,7 @@
       "id": "surface:b838cc4405867efb7921",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/research.ts",
-      "sha256": "aa6bdd6450fabb91b48e0949fb8e7474a6d9e9a9a0958df5cc3756989ebb250f",
+      "sha256": "1a304a2375bc63b04d4c0fc53ef473dbf89a391c7257eba0e9c7b74e15b2e703",
       "symbols": [
         "ResearchBundle",
         "ResearchSource",
@@ -10526,7 +10527,7 @@
       "id": "surface:5f676989c84806ca6213",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/researchSearchProvider.ts",
-      "sha256": "e197584bc6cabe2aae16308db4ccae17b5b2a6766920c90aa56a044d447e8e5f",
+      "sha256": "7aa63ff92842caa912632444f3023ab65a6e5a8c009faebd6ab1afe34ff4b848",
       "symbols": [
         "DEEPSEEK_DISCOVERY_RESULTS",
         "DEEPSEEK_PRIMARY_PAGE_EXCERPT",
@@ -89597,7 +89598,7 @@
       "id": "surface:92ce2788e7a639e6a608",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/Diagram.tsx",
-      "sha256": "ec5c76205ec7df3a35d297584d192e1d8841ab48c5882c65a133f138b1ad6652",
+      "sha256": "c0a2f7e34dfad41c5ebc249097754b9f55a8554c6f2356e63fa9c79371182d3c",
       "symbols": [
         "AnswerDiagramNode",
         "AnswerNode",
@@ -89627,16 +89628,20 @@
         "nodes",
         "offset",
         "positions",
+        "relationships",
         "renderable",
         "resize",
         "result",
         "rightward",
+        "row",
         "rowSides",
         "rowSpacing",
         "rows",
         "sectionTitle",
         "separateRelationships",
         "sides",
+        "stack",
+        "stackedDiagramRows",
         "style",
         "title",
         "titleAlreadyVisible",
@@ -107327,7 +107332,7 @@
       "id": "surface:c5f31b4c34d87af3ac75",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "7ceee3d47ed5818ca83c54712613ebe2ec506735e3296623b3255febd5243ec8",
+      "sha256": "a0ca963862c51487dccf5daf0aca5c88b72ab71b7d2db65c572e0390a09eeb40",
       "symbols": [
         "ChatMessage",
         "GENERIC_SWARM_FALLBACK",
@@ -110043,7 +110048,7 @@
       "id": "surface:d8724b39fe206c89fef3",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/chatHistory.ts",
-      "sha256": "19f55a10d724e737a8c65de8906bb6466b1b5a092e5b984d34a93352b6edfe18",
+      "sha256": "ac85eb97968bb12643fb01a48ce5efcdd7b56db5effeb66275ceb8986ce284f8",
       "symbols": [
         "ChatHistoryMessage",
         "CompletedChatHistoryTurn",
@@ -112573,7 +112578,7 @@
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:8",
         "frontend/src/context/TerminalChatContext.tsx:1034",
         "frontend/src/context/TerminalChatContext.tsx:1991",
-        "frontend/src/context/TerminalChatContext.tsx:3446",
+        "frontend/src/context/TerminalChatContext.tsx:3442",
         "frontend/src/context/TerminalChatContext.tsx:63",
         "frontend/src/lib/projectResume.ts:6"
       ],
@@ -113454,7 +113459,7 @@
       ],
       "callers": [
         "frontend/src/context/TerminalChatContext.tsx:1435",
-        "frontend/src/context/TerminalChatContext.tsx:4082",
+        "frontend/src/context/TerminalChatContext.tsx:4078",
         "frontend/src/lib/rehydratePersistedMessages.ts:3"
       ],
       "reachable": true,
@@ -121369,8 +121374,8 @@
         "frontend/src/components/terminal/RepoContextBar.tsx:356",
         "frontend/src/context/TerminalChatContext.tsx:1139",
         "frontend/src/context/TerminalChatContext.tsx:1539",
-        "frontend/src/context/TerminalChatContext.tsx:2576",
-        "frontend/src/context/TerminalChatContext.tsx:4092"
+        "frontend/src/context/TerminalChatContext.tsx:2573",
+        "frontend/src/context/TerminalChatContext.tsx:4088"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -124827,7 +124832,7 @@
       "id": "surface:9abd8d23db6426268ad2",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaBlocks.ts",
-      "sha256": "5a7e72ff27d970361b924583d1e5272e5edde056dce54153e393e1ba35d0d91c",
+      "sha256": "93ca04d4fb1d8d475ccf6e6876f0bf042eb390ac89d9fb38f0c3dc7a5e1ebe91",
       "symbols": [
         "XROGA_BLOCK_SCHEMA_VERSION",
         "XrogaApproval",
@@ -125806,7 +125811,7 @@
       "id": "surface:302352813d356af65f42",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaResponseDocument.ts",
-      "sha256": "11e79806d5858eaba3edd479567d91a635fe89801d466522db327dfb1c0232b3",
+      "sha256": "67fbf045519516c4be65726a2bb81e974d7373fee758f8c4c9d7b4e26fed6875",
       "symbols": [
         "EnhancedAiResponse",
         "MAX_PROTOCOL_CHARS",
@@ -126761,11 +126766,11 @@
         "frontend/src/components/terminal/WorkspacePeopleControls.tsx:11",
         "frontend/src/context/TerminalChatContext.tsx:168",
         "frontend/src/context/TerminalChatContext.tsx:207",
-        "frontend/src/context/TerminalChatContext.tsx:2868",
+        "frontend/src/context/TerminalChatContext.tsx:2865",
         "frontend/src/context/TerminalChatContext.tsx:30",
         "frontend/src/context/TerminalChatContext.tsx:347",
-        "frontend/src/context/TerminalChatContext.tsx:3528",
-        "frontend/src/context/TerminalChatContext.tsx:3893",
+        "frontend/src/context/TerminalChatContext.tsx:3524",
+        "frontend/src/context/TerminalChatContext.tsx:3889",
         "frontend/src/context/TerminalChatContext.tsx:909",
         "frontend/src/hooks/useRuntimePreviewHydration.ts:16",
         "frontend/src/lib/projectResume.ts:8",
@@ -132736,7 +132741,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "3abb2a78935ec48c12858e71bd4fa7bfedc34c11d7970dcdcc3a13e7ab6cdbf6",
+      "sha256": "f8cc23360520fcadc36b9c8c3dc14bcb57ed017f428b16e543c78e66b3469509",
       "symbols": [
         "accessibility",
         "answer",
@@ -132790,6 +132795,7 @@
         "fallback",
         "fallbackAnswer",
         "fields",
+        "figures",
         "file",
         "filenames",
         "firstCheck",
@@ -132833,7 +132839,6 @@
         "positions",
         "pptx",
         "range",
-        "recoveredEdge",
         "recoveredTable",
         "region",
         "renderedEdge",
@@ -147917,9 +147922,9 @@
   ],
   "findings": [
     {
-      "id": "finding:24ca3bb6c96a17948fb9",
+      "id": "finding:bc4b29962e98c4f7d6fd",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "line": 85,
+      "line": 88,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -151217,9 +151222,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:019ba8d74451271e0953",
+      "id": "finding:6f6bcddf5a48cf2c2389",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3418,
+      "line": 3414,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -154836,121 +154841,121 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:f9f279f05cff524735e0",
+      "id": "frontend-call:548185428cd3ab89d6f2",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2947,
+      "line": 2943,
       "callee": "api.phase1.plan",
       "reachable": true
     },
     {
-      "id": "frontend-call:9cc88d6b02b93898901f",
+      "id": "frontend-call:b96b7aa5bafc75bc9d92",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3002,
+      "line": 2998,
       "callee": "api.github.status().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:90ab72cef4fc69ecf7e8",
+      "id": "frontend-call:2a93ac0773b9154f597e",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3002,
+      "line": 2998,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:b7e281db072e134df834",
+      "id": "frontend-call:28a4a49683e4f77e9d66",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3002,
+      "line": 2998,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:f1e5ff4aa769e2a0c2dc",
+      "id": "frontend-call:25b67dd4938d083f951e",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3444,
+      "line": 3440,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:1590c9c4746e7e207acf",
+      "id": "frontend-call:020df6e82d45a4fdf8ba",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3444,
+      "line": 3440,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:8804d12cd5e8a1af6b25",
+      "id": "frontend-call:fc2421b8331b1f436193",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4055,
+      "line": 4051,
       "callee": "api.swarm.saveConversation().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:5287031c4f98b882b4cd",
+      "id": "frontend-call:3a7615181dbfde5b07ca",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4055,
+      "line": 4051,
       "callee": "api.swarm.saveConversation",
       "reachable": true
     },
     {
-      "id": "frontend-call:32a56fd8a72cee000b6a",
+      "id": "frontend-call:d327a2b4ba4ff9d64191",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4141,
+      "line": 4137,
       "callee": "api.swarm.saveConversation().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:6989b21385cda9467039",
+      "id": "frontend-call:90a6ec80da15d9fdfd2b",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4141,
+      "line": 4137,
       "callee": "api.swarm.saveConversation",
       "reachable": true
     },
     {
-      "id": "frontend-call:0434aec88eb065b29b03",
+      "id": "frontend-call:c0d830bf00d950442cff",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4162,
+      "line": 4158,
       "callee": "api.github.updateSettings().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:105c302720b9512d0ea5",
+      "id": "frontend-call:dbe511286a9c28b1023c",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4162,
+      "line": 4158,
       "callee": "api.github.updateSettings",
       "reachable": true
     },
     {
-      "id": "frontend-call:7360307b62033229bf6c",
+      "id": "frontend-call:55c42f0cf83e1e76fd78",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4164,
+      "line": 4160,
       "callee": "api.projects.create().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:67f0944ee9efd85d8d51",
+      "id": "frontend-call:faeb376a487b89de1ef9",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4164,
+      "line": 4160,
       "callee": "api.projects.create().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:17e53d271463e3e7a4a0",
+      "id": "frontend-call:2a7904c2ccb5b7b471a6",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4164,
+      "line": 4160,
       "callee": "api.projects.create",
       "reachable": true
     },
     {
-      "id": "frontend-call:7d32d85669675c2f5792",
+      "id": "frontend-call:febb2095b040a12b462d",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4899,
+      "line": 4895,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:061539b5ffafd3e3f0b1",
+      "id": "frontend-call:2902d648dc06c0265bb7",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4899,
+      "line": 4895,
       "callee": "api.github.status",
       "reachable": true
     },
@@ -161434,7 +161439,7 @@
     {
       "id": "test-suite:c09f2cd7f24582bedd44",
       "sourcePath": "frontend/src/components/native-openui/Diagram.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
