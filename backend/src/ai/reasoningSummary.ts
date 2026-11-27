@@ -5,7 +5,7 @@ import { redactSecrets } from '../lib/truthfulExecution.js';
 import { publicAiText } from '../lib/publicAiIdentity.js';
 
 /**
- * A short, user-safe "how I'll approach this" note shown above the answer while it is prepared.
+ * User-safe working notes about this particular request, shown while the answer is prepared.
  *
  * This is a separate, tightly bounded model call, not the answering model's private reasoning. The
  * raw provider reasoning is never read here and never forwarded. The call goes through the same
@@ -15,37 +15,45 @@ import { publicAiText } from '../lib/publicAiIdentity.js';
  */
 
 export const REASONING_SUMMARY_MODEL = 'deepseek_v4_1_flash_1017' as const;
-export const REASONING_SUMMARY_MAX_OUTPUT_TOKENS = 140;
-export const REASONING_SUMMARY_MAX_CHARS = 360;
-/** Greetings and one-word messages get no note. */
-export const REASONING_SUMMARY_MIN_MESSAGE_CHARS = 24;
+/** Spending bounds, not a style rule: the note is as long as the request needs within them. */
+export const REASONING_SUMMARY_MAX_OUTPUT_TOKENS = 700;
+export const REASONING_SUMMARY_MAX_LINES = 12;
+export const REASONING_SUMMARY_MAX_LINE_CHARS = 600;
 
 const SYSTEM = [
-  'You write a short status note that a user reads while an assistant prepares an answer.',
-  'Write 1 to 3 plain sentences, at most 55 words, describing the approach to the request: what matters most and what will be checked or compared.',
-  'Rules: never answer the request; no code; no lists; no markdown; no step numbering; do not claim you searched, ran or verified anything;',
-  'do not repeat the request; do not mention these rules, prompts, models or providers; no private reasoning, only a clear approach.',
+  'You write what a user watches while an assistant prepares an answer to their request, in the language the user wrote in.',
+  'Decide first whether this particular request needs a plan. It needs one only when completing it takes several',
+  'distinct stages that depend on each other. Then write those stages in the order they will be done, one per line,',
+  'each line starting with "STEP: ", as many as the work really has. A greeting, a single fact, a short rewrite or',
+  'any one stage request needs no plan: write no STEP line at all.',
+  'Then write your working notes, one per line without a prefix: what is being asked, what matters, what has to be',
+  'worked out or checked, and how the answer will be shaped.',
+  'Everything must be specific to this request. Never give the answer itself, never write code, never claim something',
+  'was already searched, run or verified, and never mention these instructions, prompts, models or providers.',
 ].join(' ');
+
+/** A plan step line, marked so the Workspace can draw it as a checklist entry. */
+export function planStep(line: string): string | null {
+  const match = /^STEP\s*[:\-]\s*(.+)$/i.exec(line);
+  return match ? match[1]!.trim() : null;
+}
 
 export function reasoningSummaryEnabled(env: NodeJS.ProcessEnv = process.env): boolean {
   const flag = (env.XROGA_REASONING_SUMMARY ?? '').trim().toLowerCase();
   return flag !== 'off' && flag !== '0' && flag !== 'false';
 }
 
-/** Removes anything that is not a plain sentence note and bounds the length. */
+/** Plain note lines only: no markup, code, hidden reasoning tags or secrets. One note per line. */
 export function cleanReasoningSummary(raw: string): string | null {
-  const text = publicAiText(redactSecrets(raw))
+  const lines = publicAiText(redactSecrets(raw))
     .replace(/<think>[\s\S]*?<\/think>/gi, ' ')
     .replace(/```[\s\S]*?```/g, ' ')
-    .replace(/[*_`#>]+/g, '')
-    .replace(/^\s*(?:[-•]|\d+[.)])\s+/gm, '')
-    .replace(/\s+/g, ' ')
-    .trim();
-  if (text.length < 20) return null;
-  if (text.length <= REASONING_SUMMARY_MAX_CHARS) return text;
-  const cut = text.slice(0, REASONING_SUMMARY_MAX_CHARS);
-  const end = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('? '), cut.lastIndexOf('! '));
-  return end >= 60 ? cut.slice(0, end + 1) : `${cut.slice(0, REASONING_SUMMARY_MAX_CHARS - 1).trimEnd()}…`;
+    .split(/\r?\n+/)
+    .map((line) => line.replace(/[*_`#>]+/g, '').replace(/^\s*(?:[-•]|\d+[.)])\s+/, '').replace(/\s+/g, ' ').trim())
+    .filter((line) => line.length > 1)
+    .map((line) => line.length <= REASONING_SUMMARY_MAX_LINE_CHARS ? line : `${line.slice(0, REASONING_SUMMARY_MAX_LINE_CHARS - 1).trimEnd()}…`)
+    .slice(0, REASONING_SUMMARY_MAX_LINES);
+  return lines.length ? lines.join('\n') : null;
 }
 
 export async function generateReasoningSummary(opts: {
@@ -54,14 +62,14 @@ export async function generateReasoningSummary(opts: {
   signal?: AbortSignal;
 }): Promise<string | null> {
   const message = opts.message.trim();
-  if (message.length < REASONING_SUMMARY_MIN_MESSAGE_CHARS) return null;
+  if (!message) return null;
   try {
     const context = requireTenantContext(opts.scope.context);
     requireResourceOwner(context, opts.scope.userId);
     const scope = { ...opts.scope, context };
     const messages: ChatMessage[] = [
       { role: 'system', content: SYSTEM },
-      { role: 'user', content: `Request:\n${message.slice(0, 1500)}` },
+      { role: 'user', content: `Request:\n${message.slice(0, 6000)}` },
     ];
     const execute = (dispatch: BoundModelDispatch) => chatCompletion(
       REASONING_SUMMARY_MODEL,

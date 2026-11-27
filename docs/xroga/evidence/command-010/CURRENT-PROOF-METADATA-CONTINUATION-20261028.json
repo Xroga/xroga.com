@@ -6,7 +6,7 @@
       "path": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/TRANSPORT-LIFETIME-PROOF-87e33b94.json",
       "historicalSha256": "9950d43b6acdd1c5ad4e4bf784ef5115d47af775141905e918525f4ac3cfb4a0",
-      "currentSha256": "2d74201b04025e3e35211bed8123f836630a2a937206f13818f3d321027c76f2",
+      "currentSha256": "ba8d871949f10785b4aeaf603e88edb648d0d9a29ff2ffb1299d78cddbb0d257",
       "beforeWorkspaceMainTransportMergeSha256": "78eeaea0ab6f02a269f8df88f42572a62c66a06c567f89664e6029b7c8e975d0",
       "beforeBrowserMainTransportMergeSha256": "05efd04f8f2e3e1f41da824ba25be96000b4b827ed2eda7d0c359e6b83a5a139",
       "beforeTxtDownloadRoutingSha256": "2f143e3f6a8962acdde67ce8f5672d676de383232d67dd4691b144dbb5c1ec8e",
@@ -47,7 +47,8 @@
       "beforeConnectCatalogCountSha256": "0f9c4e687480410bc71e5fafe8ad5eb2fc05360ad3b14c71effeae731f3d9912",
       "beforeDraftRoutingSha256": "f616f0050bb16000ba0d3005f9627069005a4d613f4e051a0a74591bda1bc1ab",
       "beforeWorkspaceReview20261119Sha256": "1586d0ded81b662449825ee102a4784be0542cebdf5c9dd4a478fb1ed1f8c290",
-      "beforeWorkspaceAutomaticSearchSha256": "1e2e190e9757dc038f9127a99124aaa348214a4668ec6cf7b1ff678273d48b6e"
+      "beforeWorkspaceAutomaticSearchSha256": "1e2e190e9757dc038f9127a99124aaa348214a4668ec6cf7b1ff678273d48b6e",
+      "beforeWorkspaceProcessingStreamSha256": "2d74201b04025e3e35211bed8123f836630a2a937206f13818f3d321027c76f2"
     },
     {
       "path": "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",

@@ -144,7 +144,7 @@ export function checklistFromRows(
   const seen = new Set<string>();
   const items: ProcessingChecklistItem[] = [];
   for (const row of rows) {
-    if (row.kind === 'respond') continue;
+    if (row.kind === 'respond' || row.note) continue;
     const label = clean(row.label, 90);
     if (!label || seen.has(label.toLowerCase())) continue;
     seen.add(label.toLowerCase());
@@ -172,7 +172,7 @@ export interface BuildProcessingViewOptions {
 
 export function buildProcessingView(options: BuildProcessingViewOptions): ProcessingView {
   const { active, otherActive = 0, rows, pendingLabel = 'Starting request', todos, outcome = null } = options;
-  const finishedRows = rows.filter(row => row.status !== 'active' && row.status !== 'waiting');
+  const finishedRows = rows.filter(row => !row.note && row.status !== 'active' && row.status !== 'waiting');
   const failedSteps = rows.filter(row => row.status === 'error').length;
   const finishedSteps = finishedRows.length;
 
@@ -194,13 +194,13 @@ export function buildProcessingView(options: BuildProcessingViewOptions): Proces
   }
 
   const family = familyOf(active.kind);
-  const heading = HEADING_BY_KIND[active.kind] ?? 'Working on your request';
+  const heading = active.note ? 'Thinking' : HEADING_BY_KIND[active.kind] ?? 'Working on your request';
   // The "understand" row carries a short approach note, which is a sentence or two, not a status label.
   const label = clean(active.label, active.kind === 'understand' ? 380 : 140);
   const detail = clean(active.detail, 120);
   const lead = detail && !label.toLowerCase().includes(detail.toLowerCase()) ? `${label}: ${detail}` : label;
   const parallel = otherActive > 0 ? `${otherActive} more ${otherActive === 1 ? 'step is' : 'steps are'} running alongside.` : '';
-  const paragraph = [sentence(lead || heading), parallel, progressClause(finishedSteps, failedSteps)].filter(Boolean).join(' ');
+  const paragraph = [sentence(lead || heading), parallel, active.note ? '' : progressClause(finishedSteps, failedSteps)].filter(Boolean).join(' ');
 
   return {
     heading,

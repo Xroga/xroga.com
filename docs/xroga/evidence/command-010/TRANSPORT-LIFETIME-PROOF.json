@@ -251,7 +251,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "1dc6c0ef9be8280f4534e83baa0bf2b72bd50a7f3480284d8ee4c5dd3c2b40e8",
+      "sha256": "8cb49dde18ed80baecf8f06f1b762b4b8a8c21a1073c18ca105c7bf8e3f3e8c7",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/black-hole/webIntelligence.ts",
         "sha256": "f7ee10618d7993cc8e827b7f77d23eec06e663232d26a44c598a48825fbb6b7d"
@@ -835,7 +835,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "d7ac0222f724ad09cf42e5d9afa5e4f40fe8f9a6fd76041c8fcffbf451fd2dff",
+      "sha256": "5276be96f1e819194653a4e1a9f8d4aa9075c100637443f84454776932475b90",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/services/integrations/businessAction.ts",
         "sha256": "79fa4e23cd501826f0425aaa01bcdc79a14b2d457f57f2f56a29b0fde021c0a3"
@@ -889,7 +889,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "sha256": "39a0926d4ffd44f21b9ba166a8579a6ed7febae7693d39057ee2f3bf50092175",
+      "sha256": "cc2d685f207705b93a3a8b0724e8b6c0eaac2878ec0fb132dac730e441b3c077",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/services/integrations/businessRead.ts",
         "sha256": "c051a5b6418a6ec659d62b693c1dec64b3a03a5b81a1a341e83ede8ca2cd24a7"
@@ -1224,5 +1224,28 @@
     "verifiedEgressCandidates": 155,
     "guardChange": "Hosted browser execution rejects local Chrome runs before task or egress processing. Current model SDK caller was separately rebound.",
     "workspacePortReview": "Five previously reviewed local Workspace port sends remain exact; the current source review binds those sends to the authenticated Workspace and existing API ownership fence."
+  },
+  "workspaceProcessingStreamContinuation": {
+    "baseline": "ea3415479",
+    "previousProofSha256": "2d74201b04025e3e35211bed8123f836630a2a937206f13818f3d321027c76f2",
+    "ownerApproval": "The repository owner approved this proof update in the working session on 2026-11-26.",
+    "scope": "CURRENT_SOURCE_BINDING_FOR_DISPLAY_ONLY_PROGRESS_REPORTING_NOT_NEW_SECURITY_ACCEPTANCE. The existing web research call and the two existing connected-app calls are wrapped by a reporter that returns their result and errors unchanged. Outbound dispatch targets and arguments, authority permits, approval, persistence, accounting and credential handling are unchanged; the research decision is still made once and passed to the same lane. New output goes only to the requesting user's own event stream: the planned search words with secrets redacted, public source titles and addresses, and the connected app and action name. Live acceptance is not verified.",
+    "bindings": [
+      {
+        "path": "backend/src/ai/black-hole/webIntelligence.ts",
+        "previousSha256": "1dc6c0ef9be8280f4534e83baa0bf2b72bd50a7f3480284d8ee4c5dd3c2b40e8",
+        "currentSha256": "8cb49dde18ed80baecf8f06f1b762b4b8a8c21a1073c18ca105c7bf8e3f3e8c7"
+      },
+      {
+        "path": "backend/src/services/integrations/businessAction.ts",
+        "previousSha256": "d7ac0222f724ad09cf42e5d9afa5e4f40fe8f9a6fd76041c8fcffbf451fd2dff",
+        "currentSha256": "5276be96f1e819194653a4e1a9f8d4aa9075c100637443f84454776932475b90"
+      },
+      {
+        "path": "backend/src/services/integrations/businessRead.ts",
+        "previousSha256": "39a0926d4ffd44f21b9ba166a8579a6ed7febae7693d39057ee2f3bf50092175",
+        "currentSha256": "cc2d685f207705b93a3a8b0724e8b6c0eaac2878ec0fb132dac730e441b3c077"
+      }
+    ]
   }
 }

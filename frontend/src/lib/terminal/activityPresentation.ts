@@ -1,3 +1,4 @@
+import { isClientStep } from './clientSteps';
 import type { TerminalEvent } from './terminalEvent';
 import { redactTerminalText } from './terminalRedaction';
 
@@ -12,6 +13,12 @@ export type XrogaActivityStatus = 'active' | 'complete' | 'waiting' | 'warning' 
 export interface XrogaActivityPresentation {
   id: string;
   kind: XrogaActivityKind;
+  /** A status note (how the request was read, the approach). It is not a step of work. */
+  note?: boolean;
+  /** A note that is one step of the plan written for this request. */
+  planStep?: boolean;
+  /** Public pages this step used, as reported by the backend. */
+  sources?: Array<{ title: string; url: string }>;
   label: string;
   detail?: string;
   status: XrogaActivityStatus;
@@ -52,6 +59,15 @@ function kindFor(event: TerminalEvent): XrogaActivityKind {
   const type = event.canonical?.type ?? '';
   const operation = event.canonical?.metadata?.softwareEventType;
   const value = `${type} ${event.text}`.toLowerCase();
+  // A note is prose about the approach. Its words must not be read as an operation (search, deploy, database...).
+  if (event.canonical?.metadata?.note === true) return 'understand';
+  // Web steps carry the search words, which must not reclassify the step.
+  if (/^search(?:ing|ed) (?:the web|x)\b/i.test(event.text)) return 'search';
+  if (/^read(?:ing)? sources\b/i.test(event.text)) return 'read-source';
+  // Any connected app and any attached file, by the wording the progress channel uses.
+  if (/^(?:read(?:ing)? connected app|connected app .* (?:needs your approval|returned a problem))\b/i.test(event.text)) return 'connected-app-read';
+  if (/^(?:updating|sent the request to) connected app\b/i.test(event.text)) return 'connected-app-write';
+  if (/^received \d+ attached files?\b/i.test(event.text)) return 'read-file';
   if (event.canonical?.source === 'software-agent-v2') {
     if (operation === 'command.started' || operation === 'command.output' || operation === 'command.completed') return 'command';
     if (operation === 'check.started' || operation === 'check.completed') return 'test';
@@ -199,13 +215,19 @@ export function presentTerminalEvent(event: TerminalEvent): XrogaActivityPresent
     publicActivityText(redactTerminalText(rawDetail));
   // Output is already bounded and redacted by Agent V2. Preserve its line breaks.
   const body = operation === 'command.output' ? redactTerminalText(event.body ?? '').slice(-8000) :
-    operation === 'command.completed' ? '' : publicActivityText(redactTerminalText(event.canonical?.details ?? event.body ?? ''));
+    operation === 'command.completed' ? '' :
+    // File text keeps its line breaks, like command output. It is redacted and bounded.
+    operation?.toString().startsWith('file.') ? redactTerminalText(event.body ?? '').slice(0, 4000) : publicActivityText(redactTerminalText(event.canonical?.details ?? event.body ?? ''));
   const duration = event.canonical?.metadata?.durationMs;
   const exitCode = event.canonical?.metadata?.exitCode;
 
   return {
     id: event.canonical?.activityId ?? event.canonical?.toolCallId ?? event.canonical?.eventId ?? String(event.seq),
     kind,
+    note: event.canonical?.metadata?.note === true ? true : undefined,
+    planStep: event.canonical?.metadata?.planStep === true ? true : undefined,
+    sources: typeof event.canonical?.metadata?.sources === 'string'
+      ? JSON.parse(event.canonical.metadata.sources) as Array<{ title: string; url: string }> : undefined,
     label,
     detail: detail && detail.toLowerCase() !== label.toLowerCase() ? detail : undefined,
     status: statusFor(event),
@@ -231,7 +253,8 @@ export function coalesceActivity(
   const seen = new Set<string>();
   for (const event of events) {
     if (event.kind === 'output' || event.kind === 'result' || event.kind === 'session') continue;
-    if (isGenericPlaceholderActivity(event.text)) continue;
+    // The Workspace's own Thinking line is a real, timed step, not filler.
+    if (isGenericPlaceholderActivity(event.text) && !isClientStep(event.canonical?.activityId ?? '')) continue;
     const canonical = event.canonical;
     const identity = canonical ? `${canonical.runId ?? ''}:${canonical.eventId}` : `sequence:${event.seq}`;
     if (seen.has(identity)) continue;
