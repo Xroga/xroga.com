@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
 import { TerminalChatBar } from './TerminalChatBar';
+import { warmApi } from '@/lib/warmApi';
 import { ChatbarQueueOutside } from './ChatbarQueueOutside';
 import { WorkspaceScrollNavigation } from './WorkspaceScrollNavigation';
 
@@ -261,7 +262,8 @@ export function TerminalDock() {
 
               <div className="xv-kimi-composer-frame" data-composer-frame="single">
 
-                <div className="xv-chatbar-stack relative">
+                {/* Focusing or typing here wakes the API before the message is sent. */}
+                <div className="xv-chatbar-stack relative" onFocusCapture={warmApi} onInputCapture={warmApi}>
 
 
                  <TerminalChatBar starter={showStarterExperience && !incognito} />
