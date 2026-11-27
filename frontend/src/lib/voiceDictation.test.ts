@@ -72,7 +72,7 @@ test('a failed segment is retained, the transcript is not complete, and retry se
       sent.push(size);
       // Segment 1 is longer than the others, so its upload is identifiable by size.
       if (size > 100000) {
-        if (failMiddle) { failMiddle = false; throw new Failure('busy', 503, {code: 'VOICE_PROVIDER_UNAVAILABLE'}); }
+        if (failMiddle) { failMiddle = false; throw new Failure('unverified', 503, {code: 'VOICE_TRANSCRIPTION_DENIED'}); }
         return 'middle';
       }
       return 'edge';
