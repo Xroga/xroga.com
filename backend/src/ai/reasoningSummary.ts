@@ -16,8 +16,8 @@ import { publicAiText } from '../lib/publicAiIdentity.js';
 
 export const REASONING_SUMMARY_MODEL = 'deepseek_v4_1_flash_1017' as const;
 /** Spending bounds, not a style rule: the note is as long as the request needs within them. */
-export const REASONING_SUMMARY_MAX_OUTPUT_TOKENS = 700;
-export const REASONING_SUMMARY_MAX_LINES = 12;
+export const REASONING_SUMMARY_MAX_OUTPUT_TOKENS = 4_000;
+export const REASONING_SUMMARY_MAX_LINES = 40;
 export const REASONING_SUMMARY_MAX_LINE_CHARS = 600;
 
 const SYSTEM = [

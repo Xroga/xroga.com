@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "e3c54ce09e5c30c49c8de76a53aa1ab3e825f7ac8bedc6ed0dd334be6890e0c6",
+  "sourceTreeDigest": "ce8c129f37d21ca6766405e8e85fdde96cada5dd3a45ff9af347d9f6d73dcaf1",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -2249,7 +2249,7 @@
     {
       "id": "19343161fc1afbd3f2fb",
       "file": "backend/src/routes/voiceFree.ts",
-      "line": 61,
+      "line": 62,
       "entryPoint": "<module-or-callback>",
       "transport": "fetch",
       "callee": "fetch",
@@ -2264,7 +2264,7 @@
         {
           "path": "backend/src/routes/voiceFree.security.test.ts",
           "marker": "free speech route preserves original actor, credential, reservation and publication boundaries",
-          "sha256": "77da96d82d190edc1a625db5d0c8e2e5af896624b520dc610545ae587f424ddc"
+          "sha256": "45b6da7df8a0128fda4e9963ed621f39be1351343b43b546513d43d836bb9174"
         }
       ]
     },

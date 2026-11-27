@@ -330,18 +330,16 @@ export function createPresentationProjection(plan: PresentationPlan) {
   };
 }
 
-/** Reserve room for the planned sections and their data. The planner's schema
- * bounds the number of sections, and the ledger admits the resulting request. */
-export function presentedAnswerMaxTokens(plan: PresentationPlan | undefined): number {
-  if (!plan?.length) return 4096;
-  const dense = plan.filter(section => section.kind === 'graph' || section.kind === 'table' || section.kind === 'chart' || section.kind === 'calculator').length;
-  const wanted = 1536 + 700 * plan.length + 500 * dense;
-  return Math.max(4096, Math.ceil(wanted / 512) * 512);
+/** The model's own output limit. An answer is never cut short by a smaller number chosen here. */
+export const WORKSPACE_ANSWER_MAX_OUTPUT_TOKENS = 64_000;
+
+export function presentedAnswerMaxTokens(_plan: PresentationPlan | undefined): number {
+  return WORKSPACE_ANSWER_MAX_OUTPUT_TOKENS;
 }
 
 /** DeepSeek bills reasoning and the visible answer against one wire limit. */
 export const NATIVE_WORKSPACE_REASONING_RESERVE_TOKENS = 16_384;
 
-export function nativePresentedAnswerMaxTokens(plan: PresentationPlan | undefined): number {
-  return NATIVE_WORKSPACE_REASONING_RESERVE_TOKENS + presentedAnswerMaxTokens(plan);
+export function nativePresentedAnswerMaxTokens(_plan: PresentationPlan | undefined): number {
+  return presentedAnswerMaxTokens(_plan);
 }

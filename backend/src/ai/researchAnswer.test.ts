@@ -373,7 +373,7 @@ test('one exact research approval completes its original rich answer, saves evid
     assert.equal(body.messages.length,3);
     assert.equal(body.reasoning_effort,undefined);
     if(mode==='automatic'){
-     assert.equal(body.max_tokens,16_384);
+     assert.equal(body.max_tokens,64_000);
      assert.match(body.messages[0].content,/Return only the answer, without an OpenUI program/);
      assert.doesNotMatch(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>/);
      assert.match(body.messages[2].content,/Page publication \(source metadata\): 2023-01-01T12:00:00\.000Z/);
@@ -383,7 +383,7 @@ test('one exact research approval completes its original rich answer, saves evid
      assert.match(JSON.stringify(body.messages),/Independent public report 9/);
      assert.match(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>/);
     }else if(mode!=='automatic-parity'){
-     assert.equal(body.max_tokens,20_480);
+     assert.equal(body.max_tokens,64_000);
      assert.match(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>/);
      assert.doesNotMatch(body.messages[2].content,/one or two short paragraphs/);
     }

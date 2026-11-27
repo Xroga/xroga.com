@@ -4740,7 +4740,7 @@
     {
       "id": "19343161fc1afbd3f2fb",
       "callSha256": "93e31a05032e016a8c6cf393fee960363d7115eaf59892ae3f1e5bcffecd6580",
-      "sourceFileSha256": "ca50e347e4c57de9ff84de22454522b6550770f1a75ac1e45463887a16d98827",
+      "sourceFileSha256": "e19c70b1457812bc991a08da11e1058164364b1b1c4ebe2ed72026742ea94535",
       "disposition": "VERIFIED_GUARD",
       "trust": "EXACT_AUTHENTICATED_MANUAL_PCM_TO_PINNED_FREE_CLOUDFLARE_ACCOUNT_AND_MODEL_ONLY",
       "tenantAuthority": "ISSUED_ACTOR_OWNER_RESERVATION_AUDIT_REVOCATION_CANCELLATION_AND_ZERO_SETTLEMENT_BEFORE_PUBLICATION_NO_PAID_FALLBACK",
@@ -4748,14 +4748,14 @@
         {
           "path": "backend/src/routes/voiceFree.security.test.ts",
           "marker": "free speech route preserves original actor, credential, reservation and publication boundaries",
-          "sha256": "77da96d82d190edc1a625db5d0c8e2e5af896624b520dc610545ae587f424ddc"
+          "sha256": "45b6da7df8a0128fda4e9963ed621f39be1351343b43b546513d43d836bb9174"
         }
       ]
     },
     {
       "id": "eb39e5759b146603faf0",
       "callSha256": "b7de7d8baaceeb3d667da23d6269cd0b28044250d9ce7e272275698162245500",
-      "sourceFileSha256": "444770d2d31f4752b12a0933d8a59ad4d4c1979d0396d6ea0c99fb034669660b",
+      "sourceFileSha256": "40c944ffb955805538ebda49f8b95cae0072e33985e56277eaf9ea4515eada73",
       "disposition": "VERIFIED_GUARD",
       "trust": "FIRST_PARTY_API_ORIGIN_WAKE_UP_NO_CREDENTIAL_NO_BODY_RESPONSE_IGNORED",
       "tenantAuthority": "NONE_REQUIRED_NO_USER_DATA_OR_AUTHORITY_SENT_BEST_EFFORT_ONLY",

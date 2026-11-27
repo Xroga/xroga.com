@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "claude/mic-early-text-20261127",
-    "sha": "c8cc9f45b5523379d317054624509225a15d3993",
-    "sourceTimestampUtc": "2026-11-27T21:07:06+05:00",
-    "auditStartedUtc": "2026-11-27T17:17:01.750Z",
+    "sha": "7a2392dc1e73a23e623512703d66936cdb2eab42",
+    "sourceTimestampUtc": "2026-11-27T22:23:44+05:00",
+    "auditStartedUtc": "2026-11-27T17:37:07.156Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -8853,7 +8853,7 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "bf0b6cec72b13403379a09a3df62fff61e5accd8a752fd9ad34228be15689317",
+      "sha256": "88474f4efeeba31d80942e1bb9ea8b90d2b5a049cef58b343487108d2880aca4",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
@@ -9879,7 +9879,7 @@
       "id": "surface:6b6608aca0b309f1efdb",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/reasoningSummary.ts",
-      "sha256": "f3421d907dfcf9faa2a2a8cc9affe7d85685f82288af983fa3b25bfc4d45278b",
+      "sha256": "03f2c3790a024e54b268f9c1db69a987304505dd029313d1897883a83df78726",
       "symbols": [
         "PLAN_LINE",
         "REASONING_SUMMARY_MAX_LINES",
@@ -10958,7 +10958,7 @@
       "id": "surface:74760a8c78ac888599fd",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/responsePresentation.ts",
-      "sha256": "d1dde66cc1bbe2a0f523db68db294f5c4f26640c89fef46270493c228651588e",
+      "sha256": "77058455a2f06a285b6f71375c2a82486fe100122c2e5b2d9fb287296277cb48",
       "symbols": [
         "AnswerObligations",
         "GENERIC_HEADING",
@@ -10968,6 +10968,7 @@
         "PRESENTATION_PLAN_INSTRUCTIONS",
         "PresentationPlan",
         "PresentationResponseFormat",
+        "WORKSPACE_ANSWER_MAX_OUTPUT_TOKENS",
         "addition",
         "answerObligationsSchema",
         "array",
@@ -10988,7 +10989,6 @@
         "createPresentationProjection",
         "data",
         "dataSchemas",
-        "dense",
         "depth",
         "derivedSchema",
         "encoded",
@@ -11047,8 +11047,7 @@
         "unitText",
         "validateSection",
         "validators",
-        "value",
-        "wanted"
+        "value"
       ],
       "imports": [
         "./nativeDocumentDownload.js",
@@ -15247,7 +15246,7 @@
       "id": "surface:2caccad5e3c57290edad",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "3559ca76cdec97bf90e5ab0d511215d0d2b8265bea47e0fac21be78be984673e",
+      "sha256": "624814d6816daad4161cf9623b84855874963c1627572bcd57ac597b41af9887",
       "symbols": [
         "SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS",
         "SEMANTIC_PLANNER_HEDGE_DELAY_MS",
@@ -108902,6 +108901,7 @@
         "frontend/src/lib/vercelConnect.ts:154",
         "frontend/src/lib/vercelConnect.ts:51",
         "frontend/src/lib/voiceApi.ts:1",
+        "frontend/src/lib/warmApi.ts:1",
         "frontend/src/lib/xrogaConnect.ts:3"
       ],
       "reachable": true,
@@ -123769,8 +123769,7 @@
       ],
       "callers": [
         "frontend/src/components/browser/WorkspaceBrowserOperator.tsx:6",
-        "frontend/src/components/terminal/XrogaVoiceControl.tsx:7",
-        "frontend/src/lib/warmApi.ts:1"
+        "frontend/src/components/terminal/XrogaVoiceControl.tsx:7"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -124222,7 +124221,7 @@
       "id": "surface:82ceaece566fd73e84de",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/warmApi.ts",
-      "sha256": "552a81cc241f0ef4143ed7fb78a519887b17c5e1ca8aa0241f048de56223aea3",
+      "sha256": "7ae0fd570c2b93657c63cf83a2174d49f81bd7228b99a4c0f74ae60e3b88bcff",
       "symbols": [
         "WARM_AGAIN_AFTER_MS",
         "at",
@@ -124231,10 +124230,10 @@
         "warmApi"
       ],
       "imports": [
-        "./voiceApi"
+        "./api"
       ],
       "runtimeImports": [
-        "frontend/src/lib/voiceApi.ts"
+        "frontend/src/lib/api.ts"
       ],
       "entryPoints": [
         "frontend/src/app/(shell)/layout.tsx",

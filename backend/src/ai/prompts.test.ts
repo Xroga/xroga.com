@@ -49,7 +49,7 @@ test('research synthesis preserves an explicit concise response contract', () =>
   assert.doesNotMatch(prompt, /comprehensive, well-structured report/);
   assert.equal(
     researchAnswerMaxTokens('Answer concisely in three bullets.'),
-    800,
+    64_000,
   );
 });
 
@@ -57,7 +57,8 @@ test('research synthesis recognizes a one-short-sentence contract', () => {
   const query = 'Use the official source and answer in one short sentence with a citation.';
   const prompt = researchSynthesisPrompt(query, 'Official source material');
 
-  assert.equal(researchAnswerMaxTokens(query), 800);
+  // Brevity is asked for in the instructions; the ceiling never cuts an answer off.
+  assert.equal(researchAnswerMaxTokens(query), 64_000);
   assert.match(prompt, /answer the user directly/);
   assert.match(prompt, /Do not turn a single-fact lookup into a long report/);
   assert.doesNotMatch(prompt, /write a comprehensive, well-structured report/);
@@ -66,7 +67,7 @@ test('research synthesis recognizes a one-short-sentence contract', () => {
 test('research retains the full output budget when the user requests a report', () => {
   assert.equal(
     researchAnswerMaxTokens('Prepare a comprehensive multi-source research report.'),
-    8192,
+    64_000,
   );
 });
 
