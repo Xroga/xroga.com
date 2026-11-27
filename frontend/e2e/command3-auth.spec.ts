@@ -925,7 +925,42 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await page.goto('/workspace?conversation=' + architectureSession);
   await expect(composer).toHaveAttribute('data-draft-restoring', 'false', { timeout: 20_000 });
   await send(docxPrompt);
-  await expect(page.getByRole('button', { name: 'Download DOCX', exact: true })).toBeVisible({ timeout: 30_000 });
+  const liveDocx = page.getByRole('button', { name: 'Download DOCX', exact: true });
+  await expect(liveDocx).toBeEnabled({ timeout: 30_000 });
+  const docxTurn = page.locator('[data-turn-id]', { has: liveDocx });
+  await docxTurn.getByRole('button', { name: 'Share', exact: true }).click();
+  const docxShareCreated = page.waitForResponse(response => new URL(response.url()).pathname === '/api/message-shares'
+    && response.request().method() === 'POST');
+  await dialog.getByRole('button', { name: 'Create owner-only link' }).click();
+  const docxShare = await docxShareCreated;
+  expect(docxShare.status()).toBe(201);
+  const { share: savedDocxShare } = await docxShare.json();
+  const docxSharePage = await page.context().newPage();
+  let releaseScripts!: () => void;
+  const scriptsReady = new Promise<void>(resolve => { releaseScripts = resolve; });
+  try {
+    await docxSharePage.route(/\/_next\/static\/chunks\/.*\.js(?:\?.*)?$/, async route => {
+      await scriptsReady;
+      await route.continue();
+    });
+    await docxSharePage.goto(new URL('/share/' + savedDocxShare.token, workspaceOrigin).href, { waitUntil: 'commit' });
+    const sharedDownload = docxSharePage.getByRole('button', { name: 'Download DOCX', exact: true });
+    await expect(sharedDownload).toBeVisible();
+    await expect(sharedDownload).toBeDisabled();
+    releaseScripts();
+    await expect(sharedDownload).toBeEnabled();
+    const [download] = await Promise.all([docxSharePage.waitForEvent('download'), sharedDownload.click()]);
+    expect(download.suggestedFilename()).toBe('Workshop-Proposal.docx');
+    expect((await readFile((await download.path())!)).subarray(0, 4).toString('hex')).toBe('504b0304');
+  } finally {
+    releaseScripts();
+    await docxSharePage.close();
+  }
+  const docxShareRevoked = page.waitForResponse(response => response.request().method() === 'DELETE'
+    && new URL(response.url()).pathname === '/api/message-shares/' + savedDocxShare.token);
+  await dialog.getByRole('button', { name: 'Revoke', exact: true }).click();
+  expect((await docxShareRevoked).ok()).toBe(true);
+  await dialog.getByRole('button', { name: 'Close share dialog' }).click();
   await page.locator('input[type=file][accept*="text/plain"]').setInputFiles({
     name: 'workspace-report.csv', mimeType: 'text/csv', buffer: Buffer.from(documentDataset),
   });

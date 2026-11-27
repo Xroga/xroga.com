@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "ee1c0d48059953f307385abe28ade5c9d2d7cdec",
+  "source_sha": "db4723d195614fcc475fb9076674e8e14b09a165",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -23575,7 +23575,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SharedAnswerDownloads.tsx",
-      "sha256": "9086fb9734e3af8d85d84587df14a3c66a034771439becc3a39c2d272949f953"
+      "sha256": "dbf596d91ac6995491b28df6b3cb71ec4569bfa01b6984e4a695bde2b02eb784"
     },
     {
       "path": "frontend/src/components/terminal/SocialShareModal.tsx",
@@ -24871,7 +24871,7 @@
     },
     {
       "path": "frontend/src/lib/terminal/clientSteps.ts",
-      "sha256": "13b3b035fe95ec9cb3347abc8629d736e16bee8b700f1017bc319e7409eadd0c"
+      "sha256": "74307f5f55ae12c587bfb54c11c99b9aa3fc17382edad66e6546700954f5a995"
     },
     {
       "path": "frontend/src/lib/terminal/dictation.ts",
@@ -24975,11 +24975,11 @@
     },
     {
       "path": "frontend/src/lib/voiceApi.ts",
-      "sha256": "4d91e73e2e48d1cfbccf921c7bc67f01d686f3783dcee800eba3d887819106c4"
+      "sha256": "236afeb38215ed1279bdf8acb3041877bb84e30cae989068e226f386f33bc44d"
     },
     {
       "path": "frontend/src/lib/voiceCapture.ts",
-      "sha256": "856556f39ef39fa93297ea3c02cc0ec9eff8b1f6a727a0452f41945352aa379a"
+      "sha256": "43b394ec936088ee3de7aa7f29d09aed9a40e339dc1ae6e4ba1b28a6038edab0"
     },
     {
       "path": "frontend/src/lib/voiceDictation.ts",
@@ -24991,7 +24991,7 @@
     },
     {
       "path": "frontend/src/lib/voiceRequestPolicy.ts",
-      "sha256": "b5ccd1a6edfdc4006713a5ec653faa94a36fa44ae0746b1c725ad8860c2c8044"
+      "sha256": "39d5b47f4f9bb6eeb7fc8444a814a33c9329811ee0d61f66cd2e7b9b046c4b9b"
     },
     {
       "path": "frontend/src/lib/voiceSegmenter.ts",
@@ -41254,7 +41254,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SharedAnswerDownloads.tsx",
-      "line": 30,
+      "line": 32,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

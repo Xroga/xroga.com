@@ -48,11 +48,11 @@ export const STOPPED_REPLY = 'You stopped this reply.';
 
 /** Measured time, plus the number of pages the answer really came with. */
 export function thoughtDone(elapsedMs: number, sources?: ReadonlyArray<{ title?: string; url?: string }>) {
-  const listed = (sources ?? [])
-    .filter(source => typeof source.url === 'string' && /^https?:\/\//i.test(source.url))
+  const pages = (sources ?? []).filter(source => typeof source.url === 'string' && /^https?:\/\//i.test(source.url));
+  const listed = pages
     .slice(0, 8)
     .map(source => ({ title: (source.title ?? '').replace(/\s+/g, ' ').trim().slice(0, 160) || source.url!, url: source.url! }));
-  const count = listed.length;
+  const count = pages.length;
   const time = `Thought for ${seconds(elapsedMs)}`;
   return {
     text: count ? `${time} · ${count} ${count === 1 ? 'source' : 'sources'}` : time,
