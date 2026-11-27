@@ -1,4 +1,4 @@
-import { NATIVE_UI_MARKER, splitNativeOpenUiAnswer } from '../../../backend/src/ai/nativeOpenUi';
+import { NATIVE_UI_MARKER, PARTIAL_NATIVE_PRESENTATION_NOTE, splitNativeOpenUiAnswer } from '../../../backend/src/ai/nativeOpenUi';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import type { Nodes } from 'mdast';
@@ -15,6 +15,12 @@ export function publicAnswerText(text: string, streaming = false): string {
   const markerTail = streaming && /<{1,3}[A-Z0-9_>]*[ \t]*$/u.exec(text)?.[0]?.trimEnd();
   const partialMarker = markerTail && NATIVE_UI_MARKER.trim().startsWith(markerTail);
   return presentationSyntax.test(text) || partialMarker ? splitNativeOpenUiAnswer(text, streaming).text : text;
+}
+
+/** The leading visual-recovery marker is internal wording; copied and exported answers start at the answer. */
+export function withoutVisualRecoveryNote(text: string): string {
+  const marker = `${PARTIAL_NATIVE_PRESENTATION_NOTE}\n\n`;
+  return text.startsWith(marker) ? text.slice(marker.length) : text;
 }
 
 /** Private action links stay available in Workspace and out of read-only exports. */

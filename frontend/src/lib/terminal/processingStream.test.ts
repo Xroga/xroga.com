@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import type { XrogaActivityPresentation } from './activityPresentation';
-import { buildProcessingStream, groupStream, pastTense } from './processingStream';
+import { buildProcessingStream, groupStream, pastTense, splitLiveStep } from './processingStream';
 import { adaptTerminalEvent } from './terminalEventAdapter';
 import { coalesceActivity } from './activityPresentation';
 
@@ -78,4 +78,28 @@ test('step sources keep only web addresses', () => {
     sources: [{ title: 'ok', url: 'https://example.com/a' }, { title: 'bad', url: 'javascript:alert(1)' }] };
   const rows = coalesceActivity(adaptTerminalEvent('progress', frame, { fromSeq: 0 }));
   assert.deepEqual(rows[0]?.sources, [{ title: 'ok', url: 'https://example.com/a' }]);
+});
+
+test('plan steps are numbered in the order written and never carry a progress state', () => {
+  const plan = (id: string, label: string) => ({ ...row(id, label, 'complete', true), planStep: true });
+  const stream = buildProcessingStream([plan('a', 'Look up both releases.'), row('n', 'A note.', 'complete', true), plan('b', 'Recommend one.')], true);
+  assert.deepEqual(stream.map(e => e.type === 'note' ? e.planNumber : null), [1, undefined, 2]);
+});
+
+test('consecutive plan steps form one plan card and notes stay prose', () => {
+  const plan = (id: string, label: string) => ({ ...row(id, label, 'complete', true), planStep: true });
+  const blocks = groupStream(buildProcessingStream([plan('a', 'First.'), plan('b', 'Second.'), row('n', 'A note.', 'complete', true)], true));
+  assert.deepEqual(blocks.map(b => b.type), ['plan', 'note']);
+  assert.deepEqual(blocks[0]!.type === 'plan' && blocks[0]!.steps.map(s => [s.planNumber, s.text]), [[1, 'First.'], [2, 'Second.']]);
+});
+
+test('the running step moves to the live line unless it has something to open', () => {
+  const plain = splitLiveStep(buildProcessingStream([row('a', 'Searching the web', 'complete'), row('b', 'جواب لکھا جا رہا ہے', 'active')], true));
+  assert.equal(plain.live?.text, 'جواب لکھا جا رہا ہے');
+  assert.deepEqual(plain.entries.map(e => e.text), ['Searched the web']);
+  const command = buildProcessingStream([{ ...row('c', 'Running a command', 'active'), kind: 'command', detail: 'npm test', body: '1 passing' }], true);
+  const kept = splitLiveStep(command);
+  assert.equal(kept.entries.length, 1);
+  assert.equal(kept.live?.text, 'Running npm test');
+  assert.equal(splitLiveStep([]).live, undefined);
 });

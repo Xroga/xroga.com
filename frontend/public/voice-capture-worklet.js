@@ -5,6 +5,16 @@ class XrogaVoiceTap extends AudioWorkletProcessor {
     super();
     this.batch = new Float32Array(2048);
     this.used = 0;
+    // On Stop the page asks for the samples that have not filled a batch yet.
+    this.port.onmessage = ({ data }) => {
+      if (data !== 'flush') return;
+      if (this.used) {
+        const rest = this.batch.slice(0, this.used);
+        this.used = 0;
+        this.port.postMessage(rest, [rest.buffer]);
+      }
+      this.port.postMessage('flushed');
+    };
   }
   process(inputs) {
     const channel = inputs[0] && inputs[0][0];

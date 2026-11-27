@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import type { AddressInfo } from 'node:net';
 import express from 'express';
-import router from './phase1ChatProgress.js';
+import router, { progressTiming } from './phase1ChatProgress.js';
+import { startProgressStep } from '../ai/progressChannel.js';
 
 async function serve<T>(run: (base: string) => Promise<T>): Promise<T> {
   const app = express();
@@ -10,6 +11,11 @@ async function serve<T>(run: (base: string) => Promise<T>): Promise<T> {
   app.use('/api/phase1', router);
   app.post('/api/phase1/chat', (req, res) => {
     if (req.body?.message === 'refuse') return res.status(402).json({ error: 'Out of actions', code: 'OUT_OF_ACTIONS' });
+    if (req.body?.message === 'slow') {
+      startProgressStep('Searching the web').done('Searched the web', [{ title: 'A', url: 'https://a.example' }, { title: 'B', url: 'https://b.example' }]);
+      setTimeout(() => res.json({ response: 'late' }), 130);
+      return;
+    }
     return res.json({ response: 'hello', engine: 'xroga' });
   });
   const server = app.listen(0);
@@ -74,4 +80,44 @@ test('attached files are reported by name as received', async () => {
     const step = frames(await res.text()).find((frame) => frame.data.activityId === 'attached-files');
     assert.equal(step?.data.message, 'Received 1 attached file: brief.pdf');
   });
+});
+
+test('a long answer keeps reporting that it is still running, then closes that line', async () => {
+  const before = progressTiming.everyMs;
+  progressTiming.everyMs = 25;
+  try {
+    await serve(async (base) => {
+      const all = frames(await (await post(base, 'slow', 'text/event-stream')).text());
+      const updates = all.filter((frame) => frame.data.activityId === 'still-working');
+      assert.ok(updates.length >= 3);
+      assert.deepEqual([...new Set(updates.slice(0, -1).map((frame) => frame.data.activityStatus))], ['running']);
+      assert.match(updates[0]!.data.message, /Still working on your answer with 2 sources/);
+      assert.ok(new Set(updates.slice(0, -1).map((frame) => frame.data.message)).size >= 2, 'the line changes over time');
+      assert.equal(updates.at(-1)!.data.activityStatus, 'completed');
+      assert.equal(all.at(-1)!.event, 'result');
+      const quick = frames(await (await post(base, 'hello there', 'text/event-stream')).text());
+      assert.ok(!quick.some((frame) => frame.data.activityId === 'still-working'), 'a quick answer gets no filler');
+    });
+  } finally { progressTiming.everyMs = before; }
+});
+
+test('a quick answer never waits for notes, a long one briefly does', async () => {
+  const saved = { ...progressTiming };
+  let release: (() => void) | undefined;
+  progressTiming.summarize = () => new Promise<string | null>((resolve) => { release = () => resolve(null); });
+  progressTiming.notesGraceMs = 300;
+  const app = express();
+  app.use(express.json());
+  app.use((req, _res, next) => { Object.assign(req, { userId: 'u', tenantContext: {} }); next(); });
+  app.use('/api/phase1', router);
+  app.post('/api/phase1/chat', (_req, res) => { setTimeout(() => res.json({ response: 'hello' }), 40); });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+  const timed = async () => { const start = Date.now(); await (await post(base, 'hi there', 'text/event-stream')).text(); return Date.now() - start; };
+  try {
+    progressTiming.notesMatterAfterMs = 10_000;
+    assert.ok(await timed() < 250, 'a quick answer goes out at once');
+    progressTiming.notesMatterAfterMs = 10;
+    assert.ok(await timed() >= 320, 'a longer answer gives its notes a moment');
+  } finally { release?.(); server.close(); Object.assign(progressTiming, saved); }
 });

@@ -17,6 +17,8 @@ export interface XrogaActivityPresentation {
   note?: boolean;
   /** A note that is one step of the plan written for this request. */
   planStep?: boolean;
+  /** Which real event completes this plan step. Absent on plans saved before stages were reported. */
+  planStage?: 'search' | 'answer';
   /** Public pages this step used, as reported by the backend. */
   sources?: Array<{ title: string; url: string }>;
   label: string;
@@ -226,6 +228,8 @@ export function presentTerminalEvent(event: TerminalEvent): XrogaActivityPresent
     kind,
     note: event.canonical?.metadata?.note === true ? true : undefined,
     planStep: event.canonical?.metadata?.planStep === true ? true : undefined,
+    planStage: event.canonical?.metadata?.planStage === 'search' || event.canonical?.metadata?.planStage === 'answer'
+      ? event.canonical.metadata.planStage : undefined,
     sources: typeof event.canonical?.metadata?.sources === 'string'
       ? JSON.parse(event.canonical.metadata.sources) as Array<{ title: string; url: string }> : undefined,
     label,

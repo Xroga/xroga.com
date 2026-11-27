@@ -29,10 +29,23 @@ export interface StreamStep {
   evidence?: StreamEvidence;
 }
 
-export type StreamEntry = { type: 'note'; id: string; text: string; plan?: boolean } | StreamStep;
+export type PlanStatus = 'pending' | 'active' | 'done' | 'failed';
+export type StreamEntry = { type: 'note'; id: string; text: string; plan?: boolean; planNumber?: number; planStatus?: PlanStatus } | StreamStep;
 
 /** Consecutive finished steps folded under one summary line. */
 export interface StreamGroup { type: 'group'; id: string; text: string; families: TimelineFamily[]; steps: StreamStep[] }
+
+/** The steps written for this request, shown together as one plan. */
+export interface StreamPlan { type: 'plan'; id: string; text: string; steps: Array<Extract<StreamEntry, { type: 'note' }>> }
+
+/**
+ * The running step is drawn once, on the working line under the stream. A step with something to open stays
+ * in the stream so its output or sources remain reachable.
+ */
+export function splitLiveStep(entries: readonly StreamEntry[]): { entries: readonly StreamEntry[]; live?: StreamStep } {
+  const live = entries.findLast((e): e is StreamStep => e.type === 'step' && e.state === 'live');
+  return { entries: live && !live.evidence ? entries.filter(e => e !== live) : entries, live };
+}
 
 const PHRASE: Readonly<Record<TimelineFamily, [one: string, many: string]>> = {
   command: ['ran a command', 'ran commands'], verify: ['ran a check', 'ran checks'], read: ['read a file', 'read files'],
@@ -55,8 +68,8 @@ export function groupTitle(steps: readonly StreamStep[]): string {
  * Folds runs of two or more finished steps between written updates. The live, failed and waiting lines are
  * never hidden inside a closed group: they stay on their own line.
  */
-export function groupStream(entries: readonly StreamEntry[]): Array<StreamEntry | StreamGroup> {
-  const out: Array<StreamEntry | StreamGroup> = [];
+export function groupStream(entries: readonly StreamEntry[]): Array<StreamEntry | StreamGroup | StreamPlan> {
+  const out: Array<StreamEntry | StreamGroup | StreamPlan> = [];
   let run: StreamStep[] = [];
   const flush = () => {
     if (run.length > 1) {
@@ -69,6 +82,12 @@ export function groupStream(entries: readonly StreamEntry[]): Array<StreamEntry 
     const standalone = entry.type === 'step' && isClientStep(entry.id);
     if (entry.type === 'step' && !standalone && (entry.state === 'done' || entry.state === 'reported')) { run.push(entry); continue; }
     flush();
+    if (entry.type === 'note' && entry.plan) {
+      const open = out.at(-1);
+      if (open?.type === 'plan') open.steps.push(entry);
+      else out.push({ type: 'plan', id: `plan-${entry.id}`, text: 'Plan', steps: [entry] });
+      continue;
+    }
     out.push(entry);
   }
   flush();
@@ -131,14 +150,35 @@ function tidy(entries: StreamEntry[]): StreamEntry[] {
 
 const WRAPPER_STEP = 'preparing-answer';
 
+/**
+ * A plan step moves only on events the run really reported: search steps on a finished web search, every other
+ * step on the delivered answer. Several steps can be in progress together, and none is finished early.
+ */
+function planStatuses(rows: readonly XrogaActivityPresentation[], running: boolean): Record<'search' | 'answer', PlanStatus> {
+  const searches = rows.filter(row => !row.note && row.kind === 'search');
+  const searching = searches.some(row => row.status === 'active');
+  const searched = !searching && searches.some(row => row.status === 'complete');
+  const delivered = rows.some(row => row.id.endsWith(WRAPPER_STEP) && row.status === 'complete');
+  return {
+    search: searched ? 'done' : searching ? (running ? 'active' : 'pending') : searches.some(row => row.status === 'error') ? 'failed' : 'pending',
+    answer: delivered ? 'done' : running && !searching ? 'active' : 'pending',
+  };
+}
+
 export function buildProcessingStream(rows: readonly XrogaActivityPresentation[], running: boolean): StreamEntry[] {
   const liveId = running ? rows.findLast(row => !row.note && row.status === 'active')?.id : undefined;
   const entries: StreamEntry[] = [];
   const seenNotes = new Set<string>();
+  let planned = 0;
+  const statuses = planStatuses(rows, running);
   for (const row of rows) {
     if (row.note) {
       const text = clean(row.label, 700);
-      if (text && !seenNotes.has(text)) { seenNotes.add(text); entries.push({ type: 'note', id: row.id, text, plan: row.planStep }); }
+      if (text && !seenNotes.has(text)) {
+        seenNotes.add(text);
+        entries.push({ type: 'note', id: row.id, text, plan: row.planStep, planNumber: row.planStep ? ++planned : undefined,
+          planStatus: row.planStep && row.planStage ? statuses[row.planStage] : undefined });
+      }
       continue;
     }
     if (row.kind === 'respond') continue;
