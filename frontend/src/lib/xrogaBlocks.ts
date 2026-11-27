@@ -358,7 +358,7 @@ export const xrogaOutputSchema = z.object({
   // never HTML, executable UI or proof that the answer passed validation.
   responseSource: z.object({
     format: z.enum(['xroga-response-json-v1', 'xroga-openui-v1']), text: z.string().max(200_000), contract: responseCoverageContractSchema.optional(),
-  }).strict().refine(source => source.format !== 'xroga-openui-v1' || (source.text.length <= 24_000 && !source.contract)).optional(),
+  }).strict().refine(source => source.format !== 'xroga-openui-v1' || (source.text.length <= 200_000 && !source.contract)).optional(),
   // Independent of the strict native program schema so older renderers can
   // still read the same answer and ignore the new download affordance.
   documentDownload: z.enum(nativeDocumentFormats).optional().catch(undefined),

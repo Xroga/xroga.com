@@ -282,7 +282,7 @@ test('native answers persist independently of legacy table conversion', () => {
   assert.deepEqual(saved.blocks.map(block => block.type), ['narrative']);
   const historical = { ...enhanced.output, blocks: [{ type: 'table', columns: [{ key: 'corner', label: '' }] }] };
   assert.equal(parseXrogaOutput(historical)?.responseSource?.text, program);
-  assert.equal(parseXrogaOutput({ ...historical, responseSource: { format: 'xroga-openui-v1', text: 'x'.repeat(24_001) } }), null);
+  assert.equal(parseXrogaOutput({ ...historical, responseSource: { format: 'xroga-openui-v1', text: 'x'.repeat(200_001) } }), null);
 });
 
 test('a factual-review warning and original answer survive the saved document round trip', () => {

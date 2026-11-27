@@ -30,7 +30,7 @@ test('a conversation reset or switch paints the current messages before deferred
 });
 
 test('submit anchoring depends on the prompt identity instead of streamed message content', () => {
-  assert.match(LOG, /\}, \[loading, sessionRestoring, latestPromptId, renderedPromptId\]\);/);
+  assert.match(LOG, /\}, \[loading, sessionRestoring, latestPromptId, renderedPromptId, reserveTurnSpace\]\);/);
   assert.match(LOG, /anchoredPromptId\.current = renderedPromptId;\s*pendingPromptId\.current = null;/);
   assert.doesNotMatch(LOG, /\}, \[messages, loading, scrollToBottom\]\);/);
 });

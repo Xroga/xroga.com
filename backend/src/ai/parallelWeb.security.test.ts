@@ -58,7 +58,7 @@ test('actual Parallel entries enforce issued context, current owner, egress, can
       assert.equal(url.pathname,'/v1/tools/search');
       effects++;events.push('provider');assert.equal(init?.redirect,'manual');assert.ok(init?.signal);assert.doesNotMatch(JSON.stringify(body),/SYNTHETIC_CREDENTIAL|substituted/);
       assert.equal(new Headers(init?.headers).get('authorization'),'Bearer synthetic-platform-key');assert.equal(new Headers(init?.headers).get('x-api-key'),null);
-      assert.equal(typeof body.query,'string');assert.ok(body.query.length>=1&&body.query.length<=128);assert.equal(body.count,10);
+      assert.equal(typeof body.query,'string');assert.ok(body.query.length>=1&&body.query.length<=128);assert.equal(body.count,25);
       if(mode==='provider503')return Response.json({error:'synthetic outage'},{status:503});
       if(mode==='provider401'||mode==='provider403')return Response.json({error:'synthetic provider denial'},{status:mode==='provider401'?401:403});
       if(mode==='providerRedirect')return new Response(null,{status:307,headers:{location:'http://169.254.169.254/computeMetadata/v1/'}});

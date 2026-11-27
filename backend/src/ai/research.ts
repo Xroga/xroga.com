@@ -48,7 +48,7 @@ export async function gatherResearch(query: string, userId?: string, dispatchSco
       if (sources.length) {
         return {
           query: q,
-          summary: sources.map((source) => source.snippet).join('\n\n').slice(0, 4_000),
+          summary: sources.map((source) => source.snippet).join('\n\n').slice(0, 32_000),
           sources,
           provider: 'parallel',
         };
@@ -91,7 +91,7 @@ function hostTitle(url: string): string {
 export function formatResearchForPrompt(bundle: ResearchBundle): string {
   if (!bundle.sources.length && !bundle.summary) return '';
   const cites = bundle.sources
-    .slice(0, 8)
+    .slice(0, 30)
     .map((s, i) => `[${i + 1}] ${s.title}\n${s.url}\n${s.snippet}`)
     .join('\n\n');
   const xNote = bundle.includedXSearch ? ' · includes live X search' : '';

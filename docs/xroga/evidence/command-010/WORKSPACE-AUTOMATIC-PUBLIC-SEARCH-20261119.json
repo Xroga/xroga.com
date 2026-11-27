@@ -55,7 +55,12 @@
       },
       {
         "path": "backend/src/ai/parallelWeb.security.test.ts",
-        "sha256": "29e704826d0e504396a577427e0181d909331628d30f4ad2878e975f462290b9"
+        "sha256": "6597af1cd108743cc5522e80a2743659fbf8d8528311570ad1d55bc1a846906a",
+        "historyAndSearchLimitRebinding": {
+          "previousSha256": "29e704826d0e504396a577427e0181d909331628d30f4ad2878e975f462290b9",
+          "ownerApproval": "On 2026-11-28 the repository owner asked in chat for the answer, history and search limits to be removed. They were then told that the server history change edits a security-reviewed file, that the records would state their approval and that no separate human code review is claimed, and were asked \"May I change the protected file for the chat history limit?\". They replied \"Yes, change it\". Recorded by the assistant that made the change; no separate human code review is claimed.",
+          "finding": "The one changed assertion expects 25 search results instead of 10, following the owner's request to raise search limits. Every authority, owner, egress, hold and settlement assertion is unchanged."
+        }
       },
       {
         "path": "backend/src/ai/researchSearchProvider.test.ts",

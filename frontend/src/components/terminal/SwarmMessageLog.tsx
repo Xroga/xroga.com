@@ -123,6 +123,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
   const messageRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const pendingPromptId = useRef<string | null>(null);
   const anchoredPromptId = useRef<string | null>(null);
+  const turnSpaceRef = useRef<HTMLDivElement>(null);
   const jumpHandledRef = useRef<string | null>(null);
   const [searchHit, setSearchHit] = useState<string | null>(null);
   const [activeTurnId, setActiveTurnId] = useState<string | null>(null);
@@ -136,6 +137,24 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
     registerScrollToLatest(scrollToBottom);
   }, [registerScrollToLatest, scrollToBottom]);
 
+  // The newest exchange keeps a screen of room below its prompt. The prompt can then stay at the top while
+  // the answer is written, and nothing moves when progress lines fold away or a visual replaces plain text.
+  const reserveTurnSpace = useCallback(() => {
+    const space = turnSpaceRef.current;
+    if (!space) return;
+    const root = transcriptScrollRoot(transcriptRef.current);
+    const prompt = anchoredPromptId.current ? messageRefs.current[anchoredPromptId.current] : null;
+    if (!prompt || root === document.documentElement) {
+      space.style.height = '0px';
+      return;
+    }
+    const most = root.clientHeight;
+    space.style.height = `${most}px`;
+    const promptTop = root.scrollTop + prompt.getBoundingClientRect().top - root.getBoundingClientRect().top - root.clientTop;
+    const excess = root.scrollHeight - (promptTop - 18 + root.clientHeight);
+    space.style.height = `${Math.min(most, Math.max(0, most - excess))}px`;
+  }, []);
+
   useEffect(() => {
     const body = transcriptRef.current;
     if (!body) return;
@@ -144,7 +163,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
     const sync = () => {
       setShowJumpToLatest(root.scrollHeight - root.scrollTop - root.clientHeight >= 140);
     };
-    const observer = new ResizeObserver(sync);
+    const observer = new ResizeObserver(() => { reserveTurnSpace(); sync(); });
     observer.observe(body);
     if (root !== document.documentElement) observer.observe(root);
     scrollTarget.addEventListener('scroll', sync, { passive: true });
@@ -153,7 +172,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
       observer.disconnect();
       scrollTarget.removeEventListener('scroll', sync);
     };
-  }, [setShowJumpToLatest]);
+  }, [setShowJumpToLatest, reserveTurnSpace]);
 
   const displayInitial = profile?.display_name?.charAt(0)?.toUpperCase() ?? 'U';
 
@@ -183,10 +202,11 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
     const prompt = messageRefs.current[renderedPromptId];
     if (!prompt) return;
     const root = transcriptScrollRoot(transcriptRef.current);
-    scrollToMessage(root, prompt, 'auto');
     anchoredPromptId.current = renderedPromptId;
     pendingPromptId.current = null;
-  }, [loading, sessionRestoring, latestPromptId, renderedPromptId]);
+    reserveTurnSpace();
+    scrollToMessage(root, prompt, 'auto');
+  }, [loading, sessionRestoring, latestPromptId, renderedPromptId, reserveTurnSpace]);
 
   useEffect(() => {
     const jumpId = loadWorkspaceSession()?.jumpMessageId;
@@ -697,6 +717,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
               </div>
             );
           })}
+          <div ref={turnSpaceRef} aria-hidden="true" data-turn-space className="!m-0" />
         </div>
 
       </div>
