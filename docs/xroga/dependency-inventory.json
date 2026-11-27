@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "dbc3bb5b2d59fba9d744ddc1dea2620518d84c1d",
+  "source_sha": "c8cc9f45b5523379d317054624509225a15d3993",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -18904,7 +18904,7 @@
     },
     {
       "path": "backend/src/routes/voiceFree.ts",
-      "sha256": "ca50e347e4c57de9ff84de22454522b6550770f1a75ac1e45463887a16d98827"
+      "sha256": "e19c70b1457812bc991a08da11e1058164364b1b1c4ebe2ed72026742ea94535"
     },
     {
       "path": "backend/src/routes/wellbeing.ts",
@@ -24636,7 +24636,7 @@
     },
     {
       "path": "frontend/src/lib/voiceApi.ts",
-      "sha256": "444770d2d31f4752b12a0933d8a59ad4d4c1979d0396d6ea0c99fb034669660b"
+      "sha256": "40c944ffb955805538ebda49f8b95cae0072e33985e56277eaf9ea4515eada73"
     },
     {
       "path": "frontend/src/lib/voiceCapture.ts",
@@ -26871,7 +26871,7 @@
       "hostname": "api.cloudflare.com",
       "protocol": "https:",
       "path": "backend/src/routes/voiceFree.ts",
-      "line": 59,
+      "line": 60,
       "credentialsInUrl": false
     },
     {

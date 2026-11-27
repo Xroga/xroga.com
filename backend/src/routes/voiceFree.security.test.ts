@@ -25,6 +25,7 @@ test('free speech route preserves original actor, credential, reservation and pu
   process.env.NODE_ENV = 'production'; process.env.SUPABASE_URL = 'http://127.0.0.1:55439'; process.env.SUPABASE_SERVICE_ROLE_KEY = 'synthetic-only';
   let actor: unknown = context, userId = owner, mode = 'ok', dispatches = 0, usageWrites = 0;
   let response: express.Response | undefined;
+  let settleGate: Promise<void> | undefined;
   const events: string[] = [], holds = new Map<string, Record<string, unknown>>(), releases: Record<string, unknown>[] = [];
   const app = express();
   app.use((req, res, next) => {response = res; Object.assign(req, {userId, tenantContext: actor}); next();}); app.use('/voice', voice);
@@ -54,6 +55,7 @@ test('free speech route preserves original actor, credential, reservation and pu
       }
       if (url.pathname.endsWith('/settle_xroga_provider_budget')) {
         events.push('settle'); assert.equal(body.p_actual_micro_usd, 0);
+        if (settleGate) await settleGate;
         if (mode === 'settlementDenied') return Response.json({message: 'Synthetic denied'}, {status: 400});
         const row = holds.get(body.p_reservation_id); assert.ok(row);
         if (mode === 'cancelAtSettlement') {response?.destroy(); await new Promise<void>(resolve => setImmediate(resolve));}
@@ -86,7 +88,7 @@ test('free speech route preserves original actor, credential, reservation and pu
       transcription_info: {duration: mode === 'wrongDuration' ? 100 : 1, language: 'ur'}}}, {headers: mode === 'missingRequestId' ? {} : {'cf-ray': '0123456789abcdef-LHR'}});
   });
   function reset(value = 'ok') {
-    mode = value; dispatches = 0; usageWrites = 0; events.length = 0; releases.length = 0; actor = context; userId = owner;
+    mode = value; settleGate = undefined; dispatches = 0; usageWrites = 0; events.length = 0; releases.length = 0; actor = context; userId = owner;
     process.env.CLOUDFLARE_VOICE_ACCOUNT_ID = account; process.env.CLOUDFLARE_VOICE_API_TOKEN = token; process.env.CLOUDFLARE_VOICE_FREE_PLAN_CONFIRMED = 'true';
   }
   const post = (audio = wav()) => originalFetch(base + '/voice/transcribe-free', {method: 'POST', headers: {'content-type': 'audio/wav'}, body: audio});
@@ -120,6 +122,47 @@ test('free speech route preserves original actor, credential, reservation and pu
   await t.test('exhausted free allowance is a clear retryable 429 with no private provider text', async () => {
     reset('429'); const result = await post(); const text = await result.text();
     assert.equal(result.status, 429); assert.match(text, /VOICE_QUOTA_EXHAUSTED/); assert.doesNotMatch(text, /PRIVATE_PROVIDER_MESSAGE/); assert.equal(dispatches, 1);
+  });
+  const early = () => originalFetch(base + '/voice/transcribe-free', {method: 'POST', headers: {'content-type': 'audio/wav', accept: 'application/x-ndjson'}, body: wav()});
+  const gate = () => {let open!: () => void; settleGate = new Promise<void>(resolve => {open = resolve;}); return () => open();};
+  async function firstLine(result: Response) {
+    const reader = result.body!.getReader(); let text = '';
+    while (!text.includes('\n')) {const part = await reader.read(); assert.equal(part.done, false); text += Buffer.from(part.value!).toString('utf8');}
+    return {reader, body: JSON.parse(text.slice(0, text.indexOf('\n'))) as {text: string; provider: string}};
+  }
+  async function until(check: () => boolean) {for (let i = 0; i < 200 && !check(); i++) await new Promise(resolve => setTimeout(resolve, 5)); assert.ok(check());}
+  await t.test('an early-text request receives the transcript before the accounting writes finish', async () => {
+    reset(); const open = gate(); const result = await early(); assert.equal(result.status, 200);
+    assert.match(result.headers.get('content-type') ?? '', /application\/x-ndjson/); assert.match(result.headers.get('cache-control') ?? '', /no-store/);
+    const {reader, body} = await firstLine(result); assert.equal(body.provider, 'cloudflare-free'); assert.match(body.text, /Build a website/);
+    assert.ok(!events.includes('usage') && !events.includes('audit:COMPLETED'));
+    open(); while (!(await reader.read()).done);
+    assert.deepEqual(events, ['reserve', 'audit:ADMITTED', 'provider', 'settle', 'usage', 'audit:COMPLETED']); assert.equal(releases.length, 0);
+  });
+  await t.test('accounting still finishes when the browser leaves after receiving the text', async () => {
+    reset(); const open = gate(); const {reader} = await firstLine(await early()); await reader.cancel();
+    await new Promise(resolve => setTimeout(resolve, 20)); open();
+    await until(() => events.includes('audit:COMPLETED')); assert.equal(releases.length, 0);
+  });
+  await t.test('pending accounting does not make the next recording busy', async () => {
+    reset(); const open = gate(); const readers = [];
+    for (let i = 0; i < 3; i++) {const result = await early(); assert.equal(result.status, 200); readers.push((await firstLine(result)).reader);}
+    open(); for (const reader of readers) while (!(await reader.read()).done);
+  });
+  for (const value of ['settlementDenied', 'wrongSettlement']) await t.test(value + ' after early text is held for reconciliation', async () => {
+    reset(value); const result = await early(); assert.equal(result.status, 200); const text = await result.text();
+    assert.equal(text.trim().split('\n').length, 1); await until(() => releases.length === 1);
+    assert.equal(releases[0].p_pending_reconciliation, true); assert.equal(dispatches, 1);
+  });
+  // Settlement already succeeded here, so there is no hold to release; the missing record is reported.
+  for (const value of ['usageDenied', 'completedAuditDenied']) await t.test(value + ' after early text is reported and never re-dispatched', async () => {
+    const reported = t.mock.method(console, 'error', () => {}); t.after(() => reported.mock.restore());
+    reset(value); const result = await early(); assert.equal(result.status, 200); await result.text();
+    assert.equal(reported.mock.calls.filter(call => JSON.stringify(call.arguments).includes('accounting_unverified_after_publication')).length, 1);
+    assert.equal(releases.length, 0); assert.equal(dispatches, 1);
+  });
+  for (const value of ['reservationDenied', 'wrongOwnerHold', 'rotateAtReservation', 'admissionAuditDenied', '401', '403', '429', '503', 'redirect', 'malformed', 'oversized', 'rotateAfterDispatch', 'revokeFreePlan', 'wrongDuration', 'missingRequestId', 'secret']) await t.test(value + ' still publishes no early text', async () => {
+    reset(value); const result = await early(); assert.notEqual(result.status, 200); assert.doesNotMatch(await result.text(), /PRIVATE_PROVIDER_MESSAGE|synthetic-cloudflare|Build a website/);
   });
   await t.test('silent and malformed PCM do not invoke a model', async () => {
     reset(); assert.equal((await post(wav(true))).status, 422); assert.notEqual((await post(Buffer.alloc(600))).status, 200); assert.equal(dispatches, 0);
