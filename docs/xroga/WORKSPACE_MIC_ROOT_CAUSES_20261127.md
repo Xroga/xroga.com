@@ -53,3 +53,22 @@ and rebinding the security review records of the voice route.
 ## Untested
 
 Physical iPhone or Safari, real microphone speech, real provider calls, and mixed-language behaviour of the production provider.
+
+## Further repairs, November 27
+
+Found by reading the source and reproduced with failing tests first. None is confirmed as a particular user report.
+
+| Cause | Repair |
+| --- | --- |
+| A piece the server heard no speech in (422) failed the whole recording, and Retry could not succeed | Treated as quiet audio |
+| One dropped, busy or provider-unavailable upload held back the transcript until a manual retry | Up to two automatic retries after 0.8 s and 2.5 s; security, sign-in, quota and unverified results are never retried |
+| An access-token refresh during dictation was treated as an account change and the audio was dropped | Same subject, session and issuer are accepted |
+| Audio still inside the worklet was lost on Stop | The worklet flushes before the microphone is released |
+| Multi-channel microphones kept only the first channel | The capture node mixes channels explicitly |
+| A microphone that never started was reported as a lost connection or transcription | Separate start-failure message |
+
+### Verification
+
+- Real component and capture code in Playwright Chromium and installed Google Chrome, desktop and Pixel 7 emulation, with a fake microphone playing computer-generated English and the real Cloudflare `@cf/openai/whisper-large-v3-turbo` through a local `wrangler dev` binding: 44 of 44 checks passed. Sign-in and backend accounting were stand-ins.
+- The same model returned empty text for silence and for noise alone, and kept the English sentence at -30 dB, -40 dB and with added noise. "Xroga" was consistently misrecognised.
+- Not tested: Urdu, mixed or other languages on this provider, physical microphones, phones, Safari or WebKit, Firefox, signed-in production.
