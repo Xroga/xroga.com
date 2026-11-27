@@ -72,7 +72,8 @@ export function TerminalLiveActivity({
 
   const baseLabel = pendingWorkLabel(run?.events ?? [], rows.length > 0, pendingReply);
   const label = !model.active && stage && baseLabel !== 'Writing response' ? stage.label : baseLabel;
-  const processing = active
+  // A checklist belongs to a build with its own to-do list. Chat never draws one from ordinary progress rows.
+  const processing = active && todos?.length
     ? buildProcessingView({ active: model.active ?? stage, otherActive: model.active ? model.otherActive : 0, rows: stageRows.length > rows.length ? stageRows : rows, pendingLabel: label, todos, outcome: run?.outcome ?? null })
     : undefined;
   const shell = rows.length === 0 && active;

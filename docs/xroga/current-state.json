@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "claude/mic-long-recording-20261128",
-    "sha": "df901fb7463cefae6d7c1966d51864b737c88196",
-    "sourceTimestampUtc": "2026-11-28T00:47:23+05:00",
-    "auditStartedUtc": "2026-11-27T21:09:58.088Z",
+    "sha": "d8c17bfd0528aeea2c2fe6e99e50e0921d93b14a",
+    "sourceTimestampUtc": "2026-11-28T02:12:26+05:00",
+    "auditStartedUtc": "2026-11-27T21:27:11.494Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -102530,7 +102530,7 @@
       "id": "surface:d57670e245a2278fa94d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/TerminalLiveActivity.tsx",
-      "sha256": "b69c68aa72a29076deb5f8b3aa58d6a4a630616f0d40252be84d1459d8309adf",
+      "sha256": "f9e7360d991960182b6737b54bf5c4430012126f05f2cb00cc7fafd0e347ffec",
       "symbols": [
         "TerminalLiveActivity",
         "TerminalLiveActivityProps",
