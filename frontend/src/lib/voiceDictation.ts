@@ -59,7 +59,7 @@ export function createDictationPipeline(options: {
     active++;
     const started = now();
     const wait = options.wait ?? pause;
-    const send = async (): Promise<string> => {
+    const transcribeWithRetry = async (): Promise<string> => {
       for (let attempt = 0; ; attempt++) {
         try { return await options.transcribe(item.wav!, options.signal); } catch (error) {
           // The server found no speech in this piece: it is quiet audio, not a failed recording.
@@ -70,7 +70,7 @@ export function createDictationPipeline(options: {
         }
       }
     };
-    send().then(text => {
+    transcribeWithRetry().then(text => {
       item.text = text.trim();
       item.state = 'done';
       item.wav = undefined;
