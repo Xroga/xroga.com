@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "claude/mic-ios-merge-20261127",
-    "sha": "09387be44ec4b169a3b7956d561ee15d017e9144",
-    "sourceTimestampUtc": "2026-11-27T17:02:15+05:00",
-    "auditStartedUtc": "2026-11-27T12:03:05.650Z",
+    "sha": "fde64f94ddb93696617262c4df9b4afcb793f868",
+    "sourceTimestampUtc": "2026-11-27T17:57:47+05:00",
+    "auditStartedUtc": "2026-11-27T12:58:25.939Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
