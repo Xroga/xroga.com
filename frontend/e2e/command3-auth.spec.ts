@@ -597,11 +597,11 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     '- Accessibility needs: __________',
   ].join('\n\n');
   await expect.poll(() => page.evaluate(async () => (await navigator.clipboard.readText()).replace(/\r\n/g, '\n'))).toBe(followUpClipboard);
+  const pendingActivity = page.getByTestId('terminal-live-activity').getByRole('button', { name: 'Black Hole is working', exact: true });
   try {
     await send(cancellation);
     await expect.poll(() => chatCalls).toBe(3);
-    const waitingForReply = page.getByTestId('terminal-live-activity').getByRole('button', { name: /Black Hole is working.*Waiting for a reply/ });
-    await expect(waitingForReply).toBeVisible();
+    await expect(pendingActivity).toBeVisible();
     const aborted = page.waitForEvent('requestfailed', {
       predicate: request => new URL(request.url()).pathname === '/api/phase1/chat' && request.postDataJSON()?.message === cancellation,
       timeout: 10_000,
@@ -609,7 +609,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     await page.getByRole('button', { name: 'Stop response', exact: true }).click();
     expect((await aborted).failure()?.errorText).toContain('ERR_ABORTED');
     await expect(page.getByRole('button', { name: 'Stop response', exact: true })).toHaveCount(0);
-    await expect(waitingForReply).toHaveCount(0);
+    await expect(pendingActivity).toHaveCount(0);
   } finally {
     releaseCancelled();
   }
@@ -725,10 +725,10 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await expect(researched.getByRole('link', { name: /Official policy fixture/ })).toHaveAttribute('href', researchSource.url);
   expect(confirmations).toBe(1);
   await send(publicLookup);
-  const pendingLookup = page.getByTestId('terminal-live-activity').getByRole('button', { name: /Black Hole is working.*Waiting for a source-backed reply/ });
   try {
-    await expect(pendingLookup).toBeVisible();
-    const pendingTurn = page.locator('[data-turn-id]', { has: pendingLookup });
+    await expect(pendingActivity).toBeVisible();
+    const pendingTurn = page.locator('[data-turn-id]', { has: pendingActivity });
+    await expect(pendingTurn.getByRole('list', { name: 'Work so far' })).toBeVisible();
     await expect(pendingTurn.getByText(/Web evidence/)).toHaveCount(0);
   } finally {
     releasePublicLookup();
@@ -744,7 +744,7 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
     await expect(publicTurn.getByText(/approval payload|prepared digest|micro-USD|no live evidence/i)).toHaveCount(0);
   };
   await checkPublicAnswer();
-  await expect(pendingLookup).toHaveCount(0);
+  await expect(pendingActivity).toHaveCount(0);
   await publicTurn.getByRole('button', { name: 'Copy', exact: true }).click();
   await expect.poll(() => page.evaluate(async () => (await navigator.clipboard.readText()).replace(/\r\n/g, '\n')))
     .toBe(`${publicLookupReply}\n\nSources\n[1] ${publicLookupSource.title} (${publicLookupSource.url})`);

@@ -165,8 +165,10 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
   // non-urgent so typing, stop controls, menus, and scrolling remain responsive.
   const transcript = useMemo(() => ({ sessionId, messages: visibleMessages }), [sessionId, visibleMessages]);
   const deferredTranscript = useDeferredValue(transcript);
-  // A conversation reset or switch must clear the previous transcript immediately.
-  const renderedMessages = deferredTranscript.sessionId === sessionId
+  // When a turn settles, swap the working panel for its answer in one paint.
+  // Removing the panel with the previous transcript still mounted briefly
+  // shortens the scroll area and clamps the user's reading position.
+  const renderedMessages = loading && deferredTranscript.sessionId === sessionId
     && deferredTranscript.messages[0]?.id === visibleMessages[0]?.id
     ? deferredTranscript.messages
     : visibleMessages;

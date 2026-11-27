@@ -103868,7 +103868,7 @@
       "id": "surface:9c57a6290c71522141f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "8cf9454cc21ed5c6b8ef917f907552c8da1490e0b1b2c046ee045db56b5fcdbc",
+      "sha256": "26f72d05556eea191e883a808596f9dbdc39f108413dc0d66cb10032a2c8a1cc",
       "symbols": [
         "AGENT_STYLES",
         "SwarmMessageLog",
@@ -153769,9 +153769,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:b1773b6e96adf024e232",
+      "id": "finding:1387ff4d6f38cc5af1fd",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "line": 405,
+      "line": 407,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -155088,84 +155088,84 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:0e9dd761de76d01bff41",
+      "id": "frontend-call:e05409cd6ff63883e329",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1067,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:bf5d7ba4345676dfffbb",
+      "id": "frontend-call:5875adab646cce123a28",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1070,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:ce4ad258a182ab9ae409",
+      "id": "frontend-call:ee58f1ddcaa6f40f464c",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1840,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:a42818a5098deb5ab06e",
+      "id": "frontend-call:da2298aa4f1e2ed80ce6",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1841,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:9eb0ace7062dec36e9ab",
+      "id": "frontend-call:d7a28c3610cc4530e85f",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1846,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:26e1016e4848a6a95db5",
+      "id": "frontend-call:76821e1b9361a142a9df",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1847,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:317c9cc5c68211dbb056",
+      "id": "frontend-call:23bc10f8ff0b6737bfa6",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1853,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:a8d093f2e8701f89ac68",
+      "id": "frontend-call:ba5fcfefd77a086981fa",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1858,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:3b97d5caae685487dab3",
+      "id": "frontend-call:9960a14743a9394ef437",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1915,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:bf87add0660037b13913",
+      "id": "frontend-call:1fd32898ca0d9e72066f",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1916,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:bf510cb17837ebbadd3a",
+      "id": "frontend-call:592a9538fe999a1b0113",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1923,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:817513203b36d0df6594",
+      "id": "frontend-call:8639fc3276a80127e0df",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1937,
       "callee": "fetch",

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "4336fe4c2bfac4c78286b48c0e3903620eb52193",
+  "source_sha": "dba6927f9f9fa2513587a8f0a25588c49e1ad6a0",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -23595,7 +23595,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "8cf9454cc21ed5c6b8ef917f907552c8da1490e0b1b2c046ee045db56b5fcdbc"
+      "sha256": "26f72d05556eea191e883a808596f9dbdc39f108413dc0d66cb10032a2c8a1cc"
     },
     {
       "path": "frontend/src/components/terminal/TerminalBuildReport.tsx",
@@ -41261,7 +41261,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "line": 203,
+      "line": 205,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
