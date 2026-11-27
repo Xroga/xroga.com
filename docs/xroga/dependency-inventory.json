@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "41d8679ba89a48031c01264b1a311ad52b6f1f0d",
+  "source_sha": "db002b2edcebd398e40ebed977c18585fa424164",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17392,7 +17392,7 @@
     },
     {
       "path": "backend/src/ai/reasoningSummary.ts",
-      "sha256": "c7097d18da3d0048da67e459b3e3ceb928988df55277fa136fe7aaad526d2f06"
+      "sha256": "34c1b1ea632e8f5f0e429faf5cca65fd272775fd9b7ceed634cf1f0f0a21680f"
     },
     {
       "path": "backend/src/ai/repairController.ts",
@@ -18828,7 +18828,7 @@
     },
     {
       "path": "backend/src/routes/phase1ChatProgress.ts",
-      "sha256": "065c14f1152157c895b5dbe073db2f0a5b2a94dfb8948ef1d59bd5fb066bd968"
+      "sha256": "a8f0f92448e8fe4bdfe58932a3bb98510dd62d954d474895b3aeccd269ba784f"
     },
     {
       "path": "backend/src/routes/profile.ts",
@@ -20992,19 +20992,19 @@
     },
     {
       "path": "frontend/src/components/activity/ActivityTimeline.tsx",
-      "sha256": "f7a6a98fea04b8932ce50c747a91c4a1f13c03939dc6ad460a5f3b1abac5fbdb"
+      "sha256": "f787c78b914c14d4e8faaf16cbfe38256aa2dcf365fd7340206b87e511fd0e43"
     },
     {
       "path": "frontend/src/components/activity/BlackHoleIndicator.tsx",
-      "sha256": "11ebdc5d0b82014fea49078e631e98242aef268235d948611f632f60de5ca6cd"
+      "sha256": "19767b2aa4277725f3d61f3e95d81c0d5db64bcb11beb61b1c61af53eb2db959"
     },
     {
       "path": "frontend/src/components/activity/ProcessingStream.tsx",
-      "sha256": "0cadc5c340d32a7587d0a4bffc400703480335b69da6c1758afc4bba34dd6f5d"
+      "sha256": "c8ef41487cc676ad0adfe11716d7d4c2b92d0df6ca0ccafcd784cca87f7c916a"
     },
     {
       "path": "frontend/src/components/activity/ProcessingSurface.tsx",
-      "sha256": "d1e55ea5743621863280fb2d2f245fcd8136c7e1c1d92adc61bac40aa770e897"
+      "sha256": "a8b753fd5a8a2c7f605f6a8f43c306c00a40bbc25763548b5aa078128c510fb1"
     },
     {
       "path": "frontend/src/components/analytics/GoogleTag.tsx",
@@ -22488,7 +22488,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/NativeSurface.tsx",
-      "sha256": "3184ccfbd653173f476122b6de239df87134b6fc8310c5b0da5798d95c3808d9"
+      "sha256": "ff5db2c2c70c69c5b199eccadcdb02fb09ad3a32332b572786668fbe45d8a49c"
     },
     {
       "path": "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
@@ -22812,7 +22812,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/conversation.ts",
-      "sha256": "2fc6ae0cbe2e52e71a4f7f5c9cb39bd9d0bc9cf45c3e9a0a7bbbf5d7b2feb623"
+      "sha256": "00a1374e0592df6598239a5774ae29989d4204f7a408138777da0defc0c701c3"
     },
     {
       "path": "frontend/src/components/response-experience-v2/diagramSyntax.ts",
@@ -23336,7 +23336,7 @@
     },
     {
       "path": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
-      "sha256": "f07e483f4254f672759d234307b80c39ef29db55525e8fbd4897bd7516e302a8"
+      "sha256": "50eeee45a218a6fc1d1e71541c7a6bc3b1dd21bd68851a344861c7ee2c313107"
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceScrollNavigation.tsx",
@@ -23664,7 +23664,7 @@
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
-      "sha256": "77e9e3bc5d16beabb67d8c080becff1d7d2c4d7cc5736f55c4e041d3fd6ed752"
+      "sha256": "e1beaeda94ec14730a42c50cac69fae7bf6ff9ed2f754b99f77c51eeda720f5b"
     },
     {
       "path": "frontend/src/lib/authQuotes.ts",
@@ -24244,7 +24244,7 @@
     },
     {
       "path": "frontend/src/lib/publicAnswerText.ts",
-      "sha256": "d93ef3936182e40b51dc556c4ce841ad18802c6cc8135353d5d2d6b3f9e19dd1"
+      "sha256": "cab86c471a4afbe4e91a808037bd58b974bf67e4c5664c92d0500dc6d7796709"
     },
     {
       "path": "frontend/src/lib/publicConnectCatalog.ts",
@@ -24344,7 +24344,7 @@
     },
     {
       "path": "frontend/src/lib/sanitizeChatMessages.ts",
-      "sha256": "cdf7a9b2a7bf232290ee19826714cfdad22b58c9212d0e7485f3680095d9088d"
+      "sha256": "f4c33f6f97f8b1543170197ab809c1f567f4e07ed0368cfbddc47d0e5cb72d79"
     },
     {
       "path": "frontend/src/lib/scheduledFeedback.ts",
@@ -24524,7 +24524,7 @@
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "sha256": "f30248bf601766a38939c682725a253315cc66913500aa65fd9408ed817bab9b"
+      "sha256": "cd9335bb766ccab63b4a715ca2c5b837056d7360d57334a71b46251d5202ca1a"
     },
     {
       "path": "frontend/src/lib/terminal/activityTimeline.ts",
@@ -24544,7 +24544,7 @@
     },
     {
       "path": "frontend/src/lib/terminal/processingStream.ts",
-      "sha256": "23cd0019aaa48790a5ce21532c590e9e412d19b4cae48cadb5e0258f110bb0de"
+      "sha256": "7031b85f6fd325fce88c5696b61f33a9fd25c9d04e49fe6989b048146d85c93b"
     },
     {
       "path": "frontend/src/lib/terminal/processingView.ts",
@@ -24740,7 +24740,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaEventAdapter.ts",
-      "sha256": "b36a2c1e25b67bdcf918a882c9d420f400c7c9e445fc94afd3afa17569c7532b"
+      "sha256": "8b6df7c966acb0c53c1f44498104d4477af9b37b5d2aaab742d1d044cb3cf909"
     },
     {
       "path": "frontend/src/lib/xrogaFileExports.ts",
@@ -37138,6 +37138,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/routes/phase1ChatProgress.ts",
+      "line": 77,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/routes/swarm.ts",
       "line": 38,
       "scope": "MODULE_LIFETIME",
@@ -41206,56 +41213,56 @@
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 252,
+      "line": 256,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 253,
+      "line": 257,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 294,
+      "line": 298,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 295,
+      "line": 299,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/terminal/activityPresentation.ts",
-      "line": 307,
+      "line": 311,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/terminal/processingStream.ts",
-      "line": 48,
+      "line": 61,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/terminal/processingStream.ts",
-      "line": 63,
+      "line": 76,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/terminal/processingStream.ts",
-      "line": 137,
+      "line": 171,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
