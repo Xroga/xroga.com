@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "db4723d195614fcc475fb9076674e8e14b09a165",
+  "source_sha": "69c42aac4070fcddbd11f705e81cfa6c6541ceab",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -24975,11 +24975,11 @@
     },
     {
       "path": "frontend/src/lib/voiceApi.ts",
-      "sha256": "236afeb38215ed1279bdf8acb3041877bb84e30cae989068e226f386f33bc44d"
+      "sha256": "4d91e73e2e48d1cfbccf921c7bc67f01d686f3783dcee800eba3d887819106c4"
     },
     {
       "path": "frontend/src/lib/voiceCapture.ts",
-      "sha256": "43b394ec936088ee3de7aa7f29d09aed9a40e339dc1ae6e4ba1b28a6038edab0"
+      "sha256": "856556f39ef39fa93297ea3c02cc0ec9eff8b1f6a727a0452f41945352aa379a"
     },
     {
       "path": "frontend/src/lib/voiceDictation.ts",
@@ -24991,7 +24991,7 @@
     },
     {
       "path": "frontend/src/lib/voiceRequestPolicy.ts",
-      "sha256": "39d5b47f4f9bb6eeb7fc8444a814a33c9329811ee0d61f66cd2e7b9b046c4b9b"
+      "sha256": "b5ccd1a6edfdc4006713a5ec653faa94a36fa44ae0746b1c725ad8860c2c8044"
     },
     {
       "path": "frontend/src/lib/voiceSegmenter.ts",
