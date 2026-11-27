@@ -7,7 +7,7 @@
   ],
   "state": "CODE_COMPLETE",
   "risk": "medium",
-  "scope": "Repair Workspace dictation: iOS Safari capture and upload failures, and losses from quiet pieces, brief upload failures, token refresh, Stop and multi-channel microphones. Record the mixed-language root cause without changing transcription.",
+  "scope": "Repair Workspace dictation: iOS Safari capture and upload failures, and losses from quiet pieces, brief upload failures, token refresh, Stop and multi-channel microphones. Record the mixed-language root cause without changing transcription. Wake the scale-to-zero voice server when a signed-in person opens or returns to the Workspace, to shorten the wait after Stop.",
   "changedFiles": [
     "docs/xroga/WORKSPACE_MIC_ROOT_CAUSES_20261127.md",
     "docs/xroga/evidence/workspace-mic-20261127/local-whisper-comparison.json",
@@ -26,6 +26,8 @@
     "frontend/src/lib/voiceMessages.test.ts",
     "frontend/src/lib/voiceMessages.ts",
     "frontend/src/lib/voiceRequestPolicy.ts",
+    "frontend/src/lib/voiceWarmup.test.ts",
+    "frontend/src/lib/voiceWarmup.ts",
     "scripts/verify-voice-capture.mjs"
   ],
   "decisions": {
@@ -35,7 +37,8 @@
     "extend": [
       "Bounded audio start and interruption recovery",
       "At most two automatic retries of passing upload failures",
-      "Flush the last audio on Stop"
+      "Flush the last audio on Stop",
+      "The existing no-credential wake-up call also runs on signed-in page activity, at most once per five minutes, never on a timer"
     ],
     "replace": [
       "Replace AbortSignal.any with a deadline helper that older iOS supports"
@@ -78,7 +81,7 @@
     },
     "cost": {
       "changed": true,
-      "description": "A segment that fails for a passing reason may be sent up to two more times on the existing free route, each with its own accounting reservation."
+      "description": "A segment that fails for a passing reason may be sent up to two more times on the existing free route, each with its own accounting reservation. The existing wake-up request may now start the voice server when a signed-in person uses the page, before any recording; it sends no audio or credential and calls no model."
     },
     "billing": {
       "changed": false,
@@ -109,6 +112,12 @@
       "scope": "Another user, session, issuer, sign-out or unreadable token stops the upload.",
       "negative": true,
       "reference": "frontend/src/lib/voiceAccount.test.ts"
+    },
+    {
+      "command": "tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/voiceWarmup.test.ts",
+      "scope": "Signed-out and hidden pages send nothing; repeated activity is limited to one wake-up per five minutes.",
+      "negative": true,
+      "reference": "frontend/src/lib/voiceWarmup.test.ts"
     }
   ],
   "rollout": "Frontend only. Verify on a physical iPhone from the candidate build before promotion.",

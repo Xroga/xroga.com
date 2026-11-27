@@ -9,6 +9,7 @@ import { openVoiceCapture, prepareVoiceAudioContext, voiceCaptureSupported, type
 import { createVoiceSegmenter } from '@/lib/voiceSegmenter';
 import { createDictationPipeline, MAX_RECORDING_SECONDS, type DictationPipeline } from '@/lib/voiceDictation';
 import { describeVoiceFailure, describeVoiceStartFailure } from '@/lib/voiceMessages';
+import { createVoiceWarmup } from '@/lib/voiceWarmup';
 import {
   DICTATION_ERROR_MESSAGES,
   DictationController,
@@ -163,6 +164,19 @@ export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
     };
   }, [cancel, finish]);
   useEffect(() => { if (disabled) cancel(); }, [disabled, cancel]);
+  useEffect(() => {
+    if (!cloudSupported()) return;
+    const wake = createVoiceWarmup({ warm: warmVoiceBackend, token: getAccessToken, visible: () => !document.hidden });
+    const activity = () => { void wake(); };
+    const events = ['pointerdown', 'keydown', 'focus'] as const;
+    activity();
+    document.addEventListener('visibilitychange', activity);
+    events.forEach(name => window.addEventListener(name, activity, { passive: true }));
+    return () => {
+      document.removeEventListener('visibilitychange', activity);
+      events.forEach(name => window.removeEventListener(name, activity));
+    };
+  }, []);
   useEffect(() => {
     if (mode === 'listening') meterRef.current?.startAnimation();
     else meterRef.current?.stopAnimation();
