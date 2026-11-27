@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "69c42aac4070fcddbd11f705e81cfa6c6541ceab",
+  "source_sha": "cbe9790146c0888c794eb68c88a51f8f707fc6e9",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -23727,7 +23727,7 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sha256": "bfad45774e4c9cba5da59da9711b9bd956a18357469def835e81c7165581d0b2"
+      "sha256": "778082159fdc39b4dffb8ce1b3de60be0d502b06c67191658533fea01d431bb6"
     },
     {
       "path": "frontend/src/components/terminal/builder/BuilderDatabase.tsx",
@@ -24975,15 +24975,19 @@
     },
     {
       "path": "frontend/src/lib/voiceApi.ts",
-      "sha256": "4d91e73e2e48d1cfbccf921c7bc67f01d686f3783dcee800eba3d887819106c4"
+      "sha256": "444770d2d31f4752b12a0933d8a59ad4d4c1979d0396d6ea0c99fb034669660b"
     },
     {
       "path": "frontend/src/lib/voiceCapture.ts",
-      "sha256": "856556f39ef39fa93297ea3c02cc0ec9eff8b1f6a727a0452f41945352aa379a"
+      "sha256": "96761de0768e92a430ced03fc8c098ccbd8c51a53588b337b8a80dfb52f0fcb3"
     },
     {
       "path": "frontend/src/lib/voiceDictation.ts",
-      "sha256": "1e04bcd6669d67b7f5baa5491d60b1990000f3dfab0ea02c2a22551f653c75b7"
+      "sha256": "208fce2d7e1633ca9a80f3e341e392d35bdd6643284dac56fdbb0b65f43d6f41"
+    },
+    {
+      "path": "frontend/src/lib/voiceMessages.ts",
+      "sha256": "16478886f99d98264e4aecf0ae52ec6d211bcdfb5ede19a366311f09aa309b1e"
     },
     {
       "path": "frontend/src/lib/voicePcm.ts",
@@ -24991,7 +24995,7 @@
     },
     {
       "path": "frontend/src/lib/voiceRequestPolicy.ts",
-      "sha256": "b5ccd1a6edfdc4006713a5ec653faa94a36fa44ae0746b1c725ad8860c2c8044"
+      "sha256": "c060e2d0d0ff17b1c3ad4d3737f2d70f220ea58bdd415f02c47ff75a5bbefb6d"
     },
     {
       "path": "frontend/src/lib/voiceSegmenter.ts",
@@ -41982,7 +41986,7 @@
     },
     {
       "path": "frontend/src/lib/voiceDictation.ts",
-      "line": 32,
+      "line": 46,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
