@@ -103582,21 +103582,24 @@
       "id": "surface:25011d252e1cd2cb8181",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SharedAnswerDownloads.tsx",
-      "sha256": "9086fb9734e3af8d85d84587df14a3c66a034771439becc3a39c2d272949f953",
+      "sha256": "dbf596d91ac6995491b28df6b3cb71ec4569bfa01b6984e4a695bde2b02eb784",
       "symbols": [
         "AnswerDownloadProps",
         "SharedAnswerDownloads",
         "cause",
         "download",
-        "formats"
+        "formats",
+        "hydrated"
       ],
       "imports": [
         "../../../../backend/src/ai/nativeDocumentDownload",
+        "@/hooks/useHydrated",
         "@/lib/xrogaFileExports",
         "lucide-react",
         "react"
       ],
       "runtimeImports": [
+        "frontend/src/hooks/useHydrated.ts",
         "frontend/src/lib/xrogaFileExports.ts"
       ],
       "entryPoints": [
@@ -110052,6 +110055,7 @@
         "frontend/src/components/library/LibraryWorkspace.tsx:9",
         "frontend/src/components/terminal/DevWorkspacePanel.tsx:33",
         "frontend/src/components/terminal/ProjectWorkspaceRail.tsx:6",
+        "frontend/src/components/terminal/SharedAnswerDownloads.tsx:5",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:40",
         "frontend/src/components/terminal/TerminalChatBar.tsx:13",
         "frontend/src/components/terminal/TerminalDock.tsx:14",
@@ -123723,7 +123727,7 @@
       "id": "surface:f0b6514316e865a55dfb",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/terminal/clientSteps.ts",
-      "sha256": "13b3b035fe95ec9cb3347abc8629d736e16bee8b700f1017bc319e7409eadd0c",
+      "sha256": "74307f5f55ae12c587bfb54c11c99b9aa3fc17382edad66e6546700954f5a995",
       "symbols": [
         "CLIENT_READ",
         "CLIENT_THOUGHT",
@@ -123733,6 +123737,7 @@
         "count",
         "isClientStep",
         "listed",
+        "pages",
         "raw",
         "seconds",
         "short",
@@ -127443,7 +127448,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SharedAnswerDownloads.tsx:5",
+        "frontend/src/components/terminal/SharedAnswerDownloads.tsx:6",
         "frontend/src/components/terminal/XrogaRichBlockView.tsx:16",
         "frontend/src/lib/xrogaFileExports.test.ts:7"
       ],
@@ -155088,86 +155093,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:e05409cd6ff63883e329",
+      "id": "frontend-call:c164a99fe22fb6b3bce2",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1067,
+      "line": 1102,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:5875adab646cce123a28",
+      "id": "frontend-call:48f8af7a33feaa6519db",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1070,
+      "line": 1105,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:ee58f1ddcaa6f40f464c",
+      "id": "frontend-call:68843f7b408902859afd",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1840,
+      "line": 1875,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:da2298aa4f1e2ed80ce6",
+      "id": "frontend-call:fe7046c99de7fc345f9d",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1841,
+      "line": 1876,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:d7a28c3610cc4530e85f",
+      "id": "frontend-call:e9afa44bf68ebbd88ca9",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1846,
+      "line": 1881,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:76821e1b9361a142a9df",
+      "id": "frontend-call:de0ce6f64079eb1892f9",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1847,
+      "line": 1882,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:23bc10f8ff0b6737bfa6",
+      "id": "frontend-call:ece22b509b749ffc7bcf",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1853,
+      "line": 1888,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:ba5fcfefd77a086981fa",
+      "id": "frontend-call:c358ad57391cd46d789e",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1858,
+      "line": 1893,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:9960a14743a9394ef437",
+      "id": "frontend-call:7edd6d9e315435fe84bc",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1915,
+      "line": 1950,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:1fd32898ca0d9e72066f",
+      "id": "frontend-call:e1353a0280a4a40370a6",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1916,
+      "line": 1951,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:592a9538fe999a1b0113",
+      "id": "frontend-call:b87b11a1b9c2d7c86de9",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1923,
+      "line": 1958,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:8639fc3276a80127e0df",
+      "id": "frontend-call:ac99f8669a4eec92dc9d",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1937,
+      "line": 1972,
       "callee": "fetch",
       "reachable": false
     },
@@ -167230,7 +167235,7 @@
     {
       "id": "test-suite:e4b27e6139d4bf048484",
       "sourcePath": "frontend/src/lib/terminal/clientSteps.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },

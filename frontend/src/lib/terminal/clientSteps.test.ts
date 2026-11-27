@@ -41,6 +41,13 @@ test('the finished line counts only real web pages and composes nothing about th
   assert.equal(thoughtDone(200).text, 'Thought for 1s');
 });
 
+test('the finished line counts all sources and keeps only eight link previews', () => {
+  const pages = Array.from({ length: 12 }, (_, index) => ({ url: 'https://example.com/' + index }));
+  const done = thoughtDone(50_000, [...pages, { url: 'javascript:1' }]);
+  assert.equal(done.text, 'Thought for 50s · 12 sources');
+  assert.deepEqual(done.sources?.map(source => source.url), pages.slice(0, 8).map(source => source.url));
+});
+
 test('the mechanical reading of a request is not shown', () => {
   const rows = adaptTerminalEvent('progress', { agent: 'session', status: 'understanding_request', swarmActivity: 'Reads as "a question answered".' }, { fromSeq: 0 });
   assert.equal(rows.length, 0);

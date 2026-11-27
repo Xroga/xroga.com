@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "dba6927f9f9fa2513587a8f0a25588c49e1ad6a0",
+  "source_sha": "db4723d195614fcc475fb9076674e8e14b09a165",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -23575,7 +23575,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SharedAnswerDownloads.tsx",
-      "sha256": "9086fb9734e3af8d85d84587df14a3c66a034771439becc3a39c2d272949f953"
+      "sha256": "dbf596d91ac6995491b28df6b3cb71ec4569bfa01b6984e4a695bde2b02eb784"
     },
     {
       "path": "frontend/src/components/terminal/SocialShareModal.tsx",
@@ -24871,7 +24871,7 @@
     },
     {
       "path": "frontend/src/lib/terminal/clientSteps.ts",
-      "sha256": "13b3b035fe95ec9cb3347abc8629d736e16bee8b700f1017bc319e7409eadd0c"
+      "sha256": "74307f5f55ae12c587bfb54c11c99b9aa3fc17382edad66e6546700954f5a995"
     },
     {
       "path": "frontend/src/lib/terminal/dictation.ts",
@@ -41254,7 +41254,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SharedAnswerDownloads.tsx",
-      "line": 30,
+      "line": 32,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

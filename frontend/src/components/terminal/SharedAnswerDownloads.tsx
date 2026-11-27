@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Download } from 'lucide-react';
+import { useHydrated } from '@/hooks/useHydrated';
 import {
   downloadExportedFile,
   exportAnswerFile,
@@ -17,6 +18,7 @@ type AnswerDownloadProps = {
 
 /** Generate the actual file on demand from the authorized answer shown on this page. */
 export function SharedAnswerDownloads({ response, requestedFormat, verifiedLinks }: AnswerDownloadProps) {
+  const hydrated = useHydrated();
   const [busy, setBusy] = useState<NativeDocumentFormat | null>(null);
   const [error, setError] = useState('');
   const [needsDocx, setNeedsDocx] = useState(false);
@@ -45,7 +47,7 @@ export function SharedAnswerDownloads({ response, requestedFormat, verifiedLinks
             key={format}
             type="button"
             onClick={() => void download(format)}
-            disabled={busy !== null}
+            disabled={!hydrated || busy !== null}
             className="inline-flex min-h-9 items-center gap-2 rounded-lg border border-black/15 px-3 text-xs font-medium transition-colors hover:bg-black/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 disabled:opacity-50 dark:border-white/20 dark:hover:bg-white/10"
           >
             <Download size={14} aria-hidden="true" />
