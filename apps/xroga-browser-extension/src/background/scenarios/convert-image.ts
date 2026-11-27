@@ -52,6 +52,21 @@ defineScenario({
     const ico = await favZip.bytes('favicon.ico');
     const svg = await make({ url: LOGO, format: 'svg', colors: 8 });
     const svgText = new TextDecoder().decode(svg.bytes);
+    const thr = await make({ url: PHOTO, format: 'png', width: 120, threshold: 110 });
+    const thrP = await decode(thr.bytes, 'image/png');
+    let binary = 0;
+    for (let i = 0; i < thrP.data.length; i += 4) if ((thrP.data[i] === 0 || thrP.data[i] === 255) && thrP.data[i] === thrP.data[i + 1]) binary++;
+    const tinted = await make({ url: PHOTO, format: 'png', width: 120, tint: '#c86432' });
+    const tintP = await decode(tinted.bytes, 'image/png');
+    let warm = 0;
+    for (let i = 0; i < tintP.data.length; i += 4) if (tintP.data[i]! >= tintP.data[i + 2]!) warm++;
+    const plainSmall = await decode((await make({ url: PHOTO, format: 'png', width: 120 })).bytes, 'image/png');
+    const gam = await decode((await make({ url: PHOTO, format: 'png', width: 120, gamma: 2 })).bytes, 'image/png');
+    const meanOf = (p: { data: Uint8ClampedArray }) => { let t = 0; for (let i = 0; i < p.data.length; i += 4) t += p.data[i]! + p.data[i + 1]! + p.data[i + 2]!; return t / (p.data.length / 4) / 3; };
+    const med = await make({ url: PHOTO, format: 'png', width: 120, median: 5 });
+    const medP = await decode(med.bytes, 'image/png');
+    const flat = await make({ url: LOGO, format: 'png', unflatten: true });
+    const flatP = await decode(flat.bytes, 'image/png');
     const wm = await make({ url: PHOTO, format: 'png', width: 300, watermark: { url: LOGO, position: 'bottom-right', scale: 0.3, opacity: 1 } });
     const wmPlain = await make({ url: PHOTO, format: 'png', width: 300 });
     const wmP = await decode(wm.bytes, 'image/png');
@@ -70,6 +85,11 @@ defineScenario({
       faviconSet: favZip.has('favicon.ico') && favZip.has('apple-touch-icon.png') && favZip.has('android-chrome-512x512.png') && favZip.entries.length === 13 && !!ico && ico[2] === 1 && ico[4] === 3,
       svgTrace: svg.made.container === 'svg' && svgText.startsWith('<svg') && svgText.includes('<path') && svgText.length < 60000,
       watermark: wmDiff > 3000,
+      threshold: binary === thrP.data.length / 4,
+      tint: warm > (tintP.data.length / 4) * 0.97,
+      gammaBrightens: meanOf(gam) > meanOf(plainSmall) + 15,
+      medianSizes: medP.width === 120,
+      unflatten: alphaAt(flatP, 0, 0) === 0 && flatP.data.some((v, i) => i % 4 === 3 && v === 255),
     };
     return outcome(
       'real pictures are resized, cropped, rounded, graded, converted, packed and traced, and each result measures as asked',

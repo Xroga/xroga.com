@@ -194,3 +194,54 @@ export function cellCenter(name: string, n = 3): { x: number; y: number } | null
   if (col < 0 || col >= n || row < 0 || row >= n) return null;
   return { x: Math.round(((col + 0.5) / n) * 1000) / 1000, y: Math.round(((row + 0.5) / n) * 1000) / 1000 };
 }
+
+export interface CounterSpec {
+  from: number;
+  to: number;
+  /** Digits after the point; by default as many as the numbers have (at most 4). */
+  decimals: number;
+  prefix: string;
+  suffix: string;
+  /** Group thousands with commas (default true). */
+  thousands: boolean;
+  /** 1200 as 1.2K, 3400000 as 3.4M. */
+  compact: boolean;
+  /** Seconds the count takes from the layer's start; by default the whole layer. */
+  seconds?: number;
+  easing: string;
+}
+
+/** Reads a counter layer's settings. */
+export function normalizeCounter(L: Record<string, unknown>): CounterSpec | string {
+  const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : typeof v === 'string' && v.trim() !== '' && Number.isFinite(Number(v.replace(/,/g, ''))) ? Number(v.replace(/,/g, '')) : undefined);
+  const to = num(L.to ?? L.value);
+  if (to === undefined) return 'a counter needs to (the number it counts up to).';
+  const from = num(L.from) ?? 0;
+  const places = (n: number) => (String(n).split('.')[1] ?? '').length;
+  return {
+    from,
+    to,
+    decimals: typeof L.decimals === 'number' ? Math.max(0, Math.min(6, Math.round(L.decimals))) : Math.min(4, Math.max(places(from), places(to))),
+    prefix: typeof L.prefix === 'string' ? L.prefix.slice(0, 12) : '',
+    suffix: typeof L.suffix === 'string' ? L.suffix.slice(0, 12) : '',
+    thousands: L.thousands !== false,
+    compact: L.compact === true,
+    ...(typeof L.countSeconds === 'number' && L.countSeconds > 0 ? { seconds: Math.min(600, L.countSeconds) } : {}),
+    easing: typeof L.easing === 'string' ? L.easing : 'ease-out',
+  };
+}
+
+/** The text of a counter at a share of its count (0 to 1, already eased). */
+export function formatCounter(c: CounterSpec, p: number): string {
+  const v = c.from + (c.to - c.from) * Math.min(1, Math.max(0, p));
+  let body: string;
+  if (c.compact && Math.abs(v) >= 1000) {
+    const units: Array<[number, string]> = [[1e12, 'T'], [1e9, 'B'], [1e6, 'M'], [1e3, 'K']];
+    const [size, tag] = units.find(([s]) => Math.abs(v) >= s)!;
+    body = `${(Math.round((v / size) * 10 ** Math.max(1, Math.min(c.decimals, 2))) / 10 ** Math.max(1, Math.min(c.decimals, 2))).toString()}${tag}`;
+  } else {
+    const fixed = v.toFixed(c.decimals);
+    body = c.thousands ? fixed.replace(/\B(?=(\d{3})+(?!\d))(?<!\.\d*)/g, ',') : fixed;
+  }
+  return `${c.prefix}${body}${c.suffix}`;
+}

@@ -148,3 +148,19 @@ describe('tracing', () => {
     expect(traceImage(flat, 16, 16).layers).toHaveLength(0);
   });
 });
+
+describe('curves in the trace', () => {
+  it('keeps corners as lines and smooths a gentle turn', async () => {
+    const { loopPath } = await import('../vector-trace');
+    expect(loopPath([[0, 0], [10, 0], [10, 10], [0, 10]])).not.toContain('Q');
+    const circle = Array.from({ length: 24 }, (_, i) => [50 + 40 * Math.cos((i / 24) * 2 * Math.PI), 50 + 40 * Math.sin((i / 24) * 2 * Math.PI)] as [number, number]);
+    const d = loopPath(circle);
+    expect((d.match(/Q/g) ?? []).length).toBe(24);
+    expect(d.startsWith('M')).toBe(true);
+    expect(d.endsWith('Z')).toBe(true);
+    expect(loopPath(circle, false)).not.toContain('Q');
+    const mixed = loopPath([[0, 0], [20, 0], [30, 2], [40, 8], [40, 40], [0, 40]]);
+    expect(mixed).toContain('Q');
+    expect(mixed).toContain('L');
+  });
+});

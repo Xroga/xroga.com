@@ -126,10 +126,51 @@ function chooseStraight(loop: Array<[number, number]>, next: number[]): number {
   return next[next.length - 1]!;
 }
 
+/**
+ * The path data of one outline. With curves, a vertex that turns gently is smoothed (the line comes in at the middle of the edge before it and leaves at the middle of the edge after it, with
+ * the vertex as the control point of a quadratic curve) and a vertex that turns sharply (more than `cornerDegrees`) stays a corner: logos keep their corners, curves lose their facets.
+ * This is the corner idea of vtracer's spline mode (corner threshold), written fresh.
+ */
+export function loopPath(loop: ReadonlyArray<readonly [number, number]>, curves = true, cornerDegrees = 60): string {
+  const n = loop.length;
+  const r = (v: number) => Math.round(v * 100) / 100;
+  if (!curves || n < 4) return 'M' + loop.map(p => `${p[0]} ${p[1]}`).join('L') + 'Z';
+  const mid = (a: readonly [number, number], b: readonly [number, number]): [number, number] => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+  const smooth = loop.map((v, i) => {
+    const a = loop[(i + n - 1) % n]!;
+    const b = loop[(i + 1) % n]!;
+    const ux = v[0] - a[0];
+    const uy = v[1] - a[1];
+    const wx = b[0] - v[0];
+    const wy = b[1] - v[1];
+    const lu = Math.hypot(ux, uy);
+    const lw = Math.hypot(wx, wy);
+    if (!lu || !lw) return false;
+    const turn = (Math.acos(Math.max(-1, Math.min(1, (ux * wx + uy * wy) / (lu * lw)))) * 180) / Math.PI;
+    return turn <= cornerDegrees;
+  });
+  const enter = (i: number) => (smooth[i] ? mid(loop[(i + n - 1) % n]!, loop[i]!) : ([loop[i]![0], loop[i]![1]] as [number, number]));
+  const leave = (i: number) => (smooth[i] ? mid(loop[i]!, loop[(i + 1) % n]!) : ([loop[i]![0], loop[i]![1]] as [number, number]));
+  const start = leave(0);
+  let d = `M${r(start[0])} ${r(start[1])}`;
+  for (let i = 1; i < n; i++) {
+    const e = enter(i);
+    d += `L${r(e[0])} ${r(e[1])}`;
+    if (smooth[i]) {
+      const x = leave(i);
+      d += `Q${r(loop[i]![0])} ${r(loop[i]![1])} ${r(x[0])} ${r(x[1])}`;
+    }
+  }
+  const e0 = enter(0);
+  d += `L${r(e0[0])} ${r(e0[1])}`;
+  if (smooth[0]) d += `Q${r(loop[0]![0])} ${r(loop[0]![1])} ${r(start[0])} ${r(start[1])}`;
+  return d + 'Z';
+}
+
 const hex = (c: readonly number[]) => '#' + c.map(v => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0')).join('');
 
 /** Traces RGBA pixels (width × height) into layers and an SVG. `colors` is the palette size, `epsilon` how far a simplified outline may stray (pixels), `minArea` drops specks. */
-export function traceImage(rgba: Uint8ClampedArray | Uint8Array, width: number, height: number, options: { colors?: number; epsilon?: number; minArea?: number } = {}): Traced {
+export function traceImage(rgba: Uint8ClampedArray | Uint8Array, width: number, height: number, options: { colors?: number; epsilon?: number; minArea?: number; curves?: boolean; cornerDegrees?: number } = {}): Traced {
   const colors = Math.max(2, Math.min(32, options.colors ?? 16));
   const epsilon = options.epsilon ?? 1;
   const minArea = options.minArea ?? Math.max(4, Math.round(width * height * 0.00005));
@@ -190,7 +231,7 @@ export function traceImage(rgba: Uint8ClampedArray | Uint8Array, width: number, 
   // big areas first so small shapes lie over them
   layers.sort((a, b) => b.area - a.area);
   const background = bgIndex >= 0 ? palette[bgIndex]! : null;
-  const path = (l: TraceLayer) => l.loops.map(loop => 'M' + loop.map(p => `${p[0]} ${p[1]}`).join('L') + 'Z').join('');
+  const path = (l: TraceLayer) => l.loops.map(loop => loopPath(loop, options.curves !== false, options.cornerDegrees ?? 60)).join('');
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">${background ? `<rect width="${width}" height="${height}" fill="${hex(background)}"/>` : ''}${layers.map(l => `<path d="${path(l)}" fill="${hex(l.color)}" fill-rule="evenodd"/>`).join('')}</svg>`;
   return { width, height, background, layers, svg };
 }

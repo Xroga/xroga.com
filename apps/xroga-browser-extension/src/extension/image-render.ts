@@ -1,6 +1,7 @@
 // Changing a picture in the offscreen document with the canvas the browser has: the request is src/agent/image-spec.ts. The picture is fetched (no cookies), decoded, worked on in the order the
 // tool describes, and encoded as PNG, JPEG or WebP (or traced into SVG, or packed as an .ico, or several sizes into a ZIP). Nothing is sent anywhere.
 import { applyGrade, balanceGrade, measureLook, type Grade } from '@src/agent/grade';
+import * as ops from '@src/agent/image-ops';
 import { FAVICON_SIZES, icoFromPngs, planResize, trimBounds, type ImageRequest } from '@src/agent/image-spec';
 import { traceImage } from '@src/agent/vector-trace';
 import { buildZip, deflateRaw } from '@src/agent/zip-write';
@@ -189,6 +190,20 @@ async function work(source: ImageBitmap, request: ImageRequest, width: number | 
     cur = next;
   }
   if (request.grade) gradeSurface(cur, request.grade);
+  if (request.median || request.gamma || request.normalise || request.threshold !== undefined || request.tint || request.negate || request.unflatten || request.channel) {
+    const data = cur.ctx.getImageData(0, 0, cur.canvas.width, cur.canvas.height);
+    const w = cur.canvas.width;
+    const h = cur.canvas.height;
+    if (request.unflatten) ops.unflatten(data.data, request.unflatten);
+    if (request.median) ops.median(data.data, w, h, request.median);
+    if (request.normalise) ops.normalise(data.data, request.normalise.lower, request.normalise.upper);
+    if (request.gamma) ops.gamma(data.data, request.gamma);
+    if (request.negate) ops.negate(data.data);
+    if (request.tint) ops.tint(data.data, request.tint);
+    if (request.threshold !== undefined) ops.threshold(data.data, request.threshold);
+    if (request.channel) ops.extractChannel(data.data, request.channel);
+    cur.ctx.putImageData(data, 0, 0);
+  }
   if (request.blur > 0 || request.sharpen > 0) {
     if (request.blur > 0) {
       const next = surface(cur.canvas.width, cur.canvas.height);
@@ -225,7 +240,9 @@ async function work(source: ImageBitmap, request: ImageRequest, width: number | 
     const x = pos.includes('left') ? margin : pos.includes('right') ? cur.canvas.width - w - margin : (cur.canvas.width - w) / 2;
     const y = pos.includes('top') ? margin : pos.includes('bottom') ? cur.canvas.height - h - margin : (cur.canvas.height - h) / 2;
     cur.ctx.globalAlpha = request.watermark.opacity;
+    cur.ctx.globalCompositeOperation = request.watermark.blend as GlobalCompositeOperation;
     cur.ctx.drawImage(mark, x, y, w, h);
+    cur.ctx.globalCompositeOperation = 'source-over';
     cur.ctx.globalAlpha = 1;
     mark.close();
   }

@@ -13,6 +13,7 @@ import { normalizeFx, type AudioFx } from './audio-fx';
 import { describeGrade, normalizeGrade, type Grade } from './grade';
 import { CAPTION_STYLES } from './subtitle-format';
 import { isEasing, resolveEasing } from './easing';
+import { formatCounter, normalizeCounter, type CounterSpec } from './compose-extras';
 import { normalizePlot, type PlotSpec } from './plot';
 import { zoomKeyframes, zoomRangeKeyframes } from './compose-motion';
 import { cellCenter } from './compose-extras';
@@ -129,7 +130,7 @@ export type Layer =
   | ({ type: 'gradient'; kind: 'linear' | 'radial'; colors: [string, string] } & Timed)
   | ({ type: 'shader'; fragment: string; speed: number } & Timed)
   | ({ type: 'shape'; shape: 'rect' | 'ellipse' | 'line'; color: string; stroke: number; rect: Rect } & Timed)
-  | ({ type: 'text'; style: 'title' | 'subtitle' | 'title-background' | 'news-title' | 'slide-in-text'; font: FontName; text: string; color: string; background: string; backgroundShape?: Background; position: Position; fontSize: number; charSpacing: number; delay: number; speed: number; zoom: ZoomDirection; zoomAmount: number; look?: TextLook } & Timed)
+  | ({ type: 'text'; style: 'title' | 'subtitle' | 'title-background' | 'news-title' | 'slide-in-text'; font: FontName; text: string; color: string; background: string; backgroundShape?: Background; position: Position; fontSize: number; charSpacing: number; delay: number; speed: number; zoom: ZoomDirection; zoomAmount: number; look?: TextLook; counter?: CounterSpec } & Timed)
   | ({ type: 'image'; url: string; resizeMode: ResizeMode; zoom: ZoomDirection; zoomAmount: number; rect: Rect; frame?: PictureFrame; grade?: Grade } & Timed)
   | ({ type: 'image-overlay'; url: string; position: Position; width: number; height: number; zoom: ZoomDirection; zoomAmount: number; grade?: Grade } & Timed)
   | ({ type: 'captions'; words?: Array<{ text: string; start: number; end: number }>; source?: { url: string; from: number; to?: number }; subtitles?: string; subtitleOffset?: number; font: FontName; fontSize: number; color: string; highlightColor?: string; background: string; position: 'top' | 'middle' | 'bottom'; margin: number; maxWidth: number; maxChars: number; wordsSpread?: boolean } & Timed)
@@ -390,11 +391,14 @@ export function normalizeSpec(raw: unknown): Normalized {
         const cs = CAPTION_STYLES[str(L.style)] ?? {};
         const subs = httpsOnly(L.subtitles ?? L.srt ?? L.vtt);
         layers.push({ type: 'captions', ...(words?.length ? { words } : {}), ...(subs ? { subtitles: subs, ...(typeof L.subtitleOffset === 'number' && Number.isFinite(L.subtitleOffset) ? { subtitleOffset: Math.min(3600, Math.max(-3600, L.subtitleOffset)) } : {}) } : {}), ...(url ? { source: { url, from: num(src?.from, 0, 0, 36000), ...(typeof src?.to === 'number' && Number.isFinite(src.to) ? { to: Math.max(0, src.to) } : {}) } } : {}), font: (str(L.font ?? L.fontFamily ?? cs.font) in FONTS ? str(L.font ?? L.fontFamily ?? cs.font) : 'sans') as FontName, fontSize: num(L.fontSize, cs.fontSize ?? 0.06, 0.02, 0.2), color: colorOf(L.textColor ?? L.color, cs.color ?? '#ffffff'), ...(typeof (L.highlightColor ?? cs.highlightColor) === 'string' && COLOR.test(String(L.highlightColor ?? cs.highlightColor).trim()) ? { highlightColor: String(L.highlightColor ?? cs.highlightColor).trim() } : {}), background: colorOf(L.backgroundColor, cs.background ?? 'rgba(0,0,0,0.7)'), position: (['top', 'middle', 'bottom'].includes(str(L.position ?? cs.position)) ? str(L.position ?? cs.position) : 'bottom') as 'bottom', margin: num(L.margin, 0.08, 0, 0.5), maxWidth: num(L.maxWidth, 0.85, 0.2, 1), maxChars: Math.round(num(L.maxChars, 42, 10, 120)), ...timing });
-      } else if (['title', 'subtitle', 'title-background', 'news-title', 'slide-in-text'].includes(type)) {
-        const text = str(L.text).trim();
+      } else if (['title', 'subtitle', 'title-background', 'news-title', 'slide-in-text', 'counter'].includes(type)) {
+        // a counter is a title whose text is a number that counts up (or down) over the layer
+        const counterSpec = type === 'counter' ? normalizeCounter(L) : undefined;
+        if (typeof counterSpec === 'string') errors.push(`${at} (counter) ${counterSpec}`);
+        const text = counterSpec && typeof counterSpec !== 'string' ? formatCounter(counterSpec, 0) : str(L.text).trim();
         if (!text) errors.push(`${at} (${type}) needs text.`);
         if (text.length > LIMITS.maxText) errors.push(`${at}: text is longer than ${LIMITS.maxText} characters.`);
-        const style = type as Extract<Layer, { type: 'text' }>['style'];
+        const style = (type === 'counter' ? 'title' : type) as Extract<Layer, { type: 'text' }>['style'];
         const bg = (L.background && typeof L.background === 'object' ? L.background : undefined) as { type?: unknown; colors?: unknown; color?: unknown } | undefined;
         let backgroundShape: Background | undefined;
         if (bg) {
@@ -417,6 +421,7 @@ export function normalizeSpec(raw: unknown): Normalized {
           zoom: style === 'title' || style === 'title-background' ? zoomOf(L.zoomDirection, 'in') : 'none',
           zoomAmount: num(L.zoomAmount, 0.2, 0, 1),
           ...(lookOf(L) ? { look: lookOf(L)! } : {}),
+          ...(counterSpec && typeof counterSpec !== 'string' ? { counter: counterSpec } : {}),
           ...timing,
         });
       } else if (type === 'image' || type === 'image-overlay') {
@@ -472,7 +477,7 @@ export function normalizeSpec(raw: unknown): Normalized {
         const url = httpsOnly(L.url ?? L.path);
         if (!url) errors.push(`${at} (${type}) needs an https address in url.`);
         layers.push({ type, url: url ?? '', cutFrom: num(L.cutFrom, 0, 0, 36000), ...(typeof L.cutTo === 'number' && Number.isFinite(L.cutTo) ? { cutTo: Math.max(0, L.cutTo) } : {}), volume: num(L.mixVolume ?? L.volume, 1, 0, 4), ...(normalizeFx(L.fx) ? { fx: normalizeFx(L.fx)! } : {}), ...timing });
-      } else errors.push(`${at} has the type "${type}": use plot, adjustment, fill-color, pause, linear-gradient, radial-gradient, rainbow-colors, shader, shape, title, subtitle, title-background, news-title, slide-in-text, image, image-overlay, video, audio or detached-audio.`);
+      } else errors.push(`${at} has the type "${type}": use counter, plot, adjustment, fill-color, pause, linear-gradient, radial-gradient, rainbow-colors, shader, shape, title, subtitle, title-background, news-title, slide-in-text, image, image-overlay, video, audio or detached-audio.`);
     });
     const hasVideo = layers.some(l => l.type === 'video');
     const fixed = typeof clip.duration === 'number' && Number.isFinite(clip.duration);

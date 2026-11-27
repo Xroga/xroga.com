@@ -210,3 +210,51 @@ describe('named speed curves', () => {
     expect(b!.speedRanges).toHaveLength(1);
   });
 });
+
+describe('a counter', () => {
+  it('counts with grouping, decimals, a prefix and a suffix, and in short form', async () => {
+    const { formatCounter, normalizeCounter } = await import('../compose-extras');
+    const c = normalizeCounter({ to: 1250000, prefix: '$', suffix: '+' });
+    expect(typeof c).toBe('object');
+    if (typeof c === 'string') return;
+    expect(formatCounter(c, 0)).toBe('$0+');
+    expect(formatCounter(c, 0.5)).toBe('$625,000+');
+    expect(formatCounter(c, 1)).toBe('$1,250,000+');
+    const d = normalizeCounter({ from: 0, to: 99.5 }) as never;
+    expect(formatCounter(d, 1)).toBe('99.5');
+    const k = normalizeCounter({ to: 3400000, compact: true }) as never;
+    expect(formatCounter(k, 1)).toBe('3.4M');
+    expect(formatCounter(k, 0.0002)).toBe('680');
+    expect(formatCounter(normalizeCounter({ from: 100, to: 0, thousands: false }) as never, 0.25)).toBe('75');
+    expect(normalizeCounter({ from: 1 })).toContain('needs to');
+    expect(normalizeCounter({ to: '1,200' })).toMatchObject({ to: 1200 });
+  });
+  it('is a title in a spec whose first text is the start of the count', async () => {
+    const { normalizeSpec } = await import('../compose-spec');
+    const r = normalizeSpec({ clips: [{ duration: 4, layers: [{ type: 'fill-color' }, { type: 'counter', to: 5000, suffix: ' users', fontSize: 0.2, animationIn: 'pulse' }] }] });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const l = r.spec.clips[0]!.layers[1] as { type: string; text: string; counter?: { to: number }; style: string };
+    expect(l).toMatchObject({ type: 'text', style: 'title', text: '0 users' });
+    expect(l.counter?.to).toBe(5000);
+    expect(normalizeSpec({ clips: [{ duration: 4, layers: [{ type: 'counter' }] }] }).ok).toBe(false);
+  });
+});
+
+describe('the new entrance effects', () => {
+  it('start and end at rest, and pulse never fades', async () => {
+    const { presetPose, PRESETS } = await import('../compose-motion');
+    for (const p of ['pulse', 'wiggle', 'flash', 'spin', 'drop'] as const) {
+      expect(PRESETS).toContain(p);
+      const end = presetPose(p, 1, 'in');
+      expect(end.scale).toBeCloseTo(1, 6);
+      expect(Math.abs(end.rotation % 360)).toBeLessThan(1e-6);
+      expect(end.opacity).toBeCloseTo(1, 6);
+      expect(Math.abs(end.dy)).toBeLessThan(1e-6);
+    }
+    expect(presetPose('pulse', 0.5, 'in').scale).toBeGreaterThan(1.2);
+    expect(presetPose('pulse', 0.5, 'in').opacity).toBe(1);
+    expect(presetPose('flash', 0.25, 'in').opacity).toBeLessThan(0.7);
+    expect(presetPose('spin', 0.5, 'in').rotation).not.toBe(0);
+  });
+});

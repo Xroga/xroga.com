@@ -5,7 +5,7 @@ import { FONTS, ease, layerActive, layerAlpha, layoutAt, transitionAt, type Back
 import { hasRule, transitionColor, type Rgba } from '@src/agent/transitions';
 import { motionAt } from '@src/agent/compose-motion';
 import { buildPlayback, type Playback } from '@src/agent/compose-playback';
-import { activeWordAt, layoutWords } from '@src/agent/compose-extras';
+import { activeWordAt, formatCounter, layoutWords } from '@src/agent/compose-extras';
 import { wordsToCues } from '@src/agent/transcript-tools';
 
 export type Picture = CanvasImageSource & { width: number; height: number };
@@ -416,9 +416,17 @@ async function drawLayer(ctx: Ctx, layer: Layer, at: number, clipDuration: numbe
       }
       return;
     }
-    case 'text':
+    case 'text': {
+      if (layer.counter) {
+        // the number counts over countSeconds (or the whole layer), on the layer's own easing
+        const span = layer.counter.seconds ?? Math.max(0.1, (layer.stop ?? clipDuration) - layer.start);
+        const t = ease(layer.counter.easing, Math.min(1, Math.max(0, (at - layer.start) / span)));
+        drawText(ctx, { ...layer, text: formatCounter(layer.counter, t) }, progress, W, H);
+        return;
+      }
       drawText(ctx, layer, progress, W, H);
       return;
+    }
     case 'image': {
       const raw = assets.images.get(layer.url);
       if (!raw) return;

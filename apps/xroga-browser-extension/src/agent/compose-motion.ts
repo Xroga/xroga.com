@@ -16,7 +16,7 @@ export interface Keyframe {
 }
 export type Keyframes = Partial<Record<MotionProp, Keyframe[]>>;
 
-export const PRESETS = ['fade', 'slide-left', 'slide-right', 'slide-up', 'slide-down', 'zoom', 'pop'] as const;
+export const PRESETS = ['fade', 'slide-left', 'slide-right', 'slide-up', 'slide-down', 'zoom', 'pop', 'pulse', 'wiggle', 'flash', 'spin', 'drop'] as const;
 export type Preset = (typeof PRESETS)[number];
 export interface PresetUse {
   preset: Preset;
@@ -91,6 +91,12 @@ export function presetPose(preset: Preset, p: number, edge: 'in' | 'out'): Motio
     pose.dy = sign * dir[1] * (1 - e) * SLIDE_DISTANCE;
   } else if (preset === 'zoom') pose.scale = ZOOM_FROM + (1 - ZOOM_FROM) * e;
   else if (preset === 'pop') pose.scale = POP_FROM + (1 - POP_FROM) * backOut(v);
+  // the indication effects of manim (Indicate, Wiggle, Flash) and a turn and a drop: the layer is there from the start, and each ends at rest
+  else if (preset === 'pulse') Object.assign(pose, { opacity: 1, scale: 1 + 0.25 * Math.sin(Math.PI * v) });
+  else if (preset === 'wiggle') Object.assign(pose, { opacity: 1, rotation: 10 * Math.sin(v * Math.PI * 6) * (1 - v) });
+  else if (preset === 'flash') Object.assign(pose, { opacity: 0.55 + 0.45 * Math.cos(v * Math.PI * 4) });
+  else if (preset === 'spin') Object.assign(pose, { rotation: (edge === 'in' ? -360 : 360) * (1 - e) });
+  else if (preset === 'drop') Object.assign(pose, { opacity: Math.min(1, v * 4), dy: -(edge === 'in' ? 1 : -1) * 0.5 * (1 - (v < 1 ? backOut(v) : 1)) });
   return pose;
 }
 

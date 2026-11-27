@@ -1,6 +1,7 @@
 // Article extraction (Mozilla Readability, Apache-2.0, run inside the page) and structured data of a page
 // (JSON-LD, Open Graph, microdata, contacts, social profiles, feeds). The page scripts only collect; the
 // formatting is plain code that unit tests cover.
+import { CONTACT_DECODE_JS } from './contact-decode';
 import { READABILITY_SOURCE, READERABLE_SOURCE } from './vendor/readability-source';
 
 export interface RawArticle {
@@ -149,10 +150,13 @@ function scope(el,depth){
 }
 Array.prototype.forEach.call(document.querySelectorAll('[itemscope]:not([itemprop])'),function(el){ if(o.microdata.length<30) o.microdata.push(scope(el,0)); });
 var em={},ph={};
+${CONTACT_DECODE_JS}
+Array.prototype.forEach.call(document.querySelectorAll('[data-cfemail]'),function(el){ var d=decodeCf(el.getAttribute('data-cfemail')||''); if(d) em[d.toLowerCase()]=1; });
+Array.prototype.forEach.call(document.querySelectorAll('a[href*="/cdn-cgi/l/email-protection#"]'),function(a){ var d=decodeCf((a.getAttribute('href')||'').split('#')[1]||''); if(d) em[d.toLowerCase()]=1; });
 Array.prototype.forEach.call(document.querySelectorAll('a[href^="mailto:"]'),function(a){ var v=decodeURIComponent(a.getAttribute('href').slice(7).split('?')[0]).trim(); if(v) em[v.toLowerCase()]=1; });
 Array.prototype.forEach.call(document.querySelectorAll('a[href^="tel:"]'),function(a){ var v=decodeURIComponent(a.getAttribute('href').slice(4)).trim(); if(v) ph[v]=1; });
 var body=(document.body&&document.body.innerText||'').slice(0,300000);
-(body.match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/g)||[]).forEach(function(e){ if(!/\\.(png|jpe?g|gif|svg|webp)$/i.test(e)) em[e.toLowerCase()]=1; });
+(deob(body).match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/g)||[]).forEach(function(e){ if(!junkEmail(e)) em[e.toLowerCase()]=1; });
 (body.match(/(?:\\+|\\b)\\d[\\d\\s().\\-]{7,18}\\d/g)||[]).forEach(function(p){ var d=p.replace(/\\D/g,''); if(d.length>=8&&d.length<=15&&!/^(19|20)\\d{2}[\\s.\\-]/.test(p.trim())) ph[p.trim()]=1; });
 o.emails=Object.keys(em).slice(0,40); o.phones=Object.keys(ph).slice(0,40);
 var nets={'twitter.com':'x','x.com':'x','facebook.com':'facebook','instagram.com':'instagram','linkedin.com':'linkedin','youtube.com':'youtube','tiktok.com':'tiktok','github.com':'github','pinterest.com':'pinterest','t.me':'telegram','wa.me':'whatsapp','threads.net':'threads','discord.gg':'discord','reddit.com':'reddit','medium.com':'medium','gitlab.com':'gitlab'};
