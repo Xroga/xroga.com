@@ -11,14 +11,15 @@ nodeRequire.extensions['.css'] = (module) => {
 };
 const { ResponseSources } = nodeRequire('../../components/terminal/ResponseSources.tsx') as typeof import('../../components/terminal/ResponseSources');
 
-test('source strip shows at most four verified links and offers a full drawer', () => {
+test('source strip shows each distinct destination with a meaningful fallback and no drawer', () => {
   const sources = Array.from({ length: 6 }, (_, index) => ({ title: `Evidence ${index + 1}`, url: `https://example.com/${index + 1}`, snippet: `Context ${index + 1}` }));
-  const html = renderToStaticMarkup(createElement(ResponseSources, { sources }));
-  assert.match(html, /View all/);
-  assert.match(html, /Evidence 4/);
-  assert.doesNotMatch(html, /Evidence 5/);
-  assert.equal((html.match(/aria-label="Visit source:/g) ?? []).length, 4);
-  assert.doesNotMatch(html, /sourceNumber|>1<|>2</);
+  const html = renderToStaticMarkup(createElement(ResponseSources, {
+    sources: [...sources, sources[0], { title: 'Source 7', url: 'https://example.com/reference', snippet: '' }],
+  }));
+  assert.match(html, /Evidence 6/);
+  assert.match(html, /Open source: example\.com\/reference/);
+  assert.equal((html.match(/aria-label="Open source:/g) ?? []).length, 7);
+  assert.doesNotMatch(html, /View all|Source 7/);
 });
 
 test('unsafe source URLs never become clickable tiles', () => {

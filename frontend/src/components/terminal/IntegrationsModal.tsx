@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type RefObjec
 import { ArrowLeft, ArrowRight, Check, ChevronDown, Loader2, Search, X } from 'lucide-react';
 import { AnchoredPortalPopover } from '@/components/ui/AnchoredPortalPopover';
 import { PluginBrandLogo } from '@/components/integrations/PluginBrandLogo';
+import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
 import { api } from '@/lib/api';
 import { canonicalPluginId } from '@/lib/pluginCatalog';
 import { xrogaConnect, type XrogaConnectCatalogToolkit, type XrogaConnectToolkit } from '@/lib/xrogaConnect';
@@ -175,7 +176,7 @@ export function IntegrationsModal({ open, onClose, anchorRef, onSelect }: {
 
   if (!open) return null;
   return <AnchoredPortalPopover open={open} onClose={onClose} anchorRef={anchorRef}
-    placement="top-start" width={350} className={styles.menu} ariaLabel="Connect Apps">
+    placement="bottom-start" belowChatbar width={294} className={styles.menu} ariaLabel="Connect Apps">
     <section className={styles.panel} role="dialog" aria-label="Connect Apps" onKeyDown={handleKeyDown}>
       <header className={styles.header}>
         <span>{view === 'connected' ? <button type="button" className={styles.iconButton} onClick={() => setView('explore')} aria-label="Back to app directory"><ArrowLeft size={16}/></button> : null}<strong>{view === 'connected' ? 'Connected Apps' : 'Connect Apps'}</strong></span>
@@ -192,7 +193,9 @@ export function IntegrationsModal({ open, onClose, anchorRef, onSelect }: {
       <div className={styles.items} ref={listRef} aria-label={view === 'connected' ? 'Your connected apps' : 'Available apps'}>
         {showResults.map(app => {
           const content = <>
-            <PluginBrandLogo id={keyFor(app.slug)} name={app.name} toolkit={app.slug} logo={app.logo} size="micro"/>
+            {app.source === 'native'
+              ? <span className="flex h-6 w-6 shrink-0 items-center justify-center"><IntegrationLogo id={app.slug} name={app.name} size={17} /></span>
+              : <PluginBrandLogo id={keyFor(app.slug)} name={app.name} toolkit={app.slug} logo={app.logo} size="micro" />}
             <span className={styles.appText}><strong>{app.name}</strong><small>{app.connected ? 'Connected' : app.noAuth ? 'No connection required' : app.description || 'Connect to use Xroga tools'}</small></span>
             {app.connected ? <Check size={14} className={styles.checked} aria-hidden="true"/> : <ArrowRight size={14} aria-hidden="true"/>}
           </>;

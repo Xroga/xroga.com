@@ -1,22 +1,22 @@
 # Xroga repository truth map
 
-Source SHA: `675d54b78a4a4041be713a87f995dba338b4b369`. Branch observed: `ops-integrated`. Audit started: 2026-11-26T10:54:19.485Z.
+Source SHA: `7eac1d713544758b0cf4eede5df60ca953670128`. Branch observed: `codex/workspace-recovery-20261125`. Audit started: 2026-11-25T22:08:05.458Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 
 ## Counts
 
-- surfaces: 1897
-- routeRegistrations: 434
-- routes: 365
-- reachableRoutes: 251
+- surfaces: 2006
+- routeRegistrations: 441
+- routes: 371
+- reachableRoutes: 257
 - queues: 4
-- migrations: 165
+- migrations: 167
 - workflows: 21
-- testSuites: 1361
-- declaredTests: 9415
-- classifiedMarkers: 415
-- reachableMarkers: 348
+- testSuites: 1395
+- declaredTests: 9908
+- classifiedMarkers: 440
+- reachableMarkers: 373
 - absentRequiredPaths: 5
 - duplicateIds: 0
 
@@ -74,7 +74,7 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 ## Review candidates
 
 - **execution_control_planes**: backend/src/ai/softwareAgent/SoftwareAgentRuntime.ts, backend/src/ai/taskGraphRunner.ts, backend/src/lib/adaptiveOrchestrator.ts, backend/src/operations/operationsEngine.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
-- **approval_contracts**: backend/src/capabilities/modules/businessAction.ts, backend/src/operations/operationsEngine.ts, backend/src/operations/permissions.ts, backend/src/services/integrations/businessAction.ts, backend/src/services/integrations/businessActionConfirmations.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
+- **approval_contracts**: backend/src/capabilities/modules/businessAction.ts, backend/src/operations/operationsEngine.ts, backend/src/operations/permissions.ts, backend/src/services/integrations/businessAction.ts, backend/src/services/integrations/businessActionConfirmations.ts, backend/src/services/integrations/businessActionResultUi.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
 - **cost_accounting**: backend/src/ai/providerBudget.ts, backend/src/ai/quota.ts, backend/src/ai/universal/costLedger.ts, backend/src/services/BillingService.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
 - **credential_persistence**: backend/src/services/integrations/githubTokenStore.ts, backend/src/services/integrations/oauthPkceStore.ts, backend/src/services/publish/chromeWebStore.ts, backend/src/services/publish/easCredentials.ts, backend/src/services/publish/electronSecrets.ts, frontend/src/components/integrations/CustomCredentialsSection.tsx. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
 - **browser_execution**: backend/src/lib/browserbase.ts, backend/src/middleware/runtimePreviewGateway.ts, backend/src/sandbox/flyMachineSandbox.ts, backend/src/sandbox/remoteSandbox.ts, backend/src/synthesis/browserVerificationAdapter.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.

@@ -83,6 +83,10 @@ interface ComposioWorkbenchConfig {
 
 interface ComposioSessionConfig {
   user_id?: string;
+  multi_account?: {
+    enable?: boolean;
+    require_explicit_selection?: boolean;
+  };
   tags?: string[] | ComposioTagsConfig;
   search?: {
     enable?: boolean;
@@ -192,6 +196,16 @@ interface ComposioSessionToolkitResponse {
   total_pages?: number;
   current_page?: number;
   total_items?: number;
+}
+
+interface ComposioConnectedAccountsResponse {
+  items?: Array<{
+    id?: string;
+    user_id?: string;
+    toolkit?: { slug?: string };
+    status?: string;
+  }>;
+  next_cursor?: string | null;
 }
 
 interface ComposioCatalogCategory {
@@ -369,6 +383,7 @@ export interface XrogaConnectSearchResult {
   mode: XrogaConnectMode;
   tools: XrogaConnectTool[];
   toolkits: XrogaConnectToolkit[];
+  explicitlyRequestedToolkit?: string;
   guidance?: string;
   skill?: XrogaConnectSkill;
 }
@@ -1762,6 +1777,14 @@ async function createComposioSession(
     execute: {
       enable_multi_execute: false,
     },
+    // A user may authorize more than one account for a toolkit. Confirmation
+    // binds the exact account, and execute passes that ID explicitly; without
+    // multi-account mode Composio rejects the account field and we must fail
+    // closed whenever a second account exists.
+    multi_account: {
+      enable: true,
+      require_explicit_selection: true,
+    },
     manage_connections: {
       enable: true,
       enable_wait_for_connections: false,
@@ -1911,6 +1934,25 @@ function mapSearchTool(
   };
 }
 
+/** Keep explicit app names local; discovery receives only the app's public slug. */
+export function explicitlyNamedConnectedToolkit(
+  query: string,
+  toolkits: Pick<XrogaConnectToolkit, 'toolkit' | 'name'>[],
+): string | undefined {
+  const normalizedQuery = ` ${query.toLowerCase().replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ').trim()} `;
+  const compactQuery = normalizedQuery.replace(/[^a-z0-9]/g, '');
+  const matches = toolkits.filter((item) => {
+    const names = [item.name, item.toolkit]
+      .filter((name): name is string => typeof name === 'string' && name.trim().length >= 3)
+      .map((name) => name.toLowerCase().replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ').trim());
+    return names.some((name) =>
+      normalizedQuery.includes(` ${name} `) ||
+      (name.replace(/ /g, '').length >= 6 && compactQuery.includes(name.replace(/ /g, ''))),
+    );
+  });
+  return matches.length === 1 ? matches[0]!.toolkit.toLowerCase() : undefined;
+}
+
 export async function searchComposioTools(
   userId: string,
   input: {
@@ -1944,9 +1986,10 @@ export async function searchComposioTools(
   // Names, recipients, private project text and query values stay local for the
   // existing selector. Metadata never supplies execution authority.
   const connected=await listSessionComposioToolkits(userId,{sessionId:session.session_id,mode,connectedOnly:true},actor);
-  const apps=connected.filter(item=>item.connected&&!item.toolkit.toLowerCase().startsWith('custom_')&&/^[a-z0-9_-]{1,80}$/i.test(item.toolkit)).map(item=>item.toolkit.toLowerCase()).slice(0,20);
+  const explicitlyRequestedToolkit=explicitlyNamedConnectedToolkit(query,connected);
+  const apps=connected.filter(item=>item.connected&&!item.toolkit.toLowerCase().startsWith('custom_')&&/^[a-z0-9_-]{1,80}$/i.test(item.toolkit)).map(item=>item.toolkit.toLowerCase()).filter(slug=>!explicitlyRequestedToolkit||slug===explicitlyRequestedToolkit).slice(0,20);
   const vocabulary=['get','list','find','search','read','send','create','update','delete','archive','upload','download','publish','message','email','task','issue','file','event','contact','row','record','invoice','calendar','channel','document','spreadsheet',
-    'add','append','insert','write','retrieve','fetch','query','page','database','block','heading','table','sheet','draft','comment','folder','label','note','value','cell','column','append'];
+    'add','append','insert','write','retrieve','fetch','query','page','database','block','heading','table','sheet','draft','comment','folder','label','note','value','cell','column'];
   const words=new Set(query.toLowerCase().match(/[a-z]+/g)??[]),terms=vocabulary.filter(word=>words.has(word));
   // When the request names a connected app, the search is for that app alone: a search that lists every connected app returns a mixed set and
   // buries the one app the user asked about. The app list is the provider's own app IDs, never text from the request.
@@ -2014,6 +2057,7 @@ export async function searchComposioTools(
   return {
     sessionId: session.session_id,
     mode,
+    ...(explicitlyRequestedToolkit ? { explicitlyRequestedToolkit } : {}),
     tools,
     toolkits,
     guidance: searchResult?.execution_guidance,
@@ -2691,6 +2735,56 @@ export async function createComposioConnectionLink(
   };
 }
 
+async function executionAccountForSession(
+  userId: string,
+  sessionId: string,
+  toolkit: string,
+  approvedAccountId: string | undefined,
+  context: TenantContext,
+): Promise<string | undefined> {
+  const session = await assertComposioSession(userId, sessionId, 'action', context);
+  if (!approvedAccountId) return undefined; // No-auth toolkit.
+  if (session.config?.multi_account?.enable === true) return approvedAccountId;
+  await assertComposioDefaultAccount(userId, toolkit, approvedAccountId, context);
+  return undefined;
+}
+
+async function assertComposioDefaultAccount(
+  userId: string,
+  toolkit: string,
+  approvedAccountId: string,
+  context: TenantContext,
+): Promise<void> {
+  // Composio rejects the `account` execute field when multi-account selection
+  // is disabled. Omitting it is safe only if its default cannot resolve to a
+  // different active account than the one bound into the user's confirmation.
+  const params = new URLSearchParams({
+    toolkit_slugs: toolkit,
+    user_ids: composioUserId(userId),
+    statuses: 'ACTIVE',
+    limit: '2',
+  });
+  const accounts = await composioRequest<ComposioConnectedAccountsResponse>(
+    `/connected_accounts?${params.toString()}`,
+    {},
+    context,
+  );
+  const only = accounts.items?.[0];
+  if (
+    accounts.items?.length !== 1 ||
+    accounts.next_cursor ||
+    only?.id !== approvedAccountId ||
+    only.user_id !== composioUserId(userId) ||
+    only.toolkit?.slug?.toLowerCase() !== toolkit.toLowerCase() ||
+    only.status?.toUpperCase() !== 'ACTIVE'
+  ) {
+    throw new ComposioClientError(
+      'The connected application account selection changed. Prepare the action again.',
+      { status: 409, code: 'COMPOSIO_ACTION_ACCOUNT_AMBIGUOUS' },
+    );
+  }
+}
+
 async function executeDiscoveredComposioTool(
   userId: string,
   input: {
@@ -2818,18 +2912,19 @@ async function executeDiscoveredComposioTool(
     if(!final?.connected||finalAccountId!==accountId)throw new ComposioClientError('The connected application account changed. Prepare the action again.',{status:409,code:'COMPOSIO_ACTION_ACCOUNT_CHANGED'});
   }
 
-  // Official session execute API selects the exact account using `account`, so the approved account is always sent first.
+  const dispatchAccount = input.mode === 'action'
+    ? await executionAccountForSession(userId, sessionId, allowedTool!.toolkit, account, context)
+    : undefined;
+  signal?.throwIfAborted();
+  // Official session execute API selects the exact account using `account`.
   // https://docs.composio.dev/reference/api-reference/tool-router/postToolRouterSessionBySessionIdExecute
-  // A project without multi-account selection refuses the field with a 400 before anything runs ("Multi-account selection is not
-  // enabled"). That one refusal is answered by repeating the same call without it (the session then uses its own single connection,
-  // which the live account check above already matched to the approved one), and the project is remembered as not supporting it.
   const executePath = `/tool_router/session/${encodeURIComponent(sessionId)}/execute`;
-  const executeWith = (withAccount: boolean) => composioRequest<ComposioExecuteResponse>(executePath, {
+  const executeWith = (selectedAccount?: string) => composioRequest<ComposioExecuteResponse>(executePath, {
     method: 'POST',
     body: {
       tool_slug: toolSlug,
       arguments: input.arguments,
-      ...(withAccount && account ? { account } : {}),
+      ...(selectedAccount ? { account: selectedAccount } : {}),
       enable_auto_workbench_offload: false,
     },
     timeoutMs: EXECUTE_TIMEOUT_MS,
@@ -2837,13 +2932,20 @@ async function executeDiscoveredComposioTool(
   }, context);
   let response: ComposioExecuteResponse;
   try {
-    response = await executeWith(!accountSelectionUnsupported);
+    response = await executeWith(dispatchAccount);
   } catch (error) {
-    const reason = (error as { providerMessage?: unknown }).providerMessage;
-    if (!(account && !accountSelectionUnsupported && error instanceof ComposioClientError && error.status === 400 &&
-        typeof reason === 'string' && reason.toLowerCase().includes('multi-account selection is not enabled'))) throw error;
-    accountSelectionUnsupported = true;
-    response = await executeWith(false);
+    if (!dispatchAccount || !(error instanceof ComposioClientError) || error.status !== 400) throw error;
+    const reason = (error as ComposioClientError & { providerMessage?: unknown }).providerMessage;
+    if (typeof reason !== 'string' ||
+      !/^(?:The 'account' parameter is not supported for this project\. )?Multi-account selection is not enabled\.?$/i.test(reason)) throw error;
+
+    // This refusal occurs before execution. A fresh tenant-owned session and
+    // unique active account must still match the permit before using the default.
+    signal?.throwIfAborted();
+    await assertComposioSession(userId, sessionId, 'action', context);
+    await assertComposioDefaultAccount(userId, allowedTool!.toolkit, dispatchAccount, context);
+    signal?.throwIfAborted();
+    response = await executeWith();
   }
   // v3.1 can report input_required or failed with HTTP 200. Neither is a
   // completed effect. Never answer a provider approval request automatically.
@@ -2986,13 +3088,6 @@ export async function executeComposioReadTool(
     toolSlug,
     mode: 'read',
   });
-}
-
-/** Set once Composio has said this project has no multi-account selection, so later calls do not repeat the refused field. */
-let accountSelectionUnsupported = false;
-/** Test-only: forgets what was learned about the project, so one test cannot change another. */
-export function resetComposioAccountSelectionMemory(): void {
-  accountSelectionUnsupported = false;
 }
 
 export async function executeComposioActionTool(

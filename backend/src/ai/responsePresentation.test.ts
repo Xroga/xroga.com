@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { assessPresentationCoverage, createPresentationProjection, presentationPlanSchema, presentationRequestInstructions, presentationResponseFormat, type PresentationPlan } from './responsePresentation.js';
 import {publicCompletionState} from './completionDiagnostics.js';
+import { formatUnadornedAnswer, requestedUnadornedBulletCount, requestsUnadornedAnswer, withoutLeadingAnswerHeading } from './answerFormat.js';
 
 const plan: PresentationPlan = [
   { kind: 'prose', heading: 'Explanation', instruction: 'Preserve supplied facts and code.' },
@@ -45,6 +46,76 @@ test('streaming every character publishes ordered complete sections and retains 
   assert.ok(final.response.indexOf('## Relationships') < final.response.indexOf('## Records'));
   assert.match(final.response, /"source":"client","target":"server"/);
   assert.match(final.response, /"c0":"tenant_id","c1":"Tenant scope"/);
+});
+
+test('a large inline table keeps every record, leading zero and duplicate', () => {
+  const tablePlan = [plan[2]];
+  const rows = Array.from({ length: 49 }, (_, index) => [String(index + 1).padStart(3, '0'), 'Town ' + (index + 1)]);
+  rows.push([...rows[4]]);
+  const received = JSON.stringify({ s0: { markdown: '', data: { columns: ['ID', 'Town'], rows } } });
+  const projection = createPresentationProjection(tablePlan);
+  const streamed = projection.append(received);
+  const output = projection.finish(received);
+  assert.equal(output.ok, true);
+  assert.equal(output.response, streamed);
+  const table = JSON.parse(/```xroga-ui\n([^\n]+)\n```/u.exec(output.response)![1]);
+  assert.deepEqual(table.rows.map((row: { c0: string; c1: string }) => [row.c0, row.c1]), rows);
+});
+
+test('strict direct answers do not acquire a planner heading in the stream or saved response', () => {
+  for (const { prompt, heading, markdown, expected } of [
+    { prompt: 'What is DNS? Explain it in two sentences.', heading: 'DNS in two sentences',
+      markdown: 'DNS maps domain names to IP addresses. Your browser uses the address to connect.',
+      expected: 'DNS maps domain names to IP addresses. Your browser uses the address to connect.' },
+    { prompt: 'What is 125 multiplied by 48? Give me the answer and nothing else.', heading: 'Product',
+      markdown: '## Product\n\n6000', expected: '6000' },
+    { prompt: 'Return only the code.', heading: 'Script',
+      markdown: '```python\n# Counts\nprint(6000)\n```', expected: '```python\n# Counts\nprint(6000)\n```' },
+    { prompt: 'Explain what a DNS record is in exactly three bullet points. Do not add an introduction or conclusion.', heading: 'DNS records',
+      markdown: 'A DNS record is an entry.\n\nEach record has a type.\n\nSome record types store addresses [1].',
+      expected: '- A DNS record is an entry.\n- Each record has a type.\n- Some record types store addresses [1].' },
+  ]) {
+    const unadornedAnswer = requestsUnadornedAnswer(prompt);
+    assert.equal(unadornedAnswer, true, prompt);
+    const projection = createPresentationProjection([{ kind: 'prose', heading, instruction: prompt }],
+      { unadornedAnswer, bulletCount: requestedUnadornedBulletCount(prompt) });
+    const raw = JSON.stringify({ s0: { markdown, data: null } });
+    let streamed = '';
+    for (const chunk of raw) streamed += projection.append(chunk);
+    assert.equal(streamed, expected, prompt);
+    assert.deepEqual(projection.finish(raw), { ok: true, response: expected, original: raw, reviewText: markdown });
+  }
+});
+
+test('bullet recovery changes markers only for an unambiguous paragraph-to-item match', () => {
+  const alreadyListed = '- Item one.\n- Item two.\n- Item three.';
+  for (const existing of [alreadyListed, '```text\nItem one.\n\nItem two.\n\nItem three.\n```',
+    'Here are three points.\n\nItem one.\n\nItem two.',
+    'Item one.\n\nItem two.\n\nItem three.\n\nOne more detail.',
+    'Item one.\n\nItem two.', 'Item one.\n\n> Cited excerpt.\n\nItem three.',
+  ]) assert.equal(formatUnadornedAnswer(existing, 3), existing);
+  assert.equal(requestedUnadornedBulletCount('Use exactly 3 bullets under the heading "Summary".'), undefined);
+  assert.equal(requestedUnadornedBulletCount('Give exactly 3 bullets.'), 3);
+});
+
+test('explicit headings and substantive Markdown stay intact', () => {
+  for (const prompt of [
+    'Write a detailed DNS reference with an implementation section.',
+    'Explain this in two sentences under a level-two heading.',
+    'What does "give me the answer and nothing else" mean?',
+    'Give the recommended steps, with the heading "Overview". Use exactly three bullets.',
+    'Explain each option in two sentences per section.',
+  ]) assert.equal(requestsUnadornedAnswer(prompt), false, prompt);
+
+  assert.equal(withoutLeadingAnswerHeading('## Requested literal heading'), '## Requested literal heading');
+  assert.equal(withoutLeadingAnswerHeading('    # comment\n    print(1)'), '    # comment\n    print(1)');
+  assert.equal(withoutLeadingAnswerHeading('## Result: 6000\n\nSee the result above.'), '## Result: 6000\n\nSee the result above.');
+  assert.equal(withoutLeadingAnswerHeading('## Evidence unavailable\n\nHere is what I could verify.'), '## Evidence unavailable\n\nHere is what I could verify.');
+  assert.equal(withoutLeadingAnswerHeading('The rule is below.\n\n## Conditions\n\nKeep it.'),
+    'The rule is below.\n\n## Conditions\n\nKeep it.');
+  const requestedHeading = [{ kind: 'prose', heading: 'Overview', instruction: 'Use the requested heading' }] as const;
+  const normal = createPresentationProjection([...requestedHeading]).finish(JSON.stringify({ s0: { markdown: 'The explanation.', data: null } }));
+  assert.match(normal.response, /^## Overview\n\nThe explanation\./);
 });
 
 test('omitted sections, duplicate keys, truncated streams and invalid graph references cannot pass', () => {
@@ -131,7 +202,8 @@ test('output budget scales with the planned sections and never exceeds the exist
   const budget = presentedAnswerMaxTokens(saas);
   assert.ok(budget > 4096 && budget <= 8192, String(budget));
   assert.equal(budget % 512, 0);
-  assert.equal(presentedAnswerMaxTokens(Array.from({ length: 8 }, (_, i) => section('graph', i))), 8192);
+  const densePlan = Array.from({ length: 8 }, (_, i) => section('graph', i));
+  assert.equal(presentedAnswerMaxTokens(densePlan), 11_264);
 });
 
 test('a table, diagram or step list with no extra text is a complete section; only prose needs words', () => {

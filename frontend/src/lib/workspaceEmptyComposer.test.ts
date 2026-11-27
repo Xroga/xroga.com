@@ -267,7 +267,7 @@ test('ideas stay collapsed until a category is chosen, then fill the real compos
 });
 
 
-test('the real new terminal keeps plugins in the composer footer', () => {
+test('the real new terminal keeps Connect Apps in the composer footer', () => {
   assert.doesNotMatch(
     WELCOME,
     /WorkspaceConnectionsStrip/,
@@ -275,7 +275,7 @@ test('the real new terminal keeps plugins in the composer footer', () => {
 
   assert.doesNotMatch(DOCK, /xv-chatbar-context-strip/);
   assert.match(CHATBAR, /aria-label="Projects"/);
-  assert.match(CHATBAR, /aria-label="Plugins"/);
+  assert.match(CHATBAR, /aria-label="Connect Apps"/);
 
   assert.match(
     CONNECTIONS,
@@ -324,45 +324,79 @@ assert.match(
 });
 
 
-test('a conversation exposes one context-aware navigator that follows scroll position', () => {
-  assert.match(
-    DOCK,
-    /messages\.length\s*>\s*0\s*&&\s*!incognito/,
-  );
+test('workspace navigation uses independent arrows and hides both at the bottom', () => {
+  const NAV = read('../components/terminal/WorkspaceScrollNavigation.tsx');
+  const POLISH = read('../components/dashboard/WorkspaceScrollPolish.module.css');
+  assert.match(DOCK, /<WorkspaceScrollNavigation/);
+  assert.match(DOCK, /messages\.length > 0/);
+  assert.match(NAV, /position\.scrollable && !position\.atBottom/);
+  assert.match(NAV, /!position\.atTop/);
+  assert.match(NAV, /aria-label="Scroll to first response"/);
+  assert.match(NAV, /aria-label="Scroll to last response"/);
+  assert.match(NAV, /scrollToFirst\(behavior\)/);
+  assert.match(NAV, /scrollToLatest\(behavior\)/);
+  assert.match(NAV, /new ResizeObserver\(schedule\)/);
+  assert.match(NAV, /prefers-reduced-motion: reduce/);
+  assert.match(NAV, /M440-160v-487L216-423/);
+  assert.match(POLISH, /\.navigation\[data-visible='true'\]/);
+});
 
-  assert.match(
-    DOCK,
-    /'xv-conversation-navigator'/,
-  );
+test('the top scroll fade stays inside the conversation pane, never on the toolbar', () => {
+  const POLISH = read('../components/dashboard/WorkspaceScrollPolish.module.css');
+  assert.doesNotMatch(POLISH, /\.header(?:Shadow|Chrome)::(?:before|after)/);
+  assert.doesNotMatch(DASHBOARD, /<header[^>]*data-scrolled/);
+  assert.match(DASHBOARD, /className="xv-terminal-panel"[^>]*>\s*\{terminalPane\}\s*\{hasConversation && \([\s\S]*?data-scrolled=\{transcriptScrolled/);
+  assert.match(POLISH, /\.transcriptFade\s*\{[^}]*inset-inline: max\(9%,[^}]*block-size: 10px;[^}]*pointer-events: none;[^}]*opacity: 0;/);
+  assert.match(POLISH, /\.transcriptFade\[data-scrolled='true'\]\s*\{ opacity: 1; \}/);
+});
 
-  assert.match(
-    DOCK,
-    /showJumpToLatest \? 'Scroll to latest' : 'Scroll to top'/,
-  );
+test('browser extension uses one layout provider and stays separate from ordinary Workspace chat', () => {
+  const LAYOUT = read('../app/(workspace)/layout.tsx');
+  const WORKSPACE = read('../app/(workspace)/workspace/page.tsx');
+  const OPERATOR = read('../components/browser/WorkspaceBrowserOperator.tsx');
 
-  assert.match(
-    DOCK,
-    /if \(showJumpToLatest\) scrollToLatest\('smooth'\);\s*else scrollToFirst\('smooth'\);/,
-  );
+  assert.equal((LAYOUT.match(/<WorkspaceBrowserOperator[\s>]/g) ?? []).length, 1);
+  assert.doesNotMatch(WORKSPACE, /WorkspaceBrowserOperator/);
+  assert.doesNotMatch(DASHBOARD, /WorkspaceBrowserConnection|browserOperator/);
+  assert.match(OPERATOR, /url\.searchParams\.get\('browserExtension'\)/);
+  assert.match(OPERATOR, /url\.searchParams\.get\('browserPair'\)/);
+  assert.match(SIDEBAR, /\{!isGuest && !incognito && <WorkspaceBrowserConnection \/>\}/);
+  assert.match(OPERATOR, /export function isLocalChromeRequest\(_text: string\)\s*\{\s*return false;/);
+  assert.match(OPERATOR, /export function WorkspaceBrowserProgress\([^\n]*\)\s*\{\s*return null;/);
+});
 
-  assert.match(DOCK, /<ArrowDown size=\{19\}/);
-  assert.match(DOCK, /<ArrowUp size=\{19\}/);
-
-  assert.match(
-    CSS,
-    /\.xv-conversation-navigator\.is-direction-down\s*\{[^}]*--xv-navigator-rotation:\s*180deg/,
-  );
-
-  assert.match(DOCK, /aria-label=\{showJumpToLatest \? 'Scroll to latest' : 'Scroll to top'\}/);
-  assert.doesNotMatch(DOCK, /data-tooltip|data-short-tip/);
-  assert.match(CSS, /\.xv-conversation-navigator,\s*\.xv-conversation-navigator:hover,\s*\.xv-conversation-navigator:active\s*\{[\s\S]*?border:\s*0\s*!important/);
-  assert.doesNotMatch(DOCK, /data-tooltip=\{showJumpToLatest/);
-  assert.doesNotMatch(DOCK, /xv-conversation-navigator__label/);
+test('workspace scroll navigation stays compact and horizontal with Uiverse motion', () => {
+  const POLISH = read('../components/dashboard/WorkspaceScrollPolish.module.css');
+  assert.match(POLISH, /\.navigation\s*\{[^}]*flex-direction:\s*row;/s);
+  assert.match(POLISH, /\.navButton\s*\{[^}]*width:\s*28px;[^}]*height:\s*28px;/s);
+  assert.match(POLISH, /\.arrow, \.downArrow\s*\{[^}]*width:\s*16px;[^}]*height:\s*16px;/s);
+  assert.match(POLISH, /\.navButton:hover\s*\{[^}]*translateY\(-3px\)[^}]*background-color:\s*#0c0c0c;/s);
+  assert.match(POLISH, /\.navButton:hover \.arrow[^}]*scale\(1\.2\)/s);
+  assert.match(POLISH, /\.navButton:active\s*\{[^}]*translateY\(2px\)/s);
+  assert.match(POLISH, /@media \(max-width: 639px\)[^{]*\{[^}]*\}[^}]*\.navButton\s*\{[^}]*width:\s*26px;/s);
+  assert.match(POLISH, /border:\s*2\.5px solid/);
+  assert.match(POLISH, /\.navButton\[data-clicked='true'\]/);
+  const NAV = read('../components/terminal/WorkspaceScrollNavigation.tsx');
+  assert.match(NAV, /setClicked\(direction\)/);
+  assert.match(NAV, /window\.setTimeout/);
+  assert.match(NAV, /data-clicked=\{clicked === 'top'/);
+  assert.match(NAV, /data-clicked=\{clicked === 'bottom'/);
+  assert.match(POLISH, /@media \(prefers-reduced-motion: reduce\)/);
 });
 
 test('workspace transcript keeps balanced responsive gutters', () => {
   assert.match(CSS, /\.xv-terminal-body--flush\s*\{[^}]*padding:\s*0 clamp\(1rem, 6vw, 6rem\)/);
   assert.match(CSS, /\.xv-terminal-body--flush \.xv-terminal-turn\s*\{[^}]*max-width:\s*56rem/);
+});
+
+test('the conversation scrollport ends at the composer without clipping its native scrollbar', () => {
+  const scrollport = CSS.match(/\.xv-terminal-scroll\[data-conversation='true'\]\s*\{([^}]*)\}/)?.[1] ?? '';
+  assert.match(scrollport, /margin-block-end: max\(0px, calc\(var\(--xv-dock-bottom, 14px\) - var\(--xv-pane-bottom, 0px\)\)\)/);
+  assert.doesNotMatch(scrollport, /clip-path/);
+  assert.match(CSS, /\.xv-terminal-scroll::-webkit-scrollbar \{ width: 12px; \}/);
+  assert.match(CSS, /\.xv-terminal-scroll::-webkit-scrollbar-thumb\s*\{[^}]*background-clip: padding-box;[^}]*border-inline: 2px solid transparent/);
+  assert.match(CSS, /\.xv-terminal-dock\[class\*='terminal-skin-'\]\[data-workspace-state='conversation'\]\s*\{[^}]*pointer-events: none/);
+  assert.match(CSS, /:is\(\.xv-kimi-composer-frame, \.xv-chatbar-queue-outside\)\s*\{[^}]*pointer-events: auto/);
 });
 
 test('the live transcript does not mount the starter headline as a scrolling wall', () => {
@@ -393,7 +427,7 @@ test('full prompt expands the existing prompt bubble instead of rendering a dupl
 });
 
 
-test('connection management reads real provider status and routes full management to Plugins', () => {
+test('connection management reads real provider status and routes full management to Connect Apps', () => {
   for (
     const provider of [
       'github',
@@ -416,24 +450,11 @@ test('connection management reads real provider status and routes full managemen
     );
   }
 
-  assert.equal(
-    INTEGRATIONS.includes('/dashboard/integrations/\${plugin.id}'),
-    true,
-  );
-
-  assert.match(
-    INTEGRATIONS,
-    /Browse all plugins/,
-  );
-
-  assert.match(INTEGRATIONS, /placeholder="Search plugins…"/);
-  assert.match(INTEGRATIONS, /xv-plugins-popover__body/);
-  assert.match(INTEGRATIONS, /Browse all/);
-
-  assert.match(
-    INTEGRATIONS,
-    /xrogaConnect\.search/,
-  );
+  assert.match(INTEGRATIONS, /href=\{'\/dashboard\/integrations\/'\+encodeURIComponent\(app\.slug\)\}/);
+  assert.match(INTEGRATIONS, /href="\/dashboard\/integrations".*Browse all apps/);
+  assert.match(INTEGRATIONS, /Search all supported apps/);
+  assert.match(INTEGRATIONS, /styles\.items/);
+  assert.match(INTEGRATIONS, /xrogaConnect\.catalog/);
 });
 
 
@@ -505,7 +526,7 @@ test('the empty dock inherits the selected terminal skin and keeps mobile starte
 
   assert.match(
     CSS,
-    /\.xv-terminal-dock\[class\*='terminal-skin-'\]\s*\{[^}]*--composer-surface:\s*var\(--terminal-ui-raised\)[^}]*background:\s*transparent[^}]*border:\s*0/,
+    /\.xv-workspace-shell\[class\*='terminal-skin-'\],[\s\S]*?\.xv-terminal-dock\[class\*='terminal-skin-'\]\s*\{[^}]*--composer-surface:\s*var\(--terminal-ui-raised\)/,
   );
 
   assert.match(
@@ -613,12 +634,12 @@ test('the bottom inspiration bar opens the real catalog automatically on workspa
 
   assert.match(
     TEMPLATES,
-    /Recent projects/,
+    /id="recent-projects-heading">Recent work<\/strong>/,
   );
 
   assert.match(
     TEMPLATES,
-    /loadTerminalHistory\(\)\.filter/,
+    /setRecentSessions\(loadTerminalHistory\(\)\.slice\(0, 6\)\)/,
   );
 
   assert.match(
@@ -673,7 +694,7 @@ test('the bottom inspiration bar opens the real catalog automatically on workspa
 
   assert.match(
     TEMPLATES,
-    /selected GitHub repository/,
+    /offer GitHub publishing only after I select and authorize a repository/,
   );
 
   assert.match(
@@ -727,9 +748,12 @@ test('new terminal renders theme-aware readable cards without black-hole artwork
   assert.doesNotMatch(START, /cardImage|1536/);
   assert.doesNotMatch(DASHBOARD, /BetaExpectationBanner/);
   assert.match(START_CSS, /background-clip: text/);
+  assert.match(START_CSS, /\.superIntelligence[^}]*Georgia,'Times New Roman',serif/);
+  assert.match(START_CSS, /\.cardWords strong[^}]*Georgia,'Times New Roman',serif/);
+  assert.match(START_CSS, /\.superIntelligence[^}]*color: var\(--foreground\)/);
   assert.deepEqual([...START.matchAll(/id: '([^']+)'/g)].map(match => match[1]),
     ['create', 'find', 'build', 'ship', 'workflows', 'scheduled-tasks', 'employees', 'work-packs', 'browser-automation', 'apps-mcp']);
-  assert.match(START_CSS, /background: var\(--terminal-ui-surface\) !important/);
+  assert.match(START_CSS, /background-color: var\(--terminal-ui-surface\) !important/);
   assert.match(START_CSS, /color: var\(--foreground\)/);
   assert.match(START_CSS, /font: 12px\/1\.5/);
   assert.match(START_CSS, /@container \(max-width: 580px\)/);

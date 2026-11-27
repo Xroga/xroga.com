@@ -3,11 +3,11 @@
   "reviews": [
     {
       "path": "backend/src/ai/attachments.ts",
-      "sourceSha256": "b1c7911aa41d59bfcc1e57f6925a4c705548787cdb81aba14100e78fe5432f45",
+      "sourceSha256": "1ef2126f5419e5a1b68c153efaa9a15b30f7e1d20d1211f2c1714517bfe0fb9a",
       "callIds": [
-        "097f3b056977288927ab",
-        "a014c3fc158d8544965e",
-        "6dad3dd6bb66b6180fa5"
+        "d937b1aa189d5483adad",
+        "c376d98ecbfc71d8162f",
+        "3285e905ea4ed30d80e9"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Re-traced all listed expressions to the native unshadowed Buffer.from implementation. Each performs local stream, body snapshot, data-URL or DOCX byte conversion. None is a database, storage bucket or service-role receiver.",
@@ -886,11 +886,11 @@
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
-      "sourceSha256": "3ae113999caad00037882cbe3f1cc72a7536a13b53e74403bf849dbda77cfeca",
+      "sourceSha256": "df2d93e2135f15fca2fca57a59aa2194f8ae9ade9e4c04b4f402365a9b82ab31",
       "callIds": [
-        "18bd459313ae6dbebaab",
-        "14acbd3141fc7fc1aedc",
-        "6b064445c855504350b1"
+        "69b83cc17815965b1253",
+        "282537c07bfc406ac7e1",
+        "5b7a284a3ac0e14709a3"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The original context comes only from the canonical native permit. Exact user_id predicates scope the executing grant and current run/worker generation. Grant, owner, immutable digest, expiry and effect receipt are rechecked before and after provider waits and immediately after DNS before any public connection.",
@@ -927,18 +927,47 @@
           "8c17e0596e9108831a35"
         ],
         "verification": "Reviewed call chains are byte-identical to the reviewed main version. The enclosing function changed, and the change was reviewed by diff: Manual diff review: additive research-answer chain after the existing permit/owner/digest check(); check() still runs before saveResearchResult and before the model answer; retrieval-only guard added; the one new scanner candidate is Uint8Array.from(page.bytes), a native byte conversion. The reviewed calls and their predicates are unchanged."
+      },
+      "workspacePublicSearchRebinding": {
+        "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
+        "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+        "previousIds": [
+          "18bd459313ae6dbebaab",
+          "14acbd3141fc7fc1aedc",
+          "6b064445c855504350b1"
+        ],
+        "scope": "Exact existing call chains and owner predicates only. The prior review grants no automatic public Search authority."
+      },
+      "workspaceOfficialLinkCoverage": {
+        "baseline": "81327005552435f2f38886320fb4f8d039887241",
+        "previousSha256": "d6b4d7dc04f841eab5243b792bfc0556133a21e0340de033f8a826c1b07d9f3b",
+        "previousIds": [
+          "192373fab95b2ca5c670",
+          "e6927dcdfc8b2bee2690",
+          "09f9cc3bfa55e77de769"
+        ],
+        "scope": "Existing persistence calls and tenant predicates are unchanged. Link discovery changes only the bounded public Search request and evidence selection."
+      },
+      "workspacePublisherVerification": {
+        "baseline": "84b288e3193fc0f285e699c8785c210d47937f16",
+        "previousIds": [
+          "34b8ee9664023c2808f9",
+          "f983ea030f69d45aabe9",
+          "c919b1c33f5cd3bf1590"
+        ],
+        "scope": "Exact private-action database expressions and function remain unchanged. The new public document check adds no direct database expression."
       }
     },
     {
       "path": "backend/src/ai/parallelDispatch.ts",
-      "sourceSha256": "ac3f222a927506239ccb3a51c40ccc5acee7329ea117c36c8654d0a6b8cdb15a",
+      "sourceSha256": "bdd54a8e208498d3d488584591ab15f57fd3ac316deb6949a2056fc38353e889",
       "callIds": [
         "eafd89a3d20bbe8c8038",
         "d39950af553ed4c73ba8",
         "a14844e6560526208cb5",
         "5f7898751365afe3ccbb",
         "4caea0778375b8dbf0dd",
-        "91afe59da48d41fdec1b"
+        "7de431277f4a0e0788a1"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
@@ -951,6 +980,10 @@
         {
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement"
+        },
+        {
+          "path": "backend/src/ai/parallelWeb.security.test.ts",
+          "marker": "empty DeepSeek results settle zero while preserving the request receipt and dispatch count"
         }
       ],
       "parallelRedirectPriorSourceReview": {
@@ -1034,6 +1067,31 @@
           "316e1774bccfc8148739"
         ],
         "verification": "Reviewed call chains are byte-identical to the reviewed main version. The enclosing function changed, and the change was reviewed by diff: Manual diff review: removes the generative responses operation and its Bearer fetch (retrieval-only), so outbound egress is narrowed. The reviewed persistence calls and predicates are unchanged."
+      },
+      "beforeEmptySearchSettlement": {
+        "sourceSha256": "ac3f222a927506239ccb3a51c40ccc5acee7329ea117c36c8654d0a6b8cdb15a",
+        "callIds": [
+          "eafd89a3d20bbe8c8038",
+          "d39950af553ed4c73ba8",
+          "a14844e6560526208cb5",
+          "5f7898751365afe3ccbb",
+          "4caea0778375b8dbf0dd",
+          "91afe59da48d41fdec1b"
+        ],
+        "disposition": "REVIEWED_GAP"
+      },
+      "workspaceOfficialLinkCoverage": {
+        "baseline": "81327005552435f2f38886320fb4f8d039887241",
+        "previousSha256": "0a7da4cf31ee271f34d2380b8d7d557be006afb19283fe1cc529539dc210c54e",
+        "previousIds": [
+          "eafd89a3d20bbe8c8038",
+          "d39950af553ed4c73ba8",
+          "a14844e6560526208cb5",
+          "5f7898751365afe3ccbb",
+          "4caea0778375b8dbf0dd",
+          "9f307b5e858813b8e6bb"
+        ],
+        "scope": "Existing persistence calls and tenant predicates are unchanged. Link discovery changes only the bounded public Search request and evidence selection."
       }
     },
     {
@@ -1063,13 +1121,13 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+      "sourceSha256": "a1849efca55ecf29dca9453dea64fec3f657782ee286c1dd43ba73ad7ec07945",
       "callIds": [
-        "4431005001a8d288051f"
+        "d2d4eae547457550a374"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Native reasoning alignment changes only answer options and their canonical output reservation. These two in-memory conversion expressions remain byte-identical. No new persistence call, authority or security certification is inferred. The tenant dispatch test verifies reservation and wire maxima match.",
       "evidence": [
         {
           "path": "backend/src/ai/pipeline.ts",
@@ -2550,17 +2608,116 @@
           "c3617170cdd8b722b96f"
         ],
         "verification": "Reviewed call chains are byte-identical to the reviewed main version. The enclosing function changed, and the change was reviewed by diff: Manual diff review: the reviewed calls are two native Array.from(byPath.values()) conversions; their expressions are byte-identical and no changed line touches them. Other changes in this large function (answer budget, imports, completion fields) do not."
+      },
+      "nativeOpenUiRebinding": {
+        "sourceSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+        "callIds": [
+          "4431005001a8d288051f"
+        ],
+        "scope": "Exact runBuildPipeline body unchanged; only existing built-in array conversions reindexed."
+      },
+      "nativeOpenUiAuthorizationReviewRebinding": {
+        "sourceSha256": "0f2209ef1fbf0b7613a5ce964a3df5cf5df7ce4bff51160b0850c1bc2be2e016",
+        "callIds": [
+          "d431d5067a3873deb9cb"
+        ],
+        "scope": "Same worker body and reviewed built-in Array.from expression. Native chat output review is separate."
+      },
+      "nativeOpenUiWorkspaceRebinding": {
+        "sourceSha256": "c5eee2fd7ac3c6211e1e0b53fa516357ef110a07504ff45c29111a4b5dbe6f43",
+        "callIds": [
+          "7dc867931d0d296911dc"
+        ],
+        "scope": "Byte-identical runBuildPipeline body; only the existing in-memory Array.from conversions were reindexed."
+      },
+      "nativePlainPromptRebinding": {
+        "sourceSha256": "07ab1714a6f3d3559d546e2172016cca626482f7a31857904f249fb27b1103af",
+        "callIds": [
+          "5b543818a91ad0c16240"
+        ],
+        "scope": "Byte-identical runBuildPipeline body; only source positions moved after changing read-only native prompt selection."
+      },
+      "beforeNativeReasoningAlignment": {
+        "source": "677b111f52097654f47e92b6807b45200c2a89ee",
+        "sourceSha256": "245f60b9f9b04e0a67226b5354a4fd13ccf584a475e2219a09472d2f5d57000c",
+        "callIds": [
+          "93a3b008dcb4d37d39ce"
+        ]
+      },
+      "bufferedDeadlineReview": {
+        "reference": "1a91eb33f46ed0036b784aac6316b91924dc7cb2",
+        "workerBodyByteIdentical": true,
+        "scope": "Only transport-appropriate attempt timeout selection changes before the unchanged worker. No persistence or authorization change. Not live acceptance."
+      },
+      "beforePlainReasoningDefault": {
+        "source": "31db9f69d27998460ceb506cbdebd5972a2121a3",
+        "sourceSha256": "5c37c7d2bbc96fc8c4ddf1f294c9b1f2bde5385048847400a5bcbd69a3582e06",
+        "callIds": [
+          "e5fc46a4de6acdba6654"
+        ]
+      },
+      "beforeDraftRouting": {
+        "reference": "3d69ee21659d013d4d5fe39b514278f5b7875669",
+        "sha256": "85c08952d3469ffaff203a91df6d79e3d554478278e9244317929d7d5de73780",
+        "callIds": [
+          "dae25c9daa57213c1180"
+        ],
+        "finding": "Only the eligibility predicate for the compact prose prompt changed. The full dispatch, usage settlement, persistence conversions, and worker are unchanged. No security acceptance or live generation is certified here."
+      },
+      "workspaceReview20261119": {
+        "auditedBase": "5898449fad9adb60c6eaa98653f2ddec8d7d6e82",
+        "candidateSource": "eea565cc2377cd5d66fcf06cc6bd4da83cfc5681",
+        "previousSha256": "814b1ac7189f74142e4441796d200f11ee5f0f24eabc7f42face59d75a414add",
+        "previousCallIds": [
+          "dd07efebd27fb2ef7b30"
+        ],
+        "finding": "Ordinary text now relies on the existing just-in-time quota check. Attachment extraction, Search and approved continuations, repository evidence and Sonnet review retain the early gate. The complete callBuilderStream and runBuildPipeline functions and every runWebIntelligence request expression match the audited base. The current Search confirmation wording does not affect authority.",
+        "liveAcceptance": false
+      },
+      "workspacePublicSearchRebinding": {
+        "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
+        "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+        "previousIds": [
+          "eb8532242b9c169bae0b"
+        ],
+        "scope": "Exact existing call chains and owner predicates only. The prior review grants no automatic public Search authority."
+      },
+      "workspacePublicResearchP0": {
+        "parent": "8cf32b08df867acf359aaf6bbdfa0b7cce74325e",
+        "applicationSource": "a53217141172f08c820d24b48b73bca9952d6b66",
+        "previousSha256": "51a5247eb08839674283392dc12025c7b44711d7598448437b78764e50ca9f13",
+        "scope": "Only source positions moved for existing non-persistence conversions in the unchanged build pipeline. The chat change preserves the existing egress, model admission, tenant scopes and accounting.",
+        "previousCallIds": [
+          "1a8a4b584015dcca17d0"
+        ]
+      },
+      "automaticResearchLedgerReservation": {
+        "parent": "3ee7bf57328167b94108eb12b8dc6db02a497557",
+        "applicationSource": "bc5175fb36e4a1b8210119cfd6a8f5255a3f4183",
+        "previousSha256": "c12b8c82d6d82f28f8dea53d2924127e9d92f9ec6eecb417c818e60620a45310",
+        "scope": "Only source positions moved for the reviewed, unchanged build conversions. Automatic public Search synthesis reserves through the existing account ledger while separate private research retains its signed bound.",
+        "previousCallIds": [
+          "db8cfe93b82fb3c4b04f"
+        ]
+      },
+      "workspaceResearchPrivacy": {
+        "baseline": "8530c904c54b32dba220dc013cfdc7bc0c6ca76e",
+        "previousSha256": "8421acd5e8233fe3207a59285288db1366c2d3f266eb76966302d2488d3546b4",
+        "scope": "Recognize source-quoted, model-planned local downloads. Verified authority, model dispatch, storage and tenant call shapes are unchanged.",
+        "previousCallIds": [
+          "d55a2bc1d31f353c8c21"
+        ]
       }
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+      "sourceSha256": "a1849efca55ecf29dca9453dea64fec3f657782ee286c1dd43ba73ad7ec07945",
       "callIds": [
-        "ce02ccc6a928e44634de"
+        "1250e6c6c67f7c3829a9"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Native reasoning alignment changes only answer options and their canonical output reservation. These two in-memory conversion expressions remain byte-identical. No new persistence call, authority or security certification is inferred. The tenant dispatch test verifies reservation and wire maxima match.",
       "evidence": [
         {
           "path": "backend/src/ai/pipeline.ts",
@@ -4041,6 +4198,105 @@
           "2e78e5aba21ba282d65c"
         ],
         "verification": "Reviewed call chains are byte-identical to the reviewed main version. The enclosing function changed, and the change was reviewed by diff: Manual diff review: the reviewed calls are two native Array.from(byPath.values()) conversions; their expressions are byte-identical and no changed line touches them. Other changes in this large function (answer budget, imports, completion fields) do not."
+      },
+      "nativeOpenUiRebinding": {
+        "sourceSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+        "callIds": [
+          "ce02ccc6a928e44634de"
+        ],
+        "scope": "Exact runBuildPipeline body unchanged; only existing built-in array conversions reindexed."
+      },
+      "nativeOpenUiAuthorizationReviewRebinding": {
+        "sourceSha256": "0f2209ef1fbf0b7613a5ce964a3df5cf5df7ce4bff51160b0850c1bc2be2e016",
+        "callIds": [
+          "1f158fd95dae861dc678"
+        ],
+        "scope": "Same worker body and reviewed built-in Array.from expression. Native chat output review is separate."
+      },
+      "nativeOpenUiWorkspaceRebinding": {
+        "sourceSha256": "c5eee2fd7ac3c6211e1e0b53fa516357ef110a07504ff45c29111a4b5dbe6f43",
+        "callIds": [
+          "b11f02479d5943c73413"
+        ],
+        "scope": "Byte-identical runBuildPipeline body; only the existing in-memory Array.from conversions were reindexed."
+      },
+      "nativePlainPromptRebinding": {
+        "sourceSha256": "07ab1714a6f3d3559d546e2172016cca626482f7a31857904f249fb27b1103af",
+        "callIds": [
+          "9ed969847167feb788b9"
+        ],
+        "scope": "Byte-identical runBuildPipeline body; only source positions moved after changing read-only native prompt selection."
+      },
+      "beforeNativeReasoningAlignment": {
+        "source": "677b111f52097654f47e92b6807b45200c2a89ee",
+        "sourceSha256": "245f60b9f9b04e0a67226b5354a4fd13ccf584a475e2219a09472d2f5d57000c",
+        "callIds": [
+          "b01a01f65052e1222fd2"
+        ]
+      },
+      "bufferedDeadlineReview": {
+        "reference": "1a91eb33f46ed0036b784aac6316b91924dc7cb2",
+        "workerBodyByteIdentical": true,
+        "scope": "Only transport-appropriate attempt timeout selection changes before the unchanged worker. No persistence or authorization change. Not live acceptance."
+      },
+      "beforePlainReasoningDefault": {
+        "source": "31db9f69d27998460ceb506cbdebd5972a2121a3",
+        "sourceSha256": "5c37c7d2bbc96fc8c4ddf1f294c9b1f2bde5385048847400a5bcbd69a3582e06",
+        "callIds": [
+          "9a60c892b04c3d76e56b"
+        ]
+      },
+      "beforeDraftRouting": {
+        "reference": "3d69ee21659d013d4d5fe39b514278f5b7875669",
+        "sha256": "85c08952d3469ffaff203a91df6d79e3d554478278e9244317929d7d5de73780",
+        "callIds": [
+          "6239699ce63ed3c3adfc"
+        ],
+        "finding": "Only the eligibility predicate for the compact prose prompt changed. The full dispatch, usage settlement, persistence conversions, and worker are unchanged. No security acceptance or live generation is certified here."
+      },
+      "workspaceReview20261119": {
+        "auditedBase": "5898449fad9adb60c6eaa98653f2ddec8d7d6e82",
+        "candidateSource": "eea565cc2377cd5d66fcf06cc6bd4da83cfc5681",
+        "previousSha256": "814b1ac7189f74142e4441796d200f11ee5f0f24eabc7f42face59d75a414add",
+        "previousCallIds": [
+          "73e39773b083010d176b"
+        ],
+        "finding": "Ordinary text now relies on the existing just-in-time quota check. Attachment extraction, Search and approved continuations, repository evidence and Sonnet review retain the early gate. The complete callBuilderStream and runBuildPipeline functions and every runWebIntelligence request expression match the audited base. The current Search confirmation wording does not affect authority.",
+        "liveAcceptance": false
+      },
+      "workspacePublicSearchRebinding": {
+        "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
+        "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+        "previousIds": [
+          "9372bc4c2d95f5c088d0"
+        ],
+        "scope": "Exact existing call chains and owner predicates only. The prior review grants no automatic public Search authority."
+      },
+      "workspacePublicResearchP0": {
+        "parent": "8cf32b08df867acf359aaf6bbdfa0b7cce74325e",
+        "applicationSource": "a53217141172f08c820d24b48b73bca9952d6b66",
+        "previousSha256": "51a5247eb08839674283392dc12025c7b44711d7598448437b78764e50ca9f13",
+        "scope": "Only source positions moved for existing non-persistence conversions in the unchanged build pipeline. The chat change preserves the existing egress, model admission, tenant scopes and accounting.",
+        "previousCallIds": [
+          "b4b12146d2de371c877b"
+        ]
+      },
+      "automaticResearchLedgerReservation": {
+        "parent": "3ee7bf57328167b94108eb12b8dc6db02a497557",
+        "applicationSource": "bc5175fb36e4a1b8210119cfd6a8f5255a3f4183",
+        "previousSha256": "c12b8c82d6d82f28f8dea53d2924127e9d92f9ec6eecb417c818e60620a45310",
+        "scope": "Only source positions moved for the reviewed, unchanged build conversions. Automatic public Search synthesis reserves through the existing account ledger while separate private research retains its signed bound.",
+        "previousCallIds": [
+          "a208147f40acfa66cc51"
+        ]
+      },
+      "workspaceResearchPrivacy": {
+        "baseline": "8530c904c54b32dba220dc013cfdc7bc0c6ca76e",
+        "previousSha256": "8421acd5e8233fe3207a59285288db1366c2d3f266eb76966302d2488d3546b4",
+        "scope": "Recognize source-quoted, model-planned local downloads. Verified authority, model dispatch, storage and tenant call shapes are unchanged.",
+        "previousCallIds": [
+          "8f870c04c0ddab6c11f2"
+        ]
       }
     },
     {
@@ -15392,12 +15648,12 @@
     },
     {
       "path": "backend/src/routes/messageShares.ts",
-      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
+      "sourceSha256": "1a4a4f088a831a511bd81d1f117f24f738c73b2dec0f8ca2e41b49127227a954",
       "callIds": [
-        "c9a009f6baa9e3a3bbad",
-        "000d28d21ea7dba70f24",
-        "2f60349dbbab02755103",
-        "c4dcd4d97035ff02f08f"
+        "8818c8c645ed42bdfcbd",
+        "fa1aab99a735dd6afc1d",
+        "c0f7d9498ea3443e4221",
+        "087a268e5f0ee8649cdc"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Create/revoke use authMiddleware and issued context. Create stores server req.userId; revoke constrains token, owner_id and unrevoked state. Submitted content grants no authority over other resources.",
@@ -15440,10 +15696,10 @@
     },
     {
       "path": "backend/src/routes/messageShares.ts",
-      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
+      "sourceSha256": "1a4a4f088a831a511bd81d1f117f24f738c73b2dec0f8ca2e41b49127227a954",
       "callIds": [
-        "db7f2c7b53d05936f3da",
-        "ea4d7ecf3043636a2883"
+        "7428c9a89d68c23b5ba1",
+        "f7eea7c47f4cea00af8d"
       ],
       "disposition": "NARROW_EXCEPTION",
       "authority": "Validated random token and unrevoked row identify the share. Named message_share_resolution exception is followed by verified viewer equality for private visibility; public access is explicit owner opt-in.",
@@ -15482,18 +15738,18 @@
     },
     {
       "path": "backend/src/routes/notifications.ts",
-      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "callIds": [
-        "95aca8562235b1b02997",
-        "cc2c2522f42d6ac8d5bd",
-        "96f82d20ad4bfc5af43e",
-        "faa4cebd0c15a1b5d69c",
-        "5233e1547ffa2fd23fd6",
-        "8f55ff924d59067efc48",
-        "83827643069e9005dce3",
-        "b1d953653483a66af3d9",
-        "add984aaad8b65bdbdfa",
-        "f0601134e3c2080d41f3"
+        "359cfba790c54b88250c",
+        "b1f8356c782b4d851d58",
+        "4cf1a1e8ccf9dfe563ec",
+        "e92ef4114ace634a21d8",
+        "cc8a37cdf238cf59a99a",
+        "6687ae47bab37c501d74",
+        "2fed6ca9cd27f6992d02",
+        "75ba31f14c658b6995a8",
+        "1a27090c7a9708d480e8",
+        "b010f789ba8fcc1a6231"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
@@ -15522,6 +15778,27 @@
         "disposition": "SCOPED_BOUNDARY"
       },
       "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+    },
+    {
+      "path": "backend/src/routes/notifications.ts",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
+      "callIds": [
+        "451e5e119fb05d5ddb8f",
+        "4f9439afecb04c3595a7",
+        "4052599c36bb1a154183",
+        "9dd5e0d47e2b5fcbd7ed",
+        "0173fa66f148bf107c9c",
+        "5756010c7ca215102e1e"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "The browser-push subscription routes are behind auth middleware and derive userId from tenant context; each query filters user_id or writes that user ID, but source inspection alone is not authenticated tenant proof.",
+      "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Existing endpoint updates are owner-scoped; a new insert cannot overwrite another account's unique endpoint. Authenticated positive and cross-account negative API tests for these six new persistence calls are still required before promoting this review to a scoped boundary.",
+      "evidence": [
+        {
+          "path": "backend/src/services/browserPushService.test.ts",
+          "marker": "rejects SSRF destinations"
+        }
+      ]
     },
     {
       "path": "backend/src/routes/operations.ts",
@@ -15600,9 +15877,9 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sourceSha256": "91b55da6a6beca61715b829c0087b10f90d2cc5bb7e2b7bce5500fbca50b2b7d",
+      "sourceSha256": "91f74671061715c1c154a7ca1ad308fe30ab40d80fc6c4cb545f39ba74442c9b",
       "callIds": [
-        "fa04b8d8f9413c194ec5"
+        "ff119993d08c76a18c1b"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in toolUiLink. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -15747,6 +16024,22 @@
           "fb2bffffc91cc072976a"
         ],
         "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      },
+      "workspacePublicSearchRebinding": {
+        "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
+        "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+        "previousIds": [
+          "006420f2256a9d86cc5a"
+        ],
+        "scope": "Exact existing call chains and owner predicates only. The prior review grants no automatic public Search authority."
+      },
+      "workspaceResearchPrivacy": {
+        "baseline": "077ea3640075b80eaa3bfebca28a2be5e58dc9a9",
+        "previousSha256": "8e116ae5296634e5a493aea0cee9434255186deaced4ce27754f92d05e760f43",
+        "scope": "Restrict consumer research serialization to answer, source, status and explicit consent fields. Stored authority and scoped caller behaviors are unchanged.",
+        "previousCallIds": [
+          "006420f2256a9d86cc5a"
+        ]
       }
     },
     {
@@ -18087,6 +18380,599 @@
         "disposition": "SCOPED_BOUNDARY"
       },
       "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "callIds": [
+        "df7eec626e3acd881448",
+        "287e2fe0dabebc523a36",
+        "3a763a5523dac73c10d4",
+        "46aca4c01b2d3d90acad",
+        "85b1d7461e8691468225",
+        "545cee9f47055ec5d761",
+        "7231d508555849d87d32",
+        "8609662e7417659e88ca",
+        "2714b6af44879d208f97",
+        "a1b9e751df5bc764909d"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+          "marker": "confirmation claims bind owner, reviewed digest and expiry"
+        }
+      ],
+      "historicalReview": {
+        "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+        "sourceSha256": "32229709ed4da07e64bd576390678e34900d0165e98ad458d55c19c12f6dba99",
+        "callIds": [
+          "c37a93be0605e64b3156",
+          "94fb30ec710f32d062c2",
+          "36d0fbfc5ddf864ad6ea",
+          "bda77ff34ad9e973cbde",
+          "a1e1f647efb6e7002993",
+          "7c2970e3ea0940d5d136",
+          "986c86eebabfae033939",
+          "884cad1975974abc0599",
+          "b6708d08741254f6da06",
+          "85d5a147aa59e4f62e68"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
+        "reason": "Claim now uses a separately reviewed service-only RPC to compare full reviewed plan/digest/expiry/display metadata and check database expiry after the row lock. Loopback race/outage tests and15 local SQL assertions pass, actual held-lock expiry/mutation/competition tests prepared. Returned owner/id/status remains verified before executePreparedBusinessAction recomputes the canonical plan digest. Remaining gaps: session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, post-claim expiry during provider preparation, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      },
+      "command007Proof": {
+        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+        "obligationIds": [
+          "OB-84b9011a0d2b4754:observed-owned-confirmation-metadata-claim"
+        ],
+        "passedTests": [
+          "real confirmation metadata preserves owner scope through create read cancel expiry and concurrent rejected execution",
+          "foreign durable business confirmations cannot be read approved or cancelled by changing IDs",
+          "real confirmation claim binds complete reviewed plan and checks expiry after contended row locks",
+          "real confirmation finish binds the original claim and admits one immutable terminal outcome"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Claim now uses a separately reviewed service-only RPC to compare full reviewed plan/digest/expiry/display metadata and check database expiry after the row lock. Loopback race/outage tests and15 local SQL assertions pass, actual held-lock expiry/mutation/competition tests prepared. Returned owner/id/status remains verified before executePreparedBusinessAction recomputes the canonical plan digest. Remaining gaps: session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, post-claim expiry during provider preparation, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+      },
+      "acceptedPhaseTwoReview": {
+        "sourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+        "sourceSha256": "32229709ed4da07e64bd576390678e34900d0165e98ad458d55c19c12f6dba99",
+        "callIds": [
+          "c37a93be0605e64b3156",
+          "94fb30ec710f32d062c2",
+          "36d0fbfc5ddf864ad6ea",
+          "bda77ff34ad9e973cbde",
+          "a1e1f647efb6e7002993",
+          "7c2970e3ea0940d5d136",
+          "986c86eebabfae033939",
+          "884cad1975974abc0599",
+          "b6708d08741254f6da06",
+          "85d5a147aa59e4f62e68"
+        ]
+      },
+      "nativeCheckoutPriorReview": {
+        "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+        "sourceSha256": "9305dabc17c792c9a22dcd9a414252ce172879423ecfb71e9ff6fa64f1284a73",
+        "callIds": [
+          "99ba24aefa7f2c2f6de9",
+          "3c64dc5d4a7058fb12f8",
+          "fc3b3f4bab00e81fbc31",
+          "94f936dfc30fe898eebe",
+          "1f375890c653535bb84b",
+          "9614e2de1a77eacffe05",
+          "b3a2b5af5ead58408dba",
+          "1f7c11b7359e0958073e",
+          "0f9bdee0b411ef2f246d",
+          "adbc1ef16d0ec277edb7"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
+        "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ],
+        "historicalReview": {
+          "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+          "sourceSha256": "32229709ed4da07e64bd576390678e34900d0165e98ad458d55c19c12f6dba99",
+          "callIds": [
+            "c37a93be0605e64b3156",
+            "94fb30ec710f32d062c2",
+            "36d0fbfc5ddf864ad6ea",
+            "bda77ff34ad9e973cbde",
+            "a1e1f647efb6e7002993",
+            "7c2970e3ea0940d5d136",
+            "986c86eebabfae033939",
+            "884cad1975974abc0599",
+            "b6708d08741254f6da06",
+            "85d5a147aa59e4f62e68"
+          ],
+          "disposition": "REVIEWED_GAP",
+          "authority": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
+          "reason": "Claim now uses a separately reviewed service-only RPC to compare full reviewed plan/digest/expiry/display metadata and check database expiry after the row lock. Loopback race/outage tests and15 local SQL assertions pass, actual held-lock expiry/mutation/competition tests prepared. Returned owner/id/status remains verified before executePreparedBusinessAction recomputes the canonical plan digest. Remaining gaps: session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, post-claim expiry during provider preparation, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+          "evidence": [
+            {
+              "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+              "marker": "confirmation claims bind owner, reviewed digest and expiry"
+            }
+          ]
+        },
+        "command007Proof": {
+          "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+          "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+          "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+          "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+          "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+          "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+          "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+          "obligationIds": [
+            "OB-84b9011a0d2b4754:observed-owned-confirmation-metadata-claim"
+          ],
+          "passedTests": [
+            "real confirmation metadata preserves owner scope through create read cancel expiry and concurrent rejected execution",
+            "foreign durable business confirmations cannot be read approved or cancelled by changing IDs",
+            "real confirmation claim binds complete reviewed plan and checks expiry after contended row locks",
+            "real confirmation finish binds the original claim and admits one immutable terminal outcome"
+          ],
+          "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+        },
+        "separateUncertifiedScope": {
+          "state": "PRESERVED_NOT_CERTIFIED",
+          "originalReviewReason": "Claim now uses a separately reviewed service-only RPC to compare full reviewed plan/digest/expiry/display metadata and check database expiry after the row lock. Loopback race/outage tests and15 local SQL assertions pass, actual held-lock expiry/mutation/competition tests prepared. Returned owner/id/status remains verified before executePreparedBusinessAction recomputes the canonical plan digest. Remaining gaps: session-to-user binding through the full external provider path, acknowledgement bound to the displayed intent, post-claim expiry during provider preparation, crash reconciliation after external success and before consumed write, and unchecked failure-record persistence.",
+          "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+          "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+        },
+        "acceptedPhaseTwoReview": {
+          "sourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+          "sourceSha256": "32229709ed4da07e64bd576390678e34900d0165e98ad458d55c19c12f6dba99",
+          "callIds": [
+            "c37a93be0605e64b3156",
+            "94fb30ec710f32d062c2",
+            "36d0fbfc5ddf864ad6ea",
+            "bda77ff34ad9e973cbde",
+            "a1e1f647efb6e7002993",
+            "7c2970e3ea0940d5d136",
+            "986c86eebabfae033939",
+            "884cad1975974abc0599",
+            "b6708d08741254f6da06",
+            "85d5a147aa59e4f62e68"
+          ]
+        }
+      },
+      "nativeCheckoutSourcePositionProof": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-SOURCE-POSITIONS-20261028.json",
+      "beforeFinalTerminalDenialPositions": {
+        "sourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+        "callIds": [
+          "99ba24aefa7f2c2f6de9",
+          "3c64dc5d4a7058fb12f8",
+          "fc3b3f4bab00e81fbc31",
+          "94f936dfc30fe898eebe",
+          "1f375890c653535bb84b",
+          "9614e2de1a77eacffe05",
+          "b3a2b5af5ead58408dba",
+          "1f7c11b7359e0958073e",
+          "a992f061331cff4e8d50",
+          "7ddf1ddcae5c5661a52a"
+        ]
+      },
+      "beforeCurrentMainIntegration": {
+        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+        "sourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+        "callIds": [
+          "99ba24aefa7f2c2f6de9",
+          "3c64dc5d4a7058fb12f8",
+          "fc3b3f4bab00e81fbc31",
+          "94f936dfc30fe898eebe",
+          "1f375890c653535bb84b",
+          "9614e2de1a77eacffe05",
+          "b3a2b5af5ead58408dba",
+          "1f7c11b7359e0958073e",
+          "a992f061331cff4e8d50",
+          "7ddf1ddcae5c5661a52a"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
+      },
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+        "baseCallIds": [
+          "99ba24aefa7f2c2f6de9",
+          "3c64dc5d4a7058fb12f8",
+          "fc3b3f4bab00e81fbc31",
+          "94f936dfc30fe898eebe",
+          "1f375890c653535bb84b",
+          "9614e2de1a77eacffe05",
+          "b3a2b5af5ead58408dba",
+          "1f7c11b7359e0958073e",
+          "a992f061331cff4e8d50",
+          "7ddf1ddcae5c5661a52a"
+        ],
+        "verification": "Reviewed call chains are byte-identical to the reviewed main version. The enclosing function changed, and the change was reviewed by diff: Manual diff review: adds requireResearchResultStorage and requireModelResultStorage guards and saves the execution result after it through tenant-context storage. The reviewed claim, authorize and confirmation calls are unchanged."
+      }
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "callIds": [
+        "7435325dc6f8734b9505"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Authenticated phase1 confirmation route passes requireUserId and explicit confirmation UUID. The service reads owner-filtered plan and validates displayed metadata. Service-only claim locks the same owner/ID and compares full plan, digest, expiry, display metadata and pending state, then checks clock_timestamp after lock acquisition before marking executing.",
+      "reason": "Fixed pending-confirmation claim boundary VERIFIED at e47030615e13f75045e4434cddcb1294f05095f3, disposable39114496584 and again2e752b76 run39117021162: actual two-client winner, expiry while blocked, same-digest full-plan mutation, foreign actor and browser-role denial pass. Claim invocation, SQL and real integration fixture are unchanged. New terminal persistence has a separate unresolved review. Loopback intent/outage tests and15 local SQL assertions/replay also pass. Only this owner/plan-bound claim is closed. Session-to-owner provider binding, displayed-intent acknowledgement and external-success crash recovery remain unresolved. No provider execution or whole business-action certification. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+      "evidence": [
+        {
+          "path": "backend/src/security/businessConfirmationClaim.local.integration.ts",
+          "marker": "registerBusinessConfirmationClaimTests"
+        },
+        {
+          "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+          "marker": "confirmation claims bind owner, reviewed digest and expiry and admit one concurrent claimant"
+        }
+      ],
+      "acceptedPhaseTwoReview": {
+        "sourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+        "sourceSha256": "32229709ed4da07e64bd576390678e34900d0165e98ad458d55c19c12f6dba99",
+        "callIds": [
+          "bbf934631616a292169c"
+        ]
+      },
+      "nativeCheckoutPriorReview": {
+        "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+        "sourceSha256": "9305dabc17c792c9a22dcd9a414252ce172879423ecfb71e9ff6fa64f1284a73",
+        "callIds": [
+          "c2ce222ac0cc6f913871"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "Authenticated phase1 confirmation route passes requireUserId and explicit confirmation UUID. The service reads owner-filtered plan and validates displayed metadata. Service-only claim locks the same owner/ID and compares full plan, digest, expiry, display metadata and pending state, then checks clock_timestamp after lock acquisition before marking executing.",
+        "reason": "Fixed pending-confirmation claim boundary VERIFIED at e47030615e13f75045e4434cddcb1294f05095f3, disposable39114496584 and again2e752b76 run39117021162: actual two-client winner, expiry while blocked, same-digest full-plan mutation, foreign actor and browser-role denial pass. Claim invocation, SQL and real integration fixture are unchanged. New terminal persistence has a separate unresolved review. Loopback intent/outage tests and15 local SQL assertions/replay also pass. Only this owner/plan-bound claim is closed. Session-to-owner provider binding, displayed-intent acknowledgement and external-success crash recovery remain unresolved. No provider execution or whole business-action certification. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+        "evidence": [
+          {
+            "path": "backend/src/security/businessConfirmationClaim.local.integration.ts",
+            "marker": "registerBusinessConfirmationClaimTests"
+          },
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry and admit one concurrent claimant"
+          }
+        ],
+        "acceptedPhaseTwoReview": {
+          "sourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+          "sourceSha256": "32229709ed4da07e64bd576390678e34900d0165e98ad458d55c19c12f6dba99",
+          "callIds": [
+            "bbf934631616a292169c"
+          ]
+        }
+      },
+      "nativeCheckoutSourcePositionProof": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-SOURCE-POSITIONS-20261028.json",
+      "beforeFinalTerminalDenialPositions": {
+        "sourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+        "callIds": [
+          "b01c22a391468e45cbe8"
+        ]
+      },
+      "beforeCurrentMainIntegration": {
+        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+        "sourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+        "callIds": [
+          "b01c22a391468e45cbe8"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
+      },
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+        "baseCallIds": [
+          "b01c22a391468e45cbe8"
+        ],
+        "verification": "Reviewed call chains are byte-identical to the reviewed main version. The enclosing function changed, and the change was reviewed by diff: Manual diff review: adds requireResearchResultStorage and requireModelResultStorage guards and saves the execution result after it through tenant-context storage. The reviewed claim, authorize and confirmation calls are unchanged."
+      }
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "callIds": [
+        "319518470d46e4577f12"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Only the existing confirmed-action executor passes its original admin client, verified server owner and exact claimed row. Service-only terminal transaction locks owner/ID and compares full plan, display metadata, original expiry/creation and claimed_at before consumed/failed status, with immutable exact replay. No provider execution, lease extension or confirmation reuse.",
+      "reason": "Fixed terminal-claim persistence boundary VERIFIED ataa1aad5c07c44cb907ff4432e1579ff79d08bd3d, disposable39119207485: actual held plan/claim changes reject before writes, opposite terminal outcomes admit one immutable winner, same-outcome replay retains its timestamp, expired original claims can record completion, rollback and browser-role denial pass. Runtime helper, SQL and fixture are unchanged. Loopback path rejects substituted/missing/outage terminal receipts without provider work and16 local SQL assertions/replay pass. Only terminal persistence is closed. Provider session authority, expiry before external execution and external-success crash reconciliation remain unresolved. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+      "evidence": [
+        {
+          "path": "backend/src/security/businessConfirmationFinish.local.integration.ts",
+          "marker": "registerBusinessConfirmationFinishTests"
+        },
+        {
+          "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+          "marker": "one failure recording attempt per admitted invalid-digest execution, no provider retry"
+        }
+      ],
+      "acceptedPhaseTwoReview": {
+        "sourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+        "sourceSha256": "32229709ed4da07e64bd576390678e34900d0165e98ad458d55c19c12f6dba99",
+        "callIds": [
+          "1a3d2ad705ca358ebbe3"
+        ]
+      },
+      "nativeCheckoutPriorReview": {
+        "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+        "sourceSha256": "9305dabc17c792c9a22dcd9a414252ce172879423ecfb71e9ff6fa64f1284a73",
+        "callIds": [
+          "8f3d42e8e45d7fb2252a"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "Only the existing confirmed-action executor passes its original admin client, verified server owner and exact claimed row. Service-only terminal transaction locks owner/ID and compares full plan, display metadata, original expiry/creation and claimed_at before consumed/failed status, with immutable exact replay. No provider execution, lease extension or confirmation reuse.",
+        "reason": "Fixed terminal-claim persistence boundary VERIFIED ataa1aad5c07c44cb907ff4432e1579ff79d08bd3d, disposable39119207485: actual held plan/claim changes reject before writes, opposite terminal outcomes admit one immutable winner, same-outcome replay retains its timestamp, expired original claims can record completion, rollback and browser-role denial pass. Runtime helper, SQL and fixture are unchanged. Loopback path rejects substituted/missing/outage terminal receipts without provider work and16 local SQL assertions/replay pass. Only terminal persistence is closed. Provider session authority, expiry before external execution and external-success crash reconciliation remain unresolved. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+        "evidence": [
+          {
+            "path": "backend/src/security/businessConfirmationFinish.local.integration.ts",
+            "marker": "registerBusinessConfirmationFinishTests"
+          },
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "one failure recording attempt per admitted invalid-digest execution, no provider retry"
+          }
+        ],
+        "acceptedPhaseTwoReview": {
+          "sourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+          "sourceSha256": "32229709ed4da07e64bd576390678e34900d0165e98ad458d55c19c12f6dba99",
+          "callIds": [
+            "1a3d2ad705ca358ebbe3"
+          ]
+        }
+      },
+      "nativeCheckoutSourcePositionProof": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-SOURCE-POSITIONS-20261028.json",
+      "beforeFinalTerminalDenialPositions": {
+        "sourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+        "callIds": [
+          "8f3d42e8e45d7fb2252a"
+        ]
+      },
+      "beforeCurrentMainIntegration": {
+        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+        "sourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+        "callIds": [
+          "8f3d42e8e45d7fb2252a"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
+      },
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+        "baseCallIds": [
+          "8f3d42e8e45d7fb2252a"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "callIds": [
+        "a2737e6413bb535344c8"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
+      "reason": "New Phase3 dispatch and in-flight revocation obligations are retained as explicit missing proof, not invented vulnerabilities or current-source security certificates. Unit and synthetic SQL checks cannot replace real disposable concurrency and authenticated CI.",
+      "evidence": [
+        {
+          "path": "backend/src/security/businessAuthority.local.integration.ts",
+          "marker": "registerBusinessAuthorityTests"
+        }
+      ],
+      "phase3Requirements": [
+        "XB01-C008-AC02",
+        "XB01-C008-AC07"
+      ],
+      "nativeCheckoutPriorReview": {
+        "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+        "sourceSha256": "9305dabc17c792c9a22dcd9a414252ce172879423ecfb71e9ff6fa64f1284a73",
+        "callIds": [
+          "16c8e03100d592b72118"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
+        "reason": "New Phase3 dispatch and in-flight revocation obligations are retained as explicit missing proof, not invented vulnerabilities or current-source security certificates. Unit and synthetic SQL checks cannot replace real disposable concurrency and authenticated CI.",
+        "evidence": [
+          {
+            "path": "backend/src/security/businessAuthority.local.integration.ts",
+            "marker": "registerBusinessAuthorityTests"
+          }
+        ],
+        "phase3Requirements": [
+          "XB01-C008-AC02",
+          "XB01-C008-AC07"
+        ]
+      },
+      "nativeCheckoutSourcePositionProof": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-SOURCE-POSITIONS-20261028.json",
+      "beforeFinalTerminalDenialPositions": {
+        "sourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+        "callIds": [
+          "16c8e03100d592b72118"
+        ]
+      },
+      "beforeCurrentMainIntegration": {
+        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+        "sourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+        "callIds": [
+          "16c8e03100d592b72118"
+        ],
+        "disposition": "REVIEWED_GAP"
+      },
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+        "baseCallIds": [
+          "16c8e03100d592b72118"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "callIds": [
+        "a794b7db009e04b8617a"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
+      "reason": "New Phase3 dispatch and in-flight revocation obligations are retained as explicit missing proof, not invented vulnerabilities or current-source security certificates. Unit and synthetic SQL checks cannot replace real disposable concurrency and authenticated CI.",
+      "evidence": [
+        {
+          "path": "backend/src/security/businessAuthority.local.integration.ts",
+          "marker": "registerBusinessAuthorityTests"
+        }
+      ],
+      "phase3Requirements": [
+        "XB01-C008-AC02",
+        "XB01-C008-AC07"
+      ],
+      "nativeCheckoutPriorReview": {
+        "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+        "sourceSha256": "9305dabc17c792c9a22dcd9a414252ce172879423ecfb71e9ff6fa64f1284a73",
+        "callIds": [
+          "402d88eda8e20ef83be0"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
+        "reason": "New Phase3 dispatch and in-flight revocation obligations are retained as explicit missing proof, not invented vulnerabilities or current-source security certificates. Unit and synthetic SQL checks cannot replace real disposable concurrency and authenticated CI.",
+        "evidence": [
+          {
+            "path": "backend/src/security/businessAuthority.local.integration.ts",
+            "marker": "registerBusinessAuthorityTests"
+          }
+        ],
+        "phase3Requirements": [
+          "XB01-C008-AC02",
+          "XB01-C008-AC07"
+        ]
+      },
+      "nativeCheckoutSourcePositionProof": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-SOURCE-POSITIONS-20261028.json",
+      "beforeFinalTerminalDenialPositions": {
+        "sourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+        "callIds": [
+          "402d88eda8e20ef83be0"
+        ]
+      },
+      "beforeCurrentMainIntegration": {
+        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+        "sourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+        "callIds": [
+          "402d88eda8e20ef83be0"
+        ],
+        "disposition": "REVIEWED_GAP"
+      },
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+        "baseCallIds": [
+          "402d88eda8e20ef83be0"
+        ],
+        "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      }
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "callIds": [
+        "b4a46938a0dec4c5f10c"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
+      "reason": "New Phase3 dispatch and in-flight revocation obligations are retained as explicit missing proof, not invented vulnerabilities or current-source security certificates. Unit and synthetic SQL checks cannot replace real disposable concurrency and authenticated CI.",
+      "evidence": [
+        {
+          "path": "backend/src/security/businessAuthority.local.integration.ts",
+          "marker": "registerBusinessAuthorityTests"
+        }
+      ],
+      "phase3Requirements": [
+        "XB01-C008-AC02",
+        "XB01-C008-AC07"
+      ],
+      "nativeCheckoutPriorReview": {
+        "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+        "sourceSha256": "9305dabc17c792c9a22dcd9a414252ce172879423ecfb71e9ff6fa64f1284a73",
+        "callIds": [
+          "d8dd240dbf1cb3f97b7d"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
+        "reason": "New Phase3 dispatch and in-flight revocation obligations are retained as explicit missing proof, not invented vulnerabilities or current-source security certificates. Unit and synthetic SQL checks cannot replace real disposable concurrency and authenticated CI.",
+        "evidence": [
+          {
+            "path": "backend/src/security/businessAuthority.local.integration.ts",
+            "marker": "registerBusinessAuthorityTests"
+          }
+        ],
+        "phase3Requirements": [
+          "XB01-C008-AC02",
+          "XB01-C008-AC07"
+        ]
+      },
+      "nativeCheckoutSourcePositionProof": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-SOURCE-POSITIONS-20261028.json",
+      "beforeFinalTerminalDenialPositions": {
+        "sourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+        "callIds": [
+          "ab85b8388bbce761729d"
+        ]
+      },
+      "beforeCurrentMainIntegration": {
+        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+        "sourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+        "callIds": [
+          "ab85b8388bbce761729d"
+        ],
+        "disposition": "REVIEWED_GAP"
+      },
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "reboundOnBranch": {
+        "prNumber": 922,
+        "baseRef": "origin/main",
+        "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
+        "baseSourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
+        "baseCallIds": [
+          "ab85b8388bbce761729d"
+        ],
+        "verification": "Reviewed call chains are byte-identical to the reviewed main version. The enclosing function changed, and the change was reviewed by diff: Manual diff review: adds requireResearchResultStorage and requireModelResultStorage guards and saves the execution result after it through tenant-context storage. The reviewed claim, authorize and confirmation calls are unchanged."
+      }
     },
     {
       "path": "backend/src/services/integrations/credentialEnvelope.ts",
@@ -23109,10 +23995,10 @@
     },
     {
       "path": "backend/src/services/notificationService.ts",
-      "sourceSha256": "97a7d33fe2b60ddebbdb9f1e8e2c5304d72398ff31ee9036386f705f62b6b402",
+      "sourceSha256": "823e0e647c547459ecd37560dee87b23d8d1fa0e28a85d5252870c65fccd69ec",
       "callIds": [
-        "988c4217a8b8b781b43c",
-        "30281b1cf819bb604048"
+        "0af8d7bbc823a95227af",
+        "2e83fbad1f1940ca3770"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The only active production callers of the notification wrappers are authenticated swarm completion/failure handlers. They pass requireTenantContext(req.tenantContext), never a body owner or recipient. Video wrappers currently have no production consumer, but their primitive still requires that same original issued context. pushNotification validates the context before factory access, snapshots the bounded caller intent and writes only the context user_id. It checks returned owner and nonempty ID before acknowledging. There is no alternate owner argument or fallback identity.",
@@ -26254,105 +27140,6 @@
       "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
     },
     {
-      "path": "frontend/src/app/(workspace)/layout.tsx",
-      "sourceSha256": "4c1ca037b72ce3a2dadb443b207c20a9735905cbb2e09f774d537624f404469c",
-      "callIds": [
-        "68a71e7e97bdbf681c01"
-      ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "These seven conservative inventory entries are genuine public-key server component or middleware queries, not service-role factories or false positives. The shared server creator uses only validated publishable configuration and verified Auth cookies. Three profile setup RPCs accept no owner argument, derive auth.uid() inside fixed SQL and return only that subject id/display name/onboarding. Pages check the returned subject and fail closed on query errors or mismatch. Public community profile column grants remain restrictive. Four current_community_role calls also take no owner argument and derive current identity from the validated JWT. Admin/community pages use current database role. Founder middleware and layout independently require configured founder identity, current role and real AAL2 before returning private HTML/RSC. Query owner/role fields grant nothing.",
-      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. One exact query per listed file. New actual Next HTTP fixture uses real local Auth-cookie issuance, distinct owner/member profiles and onboarding states, own dashboard/workspace metadata, completed versus pending onboarding, legitimate admin/community rendering and member denial despite forged query identity. Current role changes affect the same session. Real local TOTP admits the correct founder and demotion denies its still-AAL2 cookie, exercising both middleware and layout RPCs. Exact foreign profile remains unchanged. Installed Next streaming redirect markers are validated explicitly, while private founder denial remains strict403. No backend service-role or external account grant is inferred. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. The current source differs from this historical review; mapping by unchanged caller signature and ordinal only preserves identity. Current-source security proof remains required.",
-      "evidence": [
-        {
-          "path": "frontend/src/lib/supabase/server.ts",
-          "marker": "config.publishableKey"
-        },
-        {
-          "path": "frontend/src/app/(workspace)/layout.tsx",
-          "marker": "read_current_profile_setup"
-        },
-        {
-          "path": "supabase/migrations/20261019000600_current_profile_setup.sql",
-          "marker": "CREATE OR REPLACE FUNCTION public.read_current_profile_setup()"
-        }
-      ],
-      "historicalReview": {
-        "path": "frontend/src/app/(workspace)/layout.tsx",
-        "sourceSha256": "2958f2226458632dd06bfe25fceb74b7f2b665c10a92ff8470e810ce1943a810",
-        "callIds": [
-          "5740af96dff28fda6f3f"
-        ],
-        "disposition": "REVIEWED_GAP",
-        "authority": "Existing server Supabase client independently verifies the Auth cookie. The fixed read_current_profile_setup SQL function derives auth.uid() internally, returns only that profile id/display name/onboarding and accepts no client owner. Public column grants and community row policies are unchanged. No service key enters the browser.",
-        "reason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
-        "evidence": [
-          {
-            "path": "frontend/src/lib/supabase/server.ts",
-            "marker": "config.publishableKey"
-          },
-          {
-            "path": "frontend/src/app/(workspace)/layout.tsx",
-            "marker": "read_current_profile_setup"
-          },
-          {
-            "path": "supabase/migrations/20261019000600_current_profile_setup.sql",
-            "marker": "CREATE OR REPLACE FUNCTION public.read_current_profile_setup()"
-          }
-        ],
-        "historicalReview": {
-          "path": "frontend/src/app/(workspace)/layout.tsx",
-          "sourceSha256": "30ae792edc888b89b7c8849cc6c07294564a599b265070abe115846996471e61",
-          "callIds": [
-            "c2126cd594624a77ed05"
-          ],
-          "disposition": "SCOPED_BOUNDARY",
-          "authority": "Inspected full layout/page and cookie-bound publishable server client. Server getUser supplies the exact profiles.id filter; no request-provided identity or service-role credential enters this read. Only onboarding/display-name fields are returned, with RLS still applied.",
-          "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
-          "evidence": [
-            {
-              "path": "frontend/src/lib/supabase/server.ts",
-              "marker": "config.publishableKey"
-            },
-            {
-              "path": "frontend/src/app/(workspace)/layout.tsx",
-              "marker": ".eq('id', user.id)"
-            }
-          ]
-        }
-      },
-      "command007Proof": {
-        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
-        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
-        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
-        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
-        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
-        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
-        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
-        "obligationIds": [
-          "OB-49626f1bf7036db9:observed-actual-next-server-owner-role"
-        ],
-        "passedTests": [
-          "real server page reads bind verified cookies to own profile and current role despite forged query ownership"
-        ],
-        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
-      },
-      "separateUncertifiedScope": {
-        "state": "PRESERVED_NOT_CERTIFIED",
-        "originalReviewReason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
-        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
-        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
-      },
-      "beforeCurrentMainIntegration": {
-        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
-        "sourceSha256": "2958f2226458632dd06bfe25fceb74b7f2b665c10a92ff8470e810ce1943a810",
-        "callIds": [
-          "5740af96dff28fda6f3f"
-        ],
-        "disposition": "SCOPED_BOUNDARY"
-      },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
-    },
-    {
       "path": "frontend/src/app/admin/community/page.tsx",
       "sourceSha256": "8791cb3af7da75e7bd24283460a2893b714ca3fd3ef0dd1b811059491b90e1a2",
       "callIds": [
@@ -26838,9 +27625,9 @@
     },
     {
       "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "sourceSha256": "769ac7c78bd7c9b624bd0e69fa4b2eaa4df3bb13b943baf7d5019873915b29c7",
+      "sourceSha256": "435a987f8529000167f6a50c2f52b6e65a7e351eb6986d306bec197f37538b4e",
       "callIds": [
-        "37347768912b9e614cea"
+        "ed5669121537ca504798"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Native Array.from materializes locally queried menu buttons for keyboard focus navigation. The subsequent index/focus operations touch the DOM only. No database, storage client, credential or provider write is involved.",
@@ -27138,9 +27925,9 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237",
+      "sourceSha256": "bdf84341e108be49d8d273c5f9ec653b417aab8894284904f7bfb23ca61cdcd2",
       "callIds": [
-        "a291f26c3c5001de01f9"
+        "9b5825294bbdeabe6b85"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
@@ -27163,9 +27950,9 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237",
+      "sourceSha256": "bdf84341e108be49d8d273c5f9ec653b417aab8894284904f7bfb23ca61cdcd2",
       "callIds": [
-        "f8d5eaf0193282882763"
+        "1410a770303a0c8eb8f3"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
@@ -27281,31 +28068,6 @@
         "sourceSha256": "3141a8208eed9b6103ecd681fe7b31143a62122a5ba3acbda73f1a0912431399",
         "callIds": [
           "905295f8bffbe3eb3456"
-        ],
-        "disposition": "NOT_PERSISTENCE"
-      },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
-    },
-    {
-      "path": "frontend/src/components/pricing/PricingPageClient.tsx",
-      "sourceSha256": "06dc256ae10249978f8b73114f455a3b4a518d39287cd08dd229810ab66875c5",
-      "callIds": [
-        "e75e25572d006aea3011"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in CtaParticles, with no database or Storage client receiver.",
-      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
-      "evidence": [
-        {
-          "path": "frontend/src/components/pricing/PricingPageClient.tsx",
-          "marker": "{Array.from({ length: 10 }, (_, index) => ("
-        }
-      ],
-      "beforeCurrentMainIntegration": {
-        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
-        "sourceSha256": "06dc256ae10249978f8b73114f455a3b4a518d39287cd08dd229810ab66875c5",
-        "callIds": [
-          "e75e25572d006aea3011"
         ],
         "disposition": "NOT_PERSISTENCE"
       },
@@ -27481,31 +28243,6 @@
         "sourceSha256": "ab00bc2e66a63b1028f4c404dfa14170aae7cb5e26fee88bf4a7d86f841061fb",
         "callIds": [
           "acf47bba6c309386ce2f"
-        ],
-        "disposition": "NOT_PERSISTENCE"
-      },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
-    },
-    {
-      "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sourceSha256": "dfdcf903eefaa158b3d6e28c2da80df9312563791359622133a686a4bfdcb82f",
-      "callIds": [
-        "dd508fe9836928e3970f"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
-      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
-      "evidence": [
-        {
-          "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-          "marker": "const incoming = Array.from(list).filter("
-        }
-      ],
-      "beforeCurrentMainIntegration": {
-        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
-        "sourceSha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860",
-        "callIds": [
-          "18f7c2043f2ceb0ebac3"
         ],
         "disposition": "NOT_PERSISTENCE"
       },
@@ -27763,13 +28500,13 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sourceSha256": "dba219fea184b59714d2c36619d1c58bd3273e6b232c9d1b4b53e3427bc16fdf",
+      "sourceSha256": "0b6b7ba6e538e1a51872e7c41a21ed2227b49279b6f9534deecb516b5de18c05",
       "callIds": [
-        "ee548d3cf583cfcbdd91"
+        "b3ad106e971b2d324707"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
-      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. Re-bound 2026-11-04: Diff from the reviewed source d80e1ce5489b is only `export` added to BusinessActionConfirmationInline so the V2 turn can render the existing confirmation review. The reviewed call (decodeBase64UrlUtf8 Array/Uint8Array conversion) is unchanged; no new call, receiver, persistence or egress was added.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. Re-bound 2026-11-04: Diff from the reviewed source d80e1ce5489b is only `export` added to BusinessActionConfirmationInline so the V2 turn can render the existing confirmation review. The reviewed call (decodeBase64UrlUtf8 Array/Uint8Array conversion) is unchanged; no new call, receiver, persistence or egress was added. Re-bound 2026-11-15: reviewed diff adds keyboard focus, group semantics and focus outline only to the pre renderer. The Uint8Array.from call in decodeBase64UrlUtf8 and its source position are unchanged. No persistence, authentication or network behavior changed. This refresh does not certify production tenancy. Re-bound 2026-11-17: the research approval card presents the exact query and question as text and retains the full payload for inspection. The approval handler, network requests and the reviewed Uint8Array.from conversion are unchanged. The candidate ID moved because presentation lines precede that conversion. Re-bound 2026-11-18: removed the later automatic prose paragraph splitter. The entire reviewed in-memory Uint8Array conversion function and its call identity are unchanged, with no new persistence, authority or network operation. Re-bound 2026-11-18: removed the later synthesized introduction callout. The entire reviewed in-memory Uint8Array conversion function and its call identity are unchanged, with no new persistence, authority or network operation. Re-bound 2026-11-22: Marked retrieved citation evidence and made rendered table overflow keyboard-accessible. The complete decodeBase64UrlUtf8 function and its native Uint8Array.from candidate are byte-identical. Re-bound 2026-11-26: The Workspace renders an inline status for saved research without reviewable fields. The entire decodeBase64UrlUtf8 function and the existing API call expressions are unchanged. The follow-up changes only the message displayed when saved request details cannot be loaded. The same seven API and in-memory conversion call expressions are unchanged. Re-bound 2026-11-26 for HTML table alignment, column scope and long-cell text measurement. The reviewed Uint8Array conversion function is byte-identical and the persistence scanner found no new or changed expression.",
       "evidence": [
         {
           "path": "frontend/src/lib/formatAiMarkdown.tsx",
@@ -27805,6 +28542,65 @@
           "f40cf50a136b33e64174"
         ],
         "verification": "Each reviewed call chain and its whole enclosing function are byte-identical to the reviewed main version; only code outside the reviewed calls changed."
+      },
+      "paragraphPresentationRebind": {
+        "sourceBefore": "e9555c725f86ccd0cdbf6bf899654baa689fe5c8",
+        "sourceSha256Before": "a5cc9f69ee2acb380eead7c6653ab2341029277d46676fbfc1d87a1a81b3ef0f",
+        "callIdsBefore": [
+          "07e7e80f4c3c2b4a540b"
+        ],
+        "reason": "Only the later legacy paragraph-splitting helper and its formatter call changed. The complete decodeBase64UrlUtf8 function, Uint8Array.from receiver, source positions and candidate IDs are byte-identical. This refresh does not grant a tenant proof or change the historical accepted evidence."
+      },
+      "draftIntroCalloutReview": {
+        "sourceBefore": "8b2ae54c5006a7b4946411d7ad722a385374c2f0",
+        "sourceSha256Before": "0d3afb74bf92302c4de434b18ea607a1291a1829df0054f937af2c7861773316",
+        "callIdsBefore": [
+          "07e7e80f4c3c2b4a540b"
+        ],
+        "reason": "Only the Markdown opening paragraph handling and artificial callout changed. The complete decodeBase64UrlUtf8 function, Uint8Array.from receiver, source positions and candidate IDs are byte-identical. This refresh does not grant a tenant proof or change the historical accepted evidence."
+      },
+      "codePanelReview": {
+        "sourceBefore": "e4ac98cafc7bd40ef64eb24f55ddf73d1a6f5a7f",
+        "sourceSha256Before": "199d9f6f334a6a9ea1bfaa6906fec6583970c18815343eb84ef273f2e1cd0603",
+        "callIdsBefore": [
+          "07e7e80f4c3c2b4a540b"
+        ],
+        "reason": "A new import shifts the source position. The entire reviewed decodeBase64UrlUtf8 function and Uint8Array.from call are byte-identical. The fenced Markdown changes only render and locally copy existing answer text."
+      },
+      "workspaceReview20261119": {
+        "auditedBase": "5898449fad9adb60c6eaa98653f2ddec8d7d6e82",
+        "candidateSource": "eea565cc2377cd5d66fcf06cc6bd4da83cfc5681",
+        "previousSha256": "b7d062bda6d42d4adac11104da7b83f8cc9a7b0821377c68f02c3f00ddeb2226",
+        "previousCallIds": [
+          "268ea28d28fecea68c7e"
+        ],
+        "finding": "Only local approval-card labels, destination display and busy state changed. The complete decodeBase64UrlUtf8 function and confirmation load, confirm and cancel callbacks match the audited base.",
+        "liveAcceptance": false
+      },
+      "workspacePublicSearchRebinding": {
+        "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
+        "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+        "previousIds": [
+          "e75c4ea163671f8df19f"
+        ],
+        "scope": "Exact existing call chains and owner predicates only. The prior review grants no automatic public Search authority."
+      },
+      "workspacePublicResearchP0": {
+        "parent": "8cf32b08df867acf359aaf6bbdfa0b7cce74325e",
+        "source": "a53217141172f08c820d24b48b73bca9952d6b66",
+        "previousSha256": "04326cf09e25e0d7daeabacfd62f169b3c3c6ee0653687201a0b9bdb60d9c145",
+        "previousCallIds": [
+          "a34869d5c2975f5bca99"
+        ],
+        "scope": "Two progress labels changed. The reviewed effect call and confirmation authority are byte-identical."
+      },
+      "workspaceResearchPrivacy": {
+        "baseline": "599bb6f36640327f3ef2b27f033f50e33ba72f2e",
+        "previousSha256": "5f20692793f131998120fa2e6c3f247375de62768e581628a557495b7e020915",
+        "scope": "Require an explicit reviewed data disclosure before the existing authenticated action call. The reviewed calls and destinations are unchanged.",
+        "previousCallIds": [
+          "5ad78803a9689423de64"
+        ]
       }
     },
     {
@@ -28168,9 +28964,9 @@
     },
     {
       "path": "frontend/src/lib/xrogaFileExports.ts",
-      "sourceSha256": "771f7f75bff7d39c9b05c230ae37cd6bb3fc287bcd09a187acb37e8337a89807",
+      "sourceSha256": "4d3ce2cb9b387b94a03a282c342910d9230b26aa76a85104243c94976d0fb26b",
       "callIds": [
-        "53953a7522a9f4a6ec38"
+        "8df86e806ff4832e56ab"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in exportDocumentPdf, with no database or Storage client receiver.",
@@ -28211,31 +29007,6 @@
         {
           "path": "backend/tests/engineeringResourceLedger.local.integration.ts",
           "marker": "another owner cannot settle, release or re-reserve"
-        },
-        {
-          "path": "backend/tests/engineeringResourceLedger.local.integration.ts",
-          "marker": "the table and functions are not reachable by anonymous or signed-in roles"
-        }
-      ]
-    },
-    {
-      "path": "backend/src/ai/resourceMeter.ts",
-      "sourceSha256": "a7052c1dcbc6eea80c1049639f813704072432f907a7c706620df413d0cf0f26",
-      "callIds": [
-        "1e78d06e886bf0795dd5",
-        "9caea37dce7332cbd78d"
-      ],
-      "disposition": "NARROW_EXCEPTION",
-      "authority": "The only caller is the existing Google delivery maintenance tick, and only when XROGA_ENGINEERING_METERING=1. It uses the registered engineering_resource_sweep authority, which calls the single database function sweep_stale_engineering_reservations with a bounded interval. The function takes no owner, selects no row for the caller and returns only a count. The threshold has a floor of one hour (default two) so a call that is still running cannot be charged early.",
-      "reason": "Fixed-table lifecycle maintenance that spans owners by design, never selects or returns customer content and invokes no provider. A real disposable PostgreSQL test with a worker killed by SIGKILL shows the unsettled hold is charged in full once, the sweep is repeatable, and a recent hold is left alone. The function is service-role only and anon/authenticated are explicitly revoked. This certifies this bounded maintenance call, not usage accounting accuracy or any production behaviour.",
-      "evidence": [
-        {
-          "path": "backend/src/ai/resourceMeter.test.ts",
-          "marker": "sweep: off when metering is off"
-        },
-        {
-          "path": "backend/tests/engineeringResourceLedger.processes.local.integration.ts",
-          "marker": "a worker killed with SIGKILL while holding a reservation leaks a visible hold"
         },
         {
           "path": "backend/tests/engineeringResourceLedger.local.integration.ts",
@@ -28450,9 +29221,9 @@
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
-      "sourceSha256": "3ae113999caad00037882cbe3f1cc72a7536a13b53e74403bf849dbda77cfeca",
+      "sourceSha256": "df2d93e2135f15fca2fca57a59aa2194f8ae9ade9e4c04b4f402365a9b82ab31",
       "callIds": [
-        "2560cf2908b41e1b590f"
+        "484368aaf4fffe73b282"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in executeParallelNativeAction. This specific call uses the built-in Uint8Array.from conversion of already fetched public document bytes for the PDF parser, not the adjacent database, object storage or provider transport.",
@@ -28467,7 +29238,194 @@
         "prNumber": 922,
         "baseRef": "origin/main",
         "baseSha": "135f3432f4f03da15b81f1d4354d3ef1d8262374"
+      },
+      "workspacePublicSearchRebinding": {
+        "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
+        "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+        "previousIds": [
+          "2560cf2908b41e1b590f"
+        ],
+        "scope": "Exact existing call chains and owner predicates only. The prior review grants no automatic public Search authority."
+      },
+      "workspaceOfficialLinkCoverage": {
+        "baseline": "81327005552435f2f38886320fb4f8d039887241",
+        "previousSha256": "d6b4d7dc04f841eab5243b792bfc0556133a21e0340de033f8a826c1b07d9f3b",
+        "previousIds": [
+          "41f72a13adc2226d0255"
+        ],
+        "scope": "Existing persistence calls and tenant predicates are unchanged. Link discovery changes only the bounded public Search request and evidence selection."
+      },
+      "workspacePublisherVerification": {
+        "baseline": "84b288e3193fc0f285e699c8785c210d47937f16",
+        "previousIds": [
+          "0e0ffe79748dc7345605"
+        ],
+        "scope": "Exact private-action database expressions and function remain unchanged. The new public document check adds no direct database expression."
       }
+    },
+    {
+      "path": "frontend/src/lib/clipboard.ts",
+      "sourceSha256": "ea08eff8a91e3336f46bc92a58eedd114859e9cc65d99052b848ef275b26bc17",
+      "callIds": [
+        "e4cf22a404b1ba954649"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "The built-in Array.from call copies in-memory browser DOM Range objects for local selection restoration. Its receiver has no persistence or privilege interface.",
+      "reason": "The scanner includes every from method. This exact call clones the current document selection and the local clipboard fallback restores those ranges after copying.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/clipboard.ts",
+          "marker": "Array.from({ length: selection.rangeCount }, (_, i) => selection.getRangeAt(i).cloneRange())"
+        },
+        {
+          "path": "frontend/src/lib/clipboard.test.ts",
+          "marker": "missing or rejected Async Clipboard API falls back and restores focus and selection"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/attachments.ts",
+      "sourceSha256": "1ef2126f5419e5a1b68c153efaa9a15b30f7e1d20d1211f2c1714517bfe0fb9a",
+      "callIds": [
+        "6e8a63b59e7b39a8416b"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "This exact built-in Buffer.from call converts the already extracted attachment text to an in-memory UTF-8 byte buffer. It has no storage, network or privileged client",
+      "reason": "The source scanner detects any from method. utf8Prefix bounds the local bytes without splitting a UTF-8 character, then returns the decoded prefix",
+      "evidence": [
+        {
+          "path": "backend/src/ai/attachments.ts",
+          "marker": "const bytes = Buffer.from(text)"
+        },
+        {
+          "path": "backend/src/ai/attachments.test.ts",
+          "marker": "marks limited document evidence without splitting a UTF-8 character"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/app/(workspace)/layout.tsx",
+      "sourceSha256": "4c1ca037b72ce3a2dadb443b207c20a9735905cbb2e09f774d537624f404469c",
+      "callIds": [
+        "68a71e7e97bdbf681c01"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "These seven conservative inventory entries are genuine public-key server component or middleware queries, not service-role factories or false positives. The shared server creator uses only validated publishable configuration and verified Auth cookies. Three profile setup RPCs accept no owner argument, derive auth.uid() inside fixed SQL and return only that subject id/display name/onboarding. Pages check the returned subject and fail closed on query errors or mismatch. Public community profile column grants remain restrictive. Four current_community_role calls also take no owner argument and derive current identity from the validated JWT. Admin/community pages use current database role. Founder middleware and layout independently require configured founder identity, current role and real AAL2 before returning private HTML/RSC. Query owner/role fields grant nothing.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. One exact query per listed file. New actual Next HTTP fixture uses real local Auth-cookie issuance, distinct owner/member profiles and onboarding states, own dashboard/workspace metadata, completed versus pending onboarding, legitimate admin/community rendering and member denial despite forged query identity. Current role changes affect the same session. Real local TOTP admits the correct founder and demotion denies its still-AAL2 cookie, exercising both middleware and layout RPCs. Exact foreign profile remains unchanged. Installed Next streaming redirect markers are validated explicitly, while private founder denial remains strict403. No backend service-role or external account grant is inferred. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. The current source differs from this historical review; mapping by unchanged caller signature and ordinal only preserves identity. Current-source security proof remains required.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/supabase/server.ts",
+          "marker": "config.publishableKey"
+        },
+        {
+          "path": "frontend/src/app/(workspace)/layout.tsx",
+          "marker": "read_current_profile_setup"
+        },
+        {
+          "path": "supabase/migrations/20261019000600_current_profile_setup.sql",
+          "marker": "CREATE OR REPLACE FUNCTION public.read_current_profile_setup()"
+        }
+      ],
+      "historicalReview": {
+        "path": "frontend/src/app/(workspace)/layout.tsx",
+        "sourceSha256": "2958f2226458632dd06bfe25fceb74b7f2b665c10a92ff8470e810ce1943a810",
+        "callIds": [
+          "5740af96dff28fda6f3f"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Existing server Supabase client independently verifies the Auth cookie. The fixed read_current_profile_setup SQL function derives auth.uid() internally, returns only that profile id/display name/onboarding and accepts no client owner. Public column grants and community row policies are unchanged. No service key enters the browser.",
+        "reason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
+        "evidence": [
+          {
+            "path": "frontend/src/lib/supabase/server.ts",
+            "marker": "config.publishableKey"
+          },
+          {
+            "path": "frontend/src/app/(workspace)/layout.tsx",
+            "marker": "read_current_profile_setup"
+          },
+          {
+            "path": "supabase/migrations/20261019000600_current_profile_setup.sql",
+            "marker": "CREATE OR REPLACE FUNCTION public.read_current_profile_setup()"
+          }
+        ],
+        "historicalReview": {
+          "path": "frontend/src/app/(workspace)/layout.tsx",
+          "sourceSha256": "30ae792edc888b89b7c8849cc6c07294564a599b265070abe115846996471e61",
+          "callIds": [
+            "c2126cd594624a77ed05"
+          ],
+          "disposition": "SCOPED_BOUNDARY",
+          "authority": "Inspected full layout/page and cookie-bound publishable server client. Server getUser supplies the exact profiles.id filter; no request-provided identity or service-role credential enters this read. Only onboarding/display-name fields are returned, with RLS still applied.",
+          "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+          "evidence": [
+            {
+              "path": "frontend/src/lib/supabase/server.ts",
+              "marker": "config.publishableKey"
+            },
+            {
+              "path": "frontend/src/app/(workspace)/layout.tsx",
+              "marker": ".eq('id', user.id)"
+            }
+          ]
+        }
+      },
+      "command007Proof": {
+        "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+        "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+        "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+        "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+        "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+        "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+        "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+        "obligationIds": [
+          "OB-49626f1bf7036db9:observed-actual-next-server-owner-role"
+        ],
+        "passedTests": [
+          "real server page reads bind verified cookies to own profile and current role despite forged query ownership"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Actual disposable frontend test exposed a denied private onboarding column. Public community profiles deliberately do not grant that column. This page now uses the no-argument current-subject-only SQL setup projection, checks the exact returned subject and fails closed on unavailable or substituted data. Actual changed-source own/foreign/public-profile/anonymous and Next-page proof remains pending, so this is still an original007 gap.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+      },
+      "beforeCurrentMainIntegration": {
+        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+        "sourceSha256": "2958f2226458632dd06bfe25fceb74b7f2b665c10a92ff8470e810ce1943a810",
+        "callIds": [
+          "5740af96dff28fda6f3f"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
+      },
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+    },
+    {
+      "path": "backend/src/ai/resourceMeter.ts",
+      "sourceSha256": "a7052c1dcbc6eea80c1049639f813704072432f907a7c706620df413d0cf0f26",
+      "callIds": [
+        "1e78d06e886bf0795dd5",
+        "9caea37dce7332cbd78d"
+      ],
+      "disposition": "NARROW_EXCEPTION",
+      "authority": "The only caller is the existing Google delivery maintenance tick, and only when XROGA_ENGINEERING_METERING=1. It uses the registered engineering_resource_sweep authority, which calls the single database function sweep_stale_engineering_reservations with a bounded interval. The function takes no owner, selects no row for the caller and returns only a count. The threshold has a floor of one hour (default two) so a call that is still running cannot be charged early.",
+      "reason": "Fixed-table lifecycle maintenance that spans owners by design, never selects or returns customer content and invokes no provider. A real disposable PostgreSQL test with a worker killed by SIGKILL shows the unsettled hold is charged in full once, the sweep is repeatable, and a recent hold is left alone. The function is service-role only and anon/authenticated are explicitly revoked. This certifies this bounded maintenance call, not usage accounting accuracy or any production behaviour.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/resourceMeter.test.ts",
+          "marker": "sweep: off when metering is off"
+        },
+        {
+          "path": "backend/tests/engineeringResourceLedger.processes.local.integration.ts",
+          "marker": "a worker killed with SIGKILL while holding a reservation leaks a visible hold"
+        },
+        {
+          "path": "backend/tests/engineeringResourceLedger.local.integration.ts",
+          "marker": "the table and functions are not reachable by anonymous or signed-in roles"
+        }
+      ]
     },
     {
       "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
@@ -28484,6 +29442,139 @@
           "marker": "Uint8Array.from(atob(encoded)"
         }
       ]
+    },
+    {
+      "path": "backend/src/services/integrations/composioControl.ts",
+      "sourceSha256": "06e8b400c89771c9cef3002a505cd565c53c9a59c6aabde89bb263cc8455e8cf",
+      "callIds": [
+        "d8979ec278e78beb6550",
+        "751d4198266ba218c7ab"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Only the original context recovered from the canonical permit can inspect its exact owned executing confirmation. User, immutable plan digest, expiry, durable claim and effect marker are checked before and after every provider mutation. WeakMap admission cannot be fabricated, replayed, serialized or transferred across actors.",
+      "reason": "Actual canonical vault and confirmation tests pass for all three supported registration modes, sync, deletion and paused trigger registration. Cancellation, source and credential changes, account substitution, provider authorization denial, malformed receipt and replay fail closed. This adapter creates no scheduler, principal or ledger and does not certify unrelated Phase2 or production acceptance. The exact owned confirmation read and its entire query callback are unchanged. The test evidence covers the original operations. This static reconciliation confers no acceptance for the added PIN_CUSTOM_MCP_TOOL operation or for any provider effect.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/composioControl.ts",
+          "marker": ".eq('user_id',userId)"
+        },
+        {
+          "path": "backend/src/services/integrations/composioControl.security.test.ts",
+          "marker": "native Composio control:"
+        }
+      ],
+      "beforeCurrentMainIntegration": {
+        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+        "sourceSha256": "f8ad0d65a5f8e70a636a57161db93e25ce68e77a9fa873980e593ccbd8dc1e74",
+        "callIds": [
+          "81d01fa98445cfc7e929",
+          "2df8cd7fa411b818081c"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
+      },
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "sourceMergeContinuation": {
+        "sourceParent": "26018d4eeb9a70632e86d15ec9e07686af998c7d",
+        "previousSourceSha256": "f8ad0d65a5f8e70a636a57161db93e25ce68e77a9fa873980e593ccbd8dc1e74",
+        "previousCallIds": [
+          "81d01fa98445cfc7e929",
+          "2df8cd7fa411b818081c"
+        ],
+        "scope": "EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NO_NEW_SECURITY_ACCEPTANCE"
+      }
+    },
+    {
+      "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
+      "sourceSha256": "971692b317bb237ab649f70450bbd12cfc5df9e231297f098e140d167f5b48c8",
+      "callIds": [
+        "590dbb7d21550effa467"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. The exact native FileList conversion and its enclosing handler are unchanged. The browser-operator branch and any upload or egress remain outside this classification. Refreshed for textarea sizing only. The entire FileList handler stays byte-identical and the scanner reports the same persistence candidate ID.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
+          "marker": "const incoming = Array.from(list).filter("
+        }
+      ],
+      "beforeCurrentMainIntegration": {
+        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+        "sourceSha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860",
+        "callIds": [
+          "18f7c2043f2ceb0ebac3"
+        ],
+        "disposition": "NOT_PERSISTENCE"
+      },
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "sourceMergeContinuation": {
+        "sourceParent": "26018d4eeb9a70632e86d15ec9e07686af998c7d",
+        "previousSourceSha256": "56771761395d13094fd28183ae415e0d5bddeae383e8f43d49490de6758c5b73",
+        "previousCallIds": [
+          "227a815ae8e2c760bd61"
+        ],
+        "scope": "EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NO_NEW_SECURITY_ACCEPTANCE"
+      }
+    },
+    {
+      "path": "backend/src/routes/localBrowser.ts",
+      "sourceSha256": "a40092256167d3e1862314641773ca749df710b56cd6bc8ec053351aea9248ac",
+      "callIds": [
+        "7238c5d4e187fa4f3c07"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
+      "reason": "Decodes the already bounded document body into a local byte buffer. The scanner matches the built-in Buffer method name. The exact in-memory Buffer conversion remains after the bounded document-input validation. This marker classifies the conversion only. New browser behavior and other conversions remain separate.",
+      "evidence": [
+        {
+          "path": "backend/src/routes/localBrowser.ts",
+          "marker": "Buffer.from(data.base64, 'base64')"
+        }
+      ],
+      "sourceMergeContinuation": {
+        "sourceParent": "26018d4eeb9a70632e86d15ec9e07686af998c7d",
+        "previousSourceSha256": "873a0c1ae4876e25462a9b9e18772d456ee3334fd5e5dd4492e0775b3427d019",
+        "previousCallIds": [
+          "5df2ea611eb4f0af7872"
+        ],
+        "scope": "EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NO_NEW_SECURITY_ACCEPTANCE"
+      }
+    },
+    {
+      "path": "backend/src/routes/browserDocuments.ts",
+      "sourceSha256": "131007966c483ed8c7741e73be3a230c85e3cb79db89dd90908c68605d28206e",
+      "callIds": [
+        "c5afc3e57e785ef3ef3b",
+        "87ed7df95645a68cdb05",
+        "ca5e36bcc97ba13a6ccd"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Built-in Buffer and Uint8Array constructors create local memory objects only. They carry no identity, database handle or storage authority.",
+      "reason": "These matches allocate ZIP signature bytes or copy already supplied PDF and spreadsheet bytes into the local parser. The static scanner matched the method name from. The ZIP signature allocation and the exact Buffer-to-Uint8Array copies are unchanged. This static reconciliation confers no acceptance for new PDF layout, page limits, parser behavior or egress.",
+      "evidence": [
+        {
+          "path": "backend/src/routes/browserDocuments.ts",
+          "marker": "Buffer.from([0x50, 0x4b, 0x05, 0x06])"
+        },
+        {
+          "path": "backend/src/routes/browserDocuments.ts",
+          "marker": "pdf.getDocument({ data: Uint8Array.from(data), isEvalSupported: false"
+        },
+        {
+          "path": "backend/src/routes/browserDocuments.ts",
+          "marker": "workbook.xlsx.load(Uint8Array.from(data).buffer)"
+        }
+      ],
+      "sourceMergeContinuation": {
+        "sourceParent": "26018d4eeb9a70632e86d15ec9e07686af998c7d",
+        "previousSourceSha256": "52b4445687ccae287d6c84bfefac85c463400915c5857c7d70f4b9a9a5cddfe3",
+        "previousCallIds": [
+          "49d80835a4c3c34ee32b",
+          "4b5a67879fe8cadd9429",
+          "6976a39ca0e1440bcce4"
+        ],
+        "scope": "EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NO_NEW_SECURITY_ACCEPTANCE"
+      }
     }
   ],
   "retiredSourceReviews": [
@@ -28553,6 +29644,66 @@
             "marker": "Array.from(event.target.files"
           }
         ]
+      }
+    },
+    {
+      "reason": "The former standalone file-list conversion is absent from the integrated browser UI. The other call survived with the exact main-parent recording conversion review.",
+      "parent": "26018d4eeb9a70632e86d15ec9e07686af998c7d",
+      "removedCallIds": [
+        "83437d9a6bbff05b9371"
+      ],
+      "review": {
+        "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+        "sourceSha256": "ef9da002abe7c0c6002e57dfa59830f3b4672de0a9b326f8cb963f8802332415",
+        "callIds": [
+          "c4f69f052e53d5249b1f",
+          "83437d9a6bbff05b9371"
+        ],
+        "disposition": "NOT_PERSISTENCE",
+        "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
+        "reason": "Decodes the user-requested recording or enumerates user-selected File objects locally. Neither method is a database or storage invocation.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+            "marker": "Uint8Array.from(atob(encoded)"
+          },
+          {
+            "path": "frontend/src/components/browser/WorkspaceBrowserOperator.tsx",
+            "marker": "Array.from(event.target.files"
+          }
+        ]
+      }
+    },
+    {
+      "reason": "The previous pricing CTA particles Array.from expression is absent from the integrated pricing presentation. Its exact historical native-render conversion review is retained.",
+      "parent": "0d777152f43b5be1918efa27b506898008ab960f",
+      "removedCallIds": [
+        "e75e25572d006aea3011"
+      ],
+      "review": {
+        "path": "frontend/src/components/pricing/PricingPageClient.tsx",
+        "sourceSha256": "06dc256ae10249978f8b73114f455a3b4a518d39287cd08dd229810ab66875c5",
+        "callIds": [
+          "e75e25572d006aea3011"
+        ],
+        "disposition": "NOT_PERSISTENCE",
+        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in CtaParticles, with no database or Storage client receiver.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/pricing/PricingPageClient.tsx",
+            "marker": "{Array.from({ length: 10 }, (_, index) => ("
+          }
+        ],
+        "beforeCurrentMainIntegration": {
+          "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+          "sourceSha256": "06dc256ae10249978f8b73114f455a3b4a518d39287cd08dd229810ab66875c5",
+          "callIds": [
+            "e75e25572d006aea3011"
+          ],
+          "disposition": "NOT_PERSISTENCE"
+        },
+        "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
       }
     }
   ]

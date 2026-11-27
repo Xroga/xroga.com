@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
+import vm from 'node:vm';
+import ts from 'typescript';
 import { meaningfulSidebarTitle, visiblePage, sortPinned } from './sidebarOrganization';
 
 const read=(p:string)=>readFileSync(new URL(p,import.meta.url),'utf-8');
@@ -66,4 +68,46 @@ test('unscoped browser cache cannot appear as another account history or migrate
  assert.match(sidebar,/verifiedIds\.has\(e\.id\)/);
  assert.match(sidebar,/verifiedIds\.has\(e\.id\)\)/);
  assert.doesNotMatch(sidebar,/Opened terminal — start chatting or building/);
+});
+
+test('a queued sidebar save preserves long history and cannot move it to a different account', async () => {
+ let activeUser = 'account-a';
+ const timers: Array<() => void> = [];
+ type ChatRow = { user_id: string; id: string; messages: Array<{ role: string; content: string }>; message_count: number };
+ const writes: ChatRow[] = [];
+ const client = {
+  auth: { getUser: async () => ({ data: { user: { id: activeUser } } }) },
+  from: () => ({ upsert: async (row: ChatRow) => { writes.push(row); return {}; } }),
+ };
+ const exports: Record<string, (...args: unknown[]) => void> = {};
+ const code = ts.transpileModule(read('./sidebarOrganization.ts'), {
+  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+ }).outputText;
+ vm.runInNewContext(code, {
+  exports, window: { dispatchEvent() {} }, Event, console,
+  require: (name: string) => {
+   if (name === '@/lib/supabase/client') return { createClient: () => client };
+   if (name === '@/lib/storageSafe') return { sidebarMessagesForStorage: (messages: unknown[]) => messages };
+   if (name === '@/lib/sidebarProjectTask') return {};
+   if (name === './conversationTitle') return { stableConversationTitle: (title: string | null, _messages?: unknown[], prompt?: string) => title || prompt || 'Untitled conversation' };
+   throw new Error('Unexpected fixture dependency: ' + name);
+  },
+  setTimeout: (callback: () => void) => timers.push(callback), clearTimeout() {},
+ });
+ const messages = Array.from({ length: 320 }, (_, index) => ({
+  role: index % 2 ? 'assistant' : 'user',
+  content: `Private turn ${index}`,
+ }));
+ const entry = { id: 'conversation', title: 'Conversation', messages };
+ exports.scheduleSidebarChatSave('account-a', entry);
+ activeUser = 'account-b';
+ timers.shift()!();
+ await new Promise<void>(resolve => setImmediate(resolve));
+ assert.deepEqual(writes, []);
+ exports.scheduleSidebarChatSave('account-b', entry);
+ timers.shift()!();
+ await new Promise<void>(resolve => setImmediate(resolve));
+ assert.deepEqual(writes.map(({ user_id, id }) => [user_id, id]), [['account-b', 'conversation']]);
+ assert.equal(writes[0]?.message_count, 320);
+ assert.deepEqual(writes[0]?.messages, messages);
 });

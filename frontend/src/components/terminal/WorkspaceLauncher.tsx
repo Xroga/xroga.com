@@ -16,7 +16,7 @@ import { flushSync } from 'react-dom';
  *
  * Keeping them in the header prevents a detached toolbar row from floating between
  * the workspace content and the terminal window. The chat control stays icon-only;
- * Workspace remains labelled wherever the title bar has room.
+ * Each control retains its accessible name and tooltip.
  */
 export function WorkspaceLauncher({ className, control = 'all' }: { className?: string; control?: 'all' | 'project' | 'visibility' }) {
   const workspaceOpen = useProjectWorkspaceStore((s) => s.workspaceOpen);
@@ -68,7 +68,7 @@ export function WorkspaceLauncher({ className, control = 'all' }: { className?: 
       {control !== 'visibility' && <button
         type="button"
         onClick={() => setWorkspaceOpen(!workspaceOpen)}
-        className="xv-ws-launch"
+        className="xv-ws-launch xv-ws-launch--icon"
         title={workspaceOpen ? 'Close project edits' : 'Open project edits'}
         aria-label={workspaceOpen ? 'Close project edits' : 'Open project edits'}
         aria-pressed={workspaceOpen}
@@ -79,7 +79,6 @@ export function WorkspaceLauncher({ className, control = 'all' }: { className?: 
             the same thing is one thing too many. The pen says what it opens; a pair of
             panel-slide glyphs said only that a panel would move. */}
         <AnimatedIcon icon={FilePenIcon} size={14} intro={false} />
-        <span>Project edits</span>
       </button>}
     </div>
   );

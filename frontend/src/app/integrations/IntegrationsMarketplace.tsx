@@ -217,6 +217,7 @@ export function IntegrationsMarketplace({
   const [sort, setSort] = useState<SortMode>('featured');
   const [limit, setLimit] = useState(PAGE_SIZE);
   const searchInput = useRef<HTMLInputElement>(null);
+  const closingCtaRef = useRef<HTMLElement>(null);
   const typing = useTypingPlaceholder(!focused && !query);
   const [liveItems, setLiveItems] = useState<PublicIntegrationCard[] | null>(null);
   const [liveTotal, setLiveTotal] = useState<number | null>(null);
@@ -333,6 +334,28 @@ export function IntegrationsMarketplace({
   const usingLiveCatalog = liveItems !== null;
   useEffect(() => { setCategory('all'); setLimit(PAGE_SIZE); }, [usingLiveCatalog]);
   const typeSearch = (value: string) => { setQuery(value); setLimit(PAGE_SIZE); };
+
+  // Reveal only the closing signup card when users scroll to it. The card
+  // remains visible if JS is disabled, the observer is unsupported, or the
+  // visitor prefers reduced motion.
+  useEffect(() => {
+    const card = closingCtaRef.current;
+    if (!card || typeof IntersectionObserver === 'undefined'
+      || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (card.getBoundingClientRect().top <= window.innerHeight * .9) return;
+
+    card.classList.add('xi-cta--pending');
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry?.isIntersecting) return;
+      card.classList.remove('xi-cta--pending');
+      observer.disconnect();
+    }, { threshold: .12, rootMargin: '0px 0px -7% 0px' });
+    observer.observe(card);
+    return () => {
+      observer.disconnect();
+      card.classList.remove('xi-cta--pending');
+    };
+  }, []);
 
   return (
     <div className="xi-root">
@@ -504,7 +527,7 @@ export function IntegrationsMarketplace({
         </div>
       </section>
 
-      <section className="xi-cta" aria-labelledby="xi-cta-heading">
+      <section ref={closingCtaRef} className="xi-cta" aria-labelledby="xi-cta-heading">
         <div className="xi-cta-halo" aria-hidden="true"/>
         <h2 id="xi-cta-heading">Start in minutes.<br/><em>Try Xroga for free.</em></h2>
         <p>Find your app, connect it in the workspace and describe what you need done. Some providers and automations need extra setup or approval.</p>

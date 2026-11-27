@@ -1,5 +1,6 @@
 import { CAPABILITY_PAGES } from './capabilityPages';
 import { DOC_PAGES } from './docsContent';
+import { PREMIUM_BLOG_ARTICLES } from './premiumBlogIndex';
 import { SHOWCASE_TEMPLATES } from './showcase/registry';
 import {
   ALTERNATIVES,
@@ -129,8 +130,13 @@ export function buildPublicUrlInventory(): PublicUrlRecord[] {
       manifestSource: page.slug === 'github' ? 'content/manifests/build-with-github.json' : undefined,
       updatedAt: page.slug === 'github' ? '2026-09-22' : '2026-09-09',
     })),
-    ...BLOG_ARTICLES.map((page) => record(`/blog/${page.slug}`, 'BLOG', 'frontend/src/app/blog/[slug]/page.tsx', ['frontend/src/lib/seoGrowthContent.ts', ...(page.authorName === 'Xroga Editorial' ? ['frontend/src/lib/appBuildingEditorialContent.json'] : [])], {
-      publishedAt: page.updated ?? '2026-09-09', updatedAt: page.updated ?? '2026-09-09', feed: 'blog',
+    ...BLOG_ARTICLES.map((page) => record(`/blog/${page.slug}`, 'BLOG', 'frontend/src/app/blog/[slug]/page.tsx', [
+      'frontend/src/lib/seoGrowthContent.ts',
+      ...(PREMIUM_BLOG_ARTICLES.some((premium) => premium.slug === page.slug)
+        ? ['frontend/src/lib/premiumBlogIndex.ts', `frontend/src/lib/premiumBlogs/${page.slug}.ts`]
+        : page.authorName === 'Xroga Editorial' ? ['frontend/src/lib/appBuildingEditorialContent.json'] : []),
+    ], {
+      publishedAt: page.publishedAt ?? page.updated ?? '2026-09-09', updatedAt: page.updated ?? page.publishedAt ?? '2026-09-09', feed: 'blog',
     })),
     ...STACK_GUIDES.map((page) => record(`/stack/${page.slug}`, 'STACK', 'frontend/src/app/stack/[slug]/page.tsx', ['frontend/src/lib/seoExpansionContent.ts'], { updatedAt: page.reviewed })),
     ...MIGRATION_GUIDES.map((page) => record(`/migrate/${page.slug}`, 'MIGRATION', 'frontend/src/app/migrate/[slug]/page.tsx', ['frontend/src/lib/seoExpansionContent.ts'], { updatedAt: page.reviewed })),
@@ -140,7 +146,9 @@ export function buildPublicUrlInventory(): PublicUrlRecord[] {
   if (tool) tool.manifestSource = 'content/manifests/production-readiness-checker.json';
 
   const nonIndexable: PublicUrlRecord[] = [
-    ['/workspace', 'PRIVATE'], ['/team', 'PRIVATE'], ['/join/[token]', 'PUBLIC_NOINDEX'], ['/dashboard', 'PRIVATE'], ['/settings', 'PRIVATE'], ['/drive', 'PRIVATE'], ['/admin', 'PRIVATE'],
+    ['/native-answer-evaluation', 'PRIVATE'],
+    ['/team', 'PRIVATE'], ['/join/[token]', 'PUBLIC_NOINDEX'],
+    ['/workspace', 'PRIVATE'], ['/dashboard', 'PRIVATE'], ['/settings', 'PRIVATE'], ['/drive', 'PRIVATE'], ['/admin', 'PRIVATE'],
     ['/os-preview', 'PRIVATE'], ['/os-preview/[section]', 'PRIVATE'], ['/os-preview/journey', 'PRIVATE'], ['/os-preview/rich-results', 'PRIVATE'], ['/os-preview/access-denied', 'PRIVATE'], ['/os-preview/founder', 'PRIVATE'],
     ['/auth/login', 'PRIVATE'], ['/auth/signup', 'PRIVATE'], ['/auth/contact', 'PRIVATE'], ['/auth/forgot-password', 'PRIVATE'], ['/auth/reset-password', 'PRIVATE'], ['/auth/github/callback', 'PRIVATE'], ['/onboarding', 'PRIVATE'], ['/preview', 'PRIVATE'], ['/terminal', 'PRIVATE'],
     ['/image', 'PUBLIC_NOINDEX'], ['/cybersecurity', 'PUBLIC_NOINDEX'], ['/community/[postId]', 'PUBLIC_NOINDEX'], ['/ref/[code]', 'PUBLIC_NOINDEX'], ['/share/[token]', 'PUBLIC_NOINDEX'], ['/api', 'SYSTEM'], ['/robots.txt', 'SYSTEM'],

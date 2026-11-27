@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@huggingface/transformers": "3.8.1",
+    "@openuidev/lang-core": "1.1.0",
+    "@openuidev/react-lang": "1.1.0",
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.108.2",
     "@tanstack/react-table": "^8.21.3",
@@ -24,6 +26,7 @@
     "exceljs": "^4.4.0",
     "katex": "^0.17.0",
     "lucide-react": "^1.21.0",
+    "minisearch": "7.2.0",
     "motion": "^12.42.2",
     "next": "15.5.27",
     "ogl": "1.0.11",

@@ -1,6 +1,6 @@
 # Deployment topology, source and dated evidence
 
-Source SHA: `675d54b78a4a4041be713a87f995dba338b4b369`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
+Source SHA: `c0acae42af48c060190f24a8cae853715d8b6dc2`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -56,6 +56,7 @@ Source SHA: `675d54b78a4a4041be713a87f995dba338b4b369`; exact current source/con
 | endpoint-aptos-dev | Source-defined endpoint aptos.dev | CONFIGURED_BUT_UNVERIFIED | aptos.dev | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-asana-com | Source-defined endpoint asana.com | CONFIGURED_BUT_UNVERIFIED | asana.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-backend-composio-dev | Source-defined endpoint backend.composio.dev | CONFIGURED_BUT_UNVERIFIED | backend.composio.dev | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-base44-com | Source-defined endpoint base44.com | CONFIGURED_BUT_UNVERIFIED | base44.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-bolt-new | Source-defined endpoint bolt.new | CONFIGURED_BUT_UNVERIFIED | bolt.new | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-brandland-zendesk-com | Source-defined endpoint brandland.zendesk.com | CONFIGURED_BUT_UNVERIFIED | brandland.zendesk.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-build-avax-network | Source-defined endpoint build.avax.network | CONFIGURED_BUT_UNVERIFIED | build.avax.network | NOT_INDEPENDENTLY_VERIFIED |
@@ -105,6 +106,7 @@ Source SHA: `675d54b78a4a4041be713a87f995dba338b4b369`; exact current source/con
 | endpoint-example-test | Source-defined endpoint example.test | CONFIGURED_BUT_UNVERIFIED | example.test | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-exp-host | Source-defined endpoint exp.host | CONFIGURED_BUT_UNVERIFIED | exp.host | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-expo-dev | Source-defined endpoint expo.dev | CONFIGURED_BUT_UNVERIFIED | expo.dev | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-fcm-googleapis-com | Source-defined endpoint fcm.googleapis.com | CONFIGURED_BUT_UNVERIFIED | fcm.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-fixture | Source-defined endpoint fixture | CONFIGURED_BUT_UNVERIFIED | fixture | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-fixture-invalid | Source-defined endpoint fixture.invalid | CONFIGURED_BUT_UNVERIFIED | fixture.invalid | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-fixture-supabase-co | Source-defined endpoint fixture.supabase.co | CONFIGURED_BUT_UNVERIFIED | fixture.supabase.co | NOT_INDEPENDENTLY_VERIFIED |
@@ -159,6 +161,7 @@ Source SHA: `675d54b78a4a4041be713a87f995dba338b4b369`; exact current source/con
 | endpoint-supabase-management-tests-invalid | Source-defined endpoint supabase-management-tests.invalid | CONFIGURED_BUT_UNVERIFIED | supabase-management-tests.invalid | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-supabase-com | Source-defined endpoint supabase.com | CONFIGURED_BUT_UNVERIFIED | supabase.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-support-bolt-new | Source-defined endpoint support.bolt.new | CONFIGURED_BUT_UNVERIFIED | support.bolt.new | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-support-google-com | Source-defined endpoint support.google.com | CONFIGURED_BUT_UNVERIFIED | support.google.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-temporal-io | Source-defined endpoint temporal.io | CONFIGURED_BUT_UNVERIFIED | temporal.io | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-token-actions-githubusercontent-com | Source-defined endpoint token.actions.githubusercontent.com | CONFIGURED_BUT_UNVERIFIED | token.actions.githubusercontent.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-twitter-com | Source-defined endpoint twitter.com | CONFIGURED_BUT_UNVERIFIED | twitter.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -194,6 +197,7 @@ Source SHA: `675d54b78a4a4041be713a87f995dba338b4b369`; exact current source/con
 | endpoint-www-pcrf-net | Source-defined endpoint www.pcrf.net | CONFIGURED_BUT_UNVERIFIED | www.pcrf.net | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-www-perplexity-ai | Source-defined endpoint www.perplexity.ai | CONFIGURED_BUT_UNVERIFIED | www.perplexity.ai | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-www-pinterest-com | Source-defined endpoint www.pinterest.com | CONFIGURED_BUT_UNVERIFIED | www.pinterest.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-www-postgresql-org | Source-defined endpoint www.postgresql.org | CONFIGURED_BUT_UNVERIFIED | www.postgresql.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-www-reddit-com | Source-defined endpoint www.reddit.com | CONFIGURED_BUT_UNVERIFIED | www.reddit.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-www-redditinc-com | Source-defined endpoint www.redditinc.com | CONFIGURED_BUT_UNVERIFIED | www.redditinc.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-www-semrush-com | Source-defined endpoint www.semrush.com | CONFIGURED_BUT_UNVERIFIED | www.semrush.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -208,7 +212,6 @@ Source SHA: `675d54b78a4a4041be713a87f995dba338b4b369`; exact current source/con
 | endpoint-www-youtube-com | Source-defined endpoint www.youtube.com | CONFIGURED_BUT_UNVERIFIED | www.youtube.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-x-com | Source-defined endpoint x.com | CONFIGURED_BUT_UNVERIFIED | x.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-xroga-api-fly-dev | Source-defined endpoint xroga-api.fly.dev | CONFIGURED_BUT_UNVERIFIED | xroga-api.fly.dev | NOT_INDEPENDENTLY_VERIFIED |
-| endpoint-xroga-local | Source-defined endpoint xroga.local | LOCAL_ONLY | xroga.local | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-xrogaaicom-vercel-app | Source-defined endpoint xrogaaicom.vercel.app | CONFIGURED_BUT_UNVERIFIED | xrogaaicom.vercel.app | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-your-website-com | Source-defined endpoint your-website.com | CONFIGURED_BUT_UNVERIFIED | your-website.com | NOT_INDEPENDENTLY_VERIFIED |
 | runtime-controls-and-conditional-aliases | Existing operator/system configuration | CONFIGURED_BUT_UNVERIFIED | Unknown/not applicable | NOT_INDEPENDENTLY_VERIFIED |
@@ -246,4 +249,4 @@ Historical findings below remain as review obligations, not fresh observations. 
 - P1 RELEASE_CONTROLS_UNENFORCED: Observed main and Production/Preview lack platform protection/restrictions; mandatory user release gates still apply. Owner command: 010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P2 HOST_TOOLCHAIN_DRIFT: Vercel project configured Node 24.x; canonical CI/API image is 22.21.1; Fly host test workflow has no explicit setup-node. Owner command: 006; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 
-1109 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.
+1305 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.

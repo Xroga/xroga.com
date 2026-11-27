@@ -33,11 +33,34 @@ export function confirmationIdFromPayload(payload: Record<string, unknown>): str
   return ids.length === 1 ? ids[0] : null;
 }
 
+/** Chat-lane status notes: each reports something the server has already done or written, so it is never "running". */
+const NOTE_STATUSES: ReadonlySet<string> = new Set(['understanding_request', 'reasoning_summary']);
+
+/** Public pages a step reports. Only well formed web addresses survive, and the list stays short. */
+function stepSources(value: unknown): Array<{ title: string; url: string }> {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap(item => {
+    const url = typeof item?.url === 'string' ? item.url : '';
+    if (!/^https?:\/\//i.test(url) || url.length > 600) return [];
+    return [{ title: typeof item.title === 'string' && item.title.trim() ? item.title.trim().slice(0, 160) : url, url }];
+  }).slice(0, 8);
+}
+
+function isNote(rawEvent: string, payload: Record<string, unknown>): boolean {
+  return rawEvent === 'progress' && typeof payload.status === 'string' && NOTE_STATUSES.has(payload.status);
+}
+
 function genericType(rawEvent: string, payload: Record<string, unknown>): XrogaEventType {
   if (confirmationIdFromPayload(payload)) return 'approval.requested';
   if (payload.needsGitHub === true || payload.needsVercel === true || payload.needsRepoPick === true) {
     return 'connection.required';
   }
+  if (rawEvent === 'progress' && typeof payload.activityId === 'string') {
+    if (payload.activityStatus === 'running') return 'activity.started';
+    if (payload.activityStatus === 'completed') return 'activity.completed';
+    if (payload.activityStatus === 'failed') return 'activity.failed';
+  }
+  if (isNote(rawEvent, payload)) return 'activity.completed';
   switch (rawEvent) {
     case 'start': return 'run.started';
     case 'pipeline': return 'plan.created';
@@ -89,6 +112,7 @@ function softwareType(event: SoftwareRunEvent): XrogaEventType {
 function softwareStatus(event: SoftwareRunEvent, type: XrogaEventType): XrogaEventStatus {
   if (event.status === 'failed') return 'failed';
   if (event.status === 'cancelled') return 'cancelled';
+  if (event.status === 'success') return 'completed';
   if (type.endsWith('.completed') || type === 'receipt.created') return 'completed';
   return event.status === 'pending' ? 'pending' : 'running';
 }
@@ -127,11 +151,14 @@ export function adaptToXrogaEvent(input: XrogaEventAdapterInput): XrogaCanonical
     artifactRefs: evidence?.previewId ? [evidence.previewId] : undefined,
     metadata: {
       rawEvent: input.rawEvent,
+      ...(!software && isNote(input.rawEvent, input.payload) ? { note: true } : {}),
+      ...(!software && isNote(input.rawEvent, input.payload) && input.payload.planStep === true ? { planStep: true } : {}),
+      ...(!software && stepSources(input.payload.sources).length ? { sources: JSON.stringify(stepSources(input.payload.sources)) } : {}),
+      ...(software ? { softwareEventType: software.type } : {}),
       ...(type === 'approval.requested' && confirmationIdFromPayload(input.payload) ? { confirmationId: confirmationIdFromPayload(input.payload) } : {}),
       ...(evidence?.filePath ? { filePath: evidence.filePath } : {}),
       ...(evidence?.exitCode != null ? { exitCode: evidence.exitCode } : {}),
       ...(evidence?.durationMs != null ? { durationMs: evidence.durationMs } : {}),
-      ...(evidence?.runtimeSessionId ? { runtimeSessionId: evidence.runtimeSessionId } : {}),
     },
   };
 }

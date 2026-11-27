@@ -13,6 +13,7 @@ import {
 } from '@/lib/engineeringArtifact';
 import { isRecoverableBuildOutput } from '@/lib/recoveredBuildOutput';
 import { reconcileAssistantText } from '@/lib/streamText';
+import { serializeWorkspaceRequest } from '@/lib/chatHistory';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -1637,6 +1638,65 @@ export async function uploadChatFile(
   }
 }
 
+/**
+ * Same request as `api.phase1.chat`, but asks the server for live progress. When the server
+ * supports it, `onProgress` receives each real progress frame while the answer is prepared and
+ * the final `result` frame is returned (or thrown as an ApiError, exactly like the JSON path).
+ * A server that answers with plain JSON is handled too, so this is safe to ship first.
+ */
+export async function phase1ChatWithProgress(
+  body: Record<string, unknown>,
+  options: { signal?: AbortSignal; onProgress?: (frame: Record<string, unknown>) => void } = {},
+): Promise<Phase1ChatResult> {
+  const token = await getAccessToken();
+  const res = await fetchApiResponse(`${API_URL}/api/phase1/chat`, {
+    method: 'POST',
+    signal: options.signal,
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'text/event-stream, application/json;q=0.9',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: serializeWorkspaceRequest(body),
+  });
+  const contentType = res.headers.get('content-type') ?? '';
+  if (!contentType.includes('text/event-stream') || !res.body) {
+    const data = await res.json().catch(() => ({})) as Record<string, unknown>;
+    if (!res.ok) throw new ApiError(typeof data.error === 'string' ? data.error : `Request failed (${res.status})`, res.status, data);
+    return data as unknown as Phase1ChatResult;
+  }
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let result: { status: number; body: Record<string, unknown> } | null = null;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (value) buffer += decoder.decode(value, { stream: !done });
+    let boundary = buffer.indexOf('\n\n');
+    while (boundary !== -1) {
+      const block = buffer.slice(0, boundary);
+      buffer = buffer.slice(boundary + 2);
+      const event = /^event: (.+)$/m.exec(block)?.[1];
+      const data = /^data: (.+)$/m.exec(block)?.[1];
+      if (event && data) {
+        try {
+          const parsed = JSON.parse(data) as Record<string, unknown>;
+          if (event === 'progress') options.onProgress?.(parsed);
+          else if (event === 'result') result = parsed as unknown as { status: number; body: Record<string, unknown> };
+        } catch { /* A malformed frame is skipped; the result frame decides the outcome. */ }
+      }
+      boundary = buffer.indexOf('\n\n');
+    }
+    if (done) break;
+  }
+  if (!result) throw new ApiError('The reply ended before it was complete. Please send it again.', 502, {});
+  if (result.status >= 400) {
+    const data = result.body ?? {};
+    throw new ApiError(typeof data.error === 'string' ? data.error : `Request failed (${result.status})`, result.status, data);
+  }
+  return result.body as unknown as Phase1ChatResult;
+}
+
 export async function apiFetch<
   T =
     unknown
@@ -1697,6 +1757,7 @@ export async function apiFetch<
   } catch (
     err
   ) {
+    options.signal?.throwIfAborted();
     if(err instanceof ApiError&&err.data.code==='API_DESTINATION_DENIED')throw err;
     const raw =
       (
@@ -1733,6 +1794,7 @@ export async function apiFetch<
             res.statusText,
         }),
       );
+  options.signal?.throwIfAborted();
 
   if (
     !res.ok
@@ -4440,6 +4502,15 @@ export const api = {
   },
 
   notifications: {
+    pushKey: () => apiFetch<{ publicKey: string }>('/api/notifications/push-key'),
+    subscribePush: (subscription: PushSubscriptionJSON) => apiFetch<{ subscribed: boolean }>(
+      '/api/notifications/push-subscription',
+      { method: 'POST', body: JSON.stringify(subscription) },
+    ),
+    unsubscribePush: (endpoint: string) => apiFetch<{ subscribed: boolean }>(
+      '/api/notifications/push-subscription',
+      { method: 'DELETE', body: JSON.stringify({ endpoint }) },
+    ),
     list:
       () =>
         apiFetch<
@@ -4963,6 +5034,7 @@ concurrency:
             string,
             unknown
           >,
+        signal?: AbortSignal,
       ) =>
         apiFetch<
           SemanticRequestPlan
@@ -4970,11 +5042,12 @@ concurrency:
           '/api/phase1/plan',
 
           {
+            signal,
             method:
               'POST',
 
             body:
-              JSON.stringify({
+              serializeWorkspaceRequest({
                 message,
                 history,
                 attachments,
@@ -5004,6 +5077,7 @@ concurrency:
 
         goalContract?:
           SemanticRequestPlan['goalContract'],
+        signal?: AbortSignal,
       ) =>
         apiFetch<
           Phase1ChatResult
@@ -5011,11 +5085,12 @@ concurrency:
           '/api/phase1/chat',
 
           {
+            signal,
             method:
               'POST',
 
             body:
-              JSON.stringify({
+              serializeWorkspaceRequest({
                 message,
                 history,
 
@@ -6055,15 +6130,16 @@ import type {
 } from '@/lib/hackathonBrief';
 
 export interface Phase1ChatResult {
-  completion?: { status: 'complete' } | { status: 'partial'; reason: 'output_limit' | 'unconfirmed_stop' | 'authorization_review' | 'presentation_contract' };
-  responseSource?: { format: 'xroga-response-json-v1'; text: string; contract?:import('./responseCoverageContract').ResponseCoverageContract };
+  publicWebRetrieved?: true;
+  completion?: { status: 'complete' } | { status: 'partial'; reason: 'output_limit' | 'unconfirmed_stop' | 'authorization_review' | 'factual_review' | 'presentation_contract' | 'data_review' | 'source_attribution' | 'source_coverage' };
+  responseSource?: { format: 'xroga-response-json-v1' | 'xroga-openui-v1'; text: string; contract?:import('./responseCoverageContract').ResponseCoverageContract };
   response:
     string;
 
   intent:
     string;
 
-  usage:
+  usage?:
     TokenUsage;
 
   webSources?:
@@ -6082,6 +6158,10 @@ export interface Phase1ChatResult {
 
       thumbnailUrl?:
         string;
+      siteDomain?: string;
+      siteName?: string;
+      siteIconDomain?: string;
+      publishedAt?: string;
     }>;
 
   hackathonBrief?:

@@ -157,13 +157,14 @@ test('the shell keeps one radius without a visible outline', () => {
 test('the title bar is outside the scrolling container', () => {
   // In the rendered tree the header is a sibling *before* the body that holds the
   // panes, so the transcript moves underneath it rather than carrying it along.
-  const header = VIEW.indexOf('<header className="xv-workspace-header"');
+  const header = VIEW.search(/<header\b[^>]*\bxv-workspace-header\b/);
+  const headerEnd = VIEW.indexOf('</header>', header);
   // Matched on the class rather than on `<div className="…"`: the body carries a ref
   // and a style for the resizable split now, so its attributes span several lines.
   const body = VIEW.indexOf('className="xv-workspace-body"');
   assert.ok(header > -1, 'the shell header is gone');
   assert.ok(body > -1, 'the shell body is gone');
-  assert.ok(header < body, 'the header moved inside the transcript and will scroll away');
+  assert.ok(headerEnd > header && headerEnd < body, 'the header overlapped the transcript or moved inside it');
   // And the scrolling container lives inside the body, under the header.
   assert.match(VIEW.slice(body), /xv-terminal-panel[\s\S]{0,200}xv-terminal-scroll|xv-terminal-panel[^>]*>\s*\n\s*\{terminalPane\}/);
   // It is a sibling of the body, not a sticky element compensating for page padding.
@@ -202,43 +203,42 @@ test('the transcript renders chromeless inside the shell and framed everywhere e
 // The plus menu is part of the composer
 // ---------------------------------------------------------------------------
 
-test('the menu keeps a small deliberate gap above the composer', () => {
-  assert.match(MENU, /window\.innerHeight - rect\.top \+ 6/);
-  assert.match(MENU, /top: rect\.bottom \+ 6/);
+test('the menu keeps a small deliberate gap below the composer', () => {
+  assert.match(MENU, /useChatbarPopoverLayout/);
+  assert.match(read('../components/ui/useChatbarPopoverLayout.ts'), /const gap = 8, margin = 12/);
   assert.match(CSS, /\.xv-cba-menu\s*\{[\s\S]*?border-radius:\s*13px/);
   assert.doesNotMatch(MENU, /window\.innerHeight - rect\.top - 1/);
 });
 
-test('the menu is anchored to the composer, not to the plus button', () => {
-  // The portal measures the full composer surface rather than the small trigger.
+test('the compact menu is aligned with its trigger within the viewport', () => {
+  // The composer sets the vertical anchor and the trigger sets the horizontal anchor.
   assert.match(MENU, /className=\{cn\('xv-cba-root shrink-0', className\)\}/);
-  assert.match(MENU, /closest<HTMLElement>\('\.xv-chatbar-solid'\)/);
-  assert.match(MENU, /const frame = composer\.closest<HTMLElement>\('\.xv-kimi-composer-frame'\) \?\? composer/);
-  assert.match(MENU, /const left = Math\.max\(8, Math\.min\(rect\.left, window\.innerWidth - width - 8\)\)/);
-  assert.match(MENU, /window\.innerHeight - rect\.top \+ 6/);
+  assert.match(MENU, /useChatbarPopoverLayout\(open, rootRef, menuRef, 288\)/);
+  const geometry = read('../components/ui/useChatbarPopoverLayout.ts');
+  assert.match(geometry, /closest<HTMLElement>\('\.xv-chatbar-solid'\)/);
+  assert.match(geometry, /closest<HTMLElement>\('\.xv-kimi-composer-frame'\)/);
 });
 
 test('opening the menu overlays the terminal instead of resizing anything', () => {
   assert.match(MENU, /createPortal\(/);
   assert.match(MENU, /document\.body/);
-  assert.match(MENU, /maxHeight:\s*Math\.min\(480, Math\.max\(130, rect\.top - 12\)\)/);
-  assert.match(MENU, /const width = Math\.min\(rect\.width, window\.innerWidth - 16\)/);
-  assert.match(MENU, /window\.addEventListener\('scroll', sync, \{ capture: true, passive: true \}\)/, 'the portal can detach while its dock scrolls');
+  assert.match(MENU, /position: 'fixed'/);
+  assert.match(MENU, /maxHeight: menuStyle\.maxHeight/);
+  const geometry = read('../components/ui/useChatbarPopoverLayout.ts');
+  assert.match(geometry, /window\.addEventListener\('scroll', reposition, true\)/, 'the portal can detach while its dock scrolls');
 });
 
-test('composer panels select the available side and remain viewport bounded on mobile', () => {
-  assert.match(MENU, /const idle = Boolean\(composer\.closest\('\.xv-terminal-dock--idle'\)\)/);
-  assert.match(MENU, /const available = window\.innerHeight - rect\.bottom - 16/);
-  assert.match(MENU, /setMenuStyle\(available >= 160 \?/);
-  assert.match(MENU, /position: 'fixed', left, top: rect\.bottom \+ 6/);
-  assert.match(MENU, /bottom: Math\.max\(8, window\.innerHeight - rect\.top \+ 6\)/);
-  assert.match(MENU, /const width = Math\.min\(rect\.width, window\.innerWidth - 16\)/);
-  assert.match(MENU, /maxHeight: Math\.max\(120, Math\.min\(440, rect\.top - 12\)\)/);
+test('composer panels share below-chatbar placement and remain viewport bounded on mobile', () => {
+  const geometry = read('../components/ui/useChatbarPopoverLayout.ts');
+  assert.match(geometry, /window\.visualViewport/);
+  assert.match(read('../components/ui/ChatBarPortalPopover.tsx'), /placement="bottom-start" belowChatbar/);
+  assert.match(read('../components/terminal/ProjectsQuickPopover.tsx'), /placement="bottom-start" belowChatbar/);
+  assert.match(read('../components/terminal/IntegrationsModal.tsx'), /placement="bottom-start" belowChatbar/);
   assert.match(MENU, /menuRef\.current\?\.contains\(target\)/);
 });
 
 test('provider connections are one compact menu row, and the detached pill is gone', () => {
-  assert.match(MENU, /<b>Plugins<\/b>/);
+  assert.match(MENU, /<b>Connect Apps<\/b>/);
   assert.match(MENU, /onOpenIntegrations/);
   assert.match(CHATBAR, /onOpenIntegrations=\{\(\) => \{/);
   // The duplicate trigger, and its styling hook, must not come back.
@@ -256,7 +256,7 @@ test('the duplicate Connectors row is gone and slash commands expose real action
 test('the compact menu exposes the requested working tools', () => {
   for (const label of [
     'Add files or photos',
-    'Plugins',
+    'Connect Apps',
     'Slash commands',
     'Plan before build',
     'Debug an error',
@@ -272,7 +272,7 @@ test('the compact menu exposes the requested working tools', () => {
 
 test('the action palette follows the reference row order', () => {
   const files = MENU.indexOf('<b>Add files or photos</b>');
-  const integrations = MENU.indexOf('<b>Plugins</b>');
+  const integrations = MENU.indexOf('<b>Connect Apps</b>');
   const commands = MENU.indexOf('<b>Slash commands</b>');
   const plan = MENU.indexOf('<b>Plan before build</b>');
   assert.ok(files >= 0 && integrations > files, 'integrations should follow file input');
@@ -288,11 +288,11 @@ test('command, plan, and debug inserts expose an intentional selection highlight
   assert.match(CSS, /textarea\[data-insert-highlight='debug'\]::selection[^}]*background:#dc3f4b/);
 });
 
-test('Plugins keeps its supported-app description and the full gated click action', () => {
+test('Connect Apps keeps its supported-app description and the full gated click action', () => {
   // PR827 replaced the miniature provider-logo hover preview with one plain row.
   assert.match(MENU, /className="xv-cba-item xv-cba-item--integrations" data-tone="purple"/);
   assert.match(MENU, /disabled=\{!onOpenIntegrations\}/);
-  assert.match(MENU, /<b>Plugins<\/b><i>Connect and manage supported apps<\/i>/);
+  assert.match(MENU, /<b>Connect Apps<\/b><i>Connect and manage supported apps<\/i>/);
   assert.match(MENU, /onOpenIntegrations\?\.\(\)/);
   assert.match(MENU, /onOpenIntegrations\?\.\(\); setOpen\(false\)/);
 });
@@ -380,6 +380,8 @@ test('the terminal pane scrolls when there is something to scroll, and not befor
   assert.match(VIEW, /data-conversation=\{hasConversation \? 'true' : 'false'\}/, 'the pane cannot report its state');
   assert.match(VIEW, /const hasConversation = messages\.length > 0;/, 'the state is not read from the transcript');
 
-  // Compact once earned: a thumb, not a groove down the edge of the window.
-  assert.match(CSS, /\.xv-terminal-scroll::-webkit-scrollbar \{ width: 4px; \}/, 'the bar is wide again');
+  // The native target is easier to grab without thickening the visible thumb.
+  assert.match(CSS, /\.xv-terminal-scroll::-webkit-scrollbar \{ width: 12px; \}/, 'the scrollbar loses its wider hit target');
+  assert.match(CSS, /\.xv-terminal-scroll::-webkit-scrollbar-track \{ background: transparent; \}/, 'the transparent gutter paints a full-height groove');
+  assert.match(CSS, /\.xv-terminal-scroll::-webkit-scrollbar-thumb\s*\{[^}]*border-inline: 2px solid transparent/);
 });

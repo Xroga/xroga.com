@@ -61,6 +61,12 @@ test('ambiguous confirmation messages never select or execute a latest action ac
       assert.doesNotMatch(body.directResponse, /Done|completed|already cancelled/);
     }
     assert.equal((await plan('Build a scheduling interface', 'ordinary')).status, 418);
+    const publicResearch = await plan(
+      'Top 10 best AI companies in 2026; link each official site, explain the ranking, and cite reliable dated sources.',
+      'public-research',
+    );
+    assert.equal(publicResearch.status, 418);
+    assert.deepEqual(await publicResearch.json(), { semanticPlanner: true });
     missingUsage = true;
     assert.equal((await plan('Confirm it', 'missing-usage')).status, 503);
     assert.ok(calls.every(call => !call.includes('business_action_confirmations')));

@@ -55,6 +55,8 @@ export interface ModelDef {
   outputUsdPer1M: number | null;
   /** Null until verified. A guessed window silently truncates a customer's repository. */
   contextWindow: number | null;
+  /** Published maximum generated tokens, including reasoning for DeepSeek. */
+  maximumOutputTokens?: number;
   /**
    * Modalities the configured endpoint genuinely accepts.
    *
@@ -87,7 +89,8 @@ export const MODELS: Record<ModelId, ModelDef> = {
     label: 'Xroga Intelligence', role: 'Default conversation, research synthesis and engineering',
     apiModel: 'deepseek-v4.1-flash-1017', provider: 'zurelay', baseUrl: ZURELAY_BASE_URL, secretKey: 'ZURELAY_API_KEY',
     budgetUsd: 16.5, monthlyTokens: 6_172_222, inputTokens: 3_086_111, outputTokens: 3_086_111,
-    inputUsdPer1M: 0.03, outputUsdPer1M: 0.12, contextWindow: 1_000_000,
+    // https://zurelay.com/models/deepseek-v4.1-flash-1017
+    inputUsdPer1M: 0.03, outputUsdPer1M: 0.12, contextWindow: 1_000_000, maximumOutputTokens: 384_000,
     modalities: { text: true, images: false }, imagesEnv: 'ZURELAY_DEEPSEEK_VISION_VERIFIED', tagline: 'Everyday intelligence',
   },
   claude_sonnet_5_5: {

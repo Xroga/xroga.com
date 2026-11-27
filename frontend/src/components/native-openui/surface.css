@@ -1,0 +1,320 @@
+.xroga-native-openui {
+  min-width: 0;
+  max-inline-size: min(100%, var(--xroga-answer-width, 46rem));
+  color: var(--iui-ink);
+  font: 400 1rem/1.62 var(--iui-font);
+  overflow-wrap: anywhere;
+}
+.xroga-native-openui .iui-row > *, .xroga-native-openui .iui-grid > * { min-width: 0; max-width: 100%; }
+.xroga-native-openui .iui-box {
+  --iui-box-height-limit: var(--iui-space-section);
+  max-inline-size: 100%;
+}
+.xroga-native-openui .iui-table-scroll { overflow: auto; max-width: 100%; }
+.xroga-native-openui .iui-table-bounded { max-block-size: min(28rem, 60vh); }
+.xroga-native-openui .iui-table-bounded thead th { position: sticky; inset-block-start: 0; z-index: 1; }
+.xroga-native-openui :focus-visible { outline: 2px solid var(--iui-focus); outline-offset: 3px; }
+.xroga-native-openui svg { max-width: 100%; }
+.xroga-native-sections > section + section { margin-block-start: var(--iui-space-section); }
+.xroga-native-sections :is(h2,h3) { margin-block: 0 .5rem; font-size: 1em; font-weight: 650; }
+.xroga-native-openui > .iui-markdown:empty { display: none; }
+.xroga-native-openui > .native-answer-summary:not(:empty) { margin-block-end: var(--iui-space-group); }
+.xroga-native-openui :is(.iui-text, .iui-caption):empty { display: none; }
+.xroga-native-openui > .iui-col + .iui-markdown:not(:empty),
+.xroga-native-openui > .iui-markdown:not(:empty) + .iui-col { margin-block-start: var(--iui-space-group); }
+@media (max-width: 540px) {
+  .xroga-native-openui .iui-row { flex-wrap: wrap; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .xroga-native-openui *, .xroga-native-openui *::before, .xroga-native-openui *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.xroga-native-openui, .xroga-native-openui *, .xroga-native-openui *::before, .xroga-native-openui *::after { box-sizing: border-box; }
+
+
+.xroga-native-openui {
+  --native-accent: #195bd5;
+  --native-accent-soft: #edf4ff;
+  --native-panel: #f8f9fc;
+  --native-line: #dce1eb;
+  --iui-space-section: 1.375rem;
+  --iui-space-group: .75rem;
+  --iui-space-inner: .375rem;
+  --iui-card-padding-limit: clamp(.75rem, 2vw, 1rem);
+  --iui-card-gap-limit: .75rem;
+  --iui-grid-gap-limit: .75rem;
+  --iui-layout-gap-limit: var(--iui-space-section);
+  --iui-field-gap: .875rem;
+  --iui-action-gap: .875rem;
+  --iui-focus: var(--native-accent);
+  font-family: var(--openui-font-body, system-ui, sans-serif);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+:where([data-theme="dark"], [data-theme="black"], [data-theme="gray"]) .xroga-native-openui:not(:where(.native-evaluation[data-theme="light"] .xroga-native-openui, :is(.terminal-skin-light, .terminal-skin-light-grid, .terminal-skin-solar) .xroga-native-openui)),
+:where(.terminal-skin-dark, .terminal-skin-amoled, .terminal-skin-gray, .terminal-skin-midnight, .terminal-skin-forest, .terminal-skin-matrix, .terminal-skin-amber) .xroga-native-openui {
+  --native-accent: #8bb8ff;
+  --native-accent-soft: #202e48;
+  --native-panel: #1e2128;
+  --native-line: #3a404d;
+  --iui-canvas: var(--openui-foreground, #181a20);
+}
+
+/* Workspace's independently selected surface owns its answer colors. Share
+   pages and the evaluator continue to use their own page theme. */
+:where(.xv-workspace-shell[class*="terminal-skin-"]) .xroga-native-openui {
+  --iui-ink: var(--foreground);
+  --iui-muted: var(--muted);
+  --iui-faint: var(--muted);
+  --iui-canvas: var(--terminal-ui-surface);
+  --iui-on-ink: var(--terminal-ui-surface);
+  --native-panel: var(--terminal-ui-raised);
+  --native-line: var(--terminal-ui-border);
+}
+
+.xroga-native-openui .iui-title {
+  color: var(--iui-ink);
+  text-wrap: balance;
+  letter-spacing: -.018em;
+  font-weight: 650;
+}
+
+.xroga-native-openui .iui-title-sm { font-size: .9375rem; }
+.xroga-native-openui .iui-title-md { font-size: 1.25rem; }
+.xroga-native-openui .iui-title-lg { font-size: clamp(1.5rem, 1.18rem + 1.2vw, 1.875rem); }
+.xroga-native-openui .iui-col:has(> .iui-title):not(.iui-flow) {
+  row-gap: 0;
+}
+.xroga-native-openui .iui-col:has(> .iui-title):not(.iui-flow) > * + * {
+  margin-block-start: min(var(--iui-column-gap, var(--iui-space-group)), var(--iui-space-section));
+}
+.xroga-native-openui .iui-col:has(> .iui-title):not(.iui-flow) > * + .iui-title {
+  margin-block-start: var(--iui-space-section);
+}
+.xroga-native-openui .iui-col:has(> .iui-title) > .iui-title + :is(.iui-text, .iui-caption, .iui-markdown, .iui-table-scroll) {
+  margin-block-start: .45rem;
+}
+.xroga-native-openui .iui-markdown > * + .iui-md-h {
+  margin-block-start: var(--iui-space-section);
+}
+.xroga-native-openui .iui-markdown > .iui-md-h + * {
+  margin-block-start: .4rem;
+}
+.xroga-native-openui .iui-markdown > :is(p, ul, ol, blockquote) {
+  max-inline-size: 68ch;
+}
+.xroga-native-openui .iui-markdown > p { text-wrap: pretty; }
+.xroga-native-openui .iui-text:not(.iui-text-xs, .iui-text-sm) { font-size: 1rem; line-height: 1.65; }
+.xroga-native-openui .iui-caption { font-size: .875rem; line-height: 1.55; }
+.xroga-native-openui .iui-check { align-items: flex-start; }
+.xroga-native-openui .iui-check > input { margin-block-start: .28em; }
+.xroga-native-openui :is(.iui-badge, .iui-button) { max-inline-size: 100%; white-space: normal; }
+.xroga-native-openui :is(.iui-badge, .iui-button) svg { flex-shrink: 0; }
+.xroga-native-openui .iui-markdown :is(ul, ol) { padding-inline: 1.35em 0; }
+.xroga-native-openui .iui-markdown li { padding-inline: .125rem 0; }
+.xroga-native-openui .iui-card {
+  --iui-layout-gap-limit: var(--iui-card-gap-limit);
+  border-color: var(--native-line);
+  border-radius: 12px;
+  padding: var(--iui-card-padding-limit);
+}
+.xroga-native-openui .iui-card:has(> .native-answer-controls) { max-inline-size: 36rem; }
+.xroga-native-openui .iui-grid:has(> .native-answer-metric):not(:has(> :not(.native-answer-metric))) {
+  --iui-grid-child-min-limit: 7.5rem;
+  --iui-grid-gap-limit: .625rem;
+}
+.xroga-native-openui .iui-card-soft { background: var(--native-panel); }
+.xroga-native-openui .iui-card > .iui-text { font-size: .9375rem; }
+.xroga-native-openui .iui-table-scroll { border-color: var(--native-line); }
+.xroga-native-openui .iui-table :is(td,th) {
+  padding: .5rem clamp(.5rem, 1.4vw, .75rem);
+  font-size: .875rem;
+  line-height: 1.5;
+  vertical-align: top;
+  /* Keep ordinary words in table intrinsic widths. The table's own
+     scroll container can handle wider layouts at narrow answer widths. */
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+.xroga-native-openui .iui-table th { font-weight: 650; white-space: normal; }
+.xroga-native-openui .iui-table th button { min-height: 1.75rem; }
+.xroga-native-openui .iui-table td[data-answer-table-long-text] { min-inline-size: 12rem; overflow-wrap: anywhere; }
+.xroga-native-openui .iui-slider-head { font-size: .9375rem; }
+.xroga-native-openui .iui-range { --iui-range-thumb: var(--native-accent); --iui-range-track: var(--native-accent-soft); }
+.xroga-native-openui .iui-slider-marks { font-size: .8125rem; }
+
+.xroga-native-openui .native-answer-section { display: grid; gap: .5rem; min-width: 0; }
+.native-answer-section h2 {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  margin: 0;
+  font-size: clamp(1.0625rem, 1rem + .35vw, 1.25rem);
+  letter-spacing: -.018em;
+  font-weight: 650;
+  line-height: 1.3;
+}
+.native-answer-section h2 svg { flex: 0 0 auto; color: var(--native-accent); }
+.native-answer-section > p { margin: 0; color: var(--iui-muted); line-height: 1.55; }
+.xroga-native-openui .native-answer-section + .native-answer-section { margin-block-start: var(--iui-space-section); }
+
+.native-answer-metric { display: grid; gap: .1rem; margin: 0; align-content: start; }
+.native-answer-metric dt { color: var(--iui-muted); font-size: .875rem; font-weight: 550; }
+.native-answer-metric dd { margin: 0; font-size: 1.375rem; font-weight: 650; line-height: 1.2; letter-spacing: -.025em; font-variant-numeric: tabular-nums; }
+.xroga-native-openui .iui-grid > .native-answer-metric > dd:first-of-type { container-type: inline-size; }
+.xroga-native-openui .iui-grid > .native-answer-metric .native-answer-metric-value {
+  font-size: clamp(.9375rem, 9cqi, 1.375rem);
+}
+.xroga-native-openui .iui-grid > .native-answer-metric .native-answer-metric-value[data-unbroken] { white-space: nowrap; }
+.native-answer-metric[data-tone="info"] dd:first-of-type { color: var(--native-accent); }
+.native-answer-metric[data-tone="success"] dd:first-of-type { color: var(--iui-success); }
+.native-answer-metric[data-tone="warning"] dd:first-of-type { color: var(--iui-warning); }
+.native-answer-metric[data-tone="danger"] dd:first-of-type { color: var(--iui-danger); }
+.native-answer-metric .native-answer-metric-note { margin-top: .25rem; color: var(--iui-muted); font-size: .8125rem; font-weight: 400; line-height: 1.4; letter-spacing: normal; }
+.native-answer-controls { min-width: 0; margin: 0; padding: .375rem 0 0; border: 0; }
+.native-answer-controls legend { padding: 0; font-size: .875rem; font-weight: 650; }
+.native-answer-controls-grid {
+  --control-gap: .625rem;
+  --control-min: 10rem;
+  --control-share: calc((100% - (var(--control-columns, 1) - 1) * var(--control-gap)) / var(--control-columns, 1));
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, max(var(--control-min), var(--control-share))), 1fr));
+  align-items: end;
+  gap: var(--control-gap);
+}
+.native-answer-controls-grid:has(> .iui-field > input[inputmode="decimal"]) { --control-min: 7.5rem; }
+.native-answer-controls-grid > .iui-field { gap: .25rem; }
+.native-answer-controls-grid > .iui-field > input.iui-input { min-height: 40px; padding-block: .4rem; }
+.native-answer-controls-grid > :is(button, .iui-button) { align-self: end; justify-self: start; }
+.native-answer-draft-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-block-start: .75rem; }
+.native-answer-draft-actions > [role="status"] { color: var(--iui-muted); font-size: .8125rem; }
+/* Adjacent controls and readouts form one tool, even when the program
+   does not put them in an explicit Card. Leave articles and charts full width. */
+.xroga-native-openui .iui-flow:not(.iui-card) > :is(
+  .native-answer-metric:has(+ .native-answer-controls),
+  .native-answer-controls:has(+ .native-answer-metric, + [data-native-readouts]),
+  .native-answer-metric + .native-answer-controls,
+  .native-answer-controls + .native-answer-metric,
+  .native-answer-controls + [data-native-readouts]
+) {
+  max-inline-size: 36rem;
+  padding: .75rem;
+  border: 1px solid var(--native-line);
+  background: var(--native-panel);
+}
+.xroga-native-openui .iui-flow:not(.iui-card) > :is(
+  .native-answer-metric:has(+ .native-answer-controls),
+  .native-answer-controls:has(+ .native-answer-metric, + [data-native-readouts])
+) {
+  border-block-end: 0;
+  border-start-start-radius: 12px;
+  border-start-end-radius: 12px;
+}
+.xroga-native-openui .iui-flow:not(.iui-card) > :is(
+  .native-answer-metric + .native-answer-controls,
+  .native-answer-controls + .native-answer-metric,
+  .native-answer-controls + [data-native-readouts]
+) {
+  margin-block-start: 0;
+  border-end-start-radius: 12px;
+  border-end-end-radius: 12px;
+}
+.xroga-native-openui .iui-flow:not(.iui-card) > :is(
+  .native-answer-metric + .native-answer-controls,
+  .native-answer-controls:has(+ .native-answer-metric, + [data-native-readouts])
+) {
+  position: relative;
+  padding-block-start: 1.875rem;
+}
+.xroga-native-openui .iui-flow:not(.iui-card) > :is(
+  .native-answer-metric + .native-answer-controls,
+  .native-answer-controls:has(+ .native-answer-metric, + [data-native-readouts])
+) > legend {
+  position: absolute;
+  inset-block-start: .45rem;
+  inset-inline-start: .75rem;
+}
+
+.native-chart-caption { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: .25rem .75rem; margin-block: 0 .5rem; }
+.native-chart-caption strong { font-size: .975rem; font-weight: 650; }
+.native-chart-caption span, .native-chart-note, .native-chart-x-label { color: var(--iui-muted); font-size: .8125rem; line-height: 1.5; }
+.native-chart-frame { min-width: 0; padding: .375rem .5rem 0; border-radius: 10px; background: var(--native-panel); }
+.native-chart-frame .iui-chart-grid { stroke: var(--native-line); }
+.native-chart-frame .iui-chart-tick, .native-chart-frame .iui-chart-category { font-size: 12px; }
+.native-chart-x-label { margin: .35rem 0 .2rem; text-align: center; }
+.native-chart-note { margin: .55rem 0 0; }
+.native-chart-data, .native-diagram-relationships { margin-block-start: .625rem; }
+.native-chart-data caption, .native-diagram-relationships > strong { color: var(--iui-ink); font-size: .875rem; font-weight: 650; }
+.native-chart-data caption { text-align: start; padding-block: 0 .4rem; }
+
+.native-diagram { margin: 0; border: 1px solid var(--native-line); border-radius: 12px; padding: var(--iui-card-padding-limit); min-width: 0; }
+.native-diagram figcaption strong { font-size: 1.05rem; font-weight: 650; }
+.native-diagram figcaption p { margin: .28rem 0 .85rem; color: var(--iui-muted); font-size: .875rem; line-height: 1.5; }
+.native-diagram-canvas { overflow: hidden; border: 1px solid var(--native-line); border-radius: 12px; background: var(--native-panel); }
+.native-diagram .react-flow { --xy-edge-stroke-default: var(--iui-muted); --xy-edge-stroke-width-default: 1.5; --xy-controls-button-background-color-default: var(--iui-canvas); --xy-controls-button-color-default: var(--iui-ink); --xy-controls-button-background-color-hover-default: var(--iui-surface-hover); --xy-controls-button-border-color-default: var(--native-line); }
+.native-diagram .react-flow__node.native-diagram-node { width: 190px; min-height: 58px; display: grid; align-content: center; gap: 4px; padding: .55rem .65rem; border: 1px solid var(--native-line); border-radius: 10px; background: var(--iui-canvas); color: var(--iui-ink); box-shadow: 0 1px 2px #0002; text-align: start; white-space: normal; }
+.native-diagram .react-flow__node.native-diagram-node-info { border-color: var(--native-accent); background: var(--native-accent-soft); }
+.native-diagram .react-flow__node.native-diagram-node-success { border-color: var(--iui-success); background: var(--iui-success-soft); }
+.native-diagram .react-flow__node.native-diagram-node-purple { border-color: var(--iui-purple); background: var(--iui-purple-soft); }
+.native-diagram .react-flow__node.native-diagram-node-warning { border-color: var(--iui-warning); background: var(--iui-warning-soft); }
+.native-diagram-node-title { display: flex; align-items: center; gap: .35rem; font-size: 14px; line-height: 1.3; font-weight: 650; overflow-wrap: anywhere; }
+.native-diagram-node-title svg { flex: 0 0 auto; }
+.native-diagram-node-detail { font-size: 12px; line-height: 1.35; color: var(--iui-muted); }
+.native-diagram .react-flow__handle { opacity: 0; }
+.native-diagram .react-flow__edges svg { max-width: none; overflow: visible; }
+.native-diagram .react-flow__edge-path { stroke: var(--iui-muted); stroke-width: 1.65; }
+.native-diagram .react-flow__edge-text { fill: var(--iui-ink); font-size: 12px; }
+.native-diagram .react-flow__edge-textbg { fill: var(--iui-canvas); }
+.native-diagram .react-flow__controls-button { box-sizing: content-box; border-radius: 0; }
+.native-diagram-toolbar { display: flex; justify-content: flex-end; padding-top: .5rem; }
+.native-diagram-toolbar .react-flow__controls { position: static; margin: 0; }
+.native-diagram-toolbar .react-flow__controls-button {
+  background: var(--iui-canvas); color: var(--iui-ink); border-color: var(--native-line);
+}
+.native-diagram-toolbar .react-flow__controls-button:hover { background: var(--iui-surface-hover); }
+.native-diagram-relationships ul { margin: .35rem 0 0; padding-inline-start: 1.2rem; color: var(--iui-muted); font-size: .875rem; }
+@media (max-width: 540px) {
+  .native-answer-controls-grid { align-items: start; }
+  .native-answer-controls-grid > .iui-radio-pills { grid-column: 1 / -1; }
+  .xroga-native-openui .iui-table :is(td,th) { padding: .5rem .625rem; }
+  .xroga-native-openui .iui-table:has(> thead > tr > :nth-child(3):last-child) :is(td,th) { padding-inline: .4rem; }
+  .xroga-native-openui .iui-markdown > .iui-table-scroll > .iui-table:not(:has(> thead > tr > :nth-child(4))) th {
+    white-space: normal;
+  }
+  .xroga-native-openui .iui-markdown > .iui-table-scroll > .iui-table:has(> thead > tr > :nth-child(2):last-child) tr > :first-child {
+    min-inline-size: 5.5rem;
+  }
+  .xroga-native-openui .iui-table:has(> thead > tr > th:nth-child(4)) tr > :first-child { min-inline-size: 6rem; }
+  .native-diagram .react-flow__controls-button { min-width: 28px; min-height: 28px; }
+}
+@media (pointer: coarse) {
+  .native-answer-controls-grid > .iui-field > input.iui-input,
+  .native-answer-controls-grid > :is(button, .iui-button) { min-height: 44px; }
+}
+
+.native-resource {
+  display: grid;
+  grid-template-columns: 1.25rem minmax(0, 1fr);
+  align-items: start;
+  gap: .65rem;
+  padding-block: .65rem;
+  border-bottom: 1px solid var(--native-line);
+}
+.native-resource > svg { margin-top: .32rem; color: var(--iui-ink); }
+.native-resource a { color: var(--iui-ink); }
+.native-resource a { display: inline-flex; align-items: center; gap: .3rem; font-weight: 650; text-underline-offset: .2em; }
+.native-resource p { margin: .15rem 0 0; color: var(--iui-muted); font-size: .9375rem; }
+.native-choice { min-width: 0; margin: 0; border: 1px solid var(--native-line); border-radius: 12px; padding: .75rem; }
+.native-choice legend { padding-inline: .35rem; font-weight: 650; }
+.native-choice input[type="search"] { width: 100%; margin-bottom: .5rem; border: 1px solid var(--native-line); border-radius: 8px; padding: .5rem; background: var(--native-panel); color: inherit; }
+.native-choice-options { display: grid; gap: .3rem; }
+.native-choice-options label { display: flex; align-items: baseline; gap: .55rem; padding-block: .25rem; cursor: pointer; }
+.native-choice small { color: var(--iui-muted); }
+.native-choice-options small { display: block; }
+.native-choice-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: .65rem; }
+.native-choice-actions button { min-height: 2.25rem; padding-inline: .7rem; border: 1px solid var(--native-line); border-radius: 8px; background: var(--native-panel); color: inherit; }
+.native-choice-actions button:disabled { opacity: .65; }

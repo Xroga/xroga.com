@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { createClient } from '@supabase/supabase-js';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
+import AxeBuilder from '@axe-core/playwright';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -106,7 +107,19 @@ test.beforeAll(async () => {
       kind: 'chat', status: 'complete', message_count: 2,
       messages: [
         { id: `${conversation.id}-input`, role: 'user', content: 'Isolated persisted conversation fixture', createdAt: Date.now() },
-        { id: `${conversation.id}-reply`, role: 'assistant', content: conversation.reply, createdAt: Date.now() },
+        { id: `${conversation.id}-reply`, role: 'assistant', content: conversation.reply, createdAt: Date.now(),
+          ...(key === 'second' ? { featureOutput: {
+            schemaVersion: 1,
+            id: `native-${conversation.id}`,
+            status: 'completed',
+            blocks: [],
+            sourceText: conversation.reply + '\nroot = Col([UnknownInternalWidget()])',
+            responseSource: { format: 'xroga-openui-v1', text: [
+              '$attendees = 40',
+              `root = Col([Text(${JSON.stringify(conversation.reply)}), Metric("Gross revenue", @Format($attendees * 25, "currency", 0, "USD")), Controls([Slider($attendees, 10, 80, 1, "Attendees"), Button("Reset", @Set($attendees, 40))], "Attendance")])`,
+            ].join('\n') },
+          } } : {}),
+        },
       ],
     })),
   ).select('user_id,id');
@@ -117,6 +130,78 @@ test.beforeAll(async () => {
 test.afterAll(async () => {
   if (ownerId) expect((await admin.auth.admin.deleteUser(ownerId)).error).toBeNull();
   if (outsiderId) expect((await admin.auth.admin.deleteUser(outsiderId)).error).toBeNull();
+});
+
+test('sidebar search finds saved projects and chat previews without crossing accounts', async ({ page }) => {
+  const sectionTitle = `Roadmap collection ${run}`;
+  expect((await admin.from('xroga_sidebar_sections').insert({ user_id: ownerId, project_id: ownerProjectId, title: sectionTitle })).error).toBeNull();
+  await page.goto('/auth/login?next=%2Fworkspace');
+  const form = page.locator('form', { has: page.locator('#login-email') });
+  await form.locator('#login-email').fill(ownerEmail);
+  await form.locator('#login-password').fill(password);
+  await form.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await expect(page).toHaveURL(/\/workspace/, { timeout: AUTH_TRANSITION_TIMEOUT_MS });
+  expect(await browserSession(page)).toEqual({ status: 200, authenticated: true });
+
+  const trigger = page.getByRole('button', { name: 'Search workspace', exact: true }).filter({ visible: true }).first();
+  await trigger.click();
+  const dialog = page.getByRole('dialog', { name: 'Search workspace' });
+  const input = dialog.getByRole('searchbox');
+  await expect(input).toBeFocused();
+  await input.fill('command3 demo owner');
+  await expect(dialog.getByRole('link', { name: new RegExp(`command3-demo-owner-${run}`) }))
+    .toHaveAttribute('href', `/workspace?project=${ownerProjectId}`);
+  await input.fill('Roadmap collection');
+  await expect(dialog.getByRole('link', { name: new RegExp(sectionTitle) }))
+    .toHaveAttribute('href', `/workspace?project=${ownerProjectId}`);
+  await input.fill('Persisted outsider conversation');
+  await expect(dialog.getByRole('status')).toHaveText('No matching saved work.');
+  await input.press('Escape');
+  await expect(dialog).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+
+  await trigger.click();
+  await input.fill('Persisted owner first');
+  const result = dialog.getByRole('link', { name: new RegExp(conversations.first.title) });
+  await expect(result).toHaveAttribute('href', `/workspace?conversation=${conversations.first.id}`);
+  await input.press('ArrowDown');
+  await expect(result).toBeFocused();
+  await result.press('Enter');
+  await expect(page.locator('[data-terminal-composer]')).toHaveAttribute('data-draft-session', conversations.first.id);
+  await expect(page.getByText(conversations.first.reply, { exact: true })).toBeVisible();
+});
+
+test('setup remains retryable after a failed save and exits only after a durable skip', async ({ page }) => {
+  const previous = { status: 'completed', current_step: 'complete', backfilled: true };
+  const reset = await admin.from('profiles').update({ onboarding: { status: 'not_started' } }).eq('id', outsiderId);
+  expect(reset.error).toBeNull();
+  try {
+    await page.goto('/auth/login?next=%2Fworkspace');
+    const form = page.locator('form', { has: page.locator('#login-email') });
+    await form.locator('#login-email').fill(outsiderEmail);
+    await form.locator('#login-password').fill(password);
+    await form.getByRole('button', { name: 'Sign in' }).click();
+    await expect(page).toHaveURL(/\/onboarding$/, { timeout: AUTH_TRANSITION_TIMEOUT_MS });
+
+    await page.route('**/api/profile', async route => {
+      if (route.request().method() === 'PATCH') await route.abort('failed');
+      else await route.continue();
+    });
+    await page.getByRole('button', { name: 'Skip setup', exact: true }).click();
+    await expect(page.getByRole('alert').filter({ hasText: 'Setup could not be saved. Please try again.' })).toBeVisible();
+    await expect(page).toHaveURL(/\/onboarding$/);
+    await page.unroute('**/api/profile');
+
+    await page.getByRole('button', { name: 'Skip setup', exact: true }).click();
+    await expect(page).toHaveURL(/\/workspace$/, { timeout: AUTH_TRANSITION_TIMEOUT_MS });
+    const saved = await admin.from('profiles').select('onboarding').eq('id', outsiderId).single();
+    expect(saved.error).toBeNull();
+    expect(saved.data?.onboarding).toMatchObject({ status: 'skipped', current_step: 'complete' });
+    await page.reload();
+    await expect(page).toHaveURL(/\/workspace$/);
+  } finally {
+    expect((await admin.from('profiles').update({ onboarding: previous }).eq('id', outsiderId)).error).toBeNull();
+  }
 });
 
 test('explicit hide preserves drafts without crossing real account and conversation boundaries', async ({ page }) => {
@@ -147,6 +232,13 @@ test('explicit hide preserves drafts without crossing real account and conversat
   await expect(composer).not.toHaveAttribute('data-draft-session', firstConversation!);
   await expect(header.getByRole('button', { name: 'Composer stays visible in a new workspace', exact: true })).toBeDisabled();
   await openPersistedConversation(page, conversations.second);
+  const nativeAnswer = page.getByRole('region', { name: 'Answer', exact: true });
+  const attendees = nativeAnswer.getByRole('slider', { name: 'Attendees' });
+  await expect(nativeAnswer.getByText('$1,000', { exact: true })).toBeVisible();
+  await attendees.press('End');
+  await expect(nativeAnswer.getByText('$2,000', { exact: true })).toBeVisible();
+  await nativeAnswer.getByRole('button', { name: 'Reset', exact: true }).click();
+  await expect(nativeAnswer.getByText('$1,000', { exact: true })).toBeVisible();
   await expect(composer).toHaveValue('');
   await composer.fill('');
   await header.getByRole('button', { name: 'Hide the chatbar', exact: true }).click();
@@ -170,6 +262,828 @@ test('explicit hide preserves drafts without crossing real account and conversat
   await header.getByRole('button', { name: 'Hide the chatbar', exact: true }).click();
   await header.getByRole('button', { name: 'Show the chatbar', exact: true }).click();
   await expect(composer).toHaveValue('');
+});
+
+test('regular Workspace composes, copies, shares and reopens a settled native answer', async ({ page, browser }) => {
+  const signIn = async (tab: typeof page, email: string) => {
+    await tab.goto('/auth/login?next=%2Fworkspace', { waitUntil: 'domcontentloaded' });
+    const form = tab.locator('form', { has: tab.locator('#login-email') });
+    await form.locator('#login-email').fill(email);
+    await form.locator('#login-password').fill(password);
+    await form.getByRole('button', { name: 'Sign in' }).click();
+    await expect(tab).toHaveURL(/\/workspace$/, { timeout: AUTH_TRANSITION_TIMEOUT_MS });
+  };
+  await signIn(page, ownerEmail);
+  const workspaceOrigin = new URL(page.url()).origin;
+  await page.context().grantPermissions(['clipboard-read', 'clipboard-write'], { origin: workspaceOrigin });
+  const composer = page.locator('[data-terminal-composer]');
+  await expect(composer).toHaveAttribute('data-draft-owner', ownerId);
+  await expect(composer).toHaveAttribute('data-draft-restoring', 'false');
+
+  // Replace the two paid endpoints only. Sign-in, storage, Share and its ACLs
+  // still go through the real isolated app and database. Never use a live model.
+  const prompt = 'Compare the workshop figures from my attached notes.';
+  const reply = 'The workshop earns $25 per attendee. At 40 attendees, revenue is $1,000.';
+  const detail = 'The estimate excludes venue costs and payment processing fees.';
+  const fullReply = reply + '\n\n' + detail;
+  const followUp = 'What was the ticket price again? Draft an email and RSVP form with the venue left blank.';
+  const followUpIntro = 'The ticket price was $25. Replace each placeholder before sending.';
+  const followUpReply = [
+    followUpIntro,
+    '## Email draft\n\n**Subject:** [Workshop title]',
+    '| Item | Detail |\n| --- | --- |\n| Venue | [Venue name] |',
+    '## RSVP form\n\n- Accessibility needs: __________',
+  ].join('\n\n');
+  const cancellation = 'Stop this pending fixture reply.';
+  const malformed = 'Show the invalid-program fallback.';
+  // Genuine captured DeepSeek prose from the private acceptance run. Replay it
+  // without inference to cover the complete paragraph and its visible footer.
+  const fallback = 'Pre-print or stamp a small label on each packet with common name, variety, year harvested, and a short batch code (e.g., "TOM-CHK-24-03"), then keep a three-ring binder as the ledger with one row per transaction: date, borrower name and phone or email, batch code, number of packets taken, and a checkbox for any seed returned later. Have borrowers write their own rows (or staff write them and borrowers initial) so the handwriting matches the person, and note the growing-season return expectation at the top of each page. Number the pages, keep a second binder copy as backup, and do a monthly spot-count of a few batches against the ledger to catch drift.';
+  const recovery = 'Show a partially recovered estimate.';
+  const recoveryNote = 'Some visuals could not be validated. The available explanation and verified visuals are shown below.';
+  const recoveryProse = 'The estimate covers the print charge.';
+  const recoveryGuidance = 'Stripe automatic webhook retries have a finite delivery window.';
+  const recoveryText = [recoveryNote, recoveryGuidance, recoveryProse, '| Item | USD |\n| --- | --- |\n| Printing | 25 |'].join('\n\n');
+  const recoveryProgram = 'root = Col([Table(["Item", "USD"], [["Printing", 25]])])';
+  const reviewed = 'Show the reviewed monthly chart.';
+  const reviewedReply = 'Partial answer. The written summary disagreed with the plotted data, so it was withheld.';
+  const reviewedProgram = 'root = Col([Markdown(' + JSON.stringify(reviewedReply) + '), Chart("bar", [{Month:"January", Value:12000}, {Month:"February", Value:15500}], "Month", ["Value"], "currency", "USD")])';
+  const architecture = 'Show the request architecture, component roles and example code.';
+  const docxPrompt = 'Create a DOCX proposal with editable sections.';
+  const pdfPrompt = 'Create a PDF executive report from this attached dataset.';
+  const xlsxPrompt = 'Create an XLSX workshop budget with formulas.';
+  const pptxPrompt = 'Create a PPTX slide deck about workshop logistics.';
+  const docxResponse = '# Workshop Proposal\n\n## Scope\n\nDiscuss the workshop training plan.';
+  const pdfResponse = '# Workshop Executive Report\n\nRevenue from 40 attendees at $25 was $1,000.';
+  const xlsxResponse = '# Workshop Budget\n\n| Item | Cost |\n| --- | --- |\n| Hosting | 25 |\n| Total | |\n\n## Formulas\n- B3: =SUM(B2:B2)';
+  const pptxResponse = '# Workshop Logistics\n\n## Location\nLeave the location open.\n\n## Duration\nAllow 90 minutes.';
+  const officeFixtures = new Map([
+    [docxPrompt, { downloadFormat: 'docx', response: docxResponse }],
+    [pdfPrompt, { downloadFormat: 'pdf', response: pdfResponse }],
+    [xlsxPrompt, { downloadFormat: 'xlsx', response: xlsxResponse }],
+    [pptxPrompt, { downloadFormat: 'pptx', response: pptxResponse }],
+  ]);
+  const documentDataset = 'ticket,attendees\n25,40';
+  const architectureCaption = 'The app queries rows with the user access token.';
+  const architectureReply = [
+    '## Request architecture', 'The application checks tenant membership before reading rows.',
+    architectureCaption,
+    '| | Role |\n| --- | --- |\n| Next.js | Application |\n| PostgreSQL | Data isolation |',
+    '```typescript\nconst boundary = "tenant_id";\n```',
+  ].join('\n\n');
+  const architectureProgram = [
+    'root = Col([Section("Request architecture", [diagram]), roles, sample])',
+    'diagram = Diagram("Request path", [{id: "app", label: "Next.js", level: 0}, {id: "database", label: "PostgreSQL", level: 1}], [{from: "app", to: "database", label: "User access token"}], "The app queries rows with the user access token.")',
+    'roles = Section("Component roles", [table], "What each component does")',
+    'table = Table(["", "Role"], [["Next.js", "Application"], ["PostgreSQL", "Data isolation"]])',
+    'sample = Code("const boundary = \\"tenant_id\\";", "typescript")',
+  ].join('\n');
+  const research = 'Research the official evidence using my private workshop details and cite it.';
+  const confirmationId = '221fe7f9-f0dd-4b12-b03a-bcb57a13f655';
+  const researchReply = 'The retrieved source describes the official policy [1].';
+  const researchSource = { title: 'Official policy fixture', siteName: 'Example publisher', url: 'https://example.com/policy', snippet: 'Documented policy.', source: 'web' };
+  const publicLookup = 'price of btc currently';
+  const publicLookupProse = 'The test quote includes a timestamp and a price in USD.';
+  const publicLookupSource = { title: 'Timestamped market quote fixture', siteName: 'Example Market', url: 'https://example.com/market-quote', snippet: 'Synthetic market data for this test.', source: 'web' };
+  const publicLookupReply = publicLookupProse + ' [1]';
+  const publicLookupProgram = 'root = Col([Text([' + JSON.stringify(publicLookupProse + ' ') + ', Source("source-1")])])';
+  const legacyPublicLookup = 'Search public sources for accessibility requirements and present a comparison table.';
+  const legacyPublicId = '22b77cb3-d903-45e2-b94d-48eb34c195fd';
+  const legacyPublicReply = 'Review the exact research request before it is sent: [Review action](/dashboard/actions/confirm/' + legacyPublicId + '). No live evidence has been retrieved.';
+  const confirmation = { id: confirmationId, status: 'pending', summary: 'Review the information to send with this research request.',
+    toolkit: 'xroga-native-research', risk: 'write', createdAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 900_000).toISOString(),
+    researchReview: [{ label: 'Research objective', value: 'Compare the workshop notes with official evidence.' }] };
+  const source = { title: 'Workshop source fixture', url: 'https://example.com/workshop', snippet: 'USD 25 per attendee.', source: 'fixture' };
+  const program = [
+    '$attendees = 40',
+    `root = Col([Text(${JSON.stringify(reply)}), Metric("Gross revenue", @Format($attendees * 25, "currency", 0, "USD")), Controls([Slider($attendees, 10, 80, 1, "Attendees"), Button("Reset", @Set($attendees, 40))], "Attendance"), Caption("Ticket price basis [1]."), Button("Draft only")])`,
+  ].join('\n');
+  const goalContract = {
+    version: '1.0', goal: 'Answer a question', desiredOutcome: 'An answer based on the supplied material',
+    semanticIntent: 'ANSWER', constraints: [], acceptance: [], historyContext: [], projectContext: null,
+    deliverables: [], requiredCapabilities: ['conversation.respond'], requiredAuthorities: [],
+    freshnessRequirement: 'NONE', sourcePolicy: { mode: 'any', scope: 'public_web', officialDomains: [] },
+    previewRequirement: 'NONE', deploymentRequirement: 'NONE', risks: [], contextComplexity: 'low', blockers: [], confidence: 1,
+  };
+  let chatCalls = 0;
+  let releaseCancelled: () => void = () => {};
+  const held = new Promise<void>(resolve => { releaseCancelled = resolve; });
+  let releasePublicLookup: () => void = () => {};
+  const heldPublicLookup = new Promise<void>(resolve => { releasePublicLookup = resolve; });
+  const cors = {
+    'access-control-allow-origin': workspaceOrigin,
+    'access-control-allow-methods': 'POST, OPTIONS',
+    'access-control-allow-headers': 'authorization, content-type',
+  };
+  await page.route('**/api/phase1/{plan,chat}', async route => {
+    const request = route.request();
+    if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors });
+    expect(request.method()).toBe('POST');
+    const body = request.postDataJSON();
+    if (new URL(request.url()).pathname.endsWith('/plan')) {
+      const contract = body.message === publicLookup || body.message === legacyPublicLookup
+        ? { ...goalContract, semanticIntent: 'INVESTIGATE', freshnessRequirement: 'CURRENT_REQUIRED',
+          requiredCapabilities: ['research.public-web', 'conversation.respond'], requiredAuthorities: ['network:public-read'] }
+        : goalContract;
+      return route.fulfill({ headers: cors, json: { goalContract: contract, dispatch: 'chat', capabilityIds: contract.requiredCapabilities, rationale: 'no-cost fixture', blockers: [] } });
+    }
+    chatCalls += 1;
+    if (body.message === prompt) {
+      expect(body.attachments).toEqual([{
+        url: `data:text/plain;base64,${Buffer.from('Ticket: $25. Attendees: 40.').toString('base64')}`,
+        name: 'workshop-notes.txt', mimeType: 'text/plain',
+      }]);
+      return route.fulfill({ headers: cors, json: { response: fullReply, completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: program }, webSources: [source], intent: 'file_analysis' } });
+    }
+    if (body.message === followUp) {
+      expect(body.history).toEqual(expect.arrayContaining([{ role: 'assistant', content: fullReply }]));
+      return route.fulfill({ headers: cors, json: { response: followUpReply, completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: '' } } });
+    }
+    if (body.message === cancellation) {
+      await held;
+      return route.fulfill({ headers: cors, json: { response: 'Cancelled fixture must never appear.' } }).catch(() => undefined);
+    }
+    if (body.message === recovery) {
+      return route.fulfill({ headers: cors, json: {
+        response: recoveryText,
+        completion: { status: 'partial', reason: 'factual_review' },
+        responseSource: { format: 'xroga-openui-v1', text: recoveryProgram },
+      } });
+    }
+    if (body.message === reviewed) {
+      return route.fulfill({ headers: cors, json: { response: reviewedReply, completion: { status: 'partial', reason: 'data_review' }, responseSource: { format: 'xroga-openui-v1', text: reviewedProgram } } });
+    }
+    if (body.message === architecture) {
+      return route.fulfill({ headers: cors, json: { response: architectureReply, completion: { status: 'complete' }, responseSource: { format: 'xroga-openui-v1', text: architectureProgram } } });
+    }
+    const officeFixture = officeFixtures.get(body.message);
+    if (officeFixture) {
+      if (body.message === pdfPrompt) expect(body.attachments).toEqual([{
+        url: `data:text/csv;base64,${Buffer.from(documentDataset).toString('base64')}`,
+        name: 'workspace-report.csv', mimeType: 'text/csv',
+      }]);
+      const { downloadFormat, response } = officeFixture;
+      return route.fulfill({ headers: cors, json: { response, completion: { status: 'complete' },
+        responseSource: { format: 'xroga-openui-v1', text: '', downloadFormat } } });
+    }
+    if (body.message === research) {
+      return route.fulfill({ headers: cors, json: { response: 'Review the exact research request before it is sent: [Review action](/dashboard/actions/confirm/' + confirmationId + '). No live evidence has been retrieved.' } });
+    }
+    if (body.message === publicLookup) {
+      await heldPublicLookup;
+      return route.fulfill({ headers: cors, json: { response: publicLookupReply, completion: { status: 'complete' },
+        responseSource: { format: 'xroga-openui-v1', text: publicLookupProgram },
+        webSources: [publicLookupSource], publicWebRetrieved: true, intent: 'research' } });
+    }
+    if (body.message === legacyPublicLookup) {
+      return route.fulfill({ headers: cors, json: { response: legacyPublicReply, intent: 'confirmation_required', webSources: [] } });
+    }
+    expect(body.message).toBe(malformed);
+    return route.fulfill({ headers: cors, json: { response: fallback, completion: { status: 'partial', reason: 'presentation_contract' }, responseSource: { format: 'xroga-openui-v1', text: '' } } });
+  });
+
+  await page.locator('input[type=file][accept*="text/plain"]').setInputFiles({
+    name: 'workshop-notes.txt', mimeType: 'text/plain', buffer: Buffer.from('Ticket: $25. Attendees: 40.'),
+  });
+  const send = async (text: string) => {
+    await composer.fill(text);
+    await composer.press('Enter');
+  };
+  await send(prompt);
+  const answer = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: reply });
+  await expect(answer).toBeVisible({ timeout: 30_000 });
+  await expect(answer.getByRole('link', { name: /Workshop source fixture/ })).toHaveAttribute('href', source.url);
+  await expect(answer.getByText('Draft only', { exact: true })).toBeVisible();
+  await expect(answer.getByRole('button', { name: 'Draft only', exact: true })).toHaveCount(0);
+  await expect(answer.getByText(detail, { exact: true })).toBeVisible();
+  await expect(answer.getByText(reply, { exact: true })).toHaveCount(1);
+  await expect(answer.getByRole('button', { name: 'Read full text', exact: true })).toHaveCount(0);
+  await expect(answer).not.toContainText(/\$attendees\s*=|root\s*=\s*Col/);
+  const slider = answer.getByRole('slider', { name: 'Attendees' });
+  await slider.press('End');
+  await expect(answer.getByText('$2,000', { exact: true })).toBeVisible();
+  await answer.getByRole('button', { name: 'Reset', exact: true }).click();
+  await expect(answer.getByText('$1,000', { exact: true })).toBeVisible();
+  const turn = page.locator('[data-turn-id]').filter({ has: answer });
+  await expect(turn.getByRole('link', { name: /Workshop source fixture/ })).toHaveCount(1);
+  await expect(turn.getByRole('region', { name: 'Sources', exact: true })).toHaveCount(0);
+  await turn.getByRole('button', { name: 'Copy', exact: true }).click();
+  await expect.poll(() => page.evaluate(async () => (await navigator.clipboard.readText()).replace(/\r\n/g, '\n')))
+    .toBe(`${fullReply}\n\nSources\n[1] ${source.title} (${source.url})`);
+  expect(chatCalls).toBe(1);
+
+  const sessionId = (await composer.getAttribute('data-draft-session'))!;
+  const readSaved = async (id = sessionId) => {
+    const saved = await admin.from('xroga_sidebar_chats').select('title,messages').eq('user_id', ownerId).eq('id', id).maybeSingle();
+    expect(saved.error).toBeNull();
+    return saved.data;
+  };
+  await expect.poll(async () => ((await readSaved())?.messages as Array<{ featureOutput?: { responseSource?: { text?: string } } }> | undefined)
+    ?.some(message => message.featureOutput?.responseSource?.text === program), { timeout: 20_000 }).toBe(true);
+  const savedTitle = (await readSaved())?.title;
+  // Workspace titles for file-backed prompts retain the attachment marker.
+  // Reopen the exact persisted title rather than guessing from the draft alone.
+  expect(savedTitle).toContain(prompt);
+
+  await mkdir('test-results/native-workspace', { recursive: true });
+  for (const theme of ['black', 'white'] as const) {
+    // Use the actual control so React shell state, persistence and DOM tokens
+    // change together. Direct DOM attributes do not exercise the product.
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.getByRole('button', { name: 'Change theme', exact: true }).first().click();
+    await page.getByRole('menuitemradio', { name: new RegExp('^' + theme, 'i') }).click();
+    await expect(page.locator('body')).toHaveClass(new RegExp('theme-' + theme));
+    await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+    for (const width of [320, 390, 768, 1280, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      await expect(answer).toBeVisible();
+      expect(await answer.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
+      expect(await answer.evaluate(el => getComputedStyle(el).colorScheme)).toBe(theme === 'black' ? 'dark' : 'light');
+      const contrast = await new AxeBuilder({ page }).include('[data-turn-id]').withRules(['color-contrast']).analyze();
+      expect(contrast.violations.map(({ id, nodes }) => ({ id, targets: nodes.map(node => node.target) }))).toEqual([]);
+      await answer.screenshot({ path: `test-results/native-workspace/composer-${width}-${theme}.png` });
+      if (width === 390 || width === 1440) {
+        await page.screenshot({ path: `test-results/native-workspace/workspace-${width}-${theme}.png` });
+      }
+    }
+  }
+  await page.setViewportSize({ width: 1440, height: 900 });
+
+  await turn.getByRole('button', { name: 'Share', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Share this answer' });
+  const created = page.waitForResponse(response => new URL(response.url()).pathname === '/api/message-shares' && response.request().method() === 'POST');
+  await dialog.getByRole('button', { name: 'Create owner-only link' }).click();
+  const share = await created;
+  expect(share.status()).toBe(201);
+  await dialog.getByRole('button', { name: 'Copy share link' }).click();
+  const shareUrl = new URL(`/share/${(await share.json()).share.token}`, workspaceOrigin).href;
+  await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe(shareUrl);
+  await dialog.getByRole('button', { name: 'Close share dialog' }).click();
+
+  const ownerShare = await page.context().newPage();
+  const other = await browser.newContext({ baseURL: workspaceOrigin });
+  try {
+    await ownerShare.goto(shareUrl);
+    const sharedAnswer = ownerShare.getByRole('region', { name: 'Answer', exact: true });
+    await expect(sharedAnswer.getByRole('slider', { name: 'Attendees' })).toBeVisible();
+    await expect(sharedAnswer.getByRole('link', { name: /Workshop source fixture/ })).toHaveAttribute('href', source.url);
+    await expect(ownerShare.getByRole('link', { name: /Workshop source fixture/ })).toHaveCount(1);
+    await expect(ownerShare.getByRole('region', { name: 'Sources', exact: true })).toHaveCount(0);
+    await expect(sharedAnswer.getByText(detail, { exact: true })).toBeVisible();
+    await expect(sharedAnswer.getByText(reply, { exact: true })).toHaveCount(1);
+    await expect(sharedAnswer.getByRole('button', { name: 'Read full text', exact: true })).toHaveCount(0);
+    await expect(sharedAnswer).not.toContainText(/\$attendees\s*=|root\s*=\s*Col/);
+    for (const [width, theme] of [[1440, 'black'], [390, 'white']] as const) {
+      await ownerShare.setViewportSize({ width, height: 900 });
+      await ownerShare.evaluate(value => {
+        document.documentElement.dataset.theme = value;
+        document.body.classList.remove('theme-black', 'theme-gray', 'theme-white', 'theme-beige');
+        document.body.classList.add('theme-' + value);
+      }, theme);
+      const contrast = await sharedAnswer.getByText(reply, { exact: true }).evaluate(node => {
+        const channels = (css: string) => css.match(/[\d.]+/g)?.map(Number) ?? [];
+        const over = (top: number[], bottom: number[]) => bottom.map((channel, i) =>
+          (top[i] ?? 0) * (top[3] ?? 1) + channel * (1 - (top[3] ?? 1)));
+        const luminance = (rgb: number[]) => rgb.reduce((sum, component, index) => {
+          const normalized = component / 255;
+          return sum + (normalized <= 0.04045 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4)
+            * [0.2126, 0.7152, 0.0722][index];
+        }, 0);
+        const surfaces: number[][] = [];
+        for (let el: Element | null = node; el; el = el.parentElement) {
+          surfaces.unshift(channels(getComputedStyle(el).backgroundColor));
+        }
+        const bg = surfaces.reduce((under, above) => over(above, under), [255, 255, 255]);
+        const text = over(channels(getComputedStyle(node).color), bg);
+        const values = [luminance(bg), luminance(text)].sort((a, b) => b - a);
+        return (values[0] + 0.05) / (values[1] + 0.05);
+      });
+      expect(contrast).toBeGreaterThanOrEqual(4.5);
+      await ownerShare.screenshot({ path: `test-results/native-workspace/owner-share-${width}-${theme}.png` });
+    }
+    const visitor = await other.newPage();
+    await visitor.goto(shareUrl);
+    await expect(visitor.getByRole('heading', { name: 'This share is private' })).toBeVisible();
+    await signIn(visitor, outsiderEmail);
+    await visitor.goto(shareUrl);
+    await expect(visitor.getByRole('heading', { name: 'This share is private' })).toBeVisible();
+    await expect(visitor.getByText(reply, { exact: true })).toHaveCount(0);
+  } finally {
+    await other.close();
+    await ownerShare.close();
+  }
+
+  await page.reload();
+  await openPersistedConversation(page, { id: sessionId, title: savedTitle!, reply });
+  await expect(answer.getByText('$1,000', { exact: true })).toBeVisible();
+  await expect(answer.getByText(detail, { exact: true })).toBeVisible();
+  await send(followUp);
+  const followUpAnswer = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: followUpIntro });
+  const expectFormattedDraft = async () => {
+    await expect(followUpAnswer.getByRole('heading', { name: 'Email draft', exact: true })).toBeVisible();
+    await expect(followUpAnswer.locator('strong').getByText('Subject:', { exact: true })).toBeVisible();
+    await expect(followUpAnswer.getByRole('cell', { name: '[Venue name]', exact: true })).toBeVisible();
+    await expect(followUpAnswer.getByRole('heading', { name: 'RSVP form', exact: true })).toBeVisible();
+    await expect(followUpAnswer.getByText(/Accessibility needs:/)).toBeVisible();
+  };
+  await expectFormattedDraft();
+  await page.locator('[data-turn-id]').filter({ has: followUpAnswer }).getByRole('button', { name: 'Copy', exact: true }).click();
+  const followUpClipboard = [
+    followUpIntro,
+    'Email draft',
+    'Subject: [Workshop title]',
+    'Item\tDetail\nVenue\t[Venue name]',
+    'RSVP form',
+    '- Accessibility needs: __________',
+  ].join('\n\n');
+  await expect.poll(() => page.evaluate(async () => (await navigator.clipboard.readText()).replace(/\r\n/g, '\n'))).toBe(followUpClipboard);
+  const pendingActivity = page.getByTestId('terminal-live-activity').getByRole('button', { name: 'Black Hole is working', exact: true });
+  try {
+    await send(cancellation);
+    await expect.poll(() => chatCalls).toBe(3);
+    await expect(pendingActivity).toBeVisible();
+    const aborted = page.waitForEvent('requestfailed', {
+      predicate: request => new URL(request.url()).pathname === '/api/phase1/chat' && request.postDataJSON()?.message === cancellation,
+      timeout: 10_000,
+    });
+    await page.getByRole('button', { name: 'Stop response', exact: true }).click();
+    expect((await aborted).failure()?.errorText).toContain('ERR_ABORTED');
+    await expect(page.getByRole('button', { name: 'Stop response', exact: true })).toHaveCount(0);
+    await expect(pendingActivity).toHaveCount(0);
+  } finally {
+    releaseCancelled();
+  }
+  await send(malformed);
+  const fallbackTurn = page.locator('[data-turn-id]').filter({ hasText: fallback }).last();
+  await expect(fallbackTurn.getByText(fallback, { exact: true })).toBeVisible();
+  await expect(fallbackTurn.locator('.xv-formatted-response > p')).toHaveCount(1);
+  await expect(fallbackTurn.locator('.xv-answer-lead')).toHaveCount(0);
+  for (const theme of ['black', 'white'] as const) {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.getByRole('button', { name: 'Change theme', exact: true }).first().click();
+    await page.getByRole('menuitemradio', { name: new RegExp('^' + theme, 'i') }).click();
+    await expect(page.locator('body')).toHaveClass(new RegExp('theme-' + theme));
+    for (const width of [320, 390, 768, 1280, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      await fallbackTurn.getByRole('link', { name: 'Report a bug', exact: true }).focus();
+      const timestamp = fallbackTurn.locator('.xv-response-meta time');
+      await timestamp.scrollIntoViewIfNeeded();
+      await expect(timestamp).toHaveCSS('opacity', '1');
+      const contrast = await new AxeBuilder({ page }).include('[data-turn-id]').withRules(['color-contrast']).analyze();
+      expect(contrast.violations.map(({ id, nodes }) => ({ id, targets: nodes.map(node => node.target) }))).toEqual([]);
+      await page.screenshot({ path: `test-results/native-workspace/plain-footer-${width}-${theme}.png` });
+    }
+  }
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await fallbackTurn.getByRole('button', { name: 'Copy', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe(fallback);
+  await fallbackTurn.getByRole('button', { name: 'Share', exact: true }).click();
+  const fallbackShare = page.waitForResponse(response => new URL(response.url()).pathname === '/api/message-shares' && response.request().method() === 'POST');
+  await dialog.getByRole('button', { name: 'Create owner-only link' }).click();
+  const fallbackLink = await fallbackShare;
+  expect(fallbackLink.status()).toBe(201);
+  await dialog.getByRole('button', { name: 'Close share dialog' }).click();
+  const fallbackSharePage = await page.context().newPage();
+  try {
+    const { share: { token } } = await fallbackLink.json();
+    await fallbackSharePage.goto(new URL('/share/' + token, workspaceOrigin).href);
+    await expect(fallbackSharePage.getByText(fallback, { exact: true })).toBeVisible();
+  } finally {
+    await fallbackSharePage.close();
+  }
+  await expect.poll(async () => {
+    const saved = await readSaved();
+    const messages = saved?.messages as Array<{role?: string; content?: string; featureOutput?: unknown}> | undefined;
+    return messages?.some(message => message.content === fallback) &&
+      !messages.some(message => message.role === 'assistant' && !message.content?.trim() && !message.featureOutput);
+  }, { timeout: 20_000 }).toBe(true);
+  await page.reload();
+  await openPersistedConversation(page, { id: sessionId, title: savedTitle!, reply: fallback });
+  await expect(fallbackTurn.getByText(fallback, { exact: true })).toBeVisible();
+  await expectFormattedDraft();
+  await expect(page.getByText('Cancelled fixture must never appear.', { exact: true })).toHaveCount(0);
+  await expect(page.getByText('should never render', { exact: true })).toHaveCount(0);
+  await send(recovery);
+  const recoveredAnswer = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: recoveryProse });
+  const recoveredTable = recoveredAnswer.locator('.iui-col').getByRole('table');
+  await expect(recoveredAnswer.getByText(recoveryNote, { exact: true })).toBeVisible();
+  await expect(recoveredAnswer.getByText(recoveryGuidance, { exact: true })).toBeVisible();
+  await expect(recoveredTable.getByRole('cell', { name: '25', exact: true })).toBeVisible();
+  const recoveryTurn = page.locator('[data-turn-id]').filter({ has: recoveredAnswer });
+  await recoveryTurn.getByRole('button', { name: 'Copy', exact: true }).click();
+  const recoveryClipboard = [recoveryNote, recoveryGuidance, recoveryProse, 'Item\tUSD\nPrinting\t25'].join('\n\n');
+  await expect.poll(() => page.evaluate(async () => (await navigator.clipboard.readText()).replace(/\r\n/g, '\n'))).toBe(recoveryClipboard);
+  await expect.poll(async () => ((await readSaved())?.messages as Array<{ featureOutput?: { responseSource?: { text?: string } } }> | undefined)
+    ?.some(message => message.featureOutput?.responseSource?.text === recoveryProgram), { timeout: 20_000 }).toBe(true);
+  await page.reload();
+  await openPersistedConversation(page, { id: sessionId, title: savedTitle!, reply: recoveryProse });
+  await expect(recoveredAnswer.getByText(recoveryNote, { exact: true })).toBeVisible();
+  await expect(recoveredAnswer.getByText(recoveryGuidance, { exact: true })).toBeVisible();
+  await expect(recoveredTable.getByRole('cell', { name: '25', exact: true })).toBeVisible();
+  await send(reviewed);
+  const reviewedAnswer = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: reviewedReply });
+  await expect(reviewedAnswer.getByRole('img', { name: /bar chart/ })).toBeVisible();
+  await expect(reviewedAnswer.getByText(reviewedReply, { exact: true })).toBeVisible();
+  await expect(page.getByText('Suggested next steps', { exact: true })).toHaveCount(0);
+  let confirmations = 0;
+  let receiptReads = 0;
+  await page.route('**/api/phase1/business-actions/confirmations/' + confirmationId + '**', async route => {
+    const request = route.request();
+    if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors });
+    if (new URL(request.url()).pathname.endsWith('/confirm')) {
+      expect(request.method()).toBe('POST');
+      confirmations++;
+      return route.fulfill({ headers: cors, json: { ok: true, toolkit: confirmation.toolkit,
+        confirmation: { ...confirmation, status: 'consumed' }, response: 'Completed.' } });
+    }
+    expect(request.method()).toBe('GET');
+    if (!confirmations) return route.fulfill({ headers: cors, json: { confirmation } });
+    receiptReads++;
+    return route.fulfill({ headers: cors, json: { confirmation: { ...confirmation, status: 'consumed' },
+      researchResult: { confirmationId, receiptId: confirmationId, text: '', omittedSourceCount: 0, sources: [researchSource],
+        answer: { response: researchReply, completion: { status: 'complete' }, webSources: [researchSource],
+          responseSource: { format: 'xroga-openui-v1', text: 'root = Col([Text(["The retrieved source describes the official policy. ", Source("source-1")])])' } } } } });
+  });
+  await send(research);
+  const review = page.getByRole('button', { name: 'Review information to share', exact: true });
+  await expect(review).toBeVisible();
+  await expect(page.getByRole('button', { name: /Confirm action|Approve (research request|information sharing)/ })).toHaveCount(0);
+  await review.click();
+  await expect(page.getByRole('region', { name: 'Information to send' })).toContainText('Compare the workshop notes with official evidence.');
+  await expect(page.getByText(/Prepared action digest|micro-USD|Approved spend ceiling|Critical parameters|Prepared app operation/)).toHaveCount(0);
+  await page.getByRole('button', { name: 'Approve information sharing', exact: true }).click();
+  await expect(page).toHaveURL(/\/workspace$/);
+  const researched = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: 'The retrieved source describes the official policy.' });
+  await expect(researched.getByRole('link', { name: /Official policy fixture/ })).toHaveAttribute('href', researchSource.url);
+  expect(confirmations).toBe(1);
+  expect(receiptReads).toBeGreaterThanOrEqual(1);
+  expect(receiptReads).toBeLessThanOrEqual(2);
+  expect(chatCalls).toBe(7);
+  await expect.poll(async () => JSON.stringify((await readSaved())?.messages ?? []), { timeout: 15_000 }).toContain(researchReply);
+  await page.reload();
+  await openPersistedConversation(page, { id: sessionId, title: savedTitle!, reply });
+  await expect(researched.getByRole('link', { name: /Official policy fixture/ })).toHaveAttribute('href', researchSource.url);
+  expect(confirmations).toBe(1);
+  await send(publicLookup);
+  try {
+    await expect(pendingActivity).toBeVisible();
+    const pendingTurn = page.locator('[data-turn-id]', { has: pendingActivity });
+    await expect(pendingTurn.getByRole('list', { name: 'Work so far' })).toBeVisible();
+    await expect(pendingTurn.getByText(/Web evidence/)).toHaveCount(0);
+  } finally {
+    releasePublicLookup();
+  }
+  const publicAnswer = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: publicLookupProse });
+  const publicTurn = page.locator('[data-turn-id]', { has: publicAnswer });
+  const checkPublicAnswer = async () => {
+    await expect(publicAnswer.getByRole('link', { name: /Timestamped market quote fixture/ })).toHaveAttribute('href', publicLookupSource.url);
+    await expect(publicAnswer).toHaveClass(/xroga-native-openui/);
+    await expect(publicAnswer.locator('[data-source-citation]')).toHaveCount(1);
+    await expect(publicTurn.getByText('Web evidence · 1 source retrieved', { exact: true })).toBeVisible();
+    await expect(publicTurn.getByRole('button', { name: /^(Confirm action|Approve research request)$/ })).toHaveCount(0);
+    await expect(publicTurn.getByText(/approval payload|prepared digest|micro-USD|no live evidence/i)).toHaveCount(0);
+  };
+  await checkPublicAnswer();
+  await expect(pendingActivity).toHaveCount(0);
+  await publicTurn.getByRole('button', { name: 'Copy', exact: true }).click();
+  await expect.poll(() => page.evaluate(async () => (await navigator.clipboard.readText()).replace(/\r\n/g, '\n')))
+    .toBe(`${publicLookupReply}\n\nSources\n[1] ${publicLookupSource.title} (${publicLookupSource.url})`);
+  await publicTurn.getByRole('button', { name: 'Share', exact: true }).click();
+  const publicShareCreated = page.waitForResponse(response => new URL(response.url()).pathname === '/api/message-shares'
+    && response.request().method() === 'POST');
+  await dialog.getByRole('button', { name: 'Create owner-only link' }).click();
+  const publicShare = await publicShareCreated;
+  expect(publicShare.status()).toBe(201);
+  const { share: publicSnapshot } = await publicShare.json();
+  expect(publicSnapshot.richResponse).toMatch(/^XROGA_OPENUI_SHARE_V1\n/);
+  expect(JSON.parse(publicSnapshot.richResponse.slice('XROGA_OPENUI_SHARE_V1\n'.length))).toMatchObject({
+    program: publicLookupProgram, sources: [expect.objectContaining({ url: publicLookupSource.url })],
+  });
+  expect(publicSnapshot.richResponse).not.toMatch(/\/dashboard\/actions\/confirm|micro-USD|approval payload/i);
+  const publicShareRevoked = page.waitForResponse(response => response.request().method() === 'DELETE'
+    && new URL(response.url()).pathname === '/api/message-shares/' + publicSnapshot.token);
+  await dialog.getByRole('button', { name: 'Revoke', exact: true }).click();
+  expect((await publicShareRevoked).ok()).toBe(true);
+  await dialog.getByRole('button', { name: 'Close share dialog', exact: true }).click();
+  await expect.poll(async () => ((await readSaved())?.messages as Array<{ content?: string; publicWebRetrieved?: true; researchReceiptId?: string }> | undefined)
+    ?.some(message => message.content?.includes(publicLookupProse) && message.publicWebRetrieved === true && !message.researchReceiptId),
+  { timeout: 20_000 }).toBe(true);
+  await page.reload();
+  await openPersistedConversation(page, { id: sessionId, title: savedTitle!, reply: fallback });
+  await checkPublicAnswer();
+  await publicTurn.screenshot({ path: 'test-results/native-workspace/public-search-without-approval.png' });
+  expect(confirmations).toBe(1);
+  expect(chatCalls).toBe(8);
+  await page.getByRole('button', { name: 'New Work', exact: true }).click();
+  await expect(composer).not.toHaveAttribute('data-draft-session', sessionId);
+  await expect(composer).toHaveAttribute('data-draft-restoring', 'false');
+  const architectureSession = (await composer.getAttribute('data-draft-session'))!;
+  expect(architectureSession).toBeTruthy();
+  const architectureHttp = page.waitForResponse(response => new URL(response.url()).pathname === '/api/phase1/chat'
+    && response.request().method() === 'POST' && response.request().postDataJSON()?.message === architecture);
+  await send(architecture);
+  expect((await architectureHttp).ok()).toBe(true);
+  const renderedArchitecture = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: 'Component roles' }).last();
+  const architectureTable = renderedArchitecture.getByRole('region', { name: 'Answer table', exact: true });
+  await expect(architectureTable).toBeVisible({ timeout: 20_000 });
+  await expect(architectureTable.locator('thead td').first()).toBeEmpty();
+  await expect(architectureTable.getByRole('button')).toHaveCount(1);
+  await architectureTable.getByRole('button', { name: 'Role', exact: true }).press('Enter');
+  await expect(architectureTable.getByRole('columnheader', { name: 'Role' })).toHaveAttribute('aria-sort', 'ascending');
+  await expect(renderedArchitecture.locator('.react-flow__edge')).toHaveCount(1);
+  await expect(renderedArchitecture.getByText(architectureCaption, { exact: true })).toHaveCount(1);
+  await expect(renderedArchitecture.locator('pre code')).toHaveText('const boundary = "tenant_id";');
+  await expect(renderedArchitecture).not.toContainText(/root\s*=\s*Col/);
+  await expect.poll(async () => ((await readSaved(architectureSession))?.messages as Array<{ featureOutput?: { responseSource?: { text?: string } } }> | undefined)
+    ?.some(message => message.featureOutput?.responseSource?.text === architectureProgram), { timeout: 20_000 }).toBe(true);
+  const architectureTurn = page.locator('[data-turn-id]', { has: renderedArchitecture });
+  await architectureTurn.getByRole('button', { name: 'Share', exact: true }).click();
+  const architectureShareCreated = page.waitForResponse(response => new URL(response.url()).pathname === '/api/message-shares'
+    && response.request().method() === 'POST');
+  await dialog.getByRole('button', { name: 'Create owner-only link' }).click();
+  const architectureShare = await architectureShareCreated;
+  expect(architectureShare.status()).toBe(201);
+  const { share: savedArchitectureShare } = await architectureShare.json();
+  expect(savedArchitectureShare.richResponse).toContain('XROGA_OPENUI_SHARE_V1');
+  const architectureLink = new URL('/share/' + savedArchitectureShare.token, workspaceOrigin).href;
+  const architectureSharePage = await page.context().newPage();
+  try {
+    await architectureSharePage.setViewportSize({ width: 390, height: 900 });
+    await architectureSharePage.goto(architectureLink);
+    const sharedArchitecture = architectureSharePage.getByRole('region', { name: 'Answer', exact: true });
+    await expect(sharedArchitecture.getByRole('region', { name: 'Answer table', exact: true })).toBeVisible();
+    const sharedDiagram = sharedArchitecture.getByRole('figure', { name: 'Request path', exact: true });
+    await expect(sharedDiagram.getByText('Next.js → PostgreSQL · User access token')).toBeVisible();
+    await expect(sharedArchitecture.getByText(architectureCaption, { exact: true })).toHaveCount(1);
+    for (const name of ['Next.js', 'PostgreSQL']) {
+      await expect(sharedDiagram.locator('.native-diagram-node-title').getByText(name, { exact: true })).toBeVisible();
+    }
+    await expect(sharedDiagram.locator('.react-flow__edge-path')).toHaveCount(1);
+    expect(await sharedDiagram.locator('.react-flow__edge-path').evaluate((path: SVGPathElement) => path.getTotalLength())).toBeGreaterThan(0);
+    await expect(sharedArchitecture.locator('pre code')).toHaveText('const boundary = "tenant_id";');
+    const shareRevoked = page.waitForResponse(response => response.request().method() === 'DELETE'
+      && new URL(response.url()).pathname === '/api/message-shares/' + savedArchitectureShare.token);
+    await dialog.getByRole('button', { name: 'Revoke', exact: true }).click();
+    expect((await shareRevoked).ok()).toBe(true);
+    await architectureSharePage.reload();
+    await expect(architectureSharePage.getByRole('heading', { name: 'Page not found', exact: true })).toBeVisible();
+    await expect(sharedArchitecture).toHaveCount(0);
+  } catch (error) {
+    // Capture the synthetic diagram before this secondary page is closed. The
+    // default failure screenshot otherwise records the unrelated primary page.
+    await mkdir('test-results/native-workspace', { recursive: true });
+    await architectureSharePage.screenshot({ path: 'test-results/native-workspace/share-diagram-failure.png', fullPage: true });
+    const geometry = await architectureSharePage.locator('.native-diagram-canvas, .react-flow__viewport, .react-flow__node').evaluateAll(elements => elements.map(element => {
+      const bounds = element.getBoundingClientRect(), style = getComputedStyle(element);
+      return { className: element.className, width: bounds.width, height: bounds.height,
+        display: style.display, visibility: style.visibility, transform: style.transform };
+    }));
+    await writeFile('test-results/native-workspace/share-diagram-failure.json', JSON.stringify({ geometry }, null, 2));
+    throw error;
+  } finally {
+    await architectureSharePage.close();
+    await dialog.getByRole('button', { name: 'Close share dialog' }).click();
+  }
+  let browserOperatorRequests = 0;
+  await page.route('**/api/browser/local/**', route => {
+    browserOperatorRequests += 1;
+    return route.abort();
+  });
+  const pairingWorkspace = new URL('/workspace', page.url());
+  pairingWorkspace.searchParams.set('conversation', architectureSession);
+  pairingWorkspace.searchParams.set('browserExtension', 'abcdefghijklmnopabcdefghijklmnop');
+  pairingWorkspace.searchParams.set('browserPair', '11111111-1111-4111-8111-111111111111');
+  const restoredPairingWorkspace = new URL(pairingWorkspace);
+  restoredPairingWorkspace.searchParams.delete('conversation');
+  await page.goto(pairingWorkspace.href);
+  await expect(renderedArchitecture.locator('.react-flow__edge')).toHaveCount(1, { timeout: 20_000 });
+  await expect(page).toHaveURL(restoredPairingWorkspace.href);
+  await page.mouse.move(0, 0);
+  await expect(page.getByText('Conversation restored', { exact: true })).toHaveCount(0, { timeout: 10_000 });
+  const transcript = page.getByTestId('terminal-scroll');
+  const header = page.getByTestId('terminal-identity-header');
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    const headerBounds = (await header.boundingBox())!;
+    await expect(header).not.toHaveAttribute('data-scrolled');
+    const fade = transcript.locator('..').getByTestId('workspace-transcript-fade');
+    const fadeBounds = (await fade.boundingBox())!;
+    const transcriptBounds = (await transcript.boundingBox())!;
+    expect(fadeBounds.y).toBeGreaterThanOrEqual(headerBounds.y + headerBounds.height - 1);
+    expect(fadeBounds.x).toBeGreaterThan(transcriptBounds.x);
+    expect(fadeBounds.x + fadeBounds.width).toBeLessThan(transcriptBounds.x + transcriptBounds.width);
+    expect(fadeBounds.height).toBeLessThanOrEqual(10);
+    await transcript.evaluate(element => { element.scrollTop = 0; });
+    await expect(fade).toHaveCSS('opacity', '0');
+    await transcript.evaluate(element => { element.scrollTop = element.scrollHeight; });
+    await expect(fade).toHaveCSS('opacity', '1');
+    await expect(transcript).toHaveCSS('clip-path', 'none');
+    const dockFrame = page.locator('[data-composer-frame="single"]');
+    const composerBottom = (await dockFrame.boundingBox())!;
+    expect(transcriptBounds.y + transcriptBounds.height).toBeLessThanOrEqual(composerBottom.y + composerBottom.height + 1);
+    const end = await transcript.evaluate(element => element.scrollTop);
+    const railX = transcriptBounds.x + transcriptBounds.width - 6;
+    const railY = transcriptBounds.y + transcriptBounds.height - 12;
+    await page.mouse.move(railX, railY);
+    await page.mouse.wheel(0, -260);
+    await expect.poll(() => transcript.evaluate(element => element.scrollTop)).toBeLessThan(end);
+    await page.mouse.wheel(0, 1000);
+    await expect.poll(() => transcript.evaluate(element => Math.ceil(element.scrollTop))).toBeGreaterThanOrEqual(Math.floor(end));
+
+    // The extension owns pairing and consent. Workspace only shows the signed-in
+    // connection state in the sidebar, including the unavailable fixture state.
+    const mobile = width < 1024;
+    const transcriptTop = (await transcript.boundingBox())!.y;
+    if (mobile) await page.getByRole('button', { name: 'Open sidebar', exact: true }).click();
+    const sidebar = page.locator(mobile ? '.xv-sidebar-floating--mobile' : '.xv-sidebar-root');
+    const browserOperator = sidebar.locator('summary').filter({ hasText: 'Browser Automation' });
+    await expect(browserOperator).toBeVisible();
+    await expect(page.locator('summary:visible').filter({ hasText: 'Browser Automation' })).toHaveCount(1);
+    await expect(header.getByText('Browser Automation', { exact: true })).toHaveCount(0);
+    const panel = browserOperator.locator('..');
+    const status = panel.getByRole('status');
+    await expect(panel).toHaveJSProperty('open', false);
+    await expect(status).toBeHidden();
+    await browserOperator.press('Enter');
+    await expect(panel).toHaveJSProperty('open', true);
+    await expect(status).toHaveText('Browser Automation is unavailable in this Workspace release.');
+    await expect(status).toBeInViewport();
+    await expect(panel.getByRole('button', { name: 'Reconnect', exact: true })).toBeEnabled();
+    await expect(panel.getByRole('link')).toHaveCount(0);
+    const expanded = (await panel.boundingBox())!;
+    const sidebarBounds = (await sidebar.boundingBox())!;
+    expect(expanded.x).toBeGreaterThanOrEqual(sidebarBounds.x - 1);
+    expect(expanded.x + expanded.width).toBeLessThanOrEqual(Math.min(width, sidebarBounds.x + sidebarBounds.width) + 1);
+    await browserOperator.press('Enter');
+    await expect(status).toBeHidden();
+    if (mobile) await sidebar.getByRole('button', { name: 'Close sidebar', exact: true }).click();
+    await expect.poll(async () => Math.abs((await transcript.boundingBox())!.y - transcriptTop)).toBeLessThanOrEqual(1);
+    await expect(page).toHaveURL(restoredPairingWorkspace.href);
+  }
+  expect(browserOperatorRequests).toBe(0);
+  expect(chatCalls).toBe(9);
+  await page.goto('/workspace?conversation=' + architectureSession);
+  await expect(composer).toHaveAttribute('data-draft-restoring', 'false', { timeout: 20_000 });
+  await send(docxPrompt);
+  const liveDocx = page.getByRole('button', { name: 'Download DOCX', exact: true });
+  await expect(liveDocx).toBeEnabled({ timeout: 30_000 });
+  const docxTurn = page.locator('[data-turn-id]', { has: liveDocx });
+  await docxTurn.getByRole('button', { name: 'Share', exact: true }).click();
+  const docxShareCreated = page.waitForResponse(response => new URL(response.url()).pathname === '/api/message-shares'
+    && response.request().method() === 'POST');
+  await dialog.getByRole('button', { name: 'Create owner-only link' }).click();
+  const docxShare = await docxShareCreated;
+  expect(docxShare.status()).toBe(201);
+  const { share: savedDocxShare } = await docxShare.json();
+  const docxSharePage = await page.context().newPage();
+  let releaseScripts!: () => void;
+  const scriptsReady = new Promise<void>(resolve => { releaseScripts = resolve; });
+  try {
+    await docxSharePage.route(/\/_next\/static\/chunks\/.*\.js(?:\?.*)?$/, async route => {
+      await scriptsReady;
+      await route.continue();
+    });
+    await docxSharePage.goto(new URL('/share/' + savedDocxShare.token, workspaceOrigin).href, { waitUntil: 'commit' });
+    const sharedDownload = docxSharePage.getByRole('button', { name: 'Download DOCX', exact: true });
+    await expect(sharedDownload).toBeVisible();
+    await expect(sharedDownload).toBeDisabled();
+    releaseScripts();
+    await expect(sharedDownload).toBeEnabled();
+    const [download] = await Promise.all([docxSharePage.waitForEvent('download'), sharedDownload.click()]);
+    expect(download.suggestedFilename()).toBe('Workshop-Proposal.docx');
+    expect((await readFile((await download.path())!)).subarray(0, 4).toString('hex')).toBe('504b0304');
+  } finally {
+    releaseScripts();
+    await docxSharePage.close();
+  }
+  const docxShareRevoked = page.waitForResponse(response => response.request().method() === 'DELETE'
+    && new URL(response.url()).pathname === '/api/message-shares/' + savedDocxShare.token);
+  await dialog.getByRole('button', { name: 'Revoke', exact: true }).click();
+  expect((await docxShareRevoked).ok()).toBe(true);
+  await dialog.getByRole('button', { name: 'Close share dialog' }).click();
+  await page.locator('input[type=file][accept*="text/plain"]').setInputFiles({
+    name: 'workspace-report.csv', mimeType: 'text/csv', buffer: Buffer.from(documentDataset),
+  });
+  await send(pdfPrompt);
+  await expect(page.getByRole('button', { name: 'Download PDF', exact: true })).toBeVisible({ timeout: 30_000 });
+  await send(xlsxPrompt);
+  await expect(page.getByRole('button', { name: 'Download XLSX', exact: true })).toBeVisible({ timeout: 30_000 });
+  await send(pptxPrompt);
+  await expect(page.getByRole('button', { name: 'Download PPTX', exact: true })).toBeVisible({ timeout: 30_000 });
+  await expect.poll(async () => {
+    const saved = await readSaved(architectureSession);
+    const messages = saved?.messages as Array<{ featureOutput?: { documentDownload?: string; sourceText?: string } }> | undefined;
+    return messages?.filter(message => message.featureOutput?.documentDownload)
+      .map(message => [message.featureOutput?.documentDownload, message.featureOutput?.sourceText]);
+  }, { timeout: 20_000 }).toEqual([...officeFixtures.values()].map(({downloadFormat, response}) => [downloadFormat, response]));
+  await page.reload();
+  await expect(composer).toHaveAttribute('data-draft-session', architectureSession, { timeout: 20_000 });
+  for (const [format, filename, header] of [
+    ['DOCX', 'Workshop-Proposal.docx', '504b0304'],
+    ['PDF', 'Workshop-Executive-Report.pdf', '25504446'],
+    ['XLSX', 'Workshop-Budget.xlsx', '504b0304'],
+    ['PPTX', 'Workshop-Logistics.pptx', '504b0304'],
+  ]) {
+    const button = page.getByRole('button', { name: 'Download ' + format, exact: true });
+    await expect(button).toBeVisible({ timeout: 20_000 });
+    const pending = page.waitForEvent('download');
+    await button.press('Enter');
+    const download = await pending;
+    expect(download.suggestedFilename()).toBe(filename);
+    expect((await readFile((await download.path())!)).subarray(0, 4).toString('hex')).toBe(header);
+  }
+  expect(chatCalls).toBe(13);
+  let obsoleteSearchReads = 0;
+  await page.route('**/api/phase1/business-actions/confirmations/' + legacyPublicId + '**', async route => {
+    if (route.request().method() === 'OPTIONS') return route.fulfill({ status: 204, headers: { ...cors, 'access-control-allow-methods': 'GET, OPTIONS' } });
+    expect(route.request().method()).toBe('GET');
+    obsoleteSearchReads += 1;
+    await route.fulfill({ headers: cors, json: { confirmation: {
+      ...confirmation, id: legacyPublicId, researchReview: [],
+    } } });
+  });
+  await send(legacyPublicLookup);
+  const skippedSearch = page.getByText('This saved search has no sources.', { exact: true }).last();
+  const legacyPublicTurn = page.locator('[data-turn-id]', { has: skippedSearch });
+  const checkSkippedSearch = async () => {
+    await expect(skippedSearch).toBeVisible({ timeout: 20_000 });
+    await expect(legacyPublicTurn.getByRole('button', { name: 'Confirm action' })).toHaveCount(0);
+    await expect(legacyPublicTurn.getByRole('button', { name: 'Cancel', exact: true })).toHaveCount(0);
+    await expect(legacyPublicTurn.getByRole('link', { name: 'Review details' })).toHaveCount(0);
+    await expect(legacyPublicTurn.getByText('Suggested next steps', { exact: true })).toHaveCount(0);
+    await expect(legacyPublicTurn).not.toContainText(/\$0\.00575|Web evidence|Share a web research request/);
+  };
+  await checkSkippedSearch();
+  expect(obsoleteSearchReads).toBeGreaterThan(0);
+  await expect.poll(async () => JSON.stringify((await readSaved(architectureSession))?.messages ?? [])).toContain(legacyPublicReply);
+  await page.reload();
+  await expect(composer).toHaveAttribute('data-draft-session', architectureSession, { timeout: 20_000 });
+  await checkSkippedSearch();
+  await legacyPublicTurn.screenshot({ path: 'test-results/native-workspace/legacy-public-search-status.png' });
+  expect(chatCalls).toBe(14);
+  await writeFile('test-results/native-workspace/evidence.json', JSON.stringify({
+    source: expectedRelease, route: '/workspace', auth: 'isolated Supabase ordinary accounts',
+    model: 'deterministic transport fixtures, zero provider calls', nativeActions: ['file handoff', 'citation link', 'keyboard calculator', 'copy readback', 'database save and reopen', 'private share owner/guest/other account', 'continuation', 'browser cancellation', 'client validation fallback', 'partial native recovery, copy and reopen', 'reviewed partial chart', 'legacy research receipt without refocus or redispatch', 'automatic public lookup, citation and source count after Copy, Share and Reopen', 'connected diagram, nested table and code in one persisted answer'],
+    viewports: [320, 390, 768, 1280, 1440], themes: ['black', 'white'], browserOperator: 'one compact header control expands within the viewport without shifting the saved answer',
+  }, null, 2));
+});
+
+test('saved native answers hide transport syntax during a lazy renderer failure and restore on reopen', async ({ page, browser }) => {
+  const chunkURLs = new Set<string>();
+  const inspect = async (response: import('@playwright/test').Response) => {
+    const url = new URL(response.url());
+    if (!url.pathname.startsWith('/_next/static/chunks/') || !url.pathname.endsWith('.js') || !response.ok()) return;
+    const script = await response.text().catch(() => '');
+    if (script.includes('xroga-native-openui') && script.includes('publishObservability')) chunkURLs.add(response.url());
+  };
+  page.on('response', inspect);
+  await page.goto('/auth/login?next=%2Fworkspace', { waitUntil: 'domcontentloaded' });
+  const form = page.locator('form', { has: page.locator('#login-email') });
+  await form.locator('#login-email').fill(ownerEmail);
+  await form.locator('#login-password').fill(password);
+  await form.getByRole('button', { name: 'Sign in' }).click();
+  await expect(page).toHaveURL(/\/workspace$/, { timeout: AUTH_TRANSITION_TIMEOUT_MS });
+  const workspace = new URL('/workspace', page.url());
+  workspace.searchParams.set('conversation', conversations.second.id);
+  // The earlier composer test creates newer conversations. A durable record
+  // is still addressable when it has aged out of the sidebar's recent list.
+  await page.goto(workspace.href);
+  const composer = page.locator('[data-terminal-composer]');
+  await expect(composer).toHaveAttribute('data-draft-owner', ownerId);
+  await expect(composer).toHaveAttribute('data-draft-session', conversations.second.id, { timeout: 20_000 });
+  await expect(page.getByRole('slider', { name: 'Attendees' })).toHaveValue('40');
+  await expect.poll(() => chunkURLs.size).toBeGreaterThan(0);
+
+  const context = await browser.newContext({ baseURL: workspace.origin, storageState: await page.context().storageState(),
+    viewport: { width: 390, height: 844 }, permissions: ['clipboard-read', 'clipboard-write'] });
+  let blocked = 0;
+  try {
+    const saved = await context.newPage();
+    for (const chunk of chunkURLs) await saved.route(chunk, route => { blocked += 1; return route.abort('failed'); });
+    await saved.goto(workspace.href);
+    const answer = saved.getByRole('region', { name: 'Answer', exact: true });
+    await expect.poll(() => blocked).toBeGreaterThan(0);
+    await expect(answer.getByText(conversations.second.reply, { exact: true })).toBeVisible();
+    await expect(answer.getByRole('slider')).toHaveCount(0);
+    await expect(answer).not.toContainText(/UnknownInternalWidget|root\s*=\s*Col/);
+    await saved.locator('[data-turn-id]').filter({ has: answer }).getByRole('button', { name: 'Copy', exact: true }).click();
+    await expect.poll(() => saved.evaluate(() => navigator.clipboard.readText())).toBe(conversations.second.reply);
+    await saved.unrouteAll({ behavior: 'wait' });
+    await saved.goto(workspace.href);
+    await expect(answer.getByRole('slider', { name: 'Attendees' })).toHaveValue('40');
+    await expect(answer).not.toContainText(/UnknownInternalWidget|root\s*=\s*Col/);
+    const failedOnce = new Set<string>();
+    for (const chunk of chunkURLs) await saved.route(chunk, route => {
+      if (failedOnce.has(chunk)) return route.continue();
+      failedOnce.add(chunk);
+      return route.fulfill({ status: 429 });
+    });
+    await saved.goto(workspace.href);
+    await expect.poll(() => failedOnce.size).toBeGreaterThan(0);
+    await expect(answer.getByRole('slider', { name: 'Attendees' })).toHaveValue('40');
+  } finally {
+    await context.close();
+  }
 });
 
 test('real Supabase login persists, Operations works, cross-tenant access is denied, and logout clears the session', async ({ page }) => {
@@ -376,12 +1290,11 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     : composerBox.y - (menuBox.y + menuBox.height);
   expect(composerGap).toBeGreaterThanOrEqual(4);
   expect(composerGap).toBeLessThanOrEqual(12);
-  // The new menu is a compact, trigger-anchored popover rather than
-  // the former full-width overlay. Preserve containment and alignment.
+  // The compact menu anchors to the trigger with 12 px viewport gutters.
   const triggerBox = (await terminalDock.locator('.xv-cba-trigger').first().boundingBox())!;
   const viewportWidth = await page.evaluate(() => window.innerWidth);
-  const expectedWidth = Math.min(344, viewportWidth - 16);
-  const expectedLeft = Math.max(8, Math.min(triggerBox.x, viewportWidth - expectedWidth - 8));
+  const expectedWidth = Math.min(288, viewportWidth - 24);
+  const expectedLeft = Math.max(12, Math.min(triggerBox.x, viewportWidth - expectedWidth - 12));
   expect(Math.abs(menuBox.x - expectedLeft)).toBeLessThanOrEqual(2);
   expect(menuBox.width).toBeCloseTo(expectedWidth, 0);
 
@@ -979,8 +1892,17 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   try{expect((await anonymous.request.get(new URL(signed.url,page.url()).href)).status()).toBe(401);}finally{await anonymous.close();}
   expect((await fetch(`${backendUrl}/api/projects/${ownerProjectId}/files/${privateFileId}/links`,{method:'DELETE',headers:{Authorization:browserBearer}})).status).toBe(200);
   expect((await page.request.get(signed.url)).status()).toBe(404);
+  const ownerProjectOpened = page.waitForResponse(response =>
+    new URL(response.url()).pathname === `/api/projects/${ownerProjectId}` && response.request().method() === 'GET');
   await page.goto(`/dashboard/projects/${ownerProjectId}`);
-  await expect(page).toHaveURL(new RegExp(`/workspace\\?project=${ownerProjectId}`));
+  const ownerProjectResponse = await ownerProjectOpened;
+  expect(ownerProjectResponse.status()).toBe(200);
+  expect(await ownerProjectResponse.json()).toMatchObject({ id: ownerProjectId });
+  // Workspace consumes the one-time URL hint after verifying it with the API.
+  await expect(page).toHaveURL(/\/workspace$/);
+  await expect.poll(() => page.evaluate(() =>
+    JSON.parse(sessionStorage.getItem('xroga-active-sidebar-project-v1') || 'null')
+  )).toEqual({ userId: ownerId, projectId: ownerProjectId });
   // Keep main's unified Workspace navigation. Private saved-file delivery now
   // lives in Library, using the same owner-only download/copy/revoke controls.
   const projectsLoaded = page.waitForResponse(response => new URL(response.url()).pathname === '/api/projects' && response.request().method() === 'GET');

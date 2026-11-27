@@ -14,7 +14,7 @@ const CAPABILITIES = [
     ['Documents', 'Draft a document about: '], ['Presentations', 'Create a slide presentation about: '],
     ['Images', 'Create an image of: '], ['Video concepts', 'Plan a video with a script and storyboard about: '],
   ] },
-  { id: 'find', title: 'Find', icon: Search, description: 'Find answers, files and opportunities. Research the web.', features: [
+  { id: 'find', title: 'Find', icon: Search, description: 'Answers, clients and opportunities. Research the web.', features: [
     ['Web research', 'Research this topic on the web and cite sources: '], ['Answers & comparisons', 'Compare these options and explain the tradeoffs: '],
     ['Files & knowledge', 'Find and summarize information in my attached files: '], ['Opportunities', 'Research opportunities that match these goals: '],
   ] },
@@ -113,6 +113,12 @@ function CapabilityVisual({ id }: { id: Capability['id'] }) {
   </span>;
 }
 
+function RotatingWord({ word }: { word: string }) {
+  return <span className={styles.dynamicWordFrame} aria-hidden="true">
+    <span className={styles.dynamicWord} key={word} data-testid="workspace-rotating-word">{word}.</span>
+  </span>;
+}
+
 export function WorkspaceStartHeader() {
   const [index] = useRotation(ROTATING_WORDS.length, false, 3400);
   return (
@@ -120,7 +126,7 @@ export function WorkspaceStartHeader() {
       <h1 className={styles.superIntelligence}>Super Intelligence</h1>
       <div className={styles.taglineRow}>
         <p className={styles.tagline} aria-label="One AI workspace for every kind of work, from code and websites to research and automation.">
-          One AI workspace for every kind of <span className={styles.dynamicWord} key={ROTATING_WORDS[index]} aria-hidden="true">{ROTATING_WORDS[index]}.</span>
+          One AI workspace for every kind of <RotatingWord word={ROTATING_WORDS[index]} />
         </p>
       </div>
     </header>
@@ -138,10 +144,11 @@ function AutomaticIntro() {
     const delay = window.setTimeout(() => setShowDetail(true), 2200);
     return () => window.clearTimeout(delay);
   }, [reducedMotion]);
-  return <div className={styles.automatic} aria-label="Automatic intelligence by default. No models or tools to choose. Type or speak your goal. Xroga chooses the tools and handles the work.">
-    <span className={styles.automaticFirst} data-visible={!showDetail} aria-hidden={showDetail}><strong>Automatic intelligence by default.</strong> No models or tools to choose.</span>
+  return <div className={styles.automatic} aria-label="Automatic intelligence by default. No models or tools to choose. Type or speak in your native language, and the right tools handle the work automatically.">
+    <span className={styles.automaticFirst} data-visible={!showDetail} aria-hidden={showDetail}><strong>Automatic intelligence by default.</strong><span className={styles.guidanceDesktop}> No models or tools to choose.</span></span>
     <span className={styles.automaticDetail} data-visible={showDetail} aria-hidden={!showDetail}>
-      Type or speak your goal. Xroga chooses the right tools and handles the work.
+      <span className={styles.guidanceDesktop}>Type or speak in your native language, and the right tools handle the work automatically.</span>
+      <span className={styles.guidanceMobile}>Type or speak your language. Xroga does the work automatically.</span>
     </span>
   </div>;
 }
@@ -153,6 +160,13 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
   const anchorRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   function close() { setOpen(false); setSelectedFeature(null); onInteraction?.(false); }
+  function returnToCategories() {
+    const previous = selectedFeature;
+    setSelectedFeature(null);
+    requestAnimationFrame(() => {
+      if (previous !== null) menuRef.current?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]')[previous]?.focus();
+    });
+  }
   function choose(feature: (typeof card.features)[number]) {
     const [label, text] = feature;
     const composer = document.querySelector<HTMLTextAreaElement>('[data-terminal-composer]');
@@ -186,7 +200,12 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
       aria-haspopup="menu" aria-expanded={open} aria-label={card.title}
       onFocus={() => onInteraction?.(true)}
       onBlur={() => { if (!open) onInteraction?.(false); }}
-      onClick={() => { if (open) { close(); return; } setSelectedFeature(null); setOpen(true); onInteraction?.(true); }}
+      onClick={() => {
+        if (open) { close(); return; }
+        setOpen(true);
+        onInteraction?.(true);
+        requestAnimationFrame(() => menuRef.current?.querySelector<HTMLButtonElement>('[role="menuitem"]')?.focus());
+      }}
     >
       <span className={styles.cardCopy}>
         <span className={styles.cardIcon}><Icon aria-hidden="true" /></span>
@@ -194,15 +213,18 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
       </span>
       <CapabilityVisual id={card.id} />
     </button>
-    <AnchoredPortalPopover open={open} onClose={close} anchorRef={anchorRef} placement="top-start" width={264} ariaLabel={`${card.title} features`} className={controls.featureMenu}>
+    <AnchoredPortalPopover open={open} onClose={close} anchorRef={anchorRef} placement="top-start" width={224} ariaLabel={`${card.title} features`} className={controls.featureMenu}>
       <div ref={menuRef}
         onKeyDown={event => {
-          if (event.key === 'Escape') { close(); anchorRef.current?.focus(); }
+          if (event.key === 'Escape') { event.stopPropagation(); close(); anchorRef.current?.focus(); }
           if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
-            event.preventDefault();
             const items = Array.from(menuRef.current?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]') ?? []);
+            if (!items.length) return;
+            event.preventDefault();
             const current = items.indexOf(document.activeElement as HTMLButtonElement);
-            const next = event.key === 'Home' ? 0 : event.key === 'End' ? items.length - 1 : (current + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+            const next = event.key === 'Home' || (current === -1 && event.key === 'ArrowDown') ? 0
+              : event.key === 'End' || current === -1 ? items.length - 1
+              : (current + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
             items[next]?.focus();
           }
         }}
@@ -210,7 +232,7 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
       >
         <div className={controls.featureHeading}>
           {selectedFeature !== null
-            ? <button type="button" aria-label="Back to categories" className={controls.featureBack} onClick={() => setSelectedFeature(null)}><ChevronLeft size={15} /><span>Back</span></button>
+            ? <button type="button" aria-label="Back to categories" className={controls.featureBack} onClick={returnToCategories}><ChevronLeft size={15} /><span>Back</span></button>
             : <strong>{card.title}</strong>}
           <button type="button" onClick={() => { close(); anchorRef.current?.focus(); }} aria-label="Close features"><X size={14} /></button>
         </div>
@@ -219,8 +241,6 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
         {selectedFeature === null ? <div className={controls.featureOptions} role="group" aria-label={`${card.title} categories`}>
           {card.features.map((feature, index) => <button type="button" role="menuitem"
             key={feature[0]}
-            onMouseEnter={() => setSelectedFeature(index)}
-            onFocus={() => setSelectedFeature(index)}
             onClick={() => setSelectedFeature(index)}>
             <span>{feature[0]}</span><ChevronRight size={14} aria-hidden="true" />
           </button>)}
@@ -228,7 +248,7 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
         {selectedFeature !== null ? <div className={controls.featureDetail} role="region" aria-label={`${card.features[selectedFeature][0]} action`}>
           <strong>{card.features[selectedFeature][0]}</strong>
           <p>Describe your objective and Xroga will prepare the steps, discover the tools, carry out authorized work, and verify the deliverable.</p>
-          <button type="button" className={controls.featureChoose}
+          <button autoFocus type="button" className={controls.featureChoose}
             onClick={() => choose(card.features[selectedFeature])}>Use this in chat <ChevronRight size={14} aria-hidden="true" /></button>
         </div> : null}
       </div>

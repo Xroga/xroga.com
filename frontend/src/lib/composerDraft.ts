@@ -9,6 +9,16 @@ export interface ComposerDraftSnapshot extends ComposerDraftScope {
   restoring: boolean;
 }
 
+/** History titles and submitted prompts are metadata, never a new draft.
+ * Keep the latest scoped input only when reopening the already active chat. */
+export function draftForConversationRestore(
+  snapshots: readonly ComposerDraftSnapshot[], scope: ComposerDraftScope,
+  targetSession: string, restoring: boolean, currentDraft: string,
+): string {
+  if (!scope.owner || !scope.session || targetSession !== scope.session || restoring) return '';
+  return draftForExplicitHide(snapshots, scope, false) ?? currentDraft;
+}
+
 /** Explicit hide only. Never flush a stale, ambiguous or restoring composer. */
 export function draftForExplicitHide(
   snapshots: readonly ComposerDraftSnapshot[],

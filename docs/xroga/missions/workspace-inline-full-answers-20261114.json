@@ -1,0 +1,121 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-INLINE-FULL-ANSWERS-20261114",
+  "baseSha": "fb9c19673f83cdc5648a67a20b53028c6777ed6d",
+  "requirementIds": [
+    "XR-MISSION-054",
+    "XR-MISSION-055"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "low",
+  "scope": "Render the full answer inline in Workspace and Share, preserve requested code and hide private presentation syntax.",
+  "changedFiles": [
+    "frontend/e2e/command3-auth.spec.ts",
+    "frontend/src/app/share/[token]/page.tsx",
+    "frontend/src/components/native-openui/NativeSurface.tsx",
+    "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
+    "frontend/src/components/native-openui/Tabs.tsx",
+    "frontend/src/components/native-openui/surface.css",
+    "frontend/src/components/native-openui/upstream/components/components.css",
+    "frontend/src/components/native-openui/upstream/components/extra.tsx",
+    "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
+    "frontend/src/components/native-openui/upstream/components/markdown.tsx",
+    "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
+    "frontend/src/components/response-experience-v2/document.test.ts",
+    "frontend/src/components/response-experience-v2/response-v2.module.css",
+    "frontend/src/components/terminal/ReasoningAndFollowUps.tsx",
+    "frontend/src/components/terminal/SwarmMessageLog.tsx",
+    "frontend/src/components/terminal/XrogaOrganizerBlockView.tsx",
+    "frontend/src/lib/publicAnswerText.ts",
+    "scripts/verify-native-openui-browser.mjs"
+  ],
+  "decisions": {
+    "extend": [
+      "Display extra prose and generated section content without disclosure controls."
+    ],
+    "keep": [
+      "The saved answer, citations, calculator controls, Share access and renderer fallback."
+    ],
+    "deprecate": [],
+    "replace": [
+      "Render tab-shaped answers, popovers and carousel items in the main answer. Strip tagged UI syntax from the display and fallback exports."
+    ]
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "Frontend only, paired with the existing API and Job.",
+    "rollback": "Restore dpl_7Qu1GdCHwBCY2PJmk8jLJPHLK3bM."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "Existing middleware and Share guards remain authoritative."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "The renderer receives the same owner-scoped saved program and citations."
+    },
+    "approval": {
+      "changed": false,
+      "description": "Current confirmation and source controls remain in force."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No credential or permission changes."
+    },
+    "egress": {
+      "changed": false,
+      "description": "The presentation reuses existing verified links and runtime decisions. No new destinations or network callers."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No model, Search or service added."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No ledger changes."
+    }
+  },
+  "tests": [
+    {
+      "scope": "Full prose and native sections on desktop and mobile, calculator, cited answers and preserved requested code.",
+      "command": "node scripts/verify-native-openui-browser.mjs",
+      "reference": "scripts/verify-native-openui-browser.mjs",
+      "negative": true
+    },
+    {
+      "scope": "Protocol filtering and exact duplicate suppression with normal code retained.",
+      "command": "npm run test:frontend",
+      "reference": "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
+      "negative": true
+    }
+  ],
+  "architecture": {
+    "change": "none",
+    "reason": "Reuse the OpenUI parser and component library, saved answer contract and existing Share renderer.",
+    "rfc": null
+  },
+  "rollout": "Exact-source CI and staging before a source-bound frontend promotion.",
+  "rollback": "Restore dpl_7Qu1GdCHwBCY2PJmk8jLJPHLK3bM while keeping the existing API and Job.",
+  "knownGaps": [
+    "CI, staged acceptance and production promotion are independent release checks."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "scripts/verify-native-openui-browser.mjs",
+    "frontend/e2e/command3-auth.spec.ts"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Exact-source verification and source-bound production promotion are pending."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "NOT_APPLICABLE",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

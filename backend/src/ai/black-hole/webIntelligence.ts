@@ -1,4 +1,5 @@
 import {requireTenantContext,requireResourceOwner} from '../../security/tenantContext.js';
+import { startProgressStep } from '../progressChannel.js';
 import {
   explicitlyDisablesResearch,
 } from '../../lib/taskClassifier.js';
@@ -14,6 +15,9 @@ import {
 
 import {withTenantModelReservation,type TenantModelScope} from '../tenantModelDispatch.js';
 import {isTerminalModelFailure} from '../providerRuntime.js';
+import { DEEPSEEK_PRIMARY_PAGE_EXCERPT, scopeOfficialSearchQuery } from '../researchSearchProvider.js';
+import { executeWorkspacePublicSearch } from '../parallelApproval.js';
+import { presentResearchResult } from '../../services/integrations/researchResult.js';
 
 import {
   parallelExtract,
@@ -61,6 +65,13 @@ export interface WebIntelligenceResult {
   reason: string;
   needsConfirmation?:boolean;
   reviewUrl?:string;
+  publicWebRetrieved?: true;
+}
+
+/** Set by the authenticated Workspace route. Only the typed turn can go to Search. */
+export interface WorkspacePublicSearch {
+  prompt?: string;
+  signal?: AbortSignal;
 }
 
 const ACTIONS: readonly WebAction[] = [
@@ -461,7 +472,7 @@ function toUiSources(
     (source) => ({
       title: source.title,
       url: source.url,
-      snippet: source.snippet,
+      snippet: source.snippet.slice(0, 1_200),
 
       source:
         source.sourceType ===
@@ -480,7 +491,50 @@ function toUiSources(
 function pendingResearch(decision:WebDecision,reviewUrl:string):WebIntelligenceResult{
   return{action:decision.action,evidence:`Research is pending exact external-data approval: ${reviewUrl}. No research provider has been dispatched.`,bundle:null,sourceCount:0,injectionAttempts:0,reason:'EXACT_RESEARCH_APPROVAL_REQUIRED',needsConfirmation:true,reviewUrl};
 }
+/**
+ * The canonical web lane, reporting its real start and outcome to whoever is streaming this request.
+ * The research itself is unchanged.
+ */
 export async function runWebIntelligence(
+  input: Parameters<typeof gatherWebIntelligence>[0],
+): Promise<WebIntelligenceResult> {
+  const decision = input.decision ?? await decideWebAction(input);
+  if (decision.action === 'none') return gatherWebIntelligence({ ...input, decision });
+  const [doing, did] = decision.action === 'read' ? ['Reading sources', 'Read sources']
+    : decision.action === 'x_research' ? ['Searching X', 'Searched X']
+      : ['Searching the web', 'Searched the web'];
+  // The planned query is the user's own request narrowed for search; secrets are removed before display.
+  const query = redactSecrets(decision.queries?.[0] ?? '').replace(/\s+/g, ' ').trim().slice(0, 140);
+  const subject = query ? ` for "${query}"` : '';
+  const step = startProgressStep(`${doing}${subject}`);
+  try {
+    const result = await gatherWebIntelligence({ ...input, decision });
+    if (result.needsConfirmation) step.done('Web search needs your approval');
+    else if (result.sourceCount === 0) step.done(`${did}: no usable sources`);
+    else step.done(`${did}${subject}: ${describeSources(result)}`, result.bundle?.sources);
+    return result;
+  } catch (error) {
+    step.fail(`${doing} failed`);
+    throw error;
+  }
+}
+
+/** "5 sources from nodejs.org, nextjs.org". Public host names only. */
+function describeSources(result: WebIntelligenceResult): string {
+  const hosts: string[] = [];
+  for (const source of result.bundle?.sources ?? []) {
+    try {
+      const host = new URL(source.url).hostname.replace(/^www./, '');
+      if (!hosts.includes(host)) hosts.push(host);
+    } catch {
+      // A source without a parsable address is only counted.
+    }
+  }
+  const count = `${result.sourceCount} ${result.sourceCount === 1 ? 'source' : 'sources'}`;
+  return hosts.length ? `${count} from ${hosts.slice(0, 3).join(', ')}` : count;
+}
+
+async function gatherWebIntelligence(
   input: {
     userId: string;
     dispatchScope?:TenantModelScope;
@@ -489,6 +543,7 @@ export async function runWebIntelligence(
     officialDomains?: readonly string[];
     decision?: WebDecision;
     signal?: AbortSignal;
+    workspaceSearch?: WorkspacePublicSearch;
   },
 ): Promise<WebIntelligenceResult> {
   const decision =
@@ -515,8 +570,33 @@ export async function runWebIntelligence(
 
   let rawResults: RawResult[] =
     [];
+  let publicSources: ResearchSource[] | undefined;
+  let automaticOfficialDomains: string[] | undefined;
+  let preferDistinctHosts = false;
+  let evidenceExcerptLimit: number | undefined;
 
-  if (
+  if (input.workspaceSearch) {
+    const { prompt, signal } = input.workspaceSearch;
+    const query = input.dispatchScope?.researchAnswer?.goalContract?.publicWebQuery;
+    const automatic = prompt && decision.action !== 'x_research' && query !== null
+      ? await executeWorkspacePublicSearch({
+          context: requireTenantContext(input.dispatchScope?.context),
+          userId: input.userId, connectedAccountId: 'platform',
+        }, prompt, decision.sourcePolicy === 'official_only', signal, query)
+      : undefined;
+    if (!automatic) {
+      return { action: decision.action, evidence: '', bundle: null, sourceCount: 0,
+        injectionAttempts: 0, reason: 'PUBLIC_QUERY_UNVERIFIED' };
+    }
+    provider = 'parallel';
+    automaticOfficialDomains = automatic.officialDomains.length ? automatic.officialDomains : undefined;
+    preferDistinctHosts = automatic.officialLinkCoverage && !automaticOfficialDomains;
+    if (automatic.primaryPageContentRequested) evidenceExcerptLimit = DEEPSEEK_PRIMARY_PAGE_EXCERPT;
+    publicSources = presentResearchResult({
+      ok: true, operation: 'search', result: automatic.result,
+    }, automaticOfficialDomains, { excludeSearchNavigation: automatic.primaryPageContentRequested }).sources;
+    rawResults = toRawResults(publicSources);
+  } else if (
     decision.action === 'read'
   ) {
     provider = 'parallel';
@@ -542,65 +622,22 @@ export async function runWebIntelligence(
       toRawResults(
         result.sources,
       );
-  } else if (
-    decision.action === 'search'
-  ) {
+  } else if (decision.action === 'search' || decision.action === 'research' || decision.action === 'deep_research') {
     provider = 'parallel';
-
-    const result =
-      await parallelSearch({
-        userId: input.userId,
-        dispatchScope: input.dispatchScope,
-
-        objective:
-          [
-            decision.objective || input.prompt,
-            decision.sourcePolicy === 'official_only' && decision.officialDomains.length
-              ? `Use only official sources from: ${decision.officialDomains.join(', ')}.`
-              : '',
-          ].filter(Boolean).join('\n'),
-
-        queries:
-          decision.queries
-            .length
-            ? decision.queries
-            : [
-                redactSecrets(
-                  input.prompt,
-                ).slice(0, 500),
-              ],
-
-        signal: input.signal,
-      });
-
-    if(result.needsConfirmation)return pendingResearch(decision,result.reviewUrl!);
-
-    rawResults =
-      toRawResults(
-        result.sources,
-      );
-  } else if (
-    decision.action ===
-      'research' ||
-    decision.action ===
-      'deep_research'
-  ) {
-    provider = 'parallel';
-
-    const result =
-      await parallelSearch({
-        userId:input.userId,dispatchScope:input.dispatchScope,objective:decision.objective || input.prompt,
-        queries:decision.queries.length ? decision.queries : [redactSecrets(input.prompt).slice(0,500)],signal:input.signal,
-      });
-
-    if(result.needsConfirmation)return pendingResearch(decision,result.reviewUrl!);
-
-    // Synthesis is performed by the existing canonical DeepSeek answer call.
-
-    rawResults =
-      toRawResults(
-        result.sources,
-      );
+    const objective = decision.objective || input.prompt;
+    const queries = decision.queries.length ? decision.queries : [redactSecrets(input.prompt).slice(0, 500)];
+    const domains = decision.officialDomains.length ? decision.officialDomains : input.officialDomains ?? [];
+    const scopedQuery = decision.sourcePolicy === 'official_only' ? scopeOfficialSearchQuery(queries[0]!, domains) : undefined;
+    if (decision.sourcePolicy === 'official_only' && !scopedQuery) {
+      return { action: decision.action, evidence: 'No verified official domain was available. No search was sent.', bundle: null,
+        sourceCount: 0, injectionAttempts: 0, reason: 'OFFICIAL_DOMAINS_UNAVAILABLE' };
+    }
+    const result = await parallelSearch({
+      userId: input.userId, dispatchScope: input.dispatchScope, objective,
+      queries: scopedQuery ? [scopedQuery] : queries, signal: input.signal,
+    });
+    if (result.needsConfirmation) return pendingResearch(decision, result.reviewUrl!);
+    rawResults = toRawResults(result.sources);
   } else {
     provider = 'grok_x';
 
@@ -630,11 +667,15 @@ export async function runWebIntelligence(
       rawResults,
       {
         query: input.prompt,
-        officialDomains:
-          decision.officialDomains.length ? decision.officialDomains : input.officialDomains,
-        maxSources: 12,
+        officialDomains: publicSources ? automaticOfficialDomains
+          : decision.officialDomains.length ? decision.officialDomains : input.officialDomains,
+        // Public Search already requests a bounded provider result set. Keep
+        // every qualifying page so official links and citations stay usable.
+        maxSources: publicSources?.length ?? 12,
+        preferDistinctHosts,
+        evidenceExcerptLimit,
       },
-    ), decision.sourcePolicy);
+    ), publicSources ? automaticOfficialDomains ? 'official_only' : 'any' : decision.sourcePolicy);
 
   // Never trust an uncited synthesis.
   if (
@@ -676,10 +717,10 @@ export async function runWebIntelligence(
           .join('\n\n')
           .slice(0, 4_000),
 
-      sources:
-        toUiSources(
-          normalized,
-        ),
+      sources: toUiSources(normalized).map(source => {
+        const metadata = publicSources?.find(item => item.url === source.url);
+        return metadata ? { ...metadata, ...source } : source;
+      }),
 
       provider,
 
@@ -696,5 +737,6 @@ export async function runWebIntelligence(
     injectionAttempts:
       normalized.injectionAttempts,
     reason: decision.reason,
+    ...(publicSources && bundle.sources.length ? { publicWebRetrieved: true as const } : {}),
   };
 }

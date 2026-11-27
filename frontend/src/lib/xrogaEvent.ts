@@ -36,6 +36,7 @@ export type XrogaEventType =
   | 'artifact.completed'
   | 'artifact.failed'
   | 'file.created'
+  | 'file.read'
   | 'file.updated'
   | 'file.deleted'
   | 'file.renamed'
@@ -96,7 +97,7 @@ const EVENT_TYPES: ReadonlySet<string> = new Set<XrogaEventType>([
   'tool.started', 'tool.updated', 'tool.completed', 'tool.failed',
   'state.snapshot', 'state.delta', 'evidence.added', 'evidence.updated',
   'artifact.created', 'artifact.updated', 'artifact.completed', 'artifact.failed',
-  'file.created', 'file.updated', 'file.deleted', 'file.renamed',
+  'file.created', 'file.read', 'file.updated', 'file.deleted', 'file.renamed',
   'approval.requested', 'approval.resolved', 'approval.cancelled',
   'connection.required', 'connection.resolved',
   'subagent.started', 'subagent.updated', 'subagent.completed', 'subagent.failed',

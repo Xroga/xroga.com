@@ -11,6 +11,9 @@ export interface ResearchSource {
   url: string;
   snippet: string;
   source: string;
+  siteName?: string;
+  siteIconDomain?: string;
+  publishedAt?: string;
 }
 
 export interface ResearchBundle {

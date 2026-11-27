@@ -1,24 +1,24 @@
-.menu { color:var(--foreground); background:var(--surface-raised); border:1px solid var(--card-border); border-radius:15px; box-shadow:0 20px 50px #0008; overflow:hidden; }
-.panel { font:12px/1.4 Arial, sans-serif; width:100%; padding:11px; display:flex; flex-direction:column; max-height:min(430px,calc(100dvh - 24px)); }
-.header { display:flex; align-items:center; justify-content:space-between; padding:0 1px 10px; font-size:13px; }
+.menu { color:var(--foreground); background:var(--surface-raised); border:1px solid var(--card-border); border-radius:15px; box-shadow:none; overflow:hidden; }
+.panel { font:11px/1.35 Arial, sans-serif; width:100%; padding:8px; display:flex; flex-direction:column; max-height:min(340px,calc(100dvh - 24px)); }
+.header { display:flex; align-items:center; justify-content:space-between; padding:0 1px 7px; font-size:12px; }
 .header>span { display:flex; align-items:center; gap:8px; }
 .iconButton { width:24px; height:24px; border-radius:7px; display:grid; place-items:center; flex:none; }
 .iconButton:hover { background:var(--surface-inset); }
 .tabs { display:grid; grid-template-columns:1fr 1fr; gap:4px; background:var(--surface-inset); border-radius:9px; padding:3px; margin-bottom:10px; }
-.tabs button { min-height:30px; border-radius:7px; font-size:11px; font-weight:600; }
-.tabs button[aria-pressed="true"] { background:var(--surface-raised); box-shadow:0 1px 4px #0002; }
+.tabs button { min-height:28px; border-radius:7px; font-size:10.5px; font-weight:600; }
+.tabs button[aria-pressed="true"] { background:var(--surface-raised); box-shadow:none; }
 .tabs button:focus-visible,.item:focus-visible,.loadMore:focus-visible { outline:2px solid var(--foreground); outline-offset:-2px; }
-.search { min-height:34px; padding:6px 8px; border:1px solid var(--card-border); border-radius:9px; display:flex; align-items:center; gap:8px; }
+.search { min-height:30px; padding:5px 7px; border:1px solid var(--card-border); border-radius:8px; display:flex; align-items:center; gap:7px; }
 .search>svg { flex:none; color:var(--muted); }
 .search input { flex:1; min-width:0; outline:none; background:transparent; color:inherit; border:0; font:inherit; }
 .search input::placeholder { color:var(--muted); }
-.items { flex:1; min-height:55px; max-height:263px; overflow-y:auto; margin:7px 0 0; scrollbar-width:thin; overscroll-behavior:contain; }
-.item { display:flex; align-items:center; width:100%; gap:9px; text-align:left; padding:7px; border-radius:9px; min-height:43px; }
+.items { flex:1; min-height:48px; max-height:220px; overflow-y:auto; margin:6px 0 0; scrollbar-width:thin; overscroll-behavior:contain; }
+.item { display:flex; align-items:center; width:100%; gap:7px; text-align:left; padding:5px; border-radius:8px; min-height:36px; }
 .item:hover,.item:focus-visible { background:var(--surface-inset); }
 .item>svg:last-child { flex:none; color:var(--muted); }
 .checked { color:var(--accent,var(--foreground))!important; }
 .appText { display:flex; flex-direction:column; gap:2px; min-width:0; flex:1; }
-.appText strong { display:block; font-size:12px; font-weight:650; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.appText strong { display:block; font-size:11px; font-weight:650; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .appText small { display:block; font-size:10px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:244px; }
 .note { padding:12px 7px; display:flex; align-items:center; gap:7px; color:var(--muted); font-size:11px; }
 .error { padding:8px; color:#f87171; font-size:11px; }
@@ -27,4 +27,4 @@
 .footer { padding:9px 4px 1px; border-top:1px solid var(--card-border); }
 .footer a { display:flex; align-items:center; justify-content:space-between; font-size:11px; font-weight:600; padding:2px; border-radius:6px; }
 .footer a:hover { text-decoration:underline; }
-@media(max-width:380px) { .panel { padding:8px; } .items { max-height:min(245px,45dvh); } }
+@media(max-width:380px) { .panel { padding:7px; } .items { max-height:min(220px,45dvh); } }

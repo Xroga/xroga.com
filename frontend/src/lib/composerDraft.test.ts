@@ -1,10 +1,19 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
-import { draftForExplicitHide, type ComposerDraftSnapshot } from './composerDraft';
+import { draftForExplicitHide, draftForConversationRestore, type ComposerDraftSnapshot } from './composerDraft';
 
 const scope = { owner: 'owner-A', session: 'conversation-A', project: 'project-A' };
 const snapshot: ComposerDraftSnapshot = { ...scope, value: ' latest draft \n', restoring: false };
+
+test('history restore never inserts a sent prompt and preserves exact active unsent input', () => {
+  assert.equal(draftForConversationRestore([snapshot], scope, 'other-chat', false, 'old question'), '');
+  assert.equal(draftForConversationRestore([snapshot], scope, scope.session, false, 'debounced draft'), snapshot.value);
+  assert.equal(draftForConversationRestore([{...snapshot,value:''}], scope, scope.session, false, 'old draft'), '');
+  assert.equal(draftForConversationRestore([], scope, scope.session, false, 'hidden unsent draft'), 'hidden unsent draft');
+  assert.equal(draftForConversationRestore([snapshot], {...scope,owner:''}, scope.session, false, 'foreign'), '');
+  assert.equal(draftForConversationRestore([snapshot], scope, scope.session, true, 'restoring'), '');
+});
 
 test('explicit hide captures the exact latest draft, including deliberate empty clears', () => {
   assert.equal(draftForExplicitHide([snapshot], scope, false), snapshot.value);

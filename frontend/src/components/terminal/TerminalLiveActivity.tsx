@@ -1,38 +1,25 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { ActivityTimeline } from '@/components/activity/ActivityTimeline';
 import {
   coalesceActivity,
-  isGenericPlaceholderActivity,
-  publicActivityText,
   type XrogaActivityPresentation,
 } from '@/lib/terminal/activityPresentation';
-import { buildActivityTimeline, formatElapsed } from '@/lib/terminal/activityTimeline';
-import type { PendingExecutionIntent } from '@/lib/terminal/executionIntent';
+import { buildActivityTimeline, formatElapsed, pendingWorkLabel, type PendingReplyKind } from '@/lib/terminal/activityTimeline';
 import type { TerminalRunState } from '@/lib/terminal/terminalEvent';
-
-/** Nothing new for this long is worth saying out loud, and only as a measured fact. */
-const STALLED_AFTER_MS = 9_000;
+import { buildProcessingView } from '@/lib/terminal/processingView';
+import { buildProcessingStream } from '@/lib/terminal/processingStream';
+import type { SwarmTodoItem } from '@/lib/swarm';
 
 interface TerminalLiveActivityProps {
   run?: TerminalRunState;
   activity?: readonly XrogaActivityPresentation[];
   pending?: boolean;
-  pendingIntent?: PendingExecutionIntent;
-  pendingLabel?: string;
-  thinkingSteps?: readonly string[];
-}
-
-/** Legacy persisted step text becomes settled rows. It is shown as stored; nothing is added to it. */
-function rowsFromThinkingSteps(steps: readonly string[]): XrogaActivityPresentation[] {
-  return steps
-    .map((step, index) => ({ step: publicActivityText(step), index }))
-    .filter(({ step }) => step && !isGenericPlaceholderActivity(step))
-    .map(({ step, index }) => ({
-      id: `legacy-step-${index}`, kind: 'understand' as const, label: step, status: 'complete' as const, startedAt: index, updatedAt: index,
-    }));
+  pendingReply?: PendingReplyKind;
+  /** Backend plan for the current turn. Shown as a checklist only when it has three or more steps. */
+  todos?: readonly SwarmTodoItem[];
 }
 
 /**
@@ -44,21 +31,24 @@ export function TerminalLiveActivity({
   run,
   activity,
   pending = false,
-  pendingIntent = 'chat',
-  pendingLabel,
-  thinkingSteps = [],
+  pendingReply,
+  todos,
 }: TerminalLiveActivityProps) {
   const [now, setNow] = useState(() => Date.now());
   const [mountedAt] = useState(() => Date.now());
-  const shown = useRef<{ id: string | null; since: number }>({ id: null, since: 0 });
 
   const rows = useMemo(() => {
     if (activity) return [...activity];
     if (run) return coalesceActivity(run.events);
     return [];
   }, [activity, run]);
-  const legacy = useMemo(() => (rows.length === 0 && !pending ? rowsFromThinkingSteps(thinkingSteps) : []), [rows.length, pending, thinkingSteps]);
-  const active = Boolean(run?.active || pending);
+  const active = !run?.outcome && Boolean(run?.active || pending);
+  // The surface above the answer follows every real stage report from the backend, including plain status lines
+  // that the folded history leaves out (understanding, routing, writing). Generic filler is still dropped.
+  const stageRows = useMemo(() => (run ? coalesceActivity(run.events) : []), [run]);
+  const stage = active
+    ? (stageRows.findLast((row) => row.status === 'active' || row.status === 'waiting') ?? stageRows.at(-1) ?? null)
+    : null;
 
   useEffect(() => {
     if (!active) return;
@@ -67,37 +57,28 @@ export function TerminalLiveActivity({
   }, [active]);
 
   const model = useMemo(
-    () => buildActivityTimeline(rows.length ? rows : legacy, {
+    () => buildActivityTimeline(rows, {
       runActive: active,
       outcome: run?.outcome ?? null,
-      displayedActiveId: shown.current.id,
-      displayedSince: shown.current.since,
-      now,
     }),
-    [rows, legacy, active, run?.outcome, now],
+    [rows, active, run?.outcome],
   );
-  useEffect(() => {
-    const id = model.active?.id ?? null;
-    if (id !== shown.current.id) shown.current = { id, since: Date.now() };
-  });
 
-  const lastObservableAt = rows.length > 0 ? Math.max(...rows.map((row) => row.updatedAt)) : run?.startedAt ?? mountedAt;
-  const silentForMs = Math.max(0, now - lastObservableAt);
-  const note = active && silentForMs >= STALLED_AFTER_MS && model.state !== 'waiting'
-    ? `No new update for ${formatElapsed(silentForMs)} · still working`
+  if (rows.length === 0 && !active && !run?.outcome) return null;
+
+  const baseLabel = pendingWorkLabel(run?.events ?? [], rows.length > 0, pendingReply);
+  const label = !model.active && stage && baseLabel !== 'Writing response' ? stage.label : baseLabel;
+  const processing = active
+    ? buildProcessingView({ active: model.active ?? stage, otherActive: model.active ? model.otherActive : 0, rows: stageRows.length > rows.length ? stageRows : rows, pendingLabel: label, todos, outcome: run?.outcome ?? null })
     : undefined;
-
-  if (rows.length === 0 && legacy.length === 0 && !pending && !run?.active) return null;
-
-  const label = pendingLabel && !isGenericPlaceholderActivity(pendingLabel) ? pendingLabel : 'Responding';
-  const shell = rows.length === 0 && pending;
+  const shell = rows.length === 0 && active;
+  const stream = buildProcessingStream(stageRows.length > rows.length ? stageRows : rows, active);
   return (
     <div
       data-testid="terminal-live-activity"
       data-state={shell ? 'pending' : active ? 'active' : 'settled'}
-      data-intent={shell ? pendingIntent : undefined}
     >
-      <ActivityTimeline model={model} now={now} runStartedAt={run?.startedAt ?? mountedAt} pendingLabel={label} note={note} />
+      <ActivityTimeline model={model} now={now} runStartedAt={run?.startedAt ?? mountedAt} pendingLabel={label} processing={processing} stream={stream} />
     </div>
   );
 }

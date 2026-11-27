@@ -36,8 +36,8 @@ test('Connect Apps uses actual connected app picker and no full-page dialog', ()
 });
 
 test('Actions are compact and keyboard reachable, with actual project access', () => {
-  assert.match(ACTIONS, /Math\.min\(344, window\.innerWidth - 16\)/);
-  assert.match(ACTIONS, /Math\.min\(314,/);
+  assert.match(ACTIONS, /useChatbarPopoverLayout\(open, rootRef, menuRef, 288\)/);
+  assert.match(ACTIONS, /maxHeight: menuStyle\.maxHeight/);
   assert.match(ACTIONS, /ArrowDown/);
   assert.match(ACTIONS, /ArrowUp/);
   assert.match(ACTIONS, /scrollIntoView\(\{ block: 'nearest' \}\)/);

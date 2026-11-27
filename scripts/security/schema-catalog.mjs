@@ -5,6 +5,7 @@ export function validateCurrentMigrationAdditions(additions,files,readMigration)
   assert.equal(additions.scope,'REVIEWED_CURRENT_MIGRATION_ADDITIONS_NOT_PRODUCTION_SCHEMA_OBSERVATION');
   assert.equal(additions.historicalCatalogUnchanged,true);
   const sidebar='20261021233500_sidebar_organization.sql',parents='20261022003000_sidebar_exact_parent_guards.sql';
+  const teams='20261102000000_team_invitations.sql';
   const reviewed={product_feedback:['20261018211950_product_feedback_admin.sql','20261021100000_feedback_founder_authorization.sql'],
     xroga_sidebar_chats:[sidebar,sidebar],xroga_sidebar_items:[sidebar,parents],
     xroga_sidebar_legacy_title_backup:[sidebar,sidebar],xroga_sidebar_sections:[sidebar,parents],
@@ -32,11 +33,9 @@ export function validateCurrentMigrationAdditions(additions,files,readMigration)
     engineering_resource_limits:['20261029100000_engineering_resource_ledger.sql','20261029100000_engineering_resource_ledger.sql'],
     local_browser_device_sessions:['20261108181114_local_browser_device_sessions.sql','20261108181114_local_browser_device_sessions.sql'],
     custom_mcp_tool_pins:['20261113130000_custom_mcp_tool_pins.sql','20261113130000_custom_mcp_tool_pins.sql'],
-    teams:['20261102000000_team_invitations.sql','20261102000000_team_invitations.sql'],
-    team_members:['20261102000000_team_invitations.sql','20261102000000_team_invitations.sql'],
-    team_invitations:['20261102000000_team_invitations.sql','20261102000000_team_invitations.sql'],
-    team_link_redemptions:['20261102000000_team_invitations.sql','20261102000000_team_invitations.sql'],
-    team_audit:['20261102000000_team_invitations.sql','20261102000000_team_invitations.sql']};
+    teams:[teams,teams],team_members:[teams,teams],team_invitations:[teams,teams],
+    team_link_redemptions:[teams,teams],team_audit:[teams,teams],
+    notification_push_subscriptions:['20261110212913_smart_notification_push_subscriptions.sql','20261110212913_smart_notification_push_subscriptions.sql']};
   assert.deepEqual(additions.tables.map(t=>`${t.schema}.${t.table_name}`),Object.keys(reviewed).map(name=>'public.'+name));
   for(const entry of additions.tables){
     assert.deepEqual([entry.migration,entry.authorizationMigration],reviewed[entry.table_name],'Only the explicitly reviewed creation and ownership migrations apply');

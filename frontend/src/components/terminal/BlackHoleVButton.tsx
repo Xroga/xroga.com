@@ -27,7 +27,7 @@ export function BlackHoleVButton({ className, compact = false }: { className?: s
   }, [open]);
   return (
     <div className={cn('relative shrink-0', className)}>
-      <ChatBarPortalPopover open={open} onClose={() => setOpen(false)} anchorRef={btnRef} width={250}>
+      <ChatBarPortalPopover open={open} onClose={() => setOpen(false)} anchorRef={btnRef} width={232}>
         <div className={styles.modelPanel} data-testid="black-hole-model-panel">
           <div className={styles.modelHeading}><strong>Xroga · Black Hole</strong><span>Auto</span></div>
           <p>Xroga chooses available capabilities for your task.</p>

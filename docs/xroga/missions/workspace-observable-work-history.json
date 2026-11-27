@@ -1,0 +1,113 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-OBSERVABLE-WORK-HISTORY",
+  "baseSha": "5cfc686eb7a7144c662b7f3ec0c8079c673972dc",
+  "requirementIds": [
+    "XR-MISSION-053",
+    "XR-FAMILY-activity-feeds"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "low",
+  "scope": "Use existing events for a single live status and expandable Work history in Workspace, with the approved Black Hole mark in the working header.",
+  "changedFiles": [
+    "frontend/src/components/activity/ActivityTimeline.tsx",
+    "frontend/src/components/activity/activity.module.css",
+    "frontend/src/components/activity/BlackHoleIndicator.tsx",
+    "frontend/src/components/activity/black-hole.module.css",
+    "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx",
+    "frontend/src/components/response-experience-v2/conversation-v2.module.css",
+    "frontend/src/components/response-experience-v2/conversation.test.ts",
+    "frontend/src/components/response-experience-v2/conversation.ts",
+    "frontend/src/components/terminal/SwarmMessageLog.tsx",
+    "frontend/src/components/terminal/TerminalLiveActivity.tsx",
+    "frontend/src/lib/terminal/activityPresentation.test.ts",
+    "frontend/src/lib/terminal/activityPresentation.ts",
+    "frontend/src/lib/terminal/activityTimeline.test.ts",
+    "frontend/src/lib/terminal/activityTimeline.ts",
+    "frontend/src/lib/terminal/plainResponseUi.test.ts",
+    "docs/operations/observable-work-history.md",
+    "docs/xroga/missions/workspace-observable-work-history.json"
+  ],
+  "decisions": {
+    "keep": [
+      "Existing execution, approvals, persistence and model contracts."
+    ],
+    "extend": [
+      "Compact disclosure for current work and recorded history."
+    ],
+    "replace": [
+      "Generic or guessed progress labels."
+    ],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No migration.",
+    "rollback": "No schema rollback required."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "Existing authentication."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "Reads the same authorized event or run records."
+    },
+    "approval": {
+      "changed": false,
+      "description": "Displays existing approval state only."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No new credentials."
+    },
+    "egress": {
+      "changed": false,
+      "description": "No new requests or destinations."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No additional tool or model requests."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No accounting change."
+    }
+  },
+  "tests": [
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json --test frontend/src/lib/terminal/activityTimeline.test.ts",
+      "scope": "Verify observable start, text and tool states without false activity.",
+      "negative": true,
+      "reference": "frontend/src/lib/terminal/activityTimeline.test.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Presentation only, using events already delivered to the client.",
+    "rfc": null
+  },
+  "rollout": "Run exact-source checks and review the affected surface before release.",
+  "rollback": "Revert the UI change. Event and history formats stay compatible.",
+  "knownGaps": [
+    "Hosted authenticated Workspace and installed production extension acceptance remain pending."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "docs/operations/observable-work-history.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "NOT_REQUESTED",
+    "blockers": [
+      "Exact-source release checks and live acceptance remain pending."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "NOT_APPLICABLE",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

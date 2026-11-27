@@ -1,0 +1,124 @@
+{
+  "deployment": "dpl_Dmex9wW3enU61JFYVv3vzpPkcDRe",
+  "scope": "Matching critical deployed source files against candidate Git baselines; public release stamp is unavailable.",
+  "records": [
+    {
+      "ref": "origin/codex/workspace-release-compat-20261122",
+      "results": [
+        {
+          "file": "AGENTS.md",
+          "match": true,
+          "deployedUid": "2fdc111fa71308976b02d1d68e6de306b01c177a"
+        },
+        {
+          "file": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
+          "match": true,
+          "deployedUid": "d75056650fdf4438a382eef0fbde12cad93a1ee0"
+        },
+        {
+          "file": "frontend/src/components/dashboard/WorkspaceNewTerminal.module.css",
+          "match": true,
+          "deployedUid": "d20894703b8a97ff35f7df0e80ecf666faa51180"
+        },
+        {
+          "file": "frontend/src/components/ui/useChatbarPopoverLayout.ts",
+          "match": true,
+          "deployedUid": "406724fa1c832343927eb71822f96a0e1ba36a89"
+        },
+        {
+          "file": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
+          "match": true,
+          "deployedUid": "14308ad7621001ae32e42b3996b4bbe6e3e1fd8f"
+        },
+        {
+          "file": "frontend/src/app/globals.css",
+          "match": true,
+          "deployedUid": "db53a2b84365e126c7ae89fb2ae2615dd7c18c0c"
+        },
+        {
+          "file": "backend/src/routes/teams.ts",
+          "match": false,
+          "deployedUid": "b5bb7662c1fb103688ad457ab964de4f2f6d8b63"
+        }
+      ]
+    },
+    {
+      "ref": "origin/main",
+      "results": [
+        {
+          "file": "AGENTS.md",
+          "match": true,
+          "deployedUid": "2fdc111fa71308976b02d1d68e6de306b01c177a"
+        },
+        {
+          "file": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
+          "match": false,
+          "deployedUid": "d75056650fdf4438a382eef0fbde12cad93a1ee0"
+        },
+        {
+          "file": "frontend/src/components/dashboard/WorkspaceNewTerminal.module.css",
+          "match": false,
+          "deployedUid": "d20894703b8a97ff35f7df0e80ecf666faa51180"
+        },
+        {
+          "file": "frontend/src/components/ui/useChatbarPopoverLayout.ts",
+          "match": null
+        },
+        {
+          "file": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
+          "match": false,
+          "deployedUid": "14308ad7621001ae32e42b3996b4bbe6e3e1fd8f"
+        },
+        {
+          "file": "frontend/src/app/globals.css",
+          "match": false,
+          "deployedUid": "db53a2b84365e126c7ae89fb2ae2615dd7c18c0c"
+        },
+        {
+          "file": "backend/src/routes/teams.ts",
+          "match": true,
+          "deployedUid": "b5bb7662c1fb103688ad457ab964de4f2f6d8b63"
+        }
+      ]
+    },
+    {
+      "ref": "bd1ee1366",
+      "results": [
+        {
+          "file": "AGENTS.md",
+          "match": true,
+          "deployedUid": "2fdc111fa71308976b02d1d68e6de306b01c177a"
+        },
+        {
+          "file": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
+          "match": true,
+          "deployedUid": "d75056650fdf4438a382eef0fbde12cad93a1ee0"
+        },
+        {
+          "file": "frontend/src/components/dashboard/WorkspaceNewTerminal.module.css",
+          "match": false,
+          "deployedUid": "d20894703b8a97ff35f7df0e80ecf666faa51180"
+        },
+        {
+          "file": "frontend/src/components/ui/useChatbarPopoverLayout.ts",
+          "match": false,
+          "deployedUid": "406724fa1c832343927eb71822f96a0e1ba36a89"
+        },
+        {
+          "file": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
+          "match": false,
+          "deployedUid": "14308ad7621001ae32e42b3996b4bbe6e3e1fd8f"
+        },
+        {
+          "file": "frontend/src/app/globals.css",
+          "match": false,
+          "deployedUid": "db53a2b84365e126c7ae89fb2ae2615dd7c18c0c"
+        },
+        {
+          "file": "backend/src/routes/teams.ts",
+          "match": null
+        }
+      ]
+    }
+  ]
+}

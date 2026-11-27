@@ -2,6 +2,7 @@ import { adaptTrustedA2uiBlock } from './xrogaA2uiAdapter';
 import { modelBlockCapabilitySet } from './xrogaCapabilityManifest';
 import type { XrogaBlock, XrogaOutputDocument } from './xrogaBlocks';
 import { responseCoverageContractSchema } from './responseCoverageContract';
+import { isNativeDocumentFormat } from '../../../backend/src/ai/nativeDocumentDownload';
 
 const XROGA_UI_FENCE = /```xroga-ui\s*\n?([\s\S]*?)```/gi;
 const TABLE_DIVIDER = /^\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?\s*$/;
@@ -254,7 +255,7 @@ function tableBlocksFromMarkdown(content: string, documentId: string): { content
 }
 
 /** Convert a completed assistant answer into the canonical, persisted Xroga output document. */
-export function enhanceAiResponse(content: string, documentId: string, completion?: { status: string; reason?: string }, received?: { format: string; text: string; contract?:unknown }): EnhancedAiResponse {
+export function enhanceAiResponse(content: string, documentId: string, completion?: { status: string; reason?: string }, received?: { format: string; text: string; contract?:unknown; downloadFormat?: unknown }): EnhancedAiResponse {
   const source = typeof content === 'string' ? content : '';
   if (source.length > 200_000) return { content: source };
   const blocks: XrogaBlock[] = [];
@@ -262,19 +263,40 @@ export function enhanceAiResponse(content: string, documentId: string, completio
   let segment = 0;
   const contract = responseCoverageContractSchema.safeParse(received?.contract);
   const responseSource = received?.format === 'xroga-response-json-v1' && typeof received.text === 'string' && received.text.length <= 200_000
-    ? { format: 'xroga-response-json-v1' as const, text: received.text,...(contract.success?{contract:contract.data}:{}) } : undefined;
+    ? { format: 'xroga-response-json-v1' as const, text: received.text,...(contract.success?{contract:contract.data}:{}) }
+    : received?.format === 'xroga-openui-v1' && typeof received.text === 'string' && received.text.length <= 24_000
+      ? { format: 'xroga-openui-v1' as const, text: received.text } : undefined;
   let rejected = completion?.status === 'partial' || Boolean(received?.contract && (!contract.success || !contract.data.coverage.complete));
   const partialReason = completion?.status === 'partial' ? completion.reason : 'presentation_contract';
   if (rejected) blocks.push({ schemaVersion: 1, id: `${safeIdPart(documentId)}-completion`, type: 'notice', tone: 'warning',
     text: partialReason === 'presentation_contract'
-      ? 'This answer may not cover every part of your request. The written explanation is complete as shown.'
+      ? 'Some requested details or formatting are unavailable.'
       : partialReason === 'authorization_review'
-      ? 'Authorization guidance needs review. This answer contains a known unsafe authorization claim. Privileged database roles can bypass RLS, and JWT claims alone do not prove immediate revocation. Verify current server-owned tenant membership and permissions. The original answer is preserved. No automatic retry was made.'
+      ? 'Authorization guidance needs review. Privileged database roles can bypass RLS, and JWT claims alone do not prove immediate revocation. Verify current server-owned tenant membership and permissions.'
+      : partialReason === 'data_review'
+      ? 'A written comparison disagreed with the plotted data. Check the figures against the original source.'
+      : partialReason === 'factual_review'
+      ? 'This answer contains a technical claim that needs review. The original answer is preserved below.'
       : partialReason === 'source_attribution'
-      ? 'Some numbered citations could not be matched to a retrieved source. Linked citations are verified; treat any unlinked number as unverified. No automatic retry was made.'
+      ? 'Some numbered citations could not be matched to a retrieved source. Treat unlinked citations as unverified.'
+      : partialReason === 'source_coverage'
+      ? 'Some requested details could not be verified from the retrieved sources.'
       : partialReason === 'output_limit'
-      ? 'This answer reached its output limit and is incomplete. The received content is preserved. No automatic retry was made.'
-      : 'The provider did not confirm a complete answer. The received content is preserved. No automatic retry was made.' });
+      ? 'The answer stopped at its output limit.'
+      : 'The response stopped before completion.' });
+  // Native answers already own their visual program. Legacy extraction can
+  // reject valid Markdown, such as comparison tables with an empty corner cell.
+  // Keep authoritative prose intact for persistence and renderer recovery.
+  if (responseSource?.format === 'xroga-openui-v1') {
+    if (source.trim()) blocks.push({ schemaVersion: 1, id: `${safeIdPart(documentId)}-prose`, type: 'narrative', text: source });
+    return { content: source.trim(), output: {
+      schemaVersion: 1, id: `response-${safeIdPart(documentId)}`,
+      status: rejected ? 'partial' : 'completed', sourceText: source,
+      responseSource, composition: 'source-order', blocks,
+      ...(completion?.status === 'complete' && source.trim() && isNativeDocumentFormat(received?.downloadFormat)
+        ? { documentDownload: received.downloadFormat } : {}),
+    } };
+  }
   const appendText = (value: string) => blocks.push(...tableBlocksFromMarkdown(value, `${documentId}-${segment++}`).ordered);
   for (const match of source.matchAll(XROGA_UI_FENCE)) {
     appendText(source.slice(cursor, match.index));
@@ -301,7 +323,7 @@ export function enhanceAiResponse(content: string, documentId: string, completio
   blocks.forEach((block, index) => { block.id = `${safeIdPart(documentId)}-block-${index + 1}`; });
   const narrative = compactWhitespace(blocks.flatMap(b => b.type === 'narrative' ? [b.text] : []).join('\n\n'));
   return {
-    content: narrative,
+    content: narrative || source.trim(),
     output: {
       schemaVersion: 1,
       id: `response-${safeIdPart(documentId)}`,

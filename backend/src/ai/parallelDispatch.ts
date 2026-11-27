@@ -96,7 +96,7 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
   try{
     await check();
     const response=await fetch(destination,{method:'POST',redirect:'manual',headers:{'Content-Type':'application/json',Authorization:`Bearer ${credential}`},
-      body:JSON.stringify(deepseekSearchBody(body as {objective:string;search_queries:string[]})),signal:AbortSignal.any([AbortSignal.timeout(25000),...(signal?[signal]:[])])});
+      body:JSON.stringify(admission.publicSearchPayload ?? deepseekSearchBody(body as {objective:string;search_queries:string[]})),signal:AbortSignal.any([AbortSignal.timeout(25000),...(signal?[signal]:[])])});
     if(response.redirected||response.status>=300&&response.status<400){await response.body?.cancel().catch(()=>undefined);throw new EgressDenied('UNSAFE_DESTINATION');}
     if(response.status===401||response.status===403){await response.body?.cancel().catch(()=>undefined);throw new AuthorityError('PARALLEL_PROVIDER_AUTHORIZATION_DENIED');}
     if(!response.ok){void response.body?.cancel().catch(()=>undefined);throw Object.assign(new Error(`Parallel provider request failed (${response.status}).`),{status:response.status});}
@@ -106,17 +106,21 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
     finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}
     const received=Buffer.concat(chunks).toString('utf8');
     // DeepSeek results are normalised into the existing result shape; its receipt identity is the x-ds-trace-id header.
-    const data=normaliseDeepseekSearch(JSON.parse(received),response.headers.get('x-ds-trace-id'));
+    const primaryQuestion=admission.publicSearchPayload?.need_content ? admission.publicSearchPayload.ori_question : undefined;
+    const data=normaliseDeepseekSearch(JSON.parse(received),response.headers.get('x-ds-trace-id'),primaryQuestion);
     const text=JSON.stringify(data),requestId=data.search_id;
     if(operation==='search'&&(!Array.isArray(data.results)||data.results.some((r:unknown)=>!r||typeof r!=='object'||typeof (r as {url?:unknown}).url!=='string'
       ||(r as {title?:unknown}).title!==undefined&&typeof (r as {title?:unknown}).title!=='string'
       ||(r as {excerpts?:unknown}).excerpts!==undefined&&(!Array.isArray((r as {excerpts?:unknown}).excerpts)||((r as {excerpts:unknown[]}).excerpts).some(v=>typeof v!=='string')))))throw new Error('Malformed provider result');
     if(typeof requestId!=='string'||!requestId.trim()||requestId!==requestId.trim()||requestId.length>500
       ||/[\x00-\x20\x7f]/.test(requestId)||containsCredentialSecretText(requestId))throw new Error('Missing or unsafe provider request identity');
-    const {data:settled,error}=await db.rpc('settle_xroga_provider_budget',{p_user_id:context.userId,p_reservation_id:reservation.id,p_actual_micro_usd:amount,p_provider_request_id:requestId,
+    // DeepSeek bills only a successful search with at least one returned result.
+    // An empty response still consumes one Search dispatch and retains its trace.
+    const billedMicroUsd=data.results.length ? amount : 0;
+    const {data:settled,error}=await db.rpc('settle_xroga_provider_budget',{p_user_id:context.userId,p_reservation_id:reservation.id,p_actual_micro_usd:billedMicroUsd,p_provider_request_id:requestId,
       p_actual_input_tokens:0,p_cached_input_tokens:0,p_output_tokens:0,p_reasoning_tokens:0,p_tool_calls:0,p_search_calls:units});
     if(error||!settled||settled.id!==reservation.id||settled.user_id!==context.userId||settled.status!=='settled'||settled.internal_route!==internalRoute
-      ||settled.price_version!==WEB_PRICE_VERSION||settled.provider_request_id!==requestId||!exact(settled.reserved_micro_usd,amount)||!exact(settled.settled_micro_usd,amount)
+      ||settled.price_version!==WEB_PRICE_VERSION||settled.provider_request_id!==requestId||!exact(settled.reserved_micro_usd,amount)||!exact(settled.settled_micro_usd,billedMicroUsd)
       ||!exact(settled.actual_input_tokens,0)||!exact(settled.cached_input_tokens,0)||!exact(settled.output_tokens,0)||!exact(settled.reasoning_tokens,0)||!exact(settled.tool_calls,0)||!exact(settled.search_calls,units))throw new Error('Settlement receipt mismatch');
     settledVerified=true;
     await check();

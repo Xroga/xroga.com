@@ -4,6 +4,7 @@ import {
   addPendingBuildJob,
   attachPendingBuildRun,
   loadPendingBuildJobs,
+  loadPendingBuildJobsForOwner,
   reconcilePendingBuildTranscript,
   updatePendingBuildSequence,
 } from './pendingBuildJobs';
@@ -21,6 +22,15 @@ Object.defineProperty(globalThis, 'window', { value: globalThis, configurable: t
 Object.defineProperty(globalThis, 'localStorage', { value: storage, configurable: true });
 
 beforeEach(() => storage.clear());
+
+test('pending builds reopen only for the account that started them', () => {
+  const job = { assistantMessageId: 'a', userMessageId: 'u', userPrompt: 'Private build', startedAt: 1 };
+  addPendingBuildJob({ ...job, ownerId: 'owner-a' });
+  addPendingBuildJob({ ...job, assistantMessageId: 'unscoped' });
+  assert.deepEqual(loadPendingBuildJobsForOwner('owner-a').map(item => item.assistantMessageId), ['a']);
+  assert.deepEqual(loadPendingBuildJobsForOwner('owner-b'), []);
+  assert.deepEqual(loadPendingBuildJobsForOwner(null), []);
+});
 
 test('pending build recovery never moves its replay cursor backwards', () => {
   addPendingBuildJob({

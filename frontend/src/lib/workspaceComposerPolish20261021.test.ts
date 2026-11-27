@@ -4,6 +4,7 @@ import { test } from 'node:test';
 
 const read = (p: string) => readFileSync(new URL(p, import.meta.url), 'utf8');
 const dock = read('../components/terminal/TerminalDock.tsx');
+const scrollNavigation = read('../components/terminal/WorkspaceScrollNavigation.tsx');
 const starter = read('../components/dashboard/WorkspaceNewTerminal.tsx');
 const voice = read('../components/terminal/XrogaVoiceControl.tsx');
 const audio = read('../components/icons/animated/AudioLinesIcon.tsx');
@@ -18,12 +19,15 @@ test('an actionable model selector and live voice remain after removing decorati
   assert.match(voice, /from '\.\.\/icons\/animated\/AudioLinesIcon'/);
   assert.match(audio, /scaleY: \[1, 1\.4, 0\.6, 1\]/);
   assert.match(voice, /<AudioLinesIcon\b[^>]*size=\{22\}/);
-  assert.match(dock, /aria-label=\{showJumpToLatest/);
+  assert.match(dock, /<WorkspaceScrollNavigation\b/);
+  assert.match(scrollNavigation, /aria-label="Scroll to first response"/);
+  assert.match(scrollNavigation, /aria-label="Scroll to last response"/);
   assert.doesNotMatch(dock, /data-short-tip|data-tooltip/);
 });
 
-test('starter cards provide stable hover details, explicit Back, and detailed draft rather than executing', () => {
-  assert.match(starter, /onMouseEnter=\{\(\) => setSelectedFeature\(index\)\}/);
+test('starter details require activation and keep explicit Back and editable drafts', () => {
+  assert.match(starter, /onClick=\{\(\) => setSelectedFeature\(index\)\}/);
+  assert.doesNotMatch(starter, /on(?:MouseEnter|Focus)=\{\(\) => setSelectedFeature\(index\)\}/);
   assert.match(starter, /Back to categories/);
   assert.match(starter, /Use this in chat/);
   assert.match(starter, /Ask for approval before publishing/);
@@ -31,13 +35,13 @@ test('starter cards provide stable hover details, explicit Back, and detailed dr
 });
 
 test('popovers are clamped, fully opaque and accessible to small screens', () => {
-  assert.match(shell, /maxHeight: 'calc\(100dvh - 24px\)'/);
+  assert.match(shell, /maxHeight: belowChatbar \? chatbarLayout\.maxHeight : 'calc\(100dvh - 24px\)'/);
   assert.match(shell, /availableAbove/);
   assert.match(sidebar, /overviewIconRef.current\?\.startAnimation\(\)/);
   assert.match(profile, /navigator.clipboard.writeText\(email\)/);
 });
 
-test('New Work and active conversations share one bordered composer with inline Projects and Plugins', () => {
+test('New Work and active conversations share one bordered composer with inline Projects and Connect Apps', () => {
   const chatbar = read('../components/terminal/TerminalChatBar.tsx');
   const shell = read('../components/layout/AppShell.tsx');
   assert.doesNotMatch(dock, /xv-chatbar-context-strip|WorkspaceConnectionsStrip/);
@@ -45,7 +49,7 @@ test('New Work and active conversations share one bordered composer with inline 
   assert.match(chatbar, /arrowSend=\{!incognito\}/);
   assert.match(chatbar, /plusIcon=\{!incognito\}/);
   assert.match(chatbar, /aria-label="Projects"/);
-  assert.match(chatbar, /aria-label="Plugins"/);
+  assert.match(chatbar, /aria-label="Connect Apps"/);
   assert.doesNotMatch(shell, /<CompactAppTooltip/);
   assert.match(audio, /<IconMotion>/);
   assert.match(starter, /TASK_ACCEPTANCE\[label\]/);

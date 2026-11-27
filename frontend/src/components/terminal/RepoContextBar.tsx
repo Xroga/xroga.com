@@ -338,7 +338,9 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
       return;
     }
     let startedFreshSession = false;
-    if (messages.length > 0 || (previousKey && previousKey !== targetKey)) {
+    // Attaching a first repository keeps the conversation. Changing from an
+    // existing repository to another creates a new task to prevent wrong-repo writes.
+    if (previousKey && previousKey !== targetKey && messages.length > 0) {
       startNewChat();
       startedFreshSession = true;
     }
@@ -459,7 +461,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
               className={textTriggerClass}
             >
               <span className="xv-repo-name" title={selectedRepo ?? undefined}>
-                <SidebarMovingTitle text={selectedRepo?.split('/').at(-1) ?? 'New repository'} />
+                <SidebarMovingTitle text={selectedRepo?.split('/').at(-1) ?? 'No repository'} />
               </span>
               <ChevronDown className={cn('w-3 h-3 opacity-50 transition-transform', open === 'repo' && 'rotate-180')} />
             </button>

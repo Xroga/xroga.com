@@ -116,23 +116,47 @@ try {
   assert.deepEqual(catalog.tables.filter(t=>t.schema==='public'&&!t.rls_enabled).map(t=>t.table_name),[],'Every installed public table must have an explicit RLS boundary');
   // Main's durable workflow checkpoints remain server-only. Inventorying the
   // exact migration is not permission to expose its stored requests/results.
-  for(const name of ['business_automation_events','business_automation_rules','business_workflow_runs']){
+  const serverOnlyTeamTables=['teams','team_members','team_invitations','team_link_redemptions','team_audit'];
+  for(const name of ['business_automation_events','business_automation_rules','business_workflow_runs','notification_push_subscriptions',...serverOnlyTeamTables]){
     const table=catalog.tables.find(t=>t.schema==='public'&&t.table_name===name);
-    assert.ok(table?.rls_enabled,'Workflow checkpoints require RLS');
-    assert.deepEqual(table.grants.filter(g=>['anon','authenticated','PUBLIC'].includes(g.role)),[],'No browser grant on workflow checkpoints');
+    assert.ok(table?.rls_enabled,name+' requires RLS');
+    assert.deepEqual(table.grants.filter(g=>['anon','authenticated','PUBLIC'].includes(g.role)),[],'No browser grant on '+name);
     for(const privilege of ['SELECT','INSERT','UPDATE','DELETE'])assert.ok(table.grants.some(g=>g.role==='service_role'&&g.privilege===privilege));
     for(const role of ['anon','authenticated']){
       await db.query('begin');
       try{
         await db.query(`set local role ${role}`);
-        await assert.rejects(db.query(`select id from public.${name} limit 0`),error=>error.code==='42501');
+        await assert.rejects(db.query(`select 1 from public.${name} limit 0`),error=>error.code==='42501');
       }finally{await db.query('rollback');}
     }
     await db.query('begin');
-    try{await db.query('set local role service_role');assert.equal((await db.query(`select id from public.${name} limit 0`)).rowCount,0);}
+    try{await db.query('set local role service_role');assert.equal((await db.query(`select 1 from public.${name} limit 0`)).rowCount,0);}
     finally{await db.query('rollback');}
   }
   evidence.workflowCheckpointRoleChecks='PASS_BROWSER_DENIED_SERVICE_ALLOWED';
+  evidence.notificationPushRoleChecks='PASS_BROWSER_DENIED_SERVICE_ALLOWED';
+  const teamFunctions=await db.query("select p.proname, has_function_privilege('anon',p.oid,'EXECUTE') as anon_access, has_function_privilege('authenticated',p.oid,'EXECUTE') as user_access, has_function_privilege('service_role',p.oid,'EXECUTE') as service_access from pg_proc p where p.pronamespace='public'::regnamespace and left(p.proname,5)='team_' and p.proname<>'team_member_limit'");
+  assert.equal(teamFunctions.rowCount,17,'Require the complete service-only Team function set');
+  assert.ok(teamFunctions.rows.some(fn=>fn.proname==='team_activity'),'Team activity must be included in the grant checks');
+  for(const fn of teamFunctions.rows) {
+    assert.equal(fn.anon_access,false,fn.proname);
+    assert.equal(fn.user_access,false,fn.proname);
+    assert.equal(fn.service_access,true,fn.proname);
+  }
+  evidence.teamRoleChecks='PASS_BROWSER_TABLE_AND_FUNCTION_DENIED_SERVICE_ALLOWED';
+  const activityOwner=randomUUID(),activityOutsider=randomUUID();
+  await db.query('begin');
+  try {
+    await db.query("insert into auth.users(id,email,raw_user_meta_data) values($1,$2,'{}'),($3,$4,'{}')",[activityOwner,'activity-owner@example.invalid',activityOutsider,'activity-outsider@example.invalid']);
+    await db.query('set local role service_role');
+    const team=(await db.query("select public.team_create($1,'Activity fixture') as value",[activityOwner])).rows[0].value;
+    await db.query("select public.team_audit_write($1,$2,'search',null,'{}')",[team.id,activityOwner]);
+    const activity=(await db.query('select public.team_activity($1,$2) as value',[activityOwner,team.id])).rows[0].value;
+    assert.deepEqual(activity.map(item=>item.action),['team_created']);
+    assert.equal(activity[0].actor.userId,activityOwner);
+    await assert.rejects(db.query('select public.team_activity($1,$2)',[activityOutsider,team.id]),error=>error.code==='XT404');
+  } finally {await db.query('rollback');}
+  evidence.teamActivityIsolation='PASS_MEMBER_ALLOWED_OUTSIDER_DENIED';
 
   const delivery=catalog.tables.find(t=>t.schema==='public'&&t.table_name==='google_canonical_deliveries');
   assert.ok(delivery?.rls_enabled,'Google deliveries require RLS');

@@ -1,3 +1,8 @@
+import { NATIVE_SHARE_PREFIX, readNativeOpenUiShare, readNativeOpenUiShareText } from '../../../../../backend/src/ai/nativeOpenUiShare';
+import { splitNativeOpenUiAnswer } from '../../../../../backend/src/ai/nativeOpenUi';
+import { MAX_SHARED_RESPONSE_CHARS } from '../../../../../backend/src/lib/messageShareLimits';
+import { NativeWorkspaceAnswer } from '@/components/native-openui/NativeWorkspaceAnswer';
+import { publicAnswerExportText, publicAnswerText } from '@/lib/publicAnswerText';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -6,6 +11,7 @@ import { cache } from 'react';
 import { createClient } from '@/lib/supabase/server';
 import { SharedAnswerDownloads } from '@/components/terminal/SharedAnswerDownloads';
 import { API_URL, fetchApiResponse } from '@/lib/api';
+import { hostedWorkspaceRequest } from '@/lib/hostedWorkspaceBridge.mjs';
 import SharedResponseV2 from '@/components/response-experience-v2/SharedResponseV2';
 import { readRichShareSnapshot, RICH_SHARE_PREFIX } from '@/components/response-experience-v2/shareSnapshot';
 import { responseV2Audience, responseV2Decision } from '@/components/response-experience-v2/access';
@@ -23,7 +29,7 @@ type PublicShare = {
 };
 
 type ShareResult =
-  | { status: 'ok'; share: PublicShare }
+  | { status: 'ok'; share: PublicShare; native?: NonNullable<ReturnType<typeof readNativeOpenUiShare>> }
   | { status: 'private' }
   | { status: 'missing' };
 
@@ -39,14 +45,18 @@ const loadShare = cache(async (token: string): Promise<ShareResult> => {
       // Public shares do not depend on auth configuration. A private one will
       // correctly receive 403 below when no verified session can be forwarded.
     }
-    const response = await fetchApiResponse(`${API_URL}/api/message-shares/${encodeURIComponent(token)}`, {
+    const path = `/api/message-shares/${encodeURIComponent(token)}`;
+    const options = {
       cache: 'no-store',
       signal: AbortSignal.timeout(25000),
       headers: {
         Accept: 'application/json',
         ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       },
-    });
+    } satisfies RequestInit;
+    const response = process.env.NEXT_PUBLIC_XROGA_WORKSPACE_STAGING_ORIGIN
+      ? await hostedWorkspaceRequest(new Request(`${API_URL}${path}`, options), path)
+      : await fetchApiResponse(`${API_URL}${path}`, options);
     if (!response.ok) {
       await response.body?.cancel().catch(()=>undefined);
       return { status: response.status===403?'private':'missing' };
@@ -57,16 +67,37 @@ const loadShare = cache(async (token: string): Promise<ShareResult> => {
     const payload = JSON.parse(Buffer.concat(chunks).toString('utf8')) as { share?: PublicShare };
     const share=payload?.share;
     if(!share||share.token!==token||!['public','private'].includes(share.visibility)||!['response','exchange'].includes(share.scope)
-      ||typeof share.prompt!=='string'||share.prompt.length>20000||typeof share.response!=='string'||share.response.length>100000)return{status:'missing'};
+      ||typeof share.prompt!=='string'||share.prompt.length>20000||typeof share.response!=='string'||share.response.length>MAX_SHARED_RESPONSE_CHARS)return{status:'missing'};
     // Current API exposes text plus an optional snapshot. Older compatible API
     // revisions return the snapshot in response. Both retain the same share ACL.
     const snapshot = typeof share.richResponse === 'string' ? share.richResponse : share.response;
+    if (snapshot.startsWith(NATIVE_SHARE_PREFIX)) {
+      const native = readNativeOpenUiShare(snapshot);
+      const wrapped = !share.richResponse && share.response.startsWith(NATIVE_SHARE_PREFIX);
+      const responseText = wrapped ? readNativeOpenUiShareText(snapshot) : splitNativeOpenUiAnswer(share.response).text;
+      const matchingText = wrapped || native?.text === responseText;
+      const exportText = publicAnswerExportText(responseText ?? '');
+      return {
+        status: 'ok',
+        // Pass the verified snapshot directly to the renderer.
+        native: matchingText && exportText === responseText ? native : undefined,
+        share: { ...share,
+          response: exportText || 'The shared answer has no readable text.',
+          richResponse: undefined,
+          richUnavailable: !native || !matchingText,
+        },
+      };
+    }
     const presentation = readRichShareSnapshot(snapshot);
     const matchingText = !share.richResponse || presentation.text === share.response;
+    const responseText = publicAnswerText(share.response.startsWith(RICH_SHARE_PREFIX) ? presentation.text : share.response);
+    const exportText = publicAnswerExportText(responseText);
+    const originalText = presentation.document?.originalText ?? '';
     return { status: 'ok', share: { ...share,
-      response: share.response.startsWith(RICH_SHARE_PREFIX) ? presentation.text : share.response,
-      richResponse: presentation.document && matchingText ? snapshot : undefined,
-      richUnavailable: snapshot.startsWith(RICH_SHARE_PREFIX) && (!presentation.document || !matchingText),
+      response: exportText,
+      richResponse: presentation.document && matchingText && exportText === responseText &&
+        publicAnswerExportText(originalText) === originalText ? snapshot : undefined,
+      richUnavailable: share.richUnavailable === true || snapshot.startsWith(RICH_SHARE_PREFIX) && (!presentation.document || !matchingText),
     } };
   } catch {
     return { status: 'missing' };
@@ -110,48 +141,50 @@ export default async function MessageSharePage({ params }: { params: Promise<{ t
   if (result.status === 'private') {
     const next = encodeURIComponent(`/share/${token}`);
     return (
-      <main className="grid min-h-screen place-items-center bg-[#f4f4f1] px-4 text-[#111] dark:bg-[#090a0d] dark:text-[#f5f5f3]">
-        <section className="w-full max-w-sm rounded-[24px] bg-white p-6 text-center shadow-[0_30px_90px_-60px_rgba(0,0,0,.5)] dark:bg-[#111318]">
+      <main className="grid min-h-screen place-items-center bg-[var(--surface-page)] px-4 text-[var(--text-primary)]">
+        <section className="w-full max-w-sm rounded-[24px] border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-6 text-center shadow-[var(--shadow-elevated)]">
           <Image src="/brand/xroga-orb-mark-v2.webp" alt="" width={34} height={34} className="mx-auto mb-4 rounded-xl" />
-          <h1 className="text-lg font-semibold">This share is private</h1>
-          <p className="mt-2 text-sm leading-6 text-black/55 dark:text-white/55">Only the Xroga account that created it can open this page.</p>
-          <Link href={`/auth/login?next=${next}`} className="mt-5 inline-flex h-10 items-center justify-center rounded-xl bg-[#111] px-4 text-xs font-semibold text-white dark:bg-white dark:text-[#111]">Continue with the owner account</Link>
+          <h1 className="text-lg font-semibold text-[var(--text-primary)]">This share is private</h1>
+          <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">Only the Xroga account that created it can open this page.</p>
+          <Link href={`/auth/login?next=${next}`} className="mt-5 inline-flex h-10 items-center justify-center rounded-xl bg-[var(--text-primary)] px-4 text-xs font-semibold text-[var(--surface-page)]">Continue with the owner account</Link>
         </section>
       </main>
     );
   }
-  const { share } = result;
-  const richAllowed = Boolean(share.richResponse) && await canPresentRichShare();
+  const { share, native } = result;
+  // The API has already enforced the saved link's visibility. A validated
+  // native snapshot must reopen independently of the older V2 rollout flag.
+  const legacyRichAllowed = !native && Boolean(share.richResponse) && await canPresentRichShare();
 
   return (
-    <main className="min-h-screen bg-[#f4f4f1] px-4 py-6 text-[#111] sm:px-6 sm:py-12 dark:bg-[#090a0d] dark:text-[#f5f5f3]">
+    <main className="min-h-screen bg-[var(--surface-page)] px-4 py-6 text-[var(--text-primary)] sm:px-6 sm:py-12">
       <div className="mx-auto w-full max-w-3xl">
-        <header className="mb-4 flex items-center justify-between rounded-2xl border border-black/10 bg-white px-4 py-3 shadow-sm dark:border-white/10 dark:bg-[#111318]">
+        <header className="mb-4 flex items-center justify-between rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-4 py-3 shadow-sm">
           <Link href="/" className="flex items-center gap-2 text-sm font-semibold">
             <Image src="/brand/xroga-orb-mark-v2.webp" alt="" width={24} height={24} className="rounded-lg" />
             Xroga
           </Link>
-          <span className="rounded-full bg-black/5 px-2.5 py-1 text-[10px] font-medium uppercase tracking-[.12em] text-black/55 dark:bg-white/10 dark:text-white/55">
+          <span className="rounded-full bg-[var(--surface-inset)] px-2.5 py-1 text-[10px] font-medium uppercase tracking-[.12em] text-[var(--text-secondary)]">
             {share.visibility === 'private' ? 'Private link' : 'Public share'}
           </span>
         </header>
 
-        <article className="overflow-hidden rounded-[24px] border border-black/10 bg-white shadow-[0_30px_90px_-60px_rgba(0,0,0,.5)] dark:border-white/10 dark:bg-[#111318]">
+        <article className="overflow-hidden rounded-[24px] border border-[var(--border-subtle)] bg-[var(--surface-raised)] shadow-[var(--shadow-elevated)]">
           {share.scope === 'exchange' && share.prompt && (
-            <section className="border-b border-black/10 px-5 py-5 dark:border-white/10 sm:px-8 sm:py-7">
-              <p className="mb-2 text-[10px] font-semibold uppercase tracking-[.16em] text-black/45 dark:text-white/45">Prompt</p>
-              <p className="whitespace-pre-wrap text-sm leading-6 text-black/75 dark:text-white/75">{share.prompt}</p>
+            <section className="border-b border-[var(--border-subtle)] px-5 py-5 sm:px-8 sm:py-7">
+              <p className="mb-2 text-[10px] font-semibold uppercase tracking-[.16em] text-[var(--text-secondary)]">Prompt</p>
+              <p className="whitespace-pre-wrap text-sm leading-6">{share.prompt}</p>
             </section>
           )}
           <section className="px-5 py-6 sm:px-8 sm:py-8">
-            <p className="mb-3 text-[10px] font-semibold uppercase tracking-[.16em] text-black/45 dark:text-white/45">Response</p>
+            <p className="mb-3 text-[10px] font-semibold uppercase tracking-[.16em] text-[var(--text-secondary)]">Response</p>
             {share.richUnavailable && <p role="status" className="mb-3 text-sm">The interactive view is unavailable. The complete saved text follows.</p>}
-            {richAllowed && share.richResponse ? <SharedResponseV2 snapshot={share.richResponse} text={share.response} /> : <p className="whitespace-pre-wrap text-[15px] leading-7 text-black/90 dark:text-white/90">{share.response}</p>}
-            <SharedAnswerDownloads response={share.response} />
+            {native ? <NativeWorkspaceAnswer answer={{ ...native, library: 'xroga-native-v1' }} sources={native.sources} sourceReferral={false} /> : legacyRichAllowed && share.richResponse ? <SharedResponseV2 snapshot={share.richResponse} text={share.response} /> : <p className="whitespace-pre-wrap text-[15px] leading-7">{share.response}</p>}
+            {!native?.documentDownload && <SharedAnswerDownloads response={share.response} verifiedLinks={native?.sources.map(source => source.url) ?? []} />}
           </section>
         </article>
 
-        <p className="mt-4 text-center text-xs text-black/45 dark:text-white/45">
+        <p className="mt-4 text-center text-xs text-[var(--text-secondary)]">
           Shared exactly as selected. No reactions, view counts, or generated activity.
         </p>
       </div>

@@ -1,3 +1,4 @@
+import { connectedAppLabel, trackProgress } from '../../ai/progressChannel.js';
 import {
   chatCompletion,
   estimateMessageTokens,
@@ -961,6 +962,8 @@ export async function readBusinessData(
       .filter(
         isLocallyApprovedReadTool,
       )
+      .filter((tool) => !discovery.explicitlyRequestedToolkit ||
+        normalizeToolkit(tool.toolkit) === discovery.explicitlyRequestedToolkit)
       .slice(
         0,
         MAX_TOOL_CANDIDATES,
@@ -1117,7 +1120,10 @@ export async function readBusinessData(
   }
 
   const execution =
-    await executeComposioReadTool(
+    await trackProgress(`Reading connected app ${connectedAppLabel(String(selection.toolSlug))}`, (result: Awaited<ReturnType<typeof executeComposioReadTool>>) => {
+      const label = connectedAppLabel(String(selection.toolSlug));
+      return result.needsConfirmation ? `Connected app ${label} needs your approval` : result.error ? `Connected app ${label} returned a problem` : `Read connected app ${label}`;
+    }, () => executeComposioReadTool(
       input.userId,
       {
         tenantContext:input.tenantContext,
@@ -1133,7 +1139,7 @@ export async function readBusinessData(
         arguments:
           selection.arguments,
       },
-    );
+    ));
 
   if(execution.needsConfirmation){
     if(!execution.confirmation||!execution.reviewUrl)throw new ComposioClientError('The exact read consent was not saved.',{status:503,code:'COMPOSIO_READ_CONSENT_UNAVAILABLE'});

@@ -1,0 +1,786 @@
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+import { createElement, Fragment } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { publicAnswerText } from '@/lib/publicAnswerText';
+import { parseXrogaOutput } from '@/lib/xrogaBlocks';
+import { enhanceAiResponse } from '@/lib/xrogaResponseDocument';
+import { createParser, type LibraryJSONSchema } from '@openuidev/lang-core';
+import catalog from '../../../../../../backend/src/ai/nativeOpenUiCatalog.json';
+import { NATIVE_UI_FORMAT, bindNativeAnswerText, materializeNativeAnswerText, supplementNativeProse, validateNativeOpenUi } from '../../../../../../backend/src/ai/nativeOpenUi';
+import { initialNativeValueReader } from '../../../../../../backend/src/ai/nativeOpenUiValues';
+import { inline, MathExpression, MarkdownBlocks, nativeMarkdownMatches, NativeVisualContent, placeNativeSections, preservedMarkdownTableKeys, proseOutsideNativeDocuments, tableContentKey } from './markdown';
+import { SortableTableView, sortAnswerTableRows } from './table-view';
+
+test('saved and streamed answer text hides only the attached presentation delimiter', () => {
+  const prose = 'The interest earned is $1,560.80.';
+  const marker = '<<<XROGA_OPENUI_V1>>>';
+  const continuation = '\n\n| Component | Amount |\n| --- | --- |\n| Principal | $12,500.00 |';
+  assert.equal(publicAnswerText(prose + marker + continuation), prose + continuation);
+  assert.equal(publicAnswerText(prose + '<<<XRO', true), prose);
+  const rendered = renderToStaticMarkup(createElement(MarkdownBlocks, { text: prose + marker + continuation }));
+  assert.doesNotMatch(rendered, /XROGA_OPENUI_V1/);
+  assert.match(rendered, /1,560\.80/);
+  assert.match(rendered, /12,500\.00/);
+});
+
+test('a titled native section follows the matching Markdown passage before the next heading', () => {
+  const text = '## Criteria\n\nRead this first.\n\n## Review flow\n\nFollow the two branches.\n\n## Examples\n\nPreserve the full example.';
+  const code = 'root = Col([Markdown(_xroga_answer), flow])\nflow = Section("Review flow", [Text("Draw the flow here.")])';
+  const saved = bindNativeAnswerText(code, text);
+  const layout = createParser(catalog.schema as LibraryJSONSchema, 'Col').parse(saved).root;
+  assert.ok(layout);
+  const placements = placeNativeSections(layout.props.children as unknown[]);
+  assert.ok(placements);
+  assert.equal(placements.markdownIndex, 0);
+  assert.equal(placements.placements.size, 1);
+  assert.equal(placements.placements.values().next().value?.props.title, 'Review flow');
+  const inlineSections = {
+    nodes: new Map([...placements.placements.keys()].map(i => [i, createElement('span', null, 'The native diagram')])),
+    replacedBlocks: placements.replacedBlocks,
+  };
+  const view = renderToStaticMarkup(createElement(MarkdownBlocks, {text,inlineSections}));
+  assert.match(view, /Follow the two branches.*The native diagram.*Examples.*Preserve the full example/);
+  assert.equal(view.match(/The native diagram/g)?.length, 1);
+  assert.match(text, /## Examples/);
+  assert.equal(proseOutsideNativeDocuments(text, nativeMarkdownMatches(layout)), '');
+});
+
+test('ambiguous, fenced, unanchored and earlier native sections keep their model-authored order', () => {
+  const doc = (text: string, hasDynamicProps = false) => ({type: 'element',typeName: 'Markdown',partial: false,props: {text},hasDynamicProps});
+  const section = {type: 'element',typeName: 'Section',partial: false,props: {title: 'Review flow'}};
+  for (const nodes of [
+    [doc('## Review flow\n\nRead first.\n\n## Review flow'), section],
+    [doc('```md\n## Review flow\n```'), section],
+    [doc('## Examples'), section],
+    [doc('## Review flow', true), section],
+    [doc('## Review flow'), section, section],
+    [doc('## Review flow'), doc('## Examples'), section],
+    [section, doc('## Review flow')],
+  ]) assert.equal(placeNativeSections(nodes), undefined);
+});
+
+test('a detached scalar table replaces its own block and a single diagram follows its designated heading', () => {
+  const text = [
+    '## Intake rules', 'Only release inspected equipment.',
+    '## Availability matrix', '| Tag | Decision |\n| --- | --- |\n| Current | Release |\n| Absent | Hold |',
+    'Check the condition in person.', '## Branch diagram', '1. Inspect the tag.\n2. Refer if missing.',
+    '## Example', 'A missing tag stays on hold.',
+  ].join('\n\n');
+  const program = 'root = Col([Markdown(_xroga_answer), table, flow])\n' +
+    'table = Table(["Tag", "Decision"], [["Current", "Release"], ["Absent", "Hold"]])\n' +
+    'flow = Diagram("Equipment handoff", [{id: "intake", label: "Intake", level: 0}, {id: "hold", label: "Hold", level: 1}], [{from: "intake", to: "hold"}], "Refer when the tag is missing.")';
+  const saved = bindNativeAnswerText(program, text);
+  const root = createParser(catalog.schema as LibraryJSONSchema, 'Col').parse(saved).root;
+  assert.ok(root);
+  const plan = placeNativeSections(root.props.children as unknown[]);
+  assert.ok(plan);
+  assert.deepEqual([...plan.replacedBlocks], [3]);
+  const nodes = new Map([...plan.placements].map(([index, node]) =>
+    [index, createElement('span', null, 'Native ' + node.typeName)]));
+  const rich = renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text, inlineSections: { nodes, replacedBlocks: plan.replacedBlocks },
+  }));
+  assert.match(rich, /Availability matrix.*Native Table.*Check the condition.*Branch diagram.*Inspect the tag.*Refer if missing.*Native Diagram.*Example.*stays on hold/);
+  assert.doesNotMatch(rich, /<table/);
+  const fallback = renderToStaticMarkup(createElement(MarkdownBlocks, { text }));
+  assert.match(fallback, /Availability matrix.*<table.*Release.*Hold.*Branch diagram/);
+});
+
+test('table placement preserves cited, conflicting, fenced, repeated, and dynamic content', () => {
+  const matrix = '| Tag | Decision |\n| --- | --- |\n| Current | Release |';
+  const doc = (text: string) => ({type: 'element',typeName: 'Markdown',partial: false,props: {text}});
+  const table = {type: 'element',typeName: 'Table',partial: false,props: {columns: ['Tag', 'Decision'], rows: [['Current', 'Release']]}};
+  for (const [text, tables] of [
+    [matrix.replace('Release', 'Release [1]'), [table]],
+    [matrix.replace('Release', '[Release](https://example.com/original)'), [table]],
+    [matrix.replace('Release', 'Hold'), [table]],
+    [matrix.replace('Release', '`Release`'), [table]],
+    ['```md\n' + matrix + '\n```', [table]],
+    [matrix + '\n\n## Separately documented case\n\n' + matrix, [table]],
+    [matrix, [table, table]],
+    [matrix, [{ ...table, hasDynamicProps: true }]],
+    [matrix, [{ ...table, props: { ...table.props, rows: [['Current', { type: 'element', typeName: 'Badge', props: { text: 'Release' } }]] } }]],
+  ] as const) assert.equal(placeNativeSections([doc(text), ...tables]), undefined);
+  assert.equal(placeNativeSections([table, doc(matrix)]), undefined);
+  const citedCopy = preservedMarkdownTableKeys(matrix.replace('Release', 'Release [1]'));
+  assert.equal(placeNativeSections([doc(matrix), table], undefined, citedCopy), undefined);
+  assert.equal(placeNativeSections([doc('```md\n' + matrix + '\n```\n\n' + matrix), table])?.replacedBlocks.size, 1);
+});
+
+test('separately authored table contexts survive a matching detached native table', () => {
+  const matrix = '| Gate | Result |\n| --- | --- |\n| Inspection | Hold |';
+  const text = '## Equipment handoff\n\n' + matrix + '\n\n## First-time volunteers\n\n' + matrix;
+  const key = tableContentKey(['Gate', 'Result'], [['Inspection', 'Hold']])!;
+  assert.ok(preservedMarkdownTableKeys(text).has(key));
+  assert.ok(!preservedMarkdownTableKeys('## Equipment handoff\n\n' + matrix + '\n\n' + matrix).has(key));
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text, nativeTables: new Set([key]),
+    nativeSectionTables: new Map([['Equipment handoff', new Set([key])]]), deduplicateTables: true,
+  }));
+  assert.match(html, /Equipment handoff.*<table.*First-time volunteers.*<table/);
+  assert.equal(html.match(/<table/g)?.length, 2);
+});
+
+test('diagram placement prefers one exact title and only infers a unique diagram heading', () => {
+  const doc = (text: string) => ({type: 'element',typeName: 'Markdown',partial: false,props: {text}});
+  const flow = {type: 'element',typeName: 'Diagram',partial: false,props: {title: 'Handoff overview'}};
+  const other = {type: 'element',typeName: 'Diagram',partial: false,props: {title: 'Inventory flow'}};
+  const twoSections = '## First diagram\n\nFirst note.\n\n## Second diagram\n\nSecond note.';
+  for (const children of [
+    [doc(twoSections), flow],
+    [doc('## Handoff overview\n\n## Handoff overview'), flow],
+    [doc('## Single diagram'), flow, other],
+    [doc('## Handoff overview'), flow, flow],
+    [doc('## Guidelines'), flow],
+    [doc('```md\n## Branch diagram\n```'), flow],
+    [flow, doc('## Branch diagram')],
+  ]) assert.equal(placeNativeSections(children), undefined);
+  const exact = placeNativeSections([doc(twoSections + '\n\n## Handoff overview\n\nKeep the description.'), flow, other]);
+  assert.deepEqual(exact && [...exact.placements], [[5, flow]]);
+  assert.equal(exact?.replacedBlocks.size, 0);
+});
+
+test('a visible checklist replaces its exact same-section Markdown list only', () => {
+  const code = [
+    'root = Col([Markdown(_xroga_answer), checks])',
+    'checks = Section("Closing checklist", [Controls([Checkbox($tools, "Turn off the tools."), Checkbox($handoff, "Record the handoff.")], "Close the shop")])',
+    '$tools = false',
+    '$handoff = false',
+  ].join('\n');
+  const parser = createParser(catalog.schema as LibraryJSONSchema, 'Col');
+  const bullets = '- Turn off the tools.\n- Record the handoff.';
+  function render(sectionBody: string, source = code) {
+    const text = '## Closing checklist\n\n' + sectionBody + '\n\n## Notes\n\nKeep the owner’s instructions.';
+    const saved = bindNativeAnswerText(source, text);
+    const root = parser.parse(saved).root;
+    const matches = nativeMarkdownMatches(root, initialNativeValueReader(saved));
+    const nodes = new Map([...matches.inlineReplacements.values()].map(i => [i, createElement('span', null, 'The interactive checklist')]));
+    const rich = renderToStaticMarkup(createElement(MarkdownBlocks, {
+      text, inlineSections: { nodes, replacedBlocks: new Set(nodes.keys()) }, renderCitation: () => 'Verified source',
+    }));
+    const fallback = renderToStaticMarkup(createElement(MarkdownBlocks, { text, renderCitation: () => 'Verified source' }));
+    return { rich, fallback };
+  }
+  const { rich, fallback } = render(bullets);
+  assert.match(rich, /Closing checklist.*The interactive checklist.*Notes.*Keep the owner/);
+  assert.doesNotMatch(rich, /Turn off the tools|Record the handoff/);
+  assert.match(fallback, /Turn off the tools.*Record the handoff/);
+  assert.match(render(bullets + '\n\nConfirm the handoff in writing.').rich, /The interactive checklist.*Confirm the handoff in writing.*Notes/);
+  assert.doesNotMatch(render(bullets.replaceAll('- ', '- [ ] ')).rich, /Turn off the tools/);
+  for (const [different, source] of [
+    [bullets, code.replace('"Closing checklist"', '"Another checklist"')],
+    [bullets, code.replace('$handoff = false', '$handoff = true')],
+    [bullets.split('\n').reverse().join('\n'), code],
+    [bullets.replace('tools.', 'tools. [1]'), code],
+    [bullets + '\n- Lock the door.', code],
+    ['1. Turn off the tools.\n2. Record the handoff.', code],
+    ['- [ ] Turn off the tools.\n- Record the handoff.', code],
+    ['- Preserve this precondition.\n\nBefore closing.\n\n' + bullets, code],
+  ]) assert.match(render(different, source).rich, /Turn off the tools.*Record the handoff|Record the handoff.*Turn off the tools/);
+});
+
+test('detached checkboxes preserve a single ordered checklist and its position in the saved answer', () => {
+  const text = '## Review\n\n4. Inspect the handoff.\n5. Record the result.\n\nKeep the receipt.';
+  const syntax = [
+    'root = Col([Markdown(_xroga_answer), Checkbox($inspect, "Inspect the handoff."), Checkbox($record, "Record the result.")])',
+    '$inspect = false',
+    '$record = false',
+  ].join('\n');
+  const parser = createParser(catalog.schema as LibraryJSONSchema, 'Col');
+  const placement = (answer: string, program = syntax) => {
+    const bound = bindNativeAnswerText(program, answer);
+    return nativeMarkdownMatches(parser.parse(bound).root, initialNativeValueReader(bound)).orderedChecklist;
+  };
+  assert.deepEqual(placement(text), { markdownIndex: 0, blockIndex: 1, firstCheckbox: 1, start: 4 });
+  assert.equal(supplementNativeProse(text, syntax, true), text);
+  assert.equal(placement(text.replace('Inspect the handoff.', 'Inspect the handoff. [1]')), undefined);
+  assert.equal(placement(text + '\n\n4. Inspect the handoff.\n5. Record the result.'), undefined);
+  assert.equal(placement(text, syntax.replace('$record = false', '$record = true')), undefined);
+  assert.equal(placement(text, syntax.replace('Record the result.', 'Keep the receipt.')), undefined);
+  assert.match(supplementNativeProse(text, syntax.replace('Record the result.', 'Notify the owner.'), true), /Notify the owner/);
+});
+
+test('a titled native introduction replaces a single equivalent Markdown paragraph and preserves distinct links', () => {
+  const program = 'root = Col([Markdown(_xroga_answer), Section("Handoff", [Caption("Keep this detail.")], "Pass the notes to the coordinator.")])';
+  for (const [paragraph, expected] of [
+    ['**Pass the notes to the coordinator.**', 1],
+    ['Pass the notes to the coordinator. [1]', 0],
+    ['Pass the notes to the coordinator.\n\nConfirm receipt.', 0],
+  ] as const) {
+    const code = bindNativeAnswerText(program, '## Handoff\n\n' + paragraph);
+    const root = createParser(catalog.schema as LibraryJSONSchema, 'Col').parse(code).root;
+    assert.equal(nativeMarkdownMatches(root, initialNativeValueReader(code)).inlineReplacements.size, expected);
+  }
+});
+
+const render = (source: string) => renderToStaticMarkup(createElement(Fragment, null, inline(source)));
+
+test('an unexpected typesetter exception preserves escaped formula text and the remaining answer', () => {
+  const tex='{'.repeat(3500)+'x'+'}'.repeat(3500)+'<img src=x onerror=alert(1)>';
+  const html=renderToStaticMarkup(createElement(MathExpression,{tex}));
+  assert.match(html,/&lt;img/);
+  assert.doesNotMatch(html,/<img|<script/);
+  const answer=renderToStaticMarkup(createElement(MarkdownBlocks,{text:'$$'+tex+'$$\n\nKeep the complete explanation.'}));
+  assert.match(answer,/Keep the complete explanation/);
+  assert.doesNotMatch(answer,/<img|<script/);
+});
+
+test('Markdown formulas use the existing safe math renderer without changing currency or code', () => {
+  const block = (text: string) => renderToStaticMarkup(createElement(MarkdownBlocks, {text}));
+  for (const text of ['$$A = P\\left(1 + \\frac{r}{n}\\right)^{nt}$$', '$$\nx^2 + y^2\n$$', '\\[\nx^2\n\\]']) {
+    const html = block(text);
+    assert.match(html, /class="katex"/);
+    assert.match(html, /<math/);
+    assert.match(html, /tabindex="0"/);
+    assert.doesNotMatch(html, /\$\$/);
+  }
+  assert.match(render('Use \\(x^2\\) here.'), /class="katex"/);
+  const prices = 'Basic costs $10 and Pro costs $25 per month.';
+  assert.equal(block(prices), '<p>' + prices + '</p>');
+  assert.doesNotMatch(render('`\\(x^2\\)`'), /class="katex"/);
+  assert.doesNotMatch(block('```latex\n$$x^2$$\n```'), /class="katex"/);
+  assert.match(block('$$unfinished\n\nKeep the complete explanation.'), /Keep the complete explanation/);
+  const unsafe = block('$$\\href{javascript:alert(1)}{click} + \\includegraphics{https://example.com/track}$$');
+  assert.doesNotMatch(unsafe, /href="javascript:|<img|<script|onerror=/);
+});
+
+test('a calculated table with a dynamic header replaces its initial fallback table', () => {
+  const program='root = Col([Table(["Compounding", "Balance after " + @Plural($years,"year")], [["Monthly", @Format(18193.96734,"currency",2,"USD")]])])\n$years = 10';
+  const text=supplementNativeProse('Initial calculation.',program,true);
+  const root=createParser(catalog.schema as LibraryJSONSchema,'Col').parse(program).root;
+  const matches=nativeMarkdownMatches(root,initialNativeValueReader(program));
+  const visible=renderToStaticMarkup(createElement(MarkdownBlocks,{text,matches}));
+  assert.doesNotMatch(visible,/<table/);
+  assert.match(visible,/Initial calculation/);
+  const fallback=renderToStaticMarkup(createElement(MarkdownBlocks,{text}));
+  assert.equal((fallback.match(/<table/g)??[]).length,1);
+  assert.match(fallback,/Balance after 10 years/);
+});
+
+test('a visible interactive chart replaces its exact saved data table', () => {
+  const program = [
+    'root = Col([input, Markdown(_xroga_answer), chart])',
+    '$principal = 12500',
+    'input = Input($principal, "Principal (USD)", "number")',
+    'interest = $principal * 0.124864',
+    'rows = [{"part": "Principal", "usd": $principal}, {"part": "Interest earned", "usd": interest}]',
+    'chart = Chart("bar", rows, "part", ["usd"], "currency", "USD", false, 240, {"xLabel": "Component", "yLabel": "USD"})',
+  ].join('\n');
+  const text = supplementNativeProse('Edit the principal to update the chart.', program, true);
+  const parser = createParser(catalog.schema as LibraryJSONSchema, 'Col');
+  const withMatches = (source: string, markdown: string) => {
+    const bound = bindNativeAnswerText(source, text);
+    const matches = nativeMarkdownMatches(parser.parse(bound).root, initialNativeValueReader(bound));
+    return renderToStaticMarkup(createElement(MarkdownBlocks, { text: markdown, matches }));
+  };
+  assert.match(text, /\| Interest earned \| \$1,560.80 \|/);
+  assert.doesNotMatch(withMatches(program, text), /<table/);
+  assert.match(withMatches(program, text.replace('$1,560.80', '$1,560.81')), /<table/);
+  assert.match(withMatches(program, text.replace('$1,560.80', '$1,560.80 [1]')), /<table/);
+  const hidden = program.replace('Markdown(_xroga_answer), chart', 'Markdown(_xroga_answer), Popover("View chart", chart)');
+  assert.match(withMatches(hidden, text), /<table/);
+  assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, { text })), /<table.*12,500.00.*1,560.80/);
+});
+
+test('an opening Markdown title does not repeat its native display heading', () => {
+  const matches = nativeMarkdownMatches({type:'element',typeName:'Title',props:{text:'Sortable table: time by color'}});
+  const render = (text: string, withNativeTitle = true) => renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text, nativeHeadingTitles: withNativeTitle ? matches.headingTitles : undefined,
+  }));
+  const text = '**Sortable table — time by color**\n\nThree recorded times remain available.';
+  assert.equal(render(text), '<p>Three recorded times remain available.</p>');
+  assert.match(render(text, false), /Sortable table/);
+  assert.match(render(text.replace('color**', 'color [1]**')), /Sortable table.*\[1\]/);
+  assert.match(render(text.replace('color**', 'different color**')), /different color/);
+  assert.match(render('An introduction.\n\n' + text), /Sortable table/);
+  assert.equal(render(text.replace(/^\*\*(.*?)\*\*/, '## $1')), '<p>Three recorded times remain available.</p>');
+  const code = nativeMarkdownMatches({type:'element',typeName:'Title',props:{text:'Use `a:b`'}});
+  assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text:'**Use `a — b`**',nativeHeadingTitles:code.headingTitles,
+  })), /a — b/);
+});
+
+test('one complete native Markdown document replaces only its exact readable copy', () => {
+  const text = '## Terms\n\n1. Read [1].\n2. Compare.\n\n| Plan | Price |\n|---|---|\n| Basic | $10 |';
+  const matches = nativeMarkdownMatches({type: 'element', typeName: 'Markdown', props: {text}});
+  assert.equal(proseOutsideNativeDocuments(text, matches), '');
+  assert.equal(proseOutsideNativeDocuments(text + '\n\nUnique native detail.', matches), 'Unique native detail.');
+  assert.equal(proseOutsideNativeDocuments('Calculated results were corrected.\n\n'+text+'\n\nUnique native detail.',matches),
+    'Calculated results were corrected.\n\nUnique native detail.');
+  assert.equal(proseOutsideNativeDocuments('A different sentence containing '+text,matches),'A different sentence containing '+text);
+  assert.equal(proseOutsideNativeDocuments(text.replace('$10', '$11'), matches), text.replace('$10', '$11'));
+  assert.equal(proseOutsideNativeDocuments(text, undefined), text);
+  const hidden = nativeMarkdownMatches({type: 'element', typeName: 'Flashcard', props: {back: {type: 'element', typeName: 'Markdown', props: {text}}}});
+  assert.equal(proseOutsideNativeDocuments(text, hidden), text);
+});
+
+test('upstream parser resolves the canonical answer and rich table without duplicating either', () => {
+  const text = 'Basic includes one seat.\n\n1. Read the terms.\n2. Compare.\n\n| Plan | Seats |\n|---|---|\n| Basic | 1 |';
+  const program = bindNativeAnswerText('root = Col([Markdown(_xroga_answer), Table(["Plan", "Seats"], [["Basic", 1]])])', text);
+  const root = createParser(catalog.schema as LibraryJSONSchema, 'Col').parse(program).root;
+  const matches = nativeMarkdownMatches(root, initialNativeValueReader(program));
+  assert.ok(matches.documents.has(text));
+  assert.equal(proseOutsideNativeDocuments(text, matches), '');
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, {text, nativeTables: matches.tables}));
+  assert.match(html, /Basic includes one seat/);
+  assert.match(html, /<ol/);
+  assert.doesNotMatch(html, /<table/);
+  const fallback = renderToStaticMarkup(createElement(MarkdownBlocks, {text}));
+  assert.match(fallback, /<table/);
+  assert.match(fallback, /Read the terms/);
+});
+
+test('reopened long native prose retains a single table in reading order and a single copy source', () => {
+  const details = Array.from({ length: 170 }, (_, index) =>
+    `## Inspection detail ${index + 1}\n\nRecord only observations sufficient to demonstrate that the work complies with the published requirements. Keep independent notes on the changes made to the item.`);
+  const text = ['Start the inspection here.', ...details, '## Availability matrix',
+    '| Tag | Decision |\n| --- | --- |\n| Current | Release equipment |', 'Complete the inspection here.'].join('\n\n');
+  assert.ok(text.length > 25_000);
+  const program = bindNativeAnswerText('root = Col([Markdown(_xroga_answer), Table(["Tag", "Decision"], [["Current", "Release equipment"]])])', text);
+  const enhanced = enhanceAiResponse(text, 'long-native-table', { status: 'complete' }, { format: NATIVE_UI_FORMAT, text: program });
+  const saved = parseXrogaOutput(JSON.parse(JSON.stringify(enhanced.output)));
+  assert.equal(saved?.status, 'completed');
+  assert.equal(saved?.responseSource?.text, program);
+  assert.equal(saved?.sourceText, text);
+  assert.equal(publicAnswerText(saved!.sourceText!), text);
+  assert.equal(validateNativeOpenUi(program, undefined, text).ok, true);
+  const rendered = materializeNativeAnswerText(saved!.responseSource!.text, saved!.sourceText!);
+  const root = createParser(catalog.schema as LibraryJSONSchema, 'Col').parse(rendered).root;
+  const matches = nativeMarkdownMatches(root, initialNativeValueReader(rendered));
+  assert.equal(proseOutsideNativeDocuments(text, matches), '');
+  const placement = placeNativeSections(root!.props.children as unknown[]);
+  assert.equal(placement?.placements.size, 1);
+  const nodes = new Map([...placement!.placements].map(([index, node]) => [index,
+    createElement(SortableTableView, { columns: node.props.columns as string[], rows: node.props.rows as unknown[][], renderText: value => value }),
+  ]));
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, { text, nativeTables: matches.tables,
+    inlineSections: { nodes, replacedBlocks: placement!.replacedBlocks } }));
+  assert.match(html, /Start the inspection here.*Inspection detail 170.*Availability matrix.*<table.*Release equipment.*<\/table>.*Complete the inspection here/);
+  for (const visible of [/<table/g, /Start the inspection here/g, /Complete the inspection here/g, /Release equipment/g]) {
+    assert.equal(html.match(visible)?.length, 1);
+  }
+});
+
+test('restored literal equations remain single when an interactive snapshot is unavailable', () => {
+  const text = '## Formula\n\n$$S = a + b$$\n\n## Example\n\n$$S = 3 + 5 = 8$$';
+  const before = 'The results were corrected.';
+  const after = 'Apply the formula to the next period.';
+  const complete = [before, text, after].join('\n\n');
+  const root = { type: 'element', typeName: 'Col', props: { children: [
+    { type: 'element', typeName: 'Chart', hasDynamicProps: true, props: {} },
+    { type: 'element', typeName: 'Markdown', props: { text } },
+  ] } };
+  const matches = nativeMarkdownMatches(root, () => undefined);
+  const outside = proseOutsideNativeDocuments(complete, matches);
+  assert.equal(outside, before + '\n\n' + after);
+  assert.doesNotMatch(renderToStaticMarkup(createElement(MarkdownBlocks, { text: outside })), /class="katex"/);
+  const fallback = renderToStaticMarkup(createElement(MarkdownBlocks, { text: complete }));
+  assert.equal((fallback.match(/class="katex"/g) ?? []).length, 2);
+});
+
+test('native paragraphs match emphasis-only prose and unordered items without hiding distinct content', () => {
+  const matches = nativeMarkdownMatches({ type: 'element', typeName: 'Col', props: { children: [
+    { type: 'element', typeName: 'Text', props: { text: 'Basic costs $10/month.' } },
+    { type: 'element', typeName: 'Text', props: { text: 'One person: Basic includes one seat.' } },
+  ] } });
+  const text = '**Basic** costs $10/month.\n\n- **One person:** Basic includes one seat.\n- Keep the unique limitation.\n- One person: Basic includes one seat. [1]\n\n1. One person: Basic includes one seat.\n\nBasic costs $11/month.';
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, { text, matches, renderCitation: () => 'Verified source' }));
+  assert.doesNotMatch(html, /costs \$10/);
+  assert.equal((html.match(/Basic includes one seat/g) ?? []).length, 2);
+  assert.match(html, /Keep the unique limitation/);
+  assert.match(html, /Verified source/);
+  assert.match(html, /<ol/);
+  assert.match(html, /costs \$11/);
+});
+
+test('empty comparison corners are cells and scrolling tables do not duplicate landmarks', () => {
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text: '| | Server | Client |\n|---|---|---|\n| Runs | Server | Browser |',
+  }));
+  assert.match(html, /<thead><tr><td><\/td><th scope="col">Server/);
+  assert.match(html, /role="group" aria-label="Answer table" tabindex="0"/);
+  assert.doesNotMatch(html, /<th[^>]*><\/th>/);
+});
+
+test('computed table snapshots collapse only exact resolved initial values', () => {
+  const value = { k: 'Ref', n: 'amount' };
+  const root = { type: 'element', typeName: 'Table', props: { columns: ['Payment'], rows: [[value]] } };
+  const matches = nativeMarkdownMatches(root, initialNativeValueReader('amount = 405.53'));
+  const duplicate = '| Payment |\n| --- |\n| 405.53 |';
+  const distinct = '| Payment |\n| --- |\n| 333.33 |';
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, { text: duplicate + '\n\n' + distinct, matches }));
+  assert.equal((html.match(/<table/g) ?? []).length, 1);
+  assert.match(html, /333.33/);
+  const failed = nativeMarkdownMatches(root, initialNativeValueReader('other = 1'));
+  assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, { text: duplicate, matches: failed })), /405.53/);
+  assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, { text: duplicate.replace('405.53 |', '405.53 [1] |'), matches })), /<table/);
+});
+
+test('interactive metrics suppress stale initial snapshots while fallback preserves them', () => {
+  const root = { type: 'element', typeName: 'Metric', props: { label: 'Monthly payment', value: { k: 'Ref', n: 'amount' }, note: '60 equal payments' } };
+  const text = 'Monthly payment: $405.53\n\n60 equal payments\n\nFees are excluded.';
+  const matches = nativeMarkdownMatches(root, initialNativeValueReader('amount = "$405.53"'));
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, { text, matches }));
+  assert.doesNotMatch(html, /405.53|60 equal payments/);
+  assert.match(html, /Fees are excluded/);
+  assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, { text })), /405.53/);
+});
+
+test('bound Markdown suppresses exact live readouts but keeps worked examples, sources and fallback', () => {
+  const text = [
+    'Tip: $14.40', '', '- Total to pay: $94.40',
+    '- Tip: $12.00 at 15%', '- Tip: $14.40 [1]', '',
+    'For the initial bill, multiply $80 by 18%.',
+  ].join('\n');
+  const program = bindNativeAnswerText([
+    'root = Col([Markdown(_xroga_answer), Metric("Tip", @Format($bill * 0.18, "currency", 2, "USD")), Metric("Total to pay", @Format($bill * 1.18, "currency", 2, "USD"))])',
+    '$bill = 80',
+  ].join('\n'), text);
+  const root = createParser(catalog.schema as LibraryJSONSchema, 'Col').parse(program).root;
+  const { liveReadouts } = nativeMarkdownMatches(root, initialNativeValueReader(program));
+  assert.equal(liveReadouts.size, 2);
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text, nativeReadouts: liveReadouts, renderCitation: () => 'Source link',
+  }));
+  assert.doesNotMatch(html, /<p>Tip: \$14\.40|94\.40/);
+  assert.match(html, /\$12\.00 at 15%/);
+  assert.match(html, /\$14\.40 Source link/);
+  assert.match(html, /multiply \$80 by 18%/);
+  assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, { text })), /94\.40/);
+});
+
+test('one block of coded amounts is shared by the live readouts and the readable fallback', () => {
+  const amounts = '**Total: USD 105.40**\n**Interest: EUR 5.40**';
+  const program = 'root = Col([Markdown(_xroga_answer), Metric("Total", @Format($value, "currency", 2, "USD")), Metric("Interest", @Format($value - 100, "currency", 2, "EUR"))])\n$value = 105.4';
+  const visible = (text: string) => {
+    const bound = bindNativeAnswerText(program, text);
+    const root = createParser(catalog.schema as LibraryJSONSchema, 'Col').parse(bound).root;
+    const { liveReadouts } = nativeMarkdownMatches(root, initialNativeValueReader(bound));
+    return renderToStaticMarkup(createElement(MarkdownBlocks, { text, nativeReadouts: liveReadouts }));
+  };
+  assert.equal(visible(amounts), '');
+  assert.match(visible(amounts.replace('USD', 'CAD')), /CAD 105\.40/);
+  assert.match(visible(amounts + '\nThe result excludes transaction fees.'), /transaction fees/);
+  assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, { text: amounts })), /USD 105\.40/);
+});
+
+test('inline Markdown preserves underscores inside identifiers', () => {
+  const prose = 'Every tenant-owned table carries tenant_id, membership lives in tenant_members, and métrique__totale is a column.';
+  assert.equal(render(prose), prose);
+  assert.equal(render('_membership_ and __role__ with `tenant_id`'),
+    '<em>membership</em> and <strong>role</strong> with <code class="iui-code">tenant_id</code>');
+});
+
+test('cited Markdown keeps long cells legible and never displays citation HTML', () => {
+  const text = [
+    'A finding <sup>[2]</sup>. To show the literal tag use \x60<sup>[2]</sup>\x60.',
+    '',
+    '| Rule | Practical test | Source |',
+    '| --- | --- | --- |',
+    '| Verification | Walk through the full process with keyboard input and record how each part behaves. | <sup>[2]</sup> |',
+  ].join('\n');
+  const renderCitation = (number: number) => 'Source ' + number;
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, { text, renderCitation }));
+  assert.match(html, /A finding Source 2/);
+  assert.match(html, /<code[^>]*>&lt;sup&gt;\[2\]&lt;\/sup&gt;<\/code>/);
+  assert.match(html, /data-answer-table-long-text=""[^>]*>Walk through/);
+  assert.match(html, /<td>Source 2<\/td>/);
+  assert.equal((html.match(/&lt;sup&gt;/g) ?? []).length, 1);
+  assert.equal((html.match(/data-answer-table-long-text=/g) ?? []).length, 1);
+});
+
+test('partial answer collapse preserves the cited table and distinct data', () => {
+  const cited = '| Method | Return type | Contents |\n| --- | --- | --- |\n| Path.read_text() | str | The decoded text [4][9] |\n| Path.read_bytes() | bytes | The raw binary content [4][9] |';
+  const projected = '| Method | Return type | Contents |\n|---|---|---|\n| Path.read_text() | str | Decoded text |\n| Path.read_bytes() | bytes | Raw binary content |';
+  const content = [cited, projected, projected.replace('bytes | Raw', 'int | Raw')].join('\n\n');
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, { text: content, deduplicateTables: true, renderCitation: number => 'Citation ' + number }));
+  assert.equal((html.match(/<table/g) ?? []).length, 2);
+  assert.match(html, /Citation 4Citation 9/);
+  assert.match(html, />int<\/td>/);
+
+  const keys = preservedMarkdownTableKeys(content);
+  const headings = ['Method', 'Return type', 'Contents'];
+  const rows = [['Path.read_text()', 'str', 'Decoded text'], ['Path.read_bytes()', 'bytes', 'Raw binary content']];
+  assert.ok(keys.has(tableContentKey(headings, rows)!));
+  assert.ok(!keys.has(tableContentKey(headings, [...rows].reverse())!));
+  assert.equal(tableContentKey(headings, [[...rows[0].slice(0, 2), { type: 'element' }]]), undefined);
+});
+
+test('a cited Markdown table inherits sorting only from a matching visible native table', () => {
+  const cited = '| Window | Duration [2] |\n| --- | --- |\n| North | 195.0 [1] |\n| East | 50 [1] |\n| West | 230 [1] |\n| South | 0 [1] |';
+  const columns = ['Window', 'Duration'];
+  const rows = [['North', 195], ['East', 50], ['West', 230], ['South', 0]];
+  const table = { type: 'element', typeName: 'Table', props: { columns, rows } };
+  const text = '## Service windows\n\n' + cited + '\n\nCheck local time before scheduling.';
+  const renderCitation = (number: number) => createElement('a', { href: 'https://example.org/source-' + number }, 'Source ' + number);
+  const program = bindNativeAnswerText('root = Col([Markdown(_xroga_answer), Table(' +
+    JSON.stringify(columns) + ', ' + JSON.stringify(rows) + ')])', text);
+  const accepted = validateNativeOpenUi(program, new Set(['source-1', 'source-2']), text);
+  assert.equal(accepted.ok, true, JSON.stringify(accepted));
+  const root = createParser(catalog.schema as LibraryJSONSchema, 'Col').parse(program).root;
+  const matches = nativeMarkdownMatches(root, initialNativeValueReader(program));
+  const html = renderToStaticMarkup(createElement(NativeVisualContent.Provider, { value: matches },
+    createElement(MarkdownBlocks, { text, renderCitation })));
+  assert.equal(html.match(/<table/g)?.length, 1);
+  assert.match(html, /Service windows.*<table.*Check local time/);
+  assert.match(html, /<th[^>]+class="is-numeric"[^>]*>Duration <a href="https:\/\/example.org\/source-2">Source 2<\/a> <button[^>]+aria-label="Sort by Duration">Sort<\/button>/);
+  assert.match(html, /195\.0 <a href="https:\/\/example.org\/source-1">Source 1<\/a>/);
+  assert.doesNotMatch(html, /<button[^>]*>[^<]*<a/);
+  assert.ok(preservedMarkdownTableKeys(text).has(tableContentKey(columns, rows)!));
+  const hidden = { type: 'element', typeName: 'Tabs', props: { children: [table] } };
+  for (const node of [undefined, hidden, { ...table, hasDynamicProps: true }, { ...table, partial: true }]) {
+    const plain = renderToStaticMarkup(createElement(MarkdownBlocks, { text, renderCitation, matches: nativeMarkdownMatches(node) }));
+    assert.doesNotMatch(plain, /<button/);
+    assert.match(plain, /<a href="https:\/\/example.org\/source-1">Source 1<\/a>/);
+  }
+});
+
+test('numeric table sorting ignores citation labels and retains row identity', () => {
+  const rows = [['North', '195.0 [3]'], ['East', '50 [2]'], ['West', '`230` [1]'], ['South', '0 [4]'], ['Unknown', 'n/a [1]']];
+  assert.deepEqual(sortAnswerTableRows(rows, 1, false, true), [3, 1, 0, 2, 4]);
+  assert.deepEqual(sortAnswerTableRows(rows, 1, true, true), [2, 0, 1, 3, 4]);
+});
+
+test('inline answer keeps additional prose and requested code but strips presentation fences', () => {
+  const element = (typeName: string, props: Record<string, unknown>) => ({ type: 'element', typeName, props });
+  const matches = nativeMarkdownMatches(element('Col', {
+    children: [element('Text', { text: 'An exact summary.' }), element('Text', { text: ['A cited fact. ', element('Source', { id: 'source-1' })] }), element('Code', { code: 'return 25 * 40;' })],
+  }));
+  const fence = String.fromCharCode(96).repeat(3);
+  const text = ['An exact summary.', 'Fees are excluded.', 'A cited fact [1].', 'Another cited fact [1].',
+    fence + 'openui\nroot = Col([Text("INTERNAL")])\n' + fence,
+    fence + 'js\nreturn 25 * 40;\n' + fence,
+    '~~~python\nprint(25 * 40)\n~~~', 'The complete estimate follows.'].join('\n\n');
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, { text, matches }));
+  assert.match(html, /Fees are excluded/);
+  assert.match(html, /<code class="language-python">print\(25 \* 40\)<\/code>/);
+  assert.match(html, /The complete estimate follows/);
+  assert.match(html, /Another cited fact/);
+  assert.doesNotMatch(html, /An exact summary|>A cited fact|INTERNAL|return 25 \* 40|root = Col/);
+});
+
+test('public answer text keeps ordinary code and withholds private streamed syntax', () => {
+  const fence = String.fromCharCode(96).repeat(3);
+  const code = fence + 'python\nroot = Node()\n' + fence;
+  assert.equal(publicAnswerText(code), code);
+  assert.equal(publicAnswerText(code + '\n<<<XROGA_OPENUI_V1>>>\nroot = Col([])'), code);
+  assert.equal(publicAnswerText('Answer ready.\n<<<XROGA_OPENUI', true), 'Answer ready.');
+  assert.equal(publicAnswerText('Answer ready.\nroot = Row([Text("private")])'), 'Answer ready.');
+  assert.equal(publicAnswerText(JSON.stringify({ format: 'xroga-openui-v1', text: 'Readable result.', program: 'root = Col([])' })), 'Readable result.');
+});
+
+test('a hidden study-card face never suppresses the main answer', () => {
+  const text = 'A study card explains this later.';
+  const matches = nativeMarkdownMatches({
+    type: 'element', typeName: 'Flashcard',
+    props: { back: [{ type: 'element', typeName: 'Text', props: { text } }] },
+  });
+  assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, { text, matches })), /A study card explains this later/);
+});
+
+test('a visible diagram suppresses its exact projected title and description while preserving distinct prose and the readable fallback', () => {
+  const title = 'Lead intake';
+  const description = 'Incomplete applications return to intake after the missing details arrive.';
+  const text = [title, description, 'If the lead does not respond, archive the case.', description + ' [1]'].join('\n\n');
+  const matches = nativeMarkdownMatches({ type: 'element', typeName: 'Diagram', props: {
+    title, description,
+    nodes: [{ id: 'intake', label: 'Intake' }, { id: 'missing', label: 'Missing details' }],
+    links: [{ from: 'missing', to: 'intake' }],
+  } });
+
+  const rich = renderToStaticMarkup(createElement(MarkdownBlocks, { text, matches, renderCitation: number => 'Source ' + number }));
+  assert.doesNotMatch(rich, /Lead intake|arrive\.<\/p>/);
+  assert.match(rich, /archive the case/);
+  assert.match(rich, /arrive\. Source 1/);
+
+  const fallback = renderToStaticMarkup(createElement(MarkdownBlocks, { text }));
+  assert.match(fallback, /Lead intake/);
+  assert.match(fallback, /arrive\.<\/p>/);
+});
+
+test('a visible chart and checklist collapse only their exact readable duplicates', () => {
+  const element = (typeName: string, props: Record<string, unknown>) => ({ type: 'element', typeName, props });
+  const chart = element('Chart', {
+    type: 'donut', data: [{ category: 'Fit', count: 50 }, { category: 'Other', count: 20 }], x: 'category', series: ['count'], currency: null,
+  });
+  const checks = element('Section', { title: 'Publishing', children: [
+    element('Checkbox', { label: 'Test links', checked: false }), element('Checkbox', { label: 'Proofread', checked: true }),
+  ] });
+  const matches = nativeMarkdownMatches(element('Col', { children: [chart, checks] }));
+  const duplicate = '| category | count |\n| --- | --- |\n| Fit | 50 |\n| Other | 20 |';
+  const extended = '| category | count | Share |\n| --- | --- | --- |\n| Fit | 50 | 71% |\n| Other | 20 | 29% |';
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text: [duplicate, extended, '**Publishing**\n- [ ] Test links\n- [x] Proofread', '- Test links [1]\n- Proofread'].join('\n\n'),
+    renderCitation: number => 'Source ' + number, matches,
+  }));
+  assert.equal((html.match(/<table/g) ?? []).length, 1);
+  assert.equal((html.match(/<ul>/g) ?? []).length, 1);
+  assert.match(html, /71%/);
+  assert.match(html, /Source 1/);
+  const visibleCards = nativeMarkdownMatches(element('Carousel', { children: [chart, checks] }));
+  assert.doesNotMatch(renderToStaticMarkup(createElement(MarkdownBlocks, { text: duplicate, matches: visibleCards })), /<table\b/);
+});
+
+test('inline alternatives and native lists remove exact duplicates without dropping distinct or cited content', () => {
+  const element = (typeName: string, props: Record<string, unknown>) => ({ type: 'element', typeName, props });
+  const matches = nativeMarkdownMatches(element('Col', { children: [
+    element('Tabs', { label: 'Choosing an approach', tabs: [
+      { title: 'Server', content: [element('Text', { text: 'Authorize every query.' })] },
+      { title: 'Client', content: [element('Text', { text: 'Keep tokens private.' })] },
+    ] }),
+    element('List', { items: [element('ListItem', { title: 'Server Actions', description: 'Validate inputs.' }), 'Review permissions.'] }),
+  ] }));
+  const text = ['Choosing an approach', '### Server', 'Authorize every query.', '### Client', 'Keep tokens private.',
+    '- Server Actions: Validate inputs.\n- Review permissions.\n- Retain this distinct caveat.\n- Server Actions: Validate inputs. [1]',
+    '1. Review permissions.\n2. Continue in this order.'].join('\n\n');
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, { text, matches, renderCitation: () => 'Verified source' }));
+  assert.doesNotMatch(html, /Choosing an approach|Authorize every query|Keep tokens private/);
+  assert.equal((html.match(/Server Actions/g) ?? []).length, 1);
+  assert.match(html, /Retain this distinct caveat|Verified source/);
+  assert.match(html, /<ol/);
+  assert.match(html, /Continue in this order/);
+});
+
+test('draft fallback retains separated addresses and checklist details without repeating visible controls', () => {
+  const element = (typeName: string, props: Record<string, unknown>) => ({ type: 'element', typeName, props });
+  const matches = nativeMarkdownMatches(element('Col', { children: [
+    element('Row', { children: [element('Badge', { text: 'Venue unconfirmed' })] }),
+    element('Section', { title: 'Before sending', children: [
+      element('Col', { children: [
+        element('Checkbox', { label: 'Confirm the date' }),
+        element('Checkbox', { label: 'Confirm the location' }),
+      ] }),
+    ] }),
+  ] }));
+  const text = [
+    '> Hello,\n>\n> **Venue:** [Venue name]\n> City: [City]\n>\n> Regards,\n> [Name]',
+    'Venue unconfirmed', '- Confirm the date', '- Confirm the location',
+    '- Confirm the date [1]', '- Preserve this unique action',
+  ].join('\n\n');
+  const projected = renderToStaticMarkup(createElement(MarkdownBlocks, { text, matches, renderCitation: () => 'Verified source' }));
+  assert.match(projected, /<p>Hello,<\/p><p><strong>Venue:<\/strong> \[Venue name\]\nCity: \[City\]<\/p><p>Regards,\n\[Name\]<\/p>/);
+  assert.doesNotMatch(projected, /Venue unconfirmed|Confirm the location/);
+  assert.match(projected, /Confirm the date Verified source/);
+  assert.match(projected, /Preserve this unique action/);
+  const fallback = renderToStaticMarkup(createElement(MarkdownBlocks, { text }));
+  assert.match(fallback, /Venue unconfirmed/);
+  assert.match(fallback, /Confirm the location/);
+});
+
+test('opening numerical headings preserve the sign while ignoring typography', () => {
+  const title = { type: 'element', typeName: 'Title', props: { text: 'Cash flows: -$800, $0 and +$500' } };
+  const { headingTitles } = nativeMarkdownMatches(title);
+  const render = (heading: string) => renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text: '## ' + heading + '\n\nThe first flow is an outlay.',
+    nativeHeadingTitles: headingTitles,
+  }));
+  assert.doesNotMatch(render('Cash flows: −$800, $0, +$500'), /role="heading"/);
+  assert.match(render('Cash flows: +$800, $0, +$500'), /role="heading"/);
+  assert.match(render('Cash flows: −$800, $0, +$500 [1]'), /role="heading"/);
+});
+
+test('Markdown tables preserve literal pipes and all columns', () => {
+  const text = '| Expression | Expected |\n| --- | --- |\n| `number | null` | Use A \\| B |';
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, { text }));
+  assert.equal((html.match(/<td>/g) ?? []).length, 2);
+  assert.match(html, /<code class="iui-code">number \| null<\/code>/);
+  assert.match(html, /<td>Use A \| B<\/td>/);
+});
+
+test('Markdown block order preserves quotes, list continuations, fenced table literals and verified links', () => {
+  const url = 'https://example.com/reference';
+  const table = '| Document | Link |\n| --- | --- |\n| Existing | [1](' + url + ') |';
+  const text = ['> Keep this quote.', '', '- Inspect the item.', '  Confirm the tag.', '', '~~~markdown', table, '~~~', '', '## Verified reference', table].join('\n');
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text, renderCitation: (number, href) => number === 1 && href === url ? createElement('a', { href }, 'Source') : null,
+  }));
+  assert.match(html, /<blockquote[^>]*><p>Keep this quote\.<\/p><\/blockquote>/);
+  assert.match(html, /<ul><li>Inspect the item\. Confirm the tag\.<\/li><\/ul>/);
+  assert.equal((html.match(/<table\b/g) ?? []).length, 1);
+  assert.match(html, /<th scope="col">Document<\/th>/);
+  assert.match(html, /href="https:\/\/example.com\/reference"[^>]*>Source<\/a>/);
+});
+
+test('native table sections replace empty repeated headings while unique content and cited tables remain', () => {
+  const title = 'Manual versus automated';
+  const table = '| Stage | Owner |\n| --- | --- |\n| Intake | Coordinator |';
+  const nativeTable = { type: 'element', typeName: 'Table', props: { columns: ['Stage', 'Owner'], rows: [['Intake', 'Coordinator']] } };
+  const markdown = { type: 'element', typeName: 'Markdown', props: { text: '## ' + title + '\n\n' + table } };
+  const section = { type: 'element', typeName: 'Section', props: { title, children: [nativeTable] } };
+  const matches = nativeMarkdownMatches([markdown, section]);
+  const render = (text: string) => renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text, nativeTables: matches.tables, nativeSectionTables: matches.sectionTables,
+  }));
+
+  assert.doesNotMatch(render(markdown.props.text), /Manual versus automated|<table/);
+  assert.equal(matches.markdownSectionHeadings.size, 0);
+  assert.match(render(markdown.props.text + '\n\nManual approval remains required.'), /Manual versus automated.*Manual approval remains required/);
+  assert.match(render(markdown.props.text.replace('Coordinator |', 'Coordinator [1] |')), /Manual versus automated.*<table/);
+  assert.match(render(markdown.props.text.replace(title, 'Intake ownership')), /Intake ownership/);
+});
+
+test('a bound Markdown heading remains the heading for a supplemental native section', () => {
+  const text = [
+    '## Opening title', '', 'Use the handoff procedure.',
+    '', '## Closing checklist', '', 'Record who confirmed the handoff.',
+    '', '## References [1]', '', 'Consult the current guide.',
+  ].join('\n');
+  const program = bindNativeAnswerText([
+    'root = Col([Title("Opening title"), Markdown(_xroga_answer), checks, refs])',
+    'checks = Section("Closing checklist", [Checkbox($filed, "File the handoff record")])',
+    'refs = Section("References", [Text("Supporting notes")])',
+    '$filed = false',
+  ].join('\n'), text);
+  const root = createParser(catalog.schema as LibraryJSONSchema, 'Col').parse(program).root;
+  const matches = nativeMarkdownMatches(root, initialNativeValueReader(program));
+  assert.deepEqual([...matches.markdownSectionHeadings], ['Closing checklist', 'References [1]']);
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text, nativeHeadingTitles: matches.headingTitles, renderCitation: () => 'Verified source',
+  }));
+  assert.doesNotMatch(html, /Opening title/);
+  assert.match(html, /Closing checklist<\/div><p>Record who confirmed the handoff\.<\/p>/);
+  assert.match(html, /References Verified source/);
+  assert.match(renderToStaticMarkup(createElement(MarkdownBlocks, { text })), /Opening title/);
+});
+
+test('bound Markdown retains the checklist heading and only hides an exact matching state and label sequence', () => {
+  const heading = '## Closing checks\n\nBefore handing over, check the equipment and records.\n\n';
+  const list = '- [ ] Turn off the tools.\n- [x] Record the handoff.';
+  const program = bindNativeAnswerText([
+    'root = Col([Markdown(_xroga_answer), checks])',
+    'checks = Section("Closing checks", [Controls([Checkbox($tools, "Turn off the tools."), Checkbox($handoff, "Record the handoff.")], "Close the shop")])',
+    '$tools = false',
+    '$handoff = true',
+  ].join('\n'), heading + list);
+  const root = createParser(catalog.schema as LibraryJSONSchema, 'Col').parse(program).root;
+  const matches = nativeMarkdownMatches(root, initialNativeValueReader(program));
+  const render = (value: string, native = true, opening = heading) => renderToStaticMarkup(createElement(MarkdownBlocks, {
+    text: opening + value,
+    nativeChecklists: native ? matches.checklists : undefined,
+    renderCitation: () => 'Verified source',
+  }));
+
+  const replaced = render(list);
+  assert.match(replaced, /Closing checks<\/div>/);
+  assert.match(replaced, /Before handing over, check the equipment and records/);
+  assert.doesNotMatch(replaced, /<ul>|Turn off|Record the handoff/);
+  assert.match(render(list, false), /Turn off the tools.*Record the handoff/);
+  assert.match(render(list, true, '## Closing checks\n\n'), /Closing checks.*Turn off the tools.*Record the handoff/);
+  assert.match(render(list.replace('[x]', '[ ]')), /Turn off the tools.*Record the handoff/);
+  assert.match(render(list.split('\n').reverse().join('\n')), /Record the handoff.*Turn off the tools/);
+  assert.match(render(list + '\n- [ ] Lock the door.'), /Turn off the tools.*Lock the door/);
+  assert.match(render(list.replace('tools.', 'tools. [1]')), /Turn off the tools.*Verified source/);
+  assert.match(render(list.replace('the handoff.', '[the handoff](https://example.com).')), /<ul>.*Turn off the tools.*Record the handoff/);
+});
+
+test('state-dependent Markdown cannot suppress a native heading', () => {
+  const program = [
+    'root = Col([Markdown($open ? "## Checklist" : "Hidden"), Section("Checklist", [Text("Review the items")])])',
+    '$open = true',
+  ].join('\n');
+  const root = createParser(catalog.schema as LibraryJSONSchema, 'Col').parse(program).root;
+  const matches = nativeMarkdownMatches(root, initialNativeValueReader(program));
+  assert.ok(matches.documents.has('## Checklist'));
+  assert.equal(matches.markdownSectionHeadings.size, 0);
+});

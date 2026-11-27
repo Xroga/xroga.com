@@ -3,7 +3,7 @@ import { test, expect, type Page } from '@playwright/test';
 async function chooseStarter(page: Page, feature: string) {
   const input = page.locator('[data-terminal-composer]');
   const previous = await input.inputValue();
-  await page.getByRole('menuitem', { name: feature, exact: true }).hover();
+  await page.getByRole('menuitem', { name: feature, exact: true }).click();
   const detail = page.getByRole('region', { name: `${feature} action`, exact: true });
   await expect(detail).toBeVisible();
   await detail.getByRole('button', { name: 'Use this in chat' }).click();
@@ -36,6 +36,71 @@ test.beforeEach(async ({ page, baseURL }) => {
   }));
 });
 
+test('answer citations and table rows remain directly readable on desktop and mobile', async ({ page }, testInfo) => {
+  const source = 'https://support.google.com/google-ads/answer/7478529';
+  const response = [
+    `Workspace fixture. See [Google Ads Help](${source}).`,
+    '',
+    '| Match type | Reach |',
+    '| --- | --- |',
+    ...Array.from({ length: 26 }, (_, index) => `| Example ${index + 1} | Reach ${index + 1} |`),
+  ].join('\n');
+  await page.route('**/api/guest/chat', route => {
+    const headers = { 'access-control-allow-origin': '*', 'access-control-allow-methods': 'POST, OPTIONS', 'access-control-allow-headers': 'content-type, accept' };
+    return route.request().method() === 'OPTIONS'
+      ? route.fulfill({ status: 204, headers })
+      : route.fulfill({ headers, json: { response, guestSessionId: 'inline-answer-table-fixture', guest: { limit: 10, remaining: 9, resetAt: '2099-01-01T00:00:00Z' } } });
+  });
+  await page.goto('/workspace');
+  await page.locator('[data-terminal-composer]').fill('Compare keyword match types in this fixture.');
+  await page.getByRole('button', { name: 'Send prompt', exact: true }).click();
+  const citation = page.getByRole('link', { name: 'Open link: Google Ads Help' });
+  await expect(citation).toHaveAttribute('href', source + '?utm_source=xroga.com', { timeout: 30_000 });
+  const table = page.locator('[data-inline-answer-table] table');
+  await expect(table.getByRole('cell', { name: 'Reach 26', exact: true })).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByRole('button', { name: 'Next page' })).toHaveCount(0);
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    expect(await table.evaluate(el => {
+      const scroll = el.parentElement!;
+      return scroll.scrollWidth <= scroll.clientWidth + 1;
+    })).toBe(true);
+    await citation.scrollIntoViewIfNeeded();
+    await page.screenshot({ path: testInfo.outputPath(`inline-answer-${width}.png`) });
+  }
+  await citation.focus();
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Shift+Tab');
+  await expect(citation).toBeFocused();
+  await expect(page.getByRole('tooltip').getByText('Google Ads Help', { exact: true })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('tooltip')).toHaveCount(0);
+});
+
+test('large answer tables keep wrapped rows reachable in a bounded mobile viewport', async ({ page }) => {
+  const response = [
+    '| Item | Details |',
+    '| --- | --- |',
+    ...Array.from({ length: 110 }, (_, index) =>
+      `| Item ${index + 1} | ${index % 2 ? 'A longer description that wraps on narrow screens.' : 'Brief detail.'} |`),
+  ].join('\n');
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.route('**/api/guest/chat', route => route.fulfill({
+    headers: { 'access-control-allow-origin': '*' },
+    json: { response, guestSessionId: 'virtual-table-fixture', guest: { limit: 10, remaining: 9, resetAt: '2099-01-01T00:00:00Z' } },
+  }));
+  await page.goto('/workspace');
+  await page.locator('[data-terminal-composer]').fill('Show the large fixture table.');
+  await page.getByRole('button', { name: 'Send prompt', exact: true }).click();
+  const region = page.getByRole('region', { name: /scroll area/ });
+  await expect(region.getByRole('cell', { name: 'Item 1', exact: true })).toBeVisible({ timeout: 30_000 });
+  await expect(region.getByRole('cell', { name: 'Item 110', exact: true })).toHaveCount(0);
+  expect(await region.evaluate(node => node.clientHeight)).toBeLessThanOrEqual(440);
+  await region.press('End');
+  await expect(region.getByRole('cell', { name: 'Item 110', exact: true })).toBeInViewport();
+  await expect(page.getByRole('button', { name: 'Download CSV', exact: true })).toBeVisible();
+});
+
 test('canonical public composers preserve the approved Plus controls without a second composer', async ({ page }) => {
   await page.goto('/workspace');
   const composer = page.locator('[data-terminal-composer]');
@@ -56,7 +121,7 @@ test('canonical public composers preserve the approved Plus controls without a s
   await expect(actions.locator('svg.lucide-plus')).toHaveCount(1);
   await expect(actions.locator('svg')).toHaveCount(1);
   await expect(page.locator('.xv-chatbar-solid').getByRole('button', { name: 'Projects', exact: true })).toBeVisible();
-  await expect(page.locator('.xv-chatbar-solid').getByRole('button', { name: 'Plugins', exact: true })).toBeVisible();
+  await expect(page.locator('.xv-chatbar-solid').getByRole('button', { name: 'Connect Apps', exact: true })).toBeVisible();
   await expect(composer).toHaveCount(1);
 });
 
@@ -125,6 +190,9 @@ test('private empty workspace never exposes starter cards or starter plus', asyn
   await page.goto('/workspace');
   await expect(page.locator('[data-terminal-composer]')).toHaveCount(1);
   await expect(page.locator('[data-terminal-composer]')).toHaveAttribute('placeholder', 'Type a private message…');
+  const header = page.getByTestId('terminal-identity-header');
+  await expect(header.getByText('Private · not saved', { exact: true })).toBeVisible();
+  await expect(page.locator('summary').filter({ hasText: 'Browser Automation' })).toHaveCount(0);
   await expect(page.getByTestId('workspace-start-header')).toHaveCount(0);
   await expect(page.getByTestId('workspace-start-cards')).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'More composer actions', exact: true })).toHaveCount(0);
@@ -281,9 +349,11 @@ test('feature menus open only on click, support keyboard and never send', async 
   await chooseStarter(page, 'Images');
   await expect(input).toHaveValue(/My goal: Create an image of:/);
   await page.locator('[data-capability="build"]').click();
-  // PR833 makes focus reveal the category detail. Both the detail action and
-  // Back remain keyboard reachable, with Escape dismissing the whole portal.
-  await page.getByRole('menuitem', { name: 'Apps', exact: true }).focus();
+  // Focus alone should leave the categories visible; Enter explicitly opens one.
+  const apps = page.getByRole('menuitem', { name: 'Apps', exact: true });
+  await apps.focus();
+  await expect(page.getByRole('region', { name: 'Apps action', exact: true })).toHaveCount(0);
+  await apps.press('Enter');
   await expect(page.getByRole('region', { name: 'Apps action', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Back to categories', exact: true }).focus();
   await page.keyboard.press('Enter');
@@ -326,28 +396,27 @@ test('automation panels rotate every four seconds and dots pause on a selected p
   await expect(page.getByRole('button', { name: 'Resume automation rotation' })).toBeVisible();
 });
 
-test('solid model and plus menus are monochrome and mobile preserves the readable model name', async ({ page }) => {
+test('solid model and plus menus follow the terminal palette and work on mobile', async ({ page }) => {
   await page.goto('/workspace');
   await expect(page.getByTestId('workspace-start-header')).toBeVisible();
-  await expect(page.locator('.xv-workspace-shell')).toHaveCSS('background-color', 'rgb(0, 0, 0)');
-  const model = page.getByRole('button', { name: 'Automatic model and tool routing', exact: true });
-  await expect(model.locator('span')).toBeVisible();
-  await expect(page.getByTestId('mobile-model-icon')).toBeHidden();
+  await expect(page.locator('.xv-workspace-shell')).toHaveCSS('background-color', 'rgb(11, 13, 18)');
+  const model = page.getByRole('button', { name: 'Black Hole model and usage', exact: true });
+  await expect(model).toBeVisible();
   await model.click();
   const panel = page.getByTestId('black-hole-model-panel');
   await expect(panel).toBeVisible();
   await expect(panel).toHaveCSS('backdrop-filter', 'none');
-  await expect(panel).toHaveCSS('background-color', 'rgb(22, 22, 22)');
+  const paletteSurface = await page.locator('.xv-terminal-dock').evaluate(el => getComputedStyle(el).getPropertyValue('--terminal-ui-raised').trim());
+  await expect.poll(() => panel.evaluate(el => getComputedStyle(el).getPropertyValue('--xv-popup-surface').trim())).toBe(paletteSurface);
   await page.keyboard.press('Escape');
   await page.getByRole('button', { name: 'More composer actions' }).click();
   await expect(page.getByRole('dialog', { name: 'Composer actions' })).toHaveCSS('filter', 'none');
   await page.keyboard.press('Escape');
   await page.setViewportSize({ width: 390, height: 844 });
-  // Approved PR833 explicitly keeps the readable name on mobile and hides the
-  // decorative substitute. Preserve routing access and both menu behaviors.
-  await expect(model.locator('span')).toBeVisible();
-  await expect(model.locator('span')).toHaveText('Black Hole V∞');
-  await expect(page.getByTestId('mobile-model-icon')).toBeHidden();
+  await expect(model).toBeVisible();
+  await model.click();
+  await expect(panel.getByText('Xroga · Black Hole', { exact: true })).toBeVisible();
+  await page.keyboard.press('Escape');
   await page.locator('[data-capability="create"]').click();
   await chooseStarter(page, 'Documents');
   await expect(page.locator('[data-terminal-composer]')).toHaveValue(/My goal: Draft a document about:/);
@@ -534,6 +603,41 @@ test('mobile tagline stays on one line and tool picks are editable, removable an
   expect(sends).toBe(0);
 });
 
+for (const viewport of [{ width: 320, height: 568 }, { width: 360, height: 640 }, { width: 390, height: 844 }, { width: 768, height: 1024 }, { width: 1440, height: 900 }]) {
+test(`the guest heading and capability cards remain reachable at ${viewport.width}px`, async ({ page }, testInfo) => {
+  await page.setViewportSize(viewport);
+  await page.goto('/workspace');
+  const heading = page.getByRole('heading', { name: 'Super Intelligence', exact: true });
+  await expect(heading).toBeInViewport();
+
+  const guidance = page.getByText(viewport.width < 640 ? 'Type or speak your language. Xroga does the work automatically.' : 'Type or speak in your native language, and the right tools handle the work automatically.', { exact: true });
+  await expect(guidance).toBeVisible({ timeout: 4_000 });
+  expect(await guidance.evaluate(element => {
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    const lines = Array.from(range.getClientRects());
+    const bounds = element.getBoundingClientRect();
+    return lines.length === 1 && lines[0].left >= bounds.left - 1 && lines[0].right <= bounds.right + 1;
+  })).toBe(true);
+
+  const descriptions = page.locator('[data-capability="create"] [class*="cardWords"] > span, [data-capability="find"] [class*="cardWords"] > span, [data-capability="build"] [class*="cardWords"] > span, [data-capability="ship"] [class*="cardWords"] > span');
+  await expect(descriptions).toHaveCount(4);
+  for (let index = 0; index < 4; index++) {
+    expect(Number.parseFloat(await descriptions.nth(index).evaluate(element => getComputedStyle(element).fontSize))).toBeLessThanOrEqual(12);
+  }
+
+  await page.screenshot({ path: testInfo.outputPath(`workspace-${viewport.width}-top.png`) });
+  await page.getByRole('button', { name: 'Show Work Packs', exact: true }).click();
+  const workPacks = page.locator('[data-capability="work-packs"]');
+  await workPacks.scrollIntoViewIfNeeded();
+  await expect(workPacks).toBeVisible();
+  const packsBox = await workPacks.boundingBox();
+  expect(packsBox!.y + packsBox!.height).toBeLessThanOrEqual(viewport.height);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: testInfo.outputPath(`workspace-${viewport.width}-cards.png`) });
+});
+}
+
 test('search dialog escapes workspace stacking context and has an opaque foreground', async ({ page }) => {
   await page.goto('/workspace');
   const search = page.getByRole('button', { name: 'Search workspace', exact: true });
@@ -551,7 +655,7 @@ test('automatic intro reveals its second line after delay without a model picker
   await page.clock.pauseAt(new Date(Date.now() + 1000));
   await page.goto('/workspace');
   const first = page.locator('[data-visible]').filter({ hasText: 'No models or tools to choose.' });
-  const detail = page.locator('[data-visible]').filter({ hasText: 'Type or speak your goal. Xroga chooses the right tools and handles the work.' });
+  const detail = page.locator('[data-visible]').filter({ hasText: 'Type or speak in your native language, and the right tools handle the work automatically.' });
   await expect(first).toHaveAttribute('data-visible', 'true');
   await expect(first).toHaveAttribute('aria-hidden', 'false');
   await expect(detail).toHaveAttribute('data-visible', 'false');

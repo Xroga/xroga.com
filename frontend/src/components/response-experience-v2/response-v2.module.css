@@ -127,10 +127,6 @@
 .result output { font-size:28px; line-height:1.2; font-weight:600; letter-spacing:-.03em; font-variant-numeric:tabular-nums; }
 .result output small { font-size:14px; font-weight:400; }
 .calculationNote { font-size:12px; line-height:1.6; color:var(--v2-muted); margin:16px 0 0; }
-.tabSection { padding:0; }
-.tabs { display:flex; overflow-x:auto; gap:4px; margin-block-end:20px; padding:4px; border:1px solid var(--v2-line); border-radius:12px; }
-.tabs button { flex:1 0 auto; font-size:14px; border:0; border-radius:8px; padding:8px 16px; color:var(--v2-muted); }
-.tabs button[aria-selected=true] { background:var(--v2-wash); color:var(--v2-ink); font-weight:600; }
 .metrics { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,10rem),1fr)); gap: 1.25rem; }
 .metrics dt { color: var(--v2-muted); font-size: .8rem; }.metrics dd { font-size: 1.35rem; font-weight: 600; margin: .25rem 0 0; font-variant-numeric: tabular-nums; }
 .graph { margin: 0; }.graph ol { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,12rem),1fr)); gap: .75rem; padding: 0; list-style: none; margin-block: 1rem; }
@@ -139,9 +135,7 @@
 .stepIndex { display:inline-flex; flex:none; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; background:var(--v2-wash); color:var(--v2-muted); font-size:11px; font-variant-numeric:tabular-nums; }
 .graph li p { color: var(--v2-muted); font-size: .875rem; margin-block-start: .4rem; }
 .graph ul { list-style: none; padding: 0; font-size: .875rem; margin-block-start:12px; }.graph ul li { display: flex; gap: .5rem; padding-block: .35rem; color:var(--v2-muted); }.graph small { display:block; width: 100%; }
-.sources,.source { margin-block-start: 32px; border-block-start: 1px solid var(--v2-line); padding-block-start:8px; }
-.canvas .citation { display:inline-flex; vertical-align:baseline; align-items:center; font-size:11px; line-height:1.4; padding:1px 5px; border-radius:5px; color:var(--v2-muted); background:var(--v2-wash); text-decoration:none; font-variant-numeric:tabular-nums; }
-.sources ul { list-style: none; padding: 0; }.sources li { display: flex; align-items:baseline; flex-wrap:wrap; gap: .75rem; margin-block: .8rem; font-size: .875rem; }.sources li>span { color: var(--v2-muted); }.sources li p { font-size: .8rem; color: var(--v2-muted); margin-block-start: .25rem; }
+.source { margin-block-start: 32px; border-block-start: 1px solid var(--v2-line); padding-block-start:8px; }
 .loading,.streaming { color: var(--v2-muted); font-size: .8rem; }.streaming { display: block; margin-block-start: 1rem; }
 .blockTitle { font-size: 1.125rem; font-weight: 650; margin-block: 0 .75rem; }
 .notice { border-inline-start: 2px solid var(--v2-line); padding-inline-start: 1rem; }.notice h3 { font-size: 1rem; font-weight: 600; }
@@ -158,8 +152,6 @@
 .inlineImage { display:block; margin-block:20px; max-width:100%; }
 .inlineImage img { display:block; max-width:100%; max-height:440px; width:auto; height:auto; object-fit:contain; border-radius:12px; background:var(--v2-wash); }
 .inlineImage>span { display:block; margin-block-start:8px; font-size:12px; color:var(--v2-muted); }
-.canvas .citation { gap:4px; font-size:12px; padding:2px 6px; max-width:100%; }
-.canvas .citation>span { overflow-wrap:anywhere; }
 @container (max-width:600px) { .controls {grid-template-columns:1fr;} .interactive {padding:18px;} .result {flex-wrap:wrap;} .canvas :where(th,td) {padding:10px 12px;} }
 .resources { display: grid; gap: 0; }
 .resource { padding: 1.25rem 0; border-bottom: 1px solid var(--v2-border, #8883); }
@@ -270,8 +262,6 @@
 .metrics > div[data-tone=negative] { border-color: color-mix(in srgb, #e5484d 38%, transparent); }
 
 /* The selected tab is a clear pill on any theme. */
-.tabs button[aria-selected=true] { background: color-mix(in srgb, var(--v2-ink) 16%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--v2-ink) 22%, transparent); }
-.tabs button:not([aria-selected=true]):hover { background: color-mix(in srgb, var(--v2-ink) 7%, transparent); color: var(--v2-ink); }
 .cardIcon { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 30px; height: 30px; border-radius: 9px; color: var(--accent, #6d5efc); background: color-mix(in srgb, var(--accent, #6d5efc) 12%, transparent); margin-right: 8px; }
 .cardHead { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .comparisonCard header>.cardHead { color: inherit; font-size: inherit; }

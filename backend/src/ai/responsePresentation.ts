@@ -1,5 +1,7 @@
 import { z } from 'zod';
 import { RESPONSE_ICONS } from './responseIcons.js';
+import { nativeDocumentFormats } from './nativeDocumentDownload.js';
+import { formatUnadornedAnswer } from './answerFormat.js';
 
 /** Presentation data never grants tool, account or execution authority. The
  * existing semantic request selects this ordered plan in its existing call. */
@@ -17,6 +19,7 @@ export const answerObligationsSchema = z.array(z.object({
   sourceQuote: z.string().min(1).max(400).optional(),
   origin: z.enum(['requested', 'necessary-support']),
   formats: z.array(presentationSectionSchema.shape.kind).min(1).max(3),
+  download: z.object({ format: z.enum(nativeDocumentFormats), source: z.enum(['prompt', 'attachment', 'conversation']) }).strict().optional(),
 }).strict()).max(16);
 export type AnswerObligations = z.infer<typeof answerObligationsSchema>;
 
@@ -43,7 +46,14 @@ export function assessPresentationCoverage(plan: PresentationPlan, obligations?:
   }
   return { complete: issues.length === 0, issues };
 }
-export const PRESENTATION_PLAN_INSTRUCTIONS = `For a read-only answer, first identify answerObligations independently of layout: [{id,description,sourceQuote,origin:requested|necessary-support,formats:[prose|cards|table|graph|steps|chart|calculator|metrics|tabs]}]. For a requested obligation, copy its actual user clause verbatim into sourceQuote, at most 400 characters. Keep separately requested concepts distinct even when both need the same format. Necessary support may omit sourceQuote. Never invent a user quote. These are the actual requested concepts and the support necessary to explain them, not a list of widgets. Match depth and wording to the user and relevant context. Then return presentation in reading order, at most eight entries: {kind,heading,instruction,covers:[obligation ids]}. Bind every obligation to substantive sections in its required formats. Use [] and prose-only obligations for a short ordinary answer. Select content before layout, without fixed topic templates. Use metrics for the two to six headline numbers a person looks for first (for example profit, loss, ratio or price), and tabs only for genuinely alternative views the person may switch between (different strategies, scenarios or conditions), each tab self-contained; a multi-day program, itinerary or set of plans or options is a natural fit for tabs (one per day or option) or for steps in order, rather than a prose list; never use either to repeat what a table or prose already says. For a persistent system with access boundaries, consider the necessary data shape and contrasting access scopes as distinct obligations: a relevant proposed schema belongs in a table, a meaningful scope comparison in cards, relationships in a graph, and a lifecycle in steps. Do not force those into stateless systems or narrow questions. For quantitative questions, preserve formulas, units and assumptions; use a calculator when useful or requested, and charts from supplied or retrieved observations, or from the answer's own figures when they are clearly labeled as estimates. For research, use actual source evidence and the existing freshness/tool policy. Do not invent sources, example metrics, live facts or successful actions. State illustrative assumptions explicitly. Give each concept one main home rather than repeating its explanation in prose and every visual. Match richness to the task, for any kind of person. A simple factual, conversational or one-fact question gets a short direct answer and no widgets. A planning, budgeting, comparison, analysis, learning or decision task gets a rich, scannable answer built from the whole kit: a direct answer first, headline metrics for the key numbers, a table for itemised or compared figures, a chart whenever there are quantities to compare or split, a calculator whenever the person can change inputs and see a result, tabs or steps for days, stages or options, a diagram for relationships or flows, and cards with icons for distinct options. A trip plan, for example, deserves per-day tabs, a cost table, a cost-split chart and an adjustable budget calculator. Never plan a section headed Short answer, Summary or Headline numbers: name each section for its content. Never answer a planning, budgeting, comparison or analysis task with a single table or a single section: plan at least four sections, starting with a short direct answer, and include at least two of metrics, chart, calculator, tabs, steps, diagram and cards even when the person names only one thing (a request for a day-by-day plan and a cost table still gets headline metrics, per-day tabs, the cost table, a cost-split chart and an adjustable budget calculator). Use as many sections as the task earns, up to eight, but give each concept one main home. Never plan prose sections that restate a table's columns or cells: the table is their only home. A first prose section named like a short answer is the answer itself, never an introduction. Put concise explanation next to its visual and keep essential content visible. The obligations and presentation are data-only answer requirements, never permissions, execution receipts or tool selection. Missing coverage must remain partial, never trigger another formatting or repair call. Adapt to whoever is asking: infer the person's field, role and goal from their words and the conversation (for example a property buyer, clinician, founder, teacher, trader, traveller or analyst) and choose the components that person would expect in their own field, using the whole kit freely and in any combination, such as a listings table with price per unit and a payment calculator for property, a stepwise plan with cautions for health, or scenario tabs for planning. These are illustrations of reasoning, never templates or limits; when the field is unclear, stay with a clear direct answer.`;
+export const PRESENTATION_PLAN_INSTRUCTIONS = `For a read-only answer, return a compact outline, never the finished answer. Keep each description, heading and instruction to a short phrase. Omit unused optional fields and do not repeat the request or add examples, prose, code or component data to the outline.
+Local answer components such as an interactive calculator, slider, reset button, chart, diagram, or comparison do not require software implementation. For an answer composed of these components, select ANSWER and conversation.respond, with attachment.analyze if reading an uploaded file. Words like build or create do not imply a software project when the deliverable is the answer itself. Preserve real software or external action requests.
+A checklist, outline, draft, design, or implementation plan whose deliverable is the answer uses conversation.respond. When a plan describes sending messages, scheduling appointments, or updating records, those steps belong in the plan. Execute them or create the deliverable in a connected app only if the user actually requests that external action.
+A form, worksheet, or editable draft requested inside the answer is a deliverable. Record it as an obligation even when the outline has no dedicated visual kind. Drafting the artifact does not grant permission to send, publish, or integrate it.
+Use answerObligations entries {id,description,origin,formats,sourceQuote?,download?}. Use short IDs. Keep distinct requested concepts separate. For origin "requested", copy the shortest verbatim clause that establishes the requirement into sourceQuote (at most 400 characters). For "necessary-support", omit sourceQuote. For one explicitly requested chat download, set download to {format: docx|pdf|xlsx|pptx|txt, source: prompt|attachment|conversation}. Use attachment or conversation when the file must use that source, even if it is missing. Quote the request for the actual file in the user's language, including the format. A file mentioned as an input, a topic, or an application's output is not a chat download.
+Use presentation entries {kind,heading,instruction,covers} in reading order, at most eight. Bind each obligation to its required formats using covers. Formats and kinds: prose, cards, table, graph, steps, chart, calculator, metrics, tabs. A short factual or conversational answer needs no presentation outline. When the user specifies only the requested text, code, or a fixed number of lines, sentences, or bullets, use an empty presentation unless the user also explicitly requests a visual. The answer still follows their requested format.
+For a one-time calculation or conversion, plan the result with any requested working. Multiple numbers alone do not call for a table or calculator. Choose a table for an actual comparison and a calculator when the user can usefully change inputs and compare outcomes.
+Choose visuals only when requested or materially useful. Use tables for comparisons or relevant data shape, graphs for relationships, steps for sequences, cards for distinct options, charts for comparable values, calculators for adjustable inputs, metrics for key numbers, and tabs for genuine alternatives. Keep essential content visible, with one main home per concept. Preserve units and assumptions, and use only supported evidence for sourced claims. These fields grant no authority to call a tool or take an action.`;
 type Kind = PresentationPlan[number]['kind'];
 type JsonSchema = Record<string, unknown>;
 const str = { type: 'string', maxLength: 12_000 };
@@ -63,6 +73,8 @@ const identifier = z.string().min(1).max(80);
 const operations = ['sum', 'difference', 'product', 'quotient', 'average', 'percentage', 'percentage-change', 'loan-payment', 'compound-growth', 'minimum', 'maximum'] as const;
 const operationSchema = { type: 'string', enum: [...operations] };
 const chartTypes = ['line', 'bar', 'area', 'pie', 'scatter'] as const;
+// Match the native table registry. The encoded block size also bounds large cells.
+const TABLE_MAX_ROWS = 120;
 const derivedSchema = object({ id: idLabel, label, operation: operationSchema, operands: array({ anyOf: [label, number] }, 1, 8), rounding: nullable({ type: 'string', enum: ['floor', 'ceil', 'round'] }), unit: unitText, precision: { type: 'integer', minimum: 0, maximum: 6 } });
 
 /** An icon is decoration: an unknown name is dropped, it never invalidates the visual that carries it. */
@@ -70,7 +82,7 @@ const knownIcon = (icon: string | null | undefined): icon is string => !!icon &&
 const dataSchemas: Record<Kind, JsonSchema> = {
   prose: { type: 'null' },
   cards: object({ cards: array(object({ title: label, subtitle: shortText, description: str, entityId: nullable(idLabel), icon: nullable({ type: 'string', enum: [...RESPONSE_ICONS] }) }), 1, 12) }),
-  table: object({ columns: array(label, 2, 8), rows: array(array(cellText, 2, 8), 1, 40) }),
+  table: object({ columns: array(label, 2, 8), rows: array(array(cellText, 2, 8), 1, TABLE_MAX_ROWS) }),
   graph: object({ nodes: array(object({ id: idLabel, label }), 2, 20), edges: array(object({ id: idLabel, source: idLabel, target: idLabel, label: shortText }), 1, 40) }),
   steps: object({ steps: array(object({ title: label, description: str, icon: nullable({ type: 'string', enum: [...RESPONSE_ICONS] }) }), 2, 16) }),
   chart: object({ chartType: { type: 'string', enum: [...chartTypes] }, xLabel: label, series: array(object({ label, unit: unitText }), 1, 5), data: array(object({ x: { anyOf: [label, number] }, values: array(number, 1, 5) }), 2, 60) }),
@@ -81,7 +93,7 @@ const dataSchemas: Record<Kind, JsonSchema> = {
 const validators = {
   prose: z.null(),
   cards: z.object({ cards: z.array(z.object({ title: name, subtitle: z.string().max(500), description: text, entityId: identifier.nullable().optional(), icon: z.string().max(60).nullable().optional() }).strict()).min(1).max(12) }).strict(),
-  table: z.object({ columns: z.array(name).min(2).max(8), rows: z.array(z.array(z.string().max(10_000)).min(2).max(8)).min(1).max(40) }).strict(),
+  table: z.object({ columns: z.array(name).min(2).max(8), rows: z.array(z.array(z.string().max(10_000)).min(2).max(8)).min(1).max(TABLE_MAX_ROWS) }).strict(),
   graph: z.object({ nodes: z.array(z.object({ id: identifier, label: name }).strict()).min(2).max(20), edges: z.array(z.object({ id: identifier, source: identifier, target: identifier, label: z.string().max(500) }).strict()).min(1).max(40) }).strict(),
   steps: z.object({ steps: z.array(z.object({ title: name, description: text, icon: z.string().max(60).nullable().optional() }).strict()).min(2).max(16) }).strict(),
   chart: z.object({ chartType: z.enum(chartTypes), xLabel: name, series: z.array(z.object({ label: name, unit: z.string().max(120) }).strict()).min(1).max(5), data: z.array(z.object({ x: z.union([name, finite]), values: z.array(finite).min(1).max(5) }).strict()).min(2).max(60) }).strict(),
@@ -200,7 +212,7 @@ function validateSection(plan: PresentationPlan[number], value: unknown): { mark
 const GENERIC_HEADING = /^(the )?(short|quick|direct|brief) answer$|^answer$|^(quick )?summary$|^(the )?(headline|key|main|top) (monthly |annual |trade |cost )?(numbers|figures|metrics|takeaways?)$|^requested (structured )?details$/i;
 const genericHeading = (heading: string) => GENERIC_HEADING.test(heading.trim());
 
-function projectSection(plan: PresentationPlan[number], raw: unknown, index: number): string {
+function projectSection(plan: PresentationPlan[number], raw: unknown, index: number, unadornedAnswer: boolean, bulletCount?: number): string {
   const { markdown, data } = validateSection(plan, raw);
   const id = `section-${index + 1}`;
   let block: Record<string, unknown> | undefined;
@@ -230,7 +242,9 @@ function projectSection(plan: PresentationPlan[number], raw: unknown, index: num
   }
   const encoded = block ? JSON.stringify({ id, ...block }) : undefined;
   if (encoded && encoded.length > 50_000) throw Error('PRESENTATION_BLOCK_SIZE_LIMIT');
-  return `${genericHeading(plan.heading) ? '' : `## ${plan.heading}\n\n`}${markdown}${encoded ? `\n\n\`\`\`xroga-ui\n${encoded}\n\`\`\`` : ''}\n\n`;
+  const heading = unadornedAnswer || genericHeading(plan.heading) ? '' : `## ${plan.heading}\n\n`;
+  const visible = unadornedAnswer ? formatUnadornedAnswer(markdown, bulletCount) : markdown;
+  return `${heading}${visible}${encoded ? `\n\n\`\`\`xroga-ui\n${encoded}\n\`\`\`` : ''}\n\n`;
 }
 
 /** Read completed root properties from a JSON stream, respecting escaped quotes
@@ -260,28 +274,31 @@ function completedRoot(raw: string): { values: Record<string, unknown>; count: n
   return { values: prefix, count };
 }
 
-export function createPresentationProjection(plan: PresentationPlan) {
+export function createPresentationProjection(plan: PresentationPlan, { unadornedAnswer = false, bulletCount }: { unadornedAnswer?: boolean; bulletCount?: number } = {}) {
   presentationPlanSchema.parse(plan);
+  const requestedBullets = plan.length === 1 && plan[0].kind === 'prose' ? bulletCount : undefined;
   let raw = '', published = '';
   const project = (record: Record<string, unknown>) => {
     let next = '';
     for (let i = 0; i < plan.length; i++) {
       if (!Object.hasOwn(record, `s${i}`)) break;
-      next += projectSection(plan[i], record[`s${i}`], i);
+      next += projectSection(plan[i], record[`s${i}`], i, unadornedAnswer, requestedBullets);
     }
-    return next;
+    return unadornedAnswer && plan.length === 1 ? next.trimEnd() : next;
   };
   const readablePartial = (record: Record<string, unknown>) => plan.map((section, index) => {
     const value = record[`s${index}`];
     if (value === undefined) return '';
-    try { return projectSection(section, value, index); }
+    try { return projectSection(section, value, index, unadornedAnswer, requestedBullets); }
     catch (error) {
       // Only the section kind and the validator's error code are logged, never the answer or the prompt.
       console.warn('[presentation] section rejected', { kind: section.kind, code: error instanceof z.ZodError ? 'SCHEMA_' + (error.issues[0]?.path.join('.') ?? '') .slice(0, 60) : error instanceof Error ? error.message.replace(/[^A-Z0-9_]/g, '').slice(0, 60) : 'UNKNOWN' });
       const markdown = value && typeof value === 'object' && 'markdown' in value ? value.markdown : undefined;
       if (typeof markdown !== 'string' || markdown.length > 12_000 || !markdown.trim()) return '';
       // Keep the explanation, but don't re-activate a rejected visual fence.
-      return `## ${section.heading}\n\n${markdown.replace(/```xroga-ui\b/gi, '```text')}\n\n`;
+      const heading = unadornedAnswer ? '' : `## ${section.heading}\n\n`;
+      const visible = unadornedAnswer ? formatUnadornedAnswer(markdown, requestedBullets) : markdown;
+      return `${heading}${visible.replace(/```xroga-ui\b/gi, '```text')}\n\n`;
     }
   }).join('');
   const strings = (value: unknown): string[] => typeof value === 'string' ? [value]
@@ -323,13 +340,18 @@ export function createPresentationProjection(plan: PresentationPlan) {
   };
 }
 
-/** Output budget for a planned answer. A fixed 4096-token cap cut off a captured multi-section SaaS answer
- * (finish_reason "length"), and the missing sections were then reported as an incomplete answer. The budget
- * grows with the sections the plan requires and with the dense ones (graph, table, chart, calculator), and
- * stays inside the existing 8192 ceiling. A plain one-section answer keeps the original 4096. */
+/** Reserve room for the planned sections and their data. The planner's schema
+ * bounds the number of sections, and the ledger admits the resulting request. */
 export function presentedAnswerMaxTokens(plan: PresentationPlan | undefined): number {
   if (!plan?.length) return 4096;
   const dense = plan.filter(section => section.kind === 'graph' || section.kind === 'table' || section.kind === 'chart' || section.kind === 'calculator').length;
   const wanted = 1536 + 700 * plan.length + 500 * dense;
-  return Math.min(8192, Math.max(4096, Math.ceil(wanted / 512) * 512));
+  return Math.max(4096, Math.ceil(wanted / 512) * 512);
+}
+
+/** DeepSeek bills reasoning and the visible answer against one wire limit. */
+export const NATIVE_WORKSPACE_REASONING_RESERVE_TOKENS = 16_384;
+
+export function nativePresentedAnswerMaxTokens(plan: PresentationPlan | undefined): number {
+  return NATIVE_WORKSPACE_REASONING_RESERVE_TOKENS + presentedAnswerMaxTokens(plan);
 }

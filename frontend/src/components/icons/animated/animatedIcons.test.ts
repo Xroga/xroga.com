@@ -338,7 +338,8 @@ test('the merged Personalization settings tab wears the palette', () => {
  */
 test('the workspace launcher opens Project edits, with a pen', () => {
   assert.match(LAUNCHER, /icon=\{FilePenIcon\}/, 'the launcher lost the pen');
-  assert.match(LAUNCHER, /<span>Project edits<\/span>/, 'the launcher label was not renamed');
+  assert.match(LAUNCHER, /aria-label=\{workspaceOpen \? 'Close project edits' : 'Open project edits'\}/, 'the editing action lost its accessible name');
+  assert.doesNotMatch(LAUNCHER, /<span>Project edits<\/span>/, 'the compact editing action should show its icon only');
   assert.ok(!/<span>Workspace<\/span>/.test(LAUNCHER), 'the launcher still says Workspace');
   assert.ok(
     !/PanelRightClose|PanelRightOpen/.test(LAUNCHER),

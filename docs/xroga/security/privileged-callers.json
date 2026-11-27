@@ -1,35 +1,35 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "cd6136f8d43ac7f9fdc068e146d7c235ec30a3704aa63dcce988407f2448972d",
+  "reviewRegistrySha256": "a6e4cd2ff03da2a58ea46ecdee1ee7c63267ac2bd5d5d27b511c0f628a7e72a4",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 230,
-    "persistenceCandidates": 1015,
-    "ownerPredicateCandidates": 264,
-    "reviewRequired": 185,
-    "reviewedCandidates": 830,
-    "unresolvedSafetyCandidates": 226,
+    "privilegedFactorySites": 233,
+    "persistenceCandidates": 1040,
+    "ownerPredicateCandidates": 277,
+    "reviewRequired": 182,
+    "reviewedCandidates": 858,
+    "unresolvedSafetyCandidates": 232,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 185,
-    "SCOPED_BOUNDARY": 533,
+    "REVIEW_REQUIRED": 182,
+    "SCOPED_BOUNDARY": 547,
     "NARROW_EXCEPTION": 52,
-    "NOT_PERSISTENCE": 204,
-    "REVIEWED_GAP": 41
+    "NOT_PERSISTENCE": 209,
+    "REVIEWED_GAP": 50
   },
   "acceptance": {
     "version": 1,
     "result": "BLOCKED",
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
-    "verifiedCandidateBoundaries": 80,
-    "unresolvedCandidateBoundaries": 935,
+    "verifiedCandidateBoundaries": 78,
+    "unresolvedCandidateBoundaries": 962,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -1560,6 +1560,18 @@
       },
       {
         "code": "STALE_CALLER_BINDING",
+        "id": "OB-797d0149b7f511eb"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-797d0149b7f511eb"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-797d0149b7f511eb"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
         "id": "OB-5c2f93d299fae321"
       },
       {
@@ -1617,6 +1629,18 @@
       {
         "code": "STALE_NON_PERSISTENCE_REVIEW",
         "id": "OB-154dee0c03517ddb"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-e342cc899b4e9464"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-e342cc899b4e9464"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-e342cc899b4e9464"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -1759,6 +1783,86 @@
         "id": "OB-079a87ae5cea7b51"
       },
       {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-a9ca981ff1d04bab"
+      },
+      {
         "code": "OPEN_EVIDENCE_GAP",
         "id": "OB-a9ca981ff1d04bab"
       },
@@ -1825,6 +1929,22 @@
       {
         "code": "OPEN_EVIDENCE_GAP",
         "id": "OB-8df15cca7cda10a6"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-86fddcd964290b98"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-86fddcd964290b98"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-86fddcd964290b98"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-86fddcd964290b98"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -3716,15 +3836,19 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "097f3b056977288927ab"
+        "id": "d937b1aa189d5483adad"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a014c3fc158d8544965e"
+        "id": "c376d98ecbfc71d8162f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6dad3dd6bb66b6180fa5"
+        "id": "3285e905ea4ed30d80e9"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "6e8a63b59e7b39a8416b"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3776,19 +3900,19 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "18bd459313ae6dbebaab"
+        "id": "69b83cc17815965b1253"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "14acbd3141fc7fc1aedc"
+        "id": "282537c07bfc406ac7e1"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6b064445c855504350b1"
+        "id": "5b7a284a3ac0e14709a3"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "2560cf2908b41e1b590f"
+        "id": "484368aaf4fffe73b282"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3812,15 +3936,15 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "91afe59da48d41fdec1b"
+        "id": "7de431277f4a0e0788a1"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "4431005001a8d288051f"
+        "id": "d2d4eae547457550a374"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ce02ccc6a928e44634de"
+        "id": "1250e6c6c67f7c3829a9"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3952,6 +4076,10 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "fba0d462427f8d10b40b"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "d7ef2b5739bb17d1c3bb"
       },
       {
@@ -3976,7 +4104,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "187abb36370526699b39"
+        "id": "bd2778a2cc0d479d0b04"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4772,31 +4900,99 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "c9a009f6baa9e3a3bbad"
+        "id": "8818c8c645ed42bdfcbd"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "000d28d21ea7dba70f24"
+        "id": "fa1aab99a735dd6afc1d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "db7f2c7b53d05936f3da"
+        "id": "7428c9a89d68c23b5ba1"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ea4d7ecf3043636a2883"
+        "id": "f7eea7c47f4cea00af8d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "2f60349dbbab02755103"
+        "id": "c0f7d9498ea3443e4221"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "c4dcd4d97035ff02f08f"
+        "id": "087a268e5f0ee8649cdc"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "fa04b8d8f9413c194ec5"
+        "id": "1e389b2b8a0cf1525b07"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "359cfba790c54b88250c"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "b1f8356c782b4d851d58"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "4cf1a1e8ccf9dfe563ec"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "e92ef4114ace634a21d8"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "451e5e119fb05d5ddb8f"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "4f9439afecb04c3595a7"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "4052599c36bb1a154183"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "9dd5e0d47e2b5fcbd7ed"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "0173fa66f148bf107c9c"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "5756010c7ca215102e1e"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "cc8a37cdf238cf59a99a"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "6687ae47bab37c501d74"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "2fed6ca9cd27f6992d02"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "75ba31f14c658b6995a8"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "1a27090c7a9708d480e8"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "b010f789ba8fcc1a6231"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "ff119993d08c76a18c1b"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4836,11 +5032,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "43f74a68b16673a66b2a"
+        "id": "07a57216d12e3fdb2f58"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "344cb37df2ca54037032"
+        "id": "869dd9bc27f666f2782e"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5004,6 +5200,18 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "7b3e5212487df9eb990e"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "4579524e754c9ee2fcbc"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "7f4f5ca6f9ae391042fc"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "df7eec626e3acd881448"
       },
       {
@@ -5061,6 +5269,10 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "b4a46938a0dec4c5f10c"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "ce127410029f6ea8de3c"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5172,35 +5384,35 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "b88dd13e0daf779fa46a"
+        "id": "b1c0d6b8e195f79b0330"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "67959ecf1ff6fc257e6f"
+        "id": "a0df0a93fb894e4e6fed"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ac976dbfb349604d66e3"
+        "id": "e8e8323b4ccba5a6dc16"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "46d9f0cedc1b160d74e8"
+        "id": "10e8b35ebde560e0928a"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "95698557e18360a7bcbe"
+        "id": "779aaa3d9eb539380552"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "49078188c6f905c229fb"
+        "id": "74b84794b1baeefba2e3"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "b3ebba2a9308a727ea3d"
+        "id": "fec5554e7fbf7cee0110"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "8e71a7bc7c370ef4bfac"
+        "id": "120f3c9583f4a977d816"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5572,7 +5784,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ad1e9c1616482d93e008"
+        "id": "3089acca6fa163c13c73"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5821,6 +6033,14 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "011226346256904a9409"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "0af8d7bbc823a95227af"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "2e83fbad1f1940ca3770"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6344,6 +6564,10 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "08422679562345dadd12"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "d4c73673998a3db5e517"
       },
       {
@@ -6352,7 +6576,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d9642208258b6b210b66"
+        "id": "0b45ceb87eaba1f8e1e0"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6376,7 +6600,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "37347768912b9e614cea"
+        "id": "ed5669121537ca504798"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6388,23 +6612,39 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a291f26c3c5001de01f9"
+        "id": "9b5825294bbdeabe6b85"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "f8d5eaf0193282882763"
+        "id": "1410a770303a0c8eb8f3"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6797a49e98ecf2091511"
+        "id": "aee44d92598bab6a5376"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "4fbfd0293636c69d00b0"
+        "id": "e7271a1e21312c75b908"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6742326272b0d9f8d2df"
+        "id": "dd1d78ed7de602caed33"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "044500473a0fa5b1f775"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "1f43d019e4642a62314a"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "c1f57b8225d79c77eef9"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "d46198ffaba4be6f765f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6412,19 +6652,19 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "4fe92c7afdea034fa58b"
+        "id": "590dbb7d21550effa467"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "dd508fe9836928e3970f"
-      },
-      {
-        "code": "MISSING_CALLER_REVIEW",
-        "id": "6a5f707e725aad757a40"
+        "id": "2aa4104e88385814af87"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "8e9b157c7d4fd26ad135"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "e4cf22a404b1ba954649"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6440,75 +6680,75 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ee548d3cf583cfcbdd91"
+        "id": "b3ad106e971b2d324707"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ddc1e732f1738562a7d8"
+        "id": "d611351cb4430c1f7755"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "bd0cc046439923e989ba"
+        "id": "0743ae28756bf5310e7e"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "acc8432821b9b5b26c10"
+        "id": "dadf7a230b3f9a28b790"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d93b375d98daf8c8146e"
+        "id": "8cd1403d84e0add9911d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "1435d5679d9cfc68eda8"
+        "id": "ea37c0d6dae47edcea79"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "c86a835c30be0bcf1251"
+        "id": "6b27200f9f128b123f15"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "1b5ad169706fb2285a23"
+        "id": "87c71cabcdec8938fafd"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "c51d95ae33aa4d5dae44"
+        "id": "ba2c766fc88f5cf799ab"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "7de702fbc2b7b261b051"
+        "id": "9c51456d8b54db3a797a"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "02bb0163278413bfc4d4"
+        "id": "2fe7d6185df0d5da8fac"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "c16200354fe78e5df55b"
+        "id": "a87d571c0816bf6f485e"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "db4a5917ca14f418b42b"
+        "id": "15381d9f908267a47734"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "2d4d10ceeaf02fe42f70"
+        "id": "1e36d1014c0261f853dc"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "50a0f49e57786f999e73"
+        "id": "54bdc8896efa58ffef15"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "eebad1f4e73b01bd9e5d"
+        "id": "c3c90fe76d5abf1a3cf7"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "27942300e7daaadc06fe"
+        "id": "3dfd497409a274a2b4a3"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "19a37b099336607193eb"
+        "id": "1d3e01a9bd429bf29ed5"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6521,6 +6761,42 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "3a7aa1dbe9ba47ad2c75"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "15456514e184bf2ec9b1"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "ef91dadc671180de0753"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "78594aff6685b1775779"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "1bec00ffd4c81abae866"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "7731405329a3307fa1e7"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "4ba9b08128aed200300b"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "6efc8c7854afaf321175"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "2954a7eb5e4108bc34a7"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "8df86e806ff4832e56ab"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -6544,7 +6820,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "91afe59da48d41fdec1b"
+        "id": "7de431277f4a0e0788a1"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -6580,7 +6856,11 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "187abb36370526699b39"
+        "id": "fba0d462427f8d10b40b"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "bd2778a2cc0d479d0b04"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -6680,18 +6960,6 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "c5afc3e57e785ef3ef3b"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "87ed7df95645a68cdb05"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "ca5e36bcc97ba13a6ccd"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "3a0a65d6d673a33eaf05"
       },
       {
@@ -6704,10 +6972,6 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "7238c5d4e187fa4f3c07"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "4f2f153a1fb4a19064d8"
       },
       {
@@ -6717,6 +6981,34 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "566c55f77cb71b2aa47b"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "1e389b2b8a0cf1525b07"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "451e5e119fb05d5ddb8f"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "4f9439afecb04c3595a7"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "4052599c36bb1a154183"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "9dd5e0d47e2b5fcbd7ed"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "0173fa66f148bf107c9c"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "5756010c7ca215102e1e"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -6756,11 +7048,11 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "43f74a68b16673a66b2a"
+        "id": "07a57216d12e3fdb2f58"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "344cb37df2ca54037032"
+        "id": "869dd9bc27f666f2782e"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -6792,35 +7084,15 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "df7eec626e3acd881448"
+        "id": "7b3e5212487df9eb990e"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "287e2fe0dabebc523a36"
+        "id": "4579524e754c9ee2fcbc"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "3a763a5523dac73c10d4"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "46aca4c01b2d3d90acad"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "85b1d7461e8691468225"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "545cee9f47055ec5d761"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "7231d508555849d87d32"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "8609662e7417659e88ca"
+        "id": "7f4f5ca6f9ae391042fc"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -6832,23 +7104,11 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "319518470d46e4577f12"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "2714b6af44879d208f97"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "a1b9e751df5bc764909d"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "7435325dc6f8734b9505"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "b4a46938a0dec4c5f10c"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "ce127410029f6ea8de3c"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -6960,43 +7220,35 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "b88dd13e0daf779fa46a"
+        "id": "b1c0d6b8e195f79b0330"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "67959ecf1ff6fc257e6f"
+        "id": "a0df0a93fb894e4e6fed"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "ac976dbfb349604d66e3"
+        "id": "e8e8323b4ccba5a6dc16"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "46d9f0cedc1b160d74e8"
+        "id": "10e8b35ebde560e0928a"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "95698557e18360a7bcbe"
+        "id": "779aaa3d9eb539380552"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "49078188c6f905c229fb"
+        "id": "74b84794b1baeefba2e3"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "b3ebba2a9308a727ea3d"
+        "id": "fec5554e7fbf7cee0110"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "8e71a7bc7c370ef4bfac"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "d8979ec278e78beb6550"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "751d4198266ba218c7ab"
+        "id": "120f3c9583f4a977d816"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7056,7 +7308,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "ad1e9c1616482d93e008"
+        "id": "3089acca6fa163c13c73"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7288,6 +7540,10 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "08422679562345dadd12"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "d4c73673998a3db5e517"
       },
       {
@@ -7296,7 +7552,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "d9642208258b6b210b66"
+        "id": "0b45ceb87eaba1f8e1e0"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7320,15 +7576,31 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "6797a49e98ecf2091511"
+        "id": "aee44d92598bab6a5376"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "4fbfd0293636c69d00b0"
+        "id": "e7271a1e21312c75b908"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "6742326272b0d9f8d2df"
+        "id": "dd1d78ed7de602caed33"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "044500473a0fa5b1f775"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "1f43d019e4642a62314a"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "c1f57b8225d79c77eef9"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "d46198ffaba4be6f765f"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7336,11 +7608,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "4fe92c7afdea034fa58b"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "6a5f707e725aad757a40"
+        "id": "2aa4104e88385814af87"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7352,71 +7620,71 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "ddc1e732f1738562a7d8"
+        "id": "d611351cb4430c1f7755"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "bd0cc046439923e989ba"
+        "id": "0743ae28756bf5310e7e"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "acc8432821b9b5b26c10"
+        "id": "dadf7a230b3f9a28b790"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "d93b375d98daf8c8146e"
+        "id": "8cd1403d84e0add9911d"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "1435d5679d9cfc68eda8"
+        "id": "ea37c0d6dae47edcea79"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "c86a835c30be0bcf1251"
+        "id": "6b27200f9f128b123f15"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "1b5ad169706fb2285a23"
+        "id": "87c71cabcdec8938fafd"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "c51d95ae33aa4d5dae44"
+        "id": "ba2c766fc88f5cf799ab"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "7de702fbc2b7b261b051"
+        "id": "9c51456d8b54db3a797a"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "02bb0163278413bfc4d4"
+        "id": "2fe7d6185df0d5da8fac"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "c16200354fe78e5df55b"
+        "id": "a87d571c0816bf6f485e"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "db4a5917ca14f418b42b"
+        "id": "15381d9f908267a47734"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "2d4d10ceeaf02fe42f70"
+        "id": "1e36d1014c0261f853dc"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "50a0f49e57786f999e73"
+        "id": "54bdc8896efa58ffef15"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "eebad1f4e73b01bd9e5d"
+        "id": "c3c90fe76d5abf1a3cf7"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "27942300e7daaadc06fe"
+        "id": "3dfd497409a274a2b4a3"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "19a37b099336607193eb"
+        "id": "1d3e01a9bd429bf29ed5"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7427,16 +7695,52 @@
         "id": "3a7aa1dbe9ba47ad2c75"
       },
       {
-        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "097f3b056977288927ab"
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "15456514e184bf2ec9b1"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "ef91dadc671180de0753"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "78594aff6685b1775779"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "1bec00ffd4c81abae866"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "7731405329a3307fa1e7"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "4ba9b08128aed200300b"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "6efc8c7854afaf321175"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "2954a7eb5e4108bc34a7"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "a014c3fc158d8544965e"
+        "id": "d937b1aa189d5483adad"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "6dad3dd6bb66b6180fa5"
+        "id": "c376d98ecbfc71d8162f"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "3285e905ea4ed30d80e9"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "6e8a63b59e7b39a8416b"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -7532,27 +7836,27 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "18bd459313ae6dbebaab"
+        "id": "69b83cc17815965b1253"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "14acbd3141fc7fc1aedc"
+        "id": "282537c07bfc406ac7e1"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "6b064445c855504350b1"
+        "id": "5b7a284a3ac0e14709a3"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "2560cf2908b41e1b590f"
+        "id": "484368aaf4fffe73b282"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "4431005001a8d288051f"
+        "id": "d2d4eae547457550a374"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "ce02ccc6a928e44634de"
+        "id": "1250e6c6c67f7c3829a9"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -8696,6 +9000,18 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "c5afc3e57e785ef3ef3b"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "87ed7df95645a68cdb05"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "ca5e36bcc97ba13a6ccd"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "2a2b04bfcdf9721a6f51"
       },
       {
@@ -8736,67 +9052,71 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "c9a009f6baa9e3a3bbad"
+        "id": "7238c5d4e187fa4f3c07"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "000d28d21ea7dba70f24"
+        "id": "8818c8c645ed42bdfcbd"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "db7f2c7b53d05936f3da"
+        "id": "fa1aab99a735dd6afc1d"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "ea4d7ecf3043636a2883"
+        "id": "7428c9a89d68c23b5ba1"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "2f60349dbbab02755103"
+        "id": "f7eea7c47f4cea00af8d"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "c4dcd4d97035ff02f08f"
+        "id": "c0f7d9498ea3443e4221"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "95aca8562235b1b02997"
+        "id": "087a268e5f0ee8649cdc"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "cc2c2522f42d6ac8d5bd"
+        "id": "359cfba790c54b88250c"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "96f82d20ad4bfc5af43e"
+        "id": "b1f8356c782b4d851d58"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "faa4cebd0c15a1b5d69c"
+        "id": "4cf1a1e8ccf9dfe563ec"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "5233e1547ffa2fd23fd6"
+        "id": "e92ef4114ace634a21d8"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "8f55ff924d59067efc48"
+        "id": "cc8a37cdf238cf59a99a"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "83827643069e9005dce3"
+        "id": "6687ae47bab37c501d74"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "b1d953653483a66af3d9"
+        "id": "2fed6ca9cd27f6992d02"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "add984aaad8b65bdbdfa"
+        "id": "75ba31f14c658b6995a8"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "f0601134e3c2080d41f3"
+        "id": "1a27090c7a9708d480e8"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "b010f789ba8fcc1a6231"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -8808,7 +9128,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "fa04b8d8f9413c194ec5"
+        "id": "ff119993d08c76a18c1b"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -9113,6 +9433,62 @@
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "b9522b3f509a2215c4b8"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "df7eec626e3acd881448"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "287e2fe0dabebc523a36"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "3a763a5523dac73c10d4"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "46aca4c01b2d3d90acad"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "85b1d7461e8691468225"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "545cee9f47055ec5d761"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "7231d508555849d87d32"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "8609662e7417659e88ca"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "319518470d46e4577f12"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "2714b6af44879d208f97"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "a1b9e751df5bc764909d"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "7435325dc6f8734b9505"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "d8979ec278e78beb6550"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "751d4198266ba218c7ab"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -9712,11 +10088,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "988c4217a8b8b781b43c"
+        "id": "0af8d7bbc823a95227af"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "30281b1cf819bb604048"
+        "id": "2e83fbad1f1940ca3770"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10220,7 +10596,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "37347768912b9e614cea"
+        "id": "ed5669121537ca504798"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10228,15 +10604,15 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "a291f26c3c5001de01f9"
+        "id": "9b5825294bbdeabe6b85"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "f8d5eaf0193282882763"
+        "id": "1410a770303a0c8eb8f3"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "dd508fe9836928e3970f"
+        "id": "590dbb7d21550effa467"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10248,11 +10624,15 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "e4cf22a404b1ba954649"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "a68e53a94294615ebff8"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "ee548d3cf583cfcbdd91"
+        "id": "b3ad106e971b2d324707"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10261,42 +10641,25 @@
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "19bac69e5470fee649fa"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "8df86e806ff4832e56ab"
       }
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 1015,
-    "structuredVerified": 80,
-    "structuredUnproven": 935,
-    "manualUnresolved": 226,
-    "manualUnsupported": 709,
-    "agreedVerified": 80,
+    "currentCallers": 1040,
+    "structuredVerified": 78,
+    "structuredUnproven": 962,
+    "manualUnresolved": 232,
+    "manualUnsupported": 730,
+    "agreedVerified": 78,
     "proofAwaitingManualReconciliation": 0
   },
   "callers": [
     {
-      "id": "097f3b056977288927ab",
-      "path": "backend/src/ai/attachments.ts",
-      "line": 103,
-      "enclosing": "fetchAsBuffer",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "NOT_PERSISTENCE",
-      "sourceSha256": "b1c7911aa41d59bfcc1e57f6925a4c705548787cdb81aba14100e78fe5432f45",
-      "semanticReview": {
-        "authority": "Re-traced all listed expressions to the native unshadowed Buffer.from implementation. Each performs local stream, body snapshot, data-URL or DOCX byte conversion. None is a database, storage bucket or service-role receiver.",
-        "reason": "Current-source conversion-only review. The removed Buffer.from(ab) is preserved with the exact original review in PROVENANCE-REPAIR.json. Network effects, ownership, approval, data classification and complete Command010 acceptance remain separate open obligations.",
-        "evidence": [
-          {
-            "path": "backend/src/ai/attachments.ts",
-            "marker": "if (/;base64/i.test(meta)) return Buffer.from(data, 'base64');"
-          }
-        ]
-      }
-    },
-    {
-      "id": "a014c3fc158d8544965e",
+      "id": "d937b1aa189d5483adad",
       "path": "backend/src/ai/attachments.ts",
       "line": 104,
       "enclosing": "fetchAsBuffer",
@@ -10304,7 +10667,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "b1c7911aa41d59bfcc1e57f6925a4c705548787cdb81aba14100e78fe5432f45",
+      "sourceSha256": "1ef2126f5419e5a1b68c153efaa9a15b30f7e1d20d1211f2c1714517bfe0fb9a",
       "semanticReview": {
         "authority": "Re-traced all listed expressions to the native unshadowed Buffer.from implementation. Each performs local stream, body snapshot, data-URL or DOCX byte conversion. None is a database, storage bucket or service-role receiver.",
         "reason": "Current-source conversion-only review. The removed Buffer.from(ab) is preserved with the exact original review in PROVENANCE-REPAIR.json. Network effects, ownership, approval, data classification and complete Command010 acceptance remain separate open obligations.",
@@ -10317,15 +10680,15 @@
       }
     },
     {
-      "id": "6dad3dd6bb66b6180fa5",
+      "id": "c376d98ecbfc71d8162f",
       "path": "backend/src/ai/attachments.ts",
-      "line": 154,
-      "enclosing": "extractDocxText",
+      "line": 105,
+      "enclosing": "fetchAsBuffer",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "b1c7911aa41d59bfcc1e57f6925a4c705548787cdb81aba14100e78fe5432f45",
+      "sourceSha256": "1ef2126f5419e5a1b68c153efaa9a15b30f7e1d20d1211f2c1714517bfe0fb9a",
       "semanticReview": {
         "authority": "Re-traced all listed expressions to the native unshadowed Buffer.from implementation. Each performs local stream, body snapshot, data-URL or DOCX byte conversion. None is a database, storage bucket or service-role receiver.",
         "reason": "Current-source conversion-only review. The removed Buffer.from(ab) is preserved with the exact original review in PROVENANCE-REPAIR.json. Network effects, ownership, approval, data classification and complete Command010 acceptance remain separate open obligations.",
@@ -10333,6 +10696,52 @@
           {
             "path": "backend/src/ai/attachments.ts",
             "marker": "if (/;base64/i.test(meta)) return Buffer.from(data, 'base64');"
+          }
+        ]
+      }
+    },
+    {
+      "id": "3285e905ea4ed30d80e9",
+      "path": "backend/src/ai/attachments.ts",
+      "line": 155,
+      "enclosing": "extractDocxText",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "1ef2126f5419e5a1b68c153efaa9a15b30f7e1d20d1211f2c1714517bfe0fb9a",
+      "semanticReview": {
+        "authority": "Re-traced all listed expressions to the native unshadowed Buffer.from implementation. Each performs local stream, body snapshot, data-URL or DOCX byte conversion. None is a database, storage bucket or service-role receiver.",
+        "reason": "Current-source conversion-only review. The removed Buffer.from(ab) is preserved with the exact original review in PROVENANCE-REPAIR.json. Network effects, ownership, approval, data classification and complete Command010 acceptance remain separate open obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/attachments.ts",
+            "marker": "if (/;base64/i.test(meta)) return Buffer.from(data, 'base64');"
+          }
+        ]
+      }
+    },
+    {
+      "id": "6e8a63b59e7b39a8416b",
+      "path": "backend/src/ai/attachments.ts",
+      "line": 267,
+      "enclosing": "utf8Prefix",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "1ef2126f5419e5a1b68c153efaa9a15b30f7e1d20d1211f2c1714517bfe0fb9a",
+      "semanticReview": {
+        "authority": "This exact built-in Buffer.from call converts the already extracted attachment text to an in-memory UTF-8 byte buffer. It has no storage, network or privileged client",
+        "reason": "The source scanner detects any from method. utf8Prefix bounds the local bytes without splitting a UTF-8 character, then returns the decoded prefix",
+        "evidence": [
+          {
+            "path": "backend/src/ai/attachments.ts",
+            "marker": "const bytes = Buffer.from(text)"
+          },
+          {
+            "path": "backend/src/ai/attachments.test.ts",
+            "marker": "marks limited document evidence without splitting a UTF-8 character"
           }
         ]
       }
@@ -10926,15 +11335,15 @@
       }
     },
     {
-      "id": "18bd459313ae6dbebaab",
+      "id": "69b83cc17815965b1253",
       "path": "backend/src/ai/parallelApproval.ts",
-      "line": 85,
+      "line": 157,
       "enclosing": "executeParallelNativeAction",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "3ae113999caad00037882cbe3f1cc72a7536a13b53e74403bf849dbda77cfeca",
+      "sourceSha256": "df2d93e2135f15fca2fca57a59aa2194f8ae9ade9e4c04b4f402365a9b82ab31",
       "semanticReview": {
         "authority": "The original context comes only from the canonical native permit. Exact user_id predicates scope the executing grant and current run/worker generation. Grant, owner, immutable digest, expiry and effect receipt are rechecked before and after provider waits and immediately after DNS before any public connection.",
         "reason": "Actual canonical confirmation/vault positive and negative synthetic protocol tests pass. This factory and its two scoped reads do not certify new Phase2 or whole-source live database acceptance. No new user-context issuer or accounting ledger is introduced.",
@@ -10951,15 +11360,15 @@
       }
     },
     {
-      "id": "14acbd3141fc7fc1aedc",
+      "id": "282537c07bfc406ac7e1",
       "path": "backend/src/ai/parallelApproval.ts",
-      "line": 85,
+      "line": 157,
       "enclosing": "executeParallelNativeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "3ae113999caad00037882cbe3f1cc72a7536a13b53e74403bf849dbda77cfeca",
+      "sourceSha256": "df2d93e2135f15fca2fca57a59aa2194f8ae9ade9e4c04b4f402365a9b82ab31",
       "semanticReview": {
         "authority": "The original context comes only from the canonical native permit. Exact user_id predicates scope the executing grant and current run/worker generation. Grant, owner, immutable digest, expiry and effect receipt are rechecked before and after provider waits and immediately after DNS before any public connection.",
         "reason": "Actual canonical confirmation/vault positive and negative synthetic protocol tests pass. This factory and its two scoped reads do not certify new Phase2 or whole-source live database acceptance. No new user-context issuer or accounting ledger is introduced.",
@@ -10976,15 +11385,15 @@
       }
     },
     {
-      "id": "6b064445c855504350b1",
+      "id": "5b7a284a3ac0e14709a3",
       "path": "backend/src/ai/parallelApproval.ts",
-      "line": 88,
+      "line": 160,
       "enclosing": "executeParallelNativeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "3ae113999caad00037882cbe3f1cc72a7536a13b53e74403bf849dbda77cfeca",
+      "sourceSha256": "df2d93e2135f15fca2fca57a59aa2194f8ae9ade9e4c04b4f402365a9b82ab31",
       "semanticReview": {
         "authority": "The original context comes only from the canonical native permit. Exact user_id predicates scope the executing grant and current run/worker generation. Grant, owner, immutable digest, expiry and effect receipt are rechecked before and after provider waits and immediately after DNS before any public connection.",
         "reason": "Actual canonical confirmation/vault positive and negative synthetic protocol tests pass. This factory and its two scoped reads do not certify new Phase2 or whole-source live database acceptance. No new user-context issuer or accounting ledger is introduced.",
@@ -11001,15 +11410,15 @@
       }
     },
     {
-      "id": "2560cf2908b41e1b590f",
+      "id": "484368aaf4fffe73b282",
       "path": "backend/src/ai/parallelApproval.ts",
-      "line": 112,
+      "line": 184,
       "enclosing": "executeParallelNativeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "3ae113999caad00037882cbe3f1cc72a7536a13b53e74403bf849dbda77cfeca",
+      "sourceSha256": "df2d93e2135f15fca2fca57a59aa2194f8ae9ade9e4c04b4f402365a9b82ab31",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in executeParallelNativeAction. This specific call uses the built-in Uint8Array.from conversion of already fetched public document bytes for the PDF parser, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Public egress, document size and parsing limits, resource authority and downstream actions retain their separate security obligations.",
@@ -11030,7 +11439,7 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ac3f222a927506239ccb3a51c40ccc5acee7329ea117c36c8654d0a6b8cdb15a",
+      "sourceSha256": "bdd54a8e208498d3d488584591ab15f57fd3ac316deb6949a2056fc38353e889",
       "semanticReview": {
         "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
         "reason": "Focused actual SDK/REST-transport fixtures pass actor clone/foreign owner, cancelled/replaced generation, reservation/receipt denial, secret canaries, pending accounting and normal authorized provider recovery. Current-source real disposable SQL and full source-bound CI are still required. Upstream query provenance, externally fetched URL redirect/DNS behavior and the separate xAI path remain unresolved. This honest reviewed gap still blocks security acceptance.",
@@ -11042,6 +11451,10 @@
           {
             "path": "backend/src/ai/parallelWeb.security.test.ts",
             "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement"
+          },
+          {
+            "path": "backend/src/ai/parallelWeb.security.test.ts",
+            "marker": "empty DeepSeek results settle zero while preserving the request receipt and dispatch count"
           }
         ]
       }
@@ -11055,7 +11468,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ac3f222a927506239ccb3a51c40ccc5acee7329ea117c36c8654d0a6b8cdb15a",
+      "sourceSha256": "bdd54a8e208498d3d488584591ab15f57fd3ac316deb6949a2056fc38353e889",
       "semanticReview": {
         "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
         "reason": "Focused actual SDK/REST-transport fixtures pass actor clone/foreign owner, cancelled/replaced generation, reservation/receipt denial, secret canaries, pending accounting and normal authorized provider recovery. Current-source real disposable SQL and full source-bound CI are still required. Upstream query provenance, externally fetched URL redirect/DNS behavior and the separate xAI path remain unresolved. This honest reviewed gap still blocks security acceptance.",
@@ -11067,6 +11480,10 @@
           {
             "path": "backend/src/ai/parallelWeb.security.test.ts",
             "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement"
+          },
+          {
+            "path": "backend/src/ai/parallelWeb.security.test.ts",
+            "marker": "empty DeepSeek results settle zero while preserving the request receipt and dispatch count"
           }
         ]
       }
@@ -11080,7 +11497,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ac3f222a927506239ccb3a51c40ccc5acee7329ea117c36c8654d0a6b8cdb15a",
+      "sourceSha256": "bdd54a8e208498d3d488584591ab15f57fd3ac316deb6949a2056fc38353e889",
       "semanticReview": {
         "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
         "reason": "Focused actual SDK/REST-transport fixtures pass actor clone/foreign owner, cancelled/replaced generation, reservation/receipt denial, secret canaries, pending accounting and normal authorized provider recovery. Current-source real disposable SQL and full source-bound CI are still required. Upstream query provenance, externally fetched URL redirect/DNS behavior and the separate xAI path remain unresolved. This honest reviewed gap still blocks security acceptance.",
@@ -11092,6 +11509,10 @@
           {
             "path": "backend/src/ai/parallelWeb.security.test.ts",
             "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement"
+          },
+          {
+            "path": "backend/src/ai/parallelWeb.security.test.ts",
+            "marker": "empty DeepSeek results settle zero while preserving the request receipt and dispatch count"
           }
         ]
       }
@@ -11105,7 +11526,7 @@
       "target": "reserve_xroga_provider_budget",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ac3f222a927506239ccb3a51c40ccc5acee7329ea117c36c8654d0a6b8cdb15a",
+      "sourceSha256": "bdd54a8e208498d3d488584591ab15f57fd3ac316deb6949a2056fc38353e889",
       "semanticReview": {
         "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
         "reason": "Focused actual SDK/REST-transport fixtures pass actor clone/foreign owner, cancelled/replaced generation, reservation/receipt denial, secret canaries, pending accounting and normal authorized provider recovery. Current-source real disposable SQL and full source-bound CI are still required. Upstream query provenance, externally fetched URL redirect/DNS behavior and the separate xAI path remain unresolved. This honest reviewed gap still blocks security acceptance.",
@@ -11117,6 +11538,10 @@
           {
             "path": "backend/src/ai/parallelWeb.security.test.ts",
             "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement"
+          },
+          {
+            "path": "backend/src/ai/parallelWeb.security.test.ts",
+            "marker": "empty DeepSeek results settle zero while preserving the request receipt and dispatch count"
           }
         ]
       }
@@ -11130,7 +11555,7 @@
       "target": "ensure_xroga_free_cycle",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ac3f222a927506239ccb3a51c40ccc5acee7329ea117c36c8654d0a6b8cdb15a",
+      "sourceSha256": "bdd54a8e208498d3d488584591ab15f57fd3ac316deb6949a2056fc38353e889",
       "semanticReview": {
         "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
         "reason": "Focused actual SDK/REST-transport fixtures pass actor clone/foreign owner, cancelled/replaced generation, reservation/receipt denial, secret canaries, pending accounting and normal authorized provider recovery. Current-source real disposable SQL and full source-bound CI are still required. Upstream query provenance, externally fetched URL redirect/DNS behavior and the separate xAI path remain unresolved. This honest reviewed gap still blocks security acceptance.",
@@ -11142,20 +11567,24 @@
           {
             "path": "backend/src/ai/parallelWeb.security.test.ts",
             "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement"
+          },
+          {
+            "path": "backend/src/ai/parallelWeb.security.test.ts",
+            "marker": "empty DeepSeek results settle zero while preserving the request receipt and dispatch count"
           }
         ]
       }
     },
     {
-      "id": "91afe59da48d41fdec1b",
+      "id": "7de431277f4a0e0788a1",
       "path": "backend/src/ai/parallelDispatch.ts",
-      "line": 116,
+      "line": 120,
       "enclosing": "executeParallelRequest",
       "kind": "RPC_CANDIDATE",
       "target": "settle_xroga_provider_budget",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "ac3f222a927506239ccb3a51c40ccc5acee7329ea117c36c8654d0a6b8cdb15a",
+      "sourceSha256": "bdd54a8e208498d3d488584591ab15f57fd3ac316deb6949a2056fc38353e889",
       "semanticReview": {
         "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
         "reason": "Focused actual SDK/REST-transport fixtures pass actor clone/foreign owner, cancelled/replaced generation, reservation/receipt denial, secret canaries, pending accounting and normal authorized provider recovery. Current-source real disposable SQL and full source-bound CI are still required. Upstream query provenance, externally fetched URL redirect/DNS behavior and the separate xAI path remain unresolved. This honest reviewed gap still blocks security acceptance.",
@@ -11167,6 +11596,10 @@
           {
             "path": "backend/src/ai/parallelWeb.security.test.ts",
             "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement"
+          },
+          {
+            "path": "backend/src/ai/parallelWeb.security.test.ts",
+            "marker": "empty DeepSeek results settle zero while preserving the request receipt and dispatch count"
           }
         ]
       }
@@ -11193,18 +11626,18 @@
       }
     },
     {
-      "id": "4431005001a8d288051f",
+      "id": "d2d4eae547457550a374",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3832,
+      "line": 4085,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+      "sourceSha256": "a1849efca55ecf29dca9453dea64fec3f657782ee286c1dd43ba73ad7ec07945",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Native reasoning alignment changes only answer options and their canonical output reservation. These two in-memory conversion expressions remain byte-identical. No new persistence call, authority or security certification is inferred. The tenant dispatch test verifies reservation and wire maxima match.",
         "evidence": [
           {
             "path": "backend/src/ai/pipeline.ts",
@@ -11214,18 +11647,18 @@
       }
     },
     {
-      "id": "ce02ccc6a928e44634de",
+      "id": "1250e6c6c67f7c3829a9",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4016,
+      "line": 4269,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+      "sourceSha256": "a1849efca55ecf29dca9453dea64fec3f657782ee286c1dd43ba73ad7ec07945",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Native reasoning alignment changes only answer options and their canonical output reservation. These two in-memory conversion expressions remain byte-identical. No new persistence call, authority or security certification is inferred. The tenant dispatch test verifies reservation and wire maxima match.",
         "evidence": [
           {
             "path": "backend/src/ai/pipeline.ts",
@@ -12258,6 +12691,17 @@
       }
     },
     {
+      "id": "fba0d462427f8d10b40b",
+      "path": "backend/src/ai/researchPublicationEvidence.ts",
+      "line": 45,
+      "enclosing": "links",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "ee9b32e4b5afa387366857c8099a57236a6b166e21628e4acd5758afcc1a269e"
+    },
+    {
       "id": "d7ef2b5739bb17d1c3bb",
       "path": "backend/src/ai/resourceLedger.ts",
       "line": 41,
@@ -12432,15 +12876,15 @@
       }
     },
     {
-      "id": "187abb36370526699b39",
+      "id": "bd2778a2cc0d479d0b04",
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 137,
+      "line": 149,
       "enclosing": "normalizeSectionData",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "7e16ea46e2c45bb3855222b9345b895417bd33a4eb005632fb2665150d2737d7"
+      "sourceSha256": "3f7b82341b325743179c746fe6bae145f40769960fdc25a1751dcc024eeeb195"
     },
     {
       "id": "64b99cfd7d4a42c04576",
@@ -13463,7 +13907,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "adf4566f235d911750d8b682f2f3cfa77dc75c6ed7c91ab11e8a0c05cfcc02a0"
+      "sourceSha256": "8b4c625870f1fe79b19addfc39af13ed4cac86988d064280f1236c45eb0eec55"
     },
     {
       "id": "92acd75cb009a202b61c",
@@ -13474,7 +13918,7 @@
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "adf4566f235d911750d8b682f2f3cfa77dc75c6ed7c91ab11e8a0c05cfcc02a0"
+      "sourceSha256": "8b4c625870f1fe79b19addfc39af13ed4cac86988d064280f1236c45eb0eec55"
     },
     {
       "id": "3b78226da77b7e78f992",
@@ -13485,7 +13929,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "adf4566f235d911750d8b682f2f3cfa77dc75c6ed7c91ab11e8a0c05cfcc02a0"
+      "sourceSha256": "8b4c625870f1fe79b19addfc39af13ed4cac86988d064280f1236c45eb0eec55"
     },
     {
       "id": "806c73ec27b8163a6313",
@@ -13496,7 +13940,7 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "adf4566f235d911750d8b682f2f3cfa77dc75c6ed7c91ab11e8a0c05cfcc02a0"
+      "sourceSha256": "8b4c625870f1fe79b19addfc39af13ed4cac86988d064280f1236c45eb0eec55"
     },
     {
       "id": "1836c6f18b69f6a5d8f5",
@@ -13507,7 +13951,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "adf4566f235d911750d8b682f2f3cfa77dc75c6ed7c91ab11e8a0c05cfcc02a0"
+      "sourceSha256": "8b4c625870f1fe79b19addfc39af13ed4cac86988d064280f1236c45eb0eec55"
     },
     {
       "id": "3fba7dbe0551574fe56b",
@@ -19272,8 +19716,26 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "131007966c483ed8c7741e73be3a230c85e3cb79db89dd90908c68605d28206e"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "131007966c483ed8c7741e73be3a230c85e3cb79db89dd90908c68605d28206e",
+      "semanticReview": {
+        "authority": "Built-in Buffer and Uint8Array constructors create local memory objects only. They carry no identity, database handle or storage authority.",
+        "reason": "These matches allocate ZIP signature bytes or copy already supplied PDF and spreadsheet bytes into the local parser. The static scanner matched the method name from. The ZIP signature allocation and the exact Buffer-to-Uint8Array copies are unchanged. This static reconciliation confers no acceptance for new PDF layout, page limits, parser behavior or egress.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/browserDocuments.ts",
+            "marker": "Buffer.from([0x50, 0x4b, 0x05, 0x06])"
+          },
+          {
+            "path": "backend/src/routes/browserDocuments.ts",
+            "marker": "pdf.getDocument({ data: Uint8Array.from(data), isEvalSupported: false"
+          },
+          {
+            "path": "backend/src/routes/browserDocuments.ts",
+            "marker": "workbook.xlsx.load(Uint8Array.from(data).buffer)"
+          }
+        ]
+      }
     },
     {
       "id": "87ed7df95645a68cdb05",
@@ -19283,8 +19745,26 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "131007966c483ed8c7741e73be3a230c85e3cb79db89dd90908c68605d28206e"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "131007966c483ed8c7741e73be3a230c85e3cb79db89dd90908c68605d28206e",
+      "semanticReview": {
+        "authority": "Built-in Buffer and Uint8Array constructors create local memory objects only. They carry no identity, database handle or storage authority.",
+        "reason": "These matches allocate ZIP signature bytes or copy already supplied PDF and spreadsheet bytes into the local parser. The static scanner matched the method name from. The ZIP signature allocation and the exact Buffer-to-Uint8Array copies are unchanged. This static reconciliation confers no acceptance for new PDF layout, page limits, parser behavior or egress.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/browserDocuments.ts",
+            "marker": "Buffer.from([0x50, 0x4b, 0x05, 0x06])"
+          },
+          {
+            "path": "backend/src/routes/browserDocuments.ts",
+            "marker": "pdf.getDocument({ data: Uint8Array.from(data), isEvalSupported: false"
+          },
+          {
+            "path": "backend/src/routes/browserDocuments.ts",
+            "marker": "workbook.xlsx.load(Uint8Array.from(data).buffer)"
+          }
+        ]
+      }
     },
     {
       "id": "ca5e36bcc97ba13a6ccd",
@@ -19294,8 +19774,26 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "131007966c483ed8c7741e73be3a230c85e3cb79db89dd90908c68605d28206e"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "131007966c483ed8c7741e73be3a230c85e3cb79db89dd90908c68605d28206e",
+      "semanticReview": {
+        "authority": "Built-in Buffer and Uint8Array constructors create local memory objects only. They carry no identity, database handle or storage authority.",
+        "reason": "These matches allocate ZIP signature bytes or copy already supplied PDF and spreadsheet bytes into the local parser. The static scanner matched the method name from. The ZIP signature allocation and the exact Buffer-to-Uint8Array copies are unchanged. This static reconciliation confers no acceptance for new PDF layout, page limits, parser behavior or egress.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/browserDocuments.ts",
+            "marker": "Buffer.from([0x50, 0x4b, 0x05, 0x06])"
+          },
+          {
+            "path": "backend/src/routes/browserDocuments.ts",
+            "marker": "pdf.getDocument({ data: Uint8Array.from(data), isEvalSupported: false"
+          },
+          {
+            "path": "backend/src/routes/browserDocuments.ts",
+            "marker": "workbook.xlsx.load(Uint8Array.from(data).buffer)"
+          }
+        ]
+      }
     },
     {
       "id": "3a0a65d6d673a33eaf05",
@@ -19556,8 +20054,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a40092256167d3e1862314641773ca749df710b56cd6bc8ec053351aea9248ac"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "a40092256167d3e1862314641773ca749df710b56cd6bc8ec053351aea9248ac",
+      "semanticReview": {
+        "authority": "Inspected the exact receiver and complete expression. It is a built-in JavaScript data conversion with no persistence client or privilege transfer.",
+        "reason": "Decodes the already bounded document body into a local byte buffer. The scanner matches the built-in Buffer method name. The exact in-memory Buffer conversion remains after the bounded document-input validation. This marker classifies the conversion only. New browser behavior and other conversions remain separate.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/localBrowser.ts",
+            "marker": "Buffer.from(data.base64, 'base64')"
+          }
+        ]
+      }
     },
     {
       "id": "4f2f153a1fb4a19064d8",
@@ -19593,15 +20101,15 @@
       "sourceSha256": "c71ed45f02944b55101f6c7930a6ac6c213fe580091f9249a5d7a0d5f2282fef"
     },
     {
-      "id": "c9a009f6baa9e3a3bbad",
+      "id": "8818c8c645ed42bdfcbd",
       "path": "backend/src/routes/messageShares.ts",
-      "line": 70,
+      "line": 71,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "message_shares",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
+      "sourceSha256": "1a4a4f088a831a511bd81d1f117f24f738c73b2dec0f8ca2e41b49127227a954",
       "semanticReview": {
         "authority": "Create/revoke use authMiddleware and issued context. Create stores server req.userId; revoke constrains token, owner_id and unrevoked state. Submitted content grants no authority over other resources.",
         "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance.",
@@ -19618,15 +20126,15 @@
       }
     },
     {
-      "id": "000d28d21ea7dba70f24",
+      "id": "fa1aab99a735dd6afc1d",
       "path": "backend/src/routes/messageShares.ts",
-      "line": 70,
+      "line": 71,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
+      "sourceSha256": "1a4a4f088a831a511bd81d1f117f24f738c73b2dec0f8ca2e41b49127227a954",
       "semanticReview": {
         "authority": "Create/revoke use authMiddleware and issued context. Create stores server req.userId; revoke constrains token, owner_id and unrevoked state. Submitted content grants no authority over other resources.",
         "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance.",
@@ -19643,15 +20151,15 @@
       }
     },
     {
-      "id": "db7f2c7b53d05936f3da",
+      "id": "7428c9a89d68c23b5ba1",
       "path": "backend/src/routes/messageShares.ts",
-      "line": 98,
+      "line": 99,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "message_shares",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
+      "sourceSha256": "1a4a4f088a831a511bd81d1f117f24f738c73b2dec0f8ca2e41b49127227a954",
       "semanticReview": {
         "authority": "Validated random token and unrevoked row identify the share. Named message_share_resolution exception is followed by verified viewer equality for private visibility; public access is explicit owner opt-in.",
         "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance.",
@@ -19668,15 +20176,15 @@
       }
     },
     {
-      "id": "ea4d7ecf3043636a2883",
+      "id": "f7eea7c47f4cea00af8d",
       "path": "backend/src/routes/messageShares.ts",
-      "line": 98,
+      "line": 99,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
+      "sourceSha256": "1a4a4f088a831a511bd81d1f117f24f738c73b2dec0f8ca2e41b49127227a954",
       "semanticReview": {
         "authority": "Validated random token and unrevoked row identify the share. Named message_share_resolution exception is followed by verified viewer equality for private visibility; public access is explicit owner opt-in.",
         "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance.",
@@ -19693,15 +20201,15 @@
       }
     },
     {
-      "id": "2f60349dbbab02755103",
+      "id": "c0f7d9498ea3443e4221",
       "path": "backend/src/routes/messageShares.ts",
-      "line": 147,
+      "line": 148,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "message_shares",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
+      "sourceSha256": "1a4a4f088a831a511bd81d1f117f24f738c73b2dec0f8ca2e41b49127227a954",
       "semanticReview": {
         "authority": "Create/revoke use authMiddleware and issued context. Create stores server req.userId; revoke constrains token, owner_id and unrevoked state. Submitted content grants no authority over other resources.",
         "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance.",
@@ -19718,15 +20226,15 @@
       }
     },
     {
-      "id": "c4dcd4d97035ff02f08f",
+      "id": "087a268e5f0ee8649cdc",
       "path": "backend/src/routes/messageShares.ts",
-      "line": 147,
+      "line": 148,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
+      "sourceSha256": "1a4a4f088a831a511bd81d1f117f24f738c73b2dec0f8ca2e41b49127227a954",
       "semanticReview": {
         "authority": "Create/revoke use authMiddleware and issued context. Create stores server req.userId; revoke constrains token, owner_id and unrevoked state. Submitted content grants no authority over other resources.",
         "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance.",
@@ -19743,57 +20251,26 @@
       }
     },
     {
-      "id": "95aca8562235b1b02997",
-      "path": "backend/src/routes/notifications.ts",
-      "line": 13,
+      "id": "1e389b2b8a0cf1525b07",
+      "path": "backend/src/routes/nativeOpenUiEvaluation.ts",
+      "line": 65,
       "enclosing": "<module>",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getTenantSupabaseAdmin",
+      "kind": "RPC_CANDIDATE",
+      "target": "current_community_role",
       "ownerPredicateCandidate": false,
-      "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
-      "semanticReview": {
-        "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
-        "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
-        "evidence": [
-          {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "FOREIGN_NOTIFICATION_CANARY"
-          }
-        ]
-      }
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "9c0eefe0175ba4be5e859705e69f8dc5db1accd3d5b17a875199ce084d84b717"
     },
     {
-      "id": "cc2c2522f42d6ac8d5bd",
+      "id": "359cfba790c54b88250c",
       "path": "backend/src/routes/notifications.ts",
       "line": 14,
       "enclosing": "<module>",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "notifications",
-      "ownerPredicateCandidate": true,
-      "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
-      "semanticReview": {
-        "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
-        "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
-        "evidence": [
-          {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "FOREIGN_NOTIFICATION_CANARY"
-          }
-        ]
-      }
-    },
-    {
-      "id": "96f82d20ad4bfc5af43e",
-      "path": "backend/src/routes/notifications.ts",
-      "line": 29,
-      "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
@@ -19806,15 +20283,36 @@
       }
     },
     {
-      "id": "faa4cebd0c15a1b5d69c",
+      "id": "b1f8356c782b4d851d58",
+      "path": "backend/src/routes/notifications.ts",
+      "line": 15,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "notifications",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
+      "semanticReview": {
+        "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
+        "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "FOREIGN_NOTIFICATION_CANARY"
+          }
+        ]
+      }
+    },
+    {
+      "id": "4cf1a1e8ccf9dfe563ec",
       "path": "backend/src/routes/notifications.ts",
       "line": 30,
       "enclosing": "<module>",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "notifications",
-      "ownerPredicateCandidate": true,
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
@@ -19827,15 +20325,162 @@
       }
     },
     {
-      "id": "5233e1547ffa2fd23fd6",
+      "id": "e92ef4114ace634a21d8",
       "path": "backend/src/routes/notifications.ts",
-      "line": 44,
+      "line": 31,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "notifications",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
+      "semanticReview": {
+        "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
+        "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "FOREIGN_NOTIFICATION_CANARY"
+          }
+        ]
+      }
+    },
+    {
+      "id": "451e5e119fb05d5ddb8f",
+      "path": "backend/src/routes/notifications.ts",
+      "line": 62,
+      "enclosing": "<module>",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
+      "semanticReview": {
+        "authority": "The browser-push subscription routes are behind auth middleware and derive userId from tenant context; each query filters user_id or writes that user ID, but source inspection alone is not authenticated tenant proof.",
+        "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Existing endpoint updates are owner-scoped; a new insert cannot overwrite another account's unique endpoint. Authenticated positive and cross-account negative API tests for these six new persistence calls are still required before promoting this review to a scoped boundary.",
+        "evidence": [
+          {
+            "path": "backend/src/services/browserPushService.test.ts",
+            "marker": "rejects SSRF destinations"
+          }
+        ]
+      }
+    },
+    {
+      "id": "4f9439afecb04c3595a7",
+      "path": "backend/src/routes/notifications.ts",
+      "line": 63,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "notification_push_subscriptions",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
+      "semanticReview": {
+        "authority": "The browser-push subscription routes are behind auth middleware and derive userId from tenant context; each query filters user_id or writes that user ID, but source inspection alone is not authenticated tenant proof.",
+        "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Existing endpoint updates are owner-scoped; a new insert cannot overwrite another account's unique endpoint. Authenticated positive and cross-account negative API tests for these six new persistence calls are still required before promoting this review to a scoped boundary.",
+        "evidence": [
+          {
+            "path": "backend/src/services/browserPushService.test.ts",
+            "marker": "rejects SSRF destinations"
+          }
+        ]
+      }
+    },
+    {
+      "id": "4052599c36bb1a154183",
+      "path": "backend/src/routes/notifications.ts",
+      "line": 80,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "notification_push_subscriptions",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
+      "semanticReview": {
+        "authority": "The browser-push subscription routes are behind auth middleware and derive userId from tenant context; each query filters user_id or writes that user ID, but source inspection alone is not authenticated tenant proof.",
+        "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Existing endpoint updates are owner-scoped; a new insert cannot overwrite another account's unique endpoint. Authenticated positive and cross-account negative API tests for these six new persistence calls are still required before promoting this review to a scoped boundary.",
+        "evidence": [
+          {
+            "path": "backend/src/services/browserPushService.test.ts",
+            "marker": "rejects SSRF destinations"
+          }
+        ]
+      }
+    },
+    {
+      "id": "9dd5e0d47e2b5fcbd7ed",
+      "path": "backend/src/routes/notifications.ts",
+      "line": 82,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "notification_push_subscriptions",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
+      "semanticReview": {
+        "authority": "The browser-push subscription routes are behind auth middleware and derive userId from tenant context; each query filters user_id or writes that user ID, but source inspection alone is not authenticated tenant proof.",
+        "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Existing endpoint updates are owner-scoped; a new insert cannot overwrite another account's unique endpoint. Authenticated positive and cross-account negative API tests for these six new persistence calls are still required before promoting this review to a scoped boundary.",
+        "evidence": [
+          {
+            "path": "backend/src/services/browserPushService.test.ts",
+            "marker": "rejects SSRF destinations"
+          }
+        ]
+      }
+    },
+    {
+      "id": "0173fa66f148bf107c9c",
+      "path": "backend/src/routes/notifications.ts",
+      "line": 100,
+      "enclosing": "<module>",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
+      "semanticReview": {
+        "authority": "The browser-push subscription routes are behind auth middleware and derive userId from tenant context; each query filters user_id or writes that user ID, but source inspection alone is not authenticated tenant proof.",
+        "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Existing endpoint updates are owner-scoped; a new insert cannot overwrite another account's unique endpoint. Authenticated positive and cross-account negative API tests for these six new persistence calls are still required before promoting this review to a scoped boundary.",
+        "evidence": [
+          {
+            "path": "backend/src/services/browserPushService.test.ts",
+            "marker": "rejects SSRF destinations"
+          }
+        ]
+      }
+    },
+    {
+      "id": "5756010c7ca215102e1e",
+      "path": "backend/src/routes/notifications.ts",
+      "line": 101,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "notification_push_subscriptions",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
+      "semanticReview": {
+        "authority": "The browser-push subscription routes are behind auth middleware and derive userId from tenant context; each query filters user_id or writes that user ID, but source inspection alone is not authenticated tenant proof.",
+        "reason": "Isolated staging verifies private table grants and RLS, and endpoint validation rejects arbitrary hosts. Existing endpoint updates are owner-scoped; a new insert cannot overwrite another account's unique endpoint. Authenticated positive and cross-account negative API tests for these six new persistence calls are still required before promoting this review to a scoped boundary.",
+        "evidence": [
+          {
+            "path": "backend/src/services/browserPushService.test.ts",
+            "marker": "rejects SSRF destinations"
+          }
+        ]
+      }
+    },
+    {
+      "id": "cc8a37cdf238cf59a99a",
+      "path": "backend/src/routes/notifications.ts",
+      "line": 111,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
@@ -19848,15 +20493,15 @@
       }
     },
     {
-      "id": "8f55ff924d59067efc48",
+      "id": "6687ae47bab37c501d74",
       "path": "backend/src/routes/notifications.ts",
-      "line": 45,
+      "line": 112,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "notifications",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
@@ -19869,15 +20514,15 @@
       }
     },
     {
-      "id": "83827643069e9005dce3",
+      "id": "2fed6ca9cd27f6992d02",
       "path": "backend/src/routes/notifications.ts",
-      "line": 59,
+      "line": 126,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
@@ -19890,15 +20535,15 @@
       }
     },
     {
-      "id": "b1d953653483a66af3d9",
+      "id": "75ba31f14c658b6995a8",
       "path": "backend/src/routes/notifications.ts",
-      "line": 60,
+      "line": 127,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "notifications",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
@@ -19911,15 +20556,15 @@
       }
     },
     {
-      "id": "add984aaad8b65bdbdfa",
+      "id": "1a27090c7a9708d480e8",
       "path": "backend/src/routes/notifications.ts",
-      "line": 74,
+      "line": 141,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
@@ -19932,15 +20577,15 @@
       }
     },
     {
-      "id": "f0601134e3c2080d41f3",
+      "id": "b010f789ba8fcc1a6231",
       "path": "backend/src/routes/notifications.ts",
-      "line": 75,
+      "line": 142,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "notifications",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "9aec298fc8c4b0f6c678f0861db12805da9b0700e109ff052d0e4e27be18486a",
+      "sourceSha256": "7b91dfd72ae335226c3fb83c7ce2e7cb7902b7dd25b87565f7dcef917720c5db",
       "semanticReview": {
         "authority": "Router is mounted behind authMiddleware and re-derives userId from the issued immutable context before every route. List/count/read/read-all/delete use this actor, never request ownership. Every service-role factory has its fixed downstream notification query inspected.",
         "reason": "Real API tests show foreign-ID mutations are idempotent no-ops, own-ID marking works, foreign rows remain unread and cannot be listed through API or RLS. This certifies tenant scoping, not producer content provenance, historical redaction or instant access-token revocation.",
@@ -19995,15 +20640,15 @@
       }
     },
     {
-      "id": "fa04b8d8f9413c194ec5",
+      "id": "ff119993d08c76a18c1b",
       "path": "backend/src/routes/phase1.ts",
-      "line": 194,
+      "line": 195,
       "enclosing": "toolUiLink",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "91b55da6a6beca61715b829c0087b10f90d2cc5bb7e2b7bce5500fbca50b2b7d",
+      "sourceSha256": "91f74671061715c1c154a7ca1ad308fe30ab40d80fc6c4cb545f39ba74442c9b",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in toolUiLink. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -20473,7 +21118,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ed12e795542c30516005b5a9681eee3b7e734fd619d80e1eaf913d3979df0b5b"
+      "sourceSha256": "302cc16b56f4908a3c06f68073312f59d76c38a2efefa1a37b9ad163793c4537"
     },
     {
       "id": "12690ff6770fa50bad0a",
@@ -20484,29 +21129,29 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ed12e795542c30516005b5a9681eee3b7e734fd619d80e1eaf913d3979df0b5b"
+      "sourceSha256": "302cc16b56f4908a3c06f68073312f59d76c38a2efefa1a37b9ad163793c4537"
     },
     {
-      "id": "43f74a68b16673a66b2a",
+      "id": "07a57216d12e3fdb2f58",
       "path": "backend/src/routes/teams.ts",
-      "line": 134,
+      "line": 140,
       "enclosing": "<module>",
       "kind": "RPC_CANDIDATE",
       "target": "team_create_link",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ed12e795542c30516005b5a9681eee3b7e734fd619d80e1eaf913d3979df0b5b"
+      "sourceSha256": "302cc16b56f4908a3c06f68073312f59d76c38a2efefa1a37b9ad163793c4537"
     },
     {
-      "id": "344cb37df2ca54037032",
+      "id": "869dd9bc27f666f2782e",
       "path": "backend/src/routes/teams.ts",
-      "line": 134,
+      "line": 140,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ed12e795542c30516005b5a9681eee3b7e734fd619d80e1eaf913d3979df0b5b"
+      "sourceSha256": "302cc16b56f4908a3c06f68073312f59d76c38a2efefa1a37b9ad163793c4537"
     },
     {
       "id": "353aa869f7c46574b7a6",
@@ -22009,6 +22654,39 @@
       }
     },
     {
+      "id": "7b3e5212487df9eb990e",
+      "path": "backend/src/services/browserPushService.ts",
+      "line": 48,
+      "enclosing": "sendBrowserPush",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "f4efcbdd6268fe5e71e0b265e09fa93ca00bc9ed4ca71347261039f26c085cfc"
+    },
+    {
+      "id": "4579524e754c9ee2fcbc",
+      "path": "backend/src/services/browserPushService.ts",
+      "line": 49,
+      "enclosing": "sendBrowserPush",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "notification_push_subscriptions",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "f4efcbdd6268fe5e71e0b265e09fa93ca00bc9ed4ca71347261039f26c085cfc"
+    },
+    {
+      "id": "7f4f5ca6f9ae391042fc",
+      "path": "backend/src/services/browserPushService.ts",
+      "line": 70,
+      "enclosing": "sendBrowserPush",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "notification_push_subscriptions",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "f4efcbdd6268fe5e71e0b265e09fa93ca00bc9ed4ca71347261039f26c085cfc"
+    },
+    {
       "id": "d81d114079399f02921b",
       "path": "backend/src/services/ensureUserRecords.ts",
       "line": 132,
@@ -22163,8 +22841,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "semanticReview": {
+        "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
+        "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
     },
     {
       "id": "287e2fe0dabebc523a36",
@@ -22174,8 +22862,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "semanticReview": {
+        "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
+        "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
     },
     {
       "id": "3a763a5523dac73c10d4",
@@ -22185,8 +22883,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "semanticReview": {
+        "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
+        "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
     },
     {
       "id": "46aca4c01b2d3d90acad",
@@ -22196,8 +22904,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "semanticReview": {
+        "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
+        "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
     },
     {
       "id": "85b1d7461e8691468225",
@@ -22207,8 +22925,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "semanticReview": {
+        "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
+        "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
     },
     {
       "id": "545cee9f47055ec5d761",
@@ -22218,8 +22946,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "semanticReview": {
+        "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
+        "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
     },
     {
       "id": "7231d508555849d87d32",
@@ -22229,8 +22967,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "semanticReview": {
+        "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
+        "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
     },
     {
       "id": "8609662e7417659e88ca",
@@ -22240,8 +22988,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "semanticReview": {
+        "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
+        "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
     },
     {
       "id": "a2737e6413bb535344c8",
@@ -22251,8 +23009,18 @@
       "kind": "RPC_CANDIDATE",
       "target": "cancel_business_action_confirmation",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "semanticReview": {
+        "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
+        "reason": "New Phase3 dispatch and in-flight revocation obligations are retained as explicit missing proof, not invented vulnerabilities or current-source security certificates. Unit and synthetic SQL checks cannot replace real disposable concurrency and authenticated CI.",
+        "evidence": [
+          {
+            "path": "backend/src/security/businessAuthority.local.integration.ts",
+            "marker": "registerBusinessAuthorityTests"
+          }
+        ]
+      }
     },
     {
       "id": "a794b7db009e04b8617a",
@@ -22262,8 +23030,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "semanticReview": {
+        "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
+        "reason": "New Phase3 dispatch and in-flight revocation obligations are retained as explicit missing proof, not invented vulnerabilities or current-source security certificates. Unit and synthetic SQL checks cannot replace real disposable concurrency and authenticated CI.",
+        "evidence": [
+          {
+            "path": "backend/src/security/businessAuthority.local.integration.ts",
+            "marker": "registerBusinessAuthorityTests"
+          }
+        ]
+      }
     },
     {
       "id": "319518470d46e4577f12",
@@ -22273,8 +23051,22 @@
       "kind": "RPC_CANDIDATE",
       "target": "finish_business_action_confirmation",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "semanticReview": {
+        "authority": "Only the existing confirmed-action executor passes its original admin client, verified server owner and exact claimed row. Service-only terminal transaction locks owner/ID and compares full plan, display metadata, original expiry/creation and claimed_at before consumed/failed status, with immutable exact replay. No provider execution, lease extension or confirmation reuse.",
+        "reason": "Fixed terminal-claim persistence boundary VERIFIED ataa1aad5c07c44cb907ff4432e1579ff79d08bd3d, disposable39119207485: actual held plan/claim changes reject before writes, opposite terminal outcomes admit one immutable winner, same-outcome replay retains its timestamp, expired original claims can record completion, rollback and browser-role denial pass. Runtime helper, SQL and fixture are unchanged. Loopback path rejects substituted/missing/outage terminal receipts without provider work and16 local SQL assertions/replay pass. Only terminal persistence is closed. Provider session authority, expiry before external execution and external-success crash reconciliation remain unresolved. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+        "evidence": [
+          {
+            "path": "backend/src/security/businessConfirmationFinish.local.integration.ts",
+            "marker": "registerBusinessConfirmationFinishTests"
+          },
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "one failure recording attempt per admitted invalid-digest execution, no provider retry"
+          }
+        ]
+      }
     },
     {
       "id": "2714b6af44879d208f97",
@@ -22284,8 +23076,18 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "semanticReview": {
+        "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
+        "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
     },
     {
       "id": "a1b9e751df5bc764909d",
@@ -22295,8 +23097,18 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "semanticReview": {
+        "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
+        "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry"
+          }
+        ]
+      }
     },
     {
       "id": "7435325dc6f8734b9505",
@@ -22306,8 +23118,22 @@
       "kind": "RPC_CANDIDATE",
       "target": "claim_business_action_confirmation",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "semanticReview": {
+        "authority": "Authenticated phase1 confirmation route passes requireUserId and explicit confirmation UUID. The service reads owner-filtered plan and validates displayed metadata. Service-only claim locks the same owner/ID and compares full plan, digest, expiry, display metadata and pending state, then checks clock_timestamp after lock acquisition before marking executing.",
+        "reason": "Fixed pending-confirmation claim boundary VERIFIED at e47030615e13f75045e4434cddcb1294f05095f3, disposable39114496584 and again2e752b76 run39117021162: actual two-client winner, expiry while blocked, same-digest full-plan mutation, foreign actor and browser-role denial pass. Claim invocation, SQL and real integration fixture are unchanged. New terminal persistence has a separate unresolved review. Loopback intent/outage tests and15 local SQL assertions/replay also pass. Only this owner/plan-bound claim is closed. Session-to-owner provider binding, displayed-intent acknowledgement and external-success crash recovery remain unresolved. No provider execution or whole business-action certification. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+        "evidence": [
+          {
+            "path": "backend/src/security/businessConfirmationClaim.local.integration.ts",
+            "marker": "registerBusinessConfirmationClaimTests"
+          },
+          {
+            "path": "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+            "marker": "confirmation claims bind owner, reviewed digest and expiry and admit one concurrent claimant"
+          }
+        ]
+      }
     },
     {
       "id": "b4a46938a0dec4c5f10c",
@@ -22317,8 +23143,29 @@
       "kind": "RPC_CANDIDATE",
       "target": "authorize_business_action_dispatch",
       "ownerPredicateCandidate": false,
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "semanticReview": {
+        "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
+        "reason": "New Phase3 dispatch and in-flight revocation obligations are retained as explicit missing proof, not invented vulnerabilities or current-source security certificates. Unit and synthetic SQL checks cannot replace real disposable concurrency and authenticated CI.",
+        "evidence": [
+          {
+            "path": "backend/src/security/businessAuthority.local.integration.ts",
+            "marker": "registerBusinessAuthorityTests"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ce127410029f6ea8de3c",
+      "path": "backend/src/services/integrations/businessActionResultUi.ts",
+      "line": 18,
+      "enclosing": "confirmedReadResultMarkdown",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec"
+      "sourceSha256": "9317443405eb7db5ebc8d4e6da0b090ff17a663cd0df235f574d22944de75f8a"
     },
     {
       "id": "bf8469a6c974491acd3c",
@@ -22582,7 +23429,7 @@
       "target": "business_workflow_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9dd08269a9ec339afdd6b6dee0c46837a2887213fa84355e7a7417bf69aaad4c"
+      "sourceSha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
     },
     {
       "id": "9680461141ee27df8f1e",
@@ -22593,7 +23440,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9dd08269a9ec339afdd6b6dee0c46837a2887213fa84355e7a7417bf69aaad4c"
+      "sourceSha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
     },
     {
       "id": "52cbf82d23aa39fb1097",
@@ -22604,7 +23451,7 @@
       "target": "business_workflow_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9dd08269a9ec339afdd6b6dee0c46837a2887213fa84355e7a7417bf69aaad4c"
+      "sourceSha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
     },
     {
       "id": "e6bf012f03760d8f4b31",
@@ -22615,10 +23462,10 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9dd08269a9ec339afdd6b6dee0c46837a2887213fa84355e7a7417bf69aaad4c"
+      "sourceSha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
     },
     {
-      "id": "b88dd13e0daf779fa46a",
+      "id": "b1c0d6b8e195f79b0330",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
       "line": 194,
       "enclosing": "createBusinessWorkflowRun",
@@ -22626,10 +23473,10 @@
       "target": "business_workflow_runs",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9dd08269a9ec339afdd6b6dee0c46837a2887213fa84355e7a7417bf69aaad4c"
+      "sourceSha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
     },
     {
-      "id": "67959ecf1ff6fc257e6f",
+      "id": "a0df0a93fb894e4e6fed",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
       "line": 194,
       "enclosing": "createBusinessWorkflowRun",
@@ -22637,10 +23484,10 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9dd08269a9ec339afdd6b6dee0c46837a2887213fa84355e7a7417bf69aaad4c"
+      "sourceSha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
     },
     {
-      "id": "ac976dbfb349604d66e3",
+      "id": "e8e8323b4ccba5a6dc16",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
       "line": 214,
       "enclosing": "resumeBusinessWorkflowAfterConfirmation",
@@ -22648,10 +23495,10 @@
       "target": "business_workflow_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9dd08269a9ec339afdd6b6dee0c46837a2887213fa84355e7a7417bf69aaad4c"
+      "sourceSha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
     },
     {
-      "id": "46d9f0cedc1b160d74e8",
+      "id": "10e8b35ebde560e0928a",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
       "line": 214,
       "enclosing": "resumeBusinessWorkflowAfterConfirmation",
@@ -22659,10 +23506,10 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9dd08269a9ec339afdd6b6dee0c46837a2887213fa84355e7a7417bf69aaad4c"
+      "sourceSha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
     },
     {
-      "id": "95698557e18360a7bcbe",
+      "id": "779aaa3d9eb539380552",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
       "line": 242,
       "enclosing": "resumeBusinessWorkflowAfterSetup",
@@ -22670,10 +23517,10 @@
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9dd08269a9ec339afdd6b6dee0c46837a2887213fa84355e7a7417bf69aaad4c"
+      "sourceSha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
     },
     {
-      "id": "49078188c6f905c229fb",
+      "id": "74b84794b1baeefba2e3",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
       "line": 242,
       "enclosing": "resumeBusinessWorkflowAfterSetup",
@@ -22681,10 +23528,10 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9dd08269a9ec339afdd6b6dee0c46837a2887213fa84355e7a7417bf69aaad4c"
+      "sourceSha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
     },
     {
-      "id": "b3ebba2a9308a727ea3d",
+      "id": "fec5554e7fbf7cee0110",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
       "line": 283,
       "enclosing": "cancelBusinessWorkflowForConfirmation",
@@ -22692,10 +23539,10 @@
       "target": "business_workflow_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9dd08269a9ec339afdd6b6dee0c46837a2887213fa84355e7a7417bf69aaad4c"
+      "sourceSha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
     },
     {
-      "id": "8e71a7bc7c370ef4bfac",
+      "id": "120f3c9583f4a977d816",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
       "line": 283,
       "enclosing": "cancelBusinessWorkflowForConfirmation",
@@ -22703,7 +23550,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9dd08269a9ec339afdd6b6dee0c46837a2887213fa84355e7a7417bf69aaad4c"
+      "sourceSha256": "c08a1d8f472f45de1b8eb6bee080f29e7419c4b8be919e0f4e1dff9e898ab70a"
     },
     {
       "id": "d8979ec278e78beb6550",
@@ -22713,8 +23560,22 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "06e8b400c89771c9cef3002a505cd565c53c9a59c6aabde89bb263cc8455e8cf"
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "06e8b400c89771c9cef3002a505cd565c53c9a59c6aabde89bb263cc8455e8cf",
+      "semanticReview": {
+        "authority": "Only the original context recovered from the canonical permit can inspect its exact owned executing confirmation. User, immutable plan digest, expiry, durable claim and effect marker are checked before and after every provider mutation. WeakMap admission cannot be fabricated, replayed, serialized or transferred across actors.",
+        "reason": "Actual canonical vault and confirmation tests pass for all three supported registration modes, sync, deletion and paused trigger registration. Cancellation, source and credential changes, account substitution, provider authorization denial, malformed receipt and replay fail closed. This adapter creates no scheduler, principal or ledger and does not certify unrelated Phase2 or production acceptance. The exact owned confirmation read and its entire query callback are unchanged. The test evidence covers the original operations. This static reconciliation confers no acceptance for the added PIN_CUSTOM_MCP_TOOL operation or for any provider effect.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/composioControl.ts",
+            "marker": ".eq('user_id',userId)"
+          },
+          {
+            "path": "backend/src/services/integrations/composioControl.security.test.ts",
+            "marker": "native Composio control:"
+          }
+        ]
+      }
     },
     {
       "id": "751d4198266ba218c7ab",
@@ -22724,8 +23585,22 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "06e8b400c89771c9cef3002a505cd565c53c9a59c6aabde89bb263cc8455e8cf"
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "06e8b400c89771c9cef3002a505cd565c53c9a59c6aabde89bb263cc8455e8cf",
+      "semanticReview": {
+        "authority": "Only the original context recovered from the canonical permit can inspect its exact owned executing confirmation. User, immutable plan digest, expiry, durable claim and effect marker are checked before and after every provider mutation. WeakMap admission cannot be fabricated, replayed, serialized or transferred across actors.",
+        "reason": "Actual canonical vault and confirmation tests pass for all three supported registration modes, sync, deletion and paused trigger registration. Cancellation, source and credential changes, account substitution, provider authorization denial, malformed receipt and replay fail closed. This adapter creates no scheduler, principal or ledger and does not certify unrelated Phase2 or production acceptance. The exact owned confirmation read and its entire query callback are unchanged. The test evidence covers the original operations. This static reconciliation confers no acceptance for the added PIN_CUSTOM_MCP_TOOL operation or for any provider effect.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/composioControl.ts",
+            "marker": ".eq('user_id',userId)"
+          },
+          {
+            "path": "backend/src/services/integrations/composioControl.security.test.ts",
+            "marker": "native Composio control:"
+          }
+        ]
+      }
     },
     {
       "id": "2697b20e243c70e7d302",
@@ -24767,15 +25642,15 @@
       }
     },
     {
-      "id": "ad1e9c1616482d93e008",
+      "id": "3089acca6fa163c13c73",
       "path": "backend/src/services/integrations/researchResult.ts",
-      "line": 34,
+      "line": 41,
       "enclosing": "saveResearchResult",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "8382a77b8a23817d945873566354960b6e07412a12d57a73e3c06511ce811dda"
+      "sourceSha256": "36d09f6df00960e135e607052ee8ec1644e35f67f10ea7cc577493270152d0a4"
     },
     {
       "id": "34d41864b9724cd70b8d",
@@ -26669,15 +27544,15 @@
       }
     },
     {
-      "id": "988c4217a8b8b781b43c",
+      "id": "0af8d7bbc823a95227af",
       "path": "backend/src/services/notificationService.ts",
-      "line": 60,
+      "line": 61,
       "enclosing": "pushNotification",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "97a7d33fe2b60ddebbdb9f1e8e2c5304d72398ff31ee9036386f705f62b6b402",
+      "sourceSha256": "823e0e647c547459ecd37560dee87b23d8d1fa0e28a85d5252870c65fccd69ec",
       "semanticReview": {
         "authority": "The only active production callers of the notification wrappers are authenticated swarm completion/failure handlers. They pass requireTenantContext(req.tenantContext), never a body owner or recipient. Video wrappers currently have no production consumer, but their primitive still requires that same original issued context. pushNotification validates the context before factory access, snapshots the bounded caller intent and writes only the context user_id. It checks returned owner and nonempty ID before acknowledging. There is no alternate owner argument or fallback identity.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Two exact factory/insert sites only. Actual existing wrapper persistence and own HTTP projection pass, and a cloned non-issued context is rejected before any count change. Safe failure copy does not expose raw backend diagnostics. The actor/owner proof comes from the issued-context guard and exact write, not dormancy. Delivery guarantees, notification content policy, all future consumers and Phase3 authority remain separate. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -26694,15 +27569,15 @@
       }
     },
     {
-      "id": "30281b1cf819bb604048",
+      "id": "2e83fbad1f1940ca3770",
       "path": "backend/src/services/notificationService.ts",
-      "line": 61,
+      "line": 62,
       "enclosing": "pushNotification",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "notifications",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "97a7d33fe2b60ddebbdb9f1e8e2c5304d72398ff31ee9036386f705f62b6b402",
+      "sourceSha256": "823e0e647c547459ecd37560dee87b23d8d1fa0e28a85d5252870c65fccd69ec",
       "semanticReview": {
         "authority": "The only active production callers of the notification wrappers are authenticated swarm completion/failure handlers. They pass requireTenantContext(req.tenantContext), never a body owner or recipient. Video wrappers currently have no production consumer, but their primitive still requires that same original issued context. pushNotification validates the context before factory access, snapshots the bounded caller intent and writes only the context user_id. It checks returned owner and nonempty ID before acknowledging. There is no alternate owner argument or fallback identity.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Two exact factory/insert sites only. Actual existing wrapper persistence and own HTTP projection pass, and a cloned non-issued context is rejected before any count change. Safe failure copy does not expose raw backend diagnostics. The actor/owner proof comes from the issued-context guard and exact write, not dormancy. Delivery guarantees, notification content policy, all future consumers and Phase3 authority remain separate. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -30816,6 +31691,17 @@
       }
     },
     {
+      "id": "08422679562345dadd12",
+      "path": "frontend/src/app/native-answer-evaluation/page.tsx",
+      "line": 21,
+      "enclosing": "NativeAnswerEvaluationPage",
+      "kind": "RPC_CANDIDATE",
+      "target": "current_community_role",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "6dc29300a911c9f20694b283951730fb67a9570271544b236c61c3142a94159b"
+    },
+    {
       "id": "d4c73673998a3db5e517",
       "path": "frontend/src/app/onboarding/page.tsx",
       "line": 28,
@@ -30856,15 +31742,15 @@
       }
     },
     {
-      "id": "d9642208258b6b210b66",
+      "id": "0b45ceb87eaba1f8e1e0",
       "path": "frontend/src/app/share/[token]/page.tsx",
-      "line": 97,
+      "line": 128,
       "enclosing": "canPresentRichShare",
       "kind": "RPC_CANDIDATE",
       "target": "current_community_role",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "02be162aa110db0a216d12681f621023bd0c5737a2c48f484a7244b856a7bb16"
+      "sourceSha256": "e887643e9b160af5ec7c83358136498ed1794c59443f7f863800a4425f46e56d"
     },
     {
       "id": "19620b924bbcbab333b0",
@@ -31121,15 +32007,15 @@
       }
     },
     {
-      "id": "37347768912b9e614cea",
+      "id": "ed5669121537ca504798",
       "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "line": 203,
+      "line": 221,
       "enclosing": "FeatureCard",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "769ac7c78bd7c9b624bd0e69fa4b2eaa4df3bb13b943baf7d5019873915b29c7",
+      "sourceSha256": "435a987f8529000167f6a50c2f52b6e65a7e351eb6986d306bec197f37538b4e",
       "semanticReview": {
         "authority": "Native Array.from materializes locally queried menu buttons for keyboard focus navigation. The subsequent index/focus operations touch the DOM only. No database, storage client, credential or provider write is involved.",
         "reason": "Exact current-source receiver and surrounding data flow were inspected. Only the native in-memory conversion is excluded. No adjacent authority, persistence or provider boundary is certified.",
@@ -31384,15 +32270,15 @@
       "sourceSha256": "017f18809ddcdcd868d74ad5b3e2f82ac2ced4b25a89c6bea904ace8b79204e8"
     },
     {
-      "id": "a291f26c3c5001de01f9",
+      "id": "9b5825294bbdeabe6b85",
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 605,
+      "line": 606,
       "enclosing": "SidebarProjectHistory",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237",
+      "sourceSha256": "bdf84341e108be49d8d273c5f9ec653b417aab8894284904f7bfb23ca61cdcd2",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -31405,15 +32291,15 @@
       }
     },
     {
-      "id": "f8d5eaf0193282882763",
+      "id": "1410a770303a0c8eb8f3",
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 842,
+      "line": 843,
       "enclosing": "SidebarProjectHistory",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237",
+      "sourceSha256": "bdf84341e108be49d8d273c5f9ec653b417aab8894284904f7bfb23ca61cdcd2",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -31426,26 +32312,37 @@
       }
     },
     {
-      "id": "6797a49e98ecf2091511",
+      "id": "aee44d92598bab6a5376",
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 1110,
+      "line": 1103,
       "enclosing": "saveEditor",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237"
+      "sourceSha256": "bdf84341e108be49d8d273c5f9ec653b417aab8894284904f7bfb23ca61cdcd2"
     },
     {
-      "id": "4fbfd0293636c69d00b0",
+      "id": "e7271a1e21312c75b908",
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 1130,
+      "line": 1123,
       "enclosing": "saveEditor",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "403def6e0480eb4371f4c73261063c46af91996a8287e7722609c89d6e6ac237"
+      "sourceSha256": "bdf84341e108be49d8d273c5f9ec653b417aab8894284904f7bfb23ca61cdcd2"
+    },
+    {
+      "id": "dd1d78ed7de602caed33",
+      "path": "frontend/src/components/layout/ThemeToggle.tsx",
+      "line": 37,
+      "enclosing": "ThemeToggle",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "74edc6638d8f972b4743fbf22f84353e03580fcaf6e5d52d1a2c972e527a223b"
     },
     {
       "id": "92e2f9e84b8b9d7515b1",
@@ -31490,6 +32387,39 @@
       }
     },
     {
+      "id": "044500473a0fa5b1f775",
+      "path": "frontend/src/components/native-openui/upstream/components/chart.tsx",
+      "line": 100,
+      "enclosing": "Cartesian",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "1a28c0ee2f7ca6fb56f17035050695baa792212be26cf2a2651904fb143637b4"
+    },
+    {
+      "id": "1f43d019e4642a62314a",
+      "path": "frontend/src/components/native-openui/upstream/components/chart.tsx",
+      "line": 198,
+      "enclosing": "axis",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "1a28c0ee2f7ca6fb56f17035050695baa792212be26cf2a2651904fb143637b4"
+    },
+    {
+      "id": "c1f57b8225d79c77eef9",
+      "path": "frontend/src/components/native-openui/upstream/components/style.ts",
+      "line": 42,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "1e044a155ac88ca0e25fe4a5cd8f8eb3155e22f63ffa85c6eaff98deab963245"
+    },
+    {
       "id": "a5188cf19ad57cd05861",
       "path": "frontend/src/components/os-preview/Command2Sections.tsx",
       "line": 123,
@@ -31527,27 +32457,6 @@
           {
             "path": "frontend/src/components/os-preview/FounderScenarioLab.tsx",
             "marker": "<div className=\"os-field\"><label htmlFor=\"lab-module\">Module</label><select id=\"lab-module\" value={module} onChange={(event) => chooseModule(event.target.value as LabModule | 'All')}><option>All</option>{Array.from(new Set(LAB_SCENARIOS.map((item) => item.module))).map((item) => <option key={item}>{item}</option>)}</select></div>"
-          }
-        ]
-      }
-    },
-    {
-      "id": "e75e25572d006aea3011",
-      "path": "frontend/src/components/pricing/PricingPageClient.tsx",
-      "line": 121,
-      "enclosing": "CtaParticles",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "NOT_PERSISTENCE",
-      "sourceSha256": "06dc256ae10249978f8b73114f455a3b4a518d39287cd08dd229810ab66875c5",
-      "semanticReview": {
-        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in CtaParticles, with no database or Storage client receiver.",
-        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
-        "evidence": [
-          {
-            "path": "frontend/src/components/pricing/PricingPageClient.tsx",
-            "marker": "{Array.from({ length: 10 }, (_, index) => ("
           }
         ]
       }
@@ -31595,7 +32504,7 @@
       }
     },
     {
-      "id": "6742326272b0d9f8d2df",
+      "id": "d46198ffaba4be6f765f",
       "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
       "line": 32,
       "enclosing": "CalculatorV2",
@@ -31603,7 +32512,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d48780c59ec06763103fb0de1b5d8d498135cd580cc87b207a204d3f6e34d8a0"
+      "sourceSha256": "192e0a58e5774bb0b06108de5270f3e813d84ad8722e27612a9bdc3ffe9864f9"
     },
     {
       "id": "b7da7c544e1d23eb4355",
@@ -31722,29 +32631,18 @@
       }
     },
     {
-      "id": "4fe92c7afdea034fa58b",
-      "path": "frontend/src/components/terminal/ResponseSources.tsx",
-      "line": 57,
-      "enclosing": "ResponseSources",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "0fd186c17e5d8ab081a61db58f16e171de43d5d8cc66727caccab5245f1a5fc7"
-    },
-    {
-      "id": "dd508fe9836928e3970f",
+      "id": "590dbb7d21550effa467",
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 434,
+      "line": 406,
       "enclosing": "TerminalChatBar",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "dfdcf903eefaa158b3d6e28c2da80df9312563791359622133a686a4bfdcb82f",
+      "sourceSha256": "971692b317bb237ab649f70450bbd12cfc5df9e231297f098e140d167f5b48c8",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
-        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. The exact native FileList conversion and its enclosing handler are unchanged. The browser-operator branch and any upload or egress remain outside this classification. Refreshed for textarea sizing only. The entire FileList handler stays byte-identical and the scanner reports the same persistence candidate ID.",
         "evidence": [
           {
             "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
@@ -31754,7 +32652,7 @@
       }
     },
     {
-      "id": "6a5f707e725aad757a40",
+      "id": "2aa4104e88385814af87",
       "path": "frontend/src/components/terminal/XrogaRichResultsView.tsx",
       "line": 203,
       "enclosing": "RichResultsContent",
@@ -31762,7 +32660,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "872ab28612bcce7b7b656e748219fa74242e133529e1b272fe865a8a8279f577"
+      "sourceSha256": "3a676aaf12473990570c41cb3dfb4b54cce4ff74ded53115c887fab98778d470"
     },
     {
       "id": "8e9b157c7d4fd26ad135",
@@ -31891,6 +32789,31 @@
       }
     },
     {
+      "id": "e4cf22a404b1ba954649",
+      "path": "frontend/src/lib/clipboard.ts",
+      "line": 23,
+      "enclosing": "copyTextToClipboard",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "ea08eff8a91e3336f46bc92a58eedd114859e9cc65d99052b848ef275b26bc17",
+      "semanticReview": {
+        "authority": "The built-in Array.from call copies in-memory browser DOM Range objects for local selection restoration. Its receiver has no persistence or privilege interface.",
+        "reason": "The scanner includes every from method. This exact call clones the current document selection and the local clipboard fallback restores those ranges after copying.",
+        "evidence": [
+          {
+            "path": "frontend/src/lib/clipboard.ts",
+            "marker": "Array.from({ length: selection.rangeCount }, (_, i) => selection.getRangeAt(i).cloneRange())"
+          },
+          {
+            "path": "frontend/src/lib/clipboard.test.ts",
+            "marker": "missing or rejected Async Clipboard API falls back and restores focus and selection"
+          }
+        ]
+      }
+    },
+    {
       "id": "fbaca63a90f679479d96",
       "path": "frontend/src/lib/driveUpload.ts",
       "line": 117,
@@ -31959,18 +32882,18 @@
       }
     },
     {
-      "id": "ee548d3cf583cfcbdd91",
+      "id": "b3ad106e971b2d324707",
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 635,
+      "line": 629,
       "enclosing": "decodeBase64UrlUtf8",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "dba219fea184b59714d2c36619d1c58bd3273e6b232c9d1b4b53e3427bc16fdf",
+      "sourceSha256": "0b6b7ba6e538e1a51872e7c41a21ed2227b49279b6f9534deecb516b5de18c05",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
-        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. Re-bound 2026-11-04: Diff from the reviewed source d80e1ce5489b is only `export` added to BusinessActionConfirmationInline so the V2 turn can render the existing confirmation review. The reviewed call (decodeBase64UrlUtf8 Array/Uint8Array conversion) is unchanged; no new call, receiver, persistence or egress was added.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. Re-bound 2026-11-04: Diff from the reviewed source d80e1ce5489b is only `export` added to BusinessActionConfirmationInline so the V2 turn can render the existing confirmation review. The reviewed call (decodeBase64UrlUtf8 Array/Uint8Array conversion) is unchanged; no new call, receiver, persistence or egress was added. Re-bound 2026-11-15: reviewed diff adds keyboard focus, group semantics and focus outline only to the pre renderer. The Uint8Array.from call in decodeBase64UrlUtf8 and its source position are unchanged. No persistence, authentication or network behavior changed. This refresh does not certify production tenancy. Re-bound 2026-11-17: the research approval card presents the exact query and question as text and retains the full payload for inspection. The approval handler, network requests and the reviewed Uint8Array.from conversion are unchanged. The candidate ID moved because presentation lines precede that conversion. Re-bound 2026-11-18: removed the later automatic prose paragraph splitter. The entire reviewed in-memory Uint8Array conversion function and its call identity are unchanged, with no new persistence, authority or network operation. Re-bound 2026-11-18: removed the later synthesized introduction callout. The entire reviewed in-memory Uint8Array conversion function and its call identity are unchanged, with no new persistence, authority or network operation. Re-bound 2026-11-22: Marked retrieved citation evidence and made rendered table overflow keyboard-accessible. The complete decodeBase64UrlUtf8 function and its native Uint8Array.from candidate are byte-identical. Re-bound 2026-11-26: The Workspace renders an inline status for saved research without reviewable fields. The entire decodeBase64UrlUtf8 function and the existing API call expressions are unchanged. The follow-up changes only the message displayed when saved request details cannot be loaded. The same seven API and in-memory conversion call expressions are unchanged. Re-bound 2026-11-26 for HTML table alignment, column scope and long-cell text measurement. The reviewed Uint8Array conversion function is byte-identical and the persistence scanner found no new or changed expression.",
         "evidence": [
           {
             "path": "frontend/src/lib/formatAiMarkdown.tsx",
@@ -32177,191 +33100,191 @@
       }
     },
     {
-      "id": "ddc1e732f1738562a7d8",
+      "id": "d611351cb4430c1f7755",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 31,
+      "line": 27,
       "enclosing": "loadSidebarMeta",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "bd0cc046439923e989ba",
+      "id": "0743ae28756bf5310e7e",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 35,
+      "line": 31,
       "enclosing": "loadSidebarSections",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_sections",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "acc8432821b9b5b26c10",
+      "id": "dadf7a230b3f9a28b790",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 39,
+      "line": 35,
       "enclosing": "loadSidebarProjects",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "d93b375d98daf8c8146e",
+      "id": "8cd1403d84e0add9911d",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 43,
+      "line": 39,
       "enclosing": "loadSidebarChats",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_chats",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "1435d5679d9cfc68eda8",
+      "id": "ea37c0d6dae47edcea79",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 47,
+      "line": 43,
       "enclosing": "loadSidebarChatById",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_chats",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "c86a835c30be0bcf1251",
+      "id": "6b27200f9f128b123f15",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 54,
+      "line": 56,
       "enclosing": "saveSidebarChat",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_chats",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "1b5ad169706fb2285a23",
+      "id": "87c71cabcdec8938fafd",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 65,
+      "line": 67,
       "enclosing": "changeSidebarMeta",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "c51d95ae33aa4d5dae44",
+      "id": "ba2c766fc88f5cf799ab",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 69,
+      "line": 71,
       "enclosing": "changeSidebarMeta",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "7de702fbc2b7b261b051",
+      "id": "9c51456d8b54db3a797a",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 73,
+      "line": 75,
       "enclosing": "changeSidebarMeta",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "02bb0163278413bfc4d4",
+      "id": "2fe7d6185df0d5da8fac",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 85,
+      "line": 87,
       "enclosing": "deleteSidebarMeta",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "c16200354fe78e5df55b",
+      "id": "a87d571c0816bf6f485e",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 89,
+      "line": 91,
       "enclosing": "createSidebarSection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_sections",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "db4a5917ca14f418b42b",
+      "id": "15381d9f908267a47734",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 93,
+      "line": 95,
       "enclosing": "removeSidebarSection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_sections",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "2d4d10ceeaf02fe42f70",
+      "id": "1e36d1014c0261f853dc",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 97,
+      "line": 99,
       "enclosing": "deleteSidebarChat",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_chats",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "50a0f49e57786f999e73",
+      "id": "54bdc8896efa58ffef15",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 119,
+      "line": 133,
       "enclosing": "swapSidebarPins",
       "kind": "RPC_CANDIDATE",
       "target": "xroga_swap_sidebar_pins",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "eebad1f4e73b01bd9e5d",
+      "id": "c3c90fe76d5abf1a3cf7",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 133,
+      "line": 147,
       "enclosing": "loadPinnedSidebarRecords",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "27942300e7daaadc06fe",
+      "id": "3dfd497409a274a2b4a3",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 135,
+      "line": 149,
       "enclosing": "loadPinnedSidebarRecords",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "terminal_sessions",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
-      "id": "19a37b099336607193eb",
+      "id": "1d3e01a9bd429bf29ed5",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 137,
+      "line": 151,
       "enclosing": "loadPinnedSidebarRecords",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_chats",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+      "sourceSha256": "337ce25950ef180073558a563b24900ffb2eaa69d22e20722871b77a327ca34c"
     },
     {
       "id": "66603d4f9153d6ce36e1",
@@ -32467,15 +33390,103 @@
       "sourceSha256": "c73176a55e776661d1374be102e9b46b42fbd160122407941203a059408f5b47"
     },
     {
-      "id": "53953a7522a9f4a6ec38",
+      "id": "15456514e184bf2ec9b1",
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "line": 32,
+      "enclosing": "searchOwnedWorkspace",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "xroga_sidebar_chats",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d"
+    },
+    {
+      "id": "ef91dadc671180de0753",
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "line": 33,
+      "enclosing": "searchOwnedWorkspace",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "terminal_sessions",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d"
+    },
+    {
+      "id": "78594aff6685b1775779",
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "line": 34,
+      "enclosing": "searchOwnedWorkspace",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "projects",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d"
+    },
+    {
+      "id": "1bec00ffd4c81abae866",
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "line": 35,
+      "enclosing": "searchOwnedWorkspace",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "xroga_sidebar_sections",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d"
+    },
+    {
+      "id": "7731405329a3307fa1e7",
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "line": 36,
+      "enclosing": "searchOwnedWorkspace",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "xroga_sidebar_items",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d"
+    },
+    {
+      "id": "4ba9b08128aed200300b",
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "line": 54,
+      "enclosing": "searchOwnedWorkspace",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "xroga_sidebar_chats",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d"
+    },
+    {
+      "id": "6efc8c7854afaf321175",
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "line": 55,
+      "enclosing": "searchOwnedWorkspace",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "terminal_sessions",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d"
+    },
+    {
+      "id": "2954a7eb5e4108bc34a7",
+      "path": "frontend/src/lib/workspaceSearch.ts",
+      "line": 56,
+      "enclosing": "searchOwnedWorkspace",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "projects",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d15cfc13401b281ccc98252e25506ae18df47909a7b30e672702792de3142b1d"
+    },
+    {
+      "id": "8df86e806ff4832e56ab",
       "path": "frontend/src/lib/xrogaFileExports.ts",
-      "line": 90,
+      "line": 157,
       "enclosing": "exportDocumentPdf",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "771f7f75bff7d39c9b05c230ae37cd6bb3fc287bcd09a187acb37e8337a89807",
+      "sourceSha256": "4d3ce2cb9b387b94a03a282c342910d9230b26aa76a85104243c94976d0fb26b",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in exportDocumentPdf, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",

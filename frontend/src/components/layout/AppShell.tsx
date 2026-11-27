@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { Sidebar } from './Sidebar';
 import { CompactScrollIndicator } from './SidebarNavScroller';
 import { MobileNav } from './MobileNav';
+import { TeamInvitePopup } from '@/components/team/TeamInvitePopup';
 import { TerminalDock } from '@/components/terminal/TerminalDock';
 import { TerminalChatProvider } from '@/context/TerminalChatContext';
 import { TerminalScrollProvider } from '@/context/TerminalScrollContext';
@@ -52,7 +53,8 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
     pathname === '/dashboard' ||
     pathname.startsWith('/dashboard/') ||
     pathname === '/settings' ||
-    pathname.startsWith('/settings/');
+    pathname.startsWith('/settings/') ||
+    pathname === '/team';
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
   const incognito = hydrated && incognitoRaw;
   const effectiveSidebarOpen = hydrated ? sidebarOpen : true;
@@ -161,6 +163,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
               {isDashboard ? <TerminalDock /> : null}
             </div>
             <MobileNav />
+            <TeamInvitePopup />
           </div>
         </TerminalScrollProvider>
       </TerminalChatProvider>

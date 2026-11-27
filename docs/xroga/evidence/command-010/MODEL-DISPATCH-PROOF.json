@@ -9,7 +9,7 @@
     {
       "path": "backend/src/ai/pipeline.ts",
       "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
-      "currentSha256": "d3742ca4dccc50daf99aa71d9896449957dde73798dc6d7c2a9c5ca5536cff32",
+      "currentSha256": "a1849efca55ecf29dca9453dea64fec3f657782ee286c1dd43ba73ad7ec07945",
       "genericSdkPreviousCurrentBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
@@ -24,8 +24,8 @@
         "944a58bb15dca85b3ddd"
       ],
       "afterIds": [
-        "4431005001a8d288051f",
-        "ce02ccc6a928e44634de"
+        "d2d4eae547457550a374",
+        "1250e6c6c67f7c3829a9"
       ],
       "unchangedNearestBlockSha256": [
         "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
@@ -4238,12 +4238,117 @@
           "bab7cb9676b8369a55a7"
         ],
         "basis": "Current hash and the current review ids were re-bound after the strict call-and-function comparison in REBIND-REPORT.json. The nearest-block hashes and every historical record are unchanged."
+      },
+      "beforeNativeWorkspaceRouting": {
+        "sourceSha256": "c5eee2fd7ac3c6211e1e0b53fa516357ef110a07504ff45c29111a4b5dbe6f43",
+        "afterIds": [
+          "7dc867931d0d296911dc",
+          "b11f02479d5943c73413"
+        ]
+      },
+      "beforeNativePlainPrompt": {
+        "sourceSha256": "07ab1714a6f3d3559d546e2172016cca626482f7a31857904f249fb27b1103af",
+        "scope": "Only the instructions for high-confidence prose answers change. The worker body is byte-identical. Model dispatch, scope, reservation and settlement are unchanged. This rebind does not certify a live run.",
+        "afterIds": [
+          "5b543818a91ad0c16240",
+          "9ed969847167feb788b9"
+        ]
+      },
+      "deterministicMonthlySourceReview": {
+        "previousSha256": "6934fe9714e36e4caa8cbdb93cc6f26d8e00039163f1804214e1fd975ae26471",
+        "scope": "ONLY_ORDINARY_CHAT_POST_SETTLEMENT_PRESENTATION_CONTEXT",
+        "method": "Exact source diff and two byte-identical enclosing-function caller comparisons. No change to dispatch, accounting, persistence, authorization or worker execution.",
+        "liveAcceptance": false,
+        "previousCurrentIds": [
+          "35f3549436f0298a207b",
+          "b48abe88189d416f59c4"
+        ]
+      },
+      "beforeWorkspaceResponseQuality": {
+        "currentSha256": "d981253fc491c75b4d2b90c6e080509aa541fd04d840276e133e81b39fe3eac6",
+        "afterIds": [
+          "b1d5a924ac6051d72aee",
+          "9ff832f34f606fa57c9e"
+        ]
+      },
+      "beforeAdaptiveWorkspaceBudget": {
+        "currentSha256": "e3ce3808eba24cd2461066d7b571ae5f96fd108ef3b8aaf807ba04b39b1b3dc8",
+        "afterIds": [
+          "5725855926bd46f4b2a1",
+          "108c0b015831530e885e"
+        ]
+      },
+      "beforeNativeReasoningAlignment": {
+        "source": "677b111f52097654f47e92b6807b45200c2a89ee",
+        "sha256": "245f60b9f9b04e0a67226b5354a4fd13ccf584a475e2219a09472d2f5d57000c",
+        "afterIds": [
+          "93a3b008dcb4d37d39ce",
+          "b01a01f65052e1222fd2"
+        ],
+        "scope": "Historical binding retained, no new security acceptance"
+      },
+      "beforeBufferedDeadlineSha256": "cbf67edd08efef2f05de9690ad359cd5c92dd7802c453cfb5e5d2062a5876a79",
+      "beforePlainReasoningDefault": {
+        "source": "31db9f69d27998460ceb506cbdebd5972a2121a3",
+        "sha256": "5c37c7d2bbc96fc8c4ddf1f294c9b1f2bde5385048847400a5bcbd69a3582e06",
+        "afterIds": [
+          "e5fc46a4de6acdba6654",
+          "9a60c892b04c3d76e56b"
+        ]
+      },
+      "beforeDraftRouting": {
+        "sha256": "85c08952d3469ffaff203a91df6d79e3d554478278e9244317929d7d5de73780",
+        "ids": [
+          "dae25c9daa57213c1180",
+          "6239699ce63ed3c3adfc"
+        ],
+        "scope": "Native prompt eligibility only. Dispatch, settlement and bound persistence calls remain byte-identical. Historical evidence and acceptance are unchanged."
+      },
+      "workspaceReview20261119": {
+        "auditedBase": "5898449fad9adb60c6eaa98653f2ddec8d7d6e82",
+        "candidateSource": "eea565cc2377cd5d66fcf06cc6bd4da83cfc5681",
+        "previousSha256": "814b1ac7189f74142e4441796d200f11ee5f0f24eabc7f42face59d75a414add",
+        "previousCallIds": [
+          "dd07efebd27fb2ef7b30",
+          "73e39773b083010d176b"
+        ],
+        "finding": "Ordinary text now relies on the existing just-in-time quota check. Attachment extraction, Search and approved continuations, repository evidence and Sonnet review retain the early gate. The complete callBuilderStream and runBuildPipeline functions and every runWebIntelligence request expression match the audited base. The current Search confirmation wording does not affect authority.",
+        "liveAcceptance": false
+      },
+      "workspaceAutomaticSearch": {
+        "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
+        "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+        "previousSha256": "3eb2040d95ed469292f430d5e7b47f5a7d8bf1be2bf1a7b7fc617817141d1b56",
+        "previousCallerIds": [
+          "eb8532242b9c169bae0b",
+          "9372bc4c2d95f5c088d0"
+        ],
+        "evidencePath": "docs/xroga/evidence/command-010/WORKSPACE-AUTOMATIC-PUBLIC-SEARCH-20261119.json",
+        "liveAcceptance": false
+      },
+      "automaticResearchLedgerReservation": {
+        "parent": "3ee7bf57328167b94108eb12b8dc6db02a497557",
+        "applicationSource": "bc5175fb36e4a1b8210119cfd6a8f5255a3f4183",
+        "previousSha256": "c12b8c82d6d82f28f8dea53d2924127e9d92f9ec6eecb417c818e60620a45310",
+        "scope": "Only source positions moved for the reviewed, unchanged build conversions. Automatic public Search synthesis reserves through the existing account ledger while separate private research retains its signed bound."
+      },
+      "workspaceResearchPrivacy": {
+        "baseline": "8530c904c54b32dba220dc013cfdc7bc0c6ca76e",
+        "previousSha256": "8421acd5e8233fe3207a59285288db1366c2d3f266eb76966302d2488d3546b4",
+        "scope": "Recognize source-quoted, model-planned local downloads. Verified authority, model dispatch, storage and tenant call shapes are unchanged."
+      },
+      "beforeWorkspaceExplicitSearchRouting": {
+        "currentSha256": "0d72f9ebb7a4072e05fe675a956a4515ed5c2b52d37e2fefcde9f1a0830fc10c",
+        "afterIds": [
+          "9e04b3a2c9e71ccbcd4f",
+          "ab4e501256fc00026210"
+        ]
       }
     },
     {
       "path": "backend/src/routes/phase1.ts",
       "historicalSha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b",
-      "currentSha256": "91b55da6a6beca61715b829c0087b10f90d2cc5bb7e2b7bce5500fbca50b2b7d",
+      "currentSha256": "91f74671061715c1c154a7ca1ad308fe30ab40d80fc6c4cb545f39ba74442c9b",
       "businessModelContinuationBinding": {
         "reference": "b183079ec8a00cb4d7a29a95e8cdfb517da81acb",
         "previousCurrentSha256": "7ad7b1f7dde453a4065e15ba260998fe5841c6992724d03ee299b71c8380c0f5",
@@ -4259,7 +4364,7 @@
         "ebede146c851a085d2b8"
       ],
       "afterIds": [
-        "fa04b8d8f9413c194ec5"
+        "ff119993d08c76a18c1b"
       ],
       "unchangedNearestBlockSha256": [
         "c2096dbdee542d663ba05ee31829f741533e7ae3a6bd6aae397ced85681a4286"
@@ -4464,6 +4569,21 @@
           "78696e27dd5c1ca37c3a"
         ],
         "basis": "Current hash and the current review ids were re-bound after the strict call-and-function comparison in REBIND-REPORT.json. The nearest-block hashes and every historical record are unchanged."
+      },
+      "workspaceAutomaticSearch": {
+        "baseline": "da334bea3f2170d52ab6a97202edb36eecea07bf",
+        "candidate": "debcd15f9bc92c87e76ca288ac84b37eac6287f1",
+        "previousSha256": "768d23551b96e4e803da3767e3b4cb99b6d28cb2d97f84d9a6c8c300fbdfc845",
+        "previousCallerIds": [
+          "006420f2256a9d86cc5a"
+        ],
+        "evidencePath": "docs/xroga/evidence/command-010/WORKSPACE-AUTOMATIC-PUBLIC-SEARCH-20261119.json",
+        "liveAcceptance": false
+      },
+      "workspaceResearchPrivacy": {
+        "baseline": "077ea3640075b80eaa3bfebca28a2be5e58dc9a9",
+        "previousSha256": "8e116ae5296634e5a493aea0cee9434255186deaced4ce27754f92d05e760f43",
+        "scope": "Restrict consumer research serialization to answer, source, status and explicit consent fields. Stored authority and scoped caller behaviors are unchanged."
       }
     },
     {

@@ -15,6 +15,9 @@ import { MessageShareModal } from './MessageShareModal';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import { serializeAssistantCopy } from '@/lib/assistantCopy';
+import { copyTextToClipboard } from '@/lib/clipboard';
+import { publicAnswerExportText } from '@/lib/publicAnswerText';
+import { NATIVE_SHARE_PREFIX } from '../../../../backend/src/ai/nativeOpenUiShare';
 
 interface MessageBubbleActionsProps {
   role: 'user' | 'assistant';
@@ -23,6 +26,7 @@ interface MessageBubbleActionsProps {
   prompt?: string;
   onFeedback?: () => void;
   createdAt?: number;
+  richResponse?: string;
 }
 
 export function MessageBubbleActions({
@@ -32,22 +36,29 @@ export function MessageBubbleActions({
   prompt,
   onFeedback,
   createdAt,
+  richResponse,
 }: MessageBubbleActionsProps) {
   const [reaction, setReaction] = useState<'up' | 'down' | null>(null);
   const [copied, setCopied] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const shareResponse = role === 'assistant' ? publicAnswerExportText(content) : content;
 
   async function handleCopy() {
-    try {
-      await navigator.clipboard.writeText(
-        role === 'assistant' ? serializeAssistantCopy(content) : content,
-      );
-      setCopied(true);
-      toast.success('Copied');
-      setTimeout(() => setCopied(false), 1500);
-    } catch {
-      toast.error('Copy failed');
+    const text = role === 'assistant' ? serializeAssistantCopy(content, {
+      collapseDuplicateTables: richResponse?.startsWith(NATIVE_SHARE_PREFIX),
+    }) : content;
+    if (!text) {
+      toast.error('There is no message text to copy.');
+      return;
     }
+    const success = await copyTextToClipboard(text);
+    setCopied(success);
+    if (!success) {
+      toast.error('Could not copy. Select the message text to copy it.');
+      return;
+    }
+    toast.success('Copied');
+    setTimeout(() => setCopied(false), 1500);
   }
 
   function handleLike(v: 'up' | 'down') {
@@ -109,7 +120,9 @@ export function MessageBubbleActions({
         open={shareOpen}
         onClose={() => setShareOpen(false)}
         prompt={role === 'assistant' ? prompt : undefined}
-        response={content}
+        response={shareResponse}
+        richResponse={shareResponse === content ? richResponse : undefined}
+        literalContent={Boolean(richResponse)}
         contentLabel={role === 'user' ? 'prompt' : 'answer'}
       />
     )}

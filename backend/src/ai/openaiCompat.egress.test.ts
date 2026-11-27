@@ -2,11 +2,13 @@ import test,{type TestContext} from 'node:test';
 import {randomUUID} from 'node:crypto';
 import assert from 'node:assert/strict';
 import OpenAI from 'openai';
-import {chatCompletion,chatCompletionStream,chatCompletionSingleResponse,snapshotModelEgressPayload} from './openaiCompat.js';
+import {chatCompletion,chatCompletionStream,chatCompletionSingleResponse,completionResponseMode,snapshotModelEgressPayload,createModelProviderClient,MODEL_PROVIDER_TIMEOUT_MS} from './openaiCompat.js';
+import {runBuilderAttempt,DEFAULT_BUILDER_BUDGET} from './builderAttempt.js';
 import {MODELS,type ModelId} from './models.js';
 import {createTenantContext} from '../security/tenantContext.js';
 import {withTenantModelReservation} from './tenantModelDispatch.js';
 import {presentationResponseFormat} from './responsePresentation.js';
+import {workspaceAnswerOutputChars} from './workspaceAnswerBudget.js';
 
 
 function mockProviderHttp(t:TestContext, handler:(_path:unknown, options:unknown)=>Promise<any>){
@@ -27,7 +29,13 @@ function mockProviderHttp(t:TestContext, handler:(_path:unknown, options:unknown
 
 // Positive SDK fixtures enter through the real canonical issuer. Only the
 // external HTTP responses are synthetic, no test-only authority issuer exists.
-function admitted(t:TestContext,modelId:ModelId='deepseek_v4_1_flash_1017',settlements:number[]=[]){
+type AccountingCalls = {
+  settlements: Record<string, unknown>[];
+  usage: Record<string, unknown>[];
+  releases: Record<string, unknown>[];
+  afterSettlement?: () => void;
+};
+function admitted(t:TestContext,modelId:ModelId='deepseek_v4_1_flash_1017',settlements:number[]=[],accounting?:AccountingCalls){
   const keys=['SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','ZURELAY_API_KEY','ZURELAY_JSON_SCHEMA_VERIFIED'];
   const previous=keys.map(k=>process.env[k]);
   Object.assign(process.env,{SUPABASE_URL:'http://127.0.0.1:55438',SUPABASE_SERVICE_ROLE_KEY:'synthetic-loopback-only'});
@@ -46,14 +54,21 @@ function admitted(t:TestContext,modelId:ModelId='deepseek_v4_1_flash_1017',settl
     }
     if(url.pathname.endsWith('/settle_xroga_provider_budget')){
       settlements.push(b.p_actual_micro_usd);
+      accounting?.settlements.push(b);
+      accounting?.afterSettlement?.();
       const r=reservations.get(b.p_reservation_id);assert.ok(r);
       return Response.json({...r,status:'settled',settled_micro_usd:b.p_actual_micro_usd,provider_request_id:b.p_provider_request_id,
         actual_input_tokens:b.p_actual_input_tokens,cached_input_tokens:b.p_cached_input_tokens,output_tokens:b.p_output_tokens,
         reasoning_tokens:b.p_reasoning_tokens,tool_calls:b.p_tool_calls,search_calls:b.p_search_calls});
     }
-    if(url.pathname.endsWith('/record_ai_usage_atomic'))return Response.json({userId:owner,receiptId:b.p_receipt_id,modelId:b.p_model_id,poolRole:b.p_pool_role,inputTokens:b.p_input,
-      outputTokens:b.p_output,costUsd:b.p_cost_usd,ledgerId:'1',period:new Date().toISOString().slice(0,7)+'-01',replayed:false,usage:{user_id:owner}});
-    assert.equal(url.pathname,'/rest/v1/rpc/release_xroga_provider_budget');return Response.json(null);
+    if(url.pathname.endsWith('/record_ai_usage_atomic')){
+      accounting?.usage.push(b);
+      return Response.json({userId:owner,receiptId:b.p_receipt_id,modelId:b.p_model_id,poolRole:b.p_pool_role,inputTokens:b.p_input,
+        outputTokens:b.p_output,costUsd:b.p_cost_usd,ledgerId:'1',period:new Date().toISOString().slice(0,7)+'-01',replayed:false,usage:{user_id:owner}});
+    }
+    assert.equal(url.pathname,'/rest/v1/rpc/release_xroga_provider_budget');
+    accounting?.releases.push(b);
+    return Response.json(null);
   });
   return(invoke:typeof chatCompletion,messages:Parameters<typeof chatCompletion>[1],opts:Parameters<typeof chatCompletion>[2]={})=>{
     process.env.ZURELAY_API_KEY=opts.credentialOverride??'synthetic-provider-key';
@@ -82,27 +97,113 @@ test('both actual model SDK paths allow ordinary work and deny secret prompts be
   }assert.equal(calls,2);
 });
 
-test('actual admitted SDK paths retain empty-response diagnostics without publishing or retrying',async t=>{
-  const run=admitted(t);let calls=0,published=0;
-  t.mock.method(console,'warn',()=>{});
-  mockProviderHttp(t,async(_path:unknown,options:unknown)=>{
-    calls++;
-    if((options as {body:{stream?:boolean}}).body.stream)return(async function*(){
-      yield {id:'synthetic-empty',choices:[{delta:{reasoning_content:'private reasoning'},finish_reason:'length'}]};
-      yield {choices:[],usage:{prompt_tokens:4,completion_tokens:8}};
-    })();
-    return {id:'synthetic-empty',choices:[{message:{content:null,reasoning_content:'private reasoning'},finish_reason:'length'}],usage:{prompt_tokens:4,completion_tokens:8}};
-  });
-  const options={maxTokens:8,onDelta:()=>published++};
-  for(const invoke of [chatCompletion,chatCompletionStream])await assert.rejects(run(invoke,[{role:'user',content:'ordinary source'}],options),error=>{
-    const failure=error as {code:string;retryable:boolean;completionDiagnostics:{providerRequestId:string;usage:unknown;finishReason:string}};
-    assert.equal(failure.code,'EMPTY_PROVIDER_RESPONSE');assert.equal(failure.retryable,false);
-    assert.equal(failure.completionDiagnostics.providerRequestId,'synthetic-empty');
-    assert.equal(failure.completionDiagnostics.finishReason,'length');
-    assert.deepEqual(failure.completionDiagnostics.usage,{inputTokens:4,outputTokens:8});
-    return true;
-  });
-  assert.equal(calls,2);assert.equal(published,0);
+test('admitted buffered and streaming responses settle verified reasoning usage without publishing or retrying',async t=>{
+  const cases = [
+    { streaming: false, cancel: false },
+    { streaming: true, cancel: false },
+    { streaming: false, cancel: true },
+    { streaming: true, cancel: true },
+  ];
+  for (const { streaming, cancel } of cases) {
+    await t.test(`${streaming ? 'streaming' : 'buffered'} with ${cancel ? 'post-receipt cancellation' : 'no readable answer'}`, async test => {
+      const previous = process.env.ZURELAY_STREAM_USAGE_VERIFIED;
+      process.env.ZURELAY_STREAM_USAGE_VERIFIED = streaming ? '1' : '0';
+      test.after(() => {
+        if (previous === undefined) delete process.env.ZURELAY_STREAM_USAGE_VERIFIED;
+        else process.env.ZURELAY_STREAM_USAGE_VERIFIED = previous;
+      });
+      const controller = new AbortController();
+      const accounting: AccountingCalls = {
+        settlements: [], usage: [], releases: [],
+        ...(cancel ? { afterSettlement: () => controller.abort() } : {}),
+      };
+      const run = admitted(test, 'deepseek_v4_1_flash_1017', [], accounting);
+      let calls = 0, published = 0;
+      const usage = {
+        prompt_tokens: 29, completion_tokens: 16_384,
+        prompt_tokens_details: { cached_tokens: 7 },
+        completion_tokens_details: { reasoning_tokens: 16_384 },
+      };
+      test.mock.method(console, 'warn', () => {});
+      mockProviderHttp(test, async (_path, options) => {
+        calls++;
+        assert.equal(Boolean((options as { body: { stream?: boolean } }).body.stream), streaming);
+        if (streaming) return (async function* () {
+          yield { id: 'synthetic-empty', choices: [{ delta: { reasoning_content: 'private reasoning' }, finish_reason: 'length' }] };
+          yield { choices: [], usage };
+        })();
+        return { id: 'synthetic-empty', choices: [{ message: { content: null, reasoning_content: 'private reasoning' }, finish_reason: 'length' }], usage };
+      });
+      const options = { maxTokens: 16_384, signal: controller.signal, onDelta: () => published++ };
+      await assert.rejects(run(chatCompletionStream, [{ role: 'user', content: 'Ordinary question.' }], options), error => {
+        const failure = error as { code: string; retryable: boolean; completionDiagnostics: { providerRequestId: string; usage: unknown; finishReason: string } };
+        if (cancel) {
+          assert.equal(failure.code, 'BUILD_CANCELLED');
+          return true;
+        }
+        assert.equal(failure.code, 'EMPTY_PROVIDER_RESPONSE');
+        assert.equal(failure.retryable, false);
+        assert.equal(failure.completionDiagnostics.providerRequestId, 'synthetic-empty');
+        assert.equal(failure.completionDiagnostics.finishReason, 'length');
+        assert.deepEqual(failure.completionDiagnostics.usage, { inputTokens: 29, outputTokens: 16_384 });
+        return true;
+      });
+      assert.equal(calls, 1, 'The verified empty response does not authorize a retry');
+      assert.equal(published, 0);
+      assert.equal(accounting.settlements.length, 1);
+      const [settlement] = accounting.settlements;
+      assert.equal(settlement.p_provider_request_id, 'synthetic-request');
+      assert.equal(settlement.p_actual_input_tokens, 29);
+      assert.equal(settlement.p_cached_input_tokens, 7);
+      assert.equal(settlement.p_output_tokens, 16_384);
+      assert.equal(settlement.p_reasoning_tokens, 16_384);
+      assert.equal(accounting.usage.length, 1);
+      assert.equal(accounting.usage[0].p_input, 29);
+      assert.equal(accounting.usage[0].p_output, 16_384);
+      assert.equal(accounting.usage[0].p_cost_usd, Number(settlement.p_actual_micro_usd) / 1_000_000);
+      assert.deepEqual(accounting.releases, []);
+    });
+  }
+});
+
+test('empty responses without exact verified usage remain pending in both transports', async t => {
+  for (const streaming of [false, true]) {
+    await t.test(streaming ? 'streaming' : 'buffered', async test => {
+      const previous = process.env.ZURELAY_STREAM_USAGE_VERIFIED;
+      process.env.ZURELAY_STREAM_USAGE_VERIFIED = streaming ? '1' : '0';
+      test.after(() => {
+        if (previous === undefined) delete process.env.ZURELAY_STREAM_USAGE_VERIFIED;
+        else process.env.ZURELAY_STREAM_USAGE_VERIFIED = previous;
+      });
+      const accounting: AccountingCalls = { settlements: [], usage: [], releases: [] };
+      const run = admitted(test, 'deepseek_v4_1_flash_1017', [], accounting);
+      let calls = 0, published = 0;
+      test.mock.method(console, 'warn', () => {});
+      mockProviderHttp(test, async () => {
+        calls++;
+        const finish = { model: 'deepseek-v4.1-flash-1017', finish_reason: 'length' };
+        const usage = calls === 1 ? undefined : {
+          prompt_tokens: 29, completion_tokens: 8, completion_tokens_details: { reasoning_tokens: 9 },
+        };
+        if (streaming) return (async function* () {
+          yield { id: 'synthetic-empty', choices: [{ ...finish, delta: {} }] };
+          if (usage) yield { choices: [], usage };
+        })();
+        return { id: 'synthetic-empty', choices: [{ ...finish, message: { content: null } }], usage };
+      });
+      const options = { maxTokens: 8, onDelta: () => published++ };
+      for (let failure = 0; failure < 2; failure++) {
+        await assert.rejects(run(chatCompletionStream, [{ role: 'user', content: 'Ordinary question.' }], options), {
+          code: 'MODEL_DESTINATION_DENIED',
+        });
+      }
+      assert.equal(calls, 2, 'Each unverified dispatch is attempted once');
+      assert.equal(published, 0);
+      assert.deepEqual(accounting.settlements, []);
+      assert.deepEqual(accounting.usage, []);
+      assert.deepEqual(accounting.releases.map(release => release.p_pending_reconciliation), [true, true]);
+    });
+  }
 });
 
 test('model payload snapshots support tool records and aliases but reject cycles and unsupported values safely',()=>{
@@ -223,6 +324,98 @@ const answerBody = (usage?: Record<string, unknown> | null, extra: Record<string
 });
 const single = chatCompletionSingleResponse as unknown as typeof chatCompletion;
 
+test('SDK and wire deadlines preserve the canonical buffered generation window without enabling retries', async t => {
+  const settlements:number[]=[];
+  const timeouts:number[]=[];
+  t.mock.method(AbortSignal,'timeout',(ms:number)=>{timeouts.push(ms);return new AbortController().signal;});
+  t.mock.method(globalThis,'fetch',async()=>Response.json(answerBody(),{headers:HEADERS}));
+  const run=admitted(t,'deepseek_v4_1_flash_1017',settlements);
+  const client=createModelProviderClient({apiKey:'synthetic-provider-key',baseUrl:'https://api.zurelay.com/v1',apiModel:'deepseek-v4.1-flash-1017',provider:'zurelay'});
+  assert.ok(client.timeout>DEFAULT_BUILDER_BUDGET.generationMs);
+  assert.equal(client.timeout,MODEL_PROVIDER_TIMEOUT_MS);
+  assert.equal(client.maxRetries,0);
+  const result=await run(single,[{role:'user',content:'A complete buffered answer.'}],{maxTokens:64});
+  assert.equal(result.text,'A complete answer.');
+  assert.ok(timeouts.includes(MODEL_PROVIDER_TIMEOUT_MS));
+  assert.ok(!timeouts.includes(180_000));
+  assert.equal(settlements.length,1);
+});
+
+test('opted-in continuations preserve the first line of code in both provider transports', async t => {
+  for (const streaming of [false, true]) {
+    await t.test(streaming ? 'streaming' : 'buffered', async test => {
+      const previous = process.env.ZURELAY_STREAM_USAGE_VERIFIED;
+      process.env.ZURELAY_STREAM_USAGE_VERIFIED = streaming ? '1' : '0';
+      test.after(() => {
+        if (previous === undefined) delete process.env.ZURELAY_STREAM_USAGE_VERIFIED;
+        else process.env.ZURELAY_STREAM_USAGE_VERIFIED = previous;
+      });
+      const content = '    second = 2\n    print(second)\n';
+      const settlements: number[] = [];
+      const run = admitted(test, 'deepseek_v4_1_flash_1017', settlements);
+      mockProviderHttp(test, async (_, options) => {
+        assert.equal(Boolean((options as { body: { stream?: boolean } }).body.stream), streaming);
+        const usage = { prompt_tokens: 20, completion_tokens: 10 };
+        if (streaming) return (async function* () {
+          yield { id: 'synthetic-continuation', choices: [{ delta: { content }, finish_reason: 'stop' }], usage };
+        })();
+        return { id: 'synthetic-continuation', choices: [{ message: { content }, finish_reason: 'stop' }], usage };
+      });
+      const messages = [{ role: 'user' as const, content: 'Continue the example procedure.' }];
+      assert.equal((await run(chatCompletionStream, messages, { maxTokens: 64 })).text, content.trim());
+      assert.equal((await run(chatCompletionStream, messages, {
+        maxTokens: 64, preserveLeadingWhitespace: true,
+      })).text, content.trimEnd());
+      assert.equal(settlements.length, 2);
+    });
+  }
+});
+
+test('an admitted long Workspace stream uses the attempt buffer and settles exactly once', async t => {
+  const previous = process.env.ZURELAY_STREAM_USAGE_VERIFIED;
+  process.env.ZURELAY_STREAM_USAGE_VERIFIED = '1';
+  t.after(() => {
+    if (previous === undefined) delete process.env.ZURELAY_STREAM_USAGE_VERIFIED;
+    else process.env.ZURELAY_STREAM_USAGE_VERIFIED = previous;
+  });
+  const modelId = 'deepseek_v4_1_flash_1017';
+  const maximumOutputTokens = 200_000;
+  const maximumOutputChars = workspaceAnswerOutputChars(modelId, maximumOutputTokens);
+  const settlements: number[] = [];
+  const run = admitted(t, modelId, settlements);
+  const delegate = globalThis.fetch;
+  let dispatches = 0;
+  t.mock.method(globalThis, 'fetch', async (input: Parameters<typeof fetch>[0], init?: RequestInit) => {
+    if (new URL(String(input)).origin !== 'https://api.zurelay.com') return delegate(input, init);
+    dispatches++;
+    const body = JSON.parse(String(init?.body));
+    assert.equal(body.max_tokens, maximumOutputTokens);
+    assert.equal(body.stream, true);
+    const model = 'deepseek-v4.1-flash-1017';
+    const frames = [
+      { model, choices: [{ delta: { content: 'x'.repeat(800_000) } }] },
+      { model, choices: [{ delta: { content: 'y'.repeat(800_000) }, finish_reason: 'stop' }],
+        usage: { prompt_tokens: 20, completion_tokens: maximumOutputTokens, total_tokens: maximumOutputTokens + 20 } },
+    ];
+    const encoder = new TextEncoder();
+    const bodyStream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        for (const frame of frames) controller.enqueue(encoder.encode('data: ' + JSON.stringify(frame) + '\n\n'));
+        controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+        controller.close();
+      },
+    });
+    return new Response(bodyStream, { headers: { ...HEADERS, 'content-type': 'text/event-stream' } });
+  });
+  const options = { maxTokens: maximumOutputTokens, maxOutputChars: maximumOutputChars };
+  const result = await run(chatCompletionStream, [{ role: 'user', content: 'Generate a long example answer.' }], options);
+  assert.ok(result.text.length > DEFAULT_BUILDER_BUDGET.maxOutputChars);
+  assert.equal(result.text.length, maximumOutputChars);
+  assert.equal(result.finishReason, 'stop');
+  assert.equal(dispatches, 1);
+  assert.equal(settlements.length, 1);
+});
+
 test('single-response transport sends one non-streaming request, settles from the provider receipt and publishes text once', async t => {
   const settlements: number[] = []; const bodies: Record<string, unknown>[] = [];
   t.mock.method(globalThis, 'fetch', async (input: Parameters<typeof fetch>[0], init?: RequestInit) => {
@@ -239,6 +432,30 @@ test('single-response transport sends one non-streaming request, settles from th
   assert.equal(bodies.length, 1); assert.ok(!bodies[0].stream, 'must not stream');
   assert.equal(settlements.length, 1, 'exactly one settlement per provider request, never a duplicate');
   assert.deepEqual(shown, ['A complete answer.']);
+});
+
+test('the buffered SDK route survives the stream deadline and publishes only after verified settlement', async t => {
+  const previous=process.env.ZURELAY_STREAM_USAGE_VERIFIED;
+  delete process.env.ZURELAY_STREAM_USAGE_VERIFIED;
+  t.after(()=>{if(previous===undefined)delete process.env.ZURELAY_STREAM_USAGE_VERIFIED;else process.env.ZURELAY_STREAM_USAGE_VERIFIED=previous;});
+  const settlements:number[]=[],shown:string[]=[];
+  let calls=0;
+  t.mock.method(globalThis,'fetch',async()=>{
+    calls++;
+    await new Promise(resolve=>setTimeout(resolve,60));
+    assert.equal(shown.length,0);
+    return Response.json(answerBody(),{headers:HEADERS});
+  });
+  const run=admitted(t,'deepseek_v4_1_flash_1017',settlements);
+  assert.equal(completionResponseMode('deepseek_v4_1_flash_1017'),'buffered');
+  const result=await runBuilderAttempt(({signal,onActivity})=>run(chatCompletionStream,[{role:'user',content:'Ordinary question.'}],{
+    maxTokens:64,signal,onActivity,onDelta:(text:string)=>{assert.equal(settlements.length,1);shown.push(text);},
+  } as never),{responseMode:completionResponseMode('deepseek_v4_1_flash_1017'),budget:{firstTokenMs:10,generationMs:5000}});
+  assert.equal(result.value.text,'A complete answer.');
+  assert.equal(calls,1);
+  assert.deepEqual(shown,['A complete answer.']);
+  process.env.ZURELAY_STREAM_USAGE_VERIFIED='1';
+  assert.equal(completionResponseMode('deepseek_v4_1_flash_1017'),'stream');
 });
 
 test('a missing, inconsistent or non-numeric usage receipt is refused: nothing published, nothing settled from an estimate', async t => {

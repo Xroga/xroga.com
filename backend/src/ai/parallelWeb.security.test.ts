@@ -68,6 +68,7 @@ test('actual Parallel entries enforce issued context, current owner, egress, can
       if(mode==='malformedResults')return Response.json({results:'untrusted malformed result'},receipt);
       if(mode==='missingProviderId')return Response.json({results:[]});
       if(mode==='credentialProviderId')return Response.json({results:[]},{headers:{'x-ds-trace-id':'SYNTHETIC_CREDENTIAL_PROVIDER_RECEIPT'}});
+      if(mode==='emptyResults')return Response.json({results:[]},receipt);
       return Response.json({results:[{url:'https://example.com/docs',title:'Docs',summary:'public fixture',snippet:'public',date:null}]},receipt);
     }
     assert.equal(url.origin,env.SUPABASE_URL,'No unmocked network is allowed');
@@ -99,7 +100,8 @@ test('actual Parallel entries enforce issued context, current owner, egress, can
     }
     if(url.pathname==='/rest/v1/rpc/settle_xroga_provider_budget'){
       events.push('settle');const row=reservations.get(body.p_reservation_id);assert.ok(row);assert.equal(body.p_user_id,owner);
-      assert.equal(body.p_actual_micro_usd,row.reserved_micro_usd);assert.equal(body.p_actual_input_tokens,0);assert.equal(body.p_output_tokens,0);
+      assert.equal(body.p_actual_micro_usd,mode==='emptyResults'?0:row.reserved_micro_usd);assert.equal(body.p_actual_input_tokens,0);assert.equal(body.p_output_tokens,0);
+      assert.equal(body.p_search_calls,1);
       if(mode==='settlementFailure')return Response.json({message:'synthetic settlement unavailable'},{status:503});
       const result={...row,status:'settled',settled_micro_usd:body.p_actual_micro_usd,provider_request_id:body.p_provider_request_id,actual_input_tokens:0,cached_input_tokens:0,output_tokens:0,reasoning_tokens:0,tool_calls:0,search_calls:body.p_search_calls};
       return Response.json(mode==='settlementWrongCost'?{...result,settled_micro_usd:0}:result);
@@ -149,6 +151,14 @@ test('actual Parallel entries enforce issued context, current owner, egress, can
       assert.ok(result.requestId);if(operation==='extract'){assert.deepEqual(events,['egress']);assert.equal(publicOpens,2);continue;}assert.deepEqual(events,['egress','reserve','provider','settle']);
       const row=[...reservations.values()].at(-1)!;assert.equal(row.reserved_micro_usd,750);
     }
+    await t.test('empty DeepSeek results settle zero while preserving the request receipt and dispatch count',async()=>{
+      mode='emptyResults';events.length=0;
+      const receipt=await search();
+      assert.equal(receipt.requestId,'synthetic-search-0001');
+      assert.deepEqual(receipt.result.results,[]);
+      assert.deepEqual(events,['egress','reserve','provider','settle']);
+      mode='ok';
+    });
     await t.test('native URL retrieval denies private DNS, redirects and cancellation after DNS without delegated fetch',async()=>{
       for(const denied of ['privateDns','publicRedirect','cancelAtDns']){mode=denied;const prior=effects,opened=publicOpens;await assert.rejects(complete(parallelExtract({userId:owner,dispatchScope:scope,objective:'read public docs',urls:['https://example.com/docs']})));assert.equal(effects,prior);assert.equal(publicOpens,opened+(denied==='publicRedirect'?1:0));}mode='ok';
     });

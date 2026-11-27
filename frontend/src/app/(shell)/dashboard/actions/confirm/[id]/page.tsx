@@ -52,6 +52,7 @@ interface SafeConfirmation {
   receipt?: { id: string; outcome: string; recordedAt: string; resultDigest?: string };
   toolSlug?: string;
   argumentsPreview?: string;
+  researchReview?: Array<{ label: string; value: string }>;
 }
 
 function displayToolkitName(
@@ -306,8 +307,9 @@ export default function BusinessActionConfirmationPage() {
         );
 
         setMessage(
-          result.response ||
-            'Action completed.',
+          result.confirmation.toolkit === 'xroga-native-research'
+            ? 'Open the saved research result.'
+            : result.response || 'Action completed.',
         );
         setNextConfirmationId(result.nextConfirmationId ?? null);
       } catch (
@@ -401,20 +403,24 @@ export default function BusinessActionConfirmationPage() {
     confirmation
       ?.status ===
     'pending';
+  const research = confirmation?.toolkit === 'xroga-native-research';
+  const canConfirm = research ? Boolean(confirmation?.researchReview?.length) : Boolean(confirmation?.approval);
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 py-10 sm:px-6">
       <div className="space-y-2">
         <p className="text-xs font-medium uppercase tracking-[0.16em] text-[var(--text-secondary)]">
-          Xroga Connect
+          {research ? 'Workspace research' : 'Xroga Connect'}
         </p>
 
         <h1 className="text-2xl font-semibold tracking-tight text-[var(--text-primary)]">
-          Review action
+          {research ? 'Review research information' : 'Review action'}
         </h1>
 
         <p className="text-sm leading-6 text-[var(--text-secondary)]">
-          High-risk connected-app actions run only after you approve the exact prepared action.
+          {research
+            ? 'Approve sending the information below for this research request.'
+            : 'High-risk connected-app actions run only after you approve the exact prepared action.'}
         </p>
       </div>
 
@@ -439,20 +445,20 @@ export default function BusinessActionConfirmationPage() {
           <div className="space-y-5 p-6">
             <div>
               <p className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--text-secondary)]">
-                Exact action
+                {research ? 'Information sharing' : 'Exact action'}
               </p>
 
               <p className="mt-2 text-base font-medium leading-7 text-[var(--text-primary)]">
-                {confirmation.summary}
+                {research ? 'Review the information to send with this research request.' : confirmation.summary}
               </p>
             </div>
 
-            {confirmation.request ? <div className="rounded-xl border border-blue-500/25 bg-blue-500/[0.06] px-4 py-3"><p className="text-xs font-semibold uppercase tracking-[0.12em] text-blue-500">Your original request</p><p className="mt-1 text-sm leading-6 text-[var(--text-primary)]">{confirmation.request}</p></div> : null}
+            {!research && confirmation.request ? <div className="rounded-xl border border-blue-500/25 bg-blue-500/[0.06] px-4 py-3"><p className="text-xs font-semibold uppercase tracking-[0.12em] text-blue-500">Your original request</p><p className="mt-1 text-sm leading-6 text-[var(--text-primary)]">{confirmation.request}</p></div> : null}
 
-            {confirmation.toolSlug ? <div className="rounded-xl border border-[var(--border-subtle)] px-4 py-3"><p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--text-secondary)]">Prepared app operation</p><p className="mt-1 break-all font-mono text-sm text-[var(--text-primary)]">{confirmation.toolSlug}</p><p className="mt-3 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--text-secondary)]">Arguments to review (secrets redacted)</p><pre className="mt-2 max-h-80 overflow-auto whitespace-pre-wrap break-all text-xs leading-5 text-[var(--text-primary)]">{confirmation.argumentsPreview ?? '{}'}</pre></div> : null}
+            {!research && confirmation.toolSlug ? <div className="rounded-xl border border-[var(--border-subtle)] px-4 py-3"><p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--text-secondary)]">Prepared app operation</p><p className="mt-1 break-all font-mono text-sm text-[var(--text-primary)]">{confirmation.toolSlug}</p><p className="mt-3 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--text-secondary)]">Arguments to review (secrets redacted)</p><pre className="mt-2 max-h-80 overflow-auto whitespace-pre-wrap break-all text-xs leading-5 text-[var(--text-primary)]">{confirmation.argumentsPreview ?? '{}'}</pre></div> : null}
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <div>
+              {!research && <div>
                 <p className="text-xs text-[var(--text-secondary)]">
                   Application
                 </p>
@@ -460,15 +466,15 @@ export default function BusinessActionConfirmationPage() {
                 <p className="mt-1 text-sm font-medium text-[var(--text-primary)]">
                   {appName}
                 </p>
-              </div>
+              </div>}
 
               <div>
                 <p className="text-xs text-[var(--text-secondary)]">
-                  Risk
+                  {research ? 'Purpose' : 'Risk'}
                 </p>
 
                 <p className="mt-1 text-sm font-medium capitalize text-[var(--text-primary)]">
-                  {confirmation.risk}
+                  {research ? 'Information sharing' : confirmation.risk}
                 </p>
               </div>
 
@@ -493,13 +499,22 @@ export default function BusinessActionConfirmationPage() {
               </div>
             </div>
 
-            <div className="rounded-xl border border-[var(--border-subtle)] px-4 py-3">
+            {!research && <div className="rounded-xl border border-[var(--border-subtle)] px-4 py-3">
               <p className="text-xs leading-5 text-[var(--text-secondary)]">
                 Confirming authorizes only this account and exact prepared action. Provider credentials and sessions stay on the server. Sensitive parameter values are redacted below.
               </p>
-            </div>
+            </div>}
 
-            {confirmation.approval ? (
+            {research && confirmation.researchReview?.length ? (
+              <dl className="space-y-3 rounded-xl border border-[var(--border-subtle)] p-4" aria-label="Information to send">
+                {confirmation.researchReview.map(({ label, value }, index) => (
+                  <div key={index}>
+                    <dt className="text-xs font-medium text-[var(--text-secondary)]">{label}</dt>
+                    <dd className="mt-1 whitespace-pre-wrap break-words text-sm">{value}</dd>
+                  </div>
+                ))}
+              </dl>
+            ) : !research && confirmation.approval ? (
               <section className="space-y-3 rounded-xl border border-[var(--border-subtle)] p-4" aria-label="Exact action approval">
                 <dl className="space-y-2 break-all text-sm">
                   <div><dt className="text-[var(--text-secondary)]">Account</dt><dd>{confirmation.approval.accountReference}</dd></div>
@@ -515,7 +530,7 @@ export default function BusinessActionConfirmationPage() {
               <p role="alert" className="text-sm text-[var(--text-secondary)]">This older action needs to be prepared again before it can be confirmed.</p>
             ) : null}
 
-            {confirmation.receipt ? (
+            {!research && confirmation.receipt ? (
               <p className="break-all text-xs text-[var(--text-secondary)]">
                 Receipt {confirmation.receipt.id}: {confirmation.receipt.outcome === 'provider_reported_success'
                   ? 'The provider reported success. This receipt is not independent verification of its external state.'
@@ -564,13 +579,13 @@ export default function BusinessActionConfirmationPage() {
                   onClick={() => {
                     void confirm();
                   }}
-                  disabled={Boolean(submitting) || !confirmation.approval}
+                  disabled={Boolean(submitting) || !canConfirm}
                   className="rounded-xl bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-[var(--background)] transition-opacity disabled:opacity-50"
                 >
                   {submitting ===
                   'confirm'
                     ? 'Confirming…'
-                    : 'Confirm action'}
+                    : research ? 'Approve information sharing' : 'Confirm action'}
                 </button>
               </>
             ) : (

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { safeRichSourceUrl, xrogaRichResultSchema } from './xrogaRichResults';
 import { responseCoverageContractSchema } from './responseCoverageContract';
+import { nativeDocumentFormats } from '../../../backend/src/ai/nativeDocumentDownload';
 
 export const XROGA_BLOCK_SCHEMA_VERSION = 1 as const;
 
@@ -355,7 +356,12 @@ export const xrogaOutputSchema = z.object({
   sourceText: z.string().max(200_000).optional(),
   // Preserve the received document for incomplete-output recovery. It is data,
   // never HTML, executable UI or proof that the answer passed validation.
-  responseSource: z.object({ format: z.literal('xroga-response-json-v1'), text: z.string().max(200_000), contract:responseCoverageContractSchema.optional() }).strict().optional(),
+  responseSource: z.object({
+    format: z.enum(['xroga-response-json-v1', 'xroga-openui-v1']), text: z.string().max(200_000), contract: responseCoverageContractSchema.optional(),
+  }).strict().refine(source => source.format !== 'xroga-openui-v1' || (source.text.length <= 24_000 && !source.contract)).optional(),
+  // Independent of the strict native program schema so older renderers can
+  // still read the same answer and ignore the new download affordance.
+  documentDownload: z.enum(nativeDocumentFormats).optional().catch(undefined),
   composition: z.literal('source-order').optional(),
   artifact: z.object({
     id: z.string().min(1), type: z.string().min(1), title: z.string().min(1), projectId: z.string().optional(),
@@ -384,5 +390,13 @@ export function parseXrogaBlock(value: unknown): XrogaBlock | null {
 
 export function parseXrogaOutput(value: unknown): XrogaOutputDocument | null {
   const parsed = xrogaOutputSchema.safeParse(value);
-  return parsed.success ? parsed.data : null;
+  if (parsed.success) return parsed.data;
+  // Older native answers also stored derived legacy tables. Those optional
+  // projections must not invalidate the authoritative prose and native program.
+  if (value && typeof value === 'object' &&
+      (value as { responseSource?: { format?: unknown } }).responseSource?.format === 'xroga-openui-v1') {
+    const native = xrogaOutputSchema.safeParse({ ...value, blocks: [] });
+    if (native.success && native.data.sourceText) return native.data;
+  }
+  return null;
 }

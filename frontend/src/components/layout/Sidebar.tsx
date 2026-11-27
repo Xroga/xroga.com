@@ -20,8 +20,6 @@ import {
   MessageCirclePlus,
   Terminal,
   Rocket,
-  Activity,
-  TrendingUp,
   FolderGit2,
   LayoutTemplate,
   Sparkles,
@@ -90,8 +88,6 @@ import { FolderOpenIcon } from '@/components/icons/animated/FolderOpenIcon';
 import { AirplayIcon } from '@/components/icons/animated/AirplayIcon';
 import { UsersRoundIcon } from '@/components/icons/animated/UsersRoundIcon';
 import { SmileIcon } from '@/components/icons/animated/SmileIcon';
-import { ChartColumnIncreasingIcon } from '@/components/icons/animated/ChartColumnIncreasingIcon';
-import { HeartPulseIcon } from '@/components/icons/animated/HeartPulseIcon';
 import { SidebarNavScroller } from './SidebarNavScroller';
 import { ThemeToggle } from './ThemeToggle';
 import compactStyles from './SidebarCompact.module.css';
@@ -182,16 +178,14 @@ const navItems: NavEntry[] = [
       { href: '/dashboard/library#my-files', label: 'My Files', icon: Files, animated: LucideFolderOpenIcon, tip: 'Coming soon · Stored files', planned: true },
       { href: '/dashboard/library#artifacts', label: 'Artifacts', icon: FileText, animated: LucideFileTextIcon, tip: 'Coming soon · Saved deliverables', planned: true },
       { href: '/showcase', label: 'Templates', icon: LayoutTemplate, animated: LucideLayersIcon, tip: 'Browse existing Xroga templates.' },
-      { href: '/dashboard/library#skills', label: 'Skills', icon: BookOpen, animated: LucideBookTextIcon, tip: 'Coming soon · Reusable capabilities', planned: true },
+      { href: '/dashboard/library#skills', label: 'Skills', icon: BookOpen, animated: LucideBookTextIcon, tip: '40 ready-made jobs to start in your Workspace.' },
       { href: '/dashboard/library#xroga-drive', label: 'Xroga Drive', icon: HardDrive, animated: LucideHardDriveIcon, tip: 'Coming soon · Persistent personal storage', planned: true },
     ],
   },
   { href: '/dashboard/publish', motion: 'launch' as const, label: 'Publish', icon: Rocket, animated: RocketIcon, tip: 'Ship web, extensions, desktop and mobile through your accounts.' },
   {
-    id: 'more', label: 'More', icon: Ellipsis, tip: 'Operations, growth, settings and community.',
+    id: 'more', label: 'More', icon: Ellipsis, tip: 'Settings, discovery and feedback.',
     children: [
-      { href: '/dashboard/operations', label: 'Operations', icon: Activity, animated: HeartPulseIcon, tip: 'Releases, health and approvals.' },
-      { href: '/dashboard/growth', label: 'Growth', icon: TrendingUp, animated: ChartColumnIncreasingIcon, tip: 'Campaigns, experiments and attribution.' },
       { href: '/settings', label: 'Settings', icon: Settings, animated: CogIcon, tip: 'Theme, account and preferences.' },
       { href: '/features', label: 'Explore', icon: Compass, animated: TelescopeIcon, tip: 'Explore what Xroga can do.' },
       { href: '/showcase', label: 'Showcase', icon: LayoutTemplate, animated: AirplayIcon, tip: 'Explore reusable product templates.' },
@@ -563,8 +557,8 @@ export function Sidebar({ displayName, email }: SidebarProps) {
     useProjectWorkspaceStore.getState().setWorkspaceOpen(false);
     handleNavClick();
     router.push('/workspace');
-    // Signal the composer after the task reset. The canonical project stays selected;
-    // users clear it only through the separate "New product" control.
+    // Signal the composer after New Work clears the previous project
+    // and repository. Users can opt back into either in the same workspace.
     window.setTimeout(() => {
       window.dispatchEvent(new CustomEvent('xroga-request-new-terminal'));
     }, 80);
@@ -828,13 +822,8 @@ export function Sidebar({ displayName, email }: SidebarProps) {
                     }
                   >
                     <div className="xv-sidebar-hover-menu__card xv-sidebar-compact-flyout">
-                      {entry.children.map((child, index) => (
-                        <div key={child.label}>
-                          {index === 0 ? <p className="xv-sidebar-hover-menu__eyebrow">OPERATIONS &amp; GROWTH</p> : null}
-                          {index === 3 ? <p className="xv-sidebar-hover-menu__eyebrow xv-sidebar-menu-divider">DISCOVER</p> : null}
-                          {renderMenuChild(child)}
-                        </div>
-                      ))}
+                      <p className="xv-sidebar-hover-menu__eyebrow">More</p>
+                      {entry.children.map((child) => <div key={child.href}>{renderMenuChild(child)}</div>)}
                     </div>
                   </SidebarHoverMenu>
                 ) : isGroup(entry) ? (
@@ -968,7 +957,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
             onKeyDown={resizeWithKeyboard}
             className="xv-sidebar-resize-handle hidden lg:flex"
           >
-            <span aria-hidden="true" />
+            {/* Keep the accessible drag/keyboard resize handle, with no six-dot decoration. */}
           </div>
         ) : null}
       </div>

@@ -34,5 +34,7 @@ export function splitExplicitBusinessWorkflow(message: string): BusinessWorkflow
       dependsOnPrevious: steps.length > 0 && DEPENDENT_REFERENCE.test(request),
     });
   }
-  return steps.some((step) => step.kind === 'action') ? steps : null;
+  // Two explicit reads can also form a useful cross-app workflow. The same
+  // durable checkpoints and per-read confirmation still apply to each step.
+  return steps;
 }

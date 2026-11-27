@@ -1,0 +1,190 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-ADAPTIVE-EDITORIAL-REVIEW-20261120",
+  "baseSha": "349cfa75f48503ee173960eca89f5bbfdd72a0a0",
+  "requirementIds": [
+    "XR-MISSION-054",
+    "XR-MISSION-055"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "high",
+  "scope": "Validate explicit procedure decisions across representations, admit independently public Workspace research, preserve explicitly requested document downloads, and keep native answers responsive without changing model routing or execution boundaries.",
+  "changedFiles": [
+    "backend/src/ai/answerCoverage.ts",
+    "backend/src/ai/answerFormat.ts",
+    "backend/src/ai/black-hole/webIntelligence.ts",
+    "backend/src/ai/nativeDocumentDownload.test.ts",
+    "backend/src/ai/nativeDocumentDownload.ts",
+    "backend/src/ai/nativeMarkdown.ts",
+    "backend/src/ai/nativeOpenUi.ts",
+    "backend/src/ai/nativeOpenUi.test.ts",
+    "backend/src/ai/nativeOpenUiAccuracy.ts",
+    "backend/src/ai/nativeOpenUiEditorial.ts",
+    "backend/src/ai/nativeOpenUiEditorial.test.ts",
+    "backend/src/ai/nativeOpenUiPrompt.ts",
+    "backend/src/ai/nativeOpenUiValues.test.ts",
+    "backend/src/ai/nativeOpenUiValues.ts",
+    "backend/src/ai/nativeOpenUiWorkspace.ts",
+    "backend/src/ai/parallelApproval.ts",
+    "backend/src/ai/pipeline.ts",
+    "backend/src/ai/researchAnswer.test.ts",
+    "backend/src/ai/tenantModelDispatch.test.ts",
+    "backend/src/ai/universal/runtimeFailure.test.ts",
+    "backend/src/ai/universal/runtimeFailure.ts",
+    "backend/src/ai/workspaceAnswerContinuation.test.ts",
+    "backend/src/ai/workspaceAnswerContinuation.ts",
+    "backend/src/ai/workspacePublicSearch.ts",
+    "frontend/e2e/command3-auth.spec.ts",
+    "frontend/e2e/phase4-admin-share.security.mjs",
+    "frontend/src/components/native-openui/NativeSurface.tsx",
+    "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
+    "frontend/src/components/native-openui/surface.css",
+    "frontend/src/components/native-openui/upstream/components/layout.tsx",
+    "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
+    "frontend/src/components/native-openui/upstream/components/markdown.tsx",
+    "frontend/src/components/response-experience-v2/exportText.test.ts",
+    "frontend/src/lib/assistantCopy.test.ts",
+    "frontend/src/lib/connectedAppResult.test.ts",
+    "frontend/src/lib/connectedAppResult.ts",
+    "frontend/src/lib/formatAiMarkdown.tsx",
+    "frontend/src/lib/messageHelpers.test.ts",
+    "frontend/src/lib/messageHelpers.ts",
+    "frontend/src/lib/publicAnswerText.ts",
+    "frontend/src/lib/xrogaFileExports.test.ts",
+    "frontend/src/lib/xrogaFileExports.ts",
+    "frontend/src/lib/xrogaResponseDocument.test.ts",
+    "frontend/src/lib/xrogaResponseDocument.ts",
+    "scripts/verify-native-openui-browser.mjs"
+  ],
+  "decisions": {
+    "keep": [
+      "Keep the existing DeepSeek route, native registry, private Share and canonical spending ledger."
+    ],
+    "extend": [
+      "Check explicit condition outcomes and prerequisite order at the existing answer assembly boundary.",
+      "Count renderable static decision tables as delivered while preserving the existing native table requirement for requested interactions.",
+      "Admit explicitly public raw-turn lookups through the current bounded Search broker even when an unrelated project is selected.",
+      "Distinguish public software names, normal currency units, and citation requests from actual destinations or official-only restrictions.",
+      "Store settled automatic Search evidence under its authenticated request correlation before answer synthesis.",
+      "Reserve automatic public Search synthesis through the canonical ledger using the full evidence and planned answer budget, preserving the signed cap for private research.",
+      "Preserve a document's requested format when the format is specified after the creation brief, and keep its tables editable in Word.",
+      "Recognize explicit local file formats on named document subtypes and keep file delivery instructions out of the authored document.",
+      "Remove directions to unavailable calculator inputs while retaining the worked calculation and unrelated content.",
+      "Keep calculator sensitivity and boundary examples distinct from the active result being checked.",
+      "Keep a sensitivity chart's computed series separate from the calculator's selected value while still checking explicit labeled scalar rows.",
+      "Correct an explicit local percentage when its numerator and denominator identify unique evaluated calculator readouts in the same unit. Preserve the correction in both the rendered program and the saved answer.",
+      "Place a directly requested primary calculator before background prose when it is the first validated interactive block, preserving deliberate reading order and the complete written answer.",
+      "Apply a verified local factual correction in place when it resolves the only flagged issue in an ordinary plain answer.",
+      "Reuse an unchanged native answer tree during unrelated Workspace updates.",
+      "Keep native boxes within the reading column and let their contents determine height.",
+      "Respect explicit prose-only or excluded presentation formats in final response assembly.",
+      "Show a plain status when the owner’s saved research cannot be reviewed, without unrelated follow-ups or a retry instruction.",
+      "Keep available evidence visible when an ordinary Search has no answer, and preserve a valid continuation when a native presentation stops mid-program.",
+      "Render recovered native Markdown and literal duplicate code once while keeping canonical text available for Copy and Share.",
+      "Keep provider diagnostics and retry details out of public failure messages."
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "Existing completion, answer, and Share formats continue to decode.",
+    "rollback": "Restore the preceding decoder-compatible frontend, API and Job pair using the scoped release operator."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "Use the existing authenticated Workspace and Search paths."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No account, project, document, or source ownership check is altered."
+    },
+    "approval": {
+      "changed": true,
+      "description": "Admit public-topic queries independently from ambient project selection while preserving exact approval for private data and consequential actions."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "Existing isolated and production provider credentials retain their existing deployment and access rules."
+    },
+    "egress": {
+      "changed": true,
+      "description": "Approved public-query shapes send only text derived from the raw turn through the existing public read broker. Attachments, history, connected accounts and project data cannot populate this request."
+    },
+    "cost": {
+      "changed": true,
+      "description": "Automatic public Search synthesis uses a conservative reservation under the existing account entitlement. The separate signed private research cap, paid retrieval bounds, provider accounting, and one-dispatch rule remain enforced."
+    },
+    "billing": {
+      "changed": false,
+      "description": "Preserve actual provider receipts, canonical settlement and limit enforcement."
+    }
+  },
+  "tests": [
+    {
+      "command": "tsx --test backend/src/ai/nativeOpenUiEditorial.test.ts backend/src/ai/nativeOpenUi.test.ts",
+      "scope": "Preserve independent content and withhold conflicting prose, branches, tables and prerequisite order.",
+      "negative": true,
+      "reference": "backend/src/ai/nativeOpenUiEditorial.test.ts"
+    },
+    {
+      "command": "tsx --test backend/src/ai/nativeOpenUiValues.test.ts",
+      "scope": "Repair explicit calculator ratios through native presentation and Share while leaving mixed units, ambiguous metrics and independent examples intact.",
+      "negative": true,
+      "reference": "backend/src/ai/nativeOpenUiValues.test.ts"
+    },
+    {
+      "command": "tsx --test backend/src/ai/researchAnswer.test.ts",
+      "scope": "Verify public query projection, settled and tenant-private evidence before synthesis, failure without repeat dispatch, and the approval barrier for private context.",
+      "negative": true,
+      "reference": "backend/src/ai/researchAnswer.test.ts"
+    },
+    {
+      "command": "tsx --test backend/src/ai/nativeDocumentDownload.test.ts frontend/src/lib/xrogaFileExports.test.ts",
+      "scope": "Verify direct and deferred download requests, encoded Office artifacts, and negative cases for app features, conflicting formats and declined downloads.",
+      "negative": true,
+      "reference": "backend/src/ai/nativeDocumentDownload.test.ts"
+    },
+    {
+      "command": "playwright test -c frontend/playwright.config.ts command3-auth.spec.ts",
+      "scope": "Verify signed-in rendered responses, Copy, Share revocation and Reopen, including obsolete and reviewable research records on isolated accounts.",
+      "negative": true,
+      "reference": "frontend/e2e/command3-auth.spec.ts"
+    },
+    {
+      "command": "node scripts/verify-native-openui-browser.mjs",
+      "scope": "Verify oversized boxes reflow, short model dimensions keep prose visible, and SVG geometry remains intact across viewport widths.",
+      "negative": true,
+      "reference": "scripts/verify-native-openui-browser.mjs"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Use the existing chat pipeline, presentation validator and public research broker.",
+    "rfc": null
+  },
+  "rollout": "Require exact-source CI, authenticated private and fresh DeepSeek evidence, the verified Vercel artifact, and the reviewed canary and approval boundary.",
+  "rollback": "Restore the last verified compatible frontend, API, Job and decoder through the maintained release procedure.",
+  "knownGaps": [
+    "The deterministic editorial guard covers explicit supported syntax and shared labels. Novel or paraphrased model claims still need fresh editorial review.",
+    "Live Search requires independently verified isolated result storage. Map and media resolver availability remains provider-gated."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "docs/operations/native-openui/CAPABILITY_AUDIT.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Fresh DeepSeek acceptance, isolated Search storage verification and an exact Ready production frontend artifact remain required."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

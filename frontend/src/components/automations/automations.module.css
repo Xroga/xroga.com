@@ -685,9 +685,7 @@
   border-radius: 12px;
 }
 .stats strong {
-  font:
-    28px Georgia,
-    serif;
+  font: 28px Georgia, serif;
 }
 .stats small {
   text-transform: capitalize;

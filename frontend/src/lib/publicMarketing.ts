@@ -13,11 +13,14 @@ export const PRIVATE_PREFIXES = [
   '/admin',
   '/settings',
   '/drive',
+  '/team',
+  '/join',
   '/auth',
   '/onboarding',
   '/share',
   '/ref',
   '/os-preview',
+  '/native-answer-evaluation',
 ] as const;
 
 /**

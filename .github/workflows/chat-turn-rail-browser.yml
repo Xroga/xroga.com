@@ -15,6 +15,7 @@ on:
       - 'frontend/src/components/terminal/XrogaVoiceControl.tsx'
       - 'frontend/src/components/ui/AnchoredPortalPopover.tsx'
       - '.github/workflows/chat-turn-rail-browser.yml'
+      - 'scripts/ci/install-playwright-chromium.sh'
   workflow_dispatch:
 permissions:
   contents: read
@@ -44,7 +45,7 @@ jobs:
           path: ~/.cache/ms-playwright
           key: rail-chromium-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
       - name: Install Chromium
-        run: npx playwright install --with-deps chromium
+        run: bash scripts/ci/install-playwright-chromium.sh
       - name: Start locally built Xroga
         run: |
           npm run start --workspace=frontend -- --hostname 127.0.0.1 --port 3000 > /tmp/rail-frontend.log 2>&1 &

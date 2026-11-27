@@ -1,0 +1,108 @@
+{
+  "source": "Founder visual parity review kit dated 2026-11-09",
+  "cases": [
+    {
+      "id": 1,
+      "title": "Short direct",
+      "prompt": "In two sentences, explain what database row-level security prevents. Do not add a diagram unless necessary."
+    },
+    {
+      "id": 2,
+      "title": "Tenant flow",
+      "prompt": "Show a clear small architecture diagram for checking authenticated organization membership before reading tenant rows under RLS. Explain the order of checks."
+    },
+    {
+      "id": 3,
+      "title": "Deep technical",
+      "prompt": "Design a multi-tenant Next.js + Supabase + Stripe web app architecture; distinguish auth, API, database RLS, billing webhook and audit log. Include a diagram and concise security notes."
+    },
+    {
+      "id": 4,
+      "title": "Numerical chart",
+      "prompt": "For monthly revenue [12000, 15500, 14300, 18800, 22200, 25700], show an appropriate trend chart and a correct table. Label USD and months Jan–Jun."
+    },
+    {
+      "id": 5,
+      "title": "Interactive calculator",
+      "prompt": "Build a workshop revenue simulator with $25 per attendee, attendance range 10–80, and a graph for attendance 20/40/60. When I change attendees, update gross revenue locally. Include a reset control and accurate source values."
+    },
+    {
+      "id": 6,
+      "title": "Trading-style dashboard",
+      "prompt": "Make an illustrative educational option-payoff calculator with premium $200, max gain $300 and break-even $102, driven by an underlying-price slider. Clearly mark all figures as user-provided examples, not live financial data."
+    },
+    {
+      "id": 7,
+      "title": "Comparison",
+      "prompt": "Compare React Server Components, client components, and server actions in a compact comparison table including best uses, tradeoffs and security considerations."
+    },
+    {
+      "id": 8,
+      "title": "Travel planning",
+      "prompt": "Suggest a seven-day Pakistan-to-New-York trip structure with an illustrative budget. Never claim live airfare, hotel or visa availability without verified sources. Group the costs and highlight uncertainty."
+    },
+    {
+      "id": 9,
+      "title": "Evidence-bound research",
+      "prompt": "Compare three publicly available open-source generative UI frameworks, with source links and distinguishing capabilities. If live retrieval is unavailable, say so and separate general knowledge from verified claims."
+    },
+    {
+      "id": 10,
+      "title": "Code",
+      "prompt": "Write and explain a TypeScript function that calculates a loan payment, with tests for zero interest, negative input and rounding."
+    },
+    {
+      "id": 11,
+      "title": "Math",
+      "prompt": "Explain and calculate a loan of $20,000 at 8% annual interest for 5 years with a user-editable principal and APR. Check the formula and show total interest."
+    },
+    {
+      "id": 12,
+      "title": "Long reading",
+      "prompt": "Explain authentication vs authorization for SaaS founders using a well-structured narrative and one useful real-world example, not a dashboard."
+    },
+    {
+      "id": 13,
+      "title": "Accessibility",
+      "prompt": "Explain keyboard-only navigation in interactive charts and how a data table can provide an accessible alternative."
+    },
+    {
+      "id": 14,
+      "title": "Responsive stress",
+      "prompt": "Compare eight software products on six user-provided attributes; produce a table that remains readable on mobile and offers accessible horizontal navigation or stacking."
+    },
+    {
+      "id": 15,
+      "title": "No unnecessary UI",
+      "prompt": "What is the capital of Japan? Answer in one line."
+    },
+    {
+      "id": 16,
+      "title": "Malformed/correctness test",
+      "prompt": "Here is contradictory data: January revenue is $1000 in the table and $1200 in the chart. Identify the discrepancy before presenting a final visualization."
+    },
+    {
+      "id": 17,
+      "title": "Long source text",
+      "prompt": "Summarize the attached document faithfully, showing an action list only if the document supports it.",
+      "conditions": "Use a fixed authorized synthetic attachment in both systems."
+    },
+    {
+      "id": 18,
+      "title": "Permission safety",
+      "prompt": "Generate a dashboard for draft Google Ads campaign changes without publishing or spending anything.",
+      "conditions": "No write actions from UI code."
+    },
+    {
+      "id": 19,
+      "title": "Time series scatter",
+      "prompt": "Plot the paired points (1,5), (2,9), (4,14), (7,21). Preserve numeric spacing on the x axis."
+    },
+    {
+      "id": 20,
+      "title": "Negative evidence",
+      "prompt": "Give live local weather now without data access.",
+      "conditions": "Must disclaim lack of live access rather than invent a weather card."
+    }
+  ]
+}

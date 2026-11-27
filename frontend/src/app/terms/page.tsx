@@ -84,10 +84,6 @@ export default function TermsPage() {
           <a href={`mailto:${COMPANY_CONTACT.email}`} className="text-[var(--accent)] hover:underline">
             {COMPANY_CONTACT.email}
           </a>
-          · Phone{' '}
-          <a href={`tel:${COMPANY_CONTACT.phoneTel}`} className="text-[var(--accent)] hover:underline">
-            {COMPANY_CONTACT.phoneDisplay}
-          </a>
           ·{' '}
           <Link href="/contact" className="text-[var(--accent)] hover:underline">
             Contact page

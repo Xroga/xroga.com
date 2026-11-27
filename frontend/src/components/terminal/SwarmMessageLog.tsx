@@ -1,6 +1,6 @@
 'use client';
 
-import { useDeferredValue, useEffect, useRef, useState, useMemo, useCallback, lazy, Suspense } from 'react';
+import { useDeferredValue, useEffect, useLayoutEffect, useRef, useState, useMemo, useCallback, lazy, Suspense } from 'react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -9,10 +9,12 @@ import { MessageBubbleActions } from './MessageBubbleActions';
 import { MessageSuggestionChips } from './MessageSuggestionChips';
 import { ModernResponseText } from './ReasoningAndFollowUps';
 import { FeatureOutputView } from './FeatureOutputView';
+import { readNativeWorkspaceAnswer, readNativeWorkspaceProse, NativeWorkspaceAnswer, buildNativeOpenUiShare } from '@/components/native-openui/NativeWorkspaceAnswer';
+import { appendCitationReferences } from '@/lib/xrogaCitations';
 import { ConversationTurnV2 } from '@/components/response-experience-v2/ConversationTurnV2';
 import { responseTextV2 } from '@/components/response-experience-v2/exportText';
 import { conversationActivityV2 } from '@/components/response-experience-v2/conversation';
-import { coalesceActivity } from '@/lib/terminal/activityPresentation';
+import { coalesceActivity, mergeActivitySnapshots } from '@/lib/terminal/activityPresentation';
 import conversationStyles from '@/components/response-experience-v2/conversation-v2.module.css';
 import { useResponseExperienceEnabled, ResponseExperienceGate } from '@/components/response-experience-v2/ResponseExperienceGate';
 import { ChatErrorBoundary } from './ChatErrorBoundary';
@@ -20,16 +22,15 @@ import { StoppedBuildResumeCard } from './StoppedBuildResumeCard';
 import { CapacityUnavailableCard } from './CapacityUnavailableCard';
 import { UpdateFileTrail } from './UpdateFileTrail';
 import { ResponseSources } from './ResponseSources';
+import { ResponseSourceScope } from './ResponseSourceScope';
 import { webSourcesToRichResults } from '@/lib/xrogaWebResultAdapter';
 const XrogaRichResultsView = lazy(() => import('./XrogaRichResultsView').then((module) => ({ default: module.XrogaRichResultsView })));
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
+import { retrievedWebSourceCount } from '@/lib/researchHandoff';
 import { promptWantsLiveResearch } from '@/lib/researchWait';
 import { shareableDocumentText } from '@/lib/xrogaShareableOutput';
-import {
-  isQuickConversationPrompt,
-  pendingExecutionIntent,
-  pendingExecutionLabel,
-} from '@/lib/terminal/executionIntent';
+import { publicAnswerText } from '@/lib/publicAnswerText';
+import { isQuickConversationPrompt } from '@/lib/terminal/executionIntent';
 import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
 import { generateMessageSuggestions } from '@/lib/messageHelpers';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
@@ -51,7 +52,7 @@ import {
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { WorkspaceLauncher } from './WorkspaceLauncher';
 import toast from 'react-hot-toast';
-import { Lightbulb, TriangleAlert } from 'lucide-react';
+import { Lightbulb, Search, TriangleAlert } from 'lucide-react';
 import { WorkspaceIdentityMenu } from './WorkspaceIdentityMenu';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { ExpandIcon } from '@/components/icons/animated/ExpandIcon';
@@ -89,17 +90,19 @@ interface SwarmMessageLogProps {
  * it silently disables "jump to latest" and the read-position tracking, so it is worth
  * naming in one place.
  */
-function transcriptScrollRoot(): HTMLElement {
-  return (
-    document.querySelector<HTMLElement>('.xv-terminal-scroll') ??
-    document.querySelector<HTMLElement>('main.flex-1.overflow-y-auto') ??
-    document.documentElement
-  );
+function transcriptScrollRoot(transcript: HTMLElement | null): HTMLElement {
+  return transcript?.closest<HTMLElement>('.xv-terminal-scroll, main.flex-1.overflow-y-auto')
+    ?? document.documentElement;
+}
+
+function scrollToMessage(root: HTMLElement, message: HTMLElement, behavior: ScrollBehavior, offset = 18) {
+  const top = root === document.documentElement ? 0 : root.getBoundingClientRect().top + root.clientTop;
+  root.scrollTo({ top: root.scrollTop + message.getBoundingClientRect().top - top - offset, behavior });
 }
 
 export function SwarmMessageLog({ compact, incognito = false, chromeless = false }: SwarmMessageLogProps) {
   const conversationV2 = useResponseExperienceEnabled();
-  const { messages, sessionId, sessionRestoring, loading, animatingId, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, updateFeatureOutput, retryStoppedBuild, retryWithFullPower, heavyBuildActive, heavyAssistantId } =
+  const { messages, sessionId, sessionRestoring, loading, animatingId, pendingReply, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, updateFeatureOutput, retryStoppedBuild, retryWithFullPower, heavyBuildActive, heavyAssistantId } =
     useTerminalChat();
   const [rollbackId, setRollbackId] = useState<string | null>(null);
   const workspaceRepo = useProjectWorkspaceStore((s) => s.repo);
@@ -116,100 +119,41 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
   const storeIncognito = hydrated && storeIncognitoRaw;
   const isIncognito = incognito || storeIncognito;
   const { setShowJumpToLatest, registerScrollToFirst, registerScrollToLatest } = useTerminalScroll();
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const transcriptRef = useRef<HTMLDivElement>(null);
   const messageRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  const stickToBottomRef = useRef(true);
-  const userScrolledUpRef = useRef(false);
-  const prevLoadingRef = useRef(false);
+  const pendingPromptId = useRef<string | null>(null);
+  const anchoredPromptId = useRef<string | null>(null);
   const jumpHandledRef = useRef<string | null>(null);
   const [searchHit, setSearchHit] = useState<string | null>(null);
   const [activeTurnId, setActiveTurnId] = useState<string | null>(null);
 
   const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
-    stickToBottomRef.current = true;
-    userScrolledUpRef.current = false;
-    setShowJumpToLatest(false);
-    bottomRef.current?.scrollIntoView({ behavior, block: 'end' });
-  }, [setShowJumpToLatest]);
+    const root = transcriptScrollRoot(transcriptRef.current);
+    root.scrollTo({ top: root.scrollHeight, behavior });
+  }, []);
 
   useEffect(() => {
     registerScrollToLatest(scrollToBottom);
   }, [registerScrollToLatest, scrollToBottom]);
 
   useEffect(() => {
-    const el = bottomRef.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        const atBottom = entry.isIntersecting;
-        if (atBottom) {
-          stickToBottomRef.current = true;
-          userScrolledUpRef.current = false;
-          setShowJumpToLatest(false);
-        } else if (userScrolledUpRef.current) {
-          setShowJumpToLatest(true);
-        }
-      },
-      { threshold: 0, rootMargin: '0px 0px 140px 0px' },
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [messages.length, setShowJumpToLatest]);
-
-  useEffect(() => {
-    const scrollEl = transcriptScrollRoot();
-
-    const onScroll = () => {
-      const atBottom = scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.clientHeight < 140;
-      if (atBottom) {
-        stickToBottomRef.current = true;
-        if (!loading) userScrolledUpRef.current = false;
-        setShowJumpToLatest(false);
-      } else {
-        userScrolledUpRef.current = true;
-        stickToBottomRef.current = false;
-        setShowJumpToLatest(true);
-      }
+    const body = transcriptRef.current;
+    if (!body) return;
+    const root = transcriptScrollRoot(body);
+    const scrollTarget = root === document.documentElement ? document : root;
+    const sync = () => {
+      setShowJumpToLatest(root.scrollHeight - root.scrollTop - root.clientHeight >= 140);
     };
-
-    scrollEl.addEventListener('scroll', onScroll, { passive: true });
-    return () => scrollEl.removeEventListener('scroll', onScroll);
-  }, [loading, setShowJumpToLatest]);
-
-  useEffect(() => {
-    const started = loading && !prevLoadingRef.current;
-    const finished = !loading && prevLoadingRef.current;
-    prevLoadingRef.current = loading;
-
-    if (started) {
-      userScrolledUpRef.current = false;
-      stickToBottomRef.current = true;
-      scrollToBottom('auto');
-      return;
-    }
-
-    // While actively streaming, don't repeatedly yank the view to the bottom on every
-    // token — let the user read/scroll freely. Only snap once, when the response finishes.
-    if (finished && stickToBottomRef.current && !userScrolledUpRef.current) {
-      scrollToBottom('smooth');
-    }
-  }, [loading, scrollToBottom]);
-
-  useEffect(() => {
-    const session = loadWorkspaceSession();
-    const jumpId = session?.jumpMessageId;
-    if (!jumpId || jumpHandledRef.current === jumpId) return;
-    jumpHandledRef.current = jumpId;
-    const t = setTimeout(() => {
-      messageRefs.current[jumpId]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      setSearchHit(jumpId);
-      userScrolledUpRef.current = true;
-      setShowJumpToLatest(true);
-    }, 450);
-    return () => clearTimeout(t);
-  }, [messages.length, setShowJumpToLatest]);
+    const observer = new ResizeObserver(sync);
+    observer.observe(body);
+    if (root !== document.documentElement) observer.observe(root);
+    scrollTarget.addEventListener('scroll', sync, { passive: true });
+    sync();
+    return () => {
+      observer.disconnect();
+      scrollTarget.removeEventListener('scroll', sync);
+    };
+  }, [setShowJumpToLatest]);
 
   const displayInitial = profile?.display_name?.charAt(0)?.toUpperCase() ?? 'U';
 
@@ -219,7 +163,43 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
   );
   // Streaming updates arrive in small batches. Transcript paint is intentionally
   // non-urgent so typing, stop controls, menus, and scrolling remain responsive.
-  const renderedMessages = useDeferredValue(visibleMessages);
+  const transcript = useMemo(() => ({ sessionId, messages: visibleMessages }), [sessionId, visibleMessages]);
+  const deferredTranscript = useDeferredValue(transcript);
+  // When a turn settles, swap the working panel for its answer in one paint.
+  // Removing the panel with the previous transcript still mounted briefly
+  // shortens the scroll area and clamps the user's reading position.
+  const renderedMessages = loading && deferredTranscript.sessionId === sessionId
+    && deferredTranscript.messages[0]?.id === visibleMessages[0]?.id
+    ? deferredTranscript.messages
+    : visibleMessages;
+
+  const latestPromptId = visibleMessages[visibleMessages.findLastIndex(message => message.role === 'user')]?.id;
+  const renderedPromptId = renderedMessages[renderedMessages.findLastIndex(message => message.role === 'user')]?.id;
+  useLayoutEffect(() => {
+    // Loading can commit before the deferred transcript. Wait until its user
+    // bubble is mounted, and anchor once even if the reply arrives in one chunk.
+    if (loading && !sessionRestoring && latestPromptId && latestPromptId !== anchoredPromptId.current) {
+      pendingPromptId.current = latestPromptId;
+    }
+    if (!renderedPromptId || pendingPromptId.current !== renderedPromptId || latestPromptId !== renderedPromptId) return;
+    const prompt = messageRefs.current[renderedPromptId];
+    if (!prompt) return;
+    const root = transcriptScrollRoot(transcriptRef.current);
+    scrollToMessage(root, prompt, 'auto');
+    anchoredPromptId.current = renderedPromptId;
+    pendingPromptId.current = null;
+  }, [loading, sessionRestoring, latestPromptId, renderedPromptId]);
+
+  useEffect(() => {
+    const jumpId = loadWorkspaceSession()?.jumpMessageId;
+    const target = jumpId && messageRefs.current[jumpId];
+    if (!jumpId || !target || jumpHandledRef.current === jumpId) return;
+    jumpHandledRef.current = jumpId;
+    const root = transcriptScrollRoot(transcriptRef.current);
+    scrollToMessage(root, target, 'smooth', Math.max(18, (root.clientHeight - target.offsetHeight) / 2));
+    setSearchHit(jumpId);
+  }, [renderedMessages.length, sessionId]);
+
 
   const promptByAssistantId = useMemo(() => {
     const prompts = new Map<string, string>();
@@ -237,12 +217,11 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
   const firstTurnId = chatTurnIds[0] ?? null;
 
   const scrollToFirst = useCallback((behavior: ScrollBehavior = 'smooth') => {
-    if (firstTurnId) messageRefs.current[firstTurnId]?.scrollIntoView({ behavior, block: 'start' });
-    else transcriptScrollRoot().scrollTo({ top: 0, behavior });
-    stickToBottomRef.current = false;
-    userScrolledUpRef.current = true;
-    setShowJumpToLatest(true);
-  }, [firstTurnId, setShowJumpToLatest]);
+    const root = transcriptScrollRoot(transcriptRef.current);
+    const first = firstTurnId && messageRefs.current[firstTurnId];
+    if (first) scrollToMessage(root, first, behavior);
+    else root.scrollTo({ top: 0, behavior });
+  }, [firstTurnId]);
 
   useEffect(() => {
     registerScrollToFirst(scrollToFirst);
@@ -256,7 +235,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
       setActiveTurnId(null);
       return;
     }
-    const root = transcriptScrollRoot();
+    const root = transcriptScrollRoot(transcriptRef.current);
     let frame = 0;
     const sync = () => {
       frame = 0;
@@ -286,10 +265,11 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
       if (!frame) frame = requestAnimationFrame(sync);
     };
     requestSync();
-    root.addEventListener('scroll', requestSync, { passive: true });
+    const scrollTarget = root === document.documentElement ? document : root;
+    scrollTarget.addEventListener('scroll', requestSync, { passive: true });
     window.addEventListener('resize', requestSync);
     return () => {
-      root.removeEventListener('scroll', requestSync);
+      scrollTarget.removeEventListener('scroll', requestSync);
       window.removeEventListener('resize', requestSync);
       if (frame) cancelAnimationFrame(frame);
     };
@@ -298,11 +278,10 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
   }, [chatTurnIdsKey, sessionId]);
 
   function jumpToTurn(turnId: string) {
-    messageRefs.current[turnId]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const turn = messageRefs.current[turnId];
+    if (turn) scrollToMessage(transcriptScrollRoot(transcriptRef.current), turn, 'smooth');
     setSearchHit(turnId);
     setActiveTurnId(turnId);
-    userScrolledUpRef.current = true;
-    setShowJumpToLatest(true);
   }
 
   const lastAssistantId = useMemo(() => {
@@ -334,12 +313,6 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
   const lightResearchWait =
     loading && !heavyBuildActive && promptWantsLiveResearch(lastUserText);
   const showResearchPages = lightResearchWait || researchTodoActive;
-  const pendingIntent = pendingExecutionIntent({
-    prompt: lastUserText,
-    codeBuildActive,
-    researchActive: showResearchPages,
-  });
-  const pendingActivityLabel = pendingExecutionLabel(pendingIntent);
 
   function handleSuggestion(text: string) {
     setPrompt(text);
@@ -408,6 +381,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
         )}
 
         <div
+          ref={transcriptRef}
           className={cn(
             'xv-terminal-body space-y-3 font-coding text-[13px]',
             conversationV2 && conversationStyles.scope,
@@ -541,8 +515,28 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                           />
                         ) : null}
             </>;
-            const answer = (
+            const nativeAnswer = msg.role === 'assistant' ? readNativeWorkspaceAnswer(msg.featureOutput) : undefined;
+            const nativeProse = nativeAnswer?.text ?? (msg.role === 'assistant' ? readNativeWorkspaceProse(msg.featureOutput) : undefined);
+            const nativeShare = nativeProse && (nativeAnswer?.program || msg.webSources?.length || nativeAnswer?.documentDownload)
+              ? buildNativeOpenUiShare(nativeProse, nativeAnswer?.program ?? '', msg.webSources, nativeAnswer?.documentDownload) : undefined;
+            const nativeCopy = nativeProse ? appendCitationReferences(nativeProse, msg.webSources) : undefined;
+            const copyContent = msg.role === 'assistant'
+              ? nativeCopy ?? responseTextV2(msg) ?? [publicAnswerText(msg.content), shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')
+              : msg.content;
+            const webSourceCount = retrievedWebSourceCount(msg);
+            const webEvidence = webSourceCount > 0 ? (
+              <p className="mb-2 flex items-center gap-1.5 text-xs leading-normal text-[var(--foreground)]/70">
+                <Search size={13} aria-hidden="true" />
+                Web evidence · {webSourceCount} {webSourceCount === 1 ? 'source' : 'sources'} retrieved
+              </p>
+            ) : null;
+            const answer = nativeAnswer ? (
+              <ChatErrorBoundary>
+                <NativeWorkspaceAnswer answer={nativeAnswer} sources={msg.webSources} />
+              </ChatErrorBoundary>
+            ) : (
                         <ResponseExperienceGate message={msg} streaming={msg.id === animatingId && loading}>
+                        <ResponseSourceScope>
                         {isRenderedFeature ? (
                           <ChatErrorBoundary>
                             <FeatureOutputView
@@ -595,10 +589,23 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                         {msg.webSources && msg.webSources.length > 0 ? (
                           <ResponseSources sources={msg.webSources} />
                         ) : null}
+                        </ResponseSourceScope>
                         </ResponseExperienceGate>
             );
             const currentTurn = loading && msg.id === (buildPanelMessageId ?? animatingId);
-            const operationRows = conversationActivityV2(currentTurn ? coalesceActivity(terminalRun.events) : msg.executionActivity);
+            const operationRows = conversationActivityV2(currentTurn
+              ? mergeActivitySnapshots(msg.executionActivity, coalesceActivity(terminalRun.events))
+              : msg.executionActivity);
+            const showPending = currentTurn && (!suppressGreetingActivity || operationRows.length > 0);
+            const work = msg.role === 'assistant' && (showPending || operationRows.length > 0) ? (
+              <TerminalLiveActivity
+                activity={operationRows}
+                run={currentTurn ? terminalRun : undefined}
+                pending={showPending}
+                todos={currentTurn ? swarmTodos : undefined}
+                pendingReply={currentTurn && pendingReply?.messageId === msg.id ? pendingReply.kind : undefined}
+              />
+            ) : undefined;
 
             return (
               <div
@@ -607,6 +614,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                 data-turn-id={msg.role === 'user' || msg.role === 'assistant' ? msg.id : undefined}
                 className={cn(
                   'xv-terminal-turn group flex gap-2',
+                  chromeless && msg.role === 'assistant' && 'box-border ps-[18px]',
                   msg.role === 'user' ? 'flex-row-reverse' : 'flex-row',
                   msg.role === 'system' && 'justify-center',
                   searchHit === msg.id && 'ring-1 ring-[#006aff]/40 rounded-lg'
@@ -615,12 +623,13 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                 {conversationV2 && msg.role !== 'system' ? (
                   <ConversationTurnV2 role={msg.role} content={msg.content}
                     message={msg}
-                    copyContent={responseTextV2(msg) ?? [msg.content, shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')}
+                    richResponse={nativeShare}
+                    copyContent={copyContent}
                     prompt={promptByAssistantId.get(msg.id)}
                     streaming={msg.id === animatingId && loading}
                     controls={msg.buildStopped || msg.capacityUnavailable || msg.updateTrail || (currentTurn && openInteractionsForTurn(terminalRun.events, msg.content).length) ? <>{msg.buildStopped || msg.capacityUnavailable || msg.updateTrail ? taskControls : null}{currentTurn ? <RequiredInteractionCards interactions={openInteractionsForTurn(terminalRun.events, msg.content)} /> : null}</> : undefined}
-                    activity={operationRows.length ? <TerminalLiveActivity activity={operationRows} run={currentTurn ? terminalRun : undefined} /> : undefined}>
-                    {msg.role === 'assistant' ? answer : null}
+                    activity={work}>
+                    {msg.role === 'assistant' ? <>{webEvidence}{answer}</> : null}
                   </ConversationTurnV2>
                 ) : <>
                 {msg.role === 'user' && (
@@ -655,32 +664,17 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                   ) : (
                     <>
                       <div className="py-1 text-left space-y-2">
-                        {/* The pending shell is transient request-lifecycle feedback only.
-                            It is never persisted as execution evidence. Real canonical
-                            activity replaces it as soon as the backend emits a step. */}
-                        {msg.executionActivity?.length || (!loading && msg.thinkingSteps?.length) ? (
-                          <TerminalLiveActivity
-                            activity={msg.executionActivity}
-                            thinkingSteps={msg.thinkingSteps}
-                          />
-                        ) : loading &&
-                          msg.id === (buildPanelMessageId ?? animatingId) &&
-                          !suppressGreetingActivity ? (
-                          <TerminalLiveActivity
-                            run={terminalRun}
-                            pending
-                            pendingIntent={pendingIntent}
-                            pendingLabel={pendingActivityLabel}
-                          />
-                        ) : null}
+                        {work}
                         {taskControls}
+                        {webEvidence}
                         {answer}
 
                       </div>
                       {msg.content && (
                         <MessageBubbleActions
                           role="assistant"
-                          content={[msg.content, shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')}
+                          richResponse={nativeShare}
+                          content={copyContent}
                           messageId={msg.id}
                           createdAt={msg.createdAt}
                           prompt={promptByAssistantId.get(msg.id)}
@@ -689,13 +683,13 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                       {!msg.content && msg.featureOutput && (
                         <MessageBubbleActions
                           role="assistant"
-                          content={shareableDocumentText(msg.featureOutput)}
+                          content={copyContent}
                           messageId={msg.id}
                           createdAt={msg.createdAt}
                           prompt={promptByAssistantId.get(msg.id)}
                         />
                       )}
-                      {suggestions && (
+                      {suggestions && !nativeAnswer && (
                         <MessageSuggestionChips
                           suggestions={suggestions}
                           onSelect={handleSuggestion}
@@ -708,7 +702,6 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
               </div>
             );
           })}
-          <div ref={bottomRef} />
         </div>
 
       </div>

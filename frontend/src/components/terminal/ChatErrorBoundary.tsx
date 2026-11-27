@@ -5,6 +5,7 @@ import { Component, type ReactNode } from 'react';
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
+  logErrorDetails?: boolean;
 }
 
 interface State {
@@ -20,7 +21,7 @@ export class ChatErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(err: Error) {
-    console.error('[ChatErrorBoundary]', err.message);
+    console.error('[ChatErrorBoundary]', this.props.logErrorDetails === false ? 'Presentation unavailable' : err.message);
   }
 
   render() {

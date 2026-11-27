@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { messagesForStorage } from './storageSafe';
+import { messagesForStorage, sidebarMessagesForStorage } from './storageSafe';
 
 test('landing snapshots keep authoritative recovery and shipping evidence', () => {
   const [stored] = messagesForStorage([
@@ -42,4 +42,12 @@ test('landing snapshots keep authoritative recovery and shipping evidence', () =
   assert.equal(output.isUpdate, true);
   assert.deepEqual(output.shipBlockers, ['Connect Vercel']);
   assert.deepEqual(output.changesSummary, ['Added Eclipse Blend']);
+});
+
+test('cloud snapshots preserve the user turn and settled fallback without a blank assistant row', () => {
+  const user = { id: 'u', role: 'user' as const, content: 'Explain the architecture.' };
+  const pending = { id: 'a', role: 'assistant' as const, content: '' };
+  const fallback = { ...pending, content: 'The app verifies membership before opening a tenant workspace.' };
+  assert.deepEqual(sidebarMessagesForStorage([user, pending]).map(message => message.id), ['u']);
+  assert.equal(sidebarMessagesForStorage([user, fallback])[1]?.content, fallback.content);
 });

@@ -11,6 +11,11 @@ import {
 } from '../models.js';
 import { getRouterAdminConfig } from '../routerConfig.js';
 import { PRESENTATION_PLAN_INSTRUCTIONS } from '../responsePresentation.js';
+import { nativeDocumentRequiresAttachment, nativeDocumentRequiresPriorAnswer, requestedNativeDocumentFormat } from '../nativeDocumentDownload.js';
+import { usesNativeWorkspacePresentation } from '../nativeOpenUiWorkspace.js';
+import { workspaceHistoryCapacity } from '../workspaceConversation.js';
+import { explicitlyRequestsWorkspaceWebSearch } from '../workspacePublicSearch.js';
+import { explicitlyDisablesResearch } from '../../lib/taskClassifier.js';
 import {prepareSonnetConversation,requestedSonnetReason} from '../sonnetApproval.js';
 
 import {
@@ -47,13 +52,14 @@ import {
   type GoalContract,
   type GoalInterpretationInput,
 } from './goalContract.js';
+import { semanticHistoryForPlanner, semanticHistorySnapshot } from './semanticHistory.js';
 
 import {
   planCapabilities,
 } from './planner.js';
 
 import {
-  currentProductTruth,
+  PLANNER_PRODUCT_RULES,
 } from './productTruth.js';
 
 import {
@@ -100,6 +106,42 @@ export interface SemanticRequestPlan {
    */
   readonly directResponse?:
     string;
+}
+
+/** Examples, local downloads and calculator controls can be delivered in chat. Explicit
+ * project work, execution and external actions keep their own route. */
+export function enforceInlineAnswerIntent(
+  goal: GoalContract,
+  { message, attachments }: Pick<GoalInterpretationInput, 'message' | 'attachments'>,
+): GoalContract {
+  const capabilities = goal.requiredCapabilities;
+  if (
+    (goal.semanticIntent !== 'MODIFY' && goal.semanticIntent !== 'ANSWER') ||
+    !capabilities.includes('software.implement') ||
+    capabilities.some(id => !['software.implement', 'validation.run', 'attachment.analyze', 'conversation.respond'].includes(id)) ||
+    goal.blockers.length || goal.projectContext || goal.previewRequirement === 'REQUIRED' ||
+    goal.publicationRequirement !== 'NONE' || goal.deploymentRequirement !== 'NONE'
+  ) return goal;
+
+  const inAnswer = /\b(?:in|within)\s+(?:this |the |your )?(?:answer|chat|response)\b/i.test(message);
+  const adjustable = /\b(?:sliders?|adjustable inputs?)\b/i.test(message);
+  const structuredData = /\b(?:charts?|tables?|tabulate)\b/i.test(message);
+  const projectOrAction = /\b(?:apps?|websites?|webpages?|repos?|repositor(?:y|ies)|projects?|codebases?|files?|pull requests?|preview|deploy\w*|publish\w*|install\w*|integrate\w*|save|send|email|upload|delete|commit|run\s+(?:the\s+)?tests?|execute)\b/i;
+  const snippet = /\b(?:write|show|provide|give|draft|generate)\b[^.!?\n]{0,55}\b(?:functions?|snippets?|examples?|queries|regex|regular expressions?)\b/i;
+  const calculatorName = /\bcalculat(?:or|[ \t]+or)\b/i;
+  const explicitlyInteractive = /\b(?:interactive|editable)\s+(?:[\p{L}\p{N}-]+\s+){0,4}calculat(?:or|[ \t]+or)\b/iu.test(message);
+  const calculator = (explicitlyInteractive || (calculatorName.test(message) && adjustable && (inAnswer || (attachments.length > 0 && structuredData)))) &&
+    !/\b(?:code|react|next\.js|html|css|javascript|typescript|apps?|websites?|webpages?|repos?|repositor(?:y|ies)|pull requests?|preview|deploy\w*|publish\w*|install\w*|integrate\w*|save|send|email|upload|delete|commit)\b/i.test(message);
+  const localDocument = requestedNativeDocumentFormat(message) &&
+    !projectOrAction.test(message.replace(/\b(?:downloadable|docx|pdf|xlsx|pptx|txt|word|excel|powerpoint)\s+files?\b/gi, 'document'));
+  if (!calculator && !localDocument && (projectOrAction.test(message) || !snippet.test(message))) return goal;
+
+  return {
+    ...goal,
+    semanticIntent: 'ANSWER',
+    previewRequirement: 'NONE',
+    requiredCapabilities: ['conversation.respond', ...(attachments.length ? ['attachment.analyze'] : [])],
+  };
 }
 
 /**
@@ -204,14 +246,16 @@ export function enforceExplicitPublicResearchControls(
   plan: SemanticRequestPlan,
   message: string,
 ): SemanticRequestPlan {
-  const explicitSearch =
-    /\b(?:web searches?|internet searches?|search (?:the )?(?:web|internet)|browse (?:the )?(?:web|internet)|research online)\b/i.test(message);
-  const negatedSearch =
-    /\b(?:do not|don't|without|avoid)\s+(?:\w+\s+){0,2}(?:web searches?|internet searches?|search (?:the )?(?:web|internet)|browse (?:the )?(?:web|internet)|research online)\b/i.test(message);
+  const explicitSearch = explicitlyRequestsWorkspaceWebSearch(message);
+  const actionText = message.replace(/\bcreate\s+(?:a|an|one)\s+(?:(?:short|compact|simple|interactive)\s+){0,2}(?:table|chart|diagram|timeline|checklist)(?:\s+(?:in|within)\s+(?:this|the)\s+(?:answer|chat|response))?(?=\s*(?:[,.!?;]|\b(?:and|then)\b|$))/giu, '');
   const followedByAppAction =
-    /\b(?:and|then|also)\s+(?:please\s+)?(?:send|email|message|create|schedule|book|update|edit|delete|remove|publish|post|upload|invite|refund|transfer|pay)\b/i.test(message);
+    /\b(?:and|then|also)\s+(?:please\s+)?(?:send|email|message|create|schedule|book|update|edit|delete|remove|publish|post|upload|invite|refund|transfer|pay)\b/i.test(actionText);
+  // Preserve the existing mixed-workflow guard when the web instruction
+  // follows the first clause of a compound request.
+  const mixedResearch = explicitSearch || (!explicitlyDisablesResearch(message)
+    && /\b(?:search|browse) (?:the )?(?:public )?(?:web|internet)\b|\b(?:web|internet) searches?\b|\bresearch online\b/iu.test(message));
 
-  if (explicitSearch && !negatedSearch && followedByAppAction && plan.dispatch === 'chat') {
+  if (mixedResearch && followedByAppAction && plan.dispatch === 'chat') {
     const blockers = ['Public-web research followed by a connected-app action needs a reviewed multi-source workflow; no action was executed.'];
     return {
       ...plan,
@@ -225,7 +269,6 @@ export function enforceExplicitPublicResearchControls(
 
   if (
     !explicitSearch ||
-    negatedSearch ||
     plan.dispatch !== 'chat' ||
     [...plan.capabilityIds, ...plan.goalContract.requiredCapabilities].some(
       (id) => id === 'business.action' || id === 'software.implement',
@@ -236,7 +279,7 @@ export function enforceExplicitPublicResearchControls(
 
   const capabilityIds = [
     ...new Set([
-      ...plan.capabilityIds.filter((id) => id !== 'business.read'),
+      ...plan.capabilityIds.filter((id) => id !== 'business.read' && id !== 'research.x'),
       'research.public-web',
       'conversation.respond',
     ]),
@@ -245,7 +288,7 @@ export function enforceExplicitPublicResearchControls(
     universalCapabilityRegistry.get('research.public-web')?.health() === 'available';
   const blockers = researchReady
     ? []
-    : ['Public web research is unavailable because its provider is not configured.'];
+    : ['Web search is temporarily unavailable.'];
 
   const goalContract = goalContractSchema.parse({
     ...plan.goalContract,
@@ -335,6 +378,10 @@ export const SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS =
 export const SEMANTIC_PLANNER_HEDGE_DELAY_MS =
   4_000;
 
+// Allow room for the semantic decision and its answer obligations in one
+// dispatch. A clipped JSON decision cannot safely authorize a route.
+const SEMANTIC_PLANNER_MAX_OUTPUT_TOKENS = 2_200;
+
 /**
  * The planner needs a compact JSON
  * decision, not a private reasoning
@@ -344,7 +391,7 @@ export function semanticPlannerCompletionOptions(
   signal: AbortSignal,
 ) {
   return {
-    maxTokens: 1_500,
+    maxTokens: SEMANTIC_PLANNER_MAX_OUTPUT_TOKENS,
 
     temperature: 0,
 
@@ -1183,6 +1230,35 @@ export async function resolveRequestAuthorities(
   return authorities;
 }
 
+// A single artifact with supplied literal content has no execution or source
+// decision to make. Other file requests still use the semantic planner.
+const literalDocumentOpening = /^(?:please\s+)?(?:create|draft|generate|make|prepare|write)\s+(?:a|an|one)\s+(?:(?:editable|printable)\s+){0,2}downloadable\s+(?:(?:editable|printable)\s+){0,2}\.?(?:docx|pdf|xlsx|pptx|txt)\s+(?:document|handout|checklist|report|guide|brief|memo|worksheet|spreadsheet|deck|presentation)(?:\s+for\s+(?:a|an|the)\s+(?:fictional|sample)\s+[\p{L}\p{N}'’ -]+)?$/iu;
+const literalContentFields = [
+  /^Title:[ \t]+\S.*$/iu,
+  /^(?:Body|Content|Include\s+(?:(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+)?(?:unchecked\s+)?(?:checklist\s+)?(?:items|bullets)):[ \t]+\S.*$/iu,
+  /^(?:Add\s+)?(?:this\s+exact\s+)?Subtitle:[ \t]+\S.*$/iu,
+  /^(?:Add\s+)?(?:this\s+exact\s+)?Closing line:[ \t]+\S.*$/iu,
+];
+const documentNeedsSourceDecision = /https?:\/\/|(?:@|\bwww\.)[^\s]+|\b(?:latest|newest|current|recent|today|this (?:week|month|year)|real[- ]time|as of|look up|research|search|browse|retrieve|fetch|from|using|based on|connected|(?:previous|earlier|last) (?:answer|response|report|document))\b/iu;
+const documentNeedsActionDecision = /\b(?:send|email|share|upload|publish|post|deploy|execute|run|save|edit|update|open|delete|schedule|book|purchase|invite|notify|forward|sync|commit|then|sign (?:this|the) (?:file|document|report|handout))\b/iu;
+
+function selfContainedDocumentFormat(message: string) {
+  const text = message.trim();
+  const format = requestedNativeDocumentFormat(text);
+  if (!format || nativeDocumentRequiresAttachment(text) || nativeDocumentRequiresPriorAnswer(text)
+    || documentNeedsSourceDecision.test(text) || documentNeedsActionDecision.test(text)) return;
+
+  const [opening, ...fields] = text.split(/(?<=[.!?])\s+|\r?\n+/u).map(part => part.trim());
+  if (!literalDocumentOpening.test(opening.replace(/\.$/u, ''))) return;
+  const present = new Set<number>();
+  for (const field of fields) {
+    const kind = literalContentFields.findIndex(label => label.test(field));
+    if (kind === -1 || present.has(kind)) return;
+    present.add(kind);
+  }
+  if (present.has(0) && present.has(1)) return format;
+}
+
 export async function planSemanticRequest(
   input: {
     userId: string;
@@ -1265,6 +1341,40 @@ export async function planSemanticRequest(
         ),
     );
 
+  // These requests establish the complete local output and need no source or
+  // action decision. The normal chat route still generates and meters it.
+  const isolatedAnswer = !input.history?.length && !input.attachments?.length && !input.projectContext
+    && !Array.isArray(input.projectState)
+    && Object.entries(input.projectState ?? {}).every(([key, value]) =>
+      (key === 'hasExistingPreview' || key === 'isUpdate') && value === false)
+    && readiness.get('conversation.respond')?.state === 'READY';
+  const literalWord = isolatedAnswer && input.message.length <= 128
+    && /^(?:please[ \t]+)?(?:reply|respond|answer)[ \t]+with[ \t]+only[ \t]+the[ \t]+word[ \t]+\p{L}[\p{L}\p{M}]{0,39}[.!]?$/iu.test(input.message.trim());
+  const documentFormat = isolatedAnswer && usesNativeWorkspacePresentation('deepseek_v4_1_flash_1017')
+    ? selfContainedDocumentFormat(input.message) : undefined;
+  if (literalWord || documentFormat) {
+    const goalContract = goalContractSchema.parse({
+      version: '1.0',
+      goal: input.message,
+      desiredOutcome: documentFormat ? `Create the requested ${documentFormat.toUpperCase()} download.` : 'Respond with exactly the requested word.',
+      semanticIntent: 'ANSWER',
+      requiredCapabilities: ['conversation.respond'],
+      requiredAuthorities: universalCapabilityRegistry.get('conversation.respond')?.requiredAuthorities,
+      confidence: 1,
+      contextComplexity: 'low',
+    });
+    return {
+      goalContract,
+      dispatch: 'chat',
+      capabilityIds: goalContract.requiredCapabilities,
+      rationale: documentFormat ? 'The request specifies a single local download with supplied content.'
+        : 'The request specifies a single literal word for an ordinary conversation response.',
+      blockers: [],
+      usage: usageToTokenUsage(await getUsage(actor.userId)),
+    };
+  }
+
+  // Keep a single capability catalog in the planner prompt.
   const availableSummary =
     available.map(
       ({
@@ -1298,21 +1408,23 @@ export async function planSemanticRequest(
       }),
     );
 
+  const documentDelivery = requestedNativeDocumentFormat(input.message)
+    ? '\n\nAn explicit DOCX, PDF, XLSX, PPTX or TXT answer deliverable is a locally downloadable chat response. If that is the entire request, choose conversation.respond. Use any separate requested research or external capabilities only when the request actually needs them.'
+    : '';
+  const publicWebPlanning =
+    '\n\nDecide whether public evidence improves the answer from the user’s intent, in any language. When you select research.public-web, return publicWebQuery as the focused query to send to DeepSeek Search (1–128 Unicode characters). Use translations, synonyms, public names, dates, identifiers, URLs, and supported search operators when useful. Reuse an earlier subject only when it was established as public and the user is continuing it. Keep user constraints on date, region and sources. Include only the public subject; exclude presentation instructions, unpublished or personal details, workspace context, attachments, connected-account data, and credentials. For mixed requests, write the query for the public portion only. If the user asks to work offline or there is no separable public subject, do not select research.public-web and return publicWebQuery: null.' +
+    ' For current prices, eligibility, schedules, or operating rules, choose terms likely to find first-party evidence from the relevant provider or authority. Include a public operator or publisher name when it helps. Use exclusive source filters only when the user requires them.';
   const system =
-    `Understand the user's current goal from the full conversation and context. Return one strict JSON semantic decision, not the full internal contract. Do not use product modes, keyword categories, framework guesses, or a default website/build route. Choose the smallest READY capability set that can genuinely produce the requested outcome. Read-only analysis must remain read-only. Use research.public-web for public websites, flight schedules, fares, prices, travel planning, and other information that does not live inside a user's connected app. Do not select business.read merely because the user says search or research. Select business.action only when the user explicitly asks Xroga to change external business-app state; use business.read for retrieval, search, inspection, listing, or summarization inside the user's connected applications without mutation. A request to create or change software requires software.implement even when the software models concepts that also exist in connected apps, such as records, schedules, messages, payments, or files. Xroga Connect acts on an existing external account; it does not create a requested software product, project Preview, source publication, or deployment. Never upgrade a read request into an action, and never treat a request for an external action as answer-only. If the user requests several independent external actions, preserve every requested outcome; do not imply a single tool call completed them all. A project being present is context, not evidence of modification intent. The server owns project identity and authorities; do not return or invent either. Use blockers only for essential missing user input, AUTH_REQUIRED, PROVIDER_UNAVAILABLE, TEMPORARILY_UNAVAILABLE, or UNSUPPORTED capability. Never call information current unless freshnessRequirement is PREFERRED or CURRENT_REQUIRED.\n\n${currentProductTruth(
-      authorities,
-    )}\n\nRequired JSON fields: semanticIntent=ANSWER|INVESTIGATE|PROPOSE|MODIFY|EXTERNAL_ACTION|MIXED; requiredCapabilities=[registered ids]; freshnessRequirement=NONE|PREFERRED|CURRENT_REQUIRED. Optional fields: goal; desiredOutcome; constraints[]; acceptance[]; sourcePolicy={mode:any|official_only,scope:public_web|x,officialDomains:[]}; previewRequirement=NONE|PREFERRED|REQUIRED; publicationRequirement=NONE|REQUESTED; deploymentRequirement=NONE|REQUESTED; risks[]; confidence=0..1; blockers[]; contextComplexity=low|medium|high|unknown.\n\nRegistered capabilities and request-time readiness:\n${JSON.stringify(
+    `Understand the user's current goal from the full conversation and context. Return one strict JSON semantic decision, not the full internal contract. Do not use product modes, keyword categories, framework guesses, or a default website/build route. Choose the smallest READY capability set that can genuinely produce the requested outcome. Read-only analysis must remain read-only. Use research.public-web when the current request needs publicly verifiable evidence, including implicit requests for present-day rankings, recommendations, company or product comparisons, official websites, and other time-sensitive information even when the user never says search. Respect an explicit request to work offline. Keep unrelated project and chat history out of a self-contained public query. Set official_only only when the user requires the research itself to use official sources, not merely to include official website links in the answer. A subjective ranking needs stated criteria and supporting evidence, not a claim of an objective order. Do not select business.read merely because the user says search or research. Select business.action only when the user explicitly asks Xroga to change external business-app state; use business.read for retrieval, search, inspection, listing, or summarization inside the user's connected applications without mutation. A standalone code snippet, function, example or sample test shown in the answer uses conversation.respond. Select software.implement when the user asks to create or modify a project or files, or to produce a runnable software deliverable. A request to create or change software requires software.implement even when the software models concepts that also exist in connected apps, such as records, schedules, messages, payments, or files. Xroga Connect acts on an existing external account; it does not create a requested software product, project Preview, source publication, or deployment. Never upgrade a read request into an action, and never treat a request for an external action as answer-only. If the user requests several independent external actions, preserve every requested outcome; do not imply a single tool call completed them all. A project being present is context, not evidence of modification intent. The server owns project identity and authorities; do not return or invent either. Use blockers only for essential missing user input, AUTH_REQUIRED, PROVIDER_UNAVAILABLE, TEMPORARILY_UNAVAILABLE, or UNSUPPORTED capability. Never call information current unless freshnessRequirement is PREFERRED or CURRENT_REQUIRED.\n\n${PLANNER_PRODUCT_RULES}\n\nRequired JSON fields: semanticIntent=ANSWER|INVESTIGATE|PROPOSE|MODIFY|EXTERNAL_ACTION|MIXED; requiredCapabilities=[registered ids]; freshnessRequirement=NONE|PREFERRED|CURRENT_REQUIRED; publicWebQuery is required when requiredCapabilities contains research.public-web. Set it to a focused public query (1–128 Unicode characters). Optional fields: goal; desiredOutcome; constraints[]; acceptance[]; sourcePolicy={mode:any|official_only,scope:public_web|x,officialDomains:[]}; previewRequirement=NONE|PREFERRED|REQUIRED; publicationRequirement=NONE|REQUESTED; deploymentRequirement=NONE|REQUESTED; risks[]; confidence=0..1; blockers[]; contextComplexity=low|medium|high|unknown.\n\nRegistered capabilities and request-time readiness:\n${JSON.stringify(
       availableSummary,
-    )}\n\n${PRESENTATION_PLAN_INSTRUCTIONS}`;
+    )}\n\n${PRESENTATION_PLAN_INSTRUCTIONS}${documentDelivery}${publicWebPlanning}`;
 
-  const interpretationInput:
+  const currentTurn:
     GoalInterpretationInput = {
       message:
         input.message,
 
-      history:
-        input.history ??
-        [],
+      history: [],
 
       attachments:
         input.attachments ??
@@ -1326,29 +1438,18 @@ export async function planSemanticRequest(
         input.projectState,
     };
 
-  const messages:
-    ChatMessage[] = [
-      {
-        role:
-          'system',
-
-        content:
-          system,
-      },
-
-      {
-        role:
-          'user',
-
-        content:
-          JSON.stringify(
-            interpretationInput,
-          ),
-      },
-    ];
-
-  const maximumOutputTokens =
-    1_500;
+  const maximumOutputTokens = SEMANTIC_PLANNER_MAX_OUTPUT_TOKENS;
+  const systemMessage: ChatMessage = { role: 'system', content: system };
+  const context = semanticHistoryForPlanner(input.history ?? [], workspaceHistoryCapacity(models[0]!, maximumOutputTokens, [
+    systemMessage, { role: 'user', content: JSON.stringify(currentTurn) },
+  ]));
+  const interpretationInput: GoalInterpretationInput = { ...currentTurn, history: context.entries };
+  const contractInput: GoalInterpretationInput = { ...interpretationInput, history: semanticHistorySnapshot(context.entries) };
+  const messages: ChatMessage[] = [
+    systemMessage,
+    { role: 'user', content: JSON.stringify({ ...interpretationInput,
+      ...(context.omitted ? { earlierHistoryOmitted: true } : {}) }) },
+  ];
 
   const configuredTotalMs =
     Number(
@@ -1416,6 +1517,8 @@ export async function planSemanticRequest(
               let correctionUsed =
                 false;
 
+              let completionShape: { finish: 'stop' | 'length' | 'other'; outputTokens: number } | undefined;
+
               const goalContract =
                 await resolveStructuredGoalContract(
                   async (
@@ -1478,6 +1581,11 @@ export async function planSemanticRequest(
 
                     finalModelId =
                       completion.modelId;
+                    completionShape = {
+                      finish: completion.finishReason === 'stop' || completion.finishReason === 'length'
+                        ? completion.finishReason : 'other',
+                      outputTokens: completion.outputTokens,
+                    };
 
                     /* Canonical dispatch already verified the atomic usage receipt. */
 
@@ -1493,7 +1601,7 @@ export async function planSemanticRequest(
                     normalizePlannerDecisionCandidate(
                       value,
 
-                      interpretationInput,
+                      contractInput,
                     ),
                 )
                   .catch(
@@ -1504,6 +1612,9 @@ export async function planSemanticRequest(
                         error instanceof
                         RuntimeFailure
                       ) {
+                        if (completionShape) {
+                          console.warn('[planner-completion-shape]', { modelId, code: error.code, ...completionShape });
+                        }
                         lastStructuredFailure =
                           error;
 
@@ -1527,14 +1638,15 @@ export async function planSemanticRequest(
         },
       );
 
+    const interpretedGoal = enforceInlineAnswerIntent(planned.value, interpretationInput);
     const goalContract =
       goalContractSchema.parse(
         {
-          ...planned.value,
+          ...interpretedGoal,
 
           requiredAuthorities: [
             ...new Set(
-              planned.value
+              interpretedGoal
                 .requiredCapabilities
                 .flatMap(
                   (
@@ -1653,7 +1765,7 @@ export async function planSemanticRequest(
       throw new RuntimeFailure(
         'PLANNER_TIMEOUT',
 
-        'Xroga could not understand this request before the planning deadline. Please retry.',
+        'The planning model timed out. Please retry this request.',
 
         {
           cause:

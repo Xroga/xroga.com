@@ -4,6 +4,7 @@ import { PUBLIC_URL_INVENTORY } from './publicUrlInventory';
 
 test('OS preview routes are inventoried as private and never indexable', () => {
   const expected = new Map([
+    ['/native-answer-evaluation', 'PRIVATE'],
     ['/os-preview', 'PRIVATE'],
     ['/os-preview/[section]', 'PRIVATE'],
     ['/os-preview/journey', 'PRIVATE'],

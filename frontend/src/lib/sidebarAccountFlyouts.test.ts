@@ -18,18 +18,17 @@ const CSS = read('../app/globals.css');
 test('More consolidates legacy groups and uses the portalled flyout', () => {
   assert.match(SIDEBAR, /entry\.id === 'more'/);
   assert.match(SIDEBAR, /<Ellipsis[\s\S]*?<span>More<\/span>/);
-  assert.match(SIDEBAR, /OPERATIONS &amp; GROWTH/);
-  assert.match(SIDEBAR, /DISCOVER/);
+  assert.doesNotMatch(SIDEBAR, /OPERATIONS &amp; GROWTH|>DISCOVER</);
   assert.match(HOVER_MENU, /createPortal/);
   assert.match(HOVER_MENU, /onMouseEnter=\{cancelClose\}/);
   assert.match(HOVER_MENU, /onMouseLeave=\{scheduleClose\}/);
   assert.match(HOVER_MENU, /if \(!event\.defaultPrevented\) openMenu\(\)/);
   assert.match(HOVER_MENU, /window\.dispatchEvent\(new CustomEvent\(FLYOUT_OPEN_EVENT/);
   assert.match(HOVER_MENU, /onClick\?\.\(event\)/);
-  for (const label of ['Operations', 'Growth', 'Settings', 'Explore', 'Showcase', 'Community', 'Share Feedback']) {
+  for (const label of ['Settings', 'Explore', 'Showcase', 'Community', 'Share Feedback']) {
     assert.match(SIDEBAR, new RegExp("label: '" + label + "'"));
   }
-  assert.doesNotMatch(SIDEBAR, /label: 'Explore Xroga OS'/);
+  assert.doesNotMatch(SIDEBAR, /label: '(Operations|Growth|Explore Xroga OS)'/);
 });
 
 test('Automations and Library are coming soon and Publish is direct', () => {
@@ -52,7 +51,7 @@ test('tips and ordinary notifications dismiss after five seconds', () => {
 test('avatar editing and account navigation remain separate controls', () => {
   assert.match(SIDEBAR, /size="sidebarCompact"[\s\S]*?onClick=\{\(\) => setAvatarPickerOpen\(true\)\}/);
   assert.match(SIDEBAR, /<ProfileQuickMenu[\s\S]*?displayName=\{userName\}[\s\S]*?email=\{email\}/);
-  assert.match(SIDEBAR, /<UpgradeActionButton compact \/>/);
+  assert.match(PROFILE_MENU, /<UpgradeActionButton \/>/);
   assert.match(UPGRADE_ACTION, /xv-upgrade-action__fold/);
   assert.match(UPGRADE_ACTION, /Array\.from\(\{ length: 10 \}/);
 });

@@ -8,20 +8,21 @@ function source(relativeUrl: string): string {
   return readFileSync(new URL(relativeUrl, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
 }
 
-test('AI responses use cardless task-aware transient feedback before real activity arrives', () => {
+test('AI responses share one compact activity view in both Workspace layouts', () => {
   const messageLog = source('../../components/terminal/SwarmMessageLog.tsx');
   const liveActivity = source('../../components/terminal/TerminalLiveActivity.tsx');
   const timeline = source('../../components/activity/ActivityTimeline.tsx');
   const motion = source('../../components/terminal/ExecutionMotion.tsx');
 
   assert.doesNotMatch(messageLog, /TerminalRunStream|ResearchPagesLoader|waiting for first event/);
-  assert.match(messageLog, /pendingIntent=\{pendingIntent\}/);
-  assert.match(messageLog, /pendingLabel=\{pendingActivityLabel\}/);
+  assert.match(messageLog, /activity=\{work\}/);
+  assert.match(messageLog, /\{work\}/);
   assert.match(messageLog, /isQuickConversationPrompt\(messagePrompt\)/);
   assert.match(liveActivity, /coalesceActivity\(run\.events\)/);
-  assert.match(liveActivity, /thinkingSteps/);
+  assert.doesNotMatch(liveActivity, /thinkingSteps|pendingIntent/);
   assert.match(liveActivity, /ActivityTimeline/);
-  assert.match(liveActivity, /STALLED_AFTER_MS/);
+  // The running line says what is happening; it never counts seconds of silence at the reader.
+  assert.doesNotMatch(liveActivity, /No new update/);
   // The redesign shows one quiet timeline: no request panel, no branding block and no capability claims.
   assert.doesNotMatch(liveActivity, /Your request|BlackHoleMark|BlackHoleWordmark|ExecutionShimmerText|Ready to use|Observed:/);
   assert.doesNotMatch(liveActivity, /SearchScanner|UniversalExecutionOrb|Globe2/);
@@ -32,7 +33,6 @@ test('AI responses use cardless task-aware transient feedback before real activi
   assert.doesNotMatch(liveActivity, /Connected · awaiting first update/);
   assert.doesNotMatch(liveActivity, /rounded-2xl border border-\[var\(--card-border\)\]/);
   assert.match(timeline, /aria-label="Activity"/);
-  assert.match(timeline, /private model reasoning is never shown/i);
   assert.doesNotMatch(`${liveActivity}
 ${timeline}`, /chain-of-thought is being generated|generating private model reasoning/i);
 });
@@ -46,7 +46,7 @@ test('the live transcript keeps pending UI separate from received execution rows
   assert.doesNotMatch(code, /percent|Math\.round\([^)]*100/i);
   assert.match(liveActivity, /run\.events/);
   assert.match(liveActivity, /data-state=\{shell \? 'pending'/);
-  assert.match(liveActivity, /data-intent=\{shell \? pendingIntent/);
+  assert.match(liveActivity, /pendingWorkLabel\(run\?\.events/);
   assert.doesNotMatch(liveActivity, /Developer details/);
 });
 

@@ -1,0 +1,92 @@
+.chip.chip {
+  --citation-gap: .18rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .32rem;
+  max-inline-size: min(calc(100% - var(--citation-gap)), 18rem);
+  min-block-size: 24px;
+  margin-inline-start: var(--citation-gap);
+  padding: .1rem .55rem .1rem .35rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: color-mix(in srgb, currentColor 9%, transparent);
+  /* A citation remains readable even inside a muted caption or footnote. */
+  color: var(--iui-ink, var(--foreground, inherit));
+  font: 550 .72rem/1.25 system-ui, sans-serif;
+  text-decoration: none;
+  vertical-align: .08em;
+}
+
+.chip.chip:hover, .chip.chip:focus-visible {
+  background: color-mix(in srgb, currentColor 15%, transparent);
+  border-color: color-mix(in srgb, currentColor 24%, transparent);
+}
+
+.compact.compact {
+  min-inline-size: 24px;
+  max-inline-size: min(calc(100% - var(--citation-gap)), 12rem);
+  gap: .2rem;
+  padding-inline: .25rem;
+}
+
+.chip.chip:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.label { min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mark { display: inline-grid; place-items: center; flex: none; }
+.mark svg { width: 100%; height: 100%; }
+.named.named { max-inline-size: calc(100% - var(--citation-gap)); }
+.named .label { overflow-wrap: anywhere; white-space: normal; }
+
+:global(td) .chip.chip:not(.named) {
+  max-inline-size: 12rem;
+}
+
+@media (max-width: 540px) {
+  :global(td) .chip.chip[data-citation-domain] {
+    --citation-gap: 0rem;
+    inline-size: 4rem;
+    max-inline-size: 100%;
+    gap: .25rem;
+    padding-inline: .28rem;
+  }
+  :global(td) .chip[data-citation-domain] .label { display: none; }
+  :global(td) .chip[data-citation-domain]::after {
+    content: attr(data-citation-domain);
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.preview {
+  position: fixed;
+  z-index: 10000;
+  visibility: hidden;
+  box-sizing: border-box;
+  display: grid;
+  gap: .25rem;
+  width: max-content;
+  max-width: min(17rem, calc(100vw - 16px));
+  padding: .45rem .6rem;
+  color: #202124;
+  background: #fff;
+  border: 1px solid #dedfe2;
+  border-radius: .65rem;
+  box-shadow: 0 7px 24px #0002;
+  font: 400 .8rem/1.4 system-ui, sans-serif;
+  text-align: start;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.preview:is([data-theme="dark"], [data-theme="black"], [data-theme="gray"]),
+:is(.dark, [data-theme="dark"], [data-theme="black"], [data-theme="gray"]) .preview:not([data-theme="light"]) {
+  color: #f2f2f4;
+  background: #292a2d;
+  border-color: #494a4e;
+  box-shadow: 0 7px 24px #0005;
+}
+
+.site { display: flex; align-items: center; gap: .4rem; font-size: .75rem; min-width: 0; }
+.site > span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.preview strong { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-weight: 650; }

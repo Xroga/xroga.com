@@ -1,0 +1,37 @@
+/*
+ * From Uiverse.io by neerajbaniwal - https://uiverse.io/neerajbaniwal/hungry-mule-59
+ * MIT License, Copyright (c) neerajbaniwal (Neeraj)
+ */
+.btnShine {
+  color: #fff;
+  background: linear-gradient(to right, #c7dbff 0, #fff 10%, #b3ccff 20%);
+  background-position: 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 3s infinite linear;
+  animation-fill-mode: forwards;
+  -webkit-text-size-adjust: none;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+@keyframes shine {
+  0% { background-position: 0; }
+  60% { background-position: 180px; }
+  100% { background-position: 180px; }
+}
+
+/* Where text clipping is unavailable, plain white text beats invisible text. */
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+  .btnShine { background: none; -webkit-text-fill-color: currentColor; animation: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btnShine { animation: none; }
+}
+
+@media (forced-colors: active) {
+  .btnShine { background: none; -webkit-text-fill-color: currentColor; animation: none; }
+}

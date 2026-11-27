@@ -1,4 +1,5 @@
-import { readResearchResult } from '../services/integrations/researchResult.js';
+import { readResearchResult, workspaceResearchConfirmationView } from '../services/integrations/researchResult.js';
+import { publicWorkspaceResearchAnswer } from '../ai/researchAnswer.js';
 import {readModelResult} from '../services/integrations/modelResult.js';
 import {isTerminalModelFailure} from '../ai/providerRuntime.js';
 import { requireTenantContext } from '../security/tenantContext.js';
@@ -17,6 +18,7 @@ import type {
 import {
   runChatPipeline,
 } from '../ai/pipeline.js';
+import { readWorkspaceHistory } from '../ai/workspaceConversation.js';
 
 import {
   assertHasQuota,
@@ -58,9 +60,7 @@ import {
   selectRepositoryChatEvidence,
 } from '../ai/universal/repositoryChatEvidence.js';
 
-import {
-  boundedSemanticHistory,
-} from '../ai/universal/semanticHistory.js';
+import { semanticHistory } from '../ai/universal/semanticHistory.js';
 
 import {
   readBusinessData,
@@ -99,6 +99,7 @@ import {
   createBusinessActionConfirmation,
   getBusinessActionConfirmation,
 } from '../services/integrations/businessActionConfirmations.js';
+import { confirmedReadResultMarkdown } from '../services/integrations/businessActionResultUi.js';
 
 const router =
   Router();
@@ -520,7 +521,7 @@ router.post(
             message,
 
             history:
-              boundedSemanticHistory(
+              semanticHistory(
                 req.body
                   ?.history,
               ),
@@ -702,24 +703,7 @@ router.post(
         );
     }
 
-    const history =
-      Array.isArray(
-        req.body
-          ?.history,
-      )
-        ? (
-            req.body
-              .history as
-              Array<{
-                role:
-                  | 'user'
-                  | 'assistant';
-
-                content:
-                  string;
-              }>
-          )
-        : [];
+    const history = readWorkspaceHistory(req.body?.history);
 
     const semanticGoal =
       goalContractSchema
@@ -1553,6 +1537,10 @@ router.post(
             )
           : message.trim();
 
+      const automaticSearch = new AbortController();
+      const onClientClose = () => automaticSearch.abort();
+      if (res.destroyed) onClientClose();
+      else res.once('close', onClientClose);
       const result =
         await runChatPipeline(
           {
@@ -1575,8 +1563,16 @@ router.post(
                   projectEvidence,
                 }
               : {}),
+            workspaceSearch: {
+              prompt: businessEvidence || businessToolkit ? undefined : message.trim(),
+              signal: automaticSearch.signal,
+            },
           },
-        );
+        ).finally(() => res.off('close', onClientClose));
+
+      if (result.publicWebRetrieved || result.intent === 'research_unavailable') {
+        return res.json(publicWorkspaceResearchAnswer(result));
+      }
 
       return res.json(
         {
@@ -1924,7 +1920,7 @@ router.get(
 
       return res.json(
         {
-          confirmation,
+          confirmation: workspaceResearchConfirmationView(confirmation),
           researchResult,
           researchResultUnavailable,
           modelResult,
@@ -2001,16 +1997,22 @@ router.post(
         continuationNeedsAttention = true;
       }
 
+      const confirmation = workspaceResearchConfirmationView(result.confirmation);
       return res.json(
         {
           ok:
             true,
 
           confirmation:
-            result.confirmation,
+            confirmation,
 
           response:
-            `The provider reported completion: ${result.confirmation.summary}. Receipt ${result.confirmation.id}.` +
+            (confirmation.toolkit === 'xroga-native-research'
+              ? 'Open the saved research result.'
+              : `The provider reported completion: ${confirmation.summary}. Receipt ${confirmation.id}.`) +
+            (confirmation.toolkit !== 'xroga-native-research' && confirmation.risk === 'read' && !continuation
+              ? confirmedReadResultMarkdown(result.execution.resultText)
+              : '') +
             (continuation ? `\n\n${businessWorkflowProgressMarkdown(continuation)}` : '') +
             (continuationNeedsAttention ? '\n\nThe external action completed, but Xroga could not advance the saved workflow. Check the workflow status before doing anything else.' : ''),
 
@@ -2098,7 +2100,7 @@ router.post(
             confirmation.status ===
             'cancelled',
 
-          confirmation,
+          confirmation: workspaceResearchConfirmationView(confirmation),
           workflowCancelNeedsAttention,
         },
       );

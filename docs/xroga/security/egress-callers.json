@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "98f50600da2528329a612b9d4f25803b1dc2c874b5792cfe192b617c3490aa79",
+  "sourceTreeDigest": "9da59b01a5b5b0fde0c0159944f1fe5b2f1457e659ffbe33a8a3f675b0ee2302",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -11,7 +11,7 @@
     {
       "id": "0e0e3527ad05d7405c68",
       "file": "backend/src/ai/attachments.ts",
-      "line": 108,
+      "line": 109,
       "entryPoint": "fetchAsBuffer",
       "transport": "boundedPublicGet",
       "callee": "boundedPublicGet",
@@ -38,7 +38,7 @@
     {
       "id": "038ced12b0f74e8d5e0f",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 238,
+      "line": 243,
       "entryPoint": "createModelProviderClient",
       "transport": "fetch",
       "callee": "globalThis.fetch",
@@ -61,7 +61,7 @@
         {
           "path": "backend/src/ai/openaiCompat.egress.test.ts",
           "marker": "real SDK completion and streaming use only the approved endpoint and refuse redirects",
-          "sha256": "8a686f065bbd6b45bd94a332466dcd77799ed7d125947b9ec1b23296ceeb6c35",
+          "sha256": "dfa82ee38d803b4e7838f617e288697f37cc38e3fec698dbdede9d869ac9e1e6",
           "reboundOnBranch": {
             "previousSha256": "0622d56b1885aad11d4f284da5aa055690e20d3661533aa59d0c9dd1c78cd499",
             "note": "Re-bound 2026-11-05: the file gained single-response transport regression tests and a streaming-verified guard in the existing redirect test; the reviewed redirect-refusal assertions are unchanged."
@@ -85,7 +85,7 @@
     {
       "id": "31380a8d5b9454a98a98",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 340,
+      "line": 347,
       "entryPoint": "chatCompletion",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -106,7 +106,7 @@
           }
         },
         {
-          "path": "backend/src/ai/tenantModelDispatch.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/tenantModelDispatch.test.ts-AT-3266b788.txt",
           "marker": "Exactly one canonical atomic receipt per completion",
           "sha256": "e410d125c211ca7c753cf0259e86a32f4472a7f7e75e54d18ebb2650ed768d9d",
           "reboundOnBranch": {
@@ -141,7 +141,7 @@
     {
       "id": "9c345e07b723c086440e",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 435,
+      "line": 447,
       "entryPoint": "chatCompletionStream",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -162,7 +162,7 @@
           }
         },
         {
-          "path": "backend/src/ai/tenantModelDispatch.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/tenantModelDispatch.test.ts-AT-3266b788.txt",
           "marker": "No successful stream publication without settlement and a valid atomic receipt",
           "sha256": "e410d125c211ca7c753cf0259e86a32f4472a7f7e75e54d18ebb2650ed768d9d",
           "reboundOnBranch": {
@@ -195,9 +195,46 @@
       ]
     },
     {
+      "id": "5ed2120bbd7466d4c21f",
+      "file": "backend/src/ai/parallelApproval.ts",
+      "line": 116,
+      "entryPoint": "executeWorkspacePublicSearch",
+      "transport": "boundedPublicGet",
+      "callee": "boundedPublicGet",
+      "callSha256": "f323d37a5dd047fc05a6eb968a20c026894786cf8f16a103bdfe65cc3c60975f",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "SCOPED_CREDENTIAL_FREE_PUBLISHER_GET_WITH_DNS_PIN_NO_REDIRECTS",
+      "tenantAuthority": "OWNER_PUBLIC_READ_WITH_PERSISTED_EGRESS_DECISION_AND_PUBLISHER_SCOPE. ONLY_PUBLIC_URL_IS_SENT. CONTENT_STAYS_UNTRUSTED.",
+      "currentProtection": "CENTRAL_PUBLIC_GET_CANDIDATE_NOT_SEMANTIC_CERTIFICATION",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "backend/src/ai/parallelApproval.ts",
+          "marker": "purpose: 'workspace-publisher-publication-verification'",
+          "sha256": "df2d93e2135f15fca2fca57a59aa2194f8ae9ade9e4c04b4f402365a9b82ab31"
+        },
+        {
+          "path": "backend/src/ai/researchPublicationEvidence.ts",
+          "marker": "matchesOfficialResearchDomain(url.href, work.domains)",
+          "sha256": "ee9b32e4b5afa387366857c8099a57236a6b166e21628e4acd5758afcc1a269e"
+        },
+        {
+          "path": "backend/src/ai/researchPublicationEvidence.test.ts",
+          "marker": "a missing original follows the publisher catalog and verifies the actual PDF",
+          "sha256": "3a35649df65cc924032709c687b90f07d5d65557fdd6afcec3c63067996464f0"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "Egress redirect denied",
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
+        }
+      ]
+    },
+    {
       "id": "90c62dd04b83e45e1c68",
       "file": "backend/src/ai/parallelApproval.ts",
-      "line": 108,
+      "line": 180,
       "entryPoint": "executeParallelNativeAction",
       "transport": "boundedPublicGet",
       "callee": "boundedPublicGet",
@@ -217,7 +254,7 @@
         {
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "c070ac329948841c4cc4a74bf641ef747fd81aa64b8cc27600879a0def449ee9",
+          "sha256": "29e704826d0e504396a577427e0181d909331628d30f4ad2878e975f462290b9",
           "reboundOnBranch": {
             "previousSha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
           }
@@ -231,10 +268,10 @@
       "entryPoint": "executeParallelRequest",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "8a4cf1df25bdb5d59e6f01020cc5be67cec679c8815a93cc5b5b594cc7a7fe28",
+      "callSha256": "dc508cf35a15a3c1b19ad126bcf268c86991a31771cef42b2ae134b2e6c9b00d",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "FIXED_PARALLEL_API_WITH_PRODUCER_ATTESTED_EXACT_PRIVATE_EGRESS_APPROVAL",
-      "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
+      "trust": "FIXED_OFFICIAL_DEEPSEEK_SEARCH_WITH_BOUND_PUBLIC_READ_OR_EXACT_PRIVATE_SEARCH_APPROVAL",
+      "tenantAuthority": "TENANT_ACTOR_AND_ONE_USE_REQUEST_ADMISSION_PUBLIC_READ_RECEIPT_OR_LEGACY_EXACT_AUTHORITY_CANONICAL_BUDGET_SETTLEMENT",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
       "disposition": "VERIFIED_GUARD",
@@ -247,10 +284,15 @@
         {
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "c070ac329948841c4cc4a74bf641ef747fd81aa64b8cc27600879a0def449ee9",
+          "sha256": "29e704826d0e504396a577427e0181d909331628d30f4ad2878e975f462290b9",
           "reboundOnBranch": {
             "previousSha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
           }
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/WORKSPACE-AUTOMATIC-PUBLIC-SEARCH-20261119.json",
+          "marker": "EXACT_SOURCE_AUTOMATIC_PUBLIC_READ_LOCAL_CONTROLLED_EVIDENCE",
+          "sha256": "db737bc630e4b76dc80e212fcf0b92d4ac1f089c687c19395e84f1391b2be939"
         }
       ]
     },
@@ -275,7 +317,7 @@
           "sha256": "29f6423cf26a0c1e3672cc7cf8861f6c978efef1773c6d39e39fff17604858c7"
         },
         {
-          "path": "backend/src/ai/tenantModelDispatch.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/tenantModelDispatch.test.ts-AT-3266b788.txt",
           "marker": "A failed dispatch cannot retry after revocation or select another model",
           "sha256": "e410d125c211ca7c753cf0259e86a32f4472a7f7e75e54d18ebb2650ed768d9d",
           "reboundOnBranch": {
@@ -2650,32 +2692,37 @@
     {
       "id": "7b6e1f490ce974fc3971",
       "file": "backend/src/services/integrations/composioClient.ts",
-      "line": 1505,
+      "line": 1520,
       "entryPoint": "composioRequest",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "9bdd54f164230d27aca5d0bdf34fc470042478bcc9bd0f1037b146d00f035cd4",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "FIXED_ORIGIN_BACKEND_COMPOSIO_DEV_WITH_PATH_AND_METHOD_ALLOWLIST_AND_MANUAL_REDIRECT_NOT_FULL_EGRESS_CERTIFICATION",
-      "tenantAuthority": "The origin is fixed (https://backend.composio.dev/api/v3.1): the path must start with a single slash with no control characters, backslashes, fragments or encoded dots and slashes, the final origin and prefix are re-checked, and only GET, POST and DELETE are allowed. Anything that is not public catalog metadata requires a verified tenant context; the connector credential is read for that context and re-checked immediately before dispatch; redirects are not followed; the body is capped at 128,000 bytes.",
+      "trust": "FIXED_COMPOSIO_TRANSPORT_ORIGINAL_CONTEXT_CURRENT_OWNED_SESSION_FINITE_PUBLIC_DISCOVERY_EXACT_PRIVATE_EGRESS_AND_NATIVE_CONFIGURATION_CONFIRMATION",
+      "tenantAuthority": "ISSUED_ACTOR_OWNER_SOURCE_CREDENTIAL_EPOCH_LIVE_ACCOUNT_ONE_USE_CLAIM_SECRET_FLOOR_TERMINAL_DENIAL_AND_VERIFIED_COMPLETION",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "disposition": "VERIFIED_GUARD",
       "evidence": [
         {
-          "path": "backend/src/services/integrations/composioClient.ts",
-          "marker": "url.origin!=='https://backend.composio.dev'",
-          "sha256": "37664dd39e626c417bec4ed231cbe8f3a8abc840e82983a2761e28aeb2aef53d"
+          "path": "docs/xroga/evidence/command-010/COMPOSIO-BOUNDARY-20261028.json",
+          "marker": "7b6e1f490ce974fc3971",
+          "sha256": "e96b43ea77ab48b0c3631f8a1f1d2299b062a096222da1315d5c57d934abd89a"
         },
         {
-          "path": "backend/src/services/integrations/composioClient.ts",
-          "marker": "redirect:'manual'",
-          "sha256": "37664dd39e626c417bec4ed231cbe8f3a8abc840e82983a2761e28aeb2aef53d"
+          "path": "backend/src/services/integrations/composioControl.security.test.ts",
+          "marker": "native Composio control:",
+          "sha256": "01e14c837f7e216a3be14b4b27fab68383cfab31c25fdc242366d4e7c982427d"
         },
         {
-          "path": "backend/src/services/integrations/composioClient.security.test.ts",
-          "marker": "SLACK_GET_REDIRECT_FIXTURE",
-          "sha256": "5963a224809816e2df4d0618424d2ba1fdc139f84ffa47882be363622ff57e83"
+          "path": "backend/src/services/integrations/composioProvenance.security.test.ts",
+          "marker": "private connected-app read uses exact existing consent",
+          "sha256": "1593499035681a2a03af17c56bcc02ceb1f2a1ae3dab1b1f552b04574f287192"
+        },
+        {
+          "path": "backend/src/services/integrations/composioAccountSelection.security.test.ts",
+          "marker": "confirmed action fails closed if disabled multi-account session has two Gmail accounts",
+          "sha256": "3795a88efd53915946650760b925509fb58e029df1bd3884204edd156e102b31"
         }
       ]
     },
@@ -4419,11 +4466,11 @@
     {
       "id": "9187c5480b950d1fad4d",
       "file": "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
-      "line": 24,
+      "line": 29,
       "entryPoint": "GET",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "d854fa7c0a76e83d07d74248b526a946c5e9628a5fc44bfcb7f703b72393dd4c",
+      "callSha256": "0d379b21a24c6f90895ae8cc24214ab222620b45b2dedfd9e30940c6ae08a515",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "FIXED_CONFIGURED_FIRST_PARTY_API_FILE_DOWNLOAD_ONLY_NO_ARBITRARY_ORIGIN_OR_PROVIDER_UPLOAD",
       "tenantAuthority": "REMOTE_VERIFIED_USER_BEFORE_SESSION_FORWARDING_BACKEND_REMAINS_CANONICAL_FILE_OWNER_LINK_EXPIRY_AND_REVOCATION_AUTHORITY_NO_NEW_GRANT",
@@ -4437,11 +4484,15 @@
           "sha256": "8ff4e33b2cd2742d55650800c74e25b3288c8a3bcb50948fd296eb5dbacdaaa5"
         },
         {
-          "path": "frontend/e2e/phase4-admin-share.security.mjs",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/admin-share-AT-3266b788.mjs.txt",
           "marker": "authorized admin, bounded shares and private range delivery keep their contracts and denial results stay private",
-          "sha256": "0b408b0cead5f45988f086a998e822cab8d0a7da828db3cb2feb21e8c7a2e1d3",
+          "sha256": "9e9ecfc6ca1a0d69986a6dd638f927a857883582187b8f1f2ea2fbc32e0e8df8",
           "reboundOnBranch": {
             "previousSha256": "9768cffa49a8b13925506e35b9a5e52e7468129590fb2178396691caec5b2d23"
+          },
+          "nativeShareRebinding": {
+            "previousSha256": "0b408b0cead5f45988f086a998e822cab8d0a7da828db3cb2feb21e8c7a2e1d3",
+            "scope": "The private-file source and guarded caller are unchanged. The expanded fixture loads the real native parser while preserving all existing redirect, access and range assertions."
           }
         }
       ]
@@ -4891,7 +4942,7 @@
     {
       "id": "c09bb8607fa4d00f23b7",
       "file": "frontend/src/lib/api.ts",
-      "line": 1448,
+      "line": 1449,
       "entryPoint": "fetchApiResponse",
       "transport": "fetch",
       "callee": "fetch",
@@ -4941,7 +4992,7 @@
         {
           "path": "frontend/e2e/phase4-api-clients.security.mjs",
           "marker": "actual Chromium opaque redirects are terminal before any outside request",
-          "sha256": "954f8ebae9fda01e6675124cdbd6910ed96660136f425bb1f15ac459d49f4481"
+          "sha256": "6b888974f6d7fa96c229260220f24a54f6ab3b0a5054e86596dcd7099d52d6a2"
         }
       ]
     },
@@ -5032,6 +5083,99 @@
       ]
     },
     {
+      "id": "9bcbd89af61af9d9c2e7",
+      "file": "frontend/src/lib/hostedWorkspaceBridge.mjs",
+      "line": 55,
+      "entryPoint": "googleIdentity",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "69183a141ad19e783f685f9775253e45397ca21b8e45fbf36e8bda227880dfde",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "GOOGLE_METADATA_ONLY_WITH_PINNED_STAGING_AUDIENCE",
+      "tenantAuthority": "WORKLOAD_IDENTITY_ONLY_NO_USER_TOKEN",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "scripts/security/hosted-workspace-staging.test.mjs",
+          "marker": "Google IAM and original user token stay separate",
+          "sha256": "1805f6c26e4f49612784dcd5fc3521d059109dd5afb3afc6cb024a0934f0e854"
+        }
+      ]
+    },
+    {
+      "id": "49a49569b55d144f7a6d",
+      "file": "frontend/src/lib/hostedWorkspaceBridge.mjs",
+      "line": 137,
+      "entryPoint": "forwardHostedWorkspace",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "da6bfc623a007eed3e78f4f96bc3c5380edf422eaf335a62cad99ea667f02942",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "PINNED_PRIVATE_STAGING_HEALTH_NO_REDIRECT",
+      "tenantAuthority": "WORKLOAD_IDENTITY_ONLY_NO_USER_TOKEN",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "scripts/security/hosted-workspace-staging.test.mjs",
+          "marker": "Google IAM and original user token stay separate",
+          "sha256": "1805f6c26e4f49612784dcd5fc3521d059109dd5afb3afc6cb024a0934f0e854"
+        }
+      ]
+    },
+    {
+      "id": "a609adccda5421076aa0",
+      "file": "frontend/src/lib/hostedWorkspaceBridge.mjs",
+      "line": 152,
+      "entryPoint": "forwardHostedWorkspace",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "0dada8e6784a5bce39fbf1fa531b03ba551a31948812672d0398b222d8fcef74",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "PINNED_PRIVATE_STAGING_RESEARCH_CONFIRMATION_GET_NO_REDIRECT",
+      "tenantAuthority": "ORIGINAL_OWNER_JWT_VERIFIED_BY_EXISTING_XROGA_AUTH_AND_TENANT_CHECKS",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "scripts/security/hosted-workspace-staging.test.mjs",
+          "marker": "hosted confirmation admits only the exact owner-visible DeepSeek research action",
+          "sha256": "1805f6c26e4f49612784dcd5fc3521d059109dd5afb3afc6cb024a0934f0e854"
+        }
+      ]
+    },
+    {
+      "id": "e88275f663bb87ce2556",
+      "file": "frontend/src/lib/hostedWorkspaceBridge.mjs",
+      "line": 167,
+      "entryPoint": "forwardHostedWorkspace",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "76321677eab8b50bb630c570fefcde30d7972a323fb64ce6a832a1da1804486a",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "PINNED_PRIVATE_STAGING_API_METHOD_PATH_AND_ISSUER_BOUND",
+      "tenantAuthority": "ORIGINAL_USER_TOKEN_VERIFIED_BY_EXISTING_XROGA_AUTH_AND_TENANT_CHECKS",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "scripts/security/hosted-workspace-staging.test.mjs",
+          "marker": "Google IAM and original user token stay separate",
+          "sha256": "1805f6c26e4f49612784dcd5fc3521d059109dd5afb3afc6cb024a0934f0e854"
+        },
+        {
+          "path": "scripts/security/hosted-workspace-staging.test.mjs",
+          "marker": "the staging bridge forwards an empty Share revoke and rejects nonempty revoke bodies",
+          "sha256": "1805f6c26e4f49612784dcd5fc3521d059109dd5afb3afc6cb024a0934f0e854"
+        }
+      ]
+    },
+    {
       "id": "3b970c32a8efb294a7fd",
       "file": "frontend/src/lib/imageStudioUtils.ts",
       "line": 66,
@@ -5072,21 +5216,16 @@
       "callee": "fetch",
       "callSha256": "12ce03fb625377d4806972e2c62595cdfe78d3bf27b8cdd5da645d9ce5663494",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "OWN_BACKEND_API_PUBLIC_CATALOG_GET_NO_CREDENTIALS",
-      "tenantAuthority": "A credential-free GET (credentials omitted) of the public integration catalog on the Xroga backend (API_URL); the only inputs are a fixed page size and an optional cursor placed in a URL query string. No account data is sent.",
+      "trust": "PUBLIC_READ_ONLY_PLATFORM_CATALOG_METADATA_AT_EXISTING_DEPLOYMENT_ORIGIN_NO_PROVIDER_DESTINATION",
+      "tenantAuthority": "PUBLIC_SHARED_METADATA_ONLY_GET_CREDENTIALS_OMIT_NO_BEARER_COOKIE_BODY_OR_ACCOUNT_SCOPE_CURSOR_ENCODED_AS_QUERY_VALUE_12_SECOND_TIMEOUT_NO_RETRY",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "evidence": [
         {
-          "path": "frontend/src/lib/publicConnectCatalog.ts",
-          "marker": "method: 'GET', credentials: 'omit'",
-          "sha256": "e3bc7e2a3acb9adba5bb5c8506d1c7fadb5be3e3329d00dad3050d1bd7411240"
-        },
-        {
-          "path": "frontend/src/lib/publicConnectCatalog.ts",
-          "marker": "/api/public/integrations/catalog?",
-          "sha256": "e3bc7e2a3acb9adba5bb5c8506d1c7fadb5be3e3329d00dad3050d1bd7411240"
+          "path": "frontend/src/lib/publicConnectCatalog.test.ts",
+          "marker": "public catalog reads use only the configured platform origin without account credentials",
+          "sha256": "1c5f1783b1005263c9ac7ba2be7e59d994a3c6d3efb76ba9740e9f2bf656dbb3"
         }
       ]
     },
@@ -5239,6 +5378,7 @@
       "scope": "GROUPING_NOT_SEMANTIC_CERTIFICATION",
       "callerIds": [
         "0e0e3527ad05d7405c68",
+        "5ed2120bbd7466d4c21f",
         "90c62dd04b83e45e1c68",
         "42b94382bd37c3f50c6c",
         "eae67182cbfc4c6f9091",
@@ -5331,6 +5471,10 @@
         "52851686fc818e0e4c5f",
         "d836bcd400bd13ddac6c",
         "c09bb8607fa4d00f23b7",
+        "9bcbd89af61af9d9c2e7",
+        "49a49569b55d144f7a6d",
+        "a609adccda5421076aa0",
+        "e88275f663bb87ce2556",
         "3b970c32a8efb294a7fd",
         "e079c51ab00e88b88aa7",
         "20618341b2f95ca0ba5e",
@@ -5484,8 +5628,8 @@
     }
   ],
   "counts": {
-    "total": 162,
-    "reviewed": 162,
+    "total": 167,
+    "reviewed": 167,
     "pending": 0,
     "unresolvedHighRiskBypasses": 0
   }

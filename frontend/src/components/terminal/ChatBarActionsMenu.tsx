@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useChatbarPopoverLayout } from '@/components/ui/useChatbarPopoverLayout';
+import { useTerminalPopoverPalette } from '@/components/ui/useTerminalPopoverPalette';
 import { ArrowUpRight, Bot, Bug, Check, ChevronRight, Command, FolderOpen, Globe2, Library, ListChecks, Paperclip, Plus, Puzzle, ScrollText, Sparkles, TerminalSquare, Workflow, X } from 'lucide-react';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { CirclePlayIcon } from '@/components/icons/animated/CirclePlayIcon';
@@ -12,6 +14,8 @@ import {
 } from '@/store/useComposerToolsStore';
 import { cn } from '@/lib/utils';
 import controls from './WorkspaceControls.module.css';
+import { NativeSkillsPicker } from '@/components/library/NativeSkillsPicker';
+import { buildNativeWorkSkillPrompt } from '@/lib/nativeWorkSkills';
 
 /**
  * The composer's extra actions, behind one compact trigger.
@@ -96,12 +100,14 @@ export function ChatBarActionsMenu({
   plusIcon?: boolean;
 }) {
   const [open, setOpen] = useState(false);
-  const [panel, setPanel] = useState<'menu' | 'commands' | 'skills' | 'preferences' | 'rules' | 'work'>('menu');
+  const [panel, setPanel] = useState<'menu' | 'commands' | 'instructions' | 'preferences' | 'rules' | 'work'>('menu');
+  const [nativeSkillsOpen, setNativeSkillsOpen] = useState(false);
   const [workId, setWorkId] = useState<string>('library');
   const activeWork = WORK_OPTIONS.find(item => item.id === workId) ?? WORK_OPTIONS[0];
   const rootRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
+  const menuStyle = useChatbarPopoverLayout(open, rootRef, menuRef, 288);
+  const palette = useTerminalPopoverPalette(open, rootRef);
 
   const preferences = useComposerToolsStore((s) => s.preferences);
   const setPreferences = useComposerToolsStore((s) => s.setPreferences);
@@ -148,53 +154,6 @@ export function ChatBarActionsMenu({
     return () => window.cancelAnimationFrame(frame);
   }, [open, panel]);
 
-  useLayoutEffect(() => {
-    if (!open) return;
-    const sync = () => {
-      const composer = rootRef.current?.closest<HTMLElement>('.xv-chatbar-solid');
-      if (!composer) return;
-      const frame = composer.closest<HTMLElement>('.xv-kimi-composer-frame') ?? composer;
-      const rect = frame.getBoundingClientRect();
-      const trigger = rootRef.current?.getBoundingClientRect() ?? rect;
-      const width = Math.min(344, window.innerWidth - 16);
-      const left = Math.max(8, Math.min(trigger.left, window.innerWidth - width - 8));
-      const idle = Boolean(composer.closest('.xv-terminal-dock--idle'));
-      if (idle) {
-        const available = window.innerHeight - rect.bottom - 16;
-        setMenuStyle(available >= 160 ? {
-          position: 'fixed', left, top: rect.bottom + 6,
-          bottom: 'auto', width,
-          maxHeight: Math.max(120, Math.min(314, available)),
-        } : {
-          position: 'fixed', left, top: 'auto',
-          bottom: Math.max(8, window.innerHeight - rect.top + 6), width,
-          maxHeight: Math.max(120, Math.min(314, rect.top - 12)),
-        });
-        return;
-      }
-      setMenuStyle({
-        position: 'fixed', left, top: 'auto',
-        bottom: Math.max(8, window.innerHeight - rect.top + 6),
-        width,
-        maxHeight: Math.min(314, Math.max(130, rect.top - 12)),
-      });
-    };
-    sync();
-    window.addEventListener('resize', sync);
-    // The menu is portalled to the document body. Any ancestor can scroll while the
-    // composer moves underneath it, so keep the portal aligned on captured scrolls
-    // as well as viewport resizes. This is what makes it remain attached to the
-    // composer's upper edge inside the idle workspace scroller.
-    window.addEventListener('scroll', sync, { capture: true, passive: true });
-    window.visualViewport?.addEventListener('resize', sync);
-    window.visualViewport?.addEventListener('scroll', sync, { passive: true });
-    return () => {
-      window.removeEventListener('resize', sync);
-      window.removeEventListener('scroll', sync, true);
-      window.visualViewport?.removeEventListener('resize', sync);
-      window.visualViewport?.removeEventListener('scroll', sync);
-    };
-  }, [open, panel]);
 
   // Always reopen on the menu — landing back inside the rules editor after a close
   // is disorienting when the trigger looks like a single generic button.
@@ -232,7 +191,7 @@ export function ChatBarActionsMenu({
       </button>
 
       {open && typeof document !== 'undefined' ? createPortal(
-        <div ref={menuRef} className={cn('xv-cba-menu', controls.actions)} role="dialog" aria-label="Composer actions" style={{ ...menuStyle, '--xv-actions-width': `${menuStyle.width}px` } as React.CSSProperties}>
+        <div ref={menuRef} className={cn('xv-cba-menu', controls.actions)} role="dialog" aria-label="Composer actions" data-chatbar-popover="true" style={{ ...palette, position: 'fixed', left: menuStyle.left, top: menuStyle.top, bottom: 'auto', right: 'auto', width: menuStyle.width, maxHeight: menuStyle.maxHeight, overflowY: 'auto', overscrollBehavior: 'contain', zIndex: 10000, '--xv-actions-width': `${menuStyle.width}px` } as React.CSSProperties}>
           {panel === 'menu' && (
             <div className="xv-cba-grid">
               {recentTerminal && (
@@ -286,9 +245,13 @@ export function ChatBarActionsMenu({
                 <Bug className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="xv-cba-item__text"><b>Debug an error</b><i>Paste the error, get the root cause</i></span>
               </button>
-              <button type="button" className="xv-cba-item" data-tone="purple" onClick={() => setPanel('skills')}>
+              <button type="button" className="xv-cba-item" data-tone="purple" onClick={() => {setOpen(false);setNativeSkillsOpen(true);}}>
                 <Sparkles className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                <span className="xv-cba-item__text"><b>Skills</b><i>{enabledSkills.length ? `${enabledSkills.length} active` : 'Reusable instruction packs'}</i></span>
+                <span className="xv-cba-item__text"><b>Skills</b><i>40 ready-made complete jobs</i></span>
+              </button>
+              <button type="button" className="xv-cba-item" data-tone="gray" onClick={() => setPanel('instructions')}>
+                <ListChecks className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                <span className="xv-cba-item__text"><b>Instruction packs</b><i>{enabledSkills.length ? `${enabledSkills.length} active` : 'Optional reusable instructions'}</i></span>
               </button>
               <button type="button" className="xv-cba-item" data-tone="purple" onClick={() => setPanel('preferences')}>
                 <ScrollText className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
@@ -354,13 +317,13 @@ export function ChatBarActionsMenu({
             </>
           )}
 
-          {panel === 'skills' && (
+          {panel === 'instructions' && (
             <>
               <div className="xv-cba-head">
                 <button type="button" onClick={() => setPanel('menu')} className="xv-cba-back">
                   Back
                 </button>
-                <span>Skills</span>
+                <span>Instruction packs</span>
                 <button type="button" onClick={() => setOpen(false)} aria-label="Close">
                   <X className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
@@ -441,6 +404,10 @@ export function ChatBarActionsMenu({
         </div>,
         document.body,
       ) : null}
+      <NativeSkillsPicker open={nativeSkillsOpen} onClose={()=>setNativeSkillsOpen(false)} onChoose={skill=>{
+        insert(buildNativeWorkSkillPrompt(skill),{label:skill.title,category:'Native Skill',description:skill.description,tone:'purple'});
+        setNativeSkillsOpen(false);
+      }}/>
     </div>
   );
 }

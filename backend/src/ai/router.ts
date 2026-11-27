@@ -4,9 +4,11 @@ import type {
 
 import {
   classifyTaskRequest,
+  explicitlyDisablesResearch,
   type TaskClassification,
 } from '../lib/taskClassifier.js';
 import type { GoalContract } from './universal/goalContract.js';
+import { workspaceSearchOptOut } from './workspacePublicSearch.js';
 
 export type TaskKind =
   | 'chat'
@@ -37,11 +39,16 @@ export interface RouteDecision {
 export function routeReadOnlyConversation(
   prompt: string,
   goal?: Pick<GoalContract, 'requiredCapabilities' | 'freshnessRequirement'>,
+  explicitWorkspaceSearch = false,
+  modelSelectedWorkspaceSearch = false,
 ): RouteDecision {
   const inferred = routePrompt(prompt);
-  if (!goal) return inferred;
-  const research = goal.requiredCapabilities.includes('research.public-web')
-    || goal.requiredCapabilities.includes('research.x') || goal.freshnessRequirement !== 'NONE';
+  const researchDisabled = modelSelectedWorkspaceSearch || explicitWorkspaceSearch
+    ? workspaceSearchOptOut(prompt) : explicitlyDisablesResearch(prompt);
+  if (!goal && !explicitWorkspaceSearch && (!inferred.useResearch || !researchDisabled)) return inferred;
+  const research = !researchDisabled && (explicitWorkspaceSearch || Boolean(goal
+    && (goal.requiredCapabilities.includes('research.public-web')
+      || goal.requiredCapabilities.includes('research.x') || goal.freshnessRequirement !== 'NONE')));
   return { ...inferred, kind: research ? 'research' : 'chat', builder: 'deepseek_v4_1_flash_1017',
     useResearch: research, reason: 'The validated semantic goal contract selected this read-only execution path.' };
 }
@@ -118,7 +125,7 @@ export function routePrompt(
   /**
    * Retrieval is handled independently:
    *
-   * general public web -> Parallel
+   * general public web -> official DeepSeek Search
    * X-native retrieval -> xAI x_search
    *
    * This route chooses only the final synthesis model.

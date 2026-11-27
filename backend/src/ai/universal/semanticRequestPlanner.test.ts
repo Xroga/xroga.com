@@ -6,6 +6,7 @@ import {
   enforceExplicitBusinessWorkflowControls,
   enforceExplicitExecutionControls,
   enforceExplicitPublicResearchControls,
+  enforceInlineAnswerIntent,
   executeHedgedPlannerFallback,
   interpreterModelOrder,
   planExplicitProjectBuild,
@@ -31,6 +32,36 @@ import { AuthorityError } from '../../security/authority/enforce.js';
 import { EgressDenied } from '../../security/egress/egressPolicy.js';
 import { RuntimeFailure } from './runtimeFailure.js';
 import { PostCompletionAccountingError } from '../postCompletionAccounting.js';
+
+it('keeps translated public queries and excludes unrelated workspace identifiers', () => {
+  const input = {
+    message: 'मेरी यात्रा के लिए नॉर्वे में ट्रेन टिकट के दाम बताओ।',
+    history: [],
+    projectContext: { repo: 'synthetic-org/internal-project', branch: 'main', projectRoot: '/' },
+    attachments: [{ mediaType: 'text/plain', name: 'Internal itinerary.txt' }],
+  };
+  const decision = {
+    semanticIntent: 'INVESTIGATE',
+    requiredCapabilities: ['research.public-web'],
+    freshnessRequirement: 'CURRENT_REQUIRED',
+  };
+  for (const query of ['Norway rail fares and ticket prices', '𠀀'.repeat(128)]) {
+    const contract = goalContractSchema.parse(normalizePlannerDecisionCandidate({ ...decision, publicWebQuery: query }, input));
+    assert.equal(contract.publicWebQuery, query);
+  }
+  for (const query of [null, 'Norway rail fares Internal itinerary.txt', 'rail fares synthetic-org/internal-project',
+    'Norway rail fares '.repeat(10) + 'Internal itinerary.txt',
+    'Norway rail fares '.repeat(10) + ' SYNTHETIC_TEST_TOKEN']) {
+    const contract = goalContractSchema.parse(normalizePlannerDecisionCandidate({ ...decision, publicWebQuery: query }, input));
+    assert.equal(contract.publicWebQuery, null);
+  }
+  const long = 'Norway rail fares trip planning high season transport '.repeat(4) + 'site:vy.no after:2026-01-01';
+  const contract = goalContractSchema.parse(normalizePlannerDecisionCandidate({ ...decision, publicWebQuery: long }, input));
+  assert.ok(contract.publicWebQuery);
+  assert.ok([...contract.publicWebQuery].length <= 128);
+  assert.match(contract.publicWebQuery, /^Norway rail fares.*after:2026-01-01.*site:vy\.no$/u);
+  assert.equal(goalContractSchema.parse(normalizePlannerDecisionCandidate({ ...decision, publicWebQuery: '𠀀'.repeat(129) }, input)).publicWebQuery, '𠀀'.repeat(128));
+});
 
 function goal(overrides: Partial<GoalContract> = {}): GoalContract {
   return goalContractSchema.parse({
@@ -128,7 +159,7 @@ describe('semantic request dispatch', () => {
         usage: {} as never,
       }, 'Search the web for flight fares');
       assert.equal(corrected.dispatch, 'blocked');
-      assert.match(corrected.blockers.join(' '), /research.*provider.*not configured/i);
+      assert.deepEqual(corrected.blockers, ['Web search is temporarily unavailable.']);
     } finally {
       if (previousKey !== undefined) process.env.DEEPSEEK_WEBSEARCH_FETCH_API = previousKey;
     }
@@ -159,6 +190,36 @@ describe('semantic request dispatch', () => {
     const guarded = enforceExplicitPublicResearchControls(plan, 'Search the web for flights and email the results to Jane');
     assert.equal(guarded.dispatch, 'blocked');
     assert.match(guarded.blockers.join(' '), /no action was executed/i);
+    for (const prompt of [
+      'Search the web for flights and create a table in the connected spreadsheet.',
+      'Search the web for flights and create a table, then email the results to Jane.',
+    ]) assert.equal(enforceExplicitPublicResearchControls(plan, prompt).dispatch, 'blocked');
+  });
+
+  it('treats a requested inline chart or table as part of the public answer', () => {
+    const originalKey = process.env.DEEPSEEK_WEBSEARCH_FETCH_API;
+    process.env.DEEPSEEK_WEBSEARCH_FETCH_API = 'test-key';
+    try {
+      const plan = {
+        goalContract: goal(),
+        dispatch: 'chat' as const,
+        capabilityIds: ['conversation.respond'],
+        rationale: 'ordinary chat',
+        blockers: [],
+        usage: {} as never,
+      };
+      for (const prompt of [
+        'Search the web for seasonal migration and create a compact table.',
+        'Search the web for public trail data and create a chart in this answer.',
+      ]) {
+        const corrected = enforceExplicitPublicResearchControls(plan, prompt);
+        assert.equal(corrected.dispatch, 'chat');
+        assert.ok(corrected.capabilityIds.includes('research.public-web'));
+      }
+    } finally {
+      if (originalKey === undefined) delete process.env.DEEPSEEK_WEBSEARCH_FETCH_API;
+      else process.env.DEEPSEEK_WEBSEARCH_FETCH_API = originalKey;
+    }
   });
 
   it('keeps a normal answer and public research out of the build path', () => {
@@ -191,6 +252,92 @@ describe('semantic request dispatch', () => {
   it('routes real implementation to build and refuses unfulfilled external actions', () => {
     assert.equal(dispatchForGoal(goal({ semanticIntent: 'MODIFY' }), ['software.implement', 'repository.write']), 'build');
     assert.equal(dispatchForGoal(goal({ semanticIntent: 'EXTERNAL_ACTION' }), ['conversation.respond']), 'blocked');
+  });
+
+  it('routes the hosted file-backed calculator request to the native answer path', () => {
+    const planned = goal({ semanticIntent: 'MODIFY', requiredCapabilities: ['software.implement', 'validation.run'] });
+    const attachments = [{ name: 'workshop-notes.txt', mediaType: 'text/plain' }];
+    const message = 'Use my attached workshop notes to build an interactive gross revenue calculator with a reset. Chart and tabulate all attendance scenarios in the notes. Label the slider Attendees and let it change by one attendee at a time. Start at the initial attendance in the notes. No web search.';
+    const corrected = enforceInlineAnswerIntent(planned, { message, attachments });
+    assert.equal(corrected.semanticIntent, 'ANSWER');
+    assert.deepEqual(corrected.requiredCapabilities, ['conversation.respond', 'attachment.analyze']);
+    assert.equal(dispatchForGoal(corrected, corrected.requiredCapabilities), 'chat');
+
+    const inline = enforceInlineAnswerIntent(planned, {
+      message: 'Make a calculator in this answer with a slider for quantity.', attachments: [],
+    });
+    assert.deepEqual(inline.requiredCapabilities, ['conversation.respond']);
+
+    for (const message of [
+      'Build an interactive paint coverage calculator. Start with 48 square metres of wall, 2 coats, 11 square metres per litre, and 10% extra. Let me change all four values and reset them. Show litres to two decimals and how many whole 2.5 L tins to buy.',
+      'Build an interactive compound-interest calculat or with principal, interest rate and years.',
+    ]) {
+      const answer = enforceInlineAnswerIntent(planned, { message, attachments: [] });
+      assert.equal(dispatchForGoal(answer, answer.requiredCapabilities), 'chat');
+      assert.deepEqual(answer.requiredCapabilities, ['conversation.respond']);
+    }
+  });
+
+  it('keeps software deliverables, external actions and explicit project controls on their existing routes', () => {
+    const planned = goal({ semanticIntent: 'MODIFY', requiredCapabilities: ['software.implement', 'validation.run'] });
+    const attachments = [{ name: 'notes.txt', mediaType: 'text/plain' }];
+    for (const message of [
+      'Build a calculator app with a slider and chart from the notes.',
+      'Build a calculator with a slider and chart from the notes, then deploy it.',
+      'Build a calculator with a slider and chart from the notes and send the result.',
+      'Build a calculator with a slider.',
+      'Build an interactive paint coverage calculator in the existing app.',
+      'Build an interactive loan calculator and deploy it.',
+    ]) assert.equal(enforceInlineAnswerIntent(planned, { message, attachments }), planned);
+
+    const message = 'Make a calculator in this answer with a slider.';
+    for (const other of [
+      { ...planned, previewRequirement: 'REQUIRED' as const },
+      { ...planned, projectContext: { repo: 'owner/repository', branch: 'main', projectRoot: '/' } },
+      { ...planned, requiredCapabilities: [...planned.requiredCapabilities, 'business.action'] },
+      { ...planned, blockers: ['An input is missing.'] },
+    ]) assert.equal(enforceInlineAnswerIntent(other, { message, attachments }), other);
+  });
+
+  it('keeps standalone Office and PDF deliverables in chat even when the model selects a build', () => {
+    const planned = goal({ semanticIntent: 'MODIFY', requiredCapabilities: ['software.implement', 'validation.run'] });
+    for (const [message, attachments] of [
+      ['Create a DOCX proposal with editable sections.', []],
+      ['Create a PDF executive report from this attached dataset.', [{ name: 'report.csv', mediaType: 'text/csv' }]],
+      ['Create an XLSX budget spreadsheet with formulas.', []],
+      ['Create a professional PPTX slide deck from these supplied notes.', []],
+    ] as const) {
+      const answer = enforceInlineAnswerIntent(planned, { message, attachments: [...attachments] });
+      assert.equal(dispatchForGoal(answer, answer.requiredCapabilities), 'chat');
+      assert.deepEqual(answer.requiredCapabilities, ['conversation.respond', ...(attachments.length ? ['attachment.analyze'] : [])]);
+    }
+    for (const message of [
+      'Create a DOCX proposal, and send it to the client.',
+      'Create a PDF report and commit it to the repository.',
+      'Build an application with DOCX and PDF downloads.',
+      'Create a PPTX deck and upload it to the client drive.',
+    ]) assert.equal(enforceInlineAnswerIntent(planned, { message, attachments: [] }), planned);
+  });
+
+  it('delivers standalone code and sample tests in chat without converting project work', () => {
+    const planned = goal({ semanticIntent: 'MODIFY', requiredCapabilities: ['software.implement', 'validation.run'] });
+    for (const message of [
+      'Write a TypeScript function that groups a list of items by status, preserving first appearance. Include a test.',
+      'Show a Python snippet that converts a list of pairs to a dictionary.',
+      'Provide an example of a JavaScript function and explain its output.',
+    ]) {
+      const answer = enforceInlineAnswerIntent(planned, { message, attachments: [] });
+      assert.equal(answer.semanticIntent, 'ANSWER');
+      assert.deepEqual(answer.requiredCapabilities, ['conversation.respond']);
+      assert.equal(dispatchForGoal(answer, answer.requiredCapabilities), 'chat');
+    }
+    for (const message of [
+      'Write a TypeScript function in the repository and include a test.',
+      'Generate a function in a file in the project.',
+      'Write a grouping function and run tests.',
+      'Generate a complete downloadable app with a grouping function.',
+      'Write a function and deploy the changes.',
+    ]) assert.equal(enforceInlineAnswerIntent(planned, { message, attachments: [] }), planned);
   });
 
   it('rejects a connected-app action that claims it can produce a software Preview', () => {
@@ -445,7 +592,7 @@ describe('semantic planner single-model delivery',()=>{
   });
   it('retains the bounded JSON decision controls and total deadline',()=>{
     const signal=new AbortController().signal;
-    assert.deepEqual(semanticPlannerCompletionOptions(signal),{maxTokens:1500,temperature:0,json:true,reasoningMode:'none',signal});
+    assert.deepEqual(semanticPlannerCompletionOptions(signal),{maxTokens:2200,temperature:0,json:true,reasoningMode:'none',signal});
     assert.equal(SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS,SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS);
     assert.ok(SEMANTIC_PLANNER_MAX_TOTAL_TIMEOUT_MS<60000);
   });

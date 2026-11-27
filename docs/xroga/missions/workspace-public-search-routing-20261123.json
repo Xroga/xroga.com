@@ -1,0 +1,125 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-PUBLIC-SEARCH-ROUTING-20261123",
+  "baseSha": "6bd4fdec53bbacb9896df101c5986a4390ee06ba",
+  "requirementIds": [
+    "XR-MISSION-054",
+    "XR-MISSION-055"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "high",
+  "scope": "Route self-contained public web research from ordinary signed-in Workspace chat to official DeepSeek Search, preserve publisher constraints in mixed research and presentation requests, and render a plain status for stale public approval replies.",
+  "changedFiles": [
+    "backend/src/ai/pipeline.ts",
+    "backend/src/ai/researchAnswer.test.ts",
+    "backend/src/ai/router.ts",
+    "backend/src/ai/router.test.ts",
+    "backend/src/ai/universal/semanticRequestPlanner.test.ts",
+    "backend/src/ai/universal/semanticRequestPlanner.ts",
+    "backend/src/ai/workspacePublicSearch.ts",
+    "frontend/e2e/command3-auth.spec.ts",
+    "frontend/src/lib/assistantCopy.test.ts",
+    "frontend/src/lib/connectedAppResult.test.ts",
+    "frontend/src/lib/connectedAppResult.ts",
+    "frontend/src/lib/publicAnswerText.ts"
+  ],
+  "decisions": {
+    "keep": [
+      "Keep the same authenticated public-read broker, private evidence store, source URLs and canonical billing ledger."
+    ],
+    "extend": [
+      "Respect an explicit public Search request from the typed turn when a chat-only plan omitted it.",
+      "Admit unfamiliar self-contained topics from the explicit command after current-turn privacy and destination checks.",
+      "Use the existing Workspace planner for research intent without a second topic classification. Preserve unfamiliar subjects, normal technical punctuation, and literal current-turn Unicode input.",
+      "Treat requested charts and tables in the answer as presentation rather than connected-app activity.",
+      "Keep named public publishers and retrieval terms when the user also requests a chart, table, timeline or checklist.",
+      "Render historical automatic Search review replies as a plain explanation in Workspace, Copy and shared answers. Existing private research and connected-action reviews retain their controls.",
+      "Keep the separate approval boundary for consequential actions and validate source provenance before synthesis."
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "Use the existing Workspace chat and source response shape.",
+    "rollback": "Restore the verified compatible frontend, API and Job pair."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "Use the existing verified Workspace actor."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "Public retrieval never takes private history, attachments or project data as query input."
+    },
+    "approval": {
+      "changed": true,
+      "description": "Direct public reads use the existing automatic path. Private export and consequential operations keep their authorization checks."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "Use the existing server-owned official Search credential and canonical model credential."
+    },
+    "egress": {
+      "changed": true,
+      "description": "Admit additional explicit current-turn public topic forms through the existing single-use, audited public-read boundary."
+    },
+    "cost": {
+      "changed": true,
+      "description": "Newly eligible explicit lookups reserve and settle the existing single official Search request and answer generation."
+    },
+    "billing": {
+      "changed": false,
+      "description": "Keep the existing canonical charging and settlement rules."
+    }
+  },
+  "tests": [
+    {
+      "command": "tsx --test backend/src/ai/researchAnswer.test.ts",
+      "scope": "Verify an unfamiliar explicit public lookup with a stale chat-only plan, no approval creation, one search, one synthesis, verified links, and private and ambiguous inputs withheld.",
+      "negative": true,
+      "reference": "backend/src/ai/researchAnswer.test.ts"
+    },
+    {
+      "command": "tsx --test backend/src/ai/universal/semanticRequestPlanner.test.ts backend/src/ai/parallelWeb.security.test.ts",
+      "scope": "Verify connected-app operation and mixed task guards and the existing audited network and budget admission.",
+      "negative": true,
+      "reference": "backend/src/ai/universal/semanticRequestPlanner.test.ts"
+    },
+    {
+      "command": "playwright test e2e/command3-auth.spec.ts",
+      "scope": "Verify the legacy public reply cannot display a confirmation or price in a new or reopened signed-in conversation. This uses controlled provider responses.",
+      "negative": true,
+      "reference": "frontend/e2e/command3-auth.spec.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Use the existing Workspace planner, chat pipeline, official Search broker and answer presentation.",
+    "rfc": null
+  },
+  "rollout": "Verify exact-source CI, authenticated staging with fresh official Search and DeepSeek receipts, and the protected production release.",
+  "rollback": "Restore the existing decoder-compatible frontend, API and Job through the reviewed operator.",
+  "knownGaps": [
+    "Ambiguous, context-dependent or sensitive target requests require a self-contained public topic for automatic retrieval.",
+    "Fresh provider acceptance and protected publication have separate evidence requirements."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "backend/src/ai/researchAnswer.test.ts"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Fresh exact-source staging and the protected production release are required."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

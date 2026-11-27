@@ -1,5 +1,6 @@
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { requireTenantContext, type TenantContext } from '../security/tenantContext.js';
+import { sendBrowserPush } from './browserPushService.js';
 
 export interface PushNotificationInput {
   title: string;
@@ -75,6 +76,12 @@ export async function pushNotification(
   if (error || !data || data.user_id !== userId || typeof data.id !== 'string' || !data.id) {
     console.warn('[NotificationService] insert receipt unavailable');
     return null;
+  }
+  try {
+    await sendBrowserPush(context, { id: data.id, type: input.type ?? 'info', link: input.link });
+  } catch {
+    // The persistent inbox receipt is authoritative even when optional push delivery fails.
+    console.warn('[NotificationService] browser push unavailable');
   }
   return data?.id ?? null;
 }

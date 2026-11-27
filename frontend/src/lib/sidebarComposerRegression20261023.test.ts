@@ -35,8 +35,9 @@ test('composer menus expose real files, apps, skills, tools and agents', () => {
 test('conversation content stays clear of the composer and model usage is fetched, not invented', () => {
   // Preserve the live dock-bottom boundary without restoring the retired
   // composer-height clipping. Keep real usage assertions unchanged.
-  assert.match(css, /clip-path:\s*inset\(0 0 max\(0px, calc\(var\(--xv-dock-bottom, 14px\) - var\(--xv-pane-bottom, 0px\)\)\) 0\)/);
-  assert.doesNotMatch(css, /clip-path:\s*inset\(0 0 calc\(var\(--xv-chatbar-height/s);
+  const scrollport = css.match(/\.xv-terminal-scroll\[data-conversation='true'\]\s*\{([^}]*)\}/)?.[1] ?? '';
+  assert.match(scrollport, /margin-block-end:\s*max\(0px, calc\(var\(--xv-dock-bottom, 14px\) - var\(--xv-pane-bottom, 0px\)\)\)/);
+  assert.doesNotMatch(scrollport, /clip-path|--xv-chatbar-height/);
   assert.match(css, /\.xv-terminal-scroll\s*\{[^}]*padding-bottom:\s*calc\(var\(--xv-chatbar-height/s);
   assert.match(css, /data-workspace-state='conversation'\][^}]*background:\s*transparent !important/s);
   assert.match(model, /api\.billing\.entitlement\(\)/);

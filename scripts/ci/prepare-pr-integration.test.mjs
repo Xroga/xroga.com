@@ -12,10 +12,15 @@ test('current Phase4 conversion reviews bind feature bytes before virtual merge 
   const paths=['backend/src/security/boundedPublicGet.ts','backend/src/ai/attachments.ts'];
   for(const path of paths){
     const records=registry.reviews.filter(r=>r.path===path);
-    assert.equal(records.length,1);
-    const row=records[0],source=read(path);
-    assert.equal(row.sourceSha256,createHash('sha256').update(source).digest('hex'));
-    assert.deepEqual(row.callIds,discoverPersistenceCalls(path,source).map(c=>c.id));
+    assert.ok(records.length>0,path);
+    const source=read(path),hash=createHash('sha256').update(source).digest('hex');
+    for(const row of records){
+      assert.equal(row.disposition,'NOT_PERSISTENCE');
+      assert.equal(row.sourceSha256,hash);
+    }
+    const reviewed=records.flatMap(row=>row.callIds);
+    assert.equal(reviewed.length,new Set(reviewed).size,'Each caller has exactly one review');
+    assert.deepEqual(reviewed.sort(),discoverPersistenceCalls(path,source).map(call=>call.id).sort());
   }
   assert.equal(projectStableArrayConversionReviews(registry,{readFeature:read,readIntegrated:read}).rebound.length,0);
   const bad={...registry,reviews:registry.reviews.map(r=>r.path===paths[0]?{...r,sourceSha256:'0'.repeat(64)}:r)};

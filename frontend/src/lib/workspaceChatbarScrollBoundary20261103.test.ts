@@ -4,7 +4,7 @@ import { test } from 'node:test';
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
 
-test('conversation clips only below the floating chatbar and fades its upper edge after scrolling', () => {
+test('the native scrollport ends at the floating chatbar and the composer edge fades after scrolling', () => {
   const dock = read('../components/terminal/TerminalDock.tsx');
   const messageLog = read('../components/terminal/SwarmMessageLog.tsx');
   const css = read('../app/globals.css');
@@ -17,11 +17,12 @@ test('conversation clips only below the floating chatbar and fades its upper edg
   assert.match(dock, /calc\(\$\{keyboardOffset\}px \+ max\(14px, env\(safe-area-inset-bottom\)\)\)/);
   assert.match(
     messageLog,
-    /if \(atBottom\)[\s\S]*setShowJumpToLatest\(false\);[\s\S]*else \{[\s\S]*setShowJumpToLatest\(true\);/,
+    /setShowJumpToLatest\(root\.scrollHeight - root\.scrollTop - root\.clientHeight >= 140\);/,
   );
   assert.doesNotMatch(messageLog, /else if \(loading\)[\s\S]*setShowJumpToLatest\(true\);/);
-  assert.match(css, /\.xv-terminal-scroll\[data-conversation='true'\]\s*\{[^}]*clip-path:\s*inset\(0 0 max\(0px, calc\(var\(--xv-dock-bottom, 14px\) - var\(--xv-pane-bottom, 0px\)\)\) 0\)/s);
-  assert.doesNotMatch(css, /clip-path:\s*inset\(0 0 calc\(var\(--xv-chatbar-height/s);
+  const scrollport = css.match(/\.xv-terminal-scroll\[data-conversation='true'\]\s*\{([^}]*)\}/)?.[1] ?? '';
+  assert.match(scrollport, /margin-block-end:\s*max\(0px, calc\(var\(--xv-dock-bottom, 14px\) - var\(--xv-pane-bottom, 0px\)\)\)/);
+  assert.doesNotMatch(scrollport, /clip-path|--xv-chatbar-height/);
   assert.match(css, /\.xv-terminal-scroll\s*\{[^}]*padding-bottom:\s*calc\(var\(--xv-chatbar-height/s);
   assert.match(css, /data-workspace-state='conversation'\][^}]*background:\s*transparent !important/s);
   assert.match(
@@ -38,4 +39,11 @@ test('conversation clips only below the floating chatbar and fades its upper edg
     css,
     /data-workspace-state='conversation'\][^}]*background:\s*var\(--terminal-ui-surface/s,
   );
+});
+
+test('assistant replies use the composer inner inset at every pane width without moving user messages', () => {
+  const messageLog = read('../components/terminal/SwarmMessageLog.tsx');
+  assert.match(messageLog, /chromeless && msg\.role === 'assistant' && 'box-border ps-\[18px\]'/);
+  assert.doesNotMatch(messageLog, /chromeless && msg\.role === 'user' && 'box-border ps-\[18px\]'/);
+  assert.doesNotMatch(messageLog, /max-\[600px\]:ps-\[18px\]/);
 });

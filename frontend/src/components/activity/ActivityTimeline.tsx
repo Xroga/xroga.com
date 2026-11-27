@@ -3,14 +3,19 @@
 import { useState } from 'react';
 import {
   AlertTriangle, CheckCircle2, ChevronDown, CircleX, CirclePause, Database, FilePen, FileSearch, FileText,
-  Globe, Hand, ListTodo, Plug, Rocket, Search, ShieldCheck, SquareTerminal, type LucideIcon,
+  Clock, Globe, Hand, ListTodo, Plug, Rocket, Search, ShieldCheck, SquareTerminal, type LucideIcon,
 } from 'lucide-react';
 import type { XrogaActivityPresentation } from '@/lib/terminal/activityPresentation';
 import {
-  formatElapsed, liveLabel,
+  familyOf, formatElapsed, liveLabel,
   type ActivityTimelineModel, type TimelineFamily, type TimelineItem, type TimelineTone,
 } from '@/lib/terminal/activityTimeline';
 import styles from './activity.module.css';
+import { BlackHoleIndicator } from './BlackHoleIndicator';
+import { ProcessingSurface } from './ProcessingSurface';
+import type { ProcessingView } from '@/lib/terminal/processingView';
+import { ProcessingStream, useOpenRows } from './ProcessingStream';
+import type { StreamEntry } from '@/lib/terminal/processingStream';
 
 const FAMILY_ICON: Record<TimelineFamily, LucideIcon> = {
   command: SquareTerminal, verify: ShieldCheck, read: FileSearch, research: Search, write: FilePen,
@@ -24,28 +29,25 @@ function iconFor(family: TimelineFamily, tone: TimelineTone): LucideIcon {
   return FAMILY_ICON[family];
 }
 
-/** Four small dots. Motion stops under prefers-reduced-motion (see the stylesheet). */
-export function ActivitySpinner() {
-  return <span className={styles.spinner} aria-hidden="true"><i /><i /><i /><i /></span>;
-}
-
-const COMMANDLIKE = new Set(['command', 'test', 'verify', 'error', 'warning']);
-const looksLikePath = (value?: string) => Boolean(value && value.length <= 120 && /[\\/]|\.[a-z0-9]{1,6}$/i.test(value) && !/\s{2,}/.test(value));
+const HISTORY_PAGE_SIZE = 25;
 
 function RowDetails({ rows, showLabel = true }: { rows: readonly XrogaActivityPresentation[]; showLabel?: boolean }) {
+  const [visibleCount, setVisibleCount] = useState(HISTORY_PAGE_SIZE);
   return (
     <div className={styles.details}>
-      {rows.map(row => {
-        const isCommand = COMMANDLIKE.has(row.kind);
+      {rows.slice(0, visibleCount).map(row => {
+        const isCommand = row.kind === 'command';
         const duration = row.durationMs ? formatElapsed(row.durationMs) : '';
-        const hasLine = showLabel || (!isCommand && looksLikePath(row.detail)) || Boolean(duration);
+        const hasLine = showLabel || Boolean(duration) || row.exitCode !== undefined;
         return (
           <div key={row.id}>
             {hasLine ? <div className={styles.detailRow}>
               {showLabel ? <span title={row.label}>{row.label}</span> : <span />}
-              {!isCommand && looksLikePath(row.detail) ? <span className={styles.chip} title={row.detail}>{row.detail}</span> : null}
+              {row.exitCode !== undefined ? <span className={styles.meta}>Exit {row.exitCode}</span> : null}
               {duration ? <span className={styles.meta}>{duration}</span> : null}
             </div> : null}
+            {!isCommand && row.detail ? <p className={styles.context}>{row.detail}</p> : null}
+            {!isCommand && row.body ? <p className={styles.context}>{row.body}</p> : null}
             {isCommand && (row.detail || row.body) ? (
               <pre className={styles.terminal} tabIndex={0} aria-label={`Output of ${row.label}`}>
                 <code>
@@ -57,6 +59,9 @@ function RowDetails({ rows, showLabel = true }: { rows: readonly XrogaActivityPr
           </div>
         );
       })}
+      {rows.length > visibleCount ? (
+        <button type="button" className={styles.earlier} onClick={() => setVisibleCount(count => count + HISTORY_PAGE_SIZE)}>Show more details</button>
+      ) : null}
     </div>
   );
 }
@@ -65,7 +70,7 @@ function SettledItem({ item }: { item: TimelineItem }) {
   const [open, setOpen] = useState(false);
   const Icon = iconFor(item.family, item.tone);
   const duration = item.durationMs ? formatElapsed(item.durationMs) : '';
-  const expandable = item.rows.some(row => row.detail || row.body) || item.count > 1;
+  const expandable = item.rows.some(row => row.detail || row.body || row.exitCode !== undefined) || item.count > 1;
   return (
     <li className={styles.item} data-tone={item.tone}>
       <button
@@ -82,7 +87,7 @@ function SettledItem({ item }: { item: TimelineItem }) {
   );
 }
 
-const EARLIER_VISIBLE = 5;
+const EARLIER_VISIBLE = 2;
 
 export interface ActivityTimelineProps {
   model: ActivityTimelineModel;
@@ -94,57 +99,106 @@ export interface ActivityTimelineProps {
   pendingLabel?: string;
   /** A measured, truthful note such as how long nothing new has arrived. */
   note?: string;
+  /** Heading, paragraph and optional checklist derived from the same real rows. */
+  processing?: ProcessingView;
+  /** Inline work stream built from the same real rows. */
+  stream?: readonly StreamEntry[];
 }
 
-export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel = 'Responding', note }: ActivityTimelineProps) {
-  const [open, setOpen] = useState(false);
+export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel = 'Starting request', note, processing, stream = [] }: ActivityTimelineProps) {
+  const [chosenOpen, setOpen] = useState<boolean | null>(null);
+  // A run watched live keeps its stream on screen when it finishes; saved history starts folded.
+  const [watched] = useState(() => model.state === 'working' || model.state === 'waiting');
+  const onlyThinking = stream.every(entry => entry.type === 'step' && /:client-(?:read|thought)$/.test(entry.id));
+  const open = chosenOpen ?? (watched && stream.length > 0 && !onlyThinking);
+  const [streamHidden, setStreamHidden] = useState(false);
+  const openRows = useOpenRows();
   const [showAll, setShowAll] = useState(false);
   const [liveOpen, setLiveOpen] = useState(false);
+  const [historyCount, setHistoryCount] = useState(HISTORY_PAGE_SIZE);
   const { state, active, settled, otherActive } = model;
   const running = state === 'working' || state === 'waiting';
 
   // A finished run folds into one quiet header so the answer under it stays the focus.
   if (!running) {
-    if (!settled.length && !active) return null;
+    if (!settled.length && state !== 'failed' && state !== 'stopped') return null;
     const steps = model.total;
-    const label = state === 'failed' ? 'Run failed' : state === 'stopped' ? 'Run stopped' : 'Activity';
+    const summary = [
+      model.completed > 0 ? `${model.completed} completed` : '',
+      model.failed > 0 ? `${model.failed} failed` : '',
+    ].filter(Boolean).join(' · ');
+    // The header names what this particular run did: how long it thought, when that is known.
+    const thought = stream.find(entry => entry.type === 'step' && entry.id.endsWith(':client-thought') && entry.state === 'done');
+    const label = state === 'failed' ? 'Run failed' : state === 'stopped' ? 'Run stopped' : thought?.text ?? 'Work history';
     const HeaderIcon = state === 'failed' ? CircleX : state === 'stopped' ? CirclePause : CheckCircle2;
     return (
       <section className={styles.timeline} aria-label="Activity" data-state={state} data-testid="activity-timeline">
-        <button type="button" className={`${styles.row} ${styles.header}`} aria-expanded={open} onClick={() => setOpen(value => !value)}
-          data-tone={state === 'failed' ? 'failed' : undefined}>
+        <button type="button" className={`${styles.row} ${styles.header}`} aria-expanded={steps ? open : undefined}
+          disabled={!steps} onClick={() => setOpen(!open)}>
           <HeaderIcon className={styles.icon} aria-hidden="true" style={state === 'failed' ? { color: 'var(--act-danger)' } : undefined} />
-          <span className={styles.text}>{label} · {steps} {steps === 1 ? 'step' : 'steps'}</span>
-          <ChevronDown className={styles.chevron} aria-hidden="true" />
+          <span className={styles.text}>{label}</span>
+          {steps ? <><span className={styles.meta}>{summary || (thought ? '' : `${steps} ${steps === 1 ? 'step' : 'steps'}`)}</span><ChevronDown className={styles.chevron} aria-hidden="true" /></> : null}
         </button>
-        {open ? <><ol className={styles.list}>{settled.map(item => <SettledItem key={item.id} item={item} />)}</ol><p className={styles.note}>Shows observable activity only. Private model reasoning is never shown.</p></> : null}
+        {open && stream.length ? <ProcessingStream entries={stream} rows={openRows} /> : null}
+        {open && !stream.length ? <>
+          <ol className={styles.list}>{settled.slice(0, historyCount).map(item => <SettledItem key={item.id} item={item} />)}</ol>
+          {settled.length > historyCount ? (
+            <button type="button" className={styles.earlier} onClick={() => setHistoryCount(count => count + HISTORY_PAGE_SIZE)}>Show more steps</button>
+          ) : null}
+        </> : null}
       </section>
     );
   }
 
-  const hidden = !showAll && settled.length > EARLIER_VISIBLE + 1 ? settled.length - EARLIER_VISIBLE : 0;
+  const hidden = Math.max(0, settled.length - (showAll ? historyCount : EARLIER_VISIBLE));
   const shown = hidden ? settled.slice(hidden) : settled;
+  const earlierSteps = settled.slice(0, hidden).reduce((count, item) => count + item.count, 0);
   const text = active ? liveLabel(active, otherActive) : pendingLabel;
-  const startedAt = active?.startedAt ?? runStartedAt ?? null;
+  const startedAt = runStartedAt ?? active?.startedAt ?? null;
   const elapsed = startedAt ? formatElapsed(now - startedAt) : '';
   const waiting = state === 'waiting';
-  const hasDetails = Boolean(active && (active.detail || active.body));
+  const WaitingIcon = active?.kind === 'approval' || active?.kind === 'connection' ? Hand : Clock;
+  const hasStream = stream.length > 0;
+  const hasDetails = Boolean(active || settled.length || hasStream);
+  const LiveIcon = active ? FAMILY_ICON[familyOf(active.kind)] : null;
 
   return (
     <section className={styles.timeline} aria-label="Activity" data-state={state} data-testid="activity-timeline">
       <span className={styles.sr} role="status" aria-live="polite">{text}</span>
-      {hidden ? <button type="button" className={styles.earlier} onClick={() => setShowAll(true)}>Show {hidden} earlier {hidden === 1 ? 'step' : 'steps'}</button> : null}
-      {shown.length ? <ol className={styles.list}>{shown.map(item => <SettledItem key={item.id} item={item} />)}</ol> : null}
-      <div className={`${styles.item} ${styles.live}`} data-waiting={waiting ? 'true' : undefined}>
-        <button type="button" className={`${styles.row} ${styles.live}`} data-waiting={waiting ? 'true' : undefined}
-          aria-expanded={hasDetails ? liveOpen : undefined} data-static={hasDetails ? undefined : 'true'}
-          onClick={hasDetails ? () => setLiveOpen(value => !value) : undefined} tabIndex={hasDetails ? 0 : -1}>
-          {waiting ? <Hand className={styles.icon} aria-hidden="true" /> : <ActivitySpinner />}
-          <span className={styles.text} key={text} title={text}>{text}</span>
-          {elapsed ? <span className={styles.meta}>{elapsed}</span> : null}
+      <div className={hasStream ? styles.streamPanel : styles.workingPanel} data-waiting={waiting ? 'true' : undefined}>
+        <button type="button" className={`${styles.row} ${styles.workingHeader}`}
+          aria-expanded={hasStream ? !streamHidden : hasDetails ? liveOpen : undefined} data-static={hasDetails ? undefined : 'true'}
+          onClick={hasStream ? () => setStreamHidden(value => !value) : hasDetails ? () => setLiveOpen(value => !value) : undefined} tabIndex={hasDetails ? 0 : -1}>
+          {waiting ? <WaitingIcon className={styles.icon} aria-hidden="true" /> : <BlackHoleIndicator />}
+          <span className={styles.workingCopy}>
+            <span className={styles.workingTitle}>
+              <span>{waiting ? text : 'Black Hole is working'}</span>
+              {elapsed ? <span className={styles.meta} aria-hidden="true">{elapsed}</span> : null}
+            </span>
+            {!waiting && !hasStream && !(processing && processing.family !== 'start') ? <span className={styles.stage}>{text}</span> : null}
+          </span>
           {hasDetails ? <ChevronDown className={styles.chevron} aria-hidden="true" /> : null}
         </button>
-        {liveOpen && active && hasDetails ? <RowDetails rows={[active]} showLabel={false} /> : null}
+        {processing && (!hasStream || processing.checklistSource === 'plan') ? <ProcessingSurface view={processing} listOnly={hasStream} /> : null}
+        {hasStream && !streamHidden ? <ProcessingStream entries={stream} rows={openRows} /> : null}
+        {!hasStream && liveOpen && hasDetails ? <div className={styles.workingDetails}>
+          {hidden > 0 ? <button type="button" className={styles.earlier} onClick={() => {
+            if (showAll) setHistoryCount(count => count + HISTORY_PAGE_SIZE);
+            else setShowAll(true);
+          }}>
+            {`Show earlier steps (${earlierSteps})`}
+          </button> : null}
+          {shown.length || active ? <ol className={styles.list}>
+            {shown.map(item => <SettledItem key={item.id} item={item} />)}
+            {active && LiveIcon ? <li className={styles.item}>
+              <div className={`${styles.row} ${styles.currentStep}`} data-static="true">
+                <LiveIcon className={styles.icon} aria-hidden="true" />
+                <span>{active.label}</span>
+              </div>
+              {active.detail || active.body ? <RowDetails key={active.id} rows={[active]} showLabel={false} /> : null}
+            </li> : null}
+          </ol> : null}
+        </div> : null}
         {note ? <p className={styles.note}>{note}</p> : null}
       </div>
     </section>

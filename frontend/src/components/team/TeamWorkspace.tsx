@@ -3,11 +3,11 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
-import { Check, Copy, Inbox, Link2, Loader2, LogOut, Plus, Search, Trash2, UserPlus, UsersRound, X } from 'lucide-react';
+import { Activity, Check, Copy, Inbox, Link2, Loader2, LogOut, Plus, Search, Trash2, UserPlus, UsersRound, X } from 'lucide-react';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
 import {
-  errorText, inviteUrl, teamsApi,
-  type FoundUser, type InviteRole, type TeamInbox, type TeamOverview,
+  TEAM_CHANGED_EVENT, announceTeamChange, describeActivity, errorText, inviteUrl, teamsApi,
+  type FoundUser, type InviteRole, type TeamActivityItem, type TeamInbox, type TeamOverview,
 } from '@/lib/teams';
 import s from './TeamWorkspace.module.css';
 
@@ -42,6 +42,11 @@ function Seg<T extends string | number>({ value, options, onChange, name }: { va
  */
 export function TeamWorkspace({ variant }: { variant: 'page' | 'panel' }) {
   const identity = useWorkspaceIdentity();
+  const accountKey = identity.status === 'authenticated' ? identity.userId : identity.status;
+  return <TeamWorkspaceView key={accountKey} variant={variant} identity={identity} />;
+}
+
+function TeamWorkspaceView({ variant, identity }: { variant: 'page' | 'panel'; identity: ReturnType<typeof useWorkspaceIdentity> }) {
   const pathname = usePathname() || '/team';
   const [inbox, setInbox] = useState<TeamInbox | null>(null);
   const [teamId, setTeamId] = useState<string | null>(null);
@@ -62,11 +67,18 @@ export function TeamWorkspace({ variant }: { variant: 'page' | 'panel' }) {
   }, []);
 
   useEffect(() => { if (identity.status === 'authenticated') void load(); }, [identity.status, load]);
+  // The invitation popup (or another Team surface) answered something: reload.
+  useEffect(() => {
+    if (identity.status !== 'authenticated') return;
+    const reload = () => { void load(); };
+    window.addEventListener(TEAM_CHANGED_EVENT, reload);
+    return () => window.removeEventListener(TEAM_CHANGED_EVENT, reload);
+  }, [identity.status, load]);
 
   async function run(action: () => Promise<unknown>, success?: string) {
     setBusy(true);
     setNotice('');
-    try { await action(); setError(''); if (success) setNotice(success); await load(); } catch (e) { setError(errorText(e)); } finally { setBusy(false); }
+    try { await action(); setError(''); if (success) setNotice(success); await load(); announceTeamChange(); } catch (e) { setError(errorText(e)); } finally { setBusy(false); }
   }
 
   function submitCreate(e: FormEvent) {
@@ -161,7 +173,7 @@ export function TeamWorkspace({ variant }: { variant: 'page' | 'panel' }) {
   );
 }
 
-type Tab = 'members' | 'invite' | 'pending';
+type Tab = 'members' | 'invite' | 'pending' | 'activity';
 
 function TeamDetail({ teamId, onChanged, onLeft, onNotice }: { teamId: string; onChanged: () => Promise<void>; onLeft: () => void; onNotice: (m: string) => void }) {
   const myId = useWorkspaceIdentity().userId;
@@ -179,10 +191,19 @@ function TeamDetail({ teamId, onChanged, onLeft, onNotice }: { teamId: string; o
   const [hours, setHours] = useState(168);
   const [maxUses, setMaxUses] = useState(1);
 
+  const [activity, setActivity] = useState<TeamActivityItem[] | null>(null);
+
   const refresh = useCallback(async () => {
     try { setData(await teamsApi.overview(teamId)); setError(''); } catch (e) { setError(errorText(e)); }
+    teamsApi.activity(teamId).then(setActivity).catch(() => setActivity(current => current ?? []));
   }, [teamId]);
   useEffect(() => { void refresh(); }, [refresh]);
+  // Someone accepted or declined elsewhere (e.g. the popup): refresh members and the timeline.
+  useEffect(() => {
+    const reload = () => { void refresh(); };
+    window.addEventListener(TEAM_CHANGED_EVENT, reload);
+    return () => window.removeEventListener(TEAM_CHANGED_EVENT, reload);
+  }, [refresh]);
 
   // Live search while typing (debounced; the server also rate-limits).
   const canSearch = !!data?.me.canInvite;
@@ -231,7 +252,25 @@ function TeamDetail({ teamId, onChanged, onLeft, onNotice }: { teamId: string; o
           <button role="tab" aria-selected={tab === 'invite'} className={cx(s.tab, tab === 'invite' && s.tabOn)} onClick={() => setTab('invite')}><UserPlus size={14} />Invite</button>
           <button role="tab" aria-selected={tab === 'pending'} className={cx(s.tab, tab === 'pending' && s.tabOn)} onClick={() => setTab('pending')}>Pending{waiting ? <span className={s.badge}>{waiting}</span> : null}</button>
         </> : null}
+        <button role="tab" aria-selected={tab === 'activity'} className={cx(s.tab, tab === 'activity' && s.tabOn)} onClick={() => setTab('activity')}><Activity size={14} />Activity</button>
       </div>
+
+      {tab === 'activity' ? (
+        activity === null ? <p className={s.muted}><Loader2 size={14} className={s.spin} style={{ display: 'inline', marginRight: 8 }} />Loading activity…</p>
+        : activity.length ? (
+          <ol className={s.timeline} aria-label="Team activity">
+            {activity.map(item => (
+              <li key={item.id} className={s.event}>
+                <Avatar text={item.actor.displayName || item.actor.username || '?'} url={item.actor.avatarUrl} />
+                <span className={s.who}>
+                  <b style={{ whiteSpace: 'normal' }}>{describeActivity(item, myId)}</b>
+                  <span>{new Date(item.at).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+        ) : <p className={s.sub}>No activity yet. Invitations, joins and changes will appear here.</p>
+      ) : null}
 
       {tab === 'members' ? (
         <ul className={s.list} aria-label="Members">

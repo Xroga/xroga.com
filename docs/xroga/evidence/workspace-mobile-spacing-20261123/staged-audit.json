@@ -1,0 +1,150 @@
+{
+  "origin": "https://xrogaai-hlh82rkpz-xrogas-projects.vercel.app",
+  "release": {
+    "service": "xroga-web",
+    "release": "ca6ef0ac5ca7c3b9e24a9e026bd95e355766ba2e",
+    "environment": "production"
+  },
+  "records": [
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "extensionBox": {
+        "x": 175.984375,
+        "y": 106,
+        "width": 127.015625,
+        "height": 21
+      },
+      "headingBox": {
+        "x": 21,
+        "y": 143,
+        "width": 278,
+        "height": 30.5
+      },
+      "gap": 16,
+      "guidanceFits": true,
+      "sizes": [
+        10.75,
+        10.75,
+        10.75,
+        10.75
+      ],
+      "overflow": false,
+      "packsReachable": true
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 640
+      },
+      "extensionBox": {
+        "x": 203.625,
+        "y": 106,
+        "width": 139.375,
+        "height": 21
+      },
+      "headingBox": {
+        "x": 21,
+        "y": 147,
+        "width": 318,
+        "height": 30.5
+      },
+      "gap": 20,
+      "guidanceFits": true,
+      "sizes": [
+        10.75,
+        10.75,
+        10.75,
+        10.75
+      ],
+      "overflow": false,
+      "packsReachable": true
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "extensionBox": {
+        "x": 233.625,
+        "y": 106,
+        "width": 139.375,
+        "height": 21
+      },
+      "headingBox": {
+        "x": 21,
+        "y": 207.546875,
+        "width": 348,
+        "height": 35.015625
+      },
+      "gap": 80.546875,
+      "guidanceFits": true,
+      "sizes": [
+        10.75,
+        10.75,
+        10.75,
+        10.75
+      ],
+      "overflow": false,
+      "packsReachable": true
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "extensionBox": {
+        "x": 576.875,
+        "y": 107,
+        "width": 172.125,
+        "height": 28
+      },
+      "headingBox": {
+        "x": 33,
+        "y": 256.171875,
+        "width": 702,
+        "height": 33.890625
+      },
+      "gap": 121.171875,
+      "guidanceFits": true,
+      "sizes": [
+        11.5,
+        11.5,
+        11.5,
+        11.5
+      ],
+      "overflow": false,
+      "packsReachable": true
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "extensionBox": {
+        "x": 1249.875,
+        "y": 63.59375,
+        "width": 172.125,
+        "height": 28
+      },
+      "headingBox": {
+        "x": 304.5,
+        "y": 194.15625,
+        "width": 1040,
+        "height": 48.578125
+      },
+      "gap": 102.5625,
+      "guidanceFits": true,
+      "sizes": [
+        11.5,
+        11.5,
+        11.5,
+        11.5
+      ],
+      "overflow": false,
+      "packsReachable": true
+    }
+  ]
+}
