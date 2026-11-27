@@ -20,13 +20,24 @@ export function thoughtFrame(
   return { agent: 'session', status: 'step', activityId: id, activityStatus: status, message: text, swarmActivity: text, ...extra };
 }
 
-export const READING = 'Reading your message';
+export const READING = 'Thinking';
+
+/** Rows every turn has. A run made only of these did no work worth listing. */
+const ROUTINE_ROW = /(?:client-read|client-thought|preparing-answer|still-working)$/;
+
+export function isRoutineTurn(rows: ReadonlyArray<{ id: string; label: string; kind?: string; status?: string; note?: unknown; sources?: readonly unknown[] }>): boolean {
+  return rows.every(row => !row.note && !row.sources?.length && row.status !== 'error'
+    && (row.kind === 'respond' || ROUTINE_ROW.test(row.id) || /^ready$/i.test(row.label)));
+}
 
 /**
  * What is being prepared, in the words the planner returned for this particular request, kept as written.
  * Different requests therefore read differently; without a description a plain line is used.
  */
-export function workingText(plan: { goalContract?: { desiredOutcome?: string; deliverables?: ReadonlyArray<{ description?: string }> } }): string {
+export function workingText(plan: { goalContract?: { contextComplexity?: string; desiredOutcome?: string; deliverables?: ReadonlyArray<{ description?: string }> } }): string {
+  // An ordinary chat turn is not a project: it only says that it is thinking.
+  const rated = plan.goalContract?.contextComplexity;
+  if (rated === 'low' || rated === 'medium') return 'Thinking';
   const raw = plan.goalContract?.deliverables?.[0]?.description || plan.goalContract?.desiredOutcome || '';
   const subject = raw.split(/\s+/).filter(Boolean).join(' ').replace(/[.!?;:,]+$/, '');
   if (!subject) return 'Writing your answer';

@@ -11,6 +11,7 @@ import { buildActivityTimeline, formatElapsed, pendingWorkLabel, type PendingRep
 import type { TerminalRunState } from '@/lib/terminal/terminalEvent';
 import { buildProcessingView } from '@/lib/terminal/processingView';
 import { buildProcessingStream } from '@/lib/terminal/processingStream';
+import { isRoutineTurn } from '@/lib/terminal/clientSteps';
 import type { SwarmTodoItem } from '@/lib/swarm';
 
 interface TerminalLiveActivityProps {
@@ -65,6 +66,9 @@ export function TerminalLiveActivity({
   );
 
   if (rows.length === 0 && !active && !run?.outcome) return null;
+  // A plain chat reply keeps no activity above it: the dots while it is written, then only the answer.
+  const routine = !todos?.length && isRoutineTurn(stageRows.length > rows.length ? stageRows : rows);
+  if (routine && !active && run?.outcome !== 'failure' && run?.outcome !== 'interrupted') return null;
 
   const baseLabel = pendingWorkLabel(run?.events ?? [], rows.length > 0, pendingReply);
   const label = !model.active && stage && baseLabel !== 'Writing response' ? stage.label : baseLabel;
@@ -72,7 +76,8 @@ export function TerminalLiveActivity({
     ? buildProcessingView({ active: model.active ?? stage, otherActive: model.active ? model.otherActive : 0, rows: stageRows.length > rows.length ? stageRows : rows, pendingLabel: label, todos, outcome: run?.outcome ?? null })
     : undefined;
   const shell = rows.length === 0 && active;
-  const stream = buildProcessingStream(stageRows.length > rows.length ? stageRows : rows, active);
+  const fullStream = buildProcessingStream(stageRows.length > rows.length ? stageRows : rows, active);
+  const stream = routine ? fullStream.filter(entry => entry.type === 'step' && entry.state === 'live') : fullStream;
   return (
     <div
       data-testid="terminal-live-activity"

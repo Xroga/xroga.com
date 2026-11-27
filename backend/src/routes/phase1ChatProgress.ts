@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { readIntent } from '../ai/intentReasoning.js';
 import { understandingProgress } from '../ai/startupProgress.js';
 import { publicAiPayload } from '../lib/publicAiIdentity.js';
-import { generateReasoningSummary, planStage, planStep, reasoningSummaryEnabled } from '../ai/reasoningSummary.js';
+import { generateReasoningSummary, reasoningSummaryEnabled } from '../ai/reasoningSummary.js';
 import { withPartialSink, withProgressSink } from '../ai/progressChannel.js';
 import { splitNativeOpenUiAnswer } from '../ai/nativeOpenUi.js';
 import { publicAiText } from '../lib/publicAiIdentity.js';
@@ -17,6 +17,9 @@ import type { AuthRequest } from '../middleware/auth.js';
  * preceded by real progress frames, so the Workspace can show what is happening while the
  * answer is prepared. Every other client is untouched: this router calls `next()` without
  * changing anything.
+ *
+ * An ordinary chat turn shows nothing but the answer as it arrives. A reading of the request and written
+ * notes appear only for work the planner marked as hard. Plans and to-do lists belong to builds, not chat.
  *
  * What a frame may say:
  * - the deterministic reading of the request (`readIntent`), which
@@ -48,7 +51,7 @@ function stillWorking(sourceCount: number): readonly string[] {
   const found = sourceCount ? ` with ${sourceCount} ${sourceCount === 1 ? 'source' : 'sources'}` : '';
   return [
     `Still working on your answer${found}`,
-    'Still working. The reply appears once it is complete and checked',
+    'Still working. A longer answer takes a little more time',
     'This one is taking longer than usual and is still running',
   ];
 }
@@ -115,8 +118,11 @@ router.post('/chat', (req: AuthRequest, res, next) => {
     write('progress', publicAiPayload({ agent: 'session', status: 'step', activityId: 'attached-files', activityStatus: 'completed', message: text, swarmActivity: text }));
   }
 
+  // Presentation only: the planner's own estimate decides how much is shown. It grants nothing.
+  const hardWork = req.body?.goalContract?.contextComplexity === 'high';
+
   try {
-    if (message.trim()) {
+    if (hardWork && message.trim()) {
       const reading = readIntent(message.trim());
       const line = understandingProgress(reading.reasoning);
       if (line) write('progress', publicAiPayload({ ...line }));
@@ -130,7 +136,7 @@ router.post('/chat', (req: AuthRequest, res, next) => {
   let notes: Promise<void> | null = null;
   let notesArrived = false;
   const startedAt = Date.now();
-  if (message.trim() && req.userId && req.tenantContext && reasoningSummaryEnabled()) {
+  if (hardWork && message.trim() && req.userId && req.tenantContext && reasoningSummaryEnabled()) {
     const controller = new AbortController();
     res.once('close', () => controller.abort());
     notes = progressTiming.summarize({
@@ -141,16 +147,13 @@ router.post('/chat', (req: AuthRequest, res, next) => {
       notesArrived = true;
       if (!summary || !open) return;
       // One frame per note, so each appears as its own written update.
-      for (const line of summary.split('\n')) {
-        const step = planStep(line);
-        const note = step ?? line;
+      for (const note of summary.split('\n')) {
         write('progress', publicAiPayload({
           agent: 'session',
           status: 'reasoning_summary',
           message: note,
           swarmStatusLabel: 'Thinking',
           swarmActivity: note,
-          ...(step ? { planStep: true, planStage: planStage(line) } : {}),
         }));
       }
     });

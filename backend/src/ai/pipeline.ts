@@ -173,7 +173,7 @@ import { routeProject } from '../config/universalAgentFlags.js';
 import { goalContractSchema, type GoalContract } from './universal/goalContract.js';
 import { currentPublicProductTruth } from './universal/productTruth.js';
 import { RuntimeFailure } from './universal/runtimeFailure.js';
-import { resolveStructuredGoalContract } from './universal/semanticRequestPlanner.js';
+import { answerReasoningMode, resolveStructuredGoalContract } from './universal/semanticRequestPlanner.js';
 import { atomicGitHubCommit, type UniversalCommitRecord } from '../synthesis/universalCommit.js';
 import type { BuilderPipelineBinding } from '../builder/pipelineBinding.js';
 import { getGitHubToken } from '../services/integrations/githubAuth.js';
@@ -1234,7 +1234,7 @@ export async function runChatPipeline(opts: {
         : opts.approvedResearch ? 4096 : route.kind === 'research'
         ? researchAnswerMaxTokens(opts.prompt)
         : presentedAnswerMaxTokens(answerContract.plan),
-      reasoningMode: native ? 'default' : 'none',
+      reasoningMode: answerReasoningMode(native, opts.goalContract),
       responseFormat: format,
       tenantContext:opts.tenantContext,
       databaseProjectId:opts.modelScope?.projectId,modelRunAttempt:opts.modelScope?.runAttempt,modelRepository:opts.modelScope?.repository,

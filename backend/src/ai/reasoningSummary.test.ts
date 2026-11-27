@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
   REASONING_SUMMARY_MAX_LINES, REASONING_SUMMARY_MAX_LINE_CHARS, cleanReasoningSummary, generateReasoningSummary,
-  planStage, planStep, reasoningSummaryEnabled,
+  reasoningSummaryEnabled,
 } from './reasoningSummary.js';
 import type { TenantModelScope } from './tenantModelDispatch.js';
 
@@ -34,25 +34,16 @@ test('makes no model call for an empty message and returns null without a valid 
   assert.equal(await generateReasoningSummary({ scope: bad, message: 'hi' }), null);
 });
 
-test('plan step lines are recognised and ordinary notes are left alone', () => {
-  assert.equal(planStep('STEP: Compare both release lines'), 'Compare both release lines');
-  assert.equal(planStep('step - ٹکٹ کی قیمت دیکھنا'), 'ٹکٹ کی قیمت دیکھنا');
-  assert.equal(planStep('Stability matters here.'), null);
-  assert.equal(cleanReasoningSummary('STEP: **Read** the file\nA note.'), 'STEP: Read the file\nA note.');
+test('the notes never become a plan: a step prefix is dropped', () => {
+  assert.equal(cleanReasoningSummary('STEP: **Read** the file\nStep SEARCH: look it up\nStability matters here.'),
+    'Read the file\nlook it up\nStability matters here.');
 });
 
 test('a note cut off by the output limit is dropped instead of shown half written', () => {
-  const raw = 'STEP: Look up both releases\nStability matters here.\nThe startup plan should be: initialize, pick';
-  assert.equal(cleanReasoningSummary(raw, 'length'), 'STEP: Look up both releases\nStability matters here.');
+  const raw = 'Look up both releases.\nStability matters here.\nThe startup plan should be: initialize, pick';
+  assert.equal(cleanReasoningSummary(raw, 'length'), 'Look up both releases.\nStability matters here.');
   assert.equal(cleanReasoningSummary('Only half a sent', 'length'), null);
   assert.equal(cleanReasoningSummary(raw, 'stop')!.split('\n').length, 3);
   // A limit reached exactly on a line break left the last line whole.
   assert.equal(cleanReasoningSummary('First note.\nSecond note.\n', 'length'), 'First note.\nSecond note.');
-});
-
-test('a plan step says whether a web search or the answer completes it', () => {
-  assert.equal(planStep('STEP SEARCH: Look up the current release'), 'Look up the current release');
-  assert.equal(planStage('STEP SEARCH: Look up the current release'), 'search');
-  assert.equal(planStage('STEP: Compare the two'), 'answer');
-  assert.equal(planStage('Searching matters here.'), null);
 });

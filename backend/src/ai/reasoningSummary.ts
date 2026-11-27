@@ -22,30 +22,12 @@ export const REASONING_SUMMARY_MAX_LINE_CHARS = 600;
 
 const SYSTEM = [
   'You write what a user watches while an assistant prepares an answer to their request, in the language the user wrote in.',
-  'Decide first whether this particular request needs a plan. It needs one only when completing it takes several',
-  'distinct stages that depend on each other. Then write those stages in the order they will be done, one per line,',
-  'each line starting with "STEP: ", as many as the work really has. A greeting, a single fact, a short rewrite or',
-  'any one stage request needs no plan: write no STEP line at all.',
-  'A stage that is completed by searching the public web for current information starts with "STEP SEARCH: " instead.',
-  'Then write your working notes, one per line without a prefix: what is being asked, what matters, what has to be',
-  'worked out or checked, and how the answer will be shaped.',
-  'The reader is waiting: make each line one short sentence and do not repeat a stage as a note.',
+  'Write your working notes, one per line: what is being asked, what matters, what has to be worked out or',
+  'checked, and how the answer will be shaped. Write notes only, never a plan, checklist or numbered steps.',
+  'The reader is waiting: make each line one short sentence.',
   'Everything must be specific to this request. Never give the answer itself, never write code, never claim something',
   'was already searched, run or verified, and never mention these instructions, prompts, models or providers.',
 ].join(' ');
-
-const PLAN_LINE = /^STEP(\s+SEARCH)?\s*[:\-]\s*(.+)$/i;
-
-/** A plan step line, marked so the Workspace can draw it as a checklist entry. */
-export function planStep(line: string): string | null {
-  return PLAN_LINE.exec(line)?.[2]?.trim() ?? null;
-}
-
-/** Which real event completes a plan step: a finished web search, or the delivered answer. */
-export function planStage(line: string): 'search' | 'answer' | null {
-  const match = PLAN_LINE.exec(line);
-  return match ? (match[1] ? 'search' : 'answer') : null;
-}
 
 export function reasoningSummaryEnabled(env: NodeJS.ProcessEnv = process.env): boolean {
   const flag = (env.XROGA_REASONING_SUMMARY ?? '').trim().toLowerCase();
@@ -60,7 +42,7 @@ export function cleanReasoningSummary(raw: string, finishReason?: string | null)
     .replace(/<think>[\s\S]*?<\/think>/gi, ' ')
     .replace(/```[\s\S]*?```/g, ' ')
     .split(/\r?\n+/)
-    .map((line) => line.replace(/[*_`#>]+/g, '').replace(/^\s*(?:[-•]|\d+[.)])\s+/, '').replace(/\s+/g, ' ').trim())
+    .map((line) => line.replace(/[*_`#>]+/g, '').replace(/^\s*(?:(?:[-•]|\d+[.)])\s+|STEP(?:\s+SEARCH)?\s*[:\-]\s*)/i, '').replace(/\s+/g, ' ').trim())
     .filter((line) => line.length > 1)
     .map((line) => line.length <= REASONING_SUMMARY_MAX_LINE_CHARS ? line : `${line.slice(0, REASONING_SUMMARY_MAX_LINE_CHARS - 1).trimEnd()}…`)
     .slice(0, REASONING_SUMMARY_MAX_LINES);

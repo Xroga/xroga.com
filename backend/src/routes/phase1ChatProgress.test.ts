@@ -28,10 +28,12 @@ async function serve<T>(run: (base: string) => Promise<T>): Promise<T> {
   finally { server.close(); }
 }
 
-const post = (base: string, message: string, accept?: string) => fetch(`${base}/api/phase1/chat`, {
+const HARD = { contextComplexity: 'high' };
+
+const post = (base: string, message: string, accept?: string, goalContract?: object) => fetch(`${base}/api/phase1/chat`, {
   method: 'POST',
   headers: { 'Content-Type': 'application/json', ...(accept ? { Accept: accept } : {}) },
-  body: JSON.stringify({ message }),
+  body: JSON.stringify({ message, ...(goalContract ? { goalContract } : {}) }),
 });
 
 function frames(text: string) {
@@ -52,7 +54,7 @@ test('a client that does not ask for a stream gets the unchanged JSON answer', a
 
 test('an event-stream client gets real progress frames, then the same answer as the last frame', async () => {
   await serve(async (base) => {
-    const res = await post(base, 'Build me a landing page for a coffee shop', 'text/event-stream');
+    const res = await post(base, 'Build me a landing page for a coffee shop', 'text/event-stream', HARD);
     assert.match(res.headers.get('content-type') ?? '', /text\/event-stream/);
     const all = frames(await res.text());
     assert.equal(all.at(-1)?.event, 'result');
@@ -64,6 +66,29 @@ test('an event-stream client gets real progress frames, then the same answer as 
     assert.equal(progress.at(-1)?.data.activityId, progress[0]?.data.activityId);
     assert.ok(!JSON.stringify(progress).includes('%'), 'no percentages');
   });
+});
+
+test('an ordinary chat turn gets no reading of the request and writes no notes', async () => {
+  const before = progressTiming.summarize;
+  let calls = 0;
+  progressTiming.summarize = async () => { calls += 1; return 'A note.'; };
+  const app = express();
+  app.use(express.json());
+  app.use((req, _res, next) => { Object.assign(req, { userId: 'u', tenantContext: {} }); next(); });
+  app.use('/api/phase1', router);
+  app.post('/api/phase1/chat', (_req, res) => { setTimeout(() => res.json({ response: 'hello' }), 20); });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+  try {
+    for (const contextComplexity of ['low', 'medium', 'unknown']) {
+      const all = frames(await (await post(base, 'Explain how vaccines work', 'text/event-stream', { contextComplexity })).text());
+      assert.ok(!all.some((frame) => frame.data.status === 'understanding_request' || frame.data.status === 'reasoning_summary'));
+    }
+    assert.equal(calls, 0);
+    const hard = frames(await (await post(base, 'Explain how vaccines work', 'text/event-stream', HARD)).text());
+    assert.equal(calls, 1);
+    assert.ok(hard.some((frame) => frame.data.status === 'reasoning_summary' && !('planStep' in frame.data)));
+  } finally { progressTiming.summarize = before; server.close(); }
 });
 
 test('a refusal keeps its status so the client still sees a refusal', async () => {
@@ -118,7 +143,7 @@ test('a quick answer never waits for notes, a long one briefly does', async () =
   app.post('/api/phase1/chat', (_req, res) => { setTimeout(() => res.json({ response: 'hello' }), 40); });
   const server = app.listen(0);
   const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
-  const timed = async () => { const start = Date.now(); await (await post(base, 'hi there', 'text/event-stream')).text(); return Date.now() - start; };
+  const timed = async () => { const start = Date.now(); await (await post(base, 'hi there', 'text/event-stream', HARD)).text(); return Date.now() - start; };
   try {
     progressTiming.notesMatterAfterMs = 10_000;
     assert.ok(await timed() < 250, 'a quick answer goes out at once');

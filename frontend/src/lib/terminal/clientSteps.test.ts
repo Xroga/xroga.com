@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import { conversationActivityV2 } from '../../components/response-experience-v2/conversation';
 import { coalesceActivity } from './activityPresentation';
 import { buildActivityTimeline } from './activityTimeline';
-import { CLIENT_READ, READING, thoughtDone, thoughtFrame, thoughtStopped, workingText } from './clientSteps';
+import { CLIENT_READ, READING, isRoutineTurn, thoughtDone, thoughtFrame, thoughtStopped, workingText } from './clientSteps';
 import { buildProcessingStream, groupStream } from './processingStream';
 import { adaptTerminalEvent } from './terminalEventAdapter';
 import type { TerminalEvent } from './terminalEvent';
@@ -21,7 +21,7 @@ function run(frames: Array<Record<string, unknown>>) {
 
 test('a plain prompt shows one live Thinking line that settles into the measured time', () => {
   const live = buildProcessingStream(run([thoughtFrame('running', READING)]), true);
-  assert.deepEqual(live.map(e => [e.text, e.type === 'step' ? e.state : '']), [['Reading your message', 'live']]);
+  assert.deepEqual(live.map(e => [e.text, e.type === 'step' ? e.state : '']), [['Thinking', 'live']]);
   const done = run([thoughtFrame('running', READING), thoughtFrame('completed', thoughtDone(9200).text)]);
   assert.deepEqual(buildProcessingStream(done, false).map(e => e.text), ['Thought for 9s']);
   assert.equal(conversationActivityV2(done).length, 1, 'it stays with the saved answer');
@@ -68,4 +68,14 @@ test('a stopped reply reports its time and one failure is counted once', () => {
   const rows = [...failed, ...coalesceActivity(error)];
   assert.equal(buildActivityTimeline(rows, { outcome: 'failure' }).failed, 1);
   assert.equal(buildActivityTimeline(failed, { outcome: 'failure' }).failed, 1);
+});
+
+test('an ordinary chat turn only says it is thinking and keeps no work history', () => {
+  for (const contextComplexity of ['low', 'medium']) assert.equal(workingText({ goalContract: { contextComplexity, desiredOutcome: 'Explain vaccines' } }), 'Thinking');
+  assert.equal(workingText({ goalContract: { contextComplexity: 'high', desiredOutcome: 'Prove the bound' } }), 'Preparing: Prove the bound');
+  const plain = run([thoughtFrame('running', READING, {}, CLIENT_READ), thoughtFrame('completed', thoughtDone(900).text), thoughtFrame('completed', 'Prepared your answer', {}, 'preparing-answer')]);
+  assert.equal(isRoutineTurn(plain), true);
+  assert.equal(isRoutineTurn(run([thoughtFrame('running', READING), thoughtFrame('completed', 'Searched the web', {}, 'web-1')])), false);
+  assert.equal(isRoutineTurn(run([thoughtFrame('completed', 'Thought for 9s', { sources: [{ title: 'A', url: 'https://a.example' }] })])), false);
+  assert.equal(isRoutineTurn(run([thoughtFrame('failed', 'Could not finish the answer')])), false);
 });
