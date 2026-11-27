@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "7a2392dc1e73a23e623512703d66936cdb2eab42",
+  "source_sha": "d96a48c0b5d3d3e9cb0dfb7996489eac99751d59",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17304,7 +17304,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "c68442eb8d29d7aaa6d1ccbbfbff9c33e3d40701cd2254e689fee0d40fee2d4d"
+      "sha256": "27952d66e9864f2afb889000a8dfabb121d8ba4eea2a32c438c39ba83b88ccbf"
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
@@ -17344,7 +17344,7 @@
     },
     {
       "path": "backend/src/ai/progressChannel.ts",
-      "sha256": "de776991c6b7ea6c35ce4aad0375b67772e73c0ec8475b7a412743ea2f474464"
+      "sha256": "6ca8638679a2ff6fdabab829894de2339b57007ea478e29fb17f72ed55c8796e"
     },
     {
       "path": "backend/src/ai/progressHeartbeat.ts",
@@ -18828,7 +18828,7 @@
     },
     {
       "path": "backend/src/routes/phase1ChatProgress.ts",
-      "sha256": "e3a07d6a845430301b8f02fd367dd9b5cbc3ddcb113f4070a9012acde9c564cf"
+      "sha256": "363f098753aa2e5746ac9ff4a0b1bf20d7640689c1d7fd5154c99c545fa45979"
     },
     {
       "path": "backend/src/routes/profile.ts",
@@ -23612,7 +23612,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "aa53229673281f30ccdc89aa5e983caa1ad2df5034a467804ef3d086a5103295"
+      "sha256": "7ceee3d47ed5818ca83c54712613ebe2ec506735e3296623b3255febd5243ec8"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -23660,7 +23660,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "de2010a50b8f6e16f06858a8ed38769c8968673674d17eebdfac9847f15294ae"
+      "sha256": "fc0d5d8900362f5aec4a987580d14636c8df956bfd852336e2074cf072cd3bde"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -25390,7 +25390,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 178,
+      "line": 179,
       "expression": "def.secretKey",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -30812,7 +30812,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4166,
+      "line": 4171,
       "credentialsInUrl": false
     },
     {
@@ -33773,7 +33773,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 274,
+      "line": 275,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37147,7 +37147,7 @@
     },
     {
       "path": "backend/src/routes/phase1ChatProgress.ts",
-      "line": 83,
+      "line": 86,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

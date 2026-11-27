@@ -1645,7 +1645,7 @@ export async function uploadChatFile(
  */
 export async function phase1ChatWithProgress(
   body: Record<string, unknown>,
-  options: { signal?: AbortSignal; onProgress?: (frame: Record<string, unknown>) => void } = {},
+  options: { signal?: AbortSignal; onProgress?: (frame: Record<string, unknown>) => void; onPartial?: (text: string) => void } = {},
 ): Promise<Phase1ChatResult> {
   const token = await getAccessToken();
   const res = await fetchApiResponse(`${API_URL}/api/phase1/chat`, {
@@ -1681,6 +1681,7 @@ export async function phase1ChatWithProgress(
         try {
           const parsed = JSON.parse(data) as Record<string, unknown>;
           if (event === 'progress') options.onProgress?.(parsed);
+          else if (event === 'partial') { if (typeof parsed.text === 'string') options.onPartial?.(parsed.text); }
           else if (event === 'result') result = parsed as unknown as { status: number; body: Record<string, unknown> };
         } catch { /* A malformed frame is skipped; the result frame decides the outcome. */ }
       }

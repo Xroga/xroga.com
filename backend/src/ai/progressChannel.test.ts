@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { connectedAppLabel, trackProgress, withProgressSink, type ProgressStepFrame } from './progressChannel.js';
+import { connectedAppLabel, partialReporter, trackProgress, withPartialSink, withProgressSink, type ProgressStepFrame } from './progressChannel.js';
 
 test('tracked work reports start and finish and returns its result unchanged', async () => {
   const frames: ProgressStepFrame[] = [];
@@ -21,4 +21,24 @@ test('a failure is reported and the same error is thrown; with no listener nothi
 test('connected app labels come from the tool name only', () => {
   assert.equal(connectedAppLabel('GMAIL_FETCH_EMAILS'), 'Gmail: fetch emails');
   assert.equal(connectedAppLabel('NOTION'), 'Notion');
+});
+
+test('partial answer text reaches only a listening request, paced, always as the whole text so far', async () => {
+  assert.equal(partialReporter(), undefined, 'no listener: the model call collects nothing');
+  const seen: string[] = [];
+  let now = 0;
+  await withPartialSink((text) => seen.push(text), async () => {
+    const report = partialReporter(() => now)!;
+    report('Hel');
+    report('lo ');
+    now = 150;
+    report('wor');
+    now = 300;
+    report('ld');
+  });
+  assert.deepEqual(seen, ['Hel', 'Hello wor', 'Hello world']);
+});
+
+test('a failing listener never breaks the model call', async () => {
+  await withPartialSink(() => { throw new Error('x'); }, async () => { partialReporter()!('text'); });
 });

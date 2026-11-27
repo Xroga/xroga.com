@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import type { AddressInfo } from 'node:net';
 import express from 'express';
 import router, { progressTiming } from './phase1ChatProgress.js';
-import { startProgressStep } from '../ai/progressChannel.js';
+import { partialReporter, startProgressStep } from '../ai/progressChannel.js';
 
 async function serve<T>(run: (base: string) => Promise<T>): Promise<T> {
   const app = express();
@@ -14,6 +14,11 @@ async function serve<T>(run: (base: string) => Promise<T>): Promise<T> {
     if (req.body?.message === 'slow') {
       startProgressStep('Searching the web').done('Searched the web', [{ title: 'A', url: 'https://a.example' }, { title: 'B', url: 'https://b.example' }]);
       setTimeout(() => res.json({ response: 'late' }), 130);
+      return;
+    }
+    if (req.body?.message === 'stream') {
+      partialReporter()?.('The first half of the answer.\n<<<XROGA_OPENUI_V1>>>\nroot = Col([])');
+      setTimeout(() => res.json({ response: 'final' }), 20);
       return;
     }
     return res.json({ response: 'hello', engine: 'xroga' });
@@ -120,4 +125,14 @@ test('a quick answer never waits for notes, a long one briefly does', async () =
     progressTiming.notesMatterAfterMs = 10;
     assert.ok(await timed() >= 320, 'a longer answer gives its notes a moment');
   } finally { release?.(); server.close(); Object.assign(progressTiming, saved); }
+});
+
+test('the answer is shown while it is written, as readable text only, before the checked result', async () => {
+  await serve(async (base) => {
+    const all = frames(await (await post(base, 'stream', 'text/event-stream')).text());
+    const partial = all.filter((frame) => frame.event === 'partial');
+    assert.equal(partial.length, 1);
+    assert.equal(partial[0]!.data.text, 'The first half of the answer.');
+    assert.ok(all.indexOf(partial[0]!) < all.findIndex((frame) => frame.event === 'result'));
+  });
 });
