@@ -1,0 +1,137 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-MIC-IOS-CAPTURE-20261127",
+  "baseSha": "d94bc7c21abfcbac13db305c65d1cf14486b50e8",
+  "requirementIds": [
+    "XR-ORIGINAL-F076"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "medium",
+  "scope": "Repair Workspace dictation: iOS Safari capture and upload failures, and losses from quiet pieces, brief upload failures, token refresh, Stop and multi-channel microphones. Record the mixed-language root cause without changing transcription.",
+  "changedFiles": [
+    "docs/xroga/WORKSPACE_MIC_ROOT_CAUSES_20261127.md",
+    "docs/xroga/evidence/workspace-mic-20261127/local-whisper-comparison.json",
+    "docs/xroga/missions/workspace-mic-ios-capture-20261127.json",
+    "docs/xroga/security/egress-caller-reviews.json",
+    "frontend/public/voice-capture-worklet.js",
+    "frontend/src/components/terminal/XrogaVoiceControl.tsx",
+    "frontend/src/lib/voiceAccount.test.ts",
+    "frontend/src/lib/voiceApi.security.test.ts",
+    "frontend/src/lib/voiceApi.ts",
+    "frontend/src/lib/voiceCapture.test.ts",
+    "frontend/src/lib/voiceCapture.ts",
+    "frontend/src/lib/voiceDictation.recovery.test.ts",
+    "frontend/src/lib/voiceDictation.test.ts",
+    "frontend/src/lib/voiceDictation.ts",
+    "frontend/src/lib/voiceMessages.test.ts",
+    "frontend/src/lib/voiceMessages.ts",
+    "frontend/src/lib/voiceRequestPolicy.ts",
+    "scripts/verify-voice-capture.mjs"
+  ],
+  "decisions": {
+    "keep": [
+      "Existing composer draft, manual Send, authenticated voice endpoint, account pinning and accounting"
+    ],
+    "extend": [
+      "Bounded audio start and interruption recovery",
+      "At most two automatic retries of passing upload failures",
+      "Flush the last audio on Stop"
+    ],
+    "replace": [
+      "Replace AbortSignal.any with a deadline helper that older iOS supports"
+    ],
+    "deprecate": [
+      "Ending a recording on the first non-running audio state"
+    ]
+  },
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Changes only the existing capture and upload helpers.",
+    "rfc": null
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No data changes.",
+    "rollback": "No schema rollback."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": true,
+      "description": "The browser keeps uploading after an access-token refresh only when subject, session identifier and issuer all match the token held at the start. Any other change stops the upload. Server verification of every token is unchanged."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No resource access changes."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No approval changes."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No credential changes."
+    },
+    "egress": {
+      "changed": false,
+      "description": "Same destinations and request bodies. Cancellation and the 60 second limit are preserved. With owner approval on November 27, the egress review source hash for voiceApi.ts was rebound; the reviewed wake-up call is unchanged."
+    },
+    "cost": {
+      "changed": true,
+      "description": "A segment that fails for a passing reason may be sent up to two more times on the existing free route, each with its own accounting reservation."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No billing changes."
+    }
+  },
+  "tests": [
+    {
+      "command": "tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/voiceApi.security.test.ts",
+      "scope": "Upload works without AbortSignal.any and cancelled recordings send nothing.",
+      "negative": true,
+      "reference": "frontend/src/lib/voiceApi.security.test.ts"
+    },
+    {
+      "command": "tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/voiceCapture.test.ts",
+      "scope": "Passing interruptions resume, lasting or closed ones end once, and a hung start releases the microphone.",
+      "negative": true,
+      "reference": "frontend/src/lib/voiceCapture.test.ts"
+    },
+    {
+      "command": "tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/voiceDictation.recovery.test.ts",
+      "scope": "Only passing failures retry, bounded; security, sign-in and quota results never do.",
+      "negative": true,
+      "reference": "frontend/src/lib/voiceDictation.recovery.test.ts"
+    },
+    {
+      "command": "tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/voiceAccount.test.ts",
+      "scope": "Another user, session, issuer, sign-out or unreadable token stops the upload.",
+      "negative": true,
+      "reference": "frontend/src/lib/voiceAccount.test.ts"
+    }
+  ],
+  "rollout": "Frontend only. Verify on a physical iPhone from the candidate build before promotion.",
+  "rollback": "Re-promote the previous verified frontend build; no database changes.",
+  "knownGaps": [
+    "Mixed English, Urdu and Hindi transcription is not repaired.",
+    "No physical iOS, Safari, real speech or real provider verification."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "docs/xroga/WORKSPACE_MIC_ROOT_CAUSES_20261127.md",
+    "docs/xroga/evidence/workspace-mic-20261127/local-whisper-comparison.json"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Physical iPhone microphone acceptance on the candidate build."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "NOT_APPLICABLE",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}
