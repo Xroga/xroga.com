@@ -78,6 +78,33 @@ export async function trackProgress<T>(doing: string, done: (result: T) => strin
   }
 }
 
+const partialChannel = new AsyncLocalStorage<(text: string) => void>();
+const PARTIAL_EVERY_MS = 150;
+
+/** A request that can show an answer while it is written listens here for the duration of its handler. */
+export function withPartialSink<T>(sink: (text: string) => void, run: () => T): T {
+  return partialChannel.run(sink, run);
+}
+
+/**
+ * For one streamed model call: takes each new piece and hands the listener the whole text so far, at a
+ * steady pace. Display only. It changes nothing about verification, accounting or the delivered answer,
+ * which arrives complete and checked afterwards and replaces what was shown.
+ */
+export function partialReporter(now: () => number = Date.now): ((piece: string) => void) | undefined {
+  const sink = partialChannel.getStore();
+  if (!sink) return undefined;
+  let text = '';
+  let last: number | undefined;
+  return (piece) => {
+    text += piece;
+    const at = now();
+    if (last !== undefined && at - last < PARTIAL_EVERY_MS) return;
+    last = at;
+    try { sink(text); } catch { /* Display only. */ }
+  };
+}
+
 /** "GMAIL_FETCH_EMAILS" becomes "Gmail: fetch emails". Built from the tool's own name, never from its data. */
 export function connectedAppLabel(toolSlug: string): string {
   const [app = 'app', ...action] = toolSlug.toLowerCase().split('_').filter(Boolean);

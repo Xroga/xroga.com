@@ -1,3 +1,4 @@
+import {withPartialSink} from './progressChannel.js';
 import test,{type TestContext} from 'node:test';
 import {randomUUID} from 'node:crypto';
 import assert from 'node:assert/strict';
@@ -433,4 +434,31 @@ test('streaming stays refused without a usage chunk, and the single-response def
   const run = admitted(t, 'deepseek_v4_1_flash_1017', settlements);
   await assert.rejects(run(chatCompletionStream, [{ role: 'user', content: 'Ordinary question.' }], { maxTokens: 64, onDelta: (d: string) => shown.push(d) } as never), { code: 'MODEL_DESTINATION_DENIED' });
   assert.deepEqual(shown, []); assert.deepEqual(settlements, []);
+});
+
+test('a listening Workspace sees streamed text early, while settlement and the result still require a valid receipt',async t=>{
+  { const prev = process.env.ZURELAY_STREAM_USAGE_VERIFIED; process.env.ZURELAY_STREAM_USAGE_VERIFIED = '1'; t.after(() => { if (prev === undefined) delete process.env.ZURELAY_STREAM_USAGE_VERIFIED; else process.env.ZURELAY_STREAM_USAGE_VERIFIED = prev; }); }
+  let withUsage=true;
+  // Two separate network reads, as a real provider sends them: the text first, the end of the stream later.
+  t.mock.method(globalThis,'fetch',async()=>{
+    const chunk={id:'synthetic-stream',model:'deepseek-v4.1-flash-1017',choices:[{delta:{content:'safe stream'},finish_reason:'stop'}],...(withUsage?{usage:{prompt_tokens:2,completion_tokens:2,total_tokens:4}}:{})};
+    const end=String.fromCharCode(10,10);
+    const parts=['data: '+JSON.stringify(chunk)+end,'data: [DONE]'+end];
+    const body=new ReadableStream<Uint8Array>({async pull(controller){
+      const next=parts.shift();
+      if(!next){controller.close();return;}
+      await new Promise(resolve=>setTimeout(resolve,15));
+      controller.enqueue(new TextEncoder().encode(next));
+    }});
+    return new Response(body,{headers:{'content-type':'text/event-stream','x-request-id':'synthetic-request','x-zurelay-model':'deepseek-v4.1-flash-1017'}});
+  });
+  const settlements:number[]=[],run=admitted(t,'deepseek_v4_1_flash_1017',settlements),messages=[{role:'user' as const,content:'ordinary source'}],opts={credentialOverride:'synthetic-provider-key',maxTokens:8};
+  const shown:string[]=[];
+  assert.equal((await withPartialSink(text=>shown.push(text),()=>run(chatCompletionStream,messages,opts))).text,'safe stream');
+  assert.deepEqual(shown,['safe stream']);assert.equal(settlements.length,1);
+  // The approved trade: text may already be on screen when the receipt turns out to be unusable. Nothing is settled
+  // from it and no result is returned.
+  withUsage=false;shown.length=0;
+  await assert.rejects(withPartialSink(text=>shown.push(text),()=>run(chatCompletionStream,[{role:'user',content:'a second ordinary source'}],opts)),{code:'MODEL_DESTINATION_DENIED'});
+  assert.deepEqual(shown,['safe stream']);assert.equal(settlements.length,1);
 });

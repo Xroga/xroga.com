@@ -121,18 +121,13 @@ test('invalid quantitative controls retain their source without publishing an un
   }
 });
 
-test('output budget scales with the planned sections and never exceeds the existing ceiling', async () => {
-  const { presentedAnswerMaxTokens } = await import('./responsePresentation.js');
-  const section = (kind: 'prose' | 'graph' | 'table' | 'cards' | 'steps', i: number) => ({ kind, heading: `H${i}`, instruction: 'x' });
-  assert.equal(presentedAnswerMaxTokens(undefined), 4096);
-  assert.equal(presentedAnswerMaxTokens([]), 4096);
-  assert.equal(presentedAnswerMaxTokens([section('prose', 1)]), 4096);
-  const saas = [section('prose', 1), section('graph', 2), section('cards', 3), section('table', 4), section('steps', 5)];
-  const budget = presentedAnswerMaxTokens(saas);
-  assert.ok(budget > 4096 && budget <= 8192, String(budget));
-  assert.equal(budget % 512, 0);
-  const densePlan = Array.from({ length: 8 }, (_, i) => section('graph', i));
-  assert.equal(presentedAnswerMaxTokens(densePlan), 11_264);
+test('every answer may use the model\'s own output limit, except a call priced in advance', async () => {
+  const { presentedAnswerMaxTokens, nativePresentedAnswerMaxTokens } = await import('./responsePresentation.js');
+  const section = (i: number) => ({ kind: 'graph' as const, heading: `H${i}`, instruction: 'x' });
+  for (const plan of [undefined, [], [section(1)], Array.from({ length: 8 }, (_, i) => section(i))]) {
+    assert.equal(presentedAnswerMaxTokens(plan), 64_000);
+    assert.equal(nativePresentedAnswerMaxTokens(plan), 64_000);
+  }
 });
 
 test('a table, diagram or step list with no extra text is a complete section; only prose needs words', () => {

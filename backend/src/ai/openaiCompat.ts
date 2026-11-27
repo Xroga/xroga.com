@@ -1,3 +1,4 @@
+import { partialReporter } from './progressChannel.js';
 import OpenAI, {type ClientOptions} from 'openai';
 import { isDeepStrictEqual } from 'node:util';
 import { getSecret } from '../config/envSecrets.js';
@@ -449,6 +450,8 @@ export async function chatCompletionStream(
     );
 
     let text = '';
+    // Readable answers only: a JSON-constrained reply is not something a person reads while it arrives.
+    const showPartial = responseFormat ? undefined : partialReporter();
     const diagnostics = new CompletionDiagnostics();
     let finishReason: string | null = null;
     let usage: OpenAI.Chat.Completions.ChatCompletionChunk['usage'];
@@ -480,6 +483,7 @@ export async function chatCompletionStream(
       if (delta) {
         if(text.length+delta.length>DEFAULT_BUILDER_BUDGET.maxOutputChars)throw Object.assign(Error('Provider exceeded the bounded output buffer'),{code:'BUILDER_OUTPUT_LIMIT'});
         text += delta;
+        showPartial?.(delta);
       }
 
       if (chunk.usage) usage = chunk.usage;
