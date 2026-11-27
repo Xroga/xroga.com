@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "61226c333bdc818e2d49d53c0a0e83230dcc8d4e8f92b98100dafb02bd84c2a2",
+  "sourceTreeDigest": "86082b2140d68678518cba0346f06704087d5fa5e3c68ebbe8d28eefa067f59a",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -38,7 +38,7 @@
     {
       "id": "038ced12b0f74e8d5e0f",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 239,
+      "line": 240,
       "entryPoint": "createModelProviderClient",
       "transport": "fetch",
       "callee": "globalThis.fetch",
@@ -61,10 +61,10 @@
         {
           "path": "backend/src/ai/openaiCompat.egress.test.ts",
           "marker": "real SDK completion and streaming use only the approved endpoint and refuse redirects",
-          "sha256": "34bd84f5aacee796d3dfa2ff83cfd227a24c41d19fc50c4c51abf88fd6e80a46",
+          "sha256": "86c0209695109de2ea4679cb061371fd7bad9f3bedd7accabf7a044d68460e6e",
           "reboundOnBranch": {
-            "previousSha256": "0622d56b1885aad11d4f284da5aa055690e20d3661533aa59d0c9dd1c78cd499",
-            "note": "Re-bound 2026-11-05: the file gained single-response transport regression tests and a streaming-verified guard in the existing redirect test; the reviewed redirect-refusal assertions are unchanged."
+            "previousSha256": "34bd84f5aacee796d3dfa2ff83cfd227a24c41d19fc50c4c51abf88fd6e80a46",
+            "note": "Re-bound 2026-11-27: added the early-display test; the reviewed redirect-refusal assertions are unchanged."
           }
         },
         {
@@ -85,7 +85,7 @@
     {
       "id": "31380a8d5b9454a98a98",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 340,
+      "line": 341,
       "entryPoint": "chatCompletion",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -141,7 +141,7 @@
     {
       "id": "9c345e07b723c086440e",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 435,
+      "line": 436,
       "entryPoint": "chatCompletionStream",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",

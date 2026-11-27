@@ -3086,7 +3086,12 @@ if (
               kind: needsCurrentSources || semanticPlan.goalContract.requiredCapabilities.includes('research.public-web')
                 ? 'source-backed' : 'standard',
             });
-            const result = await phase1ChatWithProgress({ message: displayPrompt, history, ...(attachments?.length ? { attachments } : {}), ...(semanticPlan.goalContract ? { goalContract: semanticPlan.goalContract } : {}) }, { signal: controller.signal, onProgress: (frame) => pushTerminalEvent('progress', frame) })
+            const result = await phase1ChatWithProgress({ message: displayPrompt, history, ...(attachments?.length ? { attachments } : {}), ...(semanticPlan.goalContract ? { goalContract: semanticPlan.goalContract } : {}) }, { signal: controller.signal, onProgress: (frame) => pushTerminalEvent('progress', frame),
+              // The answer appears while it is written; the checked reply below replaces it.
+              onPartial: (text) => {
+                if (runSwarmBuild || controller.signal.aborted || sessionIdRef.current !== originatingSessionId) return;
+                setMessages((current) => current.map((message) => (message.id === assistantId ? { ...message, content: text } : message)));
+              } })
               .finally(() => setPendingReply((current) => current?.messageId === assistantId ? null : current));
             if (controller.signal.aborted || sessionIdRef.current !== originatingSessionId) return;
             finishThinking(result.webSources);

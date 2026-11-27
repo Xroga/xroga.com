@@ -3,7 +3,10 @@ import { readIntent } from '../ai/intentReasoning.js';
 import { understandingProgress } from '../ai/startupProgress.js';
 import { publicAiPayload } from '../lib/publicAiIdentity.js';
 import { generateReasoningSummary, planStage, planStep, reasoningSummaryEnabled } from '../ai/reasoningSummary.js';
-import { withProgressSink } from '../ai/progressChannel.js';
+import { withPartialSink, withProgressSink } from '../ai/progressChannel.js';
+import { splitNativeOpenUiAnswer } from '../ai/nativeOpenUi.js';
+import { publicAiText } from '../lib/publicAiIdentity.js';
+import { redactSecrets } from '../lib/truthfulExecution.js';
 import type { AuthRequest } from '../middleware/auth.js';
 
 /**
@@ -180,10 +183,20 @@ router.post('/chat', (req: AuthRequest, res, next) => {
     return res;
   }) as typeof res.json;
 
-  return withProgressSink((frame) => {
+  // The answer as it is written: readable prose only, with the same identity and secret filtering as the
+  // finished reply. The checked result that follows replaces it.
+  let shown = '';
+  const partial = (raw: string) => {
+    const text = publicAiText(redactSecrets(splitNativeOpenUiAnswer(raw, true).text)).trim();
+    if (!text || text === shown || text.startsWith('{')) return;
+    shown = text;
+    write('partial', { text });
+  };
+
+  return withPartialSink(partial, () => withProgressSink((frame) => {
     for (const source of frame.sources ?? []) sourceUrls.add(source.url);
     write('progress', publicAiPayload({ ...frame }));
-  }, () => next());
+  }, () => next()));
 });
 
 export default router;
