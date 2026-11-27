@@ -51,6 +51,7 @@ import './compose-editly';
 import './compose-cutline';
 import './compose-grade';
 import './compose-more';
+import './make-document';
 import './convert';
 import './record-screen';
 import './infinite-scroll';

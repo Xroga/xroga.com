@@ -835,6 +835,29 @@ Approvals: saving the file needs the person's approval in Ask mode.`,
   {
     verified: 'curated',
     md: `---
+name: deliver-results-as-office-files
+description: Hand the person what they asked for as a real Excel spreadsheet, Word document or PowerPoint deck that opens in Office, made on the device from the data you collected.
+license: Xroga-internal
+metadata:
+  domain: general
+  hosts: ""
+  keywords: make create generate export deliver excel workbook word report powerpoint deck slides presentation proposal lead list office
+  requires: browser
+  risk: write
+  docs: ""
+---
+- Pick the format from the use: rows to sort, filter or calculate go in xlsx; a report, proposal, brief or letter in docx; a pitch or review in pptx. A plain table the person only reads can stay in the answer. CSV, markdown and JSON still go through save_file.
+- Collect and check the data first (read, extract_rows, data_ops), then make the file once. Do not leave placeholders or invented numbers: a cell you could not find stays empty, and the answer says so.
+- xlsx: one sheet per table, a header row in columns, numbers as numbers (not text with symbols), dates as 2026-11-27, formats for percent, currency and integer by column, formulas: true with strings such as =SUM(C2:C20) for totals the person will change. Wide text columns are sized from the content.
+- docx: write markdown (a # title, ## headings, text with bold, bullets, numbered lists, tables with a header row, links); keep paragraphs short and put figures in tables. page letter or a4 as the person's country uses.
+- pptx: one idea per slide, a title and 3 to 6 short bullets, a table for numbers, the first slide a cover with only a title and subtitle. Say the source in the footer when numbers come from a site.
+- Read the file back with read_file after saving if the content matters; report the name, the size and what is in it.
+Verify: the tool result names the saved file, its size and its content summary; read_file shows the same rows or text.
+Approvals: saving the file needs the person's approval in Ask mode; never put credentials or other people's private data in a file without their say.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
 name: tools-a-page-offers-an-agent
 description: Some sites register their own actions for AI agents (WebMCP, navigator.modelContext): list what the open page offers and call a tool by name instead of guessing with clicks.
 license: Xroga-internal

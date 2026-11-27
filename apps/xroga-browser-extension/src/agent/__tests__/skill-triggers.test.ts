@@ -45,6 +45,7 @@ const SHOULD: Array<[string, string]> = [
   ['make a short intro video with a title card, a photo and background music and save it as mp4', 'making-a-video-on-the-device'],
   ['cut the best moments out of this long webinar recording, remove the silences and ums and add subtitles', 'cut-highlights-and-tidy-a-recording'],
   ['my video is too dark with a blue cast, fix the white balance and add a cinematic look and reduce the hiss in the voice', 'grade-and-clean-up-a-video'],
+  ['put these leads into an excel spreadsheet with a total row and also give me a word report and a powerpoint deck', 'deliver-results-as-office-files'],
   ['does this site offer webmcp tools for agents, list the registered page tools and call one', 'tools-a-page-offers-an-agent'],
 ];
 

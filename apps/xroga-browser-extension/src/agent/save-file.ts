@@ -12,7 +12,7 @@ export const SAVE_TYPES: Record<string, string> = {
 };
 
 /** At most this much text; a file is a summary, a table or a report, not a dump. */
-export const MAX_SAVE = 5 * 1024 * 1024;
+export const MAX_SAVE = 100 * 1024 * 1024;
 
 export const SAVE_FILE_TOOL: AgentTool = {
   name: 'save_file',
@@ -51,7 +51,7 @@ export function checkSave(args: Record<string, unknown>): SaveCheck {
   if (expected !== mimeType)
     return { ok: false, reason: `a .${extension} file has the type ${expected}, not ${mimeType || 'none'}.` };
   const bytes = new TextEncoder().encode(content).length;
-  if (bytes > MAX_SAVE) return { ok: false, reason: 'the file is larger than 5 MB.' };
+  if (bytes > MAX_SAVE) return { ok: false, reason: 'the file is larger than 100 MB.' };
   return { ok: true, filename: raw, mimeType, bytes };
 }
 
