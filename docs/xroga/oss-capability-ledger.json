@@ -1779,23 +1779,25 @@
       "pushed_at": "2026-11-16T13:06:33Z",
       "language": "JavaScript",
       "stars": 32866,
-      "inspected_level": "README and the API documentation (resize with its five fits and positions, extract, trim, rotate, flip, flop, greyscale, negate, tint, modulate, blur, sharpen, extend, composite, output formats and options, several outputs); the way libvips is bound is read and not used",
+      "inspected_level": "README and the API documentation (resize with its five fits and positions, extract, trim, rotate, flip, flop, greyscale, negate, tint, modulate, blur, sharpen, extend, composite, output formats and options, several outputs); the way libvips is bound is read and not used; lib/operation.mjs, colour.mjs, channel.mjs, composite.mjs and resize.mjs read function by function (the operations and the blend list); the C++ pipeline and the build files were looked at and not used",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
       "xroga_file_paths": [
         "apps/xroga-browser-extension/src/agent/image-spec.ts",
         "apps/xroga-browser-extension/src/extension/image-render.ts",
         "apps/xroga-browser-extension/src/agent/zip-write.ts",
-        "apps/xroga-browser-extension/src/agent/grade.ts"
+        "apps/xroga-browser-extension/src/agent/grade.ts",
+        "apps/xroga-browser-extension/src/agent/image-ops.ts"
       ],
       "new_tests": [
         "apps/xroga-browser-extension/src/agent/__tests__/image-spec.test.ts",
-        "apps/xroga-browser-extension/src/background/scenarios/convert-image.ts"
+        "apps/xroga-browser-extension/src/background/scenarios/convert-image.ts",
+        "apps/xroga-browser-extension/src/agent/__tests__/image-ops.test.ts"
       ],
       "chrome_check": "S6-convert-image on a real CC0 photograph and the W3C logo: cover to 200×200, a circle with transparent corners, black and white (no colour left), WebP smaller than JPEG and than the original (27.6 KB against 38.2 and 39.7), a crop, padding in red, three sizes in a ZIP, a favicon set of 11 PNGs plus favicon.ico and a note, a watermark, and an SVG trace",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Ideas only, code written fresh over the browser canvas: the new tool convert_image takes crop, trim of a plain border, rotate, flip and flop, resize with cover, contain, fill, inside and outside and a position, no enlargement, colour work through the grade controls of compose_video, blur and sharpen, rounded corners or a circle, padding and a background, a watermark, several widths in one ZIP, a favicon and app-icon set with an .ico, and PNG, JPEG, WebP, ICO or SVG output; the person agrees before it is saved. Not taken: libvips and its native addon (no extension can run it), AVIF, TIFF and HEIF encoding (the browser has no encoder), ICC profiles and EXIF editing (the canvas drops metadata, which is said), animated pictures and raw pixel pipelines.",
+      "adoption_or_rejection_reason": "Ideas only, code written fresh over the browser canvas: the new tool convert_image takes crop, trim of a plain border, rotate, flip and flop, resize with cover, contain, fill, inside and outside and a position, no enlargement, colour work through the grade controls of compose_video, blur and sharpen, rounded corners or a circle, padding and a background, a watermark, several widths in one ZIP, a favicon and app-icon set with an .ico, and PNG, JPEG, WebP, ICO or SVG output; the person agrees before it is saved. Not taken: libvips and its native addon (no extension can run it), AVIF, TIFF and HEIF encoding (the browser has no encoder), ICC profiles and EXIF editing (the canvas drops metadata, which is said), animated pictures and raw pixel pipelines. / Third pass (2026-11-27, source read, not only the documents): median, gamma, normalise, threshold, tint, negate, unflatten, extractChannel and the blend modes of composite were added to convert_image (image-ops.ts). Not taken from lib/operation: affine, convolve, recomb, boolean, linear, clahe, dilate and erode (specialist maths with no ask behind them yet).",
       "classification": "INVOKE ON DEMAND",
       "rights_note": null
     },
@@ -1817,7 +1819,7 @@
       "pushed_at": "2026-11-17T17:07:56Z",
       "language": "Rust",
       "stars": 7576,
-      "inspected_level": "README, the command-line options (colour precision, layer difference, filter speckle, corner threshold, segment length, splice threshold, mode pixel/polygon/spline, hierarchical stacked or cutout), the clustering and path code, the web app",
+      "inspected_level": "README, the command-line options (colour precision, layer difference, filter speckle, corner threshold, segment length, splice threshold, mode pixel/polygon/spline, hierarchical stacked or cutout), the clustering and path code, the web app; the clustering and path code was read for its stages (clustering by colour, stacked or cutout layering, speckle filter, path simplification, corner-aware spline fitting)",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
       "xroga_file_paths": [
@@ -1832,7 +1834,7 @@
       "chrome_check": "S6-convert-image traced the W3C logo into an SVG of 6 colour layers over a background, 1.2 KB",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Idea only, code written fresh: a flat picture is reduced to a palette (median cut, the same as for GIF, now cut where a colour changes), each colour becomes a mask, the edges of each mask are followed into closed outlines with holes, the outlines are simplified (Douglas-Peucker), and the paths are stacked big first with the even-odd rule; convert_image with format svg. Not built: the spline curve fitting and corner detection (the paths are polygons, which suit logos and icons but are not smooth for curves), hierarchical clustering, and its modes; a photograph becomes a poster of its colours, and the tool says so.",
+      "adoption_or_rejection_reason": "Idea only, code written fresh: a flat picture is reduced to a palette (median cut, the same as for GIF, now cut where a colour changes), each colour becomes a mask, the edges of each mask are followed into closed outlines with holes, the outlines are simplified (Douglas-Peucker), and the paths are stacked big first with the even-odd rule; convert_image with format svg. Not built: the spline curve fitting and corner detection (the paths are polygons, which suit logos and icons but are not smooth for curves), hierarchical clustering, and its modes; a photograph becomes a poster of its colours, and the tool says so. / Third pass (2026-11-27, source read, not only the documents): the corner idea of its spline mode was built: a gentle turn is smoothed with a quadratic curve and a sharp turn (over 60 degrees) stays a corner, so logos keep their corners and curves lose their facets (loopPath). Still not built: true spline fitting and hierarchical clustering.",
       "classification": "INVOKE ON DEMAND",
       "rights_note": null
     },
@@ -1889,23 +1891,26 @@
       "pushed_at": "2026-11-20T16:58:37Z",
       "language": "Python",
       "stars": 42725,
-      "inspected_level": "README and the scene model, the animation classes (Create, Write, FadeIn, FadeOut, Transform, Indicate, GrowFromCenter), the mobjects (Axes, NumberPlane, FunctionGraph, BarChart, VGroup, Text, MathTex), the rate functions, the renderer options",
+      "inspected_level": "README and the scene model, the animation classes (Create, Write, FadeIn, FadeOut, Transform, Indicate, GrowFromCenter), the mobjects (Axes, NumberPlane, FunctionGraph, BarChart, VGroup, Text, MathTex), the rate functions, the renderer options; the animation modules read by name and by use: composition (AnimationGroup, LaggedStart, Succession), creation (Create, Write, DrawBorderThenFill), fading, growing, indication (Indicate, Flash, Wiggle, Circumscribe, FocusOn), movement, numbers (counting a number), rotation, speed modifiers, transform",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
       "xroga_file_paths": [
         "apps/xroga-browser-extension/src/agent/plot.ts",
         "apps/xroga-browser-extension/src/extension/plot-draw.ts",
         "apps/xroga-browser-extension/src/agent/compose-spec.ts",
-        "apps/xroga-browser-extension/src/agent/compose-help.ts"
+        "apps/xroga-browser-extension/src/agent/compose-help.ts",
+        "apps/xroga-browser-extension/src/agent/compose-extras.ts",
+        "apps/xroga-browser-extension/src/agent/compose-motion.ts"
       ],
       "new_tests": [
         "apps/xroga-browser-extension/src/agent/__tests__/plot.test.ts",
-        "apps/xroga-browser-extension/src/background/scenarios/plot-video.ts"
+        "apps/xroga-browser-extension/src/background/scenarios/plot-video.ts",
+        "apps/xroga-browser-extension/src/agent/__tests__/compose-extras.test.ts"
       ],
-      "chrome_check": "S6-plot-video on a real render: a sine curve draws itself in (orange pixels 428 then 812) and bars grow (blue pixels from a few thousand to 48 502); the frames were looked at: axes through zero with ticks, two curves, labelled bars",
+      "chrome_check": "S6-plot-video on a real render: a sine curve draws itself in (orange pixels 428 then 812) and bars grow (blue pixels from a few thousand to 48 502); the frames were looked at: axes through zero with ticks, two curves, labelled bars; S6-plot-video: a counter layer counts up on a real render (white pixels grow with the number of digits)",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Idea only, code written fresh: a plot layer for compose_video draws axes with ticks, a curve from a formula (several, separated by ;), a line from numbers or bars with names, and they draw themselves in over drawIn seconds (manim's Create). The formula is read by a parser of its own (numbers, x, pi, e, + - * / ^, brackets, 20 functions, implicit products such as 2x), never eval. Already present from earlier batches: text that writes in (typewriter), fades, zooms, easing. Not built: Transform morphs between shapes, LaTeX and MathTex, 3D scenes, the camera frame, and the geometric mobjects.",
+      "adoption_or_rejection_reason": "Idea only, code written fresh: a plot layer for compose_video draws axes with ticks, a curve from a formula (several, separated by ;), a line from numbers or bars with names, and they draw themselves in over drawIn seconds (manim's Create). The formula is read by a parser of its own (numbers, x, pi, e, + - * / ^, brackets, 20 functions, implicit products such as 2x), never eval. Already present from earlier batches: text that writes in (typewriter), fades, zooms, easing. Not built: Transform morphs between shapes, LaTeX and MathTex, 3D scenes, the camera frame, and the geometric mobjects. / Third pass (2026-11-27, source read, not only the documents): a counter layer (a number that counts up or down on screen, with grouping, decimals, prefix, suffix and a short form such as 3.4M) from its number animations, and five entrance effects (pulse, wiggle, flash, spin, drop) from its indication and growing animations, all ending at rest. LaggedStart is the clip stagger already built.",
       "classification": "INVOKE ON DEMAND",
       "rights_note": null
     },
@@ -1961,15 +1966,20 @@
       "pushed_at": "2026-11-19T00:10:32Z",
       "language": "Python",
       "stars": 2561,
-      "inspected_level": "README, the slash commands and the skill, the engine and examples at the level of what it extracts and how it batches; code not read for reuse (AGPL)",
+      "inspected_level": "README, the slash commands and the skill, the engine and examples at the level of what it extracts and how it batches; code not read for reuse (AGPL); engine/details.py, jobs.py and website_browser.py read for what they extract and from where: the place batches (a JSON answer to the search?tbm=map request that carries the whole place without opening it), the email finder with its junk filter, the website step",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
-      "xroga_file_paths": [],
-      "new_tests": [],
-      "chrome_check": null,
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/src/browser-control/core/contact-decode.ts",
+        "apps/xroga-browser-extension/src/browser-control/core/page-data.ts"
+      ],
+      "new_tests": [
+        "apps/xroga-browser-extension/src/browser-control/core/__tests__/contact-decode.test.ts"
+      ],
+      "chrome_check": "in a real browser the Google Maps results page does request https://www.google.com/search?tbm=map&q=... (seen in the network requests), the batch address the engine reads",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Concepts only, no code (AGPL-3.0): the fields of an outreach-ready list (name, phone, website, email and social links found on the website, category, address, rating, reviews), a filter for businesses with no website, search by business type and place across several towns, and de-duplication. They shaped the bundled skill find-and-qualify-local-leads, which reads Google Maps in the person's own browser and the sites it lists, instead of running a scraping engine. No engine, proxy, or bulk collection was built.",
+      "adoption_or_rejection_reason": "Concepts only, no code (AGPL-3.0): the fields of an outreach-ready list (name, phone, website, email and social links found on the website, category, address, rating, reviews), a filter for businesses with no website, search by business type and place across several towns, and de-duplication. They shaped the bundled skill find-and-qualify-local-leads, which reads Google Maps in the person's own browser and the sites it lists, instead of running a scraping engine. No engine, proxy, or bulk collection was built. / Third pass (2026-11-27, source read, not only the documents): two things were built and one noted, no code copied: the page data reader now decodes Cloudflare-protected addresses (data-cfemail and /cdn-cgi/l/email-protection links), spelled-out addresses (name [at] company [dot] com) and drops picture names and placeholders; and the lead skill now says that Maps fetches the place batches itself and that the network tools can read them. The engine's direct calls to that request are not made: the extension reads what the page already fetched.",
       "classification": "REJECT",
       "rights_note": "AGPL-3.0: no code may be copied into the extension; concepts only"
     },
@@ -1991,19 +2001,22 @@
       "pushed_at": "2026-11-20T16:15:35Z",
       "language": "Python",
       "stars": 4798,
-      "inspected_level": "README, the model (job post, compensation interval and range, job type), the search parameters of the LinkedIn, Indeed and ZipRecruiter scrapers, the board list, the CLI and MCP entry",
+      "inspected_level": "README, the model (job post, compensation interval and range, job type), the search parameters of the LinkedIn, Indeed and ZipRecruiter scrapers, the board list, the CLI and MCP entry; model.py and the salary parsers of the LinkedIn, Indeed, ZipRecruiter, Glassdoor, Naukri, SEEK, Bayt, BDJobs and HelloWork scrapers read for how pay is written and normalised",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
       "xroga_file_paths": [
-        "apps/xroga-browser-extension/src/agent/skill-catalog.ts"
+        "apps/xroga-browser-extension/src/agent/skill-catalog.ts",
+        "apps/xroga-browser-extension/src/agent/pay.ts",
+        "apps/xroga-browser-extension/src/agent/data-ops.ts"
       ],
       "new_tests": [
-        "apps/xroga-browser-extension/src/agent/__tests__/skill-triggers.test.ts"
+        "apps/xroga-browser-extension/src/agent/__tests__/skill-triggers.test.ts",
+        "apps/xroga-browser-extension/src/agent/__tests__/pay.test.ts"
       ],
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Method and facts only, as a bundled skill (job-search-across-boards): search several boards, one comparable row per posting (title, company, place, remote, type, pay with period, date, source, link), pay normalised to one period with the conversion said, duplicates removed across boards, ranking against what the person said, a sheet with make_document, and no application without approval. The address parameters (LinkedIn f_TPR and f_AL, Indeed fromage, ZipRecruiter days) are from its scrapers. Not taken: the Python scrapers, proxies and the dataframe; the person's own signed-in Chrome is used instead.",
+      "adoption_or_rejection_reason": "Method and facts only, as a bundled skill (job-search-across-boards): search several boards, one comparable row per posting (title, company, place, remote, type, pay with period, date, source, link), pay normalised to one period with the conversion said, duplicates removed across boards, ranking against what the person said, a sheet with make_document, and no application without approval. The address parameters (LinkedIn f_TPR and f_AL, Indeed fromage, ZipRecruiter days) are from its scrapers. Not taken: the Python scrapers, proxies and the dataframe; the person's own signed-in Chrome is used instead. / Third pass (2026-11-27, source read, not only the documents): a pay reader (parsePay) and a data_ops step pay: text such as \"$25-$30 an hour\", \"£45k a year\" or \"AED 15,000 per month\" becomes pay_min, pay_max, pay_interval, pay_currency, the yearly equivalents and a comparable pay_year, with the period guessed from the size of the amount when it is not written and said to be a guess. The yearly factors are the ones its model uses.",
       "classification": "INVOKE ON DEMAND",
       "rights_note": null
     },
@@ -2025,15 +2038,20 @@
       "pushed_at": "2026-11-20T17:06:32Z",
       "language": "Python",
       "stars": 4259,
-      "inspected_level": "README, the recorder extension, the workflow schema (step types and variables), the builder, the healing service (agent fallback, variable extraction, deterministic conversion, XPath optimisation), the semantic executor and step verifier, the MCP service",
+      "inspected_level": "README, the recorder extension, the workflow schema (step types and variables), the builder, the healing service (agent fallback, variable extraction, deterministic conversion, XPath optimisation), the semantic executor and step verifier, the MCP service; workflow/variable_identifier.py (527 lines), semantic_executor.py, element_finder.py, step_verifier.py and healing/ (variable extraction, deterministic conversion, selector generation) read",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
-      "xroga_file_paths": [],
-      "new_tests": [],
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/src/agent/variable-hints.ts",
+        "apps/xroga-browser-extension/src/agent/demo-tool.ts"
+      ],
+      "new_tests": [
+        "apps/xroga-browser-extension/src/agent/__tests__/variable-hints.test.ts"
+      ],
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Concepts compared, no code (AGPL-3.0). Xroga already has the same shape: record_demo learns a task from the person, macro saves a routine with ${variables} and replays public reads over plain HTTP, batch verifies each step, and the agent takes over when a step fails. Ideas noted and not built: generating a routine automatically from a finished run, pattern-based recognition of which typed values are variables, and the self-healing rewrite of a broken step.",
+      "adoption_or_rejection_reason": "Concepts compared, no code (AGPL-3.0). Xroga already has the same shape: record_demo learns a task from the person, macro saves a routine with ${variables} and replays public reads over plain HTTP, batch verifies each step, and the agent takes over when a step fails. Ideas noted and not built: generating a routine automatically from a finished run, pattern-based recognition of which typed values are variables, and the self-healing rewrite of a broken step. / Third pass (2026-11-27, source read, not only the documents): its variable identifier was built without a model: a demonstration now says which typed values look like inputs (email, phone, URL, date, postcode, amount, name by its label) with a suggested ${placeholder} each, so the routine can be saved with macro and run again with other values. Passwords and card numbers are skipped. The automatic rewrite of a broken step is still not built.",
       "classification": "REJECT",
       "rights_note": "AGPL-3.0: no code may be copied into the extension; concepts only"
     },
@@ -2055,7 +2073,7 @@
       "pushed_at": "2026-11-14T14:25:00Z",
       "language": "HTML",
       "stars": 228,
-      "inspected_level": "README, architecture, commands and permissions documents, the capability folders (page, data, documents, media, script, wait, tabs, accessibility, diagnostics, sessions, skills, bookmarks, models, mcp), about 70 tools, the document codecs, the skill runtime, the benchmarks",
+      "inspected_level": "README, architecture, commands and permissions documents, the capability folders (page, data, documents, media, script, wait, tabs, accessibility, diagnostics, sessions, skills, bookmarks, models, mcp), about 70 tools, the document codecs, the skill runtime, the benchmarks; the kernel prompt (all sections: tabs, batching, targets, scripts, durable data, goals, safety, citations), the page and wait tool messages, the data_store and document tools, the agent loop method list, the privacy and permission document",
       "xroga_current_equivalent": "src/agent/site-context.ts strict host and path matching",
       "chosen_reuse_method": "idea only: site-scoped skills matched by an exact origin rule",
       "xroga_file_paths": [
@@ -2063,16 +2081,21 @@
         "apps/xroga-browser-extension/src/agent/zip-write.ts",
         "apps/xroga-browser-extension/src/agent/document-tool.ts",
         "apps/xroga-browser-extension/src/agent/save-file.ts",
-        "apps/xroga-browser-extension/src/extension/run-manager.ts"
+        "apps/xroga-browser-extension/src/extension/run-manager.ts",
+        "apps/xroga-browser-extension/src/agent/table-store.ts",
+        "apps/xroga-browser-extension/src/extension/table-persist.ts",
+        "apps/xroga-browser-extension/src/browser-control/protocol/schemas.ts"
       ],
       "new_tests": [
         "apps/xroga-browser-extension/src/agent/__tests__/office-write.test.ts",
-        "apps/xroga-browser-extension/src/background/scenarios/make-document.ts"
+        "apps/xroga-browser-extension/src/background/scenarios/make-document.ts",
+        "apps/xroga-browser-extension/src/agent/__tests__/table-store.test.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/tables.ts"
       ],
-      "chrome_check": "S6-make-document in the real extension: 12 live Wikipedia search rows became a spreadsheet (4.4 KB), a Word document (4.0 KB) and a deck (8.0 KB) in the service worker, each read back with the extension's own readers, and the spreadsheet was saved through chrome.downloads and found again with the same size (4426 bytes); the files also open in openpyxl, python-docx and python-pptx (checked once, in a temporary environment that was then removed)",
+      "chrome_check": "S6-make-document in the real extension: 12 live Wikipedia search rows became a spreadsheet (4.4 KB), a Word document (4.0 KB) and a deck (8.0 KB) in the service worker, each read back with the extension's own readers, and the spreadsheet was saved through chrome.downloads and found again with the same size (4426 bytes); the files also open in openpyxl, python-docx and python-pptx (checked once, in a temporary environment that was then removed); S6-tables in the real extension: three live Wikipedia result pages that overlap were added to one keyed table without duplicates, saved in chrome.storage.local, reloaded by a fresh store, updated (revision 2), queried, filtered, turned into a spreadsheet and removed",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Rule matching is dot-boundary strict (look-alike hosts never match); skills never limit the model. / Second pass (2026-11-27): its tool list was compared with Xroga's. Built: make_document, real .xlsx (typed cells, dates, formats, formulas, frozen header, filter, widths), .docx (markdown or blocks: headings, lists, tables, links, quotes, code) and .pptx (cover, bullets with levels, tables) written on the device, and the save_file limit raised from 5 MB to 100 MB. Already present in Xroga: tabs, waits, network and console reads, data operations, sub-agents, skills, bookmarks. Not built, with the reason: scheduled automations with their own panel (a product feature), an ask-the-model helper tool, browser history search, location, an MCP client, the side-panel data grid, the Firefox package, and the Chinese-market model providers.",
+      "adoption_or_rejection_reason": "Rule matching is dot-boundary strict (look-alike hosts never match); skills never limit the model. / Second pass (2026-11-27): its tool list was compared with Xroga's. Built: make_document, real .xlsx (typed cells, dates, formats, formulas, frozen header, filter, widths), .docx (markdown or blocks: headings, lists, tables, links, quotes, code) and .pptx (cover, bullets with levels, tables) written on the device, and the save_file limit raised from 5 MB to 100 MB. Already present in Xroga: tabs, waits, network and console reads, data operations, sub-agents, skills, bookmarks. Not built, with the reason: scheduled automations with their own panel (a product feature), an ask-the-model helper tool, browser history search, location, an MCP client, the side-panel data grid, the Firefox package, and the Chinese-market model providers. / Third pass (2026-11-27, source read, not only the documents): a durable table store (the table tool): named tables kept on this device outside the conversation, add with a key so a row seen twice is one row, list in pages, get, update with a revision, delete, query with the data_ops steps, CSV, and make_document sheets with fromTable, so a collection over many pages never passes through the model; it is removed with the conversation. This fixed a real gap: the rows of an extraction were replaced by the next one. Also from this read: waits can now last up to an hour (the limit was one minute) and tool timeouts up to an hour. Not built: goal tracking as a separate tool (the plan and progress tracker serve), queued follow-ups with reordering, and editing a sent message to re-run it (panel features).",
       "classification": "ADAPT CODE",
       "rights_note": null
     },
@@ -2094,7 +2117,7 @@
       "pushed_at": "2026-06-10T05:11:14Z",
       "language": "JavaScript",
       "stars": 122,
-      "inspected_level": "README, SKILL.md, the Chrome bridge, and all 22 site folders with their action references (about 540 KB): addresses, requirements, authentication notes and the page code of each action",
+      "inspected_level": "README, SKILL.md, the Chrome bridge, and all 22 site folders with their action references (about 540 KB): addresses, requirements, authentication notes and the page code of each action; the remaining reference files read for their requirements and return shapes, with the benchmark notes",
       "xroga_current_equivalent": "src/agent/site-actions.ts VerifiedSiteAction",
       "chosen_reuse_method": "adapt the contract (read vs write class, input schema, requirements); reject its in-page eval handlers",
       "xroga_file_paths": [
