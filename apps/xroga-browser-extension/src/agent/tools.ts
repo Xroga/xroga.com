@@ -236,7 +236,7 @@ export function kindOf(tool: string, args: Record<string, unknown>): ToolKind {
   if (tool === 'save_file' || tool === 'save_page_pdf' || tool === 'convert_media') return 'state';
   // starting and stopping a recording changes no page; stopping saves a file, starting and status do not
   // making a document writes a file in Downloads, after the person agrees
-  if (tool === 'make_document') return 'state';
+  if (tool === 'make_document' || tool === 'convert_image') return 'state';
   if (tool === 'record_screen') return args.action === 'stop' ? 'state' : 'read';
   // a preview of a video makes no file; making it saves one
   if (tool === 'compose_video') return Array.isArray(args.preview) ? 'read' : 'state';

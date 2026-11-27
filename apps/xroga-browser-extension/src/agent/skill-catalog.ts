@@ -858,6 +858,82 @@ Approvals: saving the file needs the person's approval in Ask mode; never put cr
   {
     verified: 'curated',
     md: `---
+name: known-sites-direct-urls
+description: Go straight to the right page on well-known sites (Google Maps, LinkedIn, Amazon, Booking, Airbnb, Zillow, Reddit, X, Hacker News, G2, Glassdoor and more) with the search or detail address that works, and know which need a sign-in, instead of clicking through the home page.
+license: Xroga-internal
+metadata:
+  domain: general
+  hosts: ""
+  keywords: url address search listing google maps places linkedin jobs company amazon booking airbnb zillow craigslist reddit hacker news twitter x instagram facebook marketplace g2 capterra glassdoor walmart target tiktok substack real estate
+  requires: browser
+  risk: read
+  docs: ""
+---
+- Open the address with navigate instead of using the site's own search box: it saves steps and loads the result page directly. Fill the placeholders in angle brackets and URL-encode the query. Then read the page; do not guess selectors.
+- Google Maps: https://www.google.com/maps/search/<query>/ lists places in the side panel (scroll the list to load more; names, ratings, review counts, addresses, categories). A place page (the link in a result) adds phone, website, hours and price level. Public, no sign-in; needs a real, visible browser.
+- LinkedIn: jobs https://www.linkedin.com/jobs/search/?keywords=<q>&location=<place>; company https://www.linkedin.com/company/<slug>/; person https://www.linkedin.com/in/<handle>/; post https://www.linkedin.com/feed/update/<urn>. Most of it needs the person signed in, in this tab.
+- Amazon: product https://www.amazon.com/dp/<ASIN>; search https://www.amazon.com/s?k=<q>. Walmart: search https://www.walmart.com/search?q=<q>, product https://www.walmart.com/ip/<slug>/<id>. Target: search https://www.target.com/s?searchTerm=<q>. AliExpress search results and products are public; the cart is the person's.
+- Travel: Booking hotel https://www.booking.com/hotel/<cc>/<slug>.html?checkin=YYYY-MM-DD&checkout=YYYY-MM-DD&group_adults=N&no_rooms=1 (the dates are needed for room prices; wait a few seconds for the table); Airbnb https://www.airbnb.com/rooms/<id>?check_in=YYYY-MM-DD&check_out=YYYY-MM-DD&adults=N.
+- Property and classifieds: Zillow search https://www.zillow.com/homes/<City-Name>_rb/, listing .../homedetails/<address>/<zpid>_zpid/; Craigslist https://<city>.craigslist.org/search/<category>?query=<q>; Yad2 https://www.yad2.co.il/realestate/forsale?city=<code>; Madlan https://www.madlan.co.il/for-sale/<city>. All public.
+- Communities and news: Reddit https://www.reddit.com/r/<sub>/<hot|new|top>/ and /search/?q=<q> (public; its .json variants may be refused outside a browser); Hacker News https://news.ycombinator.com/ , item?id=<id>, and the open search API https://hn.algolia.com/api/v1/search?query=<q>&tags=story (plain JSON, use http_get); X https://x.com/search?q=<q>&src=typed_query and https://x.com/<handle> need a sign-in; Substack https://<publication>.substack.com/ with the archive API /api/v1/archive?sort=new&limit=20 (JSON, public posts).
+- Reviews and companies: G2 https://www.g2.com/products/<slug>/reviews and Capterra https://www.capterra.com/p/<id>/<slug>/reviews/ are public for the first page; Glassdoor https://www.glassdoor.com/Overview/Working-at-<slug>.htm and /Reviews/<slug>-reviews-<id>.htm need a sign-in. Facebook Marketplace https://www.facebook.com/marketplace/search/?query=<q> and Instagram profiles https://www.instagram.com/<user>/ need a sign-in; TikTok Studio pages need the creator's own account.
+- Sign-in: the person's own Chrome is already signed in where they use the site. If a page shows a sign-in wall, say so and ask them to sign in in the tab; never ask for a password, a cookie or a token, and never paste one.
+- Public sites change: if the page does not look as described, read what is there and say what you found rather than forcing the pattern.
+Verify: the page you read is the one asked for (title, query and filters visible), and each figure you report is on it.
+Approvals: reading is free; adding to a cart, booking, messaging or posting needs the person's approval first.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
+name: find-and-qualify-local-leads
+description: Build a qualified lead list for a business type and place: search Google Maps, read each business page and website for contact details, judge each against the person's ideal customer with a written reason, remove duplicates, and deliver a sheet. Nothing is sent to anyone.
+license: Xroga-internal
+metadata:
+  domain: general
+  hosts: ""
+  keywords: leads lead generation prospects prospecting client hunting find clients businesses local google maps contact email phone website outreach ideal customer icp qualify agency sales list
+  requires: browser
+  risk: read
+  docs: ""
+---
+- Start from the person's product and who buys it. Write the ideal customer in two or three lines (business type, size signals, place, what they lack) and say it back before searching; the verdicts are judged against it.
+- Search Maps at https://www.google.com/maps/search/<business type> in <place>/ , scroll the list to load more, and read each result (name, rating, review count, address, category). Several nearby towns and several phrasings (dentist, dental clinic) find more than one search.
+- Open the business page for phone, website and hours. Open the website's home, contact and about pages for an email address and social links; use what is printed there, never a guessed address. A business with no website is a lead of its own kind for someone who sells websites, and one with a website is the target for someone who sells marketing or software: filter by what the person sells.
+- Judge each business against the ideal customer: fit, maybe or no, and one sentence of reason that cites what you saw (reviews few and old, no booking page, site not mobile friendly). Keep the reason; it is the value of the list, and the person can correct the ideal customer to correct the verdicts.
+- Remove duplicates by name plus address or by website host, and chains the person did not want. Keep the source address of every row so each can be checked.
+- Deliver a sheet with make_document (columns: business, category, address, phone, website, email, rating, reviews, fit, reason, source). Say how many were found, how many fit, and what was not found rather than filling gaps.
+- Contact: this skill only finds and judges. Writing or sending an email, a message or a form submission is a separate step that needs the person's approval each time; mass or untargeted sending, harvesting private people's data, and anything that breaks a site's rules or the law (anti-spam and data-protection rules differ by country) are not done.
+Verify: ten rows picked at random match their source pages; every email shown appears on a page you opened.
+Approvals: reading public pages is free; sending anything, or entering a person's data into a form, needs the person's approval.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
+name: job-search-across-boards
+description: Search several job boards for a role and place, keep one comparable list with title, company, place, pay, remote or not, date and link, remove duplicates, and rank what fits the person.
+license: Xroga-internal
+metadata:
+  domain: general
+  hosts: ""
+  keywords: jobs job search vacancies careers hiring roles salary remote linkedin indeed glassdoor ziprecruiter naukri seek bayt apply applicant recruiter board postings
+  requires: browser
+  risk: read
+  docs: ""
+---
+- Ask what is not given: the role, the place or remote, seniority, pay floor, how recent. Then search more than one board; a single board misses most postings.
+- LinkedIn: https://www.linkedin.com/jobs/search/?keywords=<role>&location=<place>&f_TPR=r<seconds> (f_TPR=r86400 is the last day, r604800 the last week); f_AL=true shows Easy Apply only; distance=<miles>. Signed-out it shows fewer results behind a sign-in wall: use the person's own signed-in tab.
+- Indeed: https://www.indeed.com/jobs?q=<role>&l=<place>&fromage=<days>; other countries use their own domain (uk.indeed.com, in.indeed.com). ZipRecruiter: https://www.ziprecruiter.com/jobs-search?search=<role>&location=<place>&days=<days>. Glassdoor and Naukri, SEEK, Bayt follow the same keyword and place pattern on their own sites. If a board shows a bot check or sign-in, say so and continue with the others.
+- Read each posting page for the pay and the type before judging it. Normalise pay to one period and one currency name (yearly, monthly, hourly): 2080 hours a year, 12 months, and say the conversion; leave pay empty when it is not shown rather than estimating it.
+- One row per posting with: title, company, place, remote (yes, hybrid, no), type (full time, part time, contract, internship), pay minimum and maximum with period, date posted, source board and link. Remove duplicates by company plus title plus place across boards, keeping the link of each.
+- Rank against what the person said (role fit, place, pay, seniority) and give a one-line reason per top row; flag postings that look old, repost often, or hide the employer.
+- Deliver the list with make_document (a sheet) when there are more than a handful.
+- Applying is the person's decision: do not submit an application, upload their CV, or message a recruiter without their approval.
+Verify: each listed posting's page showed the title, company and place that the row states.
+Approvals: reading boards is free; applying, uploading a resume and messaging need approval first.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
 name: tools-a-page-offers-an-agent
 description: Some sites register their own actions for AI agents (WebMCP, navigator.modelContext): list what the open page offers and call a tool by name instead of guessing with clicks.
 license: Xroga-internal

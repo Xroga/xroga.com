@@ -41,7 +41,14 @@ export function medianCutPalette(pixels: Uint8ClampedArray | Uint8Array, size = 
     if (bestBox < 0 || bestRange === 0) break;
     const box = boxes[bestBox]!;
     box.sort((a, b) => a[bestChannel]! - b[bestChannel]!);
-    const mid = box.length >> 1;
+    // cut where the colour changes, nearest the middle: cutting a run of one colour in two would waste a palette entry on it
+    let mid = box.length >> 1;
+    let lo = mid;
+    let hi = mid;
+    while (lo > 0 && box[lo]![bestChannel]! === box[lo - 1]![bestChannel]!) lo--;
+    while (hi < box.length && box[hi]![bestChannel]! === box[hi - 1]![bestChannel]!) hi++;
+    mid = lo > 0 && (hi >= box.length || mid - lo <= hi - mid) ? lo : hi;
+    if (mid <= 0 || mid >= box.length) mid = box.length >> 1;
     boxes.splice(bestBox, 1, box.slice(0, mid), box.slice(mid));
   }
   boxes = boxes.filter(b => b.length);

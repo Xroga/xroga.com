@@ -574,6 +574,22 @@ chrome.runtime.onMessage.addListener((message, _sender, reply) => {
     );
     return true;
   }
+  if (message.type === 'convert-image') {
+    Promise.race([
+      import('@src/extension/image-render').then(m =>
+        m.convertImage(message.request, blob => {
+          const url = URL.createObjectURL(blob);
+          urls.add(url);
+          return url;
+        }),
+      ),
+      new Promise<never>((_, reject) => setTimeout(() => reject(new Error('the picture was not finished in 5 minutes')), 300_000)),
+    ]).then(
+      result => reply({ ok: true, ...result }),
+      error => reply({ ok: false, error: error instanceof Error ? error.message : String(error) }),
+    );
+    return true;
+  }
   if (message.type === 'convert') {
     Promise.race([
       import('@src/extension/convert-render').then(m =>

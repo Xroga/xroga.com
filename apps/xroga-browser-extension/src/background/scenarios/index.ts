@@ -52,6 +52,8 @@ import './compose-cutline';
 import './compose-grade';
 import './compose-more';
 import './make-document';
+import './convert-image';
+import './upscale-image';
 import './convert';
 import './record-screen';
 import './infinite-scroll';

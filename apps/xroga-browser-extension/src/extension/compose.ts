@@ -45,3 +45,18 @@ export async function convertOnDevice(request: unknown): Promise<import('./conve
     offscreenBusy(-1);
   }
 }
+
+/** Changes a picture on the device; the result is held as a blob URL for the worker to save. */
+export async function convertImageOnDevice(request: unknown): Promise<import('./image-render').ImageResult> {
+  offscreenBusy(1);
+  try {
+    await ensureOffscreen();
+    const answer = (await chrome.runtime.sendMessage({ target: 'offscreen', type: 'convert-image', request })) as (({ ok: true } & import('./image-render').ImageResult) | { ok: false; error: string }) | undefined;
+    if (!answer) throw new Error('the picture maker did not answer');
+    if (!answer.ok) throw new Error(answer.error);
+    const { ok: _ok, ...rest } = answer;
+    return rest;
+  } finally {
+    offscreenBusy(-1);
+  }
+}
