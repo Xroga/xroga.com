@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "db002b2edcebd398e40ebed977c18585fa424164",
+  "source_sha": "0db6ec32e05320d743ae75774a6293f900ab406f",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17392,7 +17392,7 @@
     },
     {
       "path": "backend/src/ai/reasoningSummary.ts",
-      "sha256": "34c1b1ea632e8f5f0e429faf5cca65fd272775fd9b7ceed634cf1f0f0a21680f"
+      "sha256": "f3421d907dfcf9faa2a2a8cc9affe7d85685f82288af983fa3b25bfc4d45278b"
     },
     {
       "path": "backend/src/ai/repairController.ts",
@@ -18828,7 +18828,7 @@
     },
     {
       "path": "backend/src/routes/phase1ChatProgress.ts",
-      "sha256": "a8f0f92448e8fe4bdfe58932a3bb98510dd62d954d474895b3aeccd269ba784f"
+      "sha256": "e3a07d6a845430301b8f02fd367dd9b5cbc3ddcb113f4070a9012acde9c564cf"
     },
     {
       "path": "backend/src/routes/profile.ts",
@@ -23272,7 +23272,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalDock.tsx",
-      "sha256": "ec1542d42182e741e724729aac51891a522e1cacdad63d28e339ba424df9e399"
+      "sha256": "443be1fbd5fb5a1d001e59c6246bcab672ee9bc2e2e4bc0b51b79edb2f56cc9a"
     },
     {
       "path": "frontend/src/components/terminal/TerminalLiveActivity.tsx",
@@ -24661,6 +24661,10 @@
     {
       "path": "frontend/src/lib/voiceSegmenter.ts",
       "sha256": "c73176a55e776661d1374be102e9b46b42fbd160122407941203a059408f5b47"
+    },
+    {
+      "path": "frontend/src/lib/warmApi.ts",
+      "sha256": "552a81cc241f0ef4143ed7fb78a519887b17c5e1ca8aa0241f048de56223aea3"
     },
     {
       "path": "frontend/src/lib/workLanes.ts",
@@ -37139,7 +37143,7 @@
     },
     {
       "path": "backend/src/routes/phase1ChatProgress.ts",
-      "line": 77,
+      "line": 83,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

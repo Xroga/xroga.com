@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "claude/processing-panel-fixes-20261127",
-    "sha": "db002b2edcebd398e40ebed977c18585fa424164",
-    "sourceTimestampUtc": "2026-11-27T19:03:26+05:00",
-    "auditStartedUtc": "2026-11-27T14:03:54.067Z",
+    "sha": "0db6ec32e05320d743ae75774a6293f900ab406f",
+    "sourceTimestampUtc": "2026-11-27T20:47:25+05:00",
+    "auditStartedUtc": "2026-11-27T15:47:50.922Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -9879,7 +9879,7 @@
       "id": "surface:6b6608aca0b309f1efdb",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/reasoningSummary.ts",
-      "sha256": "34c1b1ea632e8f5f0e429faf5cca65fd272775fd9b7ceed634cf1f0f0a21680f",
+      "sha256": "f3421d907dfcf9faa2a2a8cc9affe7d85685f82288af983fa3b25bfc4d45278b",
       "symbols": [
         "PLAN_LINE",
         "REASONING_SUMMARY_MAX_LINES",
@@ -33407,10 +33407,9 @@
       "id": "surface:a84cf17b2bc2287e5cc5",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
-      "sha256": "a8f0f92448e8fe4bdfe58932a3bb98510dd62d954d474895b3aeccd269ba784f",
+      "sha256": "e3a07d6a845430301b8f02fd367dd9b5cbc3ddcb113f4070a9012acde9c564cf",
       "symbols": [
         "HEARTBEAT_MS",
-        "NOTES_GRACE_MS",
         "controller",
         "files",
         "finish",
@@ -33422,6 +33421,7 @@
         "names",
         "note",
         "notes",
+        "notesArrived",
         "open",
         "originalStatus",
         "preparing",
@@ -33432,6 +33432,7 @@
         "sendJson",
         "source",
         "sourceUrls",
+        "startedAt",
         "status",
         "step",
         "still",
@@ -72251,7 +72252,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/TerminalDock.tsx:19"
+        "frontend/src/components/terminal/TerminalDock.tsx:20"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -99666,7 +99667,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/TerminalDock.tsx:7"
+        "frontend/src/components/terminal/TerminalDock.tsx:8"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -102491,7 +102492,7 @@
       "id": "surface:96c636bdc082da399e4c",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/TerminalDock.tsx",
-      "sha256": "ec1542d42182e741e724729aac51891a522e1cacdad63d28e339ba424df9e399",
+      "sha256": "443be1fbd5fb5a1d001e59c6246bcab672ee9bc2e2e4bc0b51b79edb2f56cc9a",
       "symbols": [
         "TerminalDock",
         "chatbarHidden",
@@ -102533,6 +102534,7 @@
         "@/hooks/useVisualViewportBottom",
         "@/lib/incognito",
         "@/lib/utils",
+        "@/lib/warmApi",
         "@/store/usePrivacyStore",
         "@/store/useProjectWorkspaceStore",
         "@/store/useThemeStore",
@@ -102551,6 +102553,7 @@
         "frontend/src/hooks/useVisualViewportBottom.ts",
         "frontend/src/lib/incognito.ts",
         "frontend/src/lib/utils.ts",
+        "frontend/src/lib/warmApi.ts",
         "frontend/src/store/usePrivacyStore.ts",
         "frontend/src/store/useProjectWorkspaceStore.ts",
         "frontend/src/store/useThemeStore.ts"
@@ -103619,7 +103622,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/TerminalDock.tsx:8"
+        "frontend/src/components/terminal/TerminalDock.tsx:9"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -107827,7 +107830,7 @@
         "frontend/src/components/terminal/RepoContextBar.tsx:29",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:4",
         "frontend/src/components/terminal/TerminalChatBar.tsx:4",
-        "frontend/src/components/terminal/TerminalDock.tsx:18",
+        "frontend/src/components/terminal/TerminalDock.tsx:19",
         "frontend/src/components/terminal/WorkspaceConversationMenu.tsx:6",
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx:15",
         "frontend/src/components/terminal/WorkspaceLauncher.tsx:9",
@@ -107904,7 +107907,7 @@
       "callers": [
         "frontend/src/components/layout/AppShell.tsx:10",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:5",
-        "frontend/src/components/terminal/TerminalDock.tsx:10"
+        "frontend/src/components/terminal/TerminalDock.tsx:11"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -108188,7 +108191,7 @@
         "frontend/src/components/terminal/ProjectWorkspaceRail.tsx:6",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:40",
         "frontend/src/components/terminal/TerminalChatBar.tsx:11",
-        "frontend/src/components/terminal/TerminalDock.tsx:14",
+        "frontend/src/components/terminal/TerminalDock.tsx:15",
         "frontend/src/components/ui/DownloadAppButton.tsx:8"
       ],
       "reachable": true,
@@ -108372,7 +108375,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/TerminalDock.tsx:13"
+        "frontend/src/components/terminal/TerminalDock.tsx:14"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -113168,7 +113171,7 @@
       "callers": [
         "frontend/src/components/incognito/IncognitoProfileBox.tsx:5",
         "frontend/src/components/layout/IncognitoModeButton.tsx:9",
-        "frontend/src/components/terminal/TerminalDock.tsx:15"
+        "frontend/src/components/terminal/TerminalDock.tsx:16"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -123483,7 +123486,7 @@
         "frontend/src/components/terminal/SwarmMessageLog.tsx:42",
         "frontend/src/components/terminal/TerminalBuildReport.tsx:5",
         "frontend/src/components/terminal/TerminalChatBar.tsx:24",
-        "frontend/src/components/terminal/TerminalDock.tsx:16",
+        "frontend/src/components/terminal/TerminalDock.tsx:17",
         "frontend/src/components/terminal/TerminalSearchBar.tsx:12",
         "frontend/src/components/terminal/TerminalSkinPicker.tsx:10",
         "frontend/src/components/terminal/TextGeneratingAnimation.tsx:4",
@@ -123744,7 +123747,8 @@
       ],
       "callers": [
         "frontend/src/components/browser/WorkspaceBrowserOperator.tsx:6",
-        "frontend/src/components/terminal/XrogaVoiceControl.tsx:7"
+        "frontend/src/components/terminal/XrogaVoiceControl.tsx:7",
+        "frontend/src/lib/warmApi.ts:1"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -124141,6 +124145,50 @@
         "frontend/src/lib/voiceDictation.test.ts",
         "frontend/src/lib/voiceSegmenter.pause.test.ts",
         "frontend/src/lib/voiceSegmenter.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:82ceaece566fd73e84de",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/warmApi.ts",
+      "sha256": "552a81cc241f0ef4143ed7fb78a519887b17c5e1ca8aa0241f048de56223aea3",
+      "symbols": [
+        "WARM_AGAIN_AFTER_MS",
+        "at",
+        "createApiWarmer",
+        "last",
+        "warmApi"
+      ],
+      "imports": [
+        "./voiceApi"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/voiceApi.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/terminal/TerminalDock.tsx:7",
+        "frontend/src/lib/warmApi.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/warmApi.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -126532,7 +126580,7 @@
         "frontend/src/components/settings/PrivacySettingsPanel.tsx:5",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:39",
         "frontend/src/components/terminal/TerminalChatBar.tsx:10",
-        "frontend/src/components/terminal/TerminalDock.tsx:12",
+        "frontend/src/components/terminal/TerminalDock.tsx:13",
         "frontend/src/context/TerminalChatContext.tsx:29"
       ],
       "reachable": true,
@@ -126635,7 +126683,7 @@
         "frontend/src/components/terminal/RepoContextBar.tsx:32",
         "frontend/src/components/terminal/RuntimeLogsButton.tsx:20",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:52",
-        "frontend/src/components/terminal/TerminalDock.tsx:17",
+        "frontend/src/components/terminal/TerminalDock.tsx:18",
         "frontend/src/components/terminal/VercelDeployButton.tsx:6",
         "frontend/src/components/terminal/WorkspaceConversationMenu.tsx:8",
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx:18",
@@ -126765,7 +126813,7 @@
         "frontend/src/components/settings/ThemeSettingsPanel.tsx:4",
         "frontend/src/components/terminal/ImageEditModal.tsx:30",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:6",
-        "frontend/src/components/terminal/TerminalDock.tsx:11",
+        "frontend/src/components/terminal/TerminalDock.tsx:12",
         "frontend/src/components/terminal/TerminalSkinPicker.tsx:9",
         "frontend/src/components/terminal/WorkspaceLauncher.tsx:7",
         "frontend/src/components/ui/DownloadAppButton.tsx:7"
@@ -139298,9 +139346,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:5bdb8dbc64f2a334d3cf",
+      "id": "registration:719ec5138c52cac9f2ed",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
-      "line": 51,
+      "line": 57,
       "receiver": "router",
       "method": "post",
       "path": "/chat",
@@ -140844,10 +140892,10 @@
       "reason": "Router factory invoked by an imported default export; terminal middleware traced, behavior must still be tested."
     },
     {
-      "id": "route:5866b82ce340bcd94197",
-      "registrationId": "registration:5bdb8dbc64f2a334d3cf",
+      "id": "route:8bd3251e819cdc9950cd",
+      "registrationId": "registration:719ec5138c52cac9f2ed",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
-      "line": 51,
+      "line": 57,
       "method": "POST",
       "path": "/api/phase1/chat",
       "mountChain": [
@@ -146155,18 +146203,18 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:9c09872201eec43a7197",
+      "id": "schedule:20b67a70d1af20964bf6",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
-      "line": 70,
+      "line": 76,
       "kind": "setInterval",
       "symbol": "<module>",
       "reachable": true,
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:90a9e2402a65860fee2b",
+      "id": "schedule:e85aa4958f5b9b07422e",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
-      "line": 82,
+      "line": 88,
       "kind": "setInterval",
       "symbol": "<module>",
       "reachable": true,
@@ -158063,7 +158111,7 @@
     {
       "id": "test-suite:8d73808569e38c5b4489",
       "sourcePath": "backend/src/routes/phase1ChatProgress.test.ts",
-      "declaredTests": 5,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -162850,6 +162898,13 @@
       "id": "test-suite:4dbd24fd4307b50dede2",
       "sourcePath": "frontend/src/lib/voiceSegmenter.test.ts",
       "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:8ced50e9201fc12ec0bf",
+      "sourcePath": "frontend/src/lib/warmApi.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
