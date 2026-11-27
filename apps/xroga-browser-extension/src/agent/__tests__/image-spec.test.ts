@@ -164,3 +164,36 @@ describe('curves in the trace', () => {
     expect(mixed).toContain('L');
   });
 });
+
+import { binaryMask, toOklab, traceImage as traceImageV2 } from '../vector-trace';
+describe('vtracer v2 ideas', () => {
+  it('oklab: white is lightness 1, black 0, grey has no chroma', () => {
+    expect(toOklab(255, 255, 255)[0]).toBeCloseTo(1, 2);
+    expect(toOklab(0, 0, 0)[0]).toBeCloseTo(0, 3);
+    const g = toOklab(128, 128, 128);
+    expect(Math.abs(g[1])).toBeLessThan(0.001);
+  });
+  it('adaptive threshold finds ink under uneven light where a fixed cut-off fails', () => {
+    const w = 40, h = 40, px = new Uint8ClampedArray(w * h * 4);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const bg = 120 + x * 3; // shadow on the left
+      const ink = x >= 18 && x < 22 && y >= 5 && y < 35;
+      const v = ink ? bg - 70 : bg;
+      px.set([v, v, v, 255], (y * w + x) * 4);
+    }
+    const fixed = binaryMask(px, w, h, { threshold: 128 });
+    const adap = binaryMask(px, w, h, { adaptive: true, window: 15, t: 15 });
+    expect(adap[20 * w + 20]).toBe(1);
+    expect(adap[20 * w + 2]).toBe(0);
+    expect(fixed[20 * w + 2]).toBe(1); // the shadow is wrongly ink with a fixed cut-off
+  });
+  it('bw preset gives one black layer and no background; palette is honoured', () => {
+    const w = 30, h = 30, px = new Uint8ClampedArray(w * h * 4);
+    for (let i = 0; i < w * h; i++) { const x = i % w; const dark = x > 10 && x < 20; px.set(dark ? [20, 20, 20, 255] : [240, 240, 240, 255], i * 4); }
+    const bw = traceImageV2(px, w, h, { preset: 'bw' });
+    expect(bw.layers.length).toBe(1);
+    expect(bw.svg).toContain('#000000');
+    const pal = traceImageV2(px, w, h, { palette: [[255, 0, 0], [0, 0, 255]] });
+    expect(pal.svg).toMatch(/#ff0000|#0000ff/i);
+  });
+});

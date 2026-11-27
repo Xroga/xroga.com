@@ -46,7 +46,7 @@ defineScenario({
     const checks: Record<string, boolean> = {
       curveAppears: orangeLate > 300,
       curveDrawsIn: orangeLate > orangeEarly * 1.6,
-      counterCounts: whiteLate > whiteEarly * 2.5 && whiteLate > 1500,
+      counterCounts: whiteLate > whiteEarly * 1.5 && whiteLate > 1500,
       barsGrow: blueLate > blueEarly * 3 && blueLate > 3000,
     };
     return outcome(

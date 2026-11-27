@@ -15,7 +15,7 @@ export const CONVERT_IMAGE_TOOL: AgentTool = {
   source: 'agent',
   group: 'files',
   description:
-    'Change a picture at a web address into another format or shape on this device and save it in Downloads (asks first in Ask mode, never overwrites). format: png, jpeg, webp, ico (a favicon file), svg (traces a flat picture such as a logo into vector shapes: colors up to 32). quality 1 to 100 for jpeg and webp. Order of work: crop { left, top, width, height } then trim (cut away a plain border) then rotate (degrees) and flip/flop then upscale 2 or 4 (a small super-resolution model, about 21 MB, downloaded on first use and run on this device: it adds detail to a small or soft picture, takes some seconds per megapixel) then width and/or height with fit cover|contain|fill|inside|outside and position (default center; contain fills the rest with background), noEnlarge, then grade (the same colour controls as compose_video: brightness, contrast, saturation, grayscale via saturation -1, preset, auto balance…), blur (px), sharpen (0 to 1), median (3 to 9: removes speckle noise), gamma (0.1 to 3), normalise (true, or { lower, upper } percentiles: stretches a hazy picture to full contrast), threshold (0 to 255: black and white by a level), tint ("#rrggbb": the picture in the tones of one colour), negate, unflatten (true or a tolerance: a plain background becomes transparent), channel (red, green, blue or alpha as a grey picture), round (0 to 0.5 of the short side, or "circle"), padding (px or { top, right, bottom, left }) with background, and watermark { url, position, scale (share of the width), opacity }. sizes: [widths] makes one file per width in a ZIP; favicons: true makes the usual set of favicon and app-icon sizes (16 to 512) and an .ico in a ZIP. Metadata such as location in the original is not kept. Only when the person asked for a changed picture.',
+    'Change a picture at a web address into another format or shape on this device and save it in Downloads (asks first in Ask mode, never overwrites). format: png, jpeg, webp, ico (a favicon file), svg (traces a picture into vector shapes: colors up to 32 or a fixed palette of "#rrggbb" colours; trace: bw for line art, a signature or a scan (black ink on transparent, adaptive threshold copes with uneven light), poster for flat colour, photo for a coarse poster of a photograph; precision: decimals in the paths). quality 1 to 100 for jpeg and webp. Order of work: crop { left, top, width, height } then trim (cut away a plain border) then rotate (degrees) and flip/flop then upscale 2 or 4 (a small super-resolution model, about 21 MB, downloaded on first use and run on this device: it adds detail to a small or soft picture, takes some seconds per megapixel) then width and/or height with fit cover|contain|fill|inside|outside and position (default center; contain fills the rest with background), noEnlarge, then grade (the same colour controls as compose_video: brightness, contrast, saturation, grayscale via saturation -1, preset, auto balance…), blur (px), sharpen (0 to 1), median (3 to 9: removes speckle noise), gamma (0.1 to 3), normalise (true, or { lower, upper } percentiles: stretches a hazy picture to full contrast), threshold (0 to 255: black and white by a level), tint ("#rrggbb": the picture in the tones of one colour), negate, unflatten (true or a tolerance: a plain background becomes transparent), channel (red, green, blue or alpha as a grey picture), round (0 to 0.5 of the short side, or "circle"), padding (px or { top, right, bottom, left }) with background, and watermark { url, position, scale (share of the width), opacity }. sizes: [widths] makes one file per width in a ZIP; favicons: true makes the usual set of favicon and app-icon sizes (16 to 512) and an .ico in a ZIP. Metadata such as location in the original is not kept. Only when the person asked for a changed picture.',
   parameters: {
     type: 'object',
     properties: {
@@ -51,6 +51,10 @@ export const CONVERT_IMAGE_TOOL: AgentTool = {
       sizes: { type: 'array', items: { type: 'number' }, maxItems: 40 },
       favicons: { type: 'boolean' },
       colors: { type: 'number' },
+      trace: { type: 'string', enum: ['bw', 'poster', 'photo'] },
+      palette: { type: 'array', items: { type: 'string' }, maxItems: 32 },
+      adaptive: { type: 'boolean' },
+      precision: { type: 'number' },
       filename: { type: 'string', maxLength: 110 },
     },
     required: ['url'],
@@ -91,6 +95,10 @@ export interface ImageRequest {
   sizes: number[];
   favicons: boolean;
   colors: number;
+  trace?: 'bw' | 'poster' | 'photo';
+  palette?: Array<[number, number, number]>;
+  adaptive: boolean;
+  precision: number;
   filename: string;
   notes: string[];
 }
@@ -184,6 +192,10 @@ export function normalizeImage(args: Record<string, unknown>): Checked {
     sizes,
     favicons,
     colors: Math.round(num(args.colors, 2, 32) ?? 16),
+    ...(['bw', 'poster', 'photo'].includes(String(args.trace)) ? { trace: String(args.trace) as 'bw' } : {}),
+    ...(Array.isArray(args.palette) && args.palette.length ? { palette: (args.palette as unknown[]).filter((c): c is string => typeof c === 'string' && /^#[0-9a-f]{6}$/i.test(c.trim())).map(c => [parseInt(c.trim().slice(1, 3), 16), parseInt(c.trim().slice(3, 5), 16), parseInt(c.trim().slice(5, 7), 16)] as [number, number, number]).slice(0, 32) } : {}),
+    adaptive: args.adaptive !== false,
+    precision: Math.round(num(args.precision, 0, 6) ?? 2),
     filename: imageFilename(args.filename, format, favicons || sizes.length > 1),
     notes,
   };

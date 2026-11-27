@@ -49,6 +49,7 @@ const SHOULD: Array<[string, string]> = [
   ['find dentists in leeds on google maps and linkedin company pages, give me the direct search urls', 'known-sites-direct-urls'],
   ['find dental clinics in manchester that need a new website, qualify each as a lead with a reason and give me the contact emails', 'find-and-qualify-local-leads'],
   ['search linkedin and indeed for remote python developer jobs posted this week, compare the salaries and rank them', 'job-search-across-boards'],
+  ['write a cold email sequence to these prospects with an unsubscribe line and make sure it follows gdpr and can-spam', 'draft-compliant-outreach-emails'],
   ['does this site offer webmcp tools for agents, list the registered page tools and call one', 'tools-a-page-offers-an-agent'],
 ];
 

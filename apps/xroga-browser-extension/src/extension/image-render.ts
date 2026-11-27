@@ -309,7 +309,7 @@ export async function convertImage(request: ImageRequest, makeUrl: (blob: Blob) 
     const k = longest > 900 ? 900 / longest : 1;
     const work2 = k < 1 ? surface(surf.canvas.width * k, surf.canvas.height * k) : surf;
     if (k < 1) work2.ctx.drawImage(surf.canvas, 0, 0, work2.canvas.width, work2.canvas.height);
-    const traced = traceImage(work2.ctx.getImageData(0, 0, work2.canvas.width, work2.canvas.height).data, work2.canvas.width, work2.canvas.height, { colors: request.colors });
+    const traced = traceImage(work2.ctx.getImageData(0, 0, work2.canvas.width, work2.canvas.height).data, work2.canvas.width, work2.canvas.height, { colors: request.colors, ...(request.trace ? { preset: request.trace } : {}), ...(request.palette?.length ? { palette: request.palette } : {}), ...(request.trace === 'bw' ? { binary: { adaptive: request.adaptive } } : {}), precision: request.precision });
     notes.push(`traced into ${traced.layers.length} colour layer${traced.layers.length === 1 ? '' : 's'}${traced.background ? ' over a background' : ''}; a photograph becomes a poster of its colours`);
     return done(new TextEncoder().encode(traced.svg), 'image/svg+xml', traced.width, traced.height, 1, 'svg');
   }

@@ -897,9 +897,11 @@ metadata:
   docs: ""
 ---
 - Start from the person's product and who buys it. Write the ideal customer in two or three lines (business type, size signals, place, what they lack) and say it back before searching; the verdicts are judged against it.
-- Search Maps at https://www.google.com/maps/search/<business type> in <place>/ , scroll the list to load more, and read each result (name, rating, review count, address, category). Several nearby towns and several phrasings (dentist, dental clinic) find more than one search.
+- Search Maps at https://www.google.com/maps/search/<business type> in <place>/ , scroll the list to load more, and read each result (name, rating, review count, address, category). One search stops at about 120 listings, so to cover a whole city split it into a grid of map tiles: the same search with the map placed by the address, https://www.google.com/maps/search/<query>/@<latitude>,<longitude>,<zoom>z (zoom 14 to 15 is a neighbourhood), stepping the centre across a 3 by 3 grid of the city; add several phrasings (dentist, dental clinic, orthodontist) and nearby towns. Keep a business only once (by its place link or name plus address) and drop those outside the area.
 - Faster and fuller than opening every place: while the list scrolls, Maps itself fetches batches of about 20 places from an address like https://www.google.com/search?tbm=map&q=<query>&pb=… (seen in the page's network requests; the body starts with )]}' and then JSON). Read one of those responses with the network tools (the request detail) and check what fields it holds (name, address, phone, website, rating, review count, coordinates); if it does, take the whole batch from it and open place pages only for what is missing. If it does not, fall back to the place pages.
-- Open the business page for phone, website and hours. Open the website's home, contact and about pages for an email address and social links; use what is printed there, never a guessed address. A business with no website is a lead of its own kind for someone who sells websites, and one with a website is the target for someone who sells marketing or software: filter by what the person sells.
+- Open the business page for phone, website and hours. Check that the website is theirs: Maps sometimes lists another company's site, so the home page should show the business's phone number or a word of its category; if it shows neither, do not take addresses from it. Then read the home, contact and about pages (in that order) for an email address and social links; use what is printed there, never a guessed address, keep up to three and put one on the business's own domain first. Profile links that belong to the website builder or a booking platform (wix, squarespace, shopify, yelp, opentable and similar) are not the business's.
+- Check an address's domain before trusting it: https://dns.google/resolve?name=<domain>&type=MX with http_get; Status 3 means the domain does not exist (drop the address), no Answer means it has no mail server, and an answer naming google.com or outlook.com says who runs its mail. A business with no website is a lead of its own kind for someone who sells websites, and one with a website is the target for someone who sells marketing or software: filter by what the person sells.
+- Describe the ideal customer as the kind of business or role that fits, not as one imagined person: a target that reads as a checklist of traits turns away real leads for missing a trait the person never meant to require. Say which traits are needed and which are only nice to have.
 - Judge each business against the ideal customer: fit, maybe or no, and one sentence of reason that cites what you saw (reviews few and old, no booking page, site not mobile friendly). Keep the reason; it is the value of the list, and the person can correct the ideal customer to correct the verdicts.
 - Keep the rows as you go in a table (the table tool: add with key website, or name plus address) instead of carrying them in your answer: each page or town adds to the same table, a business seen twice is one row, and the list survives a long task. Remove chains the person did not want with table query. Keep the source address of every row so each can be checked.
 - Deliver a sheet with make_document using fromTable (columns: business, category, address, phone, website, email, rating, reviews, fit, reason, source). Say how many were found, how many fit, and what was not found rather than filling gaps.
@@ -923,7 +925,8 @@ metadata:
 ---
 - Ask what is not given: the role, the place or remote, seniority, pay floor, how recent. Then search more than one board; a single board misses most postings.
 - LinkedIn: https://www.linkedin.com/jobs/search/?keywords=<role>&location=<place>&f_TPR=r<seconds> (f_TPR=r86400 is the last day, r604800 the last week); f_AL=true shows Easy Apply only; distance=<miles>. Signed-out it shows fewer results behind a sign-in wall: use the person's own signed-in tab.
-- Indeed: https://www.indeed.com/jobs?q=<role>&l=<place>&fromage=<days>; other countries use their own domain (uk.indeed.com, in.indeed.com). ZipRecruiter: https://www.ziprecruiter.com/jobs-search?search=<role>&location=<place>&days=<days>. Glassdoor and Naukri, SEEK, Bayt follow the same keyword and place pattern on their own sites. If a board shows a bot check or sign-in, say so and continue with the others.
+- Google Jobs is the best single start because it gathers postings from many boards, with filters for job type and date posted: https://www.google.com/search?q=<role>+jobs+in+<place>&udm=8 (scroll the list on the left to load more; each posting links to the board it came from).
+- Indeed: https://www.indeed.com/jobs?q=<role>&l=<place>&fromage=<days>; SEEK (Australia and New Zealand, JobStreet and Jobsdb in Asia) and Bayt (Gulf and Middle East) and Naukri (India) follow the same keyword and place pattern on their own sites; Bayt lists https://www.bayt.com/en/<country>/jobs/<role>-jobs-in-<city>/. other countries use their own domain (uk.indeed.com, in.indeed.com). ZipRecruiter: https://www.ziprecruiter.com/jobs-search?search=<role>&location=<place>&days=<days>. Glassdoor and Naukri, SEEK, Bayt follow the same keyword and place pattern on their own sites. If a board shows a bot check or sign-in, say so and continue with the others.
 - Read each posting page for the pay and the type before judging it. Normalise pay to one period and one currency name (yearly, monthly, hourly): 2080 hours a year, 12 months, and say the conversion; leave pay empty when it is not shown rather than estimating it.
 - One row per posting with: title, company, place, remote (yes, hybrid, no), type (full time, part time, contract, internship), the pay text as written, date posted, source board and link. Keep the rows in a table (the table tool, key link) as you go, board by board; the data_ops step pay then turns the pay text into pay_min, pay_max, pay_interval, pay_currency and a comparable pay_year. Remove duplicates by company plus title plus place across boards, keeping the link of each.
 - Rank against what the person said (role fit, place, pay, seniority) and give a one-line reason per top row; flag postings that look old, repost often, or hide the employer.
@@ -931,6 +934,29 @@ metadata:
 - Applying is the person's decision: do not submit an application, upload their CV, or message a recruiter without their approval.
 Verify: each listed posting's page showed the title, company and place that the row states.
 Approvals: reading boards is free; applying, uploading a resume and messaging need approval first.`,
+  },
+  {
+    verified: 'curated',
+    md: `---
+name: draft-compliant-outreach-emails
+description: Write cold or follow-up business emails that are honest, targeted and lawful to send, and prepare them for the person to send; never send without approval.
+license: Xroga-internal
+metadata:
+  domain: general
+  hosts: ""
+  keywords: cold email outreach prospecting follow up sequence unsubscribe gdpr can-spam casl pecr compliance sender subject line b2b opt-out suppression list email campaign
+  requires: browser
+  risk: write
+  docs: ""
+---
+- Write from the person's real identity and reason: who they are, what they offer, why this recipient (one specific fact seen on their site or page), one clear ask. Short: under 120 words, a subject that says what the mail is about and does not mislead, no invented familiarity, no fake reply or forward marks, no false urgency.
+- Every mail names the sender and a real way to reach them, and gives a plain way to stop further mail (a line such as "Reply stop and I will not write again"). Keep a list of the people who said stop and check every new list against it before anything is drafted.
+- The rules depend on where the sender and the recipient are, and are the person's to follow: in the US, CAN-SPAM (truthful headers and subject, a postal address, an opt-out honoured within 10 days); in the EU, UK and Switzerland, data-protection and e-privacy law (business addresses need a legitimate interest and an easy objection; some countries want consent even for business mail); Canada (CASL, consent or a narrow exemption); Australia (the Spam Act, consent). Ask the person which country they send from and to, say plainly that this is not legal advice, and when it matters suggest a lawyer.
+- Use only addresses that are printed on the recipient's own pages or given by them; do not guess addresses, do not buy lists, do not use a person's private address. A wrong or stale address belongs to someone else: say so and do not write.
+- Follow-ups: at most two or three, days apart, each adding something new (a case, a number, a question), and none after a stop.
+- Prepare the mails as drafts in a sheet or document (make_document) with the recipient, source page, subject and body, or in the person's own mail window as a draft. Sending, scheduling or entering the recipient's data into a form needs the person's approval each time; never send in bulk or from an account the person did not name.
+Verify: every recipient address appears on a page you opened, each draft has the sender identity and the opt-out line, and no one on the stop list is in the batch.
+Approvals: drafting is free; sending needs approval per message or per batch the person has seen.`,
   },
   {
     verified: 'curated',

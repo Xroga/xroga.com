@@ -131,9 +131,10 @@ function chooseStraight(loop: Array<[number, number]>, next: number[]): number {
  * the vertex as the control point of a quadratic curve) and a vertex that turns sharply (more than `cornerDegrees`) stays a corner: logos keep their corners, curves lose their facets.
  * This is the corner idea of vtracer's spline mode (corner threshold), written fresh.
  */
-export function loopPath(loop: ReadonlyArray<readonly [number, number]>, curves = true, cornerDegrees = 60): string {
+export function loopPath(loop: ReadonlyArray<readonly [number, number]>, curves = true, cornerDegrees = 60, precision = 2): string {
   const n = loop.length;
-  const r = (v: number) => Math.round(v * 100) / 100;
+  const scale = 10 ** Math.max(0, Math.min(6, precision));
+  const r = (v: number) => Math.round(v * scale) / scale;
   if (!curves || n < 4) return 'M' + loop.map(p => `${p[0]} ${p[1]}`).join('L') + 'Z';
   const mid = (a: readonly [number, number], b: readonly [number, number]): [number, number] => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
   const smooth = loop.map((v, i) => {
@@ -167,13 +168,84 @@ export function loopPath(loop: ReadonlyArray<readonly [number, number]>, curves 
   return d + 'Z';
 }
 
+/** sRGB (0 to 255) as OKLab: distances between colours there follow what the eye sees far better than distances in RGB (the colour space vtracer's colour fitting uses). */
+export function toOklab(r: number, g: number, b: number): [number, number, number] {
+  const lin = (c: number) => {
+    const v = c / 255;
+    return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+  };
+  const R = lin(r);
+  const G = lin(g);
+  const B = lin(b);
+  const l = Math.cbrt(0.4122214708 * R + 0.5363325363 * G + 0.0514459929 * B);
+  const m = Math.cbrt(0.2119034982 * R + 0.6806995451 * G + 0.1073969566 * B);
+  const s = Math.cbrt(0.0883024619 * R + 0.2817188376 * G + 0.6299787005 * B);
+  return [0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s, 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s, 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s];
+}
+
+/**
+ * Which pixels are ink, for line art and scans (vtracer's binary mode): a pixel is ink when it is darker than `fixed`, or, with `adaptive`, when it is more than `t` percent below the mean of the
+ * window around it (Bradley-Roth), which copes with uneven light and shadow that defeat one global cut-off. One pass over a summed-area table, so the window can be any size.
+ */
+export function binaryMask(rgba: Uint8ClampedArray | Uint8Array, width: number, height: number, options: { threshold?: number; adaptive?: boolean; window?: number; t?: number } = {}): Uint8Array {
+  const n = width * height;
+  const grey = new Float64Array(n);
+  for (let i = 0; i < n; i++) grey[i] = rgba[i * 4 + 3]! < 128 ? 255 : (rgba[i * 4]! + rgba[i * 4 + 1]! + rgba[i * 4 + 2]!) / 3;
+  const mask = new Uint8Array(n);
+  if (!options.adaptive) {
+    const cut = options.threshold ?? 128;
+    for (let i = 0; i < n; i++) mask[i] = grey[i]! < cut ? 1 : 0;
+    return mask;
+  }
+  const W = width + 1;
+  const sat = new Float64Array(W * (height + 1));
+  for (let y = 0; y < height; y++) {
+    let row = 0;
+    for (let x = 0; x < width; x++) {
+      row += grey[y * width + x]!;
+      sat[(y + 1) * W + x + 1] = sat[y * W + x + 1]! + row;
+    }
+  }
+  const half = Math.max(1, Math.floor((options.window && options.window > 0 ? options.window : Math.round(Math.min(width, height) / 8)) / 2));
+  const t = 1 - (options.t ?? 15) / 100;
+  for (let y = 0; y < height; y++) {
+    const y0 = Math.max(0, y - half);
+    const y1 = Math.min(height - 1, y + half);
+    for (let x = 0; x < width; x++) {
+      const x0 = Math.max(0, x - half);
+      const x1 = Math.min(width - 1, x + half);
+      const area = (x1 - x0 + 1) * (y1 - y0 + 1);
+      const sum = sat[(y1 + 1) * W + x1 + 1]! - sat[y0 * W + x1 + 1]! - sat[(y1 + 1) * W + x0]! + sat[y0 * W + x0]!;
+      mask[y * width + x] = grey[y * width + x]! * area < sum * t ? 1 : 0;
+    }
+  }
+  return mask;
+}
+
+export type TracePreset = 'bw' | 'poster' | 'photo';
+/** Starting points for the common kinds of input (vtracer's presets): line art, flat colour, and photographs (a coarse poster with the specks filtered). */
+export const TRACE_PRESETS: Record<TracePreset, { binary?: boolean; colors: number; epsilon: number; minAreaShare: number }> = {
+  bw: { binary: true, colors: 2, epsilon: 0.8, minAreaShare: 0.00002 },
+  poster: { colors: 24, epsilon: 0.8, minAreaShare: 0.00004 },
+  photo: { colors: 12, epsilon: 1.8, minAreaShare: 0.0004 },
+};
+
 const hex = (c: readonly number[]) => '#' + c.map(v => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0')).join('');
 
 /** Traces RGBA pixels (width × height) into layers and an SVG. `colors` is the palette size, `epsilon` how far a simplified outline may stray (pixels), `minArea` drops specks. */
-export function traceImage(rgba: Uint8ClampedArray | Uint8Array, width: number, height: number, options: { colors?: number; epsilon?: number; minArea?: number; curves?: boolean; cornerDegrees?: number } = {}): Traced {
-  const colors = Math.max(2, Math.min(32, options.colors ?? 16));
-  const epsilon = options.epsilon ?? 1;
-  const minArea = options.minArea ?? Math.max(4, Math.round(width * height * 0.00005));
+export function traceImage(rgba: Uint8ClampedArray | Uint8Array, width: number, height: number, options: { colors?: number; epsilon?: number; minArea?: number; curves?: boolean; cornerDegrees?: number; preset?: TracePreset; palette?: Array<[number, number, number]>; binary?: { threshold?: number; adaptive?: boolean; window?: number; t?: number }; precision?: number } = {}): Traced {
+  const preset = options.preset ? TRACE_PRESETS[options.preset] : undefined;
+  const colors = Math.max(2, Math.min(32, options.colors ?? preset?.colors ?? 16));
+  const epsilon = options.epsilon ?? preset?.epsilon ?? 1;
+  const minArea = options.minArea ?? Math.max(4, Math.round(width * height * (preset?.minAreaShare ?? 0.00005)));
+  if (options.binary || (preset?.binary && !options.palette)) {
+    // line art: the ink is one black layer on nothing (the page stays transparent)
+    const mask = binaryMask(rgba, width, height, options.binary ?? { adaptive: true });
+    const loops = traceMask(mask, width, height).filter(l => polygonArea(l) >= minArea).map(l => simplifyLoop(l, epsilon)).filter(l => l.length >= 3);
+    const layers: TraceLayer[] = loops.length ? [{ color: [0, 0, 0], loops, area: mask.reduce((a, b) => a + b, 0) }] : [];
+    const d = layers.map(l => l.loops.map(loop => loopPath(loop, options.curves !== false, options.cornerDegrees ?? 60, options.precision)).join('')).join('');
+    return { width, height, background: null, layers, svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">${layers.length ? `<path d="${d}" fill="#000000" fill-rule="evenodd"/>` : ''}</svg>` };
+  }
   const opaque = new Uint8Array(rgba.length);
   for (let i = 0; i < rgba.length; i += 4) {
     // transparent pixels are left out of the palette
@@ -182,7 +254,8 @@ export function traceImage(rgba: Uint8ClampedArray | Uint8Array, width: number, 
     opaque[i + 2] = rgba[i + 2]!;
     opaque[i + 3] = 255;
   }
-  const palette = medianCutPalette(opaque, colors);
+  const palette = options.palette?.length ? options.palette.map(c => [...c] as [number, number, number]) : medianCutPalette(opaque, colors);
+  const ok = palette.map(c => toOklab(c[0], c[1], c[2]));
   const index = new Int16Array(width * height);
   const counts = new Array<number>(palette.length).fill(0);
   for (let p = 0; p < width * height; p++) {
@@ -195,9 +268,10 @@ export function traceImage(rgba: Uint8ClampedArray | Uint8Array, width: number, 
     const b = rgba[p * 4 + 2]!;
     let best = 0;
     let bd = Infinity;
+    const lab = toOklab(r, g, b);
     for (let i = 0; i < palette.length; i++) {
-      const c = palette[i]!;
-      const d = (c[0] - r) ** 2 * 0.3 + (c[1] - g) ** 2 * 0.59 + (c[2] - b) ** 2 * 0.11;
+      const c = ok[i]!;
+      const d = (c[0] - lab[0]) ** 2 + (c[1] - lab[1]) ** 2 + (c[2] - lab[2]) ** 2;
       if (d < bd) {
         bd = d;
         best = i;
@@ -231,7 +305,7 @@ export function traceImage(rgba: Uint8ClampedArray | Uint8Array, width: number, 
   // big areas first so small shapes lie over them
   layers.sort((a, b) => b.area - a.area);
   const background = bgIndex >= 0 ? palette[bgIndex]! : null;
-  const path = (l: TraceLayer) => l.loops.map(loop => loopPath(loop, options.curves !== false, options.cornerDegrees ?? 60)).join('');
+  const path = (l: TraceLayer) => l.loops.map(loop => loopPath(loop, options.curves !== false, options.cornerDegrees ?? 60, options.precision)).join('');
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">${background ? `<rect width="${width}" height="${height}" fill="${hex(background)}"/>` : ''}${layers.map(l => `<path d="${path(l)}" fill="${hex(l.color)}" fill-rule="evenodd"/>`).join('')}</svg>`;
   return { width, height, background, layers, svg };
 }

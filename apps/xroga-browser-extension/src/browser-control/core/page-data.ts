@@ -163,7 +163,8 @@ var nets={'twitter.com':'x','x.com':'x','facebook.com':'facebook','instagram.com
 Array.prototype.forEach.call(document.querySelectorAll('a[href]'),function(a){
   var u; try{ u=new URL(a.href); }catch(e){ return; }
   var h=u.hostname.replace(/^(www|m|mobile)\\./,''); var net=nets[h]; if(!net) return;
-  if(u.pathname.length<2||/^\\/(share|sharer|intent|login|signup|dialog|plugins|home)\\b/.test(u.pathname)) return;
+  if(u.pathname.length<2||/^\\/(share|sharer|intent|login|signup|dialog|plugins|home|sharer\\.php|share\\.php|tr|policies|policy|privacy|legal|help|about|settings|hashtag|explore|search|watch|events|groups|marketplace|stories|reel|reels|p|i)(\\b|\\/|$)/i.test(u.pathname)) return;
+  var handle=u.pathname.split('/')[1]||''; if(/^(squarespace|wix|wixsite|shopify|wordpress|wordpressdotcom|godaddy|weebly|webflow|hubspot|mailchimp|yelp|tripadvisor|opentable|doordash|ubereats|grubhub|toasttab|squareup)$/i.test(handle)) return;
   var list=o.social[net]||(o.social[net]=[]); var s=u.origin+u.pathname.replace(/\\/$/,''); if(list.indexOf(s)<0&&list.length<5) list.push(s);
 });
 Array.prototype.forEach.call(document.querySelectorAll('link[rel="alternate"][type*="rss"],link[rel="alternate"][type*="atom"]'),function(l){ if(l.href&&o.feeds.indexOf(l.href)<0) o.feeds.push(l.href); });
