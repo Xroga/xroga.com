@@ -55,6 +55,7 @@ import './make-document';
 import './convert-image';
 import './upscale-image';
 import './plot-video';
+import './tables';
 import './convert';
 import './record-screen';
 import './infinite-scroll';

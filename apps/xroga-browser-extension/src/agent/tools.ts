@@ -235,6 +235,8 @@ export function kindOf(tool: string, args: Record<string, unknown>): ToolKind {
   if (tool === 'browser_data') return ['history_search', 'bookmarks_search', 'tabs_all', 'tabs_duplicates'].includes(String(args.action)) ? 'read' : 'mutate';
   if (tool === 'save_file' || tool === 'save_page_pdf' || tool === 'convert_media') return 'state';
   // starting and stopping a recording changes no page; stopping saves a file, starting and status do not
+  // the named tables are held on this device and touch no page
+  if (tool === 'table') return 'read';
   // making a document writes a file in Downloads, after the person agrees
   if (tool === 'make_document' || tool === 'convert_image') return 'state';
   if (tool === 'record_screen') return args.action === 'stop' ? 'state' : 'read';

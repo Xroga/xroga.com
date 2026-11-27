@@ -27,6 +27,8 @@ import { COMPOSE_TOOL, composeFilename, describeSpec, normalizeSpec } from '@src
 import { CONVERT_TOOL, convertMime, describeConvert, normalizeConvert } from '@src/agent/convert-spec';
 import { RECORD_SCREEN_TOOL, describeRecording, recordFilename } from '@src/agent/record-tool';
 import { CONVERT_IMAGE_TOOL, describeImageRequest, imageMime, normalizeImage } from '@src/agent/image-spec';
+import { TABLE_TOOL, TableStore, tableAsSheet } from '@src/agent/table-store';
+import { removeAllTables, removeTables, tablePersistence } from './table-persist';
 import { DOCUMENT_MIME, MAKE_DOCUMENT_TOOL, bytesToBase64, describeDocument, makeDocumentBytes, normalizeDocument } from '@src/agent/document-tool';
 import { FREE_TIMES_TOOL } from '@src/agent/free-times';
 import { AgentLoop, REASONING_DROPPED, STOPPED_BY_USER, STOPPED_NOTE } from '@src/agent/loop';
@@ -970,6 +972,7 @@ export class RunManager {
     await deleteKeepingChoices(async () => {
       for (const c of await listConversations()) await this.#delete(c.id, false);
       await deleteEverything();
+      await removeAllTables();
       await clearShortcuts();
       // The old conversations go first: with them still there and the upgrade record gone, a worker start in between
       // would run the move again.
@@ -1007,6 +1010,7 @@ export class RunManager {
     const showing = [...this.connections].filter(c => c.conversationId === conversationId);
     await this.scope.release(conversationId, closeAgentTabs);
     await deleteConversation(conversationId);
+    await removeTables(conversationId);
     await removeLive(conversationId);
     for (const connection of showing) {
       if (connection.tabId !== null) await this.#subscribe(connection, connection.tabId, null);
@@ -1365,7 +1369,17 @@ export class RunManager {
       return { text: `convert_image · saved "${saved.name}" in Downloads: ${describeImageRequest(wanted)}; ${made.files > 1 ? `${made.files} files in a ZIP, ` : `${made.width}×${made.height}, `}${(made.bytes / 1024).toFixed(0)} KB, made in ${(made.ms / 1000).toFixed(1)} s.${made.notes.length ? ` Note: ${made.notes.join('; ')}.` : ''}`, isError: false };
     }
     if (call.toolName === 'make_document') {
-      const checked = normalizeDocument(args);
+      // a sheet may name a table kept by the table tool: its rows go in without passing through the model
+      let docArgs: Record<string, unknown> = args;
+      if (Array.isArray(args.sheets) && (args.sheets as Array<Record<string, unknown>>).some(sh => typeof sh?.fromTable === 'string')) {
+        try {
+          const store = new TableStore(await tablePersistence(conversationId).load());
+          docArgs = { ...args, sheets: (args.sheets as Array<Record<string, unknown>>).map(sh => (typeof sh?.fromTable === 'string' ? { ...sh, ...tableAsSheet(store, sh.fromTable, { fields: Array.isArray(sh.fields) ? (sh.fields as unknown[]).map(String) : undefined, sheetName: typeof sh.name === 'string' ? sh.name : undefined }) } : sh)) };
+        } catch (error) {
+          return { text: `error INVALID_ARGUMENT (nothing made)\n${error instanceof Error ? error.message : String(error)}`, isError: true };
+        }
+      }
+      const checked = normalizeDocument(docArgs);
       if (!checked.ok) return { text: `error INVALID_ARGUMENT (nothing made)\n${checked.errors.join('\n')}`, isError: true };
       const wanted = checked.request;
       const canSave = () => chrome.permissions.contains({ permissions: ['downloads'] }).catch(() => false);
@@ -1977,8 +1991,8 @@ export class RunManager {
           pointAt,
           vision: model.profile.vision, localScreenshots: !!canonical,
           agentTools: isWorker
-            ? [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, PLAN_TOOL, RECORD_DEMO_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL, DATA_OPS_TOOL, MACRO_TOOL, BROWSER_DATA_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, SAVE_SKILL_TOOL, READ_PDF_TOOL, READ_FILE_TOOL, SITE_MAP_TOOL, TRANSCRIBE_TOOL, CHAPTERS_TOOL, MEDIA_TOOL, COMPOSE_TOOL, CONVERT_TOOL, RECORD_SCREEN_TOOL, MAKE_DOCUMENT_TOOL, CONVERT_IMAGE_TOOL, WEBMCP_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, MEMORY_TOOL, LIGHTHOUSE_TOOL] : [])]
-            : [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, PLAN_TOOL, RECORD_DEMO_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL, DATA_OPS_TOOL, MACRO_TOOL, BROWSER_DATA_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, SAVE_SKILL_TOOL, READ_PDF_TOOL, READ_FILE_TOOL, SITE_MAP_TOOL, TRANSCRIBE_TOOL, CHAPTERS_TOOL, MEDIA_TOOL, COMPOSE_TOOL, CONVERT_TOOL, RECORD_SCREEN_TOOL, MAKE_DOCUMENT_TOOL, CONVERT_IMAGE_TOOL, WEBMCP_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, SITE_SCAN_TOOL, MEMORY_TOOL, LIGHTHOUSE_TOOL, REPO_RUN_TOOL, CHANGE_REPO_TOOL, PYTHON_REPL_TOOL] : []), ...(canonical?.plugins ? [...PLUGIN_TOOLS, PLUGIN_CHAIN_TOOL, PLUGIN_CONNECT_TOOL] : []), ...PARALLEL_TOOLS],
+            ? [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, PLAN_TOOL, RECORD_DEMO_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL, DATA_OPS_TOOL, MACRO_TOOL, BROWSER_DATA_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, SAVE_SKILL_TOOL, READ_PDF_TOOL, READ_FILE_TOOL, SITE_MAP_TOOL, TRANSCRIBE_TOOL, CHAPTERS_TOOL, MEDIA_TOOL, COMPOSE_TOOL, CONVERT_TOOL, RECORD_SCREEN_TOOL, MAKE_DOCUMENT_TOOL, CONVERT_IMAGE_TOOL, TABLE_TOOL, WEBMCP_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, MEMORY_TOOL, LIGHTHOUSE_TOOL] : [])]
+            : [DELEGATE_TOOL, BATCH_TOOL, SCRIPT_CONSOLE_TOOL, MENU_PATH_TOOL, SITE_ACTION_TOOL, PLAN_TOOL, RECORD_DEMO_TOOL, FREE_TIMES_TOOL, CALCULATE_TOOL, DATA_OPS_TOOL, MACRO_TOOL, BROWSER_DATA_TOOL, FIND_SKILL_TOOL, READ_SKILL_TOOL, SAVE_SKILL_TOOL, READ_PDF_TOOL, READ_FILE_TOOL, SITE_MAP_TOOL, TRANSCRIBE_TOOL, CHAPTERS_TOOL, MEDIA_TOOL, COMPOSE_TOOL, CONVERT_TOOL, RECORD_SCREEN_TOOL, MAKE_DOCUMENT_TOOL, CONVERT_IMAGE_TOOL, TABLE_TOOL, WEBMCP_TOOL, CONFIRM_DOWNLOAD_TOOL, ...(canonical ? [HTTP_GET_TOOL, SITE_SCAN_TOOL, MEMORY_TOOL, LIGHTHOUSE_TOOL, REPO_RUN_TOOL, CHANGE_REPO_TOOL, PYTHON_REPL_TOOL] : []), ...(canonical?.plugins ? [...PLUGIN_TOOLS, PLUGIN_CHAIN_TOOL, PLUGIN_CONNECT_TOOL] : []), ...PARALLEL_TOOLS],
         });
         const fullToolList = noSkills ? allTools.filter(t => !skillTool.has(t.name)) : allTools;
         // A request that only reads starts with the small tool list; the model switches to the full one if it needs to act.
@@ -2010,6 +2024,7 @@ export class RunManager {
           conversationId,
           runId,
           startedAt: record.startedAt,
+          tables: tablePersistence(conversationId),
           model,
           system:
             agentSystemPrompt({

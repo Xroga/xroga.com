@@ -1,11 +1,12 @@
 // `data_ops`: exact list work on rows the agent collected from pages (prospects, products, contacts, search results): remove duplicates, filter, sort, pick columns,
 // fill a template per row, group and count. The model decides what to do; this does it without miscounting or silently dropping a row, and says what it dropped.
 // Pure and deterministic; it never evaluates code.
+import { parsePay } from './pay';
 
 export type Row = Record<string, string | number | boolean | null>;
 
 export interface DataStep {
-  op: 'dedupe' | 'filter' | 'sort' | 'pick' | 'template' | 'group' | 'limit' | 'validate' | 'csv';
+  op: 'dedupe' | 'filter' | 'sort' | 'pick' | 'template' | 'group' | 'limit' | 'validate' | 'csv' | 'pay';
   /** dedupe / sort / group: the field or fields to look at. */
   by?: string | string[];
   /** dedupe: also ignore case, punctuation, a leading www. or protocol, a trailing slash and +tags in an email. */
@@ -28,9 +29,9 @@ export interface DataStep {
   drop?: boolean;
 }
 
-export const MAX_ROWS = 100_000;
+export const MAX_ROWS = 1_000_000;
 const MAX_STEPS = 200;
-const OPS = new Set(['dedupe', 'filter', 'sort', 'pick', 'template', 'group', 'limit', 'validate', 'csv']);
+const OPS = new Set(['dedupe', 'filter', 'sort', 'pick', 'template', 'group', 'limit', 'validate', 'csv', 'pay']);
 
 const SHAPES: Record<NonNullable<DataStep['kind']>, (v: string) => boolean> = {
   email: v => /^[^\s@<>()]+@[^\s@<>()]+\.[A-Za-z]{2,}$/.test(v),
@@ -175,6 +176,17 @@ export function runDataOps(input: Row[], steps: DataStep[]): DataResult {
     } else if (s.op === 'csv') {
       csv = toCsv(rows, keysOf(s.fields));
       notes.push(`${at}: ${rows.length} rows written as CSV below`);
+    } else if (s.op === 'pay') {
+      // pay written as text ("$25-$30 an hour", "£45k a year") becomes numbers that compare: minimum, maximum, period, currency and the yearly equivalent
+      if (!s.field) throw new Error(`${at}: field names the column that holds the pay text`);
+      const p = s.as || 'pay';
+      let read = 0;
+      rows = rows.map(r => {
+        const x = parsePay(r[s.field!]);
+        if (x) read++;
+        return { ...r, [`${p}_min`]: x?.min ?? null, [`${p}_max`]: x?.max ?? null, [`${p}_interval`]: x?.interval ?? null, [`${p}_currency`]: x?.currency ?? null, [`${p}_year_min`]: x?.yearlyMin ?? null, [`${p}_year_max`]: x?.yearlyMax ?? null, [`${p}_guessed`]: x ? x.guessed : null, [`${p}_year`]: x ? Math.round(((x.yearlyMin ?? x.yearlyMax!) + (x.yearlyMax ?? x.yearlyMin!)) / 2) : null };
+      });
+      notes.push(`${at}: read the pay of ${read} of ${rows.length} rows from ${s.field} into ${p}_min, ${p}_max, ${p}_interval, ${p}_currency and the yearly ${p}_year_min/${p}_year_max and ${p}_year (one comparable figure: the middle of the range)${read < rows.length ? ` (${rows.length - read} had no amount and are empty)` : ''}`);
     } else if (s.op === 'limit') {
       const n = Math.floor(Number(s.n));
       if (!(n >= 0)) throw new Error(`${at}: n is a number of rows to keep`);
@@ -190,7 +202,7 @@ export const DATA_OPS_TOOL = {
   source: 'agent' as const,
   group: 'working' as const,
   description:
-    'Exact list work on rows you collected: dedupe, filter, sort, pick, template, group, limit, validate (field, kind email|url|phone|number|notempty, optional drop); it reports every row it drops. steps run in order, e.g. [{"op":"dedupe","by":"email","loose":true},{"op":"filter","field":"country","test":"eq","value":"UK"},{"op":"sort","by":"score","order":"desc"}]; template needs as and text with {field}; csv (optional fields) ends the steps with the rows as CSV text to paste in your answer or save_file.',
+    'Exact list work on rows you collected: dedupe, filter, sort, pick, template, group, limit, validate (field, kind email|url|phone|number|notempty, optional drop), pay (field: the pay text of a job or price list becomes pay_min, pay_max, pay_interval, pay_currency and the yearly equivalents; as: column prefix); it reports every row it drops. steps run in order, e.g. [{"op":"dedupe","by":"email","loose":true},{"op":"filter","field":"country","test":"eq","value":"UK"},{"op":"sort","by":"score","order":"desc"}]; template needs as and text with {field}; csv (optional fields) ends the steps with the rows as CSV text to paste in your answer or save_file.',
   parameters: {
     type: 'object',
     properties: {

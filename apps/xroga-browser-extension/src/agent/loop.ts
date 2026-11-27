@@ -2,6 +2,7 @@
 // hooks. The worker owns the run; Chrome is reached through the ports.
 import { runCalculate } from './calculate';
 import { runDataOpsTool } from './data-ops';
+import { TableStore, runTableTool, type TableMap } from './table-store';
 import { searchUrlToQuery } from './search-redirect';
 import { judgeTask } from './task-judge';
 import { Coach } from './coach';
@@ -136,6 +137,8 @@ export interface Request {
 export const NO_PROGRESS_STALLS = 4;
 
 export interface LoopOptions {
+  /** Where the run's named tables are kept (the table tool); without it they live only for the run. */
+  tables?: { load(): Promise<TableMap>; save(tables: TableMap): Promise<void> };
   /** How hard the model is asked to think: told, after every tool call, whether the run stalled. The server decides what is allowed. */
   effort?: { noteTurn(stalled: boolean, signal?: { error?: boolean; uncertain?: boolean; verify?: boolean }): void };
   /** Where the run's time goes; measured only, never used to decide anything. */
@@ -2126,6 +2129,7 @@ Routine "${name}" did not run through: the site may have changed. Take a snapsho
   #poolNoted = false;
   /** Search-results addresses already answered with their results: the same address again opens the page. */
   #searchServed = new Set<string>();
+  #tableStore: TableStore | undefined;
   /** The tables of the last extract_rows, as rows of text keyed by column, and the rows data_ops last produced: the working set of list work. */
   #extracted: Array<Array<Record<string, string | number | boolean | null>>> = [];
   #workingRows: Array<Record<string, string | number | boolean | null>> | undefined;
@@ -2850,6 +2854,19 @@ ${renderSkill(top)}`);
       outcome = await this.#skillTool(call, kind, args);
     } else if (call.toolName === 'site_action') {
       outcome = await this.#runSiteAction(call, kind, args);
+    } else if (call.toolName === 'table') {
+      try {
+        this.#tableStore ??= new TableStore(await (this.options.tables?.load() ?? Promise.resolve({})).catch(() => ({})));
+        const r = runTableTool(this.#tableStore, args as Record<string, unknown>, { extracted: this.#extracted, working: this.#workingRows });
+        if (r.rows) this.#workingRows = r.rows;
+        if (r.changed) {
+          await this.options.tables?.save(this.#tableStore.tables);
+          this.#tableStore.dirty = false;
+        }
+        outcome = { call, kind, isError: r.isError, text: r.text };
+      } catch (error) {
+        outcome = { call, kind, isError: true, text: 'error: the table could not be kept (' + (error instanceof Error ? error.message : String(error)).slice(0, 200) + ')' };
+      }
     } else if (call.toolName === 'data_ops') {
       const r = runDataOpsTool(args as never, { tables: this.#extracted, current: this.#workingRows });
       if (r.rows) this.#workingRows = r.rows;

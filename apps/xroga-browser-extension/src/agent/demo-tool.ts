@@ -3,6 +3,7 @@
 // so a later run on the same site can list and reuse them. Values typed in the demonstration are examples, not instructions: a replay uses the values of the
 // new request. Nothing leaves the device; secrets are never recorded.
 import { demoLine } from '@src/browser-control/core/tools/demo';
+import { describeVariables, findVariables } from './variable-hints';
 
 export const DEMOS_KEY = 'xroga_demos_v1';
 const MAX_DEMOS = 50;
@@ -61,5 +62,6 @@ export function renderDemo(name: string, steps: SavedDemo['steps']): string {
     `Demonstration "${name}" (${steps.length} steps). Values are examples from the demonstration; use the values of the current request:`,
     ...steps.map((s, i) => `${i + 1}. ${demoLine(s)}`),
     'To repeat it, use batch with the same role and name targets (row context where shown), checking the result after the last step.',
-  ].join('\n');
+    describeVariables(findVariables(steps)),
+  ].filter(Boolean).join('\n');
 }

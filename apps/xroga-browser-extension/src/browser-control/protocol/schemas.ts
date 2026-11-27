@@ -63,7 +63,7 @@ const readCommon = {
     .optional()
     .describe('Human-readable purpose, shown to the user and kept in the audit log'),
   // Positive: Puppeteer reads a navigation timeout of 0 as no deadline at all.
-  timeoutMs: z.number().int().min(1).max(120_000).optional(),
+  timeoutMs: z.number().int().min(1).max(3_600_000).optional(),
 };
 const actionCommon = {
   ...readCommon,
@@ -219,7 +219,7 @@ export const WaitArgsSchema = z.strictObject({
     .optional()
     .describe('Wait until the target reads this (value or text; matches is a regex)'),
   url: z.string().optional(),
-  ms: z.number().int().min(0).max(60_000).optional(),
+  ms: z.number().int().min(0).max(3_600_000).optional(),
 });
 
 export const DemoArgsSchema = z.strictObject({
@@ -323,7 +323,7 @@ export const AskUserArgsSchema = z.strictObject({
   tabId: readCommon.tabId,
   message: z.string().min(1).max(2000),
   kind: z.enum(['takeover', 'input']),
-  timeoutMs: z.number().int().min(1000).max(900_000).optional(),
+  timeoutMs: z.number().int().min(1000).max(3_600_000).optional(),
 });
 
 export type Target = z.infer<typeof TargetSchema>;
