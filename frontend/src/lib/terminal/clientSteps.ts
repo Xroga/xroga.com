@@ -22,12 +22,12 @@ export function thoughtFrame(
 
 export const READING = 'Thinking';
 
-/** Rows every turn has. A run made only of these did no work worth listing. */
+/** Rows every turn has. A run made only of these, or of old written notes, did no work worth listing. */
 const ROUTINE_ROW = /(?:client-read|client-thought|preparing-answer|still-working)$/;
 
-export function isRoutineTurn(rows: ReadonlyArray<{ id: string; label: string; kind?: string; status?: string; note?: unknown; sources?: readonly unknown[] }>): boolean {
-  return rows.every(row => !row.note && !row.sources?.length && row.status !== 'error'
-    && (row.kind === 'respond' || ROUTINE_ROW.test(row.id) || /^ready$/i.test(row.label)));
+export function isRoutineTurn(rows: ReadonlyArray<{ id: string; label: string; kind?: string; status?: string; note?: unknown; planStep?: boolean; sources?: readonly unknown[] }>): boolean {
+  return rows.every(row => !row.planStep && !row.sources?.length && row.status !== 'error'
+    && (Boolean(row.note) || row.kind === 'respond' || ROUTINE_ROW.test(row.id) || /^ready$/i.test(row.label)));
 }
 
 /**

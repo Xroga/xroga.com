@@ -107,10 +107,8 @@ export interface ActivityTimelineProps {
 
 export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel = 'Starting request', note, processing, stream = [] }: ActivityTimelineProps) {
   const [chosenOpen, setOpen] = useState<boolean | null>(null);
-  // A run watched live keeps its stream on screen when it finishes; saved history starts folded.
-  const [watched] = useState(() => model.state === 'working' || model.state === 'waiting');
-  const onlyThinking = stream.every(entry => entry.type === 'step' && /:client-(?:read|thought)$/.test(entry.id));
-  const open = chosenOpen ?? (watched && stream.length > 0 && !onlyThinking);
+  // Finished work folds to one line, so the answer is what is read. It opens on request.
+  const open = chosenOpen ?? false;
   const [streamHidden, setStreamHidden] = useState(false);
   const openRows = useOpenRows();
   const [showAll, setShowAll] = useState(false);

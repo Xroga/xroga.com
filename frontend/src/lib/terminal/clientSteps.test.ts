@@ -46,7 +46,7 @@ test('the mechanical reading of a request is not shown', () => {
   assert.equal(rows.length, 0);
 });
 
-test('each request reads in its own words and keeps both lines as history', () => {
+test('each request reads in its own words, and the finished stream drops the filler line', () => {
   assert.equal(workingText({ goalContract: { deliverables: [{ description: 'A concise four-step launch checklist.' }] } }), 'Preparing: A concise four-step launch checklist');
   assert.equal(workingText({ goalContract: { desiredOutcome: 'Python palindrome function' } }), 'Preparing: Python palindrome function');
   assert.equal(workingText({ goalContract: { desiredOutcome: 'HTML page' } }), 'Preparing: HTML page');
@@ -57,7 +57,7 @@ test('each request reads in its own words and keeps both lines as history', () =
     thoughtFrame('running', 'Preparing a comparison table'),
     thoughtFrame('completed', thoughtDone(8000).text),
   ]);
-  assert.deepEqual(buildProcessingStream(rows, false).map(e => e.text), ['Read your message', 'Thought for 8s']);
+  assert.deepEqual(buildProcessingStream(rows, false).map(e => e.text), ['Thought for 8s']);
   assert.equal(conversationActivityV2(rows).length, 2);
 });
 
@@ -75,6 +75,8 @@ test('an ordinary chat turn only says it is thinking and keeps no work history',
   assert.equal(workingText({ goalContract: { contextComplexity: 'high', desiredOutcome: 'Prove the bound' } }), 'Preparing: Prove the bound');
   const plain = run([thoughtFrame('running', READING, {}, CLIENT_READ), thoughtFrame('completed', thoughtDone(900).text), thoughtFrame('completed', 'Prepared your answer', {}, 'preparing-answer')]);
   assert.equal(isRoutineTurn(plain), true);
+  assert.equal(isRoutineTurn([...plain, { id: 'n1', label: 'The user is only saying hello.', note: true }]), true);
+  assert.equal(isRoutineTurn([...plain, { id: 'p1', label: 'Create the repository', note: true, planStep: true }]), false);
   assert.equal(isRoutineTurn(run([thoughtFrame('running', READING), thoughtFrame('completed', 'Searched the web', {}, 'web-1')])), false);
   assert.equal(isRoutineTurn(run([thoughtFrame('completed', 'Thought for 9s', { sources: [{ title: 'A', url: 'https://a.example' }] })])), false);
   assert.equal(isRoutineTurn(run([thoughtFrame('failed', 'Could not finish the answer')])), false);

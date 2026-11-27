@@ -2,7 +2,7 @@ import type { XrogaActivityPresentation } from './activityPresentation';
 import { publicActivityText } from './activityPresentation';
 import { familyOf, type TimelineFamily } from './activityTimeline';
 import { redactTerminalText } from './terminalRedaction';
-import { CLIENT_THOUGHT, isClientStep } from './clientSteps';
+import { CLIENT_READ, CLIENT_THOUGHT, isClientStep } from './clientSteps';
 
 /**
  * The inline work stream: written updates and one line per real step, in the order they happened.
@@ -142,7 +142,7 @@ const MAX_ENTRIES = 40;
 function tidy(entries: StreamEntry[]): StreamEntry[] {
   const thought = entries.some(e => e.type === 'step' && e.id.endsWith(CLIENT_THOUGHT));
   const otherSteps = entries.some(e => e.type === 'step' && !e.id.endsWith(WRAPPER_STEP));
-  return entries.filter(e => e.type === 'step'
+  return entries.filter(e => !(e.type === 'step' && e.state === 'done' && e.id.endsWith(CLIENT_READ))).filter(e => e.type === 'step'
     // The backend's whole-answer line gives way to real work and to the Thinking line.
     ? !(e.id.endsWith(WRAPPER_STEP) && e.state !== 'failed' && (otherSteps || thought))
     : true);
