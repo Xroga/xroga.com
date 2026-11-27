@@ -38,11 +38,12 @@ router.post('/transcribe-free', express.raw({type: ['audio/wav'], limit: 8 * 102
   const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(45000)]);
   const requestActive = () => {if (req.aborted || res.destroyed) controller.abort(); signal.throwIfAborted();};
   let current: Awaited<ReturnType<typeof beginVoiceRequest>> | undefined, slot: string | undefined;
+  const leave = () => {if (slot) {const left = (inFlight.get(slot) ?? 1) - 1; if (left > 0) inFlight.set(slot, left); else inFlight.delete(slot); slot = undefined;}};
   try {
     requestActive();
     const context = requireTenantContext(req.tenantContext); requireResourceOwner(context, req.userId);
     const audio = Buffer.isBuffer(req.body) ? Buffer.from(req.body) : Buffer.alloc(0);
-    requireVoicePcm(audio);
+    const pcm = requireVoicePcm(audio);
     let energy = 0;
     for (let at = 44; at < audio.length; at += 2) energy += audio.readInt16LE(at) ** 2;
     if (energy / ((audio.length - 44) / 2) < 256) {
@@ -79,19 +80,35 @@ router.post('/transcribe-free', express.raw({type: ['audio/wav'], limit: 8 * 102
     } | null;
     requestActive(); current.check();
     if (body?.success !== true || !Array.isArray(body.errors) || body.errors.length || !body.result) throw new AuthorityError('VOICE_RECEIPT_NOT_ADMITTED');
-    const duration = body.result.transcription_info?.duration;
-    await current.complete({type: 'cloudflare-free-duration', seconds: duration}, upstream.headers.get('cf-ray'));
-    requestActive(); current.check();
+    const duration = body.result.transcription_info?.duration, requestId = upstream.headers.get('cf-ray');
+    const settle = () => current!.complete({type: 'cloudflare-free-duration', seconds: duration}, requestId);
+    // A client that asks for early text receives the transcript as soon as the provider receipt itself
+    // is admitted; everyone else receives it only after the accounting writes are verified.
+    const early = req.headers.accept === 'application/x-ndjson';
+    if (!early) {await settle(); requestActive(); current.check();}
+    // The same receipt bounds that settlement enforces, checked before anything is published.
+    else if (typeof duration !== 'number' || !Number.isFinite(duration) || duration <= 0 || Math.abs(duration - pcm.seconds) > 1
+      || !requestId || !/^[A-Za-z0-9_-]{1,160}$/.test(requestId) || containsCredentialSecretText(requestId)) throw new AuthorityError('VOICE_RECEIPT_NOT_ADMITTED');
     const text = typeof body.result.text === 'string' ? body.result.text.trim() : '';
     // An empty result is a verified, settled receipt for audio with no speech. It is
     // returned as empty text so a quiet passage never invents words or fails a long recording.
     if (text.length > 16000 || containsCredentialSecretText(text)) throw new AuthorityError('VOICE_TRANSCRIPT_NOT_ADMITTED');
     const language = body.result.transcription_info?.language;
-    res.json({text, provider: 'cloudflare-free', model: FREE_VOICE_MODEL,
-      language: typeof language === 'string' && /^[A-Za-z -]{1,40}$/.test(language) && !containsCredentialSecretText(language) ? language : 'auto'});
+    const transcript = {text, provider: 'cloudflare-free', model: FREE_VOICE_MODEL,
+      language: typeof language === 'string' && /^[A-Za-z -]{1,40}$/.test(language) && !containsCredentialSecretText(language) ? language : 'auto'};
+    if (!early) {res.json(transcript); return;}
+    // From here a disconnect must not abandon the accounting. The response stays open until it
+    // finishes, so the instance keeps its CPU; the burst slot is free for the next piece of speech.
+    req.removeListener('aborted', abort); res.removeListener('close', abort);
+    res.status(200).set({'Content-Type': 'application/x-ndjson; charset=utf-8', 'Cache-Control': 'no-store', 'X-Accel-Buffering': 'no'});
+    res.write(JSON.stringify(transcript) + '\n'); leave();
+    await settle();
+    res.end();
   } catch (error) {
     try {await current?.fail(error);} catch { /* Accounting uncertainty stays terminal. */ }
-    if (!res.headersSent && !res.destroyed) {
+    // The transcript already left. The hold stays for reconciliation and the operator is told.
+    if (res.headersSent) {console.error('[voice]', {category: 'accounting_unverified_after_publication'}); res.end();}
+    else if (!res.destroyed) {
       const code = (error as {code?: string})?.code;
       if (code === 'VOICE_QUOTA_EXHAUSTED') {
         res.status(429).json({error: "Today's free voice transcription allowance is used up. Your recording is kept; retry later or type instead.", code}); return;
@@ -101,7 +118,7 @@ router.post('/transcribe-free', express.raw({type: ['audio/wav'], limit: 8 * 102
         code: unavailable ? 'VOICE_PROVIDER_UNAVAILABLE' : 'VOICE_TRANSCRIPTION_DENIED'});
     }
   } finally {
-    if (slot) {const left = (inFlight.get(slot) ?? 1) - 1; if (left > 0) inFlight.set(slot, left); else inFlight.delete(slot);}
+    leave();
     current?.close(); req.removeListener('aborted', abort); res.removeListener('close', abort); controller.abort();
   }
 });
