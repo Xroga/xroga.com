@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "10a87370c3b609d4af238602da8e3d86bc7751e702ea7283f0a7575c83a0a2dd",
+  "sourceTreeDigest": "848cdc807d925b16891cebed00f990a85566ef9181174743e79c61e7981031eb",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -5338,22 +5338,6 @@
       ]
     },
     {
-      "id": "a81105575c465c374aa8",
-      "file": "frontend/src/lib/voiceDictation.ts",
-      "line": 73,
-      "entryPoint": "startSegment",
-      "transport": "send",
-      "callee": "send",
-      "callSha256": "35d621560f562ee95e77be3cd98718e419d07100ddfc9dcaef565476ddcf3607",
-      "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
-      "currentProtection": "NOT_CERTIFIED",
-      "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
-    },
-    {
       "id": "e1ddea7115498d92341b",
       "file": "frontend/src/store/useCurrencyStore.ts",
       "line": 30,
@@ -5568,8 +5552,7 @@
         "f9cea4897b39781b679b",
         "e8a0d676ee1d532a3be6",
         "13608654d27d029cbf04",
-        "811d45a99740e2ecccba",
-        "a81105575c465c374aa8"
+        "811d45a99740e2ecccba"
       ]
     },
     {
@@ -5645,9 +5628,9 @@
     }
   ],
   "counts": {
-    "total": 168,
+    "total": 167,
     "reviewed": 167,
-    "pending": 1,
-    "unresolvedHighRiskBypasses": 1
+    "pending": 0,
+    "unresolvedHighRiskBypasses": 0
   }
 }

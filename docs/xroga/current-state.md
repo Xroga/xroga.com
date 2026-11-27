@@ -1,6 +1,6 @@
 # Xroga repository truth map
 
-Source SHA: `7498b07a71154a2c90162d278740fa14e6c4882c`. Branch observed: `claude/mic-ios-merge-20261127`. Audit started: 2026-11-27T11:57:22.054Z.
+Source SHA: `09387be44ec4b169a3b7956d561ee15d017e9144`. Branch observed: `claude/mic-ios-merge-20261127`. Audit started: 2026-11-27T12:03:05.650Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 

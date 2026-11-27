@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "7498b07a71154a2c90162d278740fa14e6c4882c",
+  "source_sha": "09387be44ec4b169a3b7956d561ee15d017e9144",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -24983,7 +24983,7 @@
     },
     {
       "path": "frontend/src/lib/voiceDictation.ts",
-      "sha256": "208fce2d7e1633ca9a80f3e341e392d35bdd6643284dac56fdbb0b65f43d6f41"
+      "sha256": "e803f196bdf2543691f29a1b59b86e8464d36d173cb03ce8283953c0f2f16355"
     },
     {
       "path": "frontend/src/lib/voiceMessages.ts",
