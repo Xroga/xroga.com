@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "e0ada6ea7010e9124d67f01a1a376db0084ec3a3",
+  "source_sha": "99cadec12a1fe4b80dd77cb43b8294c9c6e22605",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17392,7 +17392,7 @@
     },
     {
       "path": "backend/src/ai/reasoningSummary.ts",
-      "sha256": "5e072661c68ed6e0bd612c72faabb56bda4ae53561ecae654a14da5332829c12"
+      "sha256": "34c1b1ea632e8f5f0e429faf5cca65fd272775fd9b7ceed634cf1f0f0a21680f"
     },
     {
       "path": "backend/src/ai/repairController.ts",
@@ -18828,7 +18828,7 @@
     },
     {
       "path": "backend/src/routes/phase1ChatProgress.ts",
-      "sha256": "963af4fd8537443136c8b6a74c13d89a7da9a01a4423c1b5cf0d9611d1feca75"
+      "sha256": "a8f0f92448e8fe4bdfe58932a3bb98510dd62d954d474895b3aeccd269ba784f"
     },
     {
       "path": "backend/src/routes/profile.ts",
@@ -20992,7 +20992,7 @@
     },
     {
       "path": "frontend/src/components/activity/ActivityTimeline.tsx",
-      "sha256": "f43a09f4c2cefaec87b3634902e073fa7cf08ca3476b029f48cc648f6f976842"
+      "sha256": "f787c78b914c14d4e8faaf16cbfe38256aa2dcf365fd7340206b87e511fd0e43"
     },
     {
       "path": "frontend/src/components/activity/BlackHoleIndicator.tsx",
@@ -21000,7 +21000,7 @@
     },
     {
       "path": "frontend/src/components/activity/ProcessingStream.tsx",
-      "sha256": "a379f13400747570e872da8ada687d6640aae9e7cea2d22cdfa0d09c34ec763b"
+      "sha256": "c8ef41487cc676ad0adfe11716d7d4c2b92d0df6ca0ccafcd784cca87f7c916a"
     },
     {
       "path": "frontend/src/components/activity/ProcessingSurface.tsx",
@@ -37129,6 +37129,13 @@
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
       "line": 100,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/phase1ChatProgress.ts",
+      "line": 77,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

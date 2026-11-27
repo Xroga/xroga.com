@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "claude/processing-panel-fixes-20261127",
-    "sha": "e0ada6ea7010e9124d67f01a1a376db0084ec3a3",
-    "sourceTimestampUtc": "2026-11-27T17:41:38+05:00",
-    "auditStartedUtc": "2026-11-27T12:42:17.639Z",
+    "sha": "99cadec12a1fe4b80dd77cb43b8294c9c6e22605",
+    "sourceTimestampUtc": "2026-11-27T18:39:42+05:00",
+    "auditStartedUtc": "2026-11-27T13:40:13.611Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -8671,6 +8671,7 @@
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.ts:2",
         "backend/src/ai/progressChannel.test.ts:3",
+        "backend/src/routes/phase1ChatProgress.test.ts:6",
         "backend/src/routes/phase1ChatProgress.ts:6",
         "backend/src/services/integrations/businessAction.ts:1",
         "backend/src/services/integrations/businessRead.ts:1"
@@ -8687,7 +8688,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/ai/progressChannel.test.ts"
+        "backend/src/ai/progressChannel.test.ts",
+        "backend/src/routes/phase1ChatProgress.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -9877,7 +9879,7 @@
       "id": "surface:6b6608aca0b309f1efdb",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/reasoningSummary.ts",
-      "sha256": "5e072661c68ed6e0bd612c72faabb56bda4ae53561ecae654a14da5332829c12",
+      "sha256": "34c1b1ea632e8f5f0e429faf5cca65fd272775fd9b7ceed634cf1f0f0a21680f",
       "symbols": [
         "PLAN_LINE",
         "REASONING_SUMMARY_MAX_LINES",
@@ -33405,15 +33407,17 @@
       "id": "surface:a84cf17b2bc2287e5cc5",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
-      "sha256": "963af4fd8537443136c8b6a74c13d89a7da9a01a4423c1b5cf0d9611d1feca75",
+      "sha256": "a8f0f92448e8fe4bdfe58932a3bb98510dd62d954d474895b3aeccd269ba784f",
       "symbols": [
         "HEARTBEAT_MS",
         "NOTES_GRACE_MS",
         "controller",
         "files",
         "finish",
+        "found",
         "heartbeat",
         "line",
+        "lines",
         "message",
         "names",
         "note",
@@ -33421,13 +33425,20 @@
         "open",
         "originalStatus",
         "preparing",
+        "progressTiming",
         "reading",
+        "reminder",
         "router",
         "sendJson",
+        "source",
+        "sourceUrls",
         "status",
         "step",
+        "still",
+        "stillWorking",
         "text",
         "timer",
+        "updates",
         "wantsStream",
         "write"
       ],
@@ -67580,7 +67591,7 @@
       "id": "surface:1dacf962de020747d05b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/activity/ActivityTimeline.tsx",
-      "sha256": "f43a09f4c2cefaec87b3634902e073fa7cf08ca3476b029f48cc648f6f976842",
+      "sha256": "f787c78b914c14d4e8faaf16cbfe38256aa2dcf365fd7340206b87e511fd0e43",
       "symbols": [
         "ActivityTimeline",
         "ActivityTimelineProps",
@@ -67714,7 +67725,7 @@
       "id": "surface:ceedc01513cc1ffef785",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/activity/ProcessingStream.tsx",
-      "sha256": "a379f13400747570e872da8ada687d6640aae9e7cea2d22cdfa0d09c34ec763b",
+      "sha256": "c8ef41487cc676ad0adfe11716d7d4c2b92d0df6ca0ccafcd784cca87f7c916a",
       "symbols": [
         "Evidence",
         "Group",
@@ -67730,6 +67741,7 @@
         "done",
         "duration",
         "host",
+        "leading",
         "next",
         "open",
         "reduced",
@@ -121564,6 +121576,7 @@
         "frontend/src/components/terminal/TerminalLiveActivity.tsx:6",
         "frontend/src/context/TerminalChatContext.tsx:15",
         "frontend/src/lib/terminal/activityPresentation.test.ts:4",
+        "frontend/src/lib/terminal/anyPrompt.test.ts:7",
         "frontend/src/lib/terminal/clientSteps.test.ts:4",
         "frontend/src/lib/terminal/planTicks.test.ts:9",
         "frontend/src/lib/terminal/processingKinds.test.ts:3",
@@ -121592,6 +121605,7 @@
         "frontend/src/lib/savedProcessingActivity.test.ts",
         "frontend/src/lib/terminal/activityPresentation.test.ts",
         "frontend/src/lib/terminal/activityTimeline.test.ts",
+        "frontend/src/lib/terminal/anyPrompt.test.ts",
         "frontend/src/lib/terminal/clientSteps.test.ts",
         "frontend/src/lib/terminal/liveLine.test.ts",
         "frontend/src/lib/terminal/planTicks.test.ts",
@@ -121677,6 +121691,7 @@
         "frontend/src/components/activity/ProcessingStream.tsx:9",
         "frontend/src/components/terminal/TerminalLiveActivity.tsx:10",
         "frontend/src/lib/terminal/activityTimeline.test.ts:4",
+        "frontend/src/lib/terminal/anyPrompt.test.ts:8",
         "frontend/src/lib/terminal/clientSteps.test.ts:5",
         "frontend/src/lib/terminal/liveLine.test.ts:8",
         "frontend/src/lib/terminal/processingStream.ts:3",
@@ -121697,6 +121712,7 @@
       ],
       "testCoverage": [
         "frontend/src/lib/terminal/activityTimeline.test.ts",
+        "frontend/src/lib/terminal/anyPrompt.test.ts",
         "frontend/src/lib/terminal/clientSteps.test.ts",
         "frontend/src/lib/terminal/liveLine.test.ts",
         "frontend/src/lib/terminal/processingView.test.ts"
@@ -121746,6 +121762,7 @@
       "callers": [
         "frontend/src/context/TerminalChatContext.tsx:76",
         "frontend/src/lib/terminal/activityPresentation.ts:1",
+        "frontend/src/lib/terminal/anyPrompt.test.ts:9",
         "frontend/src/lib/terminal/clientSteps.test.ts:6",
         "frontend/src/lib/terminal/processingStream.ts:5"
       ],
@@ -121758,6 +121775,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "frontend/src/lib/terminal/anyPrompt.test.ts",
         "frontend/src/lib/terminal/clientSteps.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -121970,6 +121988,7 @@
         "frontend/src/components/activity/ProcessingStream.tsx:10",
         "frontend/src/components/terminal/TerminalLiveActivity.tsx:13",
         "frontend/src/lib/savedProcessingActivity.test.ts:6",
+        "frontend/src/lib/terminal/anyPrompt.test.ts:10",
         "frontend/src/lib/terminal/clientSteps.test.ts:7",
         "frontend/src/lib/terminal/liveLine.test.ts:9",
         "frontend/src/lib/terminal/planTicks.test.ts:10",
@@ -121990,6 +122009,7 @@
       ],
       "testCoverage": [
         "frontend/src/lib/savedProcessingActivity.test.ts",
+        "frontend/src/lib/terminal/anyPrompt.test.ts",
         "frontend/src/lib/terminal/clientSteps.test.ts",
         "frontend/src/lib/terminal/liveLine.test.ts",
         "frontend/src/lib/terminal/planTicks.test.ts",
@@ -122187,6 +122207,7 @@
         "frontend/src/lib/goldenJourneyRendering.test.ts",
         "frontend/src/lib/terminal/activityPresentation.test.ts",
         "frontend/src/lib/terminal/activityTimeline.test.ts",
+        "frontend/src/lib/terminal/anyPrompt.test.ts",
         "frontend/src/lib/terminal/clientSteps.test.ts",
         "frontend/src/lib/terminal/liveActivity.test.ts",
         "frontend/src/lib/terminal/processingView.test.ts",
@@ -122273,6 +122294,7 @@
       "callers": [
         "frontend/src/context/TerminalChatContext.tsx:16",
         "frontend/src/lib/goldenJourneyRendering.test.ts:3",
+        "frontend/src/lib/terminal/anyPrompt.test.ts:11",
         "frontend/src/lib/terminal/clientSteps.test.ts:8",
         "frontend/src/lib/terminal/liveActivity.test.ts:8",
         "frontend/src/lib/terminal/planTicks.test.ts:11",
@@ -122312,6 +122334,7 @@
       ],
       "testCoverage": [
         "frontend/src/lib/goldenJourneyRendering.test.ts",
+        "frontend/src/lib/terminal/anyPrompt.test.ts",
         "frontend/src/lib/terminal/clientSteps.test.ts",
         "frontend/src/lib/terminal/liveActivity.test.ts",
         "frontend/src/lib/terminal/planTicks.test.ts",
@@ -139201,9 +139224,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:2ae79d50cf183d1349c8",
+      "id": "registration:5bdb8dbc64f2a334d3cf",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
-      "line": 38,
+      "line": 51,
       "receiver": "router",
       "method": "post",
       "path": "/chat",
@@ -140747,10 +140770,10 @@
       "reason": "Router factory invoked by an imported default export; terminal middleware traced, behavior must still be tested."
     },
     {
-      "id": "route:6237b9e779e5a7df1e84",
-      "registrationId": "registration:2ae79d50cf183d1349c8",
+      "id": "route:5866b82ce340bcd94197",
+      "registrationId": "registration:5bdb8dbc64f2a334d3cf",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
-      "line": 38,
+      "line": 51,
       "method": "POST",
       "path": "/api/phase1/chat",
       "mountChain": [
@@ -146058,9 +146081,18 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:f7456506791f75b0dc9a",
+      "id": "schedule:9c09872201eec43a7197",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
-      "line": 57,
+      "line": 70,
+      "kind": "setInterval",
+      "symbol": "<module>",
+      "reachable": true,
+      "state": "IMPLEMENTED_BUT_UNVERIFIED"
+    },
+    {
+      "id": "schedule:90a9e2402a65860fee2b",
+      "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
+      "line": 82,
       "kind": "setInterval",
       "symbol": "<module>",
       "reachable": true,
@@ -157943,7 +157975,7 @@
     {
       "id": "test-suite:8d73808569e38c5b4489",
       "sourcePath": "backend/src/routes/phase1ChatProgress.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -162429,6 +162461,13 @@
       "id": "test-suite:b2e2b96444f09f47fa90",
       "sourcePath": "frontend/src/lib/terminal/agentV2Resume.test.ts",
       "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:aad8f9b14757cb0703f5",
+      "sourcePath": "frontend/src/lib/terminal/anyPrompt.test.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
