@@ -100,3 +100,24 @@ test('a long answer keeps reporting that it is still running, then closes that l
     });
   } finally { progressTiming.everyMs = before; }
 });
+
+test('a quick answer never waits for notes, a long one briefly does', async () => {
+  const saved = { ...progressTiming };
+  let release: (() => void) | undefined;
+  progressTiming.summarize = () => new Promise<string | null>((resolve) => { release = () => resolve(null); });
+  progressTiming.notesGraceMs = 300;
+  const app = express();
+  app.use(express.json());
+  app.use((req, _res, next) => { Object.assign(req, { userId: 'u', tenantContext: {} }); next(); });
+  app.use('/api/phase1', router);
+  app.post('/api/phase1/chat', (_req, res) => { setTimeout(() => res.json({ response: 'hello' }), 40); });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+  const timed = async () => { const start = Date.now(); await (await post(base, 'hi there', 'text/event-stream')).text(); return Date.now() - start; };
+  try {
+    progressTiming.notesMatterAfterMs = 10_000;
+    assert.ok(await timed() < 250, 'a quick answer goes out at once');
+    progressTiming.notesMatterAfterMs = 10;
+    assert.ok(await timed() >= 320, 'a longer answer gives its notes a moment');
+  } finally { release?.(); server.close(); Object.assign(progressTiming, saved); }
+});

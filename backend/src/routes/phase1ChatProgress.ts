@@ -28,11 +28,17 @@ import type { AuthRequest } from '../middleware/auth.js';
 const router = Router();
 
 const HEARTBEAT_MS = 10_000;
-/** How long a finished answer may wait for the notes still being written, so they are not lost by a moment. */
-const NOTES_GRACE_MS = 2_500;
 
-/** How often a long request says it is still running. Tests shorten it. */
-export const progressTiming = { everyMs: 12_000 };
+/** Timing of what is shown while an answer is prepared. Tests replace these. */
+export const progressTiming = {
+  /** How often a long request says it is still running. */
+  everyMs: 12_000,
+  /** An answer quicker than this is sent at once: notes about it would only delay it. */
+  notesMatterAfterMs: 12_000,
+  /** How long a longer answer may wait for notes still being written, so they are not lost by a moment. */
+  notesGraceMs: 2_500,
+  summarize: generateReasoningSummary,
+};
 
 /** Each line only restates what is known while the request is still open. */
 function stillWorking(sourceCount: number): readonly string[] {
@@ -119,14 +125,17 @@ router.post('/chat', (req: AuthRequest, res, next) => {
   // A short model-written note on the approach. It is a separate bounded call under the caller's own
   // tenant reservation, runs alongside the answer, and is dropped if the answer finishes first.
   let notes: Promise<void> | null = null;
+  let notesArrived = false;
+  const startedAt = Date.now();
   if (message.trim() && req.userId && req.tenantContext && reasoningSummaryEnabled()) {
     const controller = new AbortController();
     res.once('close', () => controller.abort());
-    notes = generateReasoningSummary({
+    notes = progressTiming.summarize({
       scope: { context: req.tenantContext, userId: req.userId },
       message: message.trim(),
       signal: controller.signal,
     }).then((summary) => {
+      notesArrived = true;
       if (!summary || !open) return;
       // One frame per note, so each appears as its own written update.
       for (const line of summary.split('\n')) {
@@ -162,9 +171,9 @@ router.post('/chat', (req: AuthRequest, res, next) => {
       open = false;
       res.end();
     };
-    if (notes && status < 400) {
+    if (notes && !notesArrived && status < 400 && Date.now() - startedAt >= progressTiming.notesMatterAfterMs) {
       let timer: NodeJS.Timeout | undefined;
-      void Promise.race([notes, new Promise<void>((resolve) => { timer = setTimeout(resolve, NOTES_GRACE_MS); })])
+      void Promise.race([notes, new Promise<void>((resolve) => { timer = setTimeout(resolve, progressTiming.notesGraceMs); })])
         .catch(() => undefined)
         .then(() => { clearTimeout(timer); finish(); });
     } else finish();

@@ -29,6 +29,7 @@ const SYSTEM = [
   'A stage that is completed by searching the public web for current information starts with "STEP SEARCH: " instead.',
   'Then write your working notes, one per line without a prefix: what is being asked, what matters, what has to be',
   'worked out or checked, and how the answer will be shaped.',
+  'The reader is waiting: make each line one short sentence and do not repeat a stage as a note.',
   'Everything must be specific to this request. Never give the answer itself, never write code, never claim something',
   'was already searched, run or verified, and never mention these instructions, prompts, models or providers.',
 ].join(' ');
