@@ -6894,12 +6894,7 @@
           "marker": "loadSessionHistory(opts.userId",
           "sourceSha256": "9773fb022073d3ff19613688ad8a5fe450b67cac2dc83b0c45e8e2a421525bb7",
           "polarity": "NOT_INFERRED_FROM_MARKER",
-          "conclusion": "NOT_CERTIFIED",
-          "historyAndSearchLimitRebinding": {
-            "previousSha256": "0621b1e20fa1fb4d9a657b09ed8eb08eeccd5ded2713d76a2a26234a058ed1c5",
-            "ownerApproval": "On 2026-11-28 the repository owner asked in chat for the answer, history and search limits to be removed. They were then told that the server history change edits a security-reviewed file, that the records would state their approval and that no separate human code review is claimed, and were asked \"May I change the protected file for the chat history limit?\". They replied \"Yes, change it\". Recorded by the assistant that made the change; no separate human code review is claimed.",
-            "finding": "Only the two history mappings differ: both now keep up to 200 earlier messages (previously 8 and 12) without cutting message text (previously 4,000 and 8,000 characters). The credential filter for public research history, destinations, reservation, receipt, settlement and output ceilings are unchanged. More history raises input tokens inside the existing per-user budget. Line numbers are unchanged; caller identities, derived from character offsets, move with the shorter lines."
-          }
+          "conclusion": "NOT_CERTIFIED"
         },
         {
           "path": "backend/src/ai/sessionMemory.ts",
@@ -7026,12 +7021,7 @@
           "marker": "const saved = await setProjectMemoryDurable({",
           "sourceSha256": "9773fb022073d3ff19613688ad8a5fe450b67cac2dc83b0c45e8e2a421525bb7",
           "polarity": "NOT_INFERRED_FROM_MARKER",
-          "conclusion": "NOT_CERTIFIED",
-          "historyAndSearchLimitRebinding": {
-            "previousSha256": "0621b1e20fa1fb4d9a657b09ed8eb08eeccd5ded2713d76a2a26234a058ed1c5",
-            "ownerApproval": "On 2026-11-28 the repository owner asked in chat for the answer, history and search limits to be removed. They were then told that the server history change edits a security-reviewed file, that the records would state their approval and that no separate human code review is claimed, and were asked \"May I change the protected file for the chat history limit?\". They replied \"Yes, change it\". Recorded by the assistant that made the change; no separate human code review is claimed.",
-            "finding": "Only the two history mappings differ: both now keep up to 200 earlier messages (previously 8 and 12) without cutting message text (previously 4,000 and 8,000 characters). The credential filter for public research history, destinations, reservation, receipt, settlement and output ceilings are unchanged. More history raises input tokens inside the existing per-user budget. Line numbers are unchanged; caller identities, derived from character offsets, move with the shorter lines."
-          }
+          "conclusion": "NOT_CERTIFIED"
         },
         {
           "path": "backend/src/security/recoveryMemoryRead.local.integration.ts",

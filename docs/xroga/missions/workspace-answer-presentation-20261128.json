@@ -16,6 +16,7 @@
     "backend/src/ai/nativeOpenUiValues.test.ts",
     "backend/src/ai/nativeOpenUiValues.ts",
     "backend/src/ai/parallelWeb.security.test.ts",
+    "backend/src/ai/pipeline.ts",
     "backend/src/ai/research.ts",
     "backend/src/ai/researchAnswer.test.ts",
     "backend/src/ai/researchSearchProvider.test.ts",
@@ -54,7 +55,8 @@
       "Answer programs up to 200,000 characters keep their visuals",
       "Public search asks for 25 results and keeps longer excerpts",
       "The newest exchange keeps room under its prompt while it is answered",
-      "Reading rhythm for Arabic-script and Devanagari answers"
+      "Reading rhythm for Arabic-script and Devanagari answers",
+      "With owner approval on November 28, the server sends the model up to 200 earlier messages whole instead of 8 to 12 shortened ones, and the pinned review records were rebound"
     ],
     "replace": [
       "A complete written backup of every visual with the existing generated plain-text copy",
@@ -145,7 +147,6 @@
   "rollback": "Re-promote the previous verified backend revision and frontend build; no database changes.",
   "knownGaps": [
     "Real model answers under the new instructions are not verified.",
-    "The server still sends the model the last 12 messages and 8,000 characters of each; raising it edits security-reviewed pipeline.ts and awaits the owner's approval to rebind those records.",
     "Images, logos beyond the product registry and live market charts need new data providers.",
     "The turn spacer is not verified in the signed-in Workspace or on a physical phone."
   ],

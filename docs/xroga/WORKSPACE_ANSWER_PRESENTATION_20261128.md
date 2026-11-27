@@ -27,7 +27,7 @@ sit on the page, step-by-step flows are blocks and task ticks are round.
 | Limit | Before | Now |
 | --- | --- | --- |
 | Earlier chat sent by the browser | 10 messages, 1,200 characters each | 200 messages, whole |
-| Earlier chat sent on to the model | 12 messages, 8,000 characters each | unchanged, awaiting approval |
+| Earlier chat sent on to the model | 8 to 12 messages, 4,000 to 8,000 characters each | 200 messages, whole (owner approved) |
 | Answer program that keeps its visuals | 24,000 characters | 200,000 |
 | Search results per request | 10 | 25 |
 | Text kept per search result | 2,000 to 3,200 characters | 8,000 to 10,000 |

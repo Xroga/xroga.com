@@ -66,7 +66,7 @@
       "path": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/MODEL-DISPATCH-PROOF-87e33b94.json",
       "historicalSha256": "7b04f1a944b9258329978770b9e273804653d5c7464a4ccfb2ac6c2e6f6849e1",
-      "currentSha256": "830f2af3380d1c920db8bcfe373ffc91cc5529d91b9f68e84332e5e743b0fee9",
+      "currentSha256": "56f82d9d279807beeaaddcab92efe2e7679b14b6fc67d4b7c0cf2c437e2a841b",
       "beforeNativeOpenUiBenchmarkSha256": "e6f50ffc7aef52b6cc365dfe72ec89183242c2c74976f1dcc2f97ba815f68a22",
       "beforeNativePublicationSha256": "f2467eb712a137ff897be9157c16cf8e17311597f712a83aa0280ca8aed27eac",
       "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
@@ -95,7 +95,8 @@
         "previousSha256": "cea8e51b82eaee8708b5845418402ea1a949975c0d0c407fe23f67f8cd8b9641",
         "ownerApproval": "On 2026-11-28 the repository owner asked in chat for the answer, history and search limits to be removed. They were then told that the server history change edits a security-reviewed file, that the records would state their approval and that no separate human code review is claimed, and were asked \"May I change the protected file for the chat history limit?\". They replied \"Yes, change it\". Recorded by the assistant that made the change; no separate human code review is claimed.",
         "finding": "A pinned record (docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json) was rebound for the owner-approved history and search limit change; its reviewed content is otherwise unchanged."
-      }
+      },
+      "beforeHistoryLimitLedgerSha256": "830f2af3380d1c920db8bcfe373ffc91cc5529d91b9f68e84332e5e743b0fee9"
     }
   ],
   "exactPersistenceRemaps": [
