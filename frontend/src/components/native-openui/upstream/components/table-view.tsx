@@ -13,6 +13,8 @@ export function tableCellText(cell: unknown): string {
 }
 
 export const tableCellHasLinks = (cell: string) => /\[\d{1,3}\]|\]\(/.test(cell);
+export const isLongAnswerTableCell = (cell: unknown) =>
+  typeof cell === 'string' && cell.length >= 72 && tableCellText(cell).length >= 72;
 
 function numericValue(value: unknown): number | undefined {
   if (typeof value === "number") return Number.isFinite(value) ? value : undefined;
@@ -78,7 +80,8 @@ export function SortableTableView({ columns, rows, renderText, renderCell }: {
           {order.map(index => (
             <tr key={index}>
               {columns.map((_, column) => (
-                <td key={column} className={cx(numeric[column] && "is-numeric")}>
+                <td key={column} className={cx(numeric[column] && "is-numeric")}
+                  data-answer-table-long-text={isLongAnswerTableCell(rows[index][column]) ? '' : undefined}>
                   {renderCell ? renderCell(rows[index][column]) : renderText(String(rows[index][column] ?? ""))}
                 </td>
               ))}

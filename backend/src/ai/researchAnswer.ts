@@ -9,7 +9,7 @@ import { requestsOfficialLinkCoverage } from './workspacePublicSearch.js';
 import { isRequestedPublication, requestedPublication } from './researchPublicationEvidence.js';
 import { bindListedWebsiteRows } from './researchWebsiteEvidence.js';
 import { withholdIncomparableResearchRanking } from './researchRankingEvidence.js';
-import { nativeMarkdownTableRow, nativeMarkdownTables, nativeTableDecimalKey } from './nativeMarkdown.js';
+import { nativeMarkdownTableRow, nativeMarkdownTables, nativeTableDecimalKey, normalizeCitationSuperscripts } from './nativeMarkdown.js';
 import type { PublicCompletionState } from './completionDiagnostics.js';
 import type { ChatPipelineResult } from './pipeline.js';
 
@@ -236,7 +236,7 @@ function reconcileConditionalQaTests(text: string): string | undefined {
  * cannot certify ownership or that the cited page supports a particular claim. */
 export function presentPublicResearchAnswer(response: string, completion: PublicCompletionState,
   sources: ReadonlyArray<{ url: string; title?: string; snippet?: string }>, prompt: string) {
-  let text = bindCitationLinks(response, sources);
+  let text = bindCitationLinks(normalizeCitationSuperscripts(response), sources);
   if (completion.status === 'complete') {
     let explicitGap = false;
     mapResearchProse(text, prose => {

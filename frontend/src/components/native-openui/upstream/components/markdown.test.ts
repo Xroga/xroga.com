@@ -472,6 +472,24 @@ test('inline Markdown preserves underscores inside identifiers', () => {
     '<em>membership</em> and <strong>role</strong> with <code class="iui-code">tenant_id</code>');
 });
 
+test('cited Markdown keeps long cells legible and never displays citation HTML', () => {
+  const text = [
+    'A finding <sup>[2]</sup>. To show the literal tag use \x60<sup>[2]</sup>\x60.',
+    '',
+    '| Rule | Practical test | Source |',
+    '| --- | --- | --- |',
+    '| Verification | Walk through the full process with keyboard input and record how each part behaves. | <sup>[2]</sup> |',
+  ].join('\n');
+  const renderCitation = (number: number) => 'Source ' + number;
+  const html = renderToStaticMarkup(createElement(MarkdownBlocks, { text, renderCitation }));
+  assert.match(html, /A finding Source 2/);
+  assert.match(html, /<code[^>]*>&lt;sup&gt;\[2\]&lt;\/sup&gt;<\/code>/);
+  assert.match(html, /data-answer-table-long-text=""[^>]*>Walk through/);
+  assert.match(html, /<td>Source 2<\/td>/);
+  assert.equal((html.match(/&lt;sup&gt;/g) ?? []).length, 1);
+  assert.equal((html.match(/data-answer-table-long-text=/g) ?? []).length, 1);
+});
+
 test('partial answer collapse preserves the cited table and distinct data', () => {
   const cited = '| Method | Return type | Contents |\n| --- | --- | --- |\n| Path.read_text() | str | The decoded text [4][9] |\n| Path.read_bytes() | bytes | The raw binary content [4][9] |';
   const projected = '| Method | Return type | Contents |\n|---|---|---|\n| Path.read_text() | str | Decoded text |\n| Path.read_bytes() | bytes | Raw binary content |';

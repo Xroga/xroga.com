@@ -4,6 +4,27 @@ import {randomUUID} from 'node:crypto';
 import {researchAnswerRequestSchema,RESEARCH_ANSWER_MAXIMUM_MICRO_USD,researchCitationIssues,bindCitationLinks,publicWorkspaceResearchAnswer,presentPublicResearchAnswer} from './researchAnswer.js';
 import {nativeMarkdownTables} from './nativeMarkdown.js';
 
+test('public research keeps numbered citation wrappers out of its canonical answer and preserves code', () => {
+  const url = 'https://standard.example/reference';
+  const literal = [
+    'Literal with inline code: ' + '\x60' + '<sup>[1]</sup>' + '\x60',
+    '',
+    '~~~html',
+    '<sup>[1]</sup>',
+    '~~~',
+    '',
+    '    <sup>[1]</sup>',
+    '',
+    '\x60\x60\x60html',
+    '<sup>[1]</sup>',
+  ].join('\n');
+  const result = presentPublicResearchAnswer(
+    'The rule applies <sup>[1]</sup>. Read <SUP>[1](https://wrong.example)</SUP>.\n\n' + literal,
+    { status: 'complete' }, [{ url }], 'Summarize the reference.');
+  assert.deepEqual(result.completion, { status: 'complete' });
+  assert.equal(result.response, 'The rule applies [1]. Read [1](' + url + ').\n\n' + literal);
+});
+
 test('public research keeps independently sufficient alternatives in its practical test verdict', () => {
   const source = { url: 'https://standard.example/verification' };
   const testRow = 'Try scanning the label with the reader. Scanning must work and no manual code may be requested. '

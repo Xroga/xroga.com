@@ -142,6 +142,7 @@
 }
 .xroga-native-openui .iui-table th { font-weight: 650; white-space: normal; }
 .xroga-native-openui .iui-table th button { min-height: 1.75rem; }
+.xroga-native-openui .iui-table td[data-answer-table-long-text] { min-inline-size: 12rem; overflow-wrap: anywhere; }
 .xroga-native-openui .iui-slider-head { font-size: .9375rem; }
 .xroga-native-openui .iui-range { --iui-range-thumb: var(--native-accent); --iui-range-track: var(--native-accent-soft); }
 .xroga-native-openui .iui-slider-marks { font-size: .8125rem; }

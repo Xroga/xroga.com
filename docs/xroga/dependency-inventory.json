@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "9f57be0387036c00d38fde4218737c8a8593b247",
+  "source_sha": "ebaa895f40f7a516c3a085088064ed267c8b592c",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17531,7 +17531,7 @@
     },
     {
       "path": "backend/src/ai/nativeMarkdown.ts",
-      "sha256": "6bfcb686f22dff3860b2f037e65b666b4ac013c184275fb6d32c5828e9e14f5b"
+      "sha256": "4ed807ab1117189da8be8e29bb0641cd96aa15880fefb4571c83638ee699f72d"
     },
     {
       "path": "backend/src/ai/nativeOfficeContent.ts",
@@ -17627,7 +17627,7 @@
     },
     {
       "path": "backend/src/ai/prompts.ts",
-      "sha256": "4e04cab98ecf48276bd15ceefa0bb2ba051956d7f19875f2f160802e286dbf4a"
+      "sha256": "39d03234207a568c879a5202164a4e15e84c32d41e178e5de2222468c3d3e230"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -17683,7 +17683,7 @@
     },
     {
       "path": "backend/src/ai/researchAnswer.ts",
-      "sha256": "fc90df1d94e45bdccf0c29bbdb995953344a471d1c5f7157ed45e43451d3a88c"
+      "sha256": "f83f2f5aacef156bee25db86b353291db61151a1c98bdc286b1b3578bbd0d0bc"
     },
     {
       "path": "backend/src/ai/researchPublicationEvidence.ts",
@@ -22867,7 +22867,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "7f8d2c1fce9277dd830771eb63a2e4f7c241aec426a9387d01226236264c14a1"
+      "sha256": "b39b68c12559c45932258918a7555ff44259a3a2ff1dd5049dae7dd6e8375b2f"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/style.ts",
@@ -22879,7 +22879,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/table-view.tsx",
-      "sha256": "570262bd04ef5299660fa93cbdfbea4c94b961fdbcfa029abdf2c5d94b5eb419"
+      "sha256": "81ad5b71ff0559eae3119083e689a7a1effd791687c4d3a1672cfcc43148f65b"
     },
     {
       "path": "frontend/src/components/native-openui/upstream/components/table.tsx",
@@ -24575,7 +24575,7 @@
     },
     {
       "path": "frontend/src/lib/publicAnswerText.ts",
-      "sha256": "1b9780fd88cbb3ba311afb505391f37892c2b27ba4986616152c979f71c80e35"
+      "sha256": "a12e8244927ab6994dcebc5b5d69d99dae2f80c83e7f397789db37450882a993"
     },
     {
       "path": "frontend/src/lib/publicConnectCatalog.ts",

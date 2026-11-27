@@ -5449,7 +5449,7 @@
       "id": "surface:0684b28fde93e166c7de",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeMarkdown.ts",
-      "sha256": "6bfcb686f22dff3860b2f037e65b666b4ac013c184275fb6d32c5828e9e14f5b",
+      "sha256": "4ed807ab1117189da8be8e29bb0641cd96aa15880fefb4571c83638ee699f72d",
       "symbols": [
         "NativeMarkdownTable",
         "NativeMarkdownTableBlock",
@@ -5467,6 +5467,7 @@
         "headings",
         "indentedCode",
         "index",
+        "inlineCodeOrCitationSuperscript",
         "level",
         "line",
         "lines",
@@ -5476,18 +5477,22 @@
         "nativeMarkdownTableRow",
         "nativeMarkdownTables",
         "nativeTableDecimalKey",
+        "normalizeCitationSuperscripts",
         "opening",
         "ordered",
         "orderedItems",
+        "output",
         "parsed",
         "paths",
+        "proseStart",
         "readNativeMarkdownTable",
         "readoutLines",
         "rows",
         "source",
         "startsNewBlock",
         "table",
-        "tables"
+        "tables",
+        "unwrap"
       ],
       "imports": [],
       "runtimeImports": [],
@@ -5518,6 +5523,7 @@
         "backend/src/ai/researchWebsiteEvidence.ts:2",
         "frontend/src/components/native-openui/upstream/components/markdown.tsx:11",
         "frontend/src/lib/assistantCopy.ts:5",
+        "frontend/src/lib/publicAnswerText.ts:2",
         "frontend/src/lib/xrogaFileExports.ts:7"
       ],
       "reachable": true,
@@ -8639,7 +8645,7 @@
         "backend/src/ai/projectName.test.ts:3",
         "backend/src/ai/repositoryHydrationAuthority.test.ts:3",
         "backend/src/ai/repositoryReadFailure.test.ts:3",
-        "backend/src/ai/researchAnswer.test.ts:203",
+        "backend/src/ai/researchAnswer.test.ts:224",
         "backend/src/ai/researchAnswer.ts:345",
         "backend/src/ai/tenantModelDispatch.test.ts:8",
         "backend/src/ai/universal/resumeProjectContext.test.ts:54",
@@ -8998,7 +9004,7 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "4e04cab98ecf48276bd15ceefa0bb2ba051956d7f19875f2f160802e286dbf4a",
+      "sha256": "39d03234207a568c879a5202164a4e15e84c32d41e178e5de2222468c3d3e230",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
@@ -10401,7 +10407,7 @@
       "id": "surface:794bcc5ea45ebaad109e",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/researchAnswer.ts",
-      "sha256": "fc90df1d94e45bdccf0c29bbdb995953344a471d1c5f7157ed45e43451d3a88c",
+      "sha256": "f83f2f5aacef156bee25db86b353291db61151a1c98bdc286b1b3578bbd0d0bc",
       "symbols": [
         "RESEARCH_ANSWER_MAXIMUM_MICRO_USD",
         "ResearchAnswerRequest",
@@ -14973,7 +14979,7 @@
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.test.ts:6",
         "backend/src/ai/pipeline.ts:177",
-        "backend/src/ai/researchAnswer.test.ts:204",
+        "backend/src/ai/researchAnswer.test.ts:225",
         "backend/src/ai/researchAnswer.ts:2",
         "backend/src/ai/responseCoverage.test.ts:4",
         "backend/src/ai/tenantModelDispatch.test.ts:9",
@@ -16493,7 +16499,7 @@
       "callers": [
         "backend/src/ai/parallelApproval.ts:24",
         "backend/src/ai/pipeline.ts:33",
-        "backend/src/ai/researchAnswer.test.ts:212",
+        "backend/src/ai/researchAnswer.test.ts:233",
         "backend/src/ai/researchAnswer.ts:8",
         "backend/src/ai/researchPublicationEvidence.ts:3",
         "backend/src/ai/router.ts:11",
@@ -39287,7 +39293,7 @@
         "backend/src/ai/reasoningSummary.ts:3",
         "backend/src/ai/repoSummarize.security.test.ts:6",
         "backend/src/ai/repoSummarize.ts:19",
-        "backend/src/ai/researchAnswer.test.ts:208",
+        "backend/src/ai/researchAnswer.test.ts:229",
         "backend/src/ai/resourceLedger.test.ts:5",
         "backend/src/ai/resourceLedger.ts:10",
         "backend/src/ai/resourceMeter.ts:17",
@@ -40488,7 +40494,7 @@
       "callers": [
         "backend/src/ai/parallelApproval.ts:13",
         "backend/src/ai/parallelWeb.security.test.ts:16",
-        "backend/src/ai/researchAnswer.test.ts:211",
+        "backend/src/ai/researchAnswer.test.ts:232",
         "backend/src/ai/sonnetApproval.test.ts:9",
         "backend/src/ai/sonnetApproval.ts:10",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:11",
@@ -40660,7 +40666,7 @@
       "callers": [
         "backend/src/ai/parallelApproval.ts:12",
         "backend/src/ai/parallelWeb.security.test.ts:18",
-        "backend/src/ai/researchAnswer.test.ts:205",
+        "backend/src/ai/researchAnswer.test.ts:226",
         "backend/src/ai/sonnetApproval.test.ts:5",
         "backend/src/ai/sonnetApproval.ts:9",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:4",
@@ -44657,7 +44663,7 @@
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.ts:19",
         "backend/src/ai/parallelApproval.ts:21",
-        "backend/src/ai/researchAnswer.test.ts:206",
+        "backend/src/ai/researchAnswer.test.ts:227",
         "backend/src/ai/researchAnswer.ts:4",
         "backend/src/routes/phase1.ts:1",
         "backend/src/services/integrations/businessActionConfirmations.ts:1",
@@ -46282,7 +46288,7 @@
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.test.ts:8",
         "backend/src/ai/parallelWeb.security.test.ts:17",
-        "backend/src/ai/researchAnswer.test.ts:209",
+        "backend/src/ai/researchAnswer.test.ts:230",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:3",
         "backend/src/services/integrations/businessModelEgress.test.ts:5",
         "backend/src/services/integrations/composioAccountSelection.security.test.ts:4",
@@ -50909,7 +50915,7 @@
       ],
       "callers": [
         "backend/src/ai/parallelWeb.security.test.ts:13",
-        "backend/src/ai/researchAnswer.test.ts:207",
+        "backend/src/ai/researchAnswer.test.ts:228",
         "backend/src/ai/sonnetApproval.test.ts:7",
         "backend/src/index.ts:63",
         "backend/src/routes/browserRuns.ts:20",
@@ -51340,7 +51346,7 @@
       "entryPoints": [],
       "callers": [
         "backend/src/ai/parallelWeb.security.test.ts:12",
-        "backend/src/ai/researchAnswer.test.ts:210",
+        "backend/src/ai/researchAnswer.test.ts:231",
         "backend/src/routes/browserRunInternal.test.ts:6",
         "backend/src/routes/browserRuns.test.ts:11",
         "backend/src/routes/drive.test.ts:7",
@@ -92517,7 +92523,7 @@
       "id": "surface:0fef6875af5860e2f4b4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.tsx",
-      "sha256": "7f8d2c1fce9277dd830771eb63a2e4f7c241aec426a9387d01226236264c14a1",
+      "sha256": "b39b68c12559c45932258918a7555ff44259a3a2ff1dd5049dae7dd6e8375b2f",
       "symbols": [
         "Block",
         "ChecklistItem",
@@ -92891,7 +92897,7 @@
       "id": "surface:cc2277541036ed041ef2",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/table-view.tsx",
-      "sha256": "570262bd04ef5299660fa93cbdfbea4c94b961fdbcfa029abdf2c5d94b5eb419",
+      "sha256": "81ad5b71ff0559eae3119083e689a7a1effd791687c4d3a1672cfcc43148f65b",
       "symbols": [
         "MAGNITUDE",
         "NUMERIC",
@@ -92900,6 +92906,7 @@
         "amount",
         "b",
         "cells",
+        "isLongAnswerTableCell",
         "isNumericColumn",
         "label",
         "leftNumber",
@@ -112677,7 +112684,7 @@
         "frontend/src/lib/formatAiMarkdown.tsx:35",
         "frontend/src/lib/messageHelpers.test.ts:4",
         "frontend/src/lib/messageHelpers.ts:2",
-        "frontend/src/lib/publicAnswerText.ts:5"
+        "frontend/src/lib/publicAnswerText.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -118693,7 +118700,7 @@
       "id": "surface:2f643a1aa432bf0f982e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/publicAnswerText.ts",
-      "sha256": "1b9780fd88cbb3ba311afb505391f37892c2b27ba4986616152c979f71c80e35",
+      "sha256": "a12e8244927ab6994dcebc5b5d69d99dae2f80c83e7f397789db37450882a993",
       "symbols": [
         "body",
         "end",
@@ -118711,6 +118718,7 @@
         "visit"
       ],
       "imports": [
+        "../../../backend/src/ai/nativeMarkdown",
         "../../../backend/src/ai/nativeOpenUi",
         "./connectedAppResult",
         "mdast",
@@ -118718,6 +118726,7 @@
         "unified"
       ],
       "runtimeImports": [
+        "backend/src/ai/nativeMarkdown.ts",
         "backend/src/ai/nativeOpenUi.ts",
         "frontend/src/lib/connectedAppResult.ts"
       ],
@@ -160362,7 +160371,7 @@
     {
       "id": "test-suite:d2498a6171b68795395c",
       "sourcePath": "backend/src/ai/researchAnswer.test.ts",
-      "declaredTests": 31,
+      "declaredTests": 32,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -165577,7 +165586,7 @@
     {
       "id": "test-suite:4ce9d7bbf578638998f1",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
-      "declaredTests": 43,
+      "declaredTests": 44,
       "skipLocations": [],
       "focusLocations": []
     },
