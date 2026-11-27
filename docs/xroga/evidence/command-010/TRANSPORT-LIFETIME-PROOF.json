@@ -290,7 +290,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.egress.test.ts",
-      "sha256": "34bd84f5aacee796d3dfa2ff83cfd227a24c41d19fc50c4c51abf88fd6e80a46",
+      "sha256": "86c0209695109de2ea4679cb061371fd7bad9f3bedd7accabf7a044d68460e6e",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/openaiCompat.egress.test.ts",
         "sha256": "649092d8bd97b3fed5a12305399a7d577b2c1b4a35ac3e952149cf6a5f834e0a"
@@ -298,11 +298,12 @@
       "previousSha256": "c013b4bb607cf023790daec71ad5e7d43e5326403bff05e5f1f295fabfede9de",
       "beforeBufferedDeadlineSha256": "8a686f065bbd6b45bd94a332466dcd77799ed7d125947b9ec1b23296ceeb6c35",
       "beforeDeadlineAlignmentSha256": "5670a75c3441731c06d9431979d040f9fb1585b88c784cab0528bbbb740e8dc3",
-      "deadlineAlignmentScope": "Existing canonical generation timeout alignment and its regression tests. No new transport, destination, caller authorization or security acceptance."
+      "deadlineAlignmentScope": "Existing canonical generation timeout alignment and its regression tests. No new transport, destination, caller authorization or security acceptance.",
+      "beforeStreamedAnswerSha256": "34bd84f5aacee796d3dfa2ff83cfd227a24c41d19fc50c4c51abf88fd6e80a46"
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "c68442eb8d29d7aaa6d1ccbbfbff9c33e3d40701cd2254e689fee0d40fee2d4d",
+      "sha256": "27952d66e9864f2afb889000a8dfabb121d8ba4eea2a32c438c39ba83b88ccbf",
       "previousGenericSdkBinding": {
         "sha256": "0a418cef1bdbdadb77f14288c4298990900a111fbc0def0050756a9b146914ca",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -318,7 +319,8 @@
       "previousSha256": "9b89fbbca10b4a53804a92b4c254998ebe87e9e03b2325a5c709837fca8fcaf8",
       "beforeBufferedDeadlineSha256": "c159e3bd321637cc26214829ed36bca439a102e91983e6fd93fcbee36ef61544",
       "beforeDeadlineAlignmentSha256": "0bd01dc8ca4992f8bc61de75a2f6ff655e56326d563155ccfe24a9f0f91f503f",
-      "deadlineAlignmentScope": "Existing canonical generation timeout alignment and its regression tests. No new transport, destination, caller authorization or security acceptance."
+      "deadlineAlignmentScope": "Existing canonical generation timeout alignment and its regression tests. No new transport, destination, caller authorization or security acceptance.",
+      "beforeStreamedAnswerSha256": "c68442eb8d29d7aaa6d1ccbbfbff9c33e3d40701cd2254e689fee0d40fee2d4d"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
@@ -693,7 +695,7 @@
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.test.ts",
-      "sha256": "66f5a6492e6dcc9bcd8662fa2aba180d94127155d62ca41d456ddf0f93b4ee5a",
+      "sha256": "7e8fcf37b9fce5cf9682e1cce07e67753971d750b8cd3e1e129e500256a16bfa",
       "beforeNamedDocumentPromptFixtureSha256": "6468973bd3fb562124f9f9e16d83fd1ce23c67cf276060c04aab4fb6a5158483",
       "previousGenericSdkBinding": {
         "sha256": "acb7d3ee286d862c38e386380a20a7632415cd454510076abedca054016f2959",
@@ -732,7 +734,8 @@
         "previousSha256": "62d37e53a2d4abf418f9667341e4104672a712e9e9cc5dc0b7f8e35c25c632fb",
         "finding": "The controlled fixture now counts quota reads for ordinary plain and rich answers and for file and approved Search turns. It verifies the single post-settlement refresh and exhausted-account denial before model reservation or attachment processing. Existing receipt and persistence checks still run. This source binding carries no new hosted, CI or production acceptance.",
         "liveAcceptance": false
-      }
+      },
+      "beforeStreamedAnswerSha256": "66f5a6492e6dcc9bcd8662fa2aba180d94127155d62ca41d456ddf0f93b4ee5a"
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.ts",
@@ -745,7 +748,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "3559ca76cdec97bf90e5ab0d511215d0d2b8265bea47e0fac21be78be984673e",
+      "sha256": "624814d6816daad4161cf9623b84855874963c1627572bcd57ac597b41af9887",
       "beforeTxtDownloadRoutingSha256": "450d77c6f89e9334ef2345d316895580732bda5b614ad3d87d42f4d4643f75fa",
       "beforeInlineCalculatorRoutingSha256": "58e3fa0ea9ec46ed2aa0be0c7aa6ca0777c213059c12f3cd6ecf04a6a2ab6e29",
       "beforePlannerCompletionDiagnosticsSha256": "6ca81b0c9234195e6159d1e03735a21ce50d50cf1e8f71b53cb62199bf95cb26",
@@ -769,7 +772,8 @@
         "candidate": "a53217141172f08c820d24b48b73bca9952d6b66",
         "previousSha256": "406c14484910f41e05c10eea704bb3977c023fb2d3b5e9d68b5c4bb3dabf6457",
         "scope": "Bounded research intent and dispatch selection were reviewed. Direct provider transports, credentials and authority implementation retain their existing requirements. Controlled evidence only."
-      }
+      },
+      "beforeStreamedAnswerSha256": "3559ca76cdec97bf90e5ab0d511215d0d2b8265bea47e0fac21be78be984673e"
     },
     {
       "path": "backend/src/operations/benchmarkAdapter.ts",
@@ -1234,6 +1238,34 @@
         "path": "backend/src/services/integrations/businessRead.ts",
         "previousSha256": "39a0926d4ffd44f21b9ba166a8579a6ed7febae7693d39057ee2f3bf50092175",
         "currentSha256": "cc2d685f207705b93a3a8b0724e8b6c0eaac2878ec0fb132dac730e441b3c077"
+      }
+    ]
+  },
+  "workspaceStreamedAnswerContinuation": {
+    "baseline": "c8cc9f45b5523379d317054624509225a15d3993",
+    "previousProofSha256": "4d397820ded57d188d10be7b161f60cc52ae68c62e3f3c8c3e3e1ac30adc90dd",
+    "ownerApproval": "On 2026-11-27 the repository owner asked for model limits to be removed and, asked whether answer text may be shown before its billing is verified, answered \"Yes, stream answers\". Recorded by the assistant that made the change; no separate human code review is claimed.",
+    "scope": "CURRENT_SOURCE_BINDING_FOR_EARLY_DISPLAY_AND_OUTPUT_CEILINGS_NOT_NEW_SECURITY_ACCEPTANCE. A listening Workspace request may display streamed answer text before the usage receipt is verified; this is an exception to the earlier no-publication-before-settlement behaviour. Destinations, credentials, redirect refusal, reservation before dispatch, usage verification, settlement and the refusal to return a result without a valid receipt are unchanged. Planner, answer, research and notes output ceilings are higher, so reservations are larger. Live acceptance is not verified.",
+    "bindings": [
+      {
+        "path": "backend/src/ai/openaiCompat.egress.test.ts",
+        "previousSha256": "34bd84f5aacee796d3dfa2ff83cfd227a24c41d19fc50c4c51abf88fd6e80a46",
+        "currentSha256": "86c0209695109de2ea4679cb061371fd7bad9f3bedd7accabf7a044d68460e6e"
+      },
+      {
+        "path": "backend/src/ai/openaiCompat.ts",
+        "previousSha256": "c68442eb8d29d7aaa6d1ccbbfbff9c33e3d40701cd2254e689fee0d40fee2d4d",
+        "currentSha256": "27952d66e9864f2afb889000a8dfabb121d8ba4eea2a32c438c39ba83b88ccbf"
+      },
+      {
+        "path": "backend/src/ai/tenantModelDispatch.test.ts",
+        "previousSha256": "66f5a6492e6dcc9bcd8662fa2aba180d94127155d62ca41d456ddf0f93b4ee5a",
+        "currentSha256": "7e8fcf37b9fce5cf9682e1cce07e67753971d750b8cd3e1e129e500256a16bfa"
+      },
+      {
+        "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
+        "previousSha256": "3559ca76cdec97bf90e5ab0d511215d0d2b8265bea47e0fac21be78be984673e",
+        "currentSha256": "624814d6816daad4161cf9623b84855874963c1627572bcd57ac597b41af9887"
       }
     ]
   }
