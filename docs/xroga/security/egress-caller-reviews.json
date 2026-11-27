@@ -5077,7 +5077,7 @@
     {
       "id": "eb39e5759b146603faf0",
       "callSha256": "b7de7d8baaceeb3d667da23d6269cd0b28044250d9ce7e272275698162245500",
-      "sourceFileSha256": "236afeb38215ed1279bdf8acb3041877bb84e30cae989068e226f386f33bc44d",
+      "sourceFileSha256": "444770d2d31f4752b12a0933d8a59ad4d4c1979d0396d6ea0c99fb034669660b",
       "disposition": "VERIFIED_GUARD",
       "trust": "FIRST_PARTY_API_ORIGIN_WAKE_UP_NO_CREDENTIAL_NO_BODY_RESPONSE_IGNORED",
       "tenantAuthority": "NONE_REQUIRED_NO_USER_DATA_OR_AUTHORITY_SENT_BEST_EFFORT_ONLY",
@@ -5087,7 +5087,8 @@
           "marker": "voice backend wake-up request carries no credentials, body or user data and its response is ignored",
           "sha256": "f7739c339fd6f7e17feba6ef782c476b4b73f7de4b9022a811897ad933029bfc"
         }
-      ]
+      ],
+      "reviewedOnBranch": "Re-inspected 2026-11-27 and recorded with owner approval: the reviewed wake-up call text and its evidence are unchanged. The same file now accepts a refreshed access token only when subject, session identifier and issuer all match the one captured at the start; any other change still stops the upload, each request sends the token it checked, and the server verifies every token. No destination, credential, billing or schema change."
     },
     {
       "id": "e1ddea7115498d92341b",

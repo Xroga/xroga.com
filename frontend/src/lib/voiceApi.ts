@@ -1,6 +1,6 @@
 import { API_URL, ApiError, getAccessToken,fetchApiResponse } from '@/lib/api';
 import {normalizeVoiceAudio} from './voicePcm';
-import {voiceClientAwait} from './voiceRequestPolicy';
+import {sameVoiceAccount, voiceClientAwait, voiceDeadline} from './voiceRequestPolicy';
 
 /** Starts the voice backend while the user is still speaking. Scale-to-zero means the first request after
  * idle waits for a cold start; a simple no-credential request lets that happen during recording.
@@ -11,16 +11,16 @@ export function warmVoiceBackend(): void {
 
 export async function transcribeVoiceAudio(audio: Blob, cancellation?: AbortSignal,
   options?: {freeOnly: true; preparedPcm: true; expectedToken: string}): Promise<string> {
-  const signal = AbortSignal.any([AbortSignal.timeout(60000), ...(cancellation ? [cancellation] : [])]);
+  const signal = voiceDeadline(60000, cancellation);
   signal.throwIfAborted();
   const token = await voiceClientAwait(getAccessToken(), signal);
   if (!token) throw new ApiError('Please sign in to use voice input.', 401);
-  if (options && token !== options.expectedToken) throw new ApiError('Your voice session changed. Record again in the current account.', 401, {code: 'VOICE_SESSION_CHANGED'});
+  if (options && !sameVoiceAccount(options.expectedToken, token)) throw new ApiError('Your voice session changed. Record again in the current account.', 401, {code: 'VOICE_SESSION_CHANGED'});
   const recording = options?.preparedPcm ? audio : await voiceClientAwait(normalizeVoiceAudio(audio), signal);
   if (recording.size < 512 || recording.size > 8 * 1024 * 1024) throw new ApiError('Invalid voice recording size.', 422);
   const current = async () => {
     signal.throwIfAborted();
-    if (await voiceClientAwait(getAccessToken(), signal) !== token) throw new ApiError('Your voice session changed. Record again in the current account.', 401, {code: 'VOICE_SESSION_CHANGED'});
+    if (!sameVoiceAccount(token, await voiceClientAwait(getAccessToken(), signal))) throw new ApiError('Your voice session changed. Record again in the current account.', 401, {code: 'VOICE_SESSION_CHANGED'});
     signal.throwIfAborted();
   };
   await current();
