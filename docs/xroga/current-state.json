@@ -2,10 +2,10 @@
   "version": "1.0",
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
-    "branch": "claude/model-limits-20261127",
-    "sha": "a531596eec427050d1e047b4290b3cd4208b6d16",
-    "sourceTimestampUtc": "2026-11-27T22:36:44+05:00",
-    "auditStartedUtc": "2026-11-27T17:53:15.476Z",
+    "branch": "claude/mic-early-text-20261127",
+    "sha": "a1275a5b1376e535afc6d694c406b0bf5ea4df90",
+    "sourceTimestampUtc": "2026-11-27T22:57:10+05:00",
+    "auditStartedUtc": "2026-11-27T18:09:53.628Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -34842,7 +34842,7 @@
       "id": "surface:9bd59dc251f0f14ea40b",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/voiceFree.ts",
-      "sha256": "ca50e347e4c57de9ff84de22454522b6550770f1a75ac1e45463887a16d98827",
+      "sha256": "e19c70b1457812bc991a08da11e1058164364b1b1c4ebe2ed72026742ea94535",
       "symbols": [
         "MAX_CONCURRENT_PER_USER",
         "VOICE_VOCABULARY",
@@ -34857,19 +34857,25 @@
         "controller",
         "current",
         "duration",
+        "early",
         "energy",
         "error",
         "inFlight",
         "language",
+        "leave",
         "left",
         "part",
+        "pcm",
         "reader",
         "receipt",
         "requestActive",
+        "requestId",
         "router",
+        "settle",
         "signal",
         "slot",
         "text",
+        "transcript",
         "unavailable",
         "upstream",
         "url"
@@ -123735,13 +123741,20 @@
       "id": "surface:0e1350a6a9f50317c14e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/voiceApi.ts",
-      "sha256": "444770d2d31f4752b12a0933d8a59ad4d4c1979d0396d6ea0c99fb034669660b",
+      "sha256": "40c944ffb955805538ebda49f8b95cae0072e33985e56277eaf9ea4515eada73",
       "symbols": [
+        "AFTER_TRANSCRIPT_MS",
         "bytes",
         "chunk",
         "chunks",
         "current",
+        "drainVoiceReply",
+        "end",
         "error",
+        "forward",
+        "handedOver",
+        "limit",
+        "lines",
         "offset",
         "part",
         "payload",
@@ -123753,7 +123766,9 @@
         "text",
         "token",
         "transcribeVoiceAudio",
-        "warmVoiceBackend"
+        "value",
+        "warmVoiceBackend",
+        "wire"
       ],
       "imports": [
         "./voicePcm",
@@ -140444,7 +140459,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:8f250ce1b67c876e85c7",
+      "id": "registration:ddf3daef5ce4463bf65c",
       "sourcePath": "backend/src/routes/voiceFree.ts",
       "line": 35,
       "receiver": "router",
@@ -142819,8 +142834,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:3da0549ab0bacb889674",
-      "registrationId": "registration:8f250ce1b67c876e85c7",
+      "id": "route:29a6e0218dcb2573453f",
+      "registrationId": "registration:ddf3daef5ce4463bf65c",
       "sourcePath": "backend/src/routes/voiceFree.ts",
       "line": 35,
       "method": "POST",
@@ -155396,73 +155411,129 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:34e34ad1b0dc78ec17e0",
+      "id": "frontend-call:e6c7d191e19c7de0961a",
       "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
-      "line": 44,
+      "line": 46,
       "callee": "api.run",
       "reachable": false
     },
     {
-      "id": "frontend-call:0a72c42b53b1a69da213",
+      "id": "frontend-call:5b087363d2b4acab652c",
       "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
-      "line": 45,
+      "line": 47,
       "callee": "api.requests",
       "reachable": false
     },
     {
-      "id": "frontend-call:fc3b82d5753e316fd6ee",
+      "id": "frontend-call:2a49ec553adb0d1c6b8b",
       "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
-      "line": 49,
+      "line": 51,
       "callee": "api.run",
       "reachable": false
     },
     {
-      "id": "frontend-call:b8860156f96613fec490",
+      "id": "frontend-call:561fee756171ed5ae5a9",
       "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
-      "line": 49,
+      "line": 51,
       "callee": "api.requests",
       "reachable": false
     },
     {
-      "id": "frontend-call:b50dd2d605388835e3aa",
+      "id": "frontend-call:dd4be092cd787eba7c00",
       "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
-      "line": 54,
+      "line": 56,
       "callee": "api.run",
       "reachable": false
     },
     {
-      "id": "frontend-call:d0c63b6bc9b25e8d194d",
+      "id": "frontend-call:e693d6725239a132e0e2",
       "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
-      "line": 55,
+      "line": 57,
       "callee": "api.requests",
       "reachable": false
     },
     {
-      "id": "frontend-call:3413f134b080f2e3a1ae",
+      "id": "frontend-call:7e621e86baeb2c69936b",
       "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
-      "line": 59,
+      "line": 61,
       "callee": "api.run",
       "reachable": false
     },
     {
-      "id": "frontend-call:f03c12066bde8b1b53a6",
+      "id": "frontend-call:dcabe669848a50b8c2a2",
       "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
-      "line": 59,
+      "line": 61,
       "callee": "api.requests",
       "reachable": false
     },
     {
-      "id": "frontend-call:798bb26b1fc844583b31",
+      "id": "frontend-call:e61d0c6bb5756c2b4119",
       "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
-      "line": 75,
+      "line": 77,
       "callee": "api.run",
       "reachable": false
     },
     {
-      "id": "frontend-call:d891f78dff3ae8dff753",
+      "id": "frontend-call:4107597b912b63238c15",
       "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
-      "line": 76,
+      "line": 78,
       "callee": "api.requests",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:1c45ad5a9fe862adbc8f",
+      "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
+      "line": 106,
+      "callee": "api.run",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:e5f73d3e7ceb8ba601bc",
+      "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
+      "line": 108,
+      "callee": "api.wire",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:86038ca38cb0e84c8f42",
+      "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
+      "line": 109,
+      "callee": "api.accept",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:cb975b2b6996d8dc6954",
+      "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
+      "line": 114,
+      "callee": "api.run",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:5c3b6aa0ea744f6757fa",
+      "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
+      "line": 116,
+      "callee": "api.wire",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:afbe4aa7edac475c213b",
+      "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
+      "line": 120,
+      "callee": "api.run",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:f3fb9598201d79369bd0",
+      "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
+      "line": 123,
+      "callee": "api.run",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:192f10fd17e9427c6cf3",
+      "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
+      "line": 123,
+      "callee": "api.accept",
       "reachable": false
     },
     {
@@ -155480,9 +155551,9 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:15ec16339809bb9eaded",
+      "id": "frontend-call:d8ca5cc301811fd9f735",
       "sourcePath": "frontend/src/lib/voiceApi.ts",
-      "line": 28,
+      "line": 41,
       "callee": "fetchApiResponse",
       "reachable": true
     },
@@ -162918,7 +162989,7 @@
     {
       "id": "test-suite:ae49f633e918fac5baa9",
       "sourcePath": "frontend/src/lib/voiceApi.security.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },

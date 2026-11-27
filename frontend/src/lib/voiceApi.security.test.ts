@@ -8,10 +8,10 @@ import {sameVoiceAccount, voiceClientAwait, voiceDeadline, isTerminalVoiceFailur
 /** AbortSignal as shipped by Safari before iOS 17.4: no static any(). */
 const olderIosAbortSignal = {timeout: (ms: number) => AbortSignal.timeout(ms)};
 
-function actualVoiceApi(mode: string, freeOnly = false, abortSignal: unknown = AbortSignal) {
-  let token: string | null = 'original-user-token', requests = 0;
+function actualVoiceApi(mode: string, freeOnly = false, abortSignal: unknown = AbortSignal, reply?: () => Response) {
+  let token: string | null = 'original-user-token', requests = 0, wire: AbortSignal | undefined, accept: string | null = null;
   class ApiError extends Error {constructor(message: string, public status: number, public data: unknown = {}) {super(message);}}
-  const context: Record<string, unknown> = {exports: {}, AbortSignal: abortSignal, Blob, Response, TextDecoder, Uint8Array, Error,
+  const context: Record<string, unknown> = {exports: {}, AbortSignal: abortSignal, AbortController, setTimeout, clearTimeout, Blob, Response, TextDecoder, Uint8Array, Error,
     require: (name: string) => {
       if (name === './voiceRequestPolicy') return {sameVoiceAccount, voiceClientAwait, voiceDeadline};
       if (name === './voicePcm') return {normalizeVoiceAudio: async () => {
@@ -24,6 +24,8 @@ function actualVoiceApi(mode: string, freeOnly = false, abortSignal: unknown = A
           requests++; assert.equal(url, 'https://api.xroga.com/api/voice/' + (freeOnly ? 'transcribe-free' : 'transcribe'));
           assert.equal(new Headers(init.headers).get('authorization'), 'Bearer original-user-token');
           assert.equal(new Headers(init.headers).get('content-type'), 'audio/wav'); assert.ok(init.signal);
+          wire = init.signal ?? undefined; accept = new Headers(init.headers).get('accept');
+          if (reply) return reply();
           if (mode === 'changeAfterResponse') token = 'different-account-token';
           if (mode === 'oversized') return new Response('x'.repeat(128001));
           if (mode === 'denial') return Response.json({error: 'Static denied response', code: 'VOICE_TRANSCRIPTION_DENIED'}, {status: 503});
@@ -34,7 +36,7 @@ function actualVoiceApi(mode: string, freeOnly = false, abortSignal: unknown = A
     }};
   const source = readFileSync(new URL('./voiceApi.ts', import.meta.url), 'utf8');
   vm.runInNewContext(ts.transpileModule(source, {compilerOptions: {target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS}}).outputText, context, {timeout: 1000});
-  return {requests: () => requests, run: (signal?: AbortSignal) => (context.exports as {transcribeVoiceAudio: (audio: Blob, signal?: AbortSignal, options?: {freeOnly: true; preparedPcm: true; expectedToken: string}) => Promise<string>}).transcribeVoiceAudio(new Blob([new Uint8Array(1024)]), signal,
+  return {requests: () => requests, wire: () => wire, accept: () => accept, run: (signal?: AbortSignal) => (context.exports as {transcribeVoiceAudio: (audio: Blob, signal?: AbortSignal, options?: {freeOnly: true; preparedPcm: true; expectedToken: string}) => Promise<string>}).transcribeVoiceAudio(new Blob([new Uint8Array(1024)]), signal,
     freeOnly ? {freeOnly: true, preparedPcm: true, expectedToken: 'original-user-token'} : undefined)};
 }
 
@@ -90,4 +92,34 @@ test('the voice deadline aborts on cancellation and on timeout, without AbortSig
   const expired = voiceDeadline(5);
   await new Promise(resolve => setTimeout(resolve, 40));
   assert.equal(expired.aborted, true);
+});
+
+test('the free upload takes the transcript from the first line and leaves the connection to finish', async t => {
+  const line = new TextEncoder().encode(JSON.stringify({text: 'Early transcript'}) + String.fromCharCode(10));
+  await t.test('resolves while the server is still writing, and a later release does not cut the request', async () => {
+    let cancelled = false, finish!: () => void;
+    const api = actualVoiceApi('ok', true, AbortSignal, () => new Response(new ReadableStream<Uint8Array>({
+      start(controller) {controller.enqueue(line.slice(0, 7)); controller.enqueue(line.slice(7)); finish = () => controller.close();},
+      cancel() {cancelled = true;},
+    }), {headers: {'content-type': 'application/x-ndjson; charset=utf-8'}}));
+    const release = new AbortController();
+    assert.equal(await api.run(release.signal), 'Early transcript');
+    release.abort();
+    assert.equal(api.wire()?.aborted, false); assert.equal(cancelled, false);
+    assert.equal(api.accept(), 'application/x-ndjson');
+    finish();
+  });
+  await t.test('cancelling before the text arrives still aborts the upload', async () => {
+    const api = actualVoiceApi('ok', true, AbortSignal, () => new Response(new ReadableStream<Uint8Array>({start() {}}), {headers: {'content-type': 'application/x-ndjson'}}));
+    const cancellation = new AbortController(), pending = api.run(cancellation.signal);
+    await new Promise(resolve => setTimeout(resolve, 10)); cancellation.abort();
+    await assert.rejects(pending); assert.equal(api.wire()?.aborted, true);
+  });
+  await t.test('a stream that ends before the line is complete publishes nothing', async () => {
+    const api = actualVoiceApi('ok', true, AbortSignal, () => new Response(line.slice(0, line.length - 1), {headers: {'content-type': 'application/x-ndjson'}}));
+    await assert.rejects(api.run());
+  });
+  await t.test('the paid route keeps asking for a whole JSON reply', async () => {
+    const api = actualVoiceApi('ok'); await api.run(); assert.equal(api.accept(), null);
+  });
 });

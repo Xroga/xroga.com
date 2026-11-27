@@ -9,6 +9,16 @@ export function warmVoiceBackend(): void {
   try { void fetch(`${API_URL}/api/voice/transcribe-free`, {method: 'GET', mode: 'no-cors', cache: 'no-store', credentials: 'omit'}).catch(() => {}); } catch { /* best effort */ }
 }
 
+/** Longest the connection is kept open after the transcript, while the server finishes its records. */
+const AFTER_TRANSCRIPT_MS = 20000;
+
+/** Reads out the rest of an early-text reply. Closing it early would end the request on the server
+ * before its accounting finished. */
+async function drainVoiceReply(reader: ReadableStreamDefaultReader<Uint8Array>): Promise<void> {
+  const limit = setTimeout(() => {void reader.cancel().catch(() => {});}, AFTER_TRANSCRIPT_MS);
+  try {while (!(await reader.read()).done);} catch { /* The transcript is already delivered. */ } finally {clearTimeout(limit);}
+}
+
 export async function transcribeVoiceAudio(audio: Blob, cancellation?: AbortSignal,
   options?: {freeOnly: true; preparedPcm: true; expectedToken: string}): Promise<string> {
   const signal = voiceDeadline(60000, cancellation);
@@ -25,26 +35,37 @@ export async function transcribeVoiceAudio(audio: Blob, cancellation?: AbortSign
   };
   await current();
 
+  // Cancellation and the deadline reach the connection only until the transcript has arrived.
+  const wire = new AbortController(), forward = () => wire.abort();
+  signal.addEventListener('abort', forward, {once: true});
   const response = await voiceClientAwait(fetchApiResponse(`${API_URL}/api/voice/${options?.freeOnly ? 'transcribe-free' : 'transcribe'}`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'audio/wav',
+      ...(options?.freeOnly ? {Accept: 'application/x-ndjson'} : {}),
     },
     body: recording,
-    signal,
+    signal: wire.signal,
   }), signal);
   try {await current();} catch (error) {void response.body?.cancel().catch(() => {}); throw error;}
   const reader = response.body?.getReader();
-  const chunks: Uint8Array[] = []; let size = 0;
+  const chunks: Uint8Array[] = []; let size = 0, handedOver = false;
+  const lines = response.ok && /^application\/x-ndjson/.test(response.headers.get('content-type') ?? '');
   try {
     if (!reader) throw new Error('Missing voice response.');
     for (;;) {
       const part = await voiceClientAwait(reader.read(), signal);
       if (part.done) break;
-      size += part.value.byteLength; if (size > 128000) throw new Error('Voice response too large.'); chunks.push(part.value);
+      const end = lines ? part.value.indexOf(10) : -1, value = end < 0 ? part.value : part.value.subarray(0, end);
+      size += value.byteLength; if (size > 128000) throw new Error('Voice response too large.'); chunks.push(value);
+      if (end >= 0) {handedOver = true; break;}
     }
-  } finally {void reader?.cancel().catch(() => {}); reader?.releaseLock();}
+    if (lines && !handedOver) throw new Error('Incomplete voice response.');
+  } finally {
+    if (handedOver && reader) {signal.removeEventListener('abort', forward); void drainVoiceReply(reader);}
+    else {void reader?.cancel().catch(() => {}); reader?.releaseLock();}
+  }
   const bytes = new Uint8Array(size); let offset = 0;
   for (const chunk of chunks) {bytes.set(chunk, offset); offset += chunk.byteLength;}
   const payload = JSON.parse(new TextDecoder('utf-8', {fatal: true}).decode(bytes)) as
