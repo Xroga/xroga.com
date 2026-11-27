@@ -9,7 +9,7 @@ import { requestsOfficialLinkCoverage } from './workspacePublicSearch.js';
 import { isRequestedPublication, requestedPublication } from './researchPublicationEvidence.js';
 import { bindListedWebsiteRows } from './researchWebsiteEvidence.js';
 import { withholdIncomparableResearchRanking } from './researchRankingEvidence.js';
-import { nativeMarkdownTables, nativeTableDecimalKey } from './nativeMarkdown.js';
+import { nativeMarkdownTableRow, nativeMarkdownTables, nativeTableDecimalKey } from './nativeMarkdown.js';
 import type { PublicCompletionState } from './completionDiagnostics.js';
 import type { ChatPipelineResult } from './pipeline.js';
 
@@ -202,6 +202,36 @@ function withholdCrossListingRoutes(text: string, sources: ReadonlyArray<{ snipp
   if (withheld) return 'I left out flight offers whose cited listings didn’t verify the route and price together.\n\n' + lines.join('\n').trim();
 }
 
+const independentAlternatives = /\bunless\b[^.!?]*\bat least one\b[^.!?]*\b(?:alternatives?|options?|exceptions?)\b/iu;
+const unconditionalTestVerdict = /([.!?][ \t]+)[\p{L}][\p{L} -]{0,45} must (?:work|succeed|be available) and no [\p{L}\p{N} -]+ may [\p{L}\p{N} -]+\./iu;
+const followUpChecksAlternative = /^[ \t]+If [^.!?]+,\s*(?:record|document|check|identify) (?:which|what) (?:permitted )?alternative\b/iu;
+
+/** The row already states that any qualifying alternative is sufficient. Keep
+ * the concrete test and the alternative check while removing the contradiction. */
+function reconcileConditionalQaTests(text: string): string | undefined {
+  const lines = text.split(/\r\n?|\n/);
+  let updated = false;
+  for (const { head, rows, start } of nativeMarkdownTables(text)) {
+    const ruleColumn = head.findIndex(label => /\b(?:requirement|main rule)\b/iu.test(label));
+    const testColumn = head.findIndex(label => /\b(?:QA|practical|acceptance) test\b/iu.test(label));
+    if (ruleColumn < 0 || testColumn < 0 || ruleColumn === testColumn) continue;
+    for (const [index, row] of rows.entries()) {
+      const test = row[testColumn];
+      const verdict = unconditionalTestVerdict.exec(test);
+      if (!verdict || !independentAlternatives.test(row[ruleColumn])) continue;
+      const observation = test.slice(0, verdict.index);
+      const followUp = test.slice(verdict.index + verdict[0].length);
+      if (!/\b(?:try|test|attempt)\b/iu.test(observation) || !followUpChecksAlternative.test(followUp)) continue;
+      row[testColumn] = observation + verdict[1]
+        + 'Record which checks worked. Apply the stated rule and its permitted alternatives before deciding whether the test fails.'
+        + followUp;
+      lines[start + index + 2] = nativeMarkdownTableRow(row);
+      updated = true;
+    }
+  }
+  if (updated) return lines.join('\n');
+}
+
 /** Structural coverage of an explicit link deliverable. A retrieved URL alone
  * cannot certify ownership or that the cited page supports a particular claim. */
 export function presentPublicResearchAnswer(response: string, completion: PublicCompletionState,
@@ -237,6 +267,8 @@ export function presentPublicResearchAnswer(response: string, completion: Public
       completion = { status: 'partial', reason: 'source_attribution' };
     }
   }
+  const checkedQa = reconcileConditionalQaTests(text);
+  if (checkedQa !== undefined) text = checkedQa;
   const attributionIncomplete = researchCitationIssues(text, sources).length > 0;
   const publication = completion.status === 'complete' ? requestedPublication(prompt) : undefined;
   if (publication && !sources.some(source => isRequestedPublication(source, publication))) {
@@ -249,7 +281,7 @@ export function presentPublicResearchAnswer(response: string, completion: Public
   }
   if (!requestsOfficialLinkCoverage(prompt)) return { response: text, completion:
     attributionIncomplete && completion.status === 'complete' ? { status: 'partial', reason: 'source_attribution' } as const : completion,
-    ...(rankingWithheld || stayMismatch || checkedOffers !== undefined ? { requiresReadableFallback: true } : {}) };
+    ...(rankingWithheld || stayMismatch || checkedOffers !== undefined || checkedQa !== undefined ? { requiresReadableFallback: true } : {}) };
 
   const count = /\b(?:top|rank|list|name|compare|find)\s+(?:the\s+)?(\d{1,3}|two|three|four|five|six|seven|eight|nine|ten)\b/iu.exec(prompt)?.[1];
   const numberWords = ['two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
