@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "dbc3bb5b2d59fba9d744ddc1dea2620518d84c1d",
+  "source_sha": "f2b2f3917cc13b232051da6d4248f982d281b246",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17356,7 +17356,7 @@
     },
     {
       "path": "backend/src/ai/prompts.ts",
-      "sha256": "bf0b6cec72b13403379a09a3df62fff61e5accd8a752fd9ad34228be15689317"
+      "sha256": "88474f4efeeba31d80942e1bb9ea8b90d2b5a049cef58b343487108d2880aca4"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -17392,7 +17392,7 @@
     },
     {
       "path": "backend/src/ai/reasoningSummary.ts",
-      "sha256": "f3421d907dfcf9faa2a2a8cc9affe7d85685f82288af983fa3b25bfc4d45278b"
+      "sha256": "03f2c3790a024e54b268f9c1db69a987304505dd029313d1897883a83df78726"
     },
     {
       "path": "backend/src/ai/repairController.ts",
@@ -17444,7 +17444,7 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "sha256": "d1dde66cc1bbe2a0f523db68db294f5c4f26640c89fef46270493c228651588e"
+      "sha256": "77058455a2f06a285b6f71375c2a82486fe100122c2e5b2d9fb287296277cb48"
     },
     {
       "path": "backend/src/ai/router.ts",
@@ -17684,7 +17684,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "3559ca76cdec97bf90e5ab0d511215d0d2b8265bea47e0fac21be78be984673e"
+      "sha256": "624814d6816daad4161cf9623b84855874963c1627572bcd57ac597b41af9887"
     },
     {
       "path": "backend/src/ai/usageAccounting.ts",
@@ -24668,7 +24668,7 @@
     },
     {
       "path": "frontend/src/lib/warmApi.ts",
-      "sha256": "552a81cc241f0ef4143ed7fb78a519887b17c5e1ca8aa0241f048de56223aea3"
+      "sha256": "7ae0fd570c2b93657c63cf83a2174d49f81bd7228b99a4c0f74ae60e3b88bcff"
     },
     {
       "path": "frontend/src/lib/workLanes.ts",
