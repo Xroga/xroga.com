@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "d96a48c0b5d3d3e9cb0dfb7996489eac99751d59",
+  "source_sha": "a1275a5b1376e535afc6d694c406b0bf5ea4df90",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -6416,9 +6416,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "162021f8e3dd8eca991f534ab74fcb0afd14e8f0724ad0ca8a85c77e98868501",
+      "sha256": "ed588d7276cbab7ccf480ef2c2d1d9c7ba4ca9272153582582dc07c28fc9bc2c",
       "byte_size": 5955184,
-      "modified_timestamp": "2026-11-27T17:45:18.134Z",
+      "modified_timestamp": "2026-11-27T18:09:54.040Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -12372,7 +12372,7 @@
       "path_or_url": "backend/src/routes/voiceFree.ts",
       "sha256": "e19c70b1457812bc991a08da11e1058164364b1b1c4ebe2ed72026742ea94535",
       "byte_size": 8705,
-      "modified_timestamp": "2026-11-27T17:09:38.709Z",
+      "modified_timestamp": "2026-11-27T17:58:13.522Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",
@@ -30247,7 +30247,7 @@
       "path_or_url": "frontend/src/lib/voiceApi.ts",
       "sha256": "40c944ffb955805538ebda49f8b95cae0072e33985e56277eaf9ea4515eada73",
       "byte_size": 4993,
-      "modified_timestamp": "2026-11-27T17:13:59.966Z",
+      "modified_timestamp": "2026-11-27T18:05:21.040Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",
