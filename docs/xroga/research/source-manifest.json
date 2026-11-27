@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "bc6b0677bb3bde9efa307e2816044e7866217193",
+  "source_sha": "0adc8eb3f3d1a1522248a5b931e62987f8eb2e12",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -6416,9 +6416,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "0482122367136c6f2dbef376203ee9fdcc48d916567fe91436dff696f2dd0683",
-      "byte_size": 5952464,
-      "modified_timestamp": "2026-11-27T19:37:28.384Z",
+      "sha256": "5364ed72e63be4eb5ae2ba7857f6c4c6e0586f6a15790c26f47e7f109c1130e0",
+      "byte_size": 5955186,
+      "modified_timestamp": "2026-11-27T19:40:15.678Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -30310,9 +30310,9 @@
       "source_id": "SRC-fb246ef519592dcb",
       "filename": "voiceSegmenter.ts",
       "path_or_url": "frontend/src/lib/voiceSegmenter.ts",
-      "sha256": "c73176a55e776661d1374be102e9b46b42fbd160122407941203a059408f5b47",
-      "byte_size": 4384,
-      "modified_timestamp": "2026-10-31T01:27:35.782Z",
+      "sha256": "19f3c8ef02e52f1f0341cd902ba56ae4c5f34274f8e8e0f561fa60661d7cf767",
+      "byte_size": 4609,
+      "modified_timestamp": "2026-11-27T19:35:12.988Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",

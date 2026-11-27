@@ -7,7 +7,7 @@
   ],
   "state": "CODE_COMPLETE",
   "risk": "medium",
-  "scope": "Repair Workspace dictation: iOS Safari capture and upload failures, and losses from quiet pieces, brief upload failures, token refresh, Stop and multi-channel microphones. Record the mixed-language root cause without changing transcription. Wake the scale-to-zero voice server when a signed-in person opens or returns to the Workspace, to shorten the wait after Stop. Show the free transcript as soon as the provider receipt is admitted and finish its accounting while the same response stays open.",
+  "scope": "Repair Workspace dictation: iOS Safari capture and upload failures, and losses from quiet pieces, brief upload failures, token refresh, Stop and multi-channel microphones. Record the mixed-language root cause without changing transcription. Wake the scale-to-zero voice server when a signed-in person opens or returns to the Workspace, to shorten the wait after Stop. Show the free transcript as soon as the provider receipt is admitted and finish its accounting while the same response stays open. Cut dictation after three seconds at a half-second pause so mixed-language speech loses fewer words.",
   "changedFiles": [
     "backend/src/routes/voiceFree.security.test.ts",
     "backend/src/routes/voiceFree.ts",
@@ -28,6 +28,8 @@
     "frontend/src/lib/voiceMessages.test.ts",
     "frontend/src/lib/voiceMessages.ts",
     "frontend/src/lib/voiceRequestPolicy.ts",
+    "frontend/src/lib/voiceSegmenter.pause.test.ts",
+    "frontend/src/lib/voiceSegmenter.ts",
     "frontend/src/lib/voiceWarmup.test.ts",
     "frontend/src/lib/voiceWarmup.ts",
     "scripts/verify-voice-capture.mjs"
@@ -127,6 +129,12 @@
       "scope": "Early text is published only after admission and receipt checks; accounting finishes after disconnect and failures are held or reported.",
       "negative": true,
       "reference": "backend/src/routes/voiceFree.security.test.ts"
+    },
+    {
+      "command": "tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/voiceSegmenter.pause.test.ts",
+      "scope": "A half-second pause after three seconds cuts; breaths, early pauses and silence do not.",
+      "negative": true,
+      "reference": "frontend/src/lib/voiceSegmenter.pause.test.ts"
     }
   ],
   "rollout": "Frontend only. Verify on a physical iPhone from the candidate build before promotion.",
