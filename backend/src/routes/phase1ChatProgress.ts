@@ -31,6 +31,19 @@ const HEARTBEAT_MS = 10_000;
 /** How long a finished answer may wait for the notes still being written, so they are not lost by a moment. */
 const NOTES_GRACE_MS = 2_500;
 
+/** How often a long request says it is still running. Tests shorten it. */
+export const progressTiming = { everyMs: 12_000 };
+
+/** Each line only restates what is known while the request is still open. */
+function stillWorking(sourceCount: number): readonly string[] {
+  const found = sourceCount ? ` with ${sourceCount} ${sourceCount === 1 ? 'source' : 'sources'}` : '';
+  return [
+    `Still working on your answer${found}`,
+    'Still working. The reply appears once it is complete and checked',
+    'This one is taking longer than usual and is still running',
+  ];
+}
+
 function wantsStream(accept: unknown): boolean {
   return typeof accept === 'string' && accept.toLowerCase().includes('text/event-stream');
 }
@@ -59,6 +72,19 @@ router.post('/chat', (req: AuthRequest, res, next) => {
   }, HEARTBEAT_MS);
   heartbeat.unref?.();
   res.once('close', () => { open = false; clearInterval(heartbeat); });
+
+  // A long answer reports nothing while the model writes, so this says it is still running, in its own step.
+  const sourceUrls = new Set<string>();
+  let updates = 0;
+  const still = (activityStatus: 'running' | 'completed' | 'failed', text: string) => write('progress', publicAiPayload({
+    agent: 'session', status: 'step', activityId: 'still-working', activityStatus, message: text, swarmActivity: text,
+  }));
+  const reminder = setInterval(() => {
+    const lines = stillWorking(sourceUrls.size);
+    still('running', lines[Math.min(updates++, lines.length - 1)]!);
+  }, progressTiming.everyMs);
+  reminder.unref?.();
+  res.once('close', () => clearInterval(reminder));
 
   // One real step that spans the whole handler: it ends when the handler's answer (or refusal) arrives.
   const preparing = (activityStatus: 'running' | 'completed' | 'failed', text: string) => write('progress', {
@@ -125,11 +151,13 @@ router.post('/chat', (req: AuthRequest, res, next) => {
   res.status = ((code: number) => { status = code; return res; }) as typeof res.status;
   res.json = ((body: unknown) => {
     clearInterval(heartbeat);
+    clearInterval(reminder);
     res.status = originalStatus;
     res.json = sendJson;
     const finish = () => {
       if (status < 400) preparing('completed', 'Prepared your answer');
       else preparing('failed', 'Could not prepare the answer');
+      if (updates) still(status < 400 ? 'completed' : 'failed', status < 400 ? 'Finished the answer' : 'Could not finish the answer');
       write('result', { status, body });
       open = false;
       res.end();
@@ -143,7 +171,10 @@ router.post('/chat', (req: AuthRequest, res, next) => {
     return res;
   }) as typeof res.json;
 
-  return withProgressSink((frame) => write('progress', publicAiPayload({ ...frame })), () => next());
+  return withProgressSink((frame) => {
+    for (const source of frame.sources ?? []) sourceUrls.add(source.url);
+    write('progress', publicAiPayload({ ...frame }));
+  }, () => next());
 });
 
 export default router;

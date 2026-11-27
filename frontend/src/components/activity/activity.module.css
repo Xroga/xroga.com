@@ -45,7 +45,7 @@
 /* The running work is unboxed: one column of updates with the working line under it. */
 .working { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; min-width: 0; }
 .liveLine { color: var(--act-ink); padding: 5px 9px; margin: 0; }
-.liveText { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+.liveText { min-width: 0; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow-wrap: anywhere; font-weight: 500; }
 .liveLine .chevron { margin-inline-start: auto; }
 .working[data-waiting='true'] .liveLine .icon { color: var(--act-warn); }
 @media (prefers-reduced-motion: no-preference) {

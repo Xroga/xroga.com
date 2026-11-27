@@ -80,7 +80,7 @@ function StepLine({ step, rows }: { step: StreamStep; rows: OpenRows }) {
   const body = (
     <>
       <Icon className={styles.lineIcon} aria-hidden="true" />
-      <span className={styles.lineText}>
+      <span className={styles.lineText} dir="auto">
         {step.text}{step.detail ? <span className={styles.lineDetail}> {step.detail}</span> : null}
       </span>
       {step.state === 'failed' ? <span className={styles.sr}>failed</span> : null}
@@ -116,11 +116,11 @@ function Group({ id, title, families, steps, rows }: { id: string; title: string
 
 const PLAN_WORD: Record<PlanStatus, string> = { pending: 'pending', active: 'in progress', done: 'done', failed: 'failed' };
 
-function PlanMark({ number, status }: { number?: number; status?: PlanStatus }) {
+function PlanMark({ number, status, leading }: { number?: number; status?: PlanStatus; leading?: boolean }) {
   if (!status) return <span className={styles.planNumber} aria-hidden="true">{number}</span>;
-  const Icon = status === 'done' ? CircleCheck : status === 'active' ? LoaderCircle : status === 'failed' ? CircleAlert : CircleDashed;
+  const Icon = status === 'done' ? CircleCheck : status === 'active' && leading ? LoaderCircle : status === 'failed' ? CircleAlert : CircleDashed;
   // Keyed by state so a newly finished step pops its tick in.
-  return <Icon key={status} className={styles.planMark} aria-hidden="true" />;
+  return <Icon key={status} className={styles.planMark} data-leading={status === 'active' && leading ? 'true' : undefined} aria-hidden="true" />;
 }
 
 /**
@@ -139,6 +139,8 @@ export function ProcessingStream({ entries, rows }: { entries: readonly StreamEn
           // without that information stays numbered.
           const tracked = entry.steps.every(step => step.planStatus);
           const done = entry.steps.filter(step => step.planStatus === 'done').length;
+          // One spinner per plan. Other steps of the same running stage breathe, so a long plan stays calm.
+          const leading = entry.steps.find(step => step.planStatus === 'active')?.id;
           content = (
             <div className={styles.planCard}>
               <p className={styles.planTitle}>
@@ -150,15 +152,15 @@ export function ProcessingStream({ entries, rows }: { entries: readonly StreamEn
                   <motion.li key={step.id} className={styles.planStep} data-status={step.planStatus}
                     initial={reduced ? false : { opacity: 0, x: -4 }} animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: reduced ? 0 : 0.22, delay: reduced ? 0 : Math.min(index, 6) * 0.05 }}>
-                    <PlanMark number={step.planNumber} status={step.planStatus} />
-                    <span className={styles.planText}>{step.text}</span>
+                    <PlanMark number={step.planNumber} status={step.planStatus} leading={step.id === leading} />
+                    <span className={styles.planText} dir="auto">{step.text}</span>
                     {step.planStatus ? <span className={styles.sr}>{PLAN_WORD[step.planStatus]}</span> : null}
                   </motion.li>
                 ))}
               </ol>
             </div>
           );
-        } else if (entry.type === 'note') content = <p className={styles.note}>{entry.text}</p>;
+        } else if (entry.type === 'note') content = <p className={styles.note} dir="auto">{entry.text}</p>;
         else if (entry.type === 'group') content = <Group id={entry.id} title={entry.text} families={entry.families} steps={entry.steps} rows={rows} />;
         else content = <StepLine step={entry} rows={rows} />;
         return (

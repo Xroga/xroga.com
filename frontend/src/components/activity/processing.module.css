@@ -71,10 +71,11 @@
 .planCard { min-width: 0; padding: 12px 14px; border: 1px solid color-mix(in srgb, var(--foreground, #0a0a0a) 12%, transparent); border-radius: 12px; }
 .planTitle { display: flex; justify-content: space-between; gap: 12px; margin: 0 0 8px; color: var(--foreground, #0a0a0a); font-size: 13px; font-weight: 600; }
 .planCount { font-weight: 400; font-variant-numeric: tabular-nums; opacity: 0.6; }
-.planText { min-width: 0; }
+.planText { flex: 1 1 auto; min-width: 0; text-align: start; }
 .planMark { flex: none; width: 17px; height: 17px; margin-top: 1px; opacity: 0.55; }
 .planStep[data-status='active'] { color: var(--foreground, #0a0a0a); }
-.planStep[data-status='active'] .planMark { color: #006aff; opacity: 1; animation: p-spin 1s linear infinite; }
+.planStep[data-status='active'] .planMark { color: #006aff; opacity: 1; animation: p-breathe 1.8s ease-in-out infinite; }
+.planStep[data-status='active'] .planMark[data-leading='true'] { animation: p-spin 1s linear infinite; }
 .planStep[data-status='done'] .planMark { color: #1f9d55; opacity: 1; animation: p-tick 320ms cubic-bezier(0.22, 1.4, 0.36, 1); }
 .planStep[data-status='failed'], .planStep[data-status='failed'] .planMark { color: #d1383f; opacity: 1; }
 .planList { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }

@@ -87,6 +87,9 @@ export async function generateReasoningSummary(opts: {
       {
         maxTokens: REASONING_SUMMARY_MAX_OUTPUT_TOKENS,
         temperature: 0.3,
+        // Compact structured output: without private reasoning the notes arrive sooner and the whole
+        // output budget is spent on text the user can read.
+        reasoningMode: 'none',
         credentialOverride: dispatch.credentialOverride,
         beforeDispatch: dispatch.beforeDispatch,
       },

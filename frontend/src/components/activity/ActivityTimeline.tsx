@@ -202,7 +202,7 @@ export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel
           onClick={hasStream ? () => setStreamHidden(value => !value) : hasDetails ? () => setLiveOpen(value => !value) : undefined} tabIndex={hasDetails ? 0 : -1}>
           {waiting ? <WaitingIcon className={styles.icon} aria-hidden="true" /> : <BlackHoleIndicator family={family} />}
           {waiting ? null : <span className={styles.sr}>Black Hole is working</span>}
-          <span className={styles.liveText} title={lineText}>{lineText}</span>
+          <span className={styles.liveText} dir="auto" title={lineText}>{lineText}</span>
           {elapsed ? <span className={styles.meta} aria-hidden="true">{elapsed}</span> : null}
           {hasDetails ? <ChevronDown className={styles.chevron} aria-hidden="true" /> : null}
         </button>
