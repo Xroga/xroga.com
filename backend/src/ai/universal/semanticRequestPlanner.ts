@@ -375,7 +375,7 @@ export const SEMANTIC_PLANNER_HEDGE_DELAY_MS =
 
 // Allow room for the semantic decision and its answer obligations in one
 // dispatch. A clipped JSON decision cannot safely authorize a route.
-const SEMANTIC_PLANNER_MAX_OUTPUT_TOKENS = 2_200;
+const SEMANTIC_PLANNER_MAX_OUTPUT_TOKENS = 8_192;
 
 /**
  * The planner needs a compact JSON
