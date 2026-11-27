@@ -153,6 +153,7 @@ export function adaptToXrogaEvent(input: XrogaEventAdapterInput): XrogaCanonical
       rawEvent: input.rawEvent,
       ...(!software && isNote(input.rawEvent, input.payload) ? { note: true } : {}),
       ...(!software && isNote(input.rawEvent, input.payload) && input.payload.planStep === true ? { planStep: true } : {}),
+      ...(!software && isNote(input.rawEvent, input.payload) && (input.payload.planStage === 'search' || input.payload.planStage === 'answer') ? { planStage: input.payload.planStage } : {}),
       ...(!software && stepSources(input.payload.sources).length ? { sources: JSON.stringify(stepSources(input.payload.sources)) } : {}),
       ...(software ? { softwareEventType: software.type } : {}),
       ...(type === 'approval.requested' && confirmationIdFromPayload(input.payload) ? { confirmationId: confirmationIdFromPayload(input.payload) } : {}),

@@ -45,10 +45,24 @@ function sanitizeExecutionActivity(raw: unknown): ChatMessage['executionActivity
     typeof value === 'string' ? redactTerminalText(value).slice(0, limit) : undefined;
   const safeRefs = (value: unknown) => Array.isArray(value) ?
     value.filter((ref): ref is string => typeof ref === 'string' && /^[a-z0-9_-]{1,128}$/i.test(ref)).slice(0, 20) : undefined;
+  const safePages = (value: unknown) => {
+    if (!Array.isArray(value)) return undefined;
+    const pages = value.flatMap((page: unknown) => {
+      const { title, url } = (page ?? {}) as { title?: unknown; url?: unknown };
+      if (typeof url !== 'string' || safeSourceUrl(url) === null) return [];
+      return [{ title: safeText(title, 160) || url, url }];
+    }).slice(0, 8);
+    return pages.length ? pages : undefined;
+  };
   const items = raw.filter(isPersistedExecutionActivity).slice(-80).map(item => ({
     id: item.id.slice(0, 320),
     kind: item.kind,
-    label: safeText(item.label, 500) ?? '',
+    // A written note stays with the answer, so it keeps its flags and its full on-screen length.
+    note: item.note === true ? true : undefined,
+    planStep: item.planStep === true ? true : undefined,
+    planStage: item.planStage === 'search' || item.planStage === 'answer' ? item.planStage : undefined,
+    sources: safePages(item.sources),
+    label: safeText(item.label, item.note === true ? 700 : 500) ?? '',
     status: item.status,
     startedAt: item.startedAt,
     updatedAt: item.updatedAt,

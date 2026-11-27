@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { readIntent } from '../ai/intentReasoning.js';
 import { understandingProgress } from '../ai/startupProgress.js';
 import { publicAiPayload } from '../lib/publicAiIdentity.js';
-import { generateReasoningSummary, planStep, reasoningSummaryEnabled } from '../ai/reasoningSummary.js';
+import { generateReasoningSummary, planStage, planStep, reasoningSummaryEnabled } from '../ai/reasoningSummary.js';
 import { withProgressSink } from '../ai/progressChannel.js';
 import type { AuthRequest } from '../middleware/auth.js';
 
@@ -112,7 +112,7 @@ router.post('/chat', (req: AuthRequest, res, next) => {
           message: note,
           swarmStatusLabel: 'Thinking',
           swarmActivity: note,
-          ...(step ? { planStep: true } : {}),
+          ...(step ? { planStep: true, planStage: planStage(line) } : {}),
         }));
       }
     });

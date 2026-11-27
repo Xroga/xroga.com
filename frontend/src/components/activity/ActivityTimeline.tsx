@@ -15,7 +15,7 @@ import { BlackHoleIndicator } from './BlackHoleIndicator';
 import { ProcessingSurface } from './ProcessingSurface';
 import type { ProcessingView } from '@/lib/terminal/processingView';
 import { ProcessingStream, useOpenRows } from './ProcessingStream';
-import type { StreamEntry } from '@/lib/terminal/processingStream';
+import { splitLiveStep, type StreamEntry } from '@/lib/terminal/processingStream';
 
 const FAMILY_ICON: Record<TimelineFamily, LucideIcon> = {
   command: SquareTerminal, verify: ShieldCheck, read: FileSearch, research: Search, write: FilePen,
@@ -130,6 +130,9 @@ export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel
     // The header names what this particular run did: how long it thought, when that is known.
     const thought = stream.find(entry => entry.type === 'step' && entry.id.endsWith(':client-thought') && entry.state === 'done');
     const label = state === 'failed' ? 'Run failed' : state === 'stopped' ? 'Run stopped' : thought?.text ?? 'Work history';
+    // The line the header already shows is not repeated below it, unless only that line holds the sources.
+    const repeatsHeader = state !== 'failed' && state !== 'stopped' && thought?.type === 'step' &&
+      (!thought.evidence?.sources || stream.some(entry => entry !== thought && entry.type === 'step' && Boolean(entry.evidence?.sources)));
     const HeaderIcon = state === 'failed' ? CircleX : state === 'stopped' ? CirclePause : CheckCircle2;
     return (
       <section className={styles.timeline} aria-label="Activity" data-state={state} data-testid="activity-timeline">
@@ -139,7 +142,7 @@ export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel
           <span className={styles.text}>{label}</span>
           {steps ? <><span className={styles.meta}>{summary || (thought ? '' : `${steps} ${steps === 1 ? 'step' : 'steps'}`)}</span><ChevronDown className={styles.chevron} aria-hidden="true" /></> : null}
         </button>
-        {open && stream.length ? <ProcessingStream entries={stream} rows={openRows} /> : null}
+        {open && stream.length ? <ProcessingStream entries={repeatsHeader ? stream.filter(entry => entry !== thought) : stream} rows={openRows} /> : null}
         {open && !stream.length ? <>
           <ol className={styles.list}>{settled.slice(0, historyCount).map(item => <SettledItem key={item.id} item={item} />)}</ol>
           {settled.length > historyCount ? (
@@ -162,25 +165,18 @@ export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel
   const hasDetails = Boolean(active || settled.length || hasStream);
   const LiveIcon = active ? FAMILY_ICON[familyOf(active.kind)] : null;
 
+  const work = splitLiveStep(stream);
+  // A written note is already on screen above, so the working line never repeats it.
+  // A running step that stays in the stream (it has output to open) is not named a second time here.
+  const lineText = waiting ? text : (work.live?.evidence ? text : work.live?.text) ?? (stream.at(-1)?.type === 'note' ? 'Thinking' : text);
+  const family = work.live?.family ?? (active ? familyOf(active.kind) : 'other');
+
   return (
     <section className={styles.timeline} aria-label="Activity" data-state={state} data-testid="activity-timeline">
-      <span className={styles.sr} role="status" aria-live="polite">{text}</span>
-      <div className={hasStream ? styles.streamPanel : styles.workingPanel} data-waiting={waiting ? 'true' : undefined}>
-        <button type="button" className={`${styles.row} ${styles.workingHeader}`}
-          aria-expanded={hasStream ? !streamHidden : hasDetails ? liveOpen : undefined} data-static={hasDetails ? undefined : 'true'}
-          onClick={hasStream ? () => setStreamHidden(value => !value) : hasDetails ? () => setLiveOpen(value => !value) : undefined} tabIndex={hasDetails ? 0 : -1}>
-          {waiting ? <WaitingIcon className={styles.icon} aria-hidden="true" /> : <BlackHoleIndicator />}
-          <span className={styles.workingCopy}>
-            <span className={styles.workingTitle}>
-              <span>{waiting ? text : 'Black Hole is working'}</span>
-              {elapsed ? <span className={styles.meta} aria-hidden="true">{elapsed}</span> : null}
-            </span>
-            {!waiting && !hasStream && !(processing && processing.family !== 'start') ? <span className={styles.stage}>{text}</span> : null}
-          </span>
-          {hasDetails ? <ChevronDown className={styles.chevron} aria-hidden="true" /> : null}
-        </button>
-        {processing && (!hasStream || processing.checklistSource === 'plan') ? <ProcessingSurface view={processing} listOnly={hasStream} /> : null}
-        {hasStream && !streamHidden ? <ProcessingStream entries={stream} rows={openRows} /> : null}
+      <span className={styles.sr} role="status" aria-live="polite">{lineText}</span>
+      <div className={styles.working} data-waiting={waiting ? 'true' : undefined}>
+        {processing?.checklist && (!hasStream || processing.checklistSource === 'plan') ? <ProcessingSurface view={processing} listOnly /> : null}
+        {work.entries.length && !streamHidden ? <ProcessingStream entries={work.entries} rows={openRows} /> : null}
         {!hasStream && liveOpen && hasDetails ? <div className={styles.workingDetails}>
           {hidden > 0 ? <button type="button" className={styles.earlier} onClick={() => {
             if (showAll) setHistoryCount(count => count + HISTORY_PAGE_SIZE);
@@ -200,6 +196,16 @@ export function ActivityTimeline({ model, now, runStartedAt = null, pendingLabel
           </ol> : null}
         </div> : null}
         {note ? <p className={styles.note}>{note}</p> : null}
+        {/* The working line follows the work, like a cursor: new steps appear above it. */}
+        <button type="button" className={`${styles.row} ${styles.liveLine}`} data-testid="live-line"
+          aria-expanded={hasStream ? !streamHidden : hasDetails ? liveOpen : undefined} data-static={hasDetails ? undefined : 'true'}
+          onClick={hasStream ? () => setStreamHidden(value => !value) : hasDetails ? () => setLiveOpen(value => !value) : undefined} tabIndex={hasDetails ? 0 : -1}>
+          {waiting ? <WaitingIcon className={styles.icon} aria-hidden="true" /> : <BlackHoleIndicator family={family} />}
+          {waiting ? null : <span className={styles.sr}>Black Hole is working</span>}
+          <span className={styles.liveText} title={lineText}>{lineText}</span>
+          {elapsed ? <span className={styles.meta} aria-hidden="true">{elapsed}</span> : null}
+          {hasDetails ? <ChevronDown className={styles.chevron} aria-hidden="true" /> : null}
+        </button>
       </div>
     </section>
   );

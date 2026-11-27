@@ -1,10 +1,14 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import type { TimelineFamily } from '@/lib/terminal/activityTimeline';
 import styles from './black-hole.module.css';
 
-/** Decorative. Mount only in the working header. The adjacent status provides the accessible text. */
-export function BlackHoleIndicator({ compact = false }: { compact?: boolean }) {
+/**
+ * Decorative: dots orbiting a black hole beside the working line. Their motion follows the kind of work the
+ * backend reported, never the wording of the prompt. The adjacent text provides the accessible status.
+ */
+export function BlackHoleIndicator({ compact = false, family = 'other' }: { compact?: boolean; family?: TimelineFamily }) {
   const ref = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
@@ -28,18 +32,15 @@ export function BlackHoleIndicator({ compact = false }: { compact?: boolean }) {
   }, []);
 
   return (
-    <span ref={ref} className={styles.mark} data-black-hole="" data-compact={compact || undefined} aria-hidden="true">
+    <span ref={ref} className={styles.mark} data-black-hole="" data-family={family} data-compact={compact || undefined} aria-hidden="true">
       <svg viewBox="0 0 28 28" fill="none" focusable="false">
-        <ellipse className={styles.primary} cx="14" cy="14" rx="12.4" ry="4.8" transform="rotate(14 14 14)" />
-        <ellipse className={styles.secondary} cx="14" cy="14" rx="12.4" ry="4.6" transform="rotate(-61 14 14)" />
-        <circle className={styles.horizon} cx="14" cy="14" r="4.3" />
-        <circle className={styles.rim} cx="14" cy="14" r="4.3" />
-        <ellipse className={styles.cyan} cx="14" cy="14" rx="12.4" ry="4.8" transform="rotate(14 14 14)" pathLength="100" />
-        <ellipse className={styles.violet} cx="14" cy="14" rx="12.4" ry="4.6" transform="rotate(-61 14 14)" pathLength="100" />
-        <g className={styles.particles}>
-          <circle cx="5.2" cy="6.2" r=".65" />
-          <circle cx="23" cy="5.7" r=".55" />
-          <circle cx="22.2" cy="23.7" r=".65" />
+        <ellipse className={styles.path} cx="14" cy="14" rx="11.5" ry="5.2" transform="rotate(-24 14 14)" />
+        <circle className={styles.horizon} cx="14" cy="14" r="4.6" />
+        <circle className={styles.rim} cx="14" cy="14" r="4.6" />
+        <g transform="translate(14 14) rotate(-24)">
+          <circle className={`${styles.dot} ${styles.first}`} r="3" />
+          <circle className={`${styles.dot} ${styles.second}`} r="2.5" />
+          <circle className={`${styles.dot} ${styles.third}`} r="2" />
         </g>
       </svg>
     </span>

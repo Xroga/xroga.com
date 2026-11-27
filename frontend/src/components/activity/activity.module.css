@@ -42,18 +42,28 @@
 .item[data-tone='warning'] .icon { color: var(--act-warn); }
 .item[data-tone='stopped'] .icon { color: var(--act-ok); }
 
-.workingPanel { border: 1px solid var(--act-line); border-radius: 13px; padding: 3px; }
-.streamPanel { min-width: 0; }
-.streamPanel[data-waiting='true'] .workingHeader .icon { color: var(--act-warn); }
-.workingHeader { color: var(--act-ink); padding: 7px 9px; margin: 0; }
-.workingCopy { flex: 1; min-width: 0; display: grid; gap: 1px; }
-.workingTitle { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 7px; font-weight: 600; }
-.workingTitle .meta { font-weight: 400; }
-.stage { color: var(--act-muted); font-size: 12.5px; overflow-wrap: anywhere; }
+/* The running work is unboxed: one column of updates with the working line under it. */
+.working { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; min-width: 0; }
+.liveLine { color: var(--act-ink); padding: 5px 9px; margin: 0; }
+.liveText { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+.liveLine .chevron { margin-inline-start: auto; }
+.working[data-waiting='true'] .liveLine .icon { color: var(--act-warn); }
+@media (prefers-reduced-motion: no-preference) {
+  .working:not([data-waiting='true']) .liveText {
+    color: transparent;
+    background: linear-gradient(100deg, color-mix(in srgb, var(--act-ink) 50%, transparent) 35%, var(--act-ink) 50%, color-mix(in srgb, var(--act-ink) 50%, transparent) 65%);
+    background-size: 250% 100%; -webkit-background-clip: text; background-clip: text;
+    animation: live-shimmer 1.8s linear infinite;
+  }
+}
+@media (forced-colors: active) {
+  .working .liveText { animation: none; background: none; color: CanvasText; }
+}
+@keyframes live-shimmer { from { background-position: 100% 0; } to { background-position: -50% 0; } }
 .workingDetails { margin: 0 8px; padding: 6px 0; border-top: 1px solid var(--act-line); }
 .currentStep { color: var(--act-ink); overflow-wrap: anywhere; }
 .currentStep .icon { color: var(--act-accent); }
-.workingPanel[data-waiting='true'] :is(.workingHeader, .currentStep) .icon { color: var(--act-warn); }
+.working[data-waiting='true'] .currentStep .icon { color: var(--act-warn); }
 @media (prefers-reduced-motion: reduce) {
   .chevron { transition: none; }
 }

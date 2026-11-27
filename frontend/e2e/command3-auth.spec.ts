@@ -666,18 +666,18 @@ test('regular Workspace composes, copies, shares and reopens a settled native an
   await send(recovery);
   const recoveredAnswer = page.getByRole('region', { name: 'Answer', exact: true }).filter({ hasText: recoveryProse });
   const recoveredTable = recoveredAnswer.locator('.iui-col').getByRole('table');
-  await expect(recoveredAnswer.getByText(recoveryNote, { exact: true })).toBeVisible();
+  await expect(recoveredAnswer.getByText(recoveryNote, { exact: true })).toHaveCount(0);
   await expect(recoveredAnswer.getByText(recoveryGuidance, { exact: true })).toBeVisible();
   await expect(recoveredTable.getByRole('cell', { name: '25', exact: true })).toBeVisible();
   const recoveryTurn = page.locator('[data-turn-id]').filter({ has: recoveredAnswer });
   await recoveryTurn.getByRole('button', { name: 'Copy', exact: true }).click();
-  const recoveryClipboard = [recoveryNote, recoveryGuidance, recoveryProse, 'Item\tUSD\nPrinting\t25'].join('\n\n');
+  const recoveryClipboard = [recoveryGuidance, recoveryProse, 'Item\tUSD\nPrinting\t25'].join('\n\n');
   await expect.poll(() => page.evaluate(async () => (await navigator.clipboard.readText()).replace(/\r\n/g, '\n'))).toBe(recoveryClipboard);
   await expect.poll(async () => ((await readSaved())?.messages as Array<{ featureOutput?: { responseSource?: { text?: string } } }> | undefined)
     ?.some(message => message.featureOutput?.responseSource?.text === recoveryProgram), { timeout: 20_000 }).toBe(true);
   await page.reload();
   await openPersistedConversation(page, { id: sessionId, title: savedTitle!, reply: recoveryProse });
-  await expect(recoveredAnswer.getByText(recoveryNote, { exact: true })).toBeVisible();
+  await expect(recoveredAnswer.getByText(recoveryNote, { exact: true })).toHaveCount(0);
   await expect(recoveredAnswer.getByText(recoveryGuidance, { exact: true })).toBeVisible();
   await expect(recoveredTable.getByRole('cell', { name: '25', exact: true })).toBeVisible();
   await send(reviewed);

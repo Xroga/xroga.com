@@ -13,7 +13,7 @@ import { MessageShareModal } from './MessageShareModal';
 import styles from './WorkspacePeopleControls.module.css';
 import './teamPanelPush.css';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
-import { publicAnswerExportText } from '@/lib/publicAnswerText';
+import { publicAnswerExportText, withoutVisualRecoveryNote } from '@/lib/publicAnswerText';
 import { UsersRoundIcon } from '@/components/icons/animated/UsersRoundIcon';
 import { ShareIcon } from '@/components/icons/animated/ShareIcon';
 
@@ -25,7 +25,7 @@ export function WorkspacePeopleControls() {
   const [open, setOpen] = useState(false);
   const [share, setShare] = useState(false);
   const transcript = messages.filter(message => message.role === 'user' || message.role === 'assistant').map(message =>
-    message.role === 'user' ? `You:\n${message.content}` : `Xroga:\n${publicAnswerExportText(message.content)}`,
+    message.role === 'user' ? `You:\n${message.content}` : `Xroga:\n${withoutVisualRecoveryNote(publicAnswerExportText(message.content))}`,
   ).join('\n\n');
   const shareConversation = () => {
     if (identity.status === 'guest') { requestAuthGate('integration'); return; }

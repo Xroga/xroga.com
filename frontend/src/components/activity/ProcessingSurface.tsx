@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import {
-  Brain, Check, ChevronDown, CircleAlert, CircleDashed, Clock, Database, FilePen, FileSearch, Globe, Hand,
+  Brain, ChevronDown, CircleAlert, CircleCheck, CircleDashed, Clock, Database, FilePen, FileSearch, Globe, Hand,
   ListChecks, LoaderCircle, Minus, Plug, Rocket, Search, ShieldCheck, SquareTerminal, Wrench, type LucideIcon,
 } from 'lucide-react';
 import type { TimelineFamily } from '@/lib/terminal/activityTimeline';
@@ -25,13 +25,12 @@ const STATUS_WORD: Record<ProcessingChecklistItem['status'], string> = {
 const DEFAULT_OPEN_MAX = 6;
 
 function StepMark({ item, reduced }: { item: ProcessingChecklistItem; reduced: boolean }) {
-  const Family = item.family ? FAMILY_ICON[item.family] : CircleDashed;
   let mark;
-  if (item.status === 'done') mark = <Check className={styles.stepIcon} aria-hidden="true" strokeWidth={2.6} />;
+  if (item.status === 'done') mark = <CircleCheck className={styles.stepIcon} aria-hidden="true" strokeWidth={2.6} />;
   else if (item.status === 'failed') mark = <CircleAlert className={styles.stepIcon} aria-hidden="true" />;
   else if (item.status === 'skipped') mark = <Minus className={styles.stepIcon} aria-hidden="true" />;
   else if (item.status === 'active') mark = <LoaderCircle className={`${styles.stepIcon} ${styles.spin}`} aria-hidden="true" />;
-  else mark = <Family className={styles.stepIcon} aria-hidden="true" />;
+  else mark = <CircleDashed className={styles.stepIcon} aria-hidden="true" />;
   return (
     <span className={styles.mark}>
       <AnimatePresence mode="popLayout" initial={false}>
@@ -90,7 +89,7 @@ export function ProcessingSurface({ view, tone, listOnly = false }: { view: Proc
 
   if (!showCopy && !checklist) return null;
   return (
-    <div className={styles.surface} data-tone={tone ?? view.tone} data-testid="processing-surface">
+    <div className={styles.surface} data-tone={tone ?? view.tone} data-testid="processing-surface" data-list-only={listOnly ? 'true' : undefined}>
       {showCopy ? (
         <div className={styles.copy}>
           <p className={styles.heading}>

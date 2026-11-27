@@ -1,4 +1,4 @@
-import { publicAnswerExportText } from './publicAnswerText';
+import { publicAnswerExportText, withoutVisualRecoveryNote } from './publicAnswerText';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import type { Nodes } from 'mdast';
@@ -61,7 +61,7 @@ function tableCells(line: string): string[] {
 
 /** Export answer structure while preserving literal fenced content. */
 export function serializeAssistantCopy(markdown: string, { collapseDuplicateTables = false } = {}): string {
-  const normalized = publicAnswerExportText(markdown).replace(/\r\n/g, '\n');
+  const normalized = withoutVisualRecoveryNote(publicAnswerExportText(markdown)).replace(/\r\n/g, '\n');
   const output: string[] = [];
   const lines = normalized.split('\n');
   let fence: string | undefined;

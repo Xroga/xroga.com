@@ -52,23 +52,22 @@ export function NativeSurface({ answer, sources, isStreaming = false }: {
     : undefined, [accepted, isStreaming]);
   const visibleTables = useMemo(() => preservedMarkdownTableKeys(answer.text), [answer.text]);
   const renderCitation: RenderEvidenceCitation = (number, href, cluster) => evidenceCitation(verified, number, href, cluster);
+  // The recovery marker selects this layout. It is internal wording and is never drawn.
+  const shownText = recovered ? answer.text.slice(PARTIAL_NATIVE_PRESENTATION_NOTE.length + 2) : answer.text;
   // Keep the model's short introduction before its native answer. Additional
   // historical prose stays available below, with only exact duplicates removed.
-  const outside = proseOutsideNativeDocuments(recovered
-    ? answer.text.slice(PARTIAL_NATIVE_PRESENTATION_NOTE.length + 2)
-    : answer.text, matches);
+  const outside = proseOutsideNativeDocuments(shownText, matches);
   const boundary = outside.indexOf('\n\n');
   const first = boundary < 0 ? outside : outside.slice(0, boundary);
   const hasSummary = !/^(?:\s*#{1,6}\s|\s*[-*>|]\s|\s*\d+[.)]\s|\s*`{3}|\s*~{3})/.test(first);
   const summary = hasSummary ? first : '';
   const details = hasSummary ? (boundary < 0 ? '' : outside.slice(boundary + 2)) : outside;
-  const prose = <div className="iui-markdown" dir="auto"><MarkdownBlocks text={answer.text} deduplicateTables={recovered} renderCitation={renderCitation} /></div>;
+  const prose = <div className="iui-markdown" dir="auto"><MarkdownBlocks text={shownText} deduplicateTables={recovered} renderCitation={renderCitation} /></div>;
   return (
     <section className="xroga-native-openui" aria-label="Answer" dir="auto" aria-busy={isStreaming}>
       {accepted && failedProgram !== accepted
         ? <EvidenceContext.Provider value={verified}>
             {recovered && <div className="iui-markdown" dir="auto">
-              <p>{PARTIAL_NATIVE_PRESENTATION_NOTE}</p>
               <MarkdownBlocks text={outside} deduplicateTables matches={matches} renderCitation={renderCitation} />
             </div>}
             {!recovered && summary && <div className="iui-markdown native-answer-summary" dir="auto"><MarkdownBlocks text={summary} matches={matches} renderCitation={renderCitation} /></div>}

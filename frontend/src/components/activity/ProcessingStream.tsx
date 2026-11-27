@@ -3,11 +3,11 @@
 import { useState, type ReactNode } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import {
-  Brain, ChevronDown, CircleAlert, CircleDashed, Database, ExternalLink, FilePen, FileSearch, Globe, Hand, ListChecks, Plug,
+  Brain, ChevronDown, CircleAlert, CircleCheck, CircleDashed, Database, ExternalLink, FilePen, FileSearch, Globe, Hand, ListChecks, LoaderCircle, Plug,
   Rocket, Search, ShieldCheck, SquareTerminal, Wrench, type LucideIcon,
 } from 'lucide-react';
 import { formatElapsed, type TimelineFamily } from '@/lib/terminal/activityTimeline';
-import { groupStream, type StreamEntry, type StreamEvidence, type StreamStep } from '@/lib/terminal/processingStream';
+import { groupStream, type PlanStatus, type StreamEntry, type StreamEvidence, type StreamStep } from '@/lib/terminal/processingStream';
 import styles from './processing.module.css';
 
 const ICON: Record<TimelineFamily, LucideIcon> = {
@@ -114,6 +114,15 @@ function Group({ id, title, families, steps, rows }: { id: string; title: string
   );
 }
 
+const PLAN_WORD: Record<PlanStatus, string> = { pending: 'pending', active: 'in progress', done: 'done', failed: 'failed' };
+
+function PlanMark({ number, status }: { number?: number; status?: PlanStatus }) {
+  if (!status) return <span className={styles.planNumber} aria-hidden="true">{number}</span>;
+  const Icon = status === 'done' ? CircleCheck : status === 'active' ? LoaderCircle : status === 'failed' ? CircleAlert : CircleDashed;
+  // Keyed by state so a newly finished step pops its tick in.
+  return <Icon key={status} className={styles.planMark} aria-hidden="true" />;
+}
+
 /**
  * Inline work stream: written updates, the running step (shimmering), and finished steps folded under one
  * summary that opens to each operation and, below that, to its command output or sources.
@@ -125,9 +134,30 @@ export function ProcessingStream({ entries, rows }: { entries: readonly StreamEn
     <ol className={styles.stream} data-testid="processing-stream" aria-label="Work so far">
       {groupStream(entries).map(entry => {
         let content: ReactNode;
-        if (entry.type === 'note' && entry.plan) {
-          // A planned step: written by the model for this request. It is not ticked, because nothing reports it done.
-          content = <p className={styles.planStep}><CircleDashed className={styles.lineIcon} aria-hidden="true" /><span>{entry.text}</span></p>;
+        if (entry.type === 'plan') {
+          // Written by the model for this request. A step is marked only from events the run reported; a plan
+          // without that information stays numbered.
+          const tracked = entry.steps.every(step => step.planStatus);
+          const done = entry.steps.filter(step => step.planStatus === 'done').length;
+          content = (
+            <div className={styles.planCard}>
+              <p className={styles.planTitle}>
+                <span>{entry.text}</span>
+                {tracked ? <span className={styles.planCount}>{done} of {entry.steps.length} done</span> : null}
+              </p>
+              <ol className={styles.planList}>
+                {entry.steps.map((step, index) => (
+                  <motion.li key={step.id} className={styles.planStep} data-status={step.planStatus}
+                    initial={reduced ? false : { opacity: 0, x: -4 }} animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: reduced ? 0 : 0.22, delay: reduced ? 0 : Math.min(index, 6) * 0.05 }}>
+                    <PlanMark number={step.planNumber} status={step.planStatus} />
+                    <span className={styles.planText}>{step.text}</span>
+                    {step.planStatus ? <span className={styles.sr}>{PLAN_WORD[step.planStatus]}</span> : null}
+                  </motion.li>
+                ))}
+              </ol>
+            </div>
+          );
         } else if (entry.type === 'note') content = <p className={styles.note}>{entry.text}</p>;
         else if (entry.type === 'group') content = <Group id={entry.id} title={entry.text} families={entry.families} steps={entry.steps} rows={rows} />;
         else content = <StepLine step={entry} rows={rows} />;
