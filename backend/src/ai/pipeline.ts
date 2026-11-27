@@ -1031,8 +1031,8 @@ export async function runChatPipeline(opts: {
       : { role: 'user', content: userText };
 
     const historyMsgs: ChatMessage[] = (opts.history ?? [])
-      .slice(-8)
-      .map((h) => ({ role: h.role, content: h.content.slice(0, 4000) }));
+      .slice(-200)
+      .map((h) => ({ role: h.role, content: h.content }));
 
     const result = await callBuilderStream(
       pick.modelId,
@@ -1173,9 +1173,9 @@ export async function runChatPipeline(opts: {
   }
 
   const historyMsgs: ChatMessage[] = (opts.history ?? [])
-    .slice(-12)
+    .slice(-200)
     .filter(message => !publicWebRetrieved || !containsCredentialSecretText(message.content))
-    .map((h) => ({ role: h.role, content: h.content.slice(0, 8000) }));
+    .map((h) => ({ role: h.role, content: h.content }));
 
   const promptWithProjectEvidence = opts.projectEvidence
     ? `${opts.prompt}\n\nAuthorized read-only repository evidence:\n${opts.projectEvidence}`
