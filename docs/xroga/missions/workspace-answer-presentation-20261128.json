@@ -1,0 +1,135 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-ANSWER-PRESENTATION-20261128",
+  "baseSha": "df901fb7463cefae6d7c1966d51864b737c88196",
+  "requirementIds": [
+    "XR-ORIGINAL-F076"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "low",
+  "scope": "Repair how Workspace answers read: shorter instructions that give each figure one home, no second copy of a visual on screen, list markers, one typography, calculator and chart sizing, right-to-left rhythm, a false calculator conflict, and a stable view while an answer is written.",
+  "changedFiles": [
+    "backend/src/ai/nativeOpenUi.test.ts",
+    "backend/src/ai/nativeOpenUiPrompt.ts",
+    "backend/src/ai/nativeOpenUiValues.test.ts",
+    "backend/src/ai/nativeOpenUiValues.ts",
+    "docs/xroga/WORKSPACE_ANSWER_PRESENTATION_20261128.md",
+    "docs/xroga/missions/workspace-answer-presentation-20261128.json",
+    "frontend/src/components/native-openui/NativeSurface.tsx",
+    "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
+    "frontend/src/components/native-openui/generatedCopy.ts",
+    "frontend/src/components/native-openui/surface.css",
+    "frontend/src/components/native-openui/upstream/components/chart.tsx",
+    "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
+    "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx",
+    "frontend/src/components/response-experience-v2/conversation-v2.module.css",
+    "frontend/src/components/response-experience-v2/conversation.test.ts",
+    "frontend/src/components/response-experience-v2/conversation.ts",
+    "frontend/src/components/terminal/SwarmMessageLog.tsx",
+    "scripts/verify-native-openui-browser.mjs"
+  ],
+  "decisions": {
+    "keep": [
+      "The existing answer validators, saved answer text, Copy, Share, renderer library and model route"
+    ],
+    "extend": [
+      "Answer instructions with one concision rule by request type",
+      "The newest exchange keeps room under its prompt while it is answered",
+      "Reading rhythm for Arabic-script and Devanagari answers"
+    ],
+    "replace": [
+      "A complete written backup of every visual with the existing generated plain-text copy",
+      "An always-open chart data table with one that opens on request"
+    ],
+    "deprecate": []
+  },
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Changes instruction text, presentation and one comparison inside the existing answer path.",
+    "rfc": null
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No data changes.",
+    "rollback": "No schema rollback."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "No authentication changes."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No resource access changes."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No approval changes."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No credential changes."
+    },
+    "egress": {
+      "changed": false,
+      "description": "No destination or request body changes beyond the instruction text sent to the existing model."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No extra model calls and no output limit change."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No billing changes."
+    }
+  },
+  "tests": [
+    {
+      "command": "tsx --tsconfig frontend/tsconfig.json --test frontend/src/components/native-openui/upstream/components/markdown.test.ts",
+      "scope": "The saved copy of a visual is not drawn twice; unbound or different prose is left untouched.",
+      "negative": true,
+      "reference": "frontend/src/components/native-openui/upstream/components/markdown.test.ts"
+    },
+    {
+      "command": "tsx --test backend/src/ai/nativeOpenUiValues.test.ts",
+      "scope": "A figure that rounds to the readout agrees; a different figure is still a conflict.",
+      "negative": true,
+      "reference": "backend/src/ai/nativeOpenUiValues.test.ts"
+    },
+    {
+      "command": "tsx --test backend/src/ai/nativeOpenUi.test.ts",
+      "scope": "The instructions ask for concise answers and no written backup of visuals.",
+      "negative": true,
+      "reference": "backend/src/ai/nativeOpenUi.test.ts"
+    },
+    {
+      "command": "tsx --tsconfig frontend/tsconfig.json --test frontend/src/components/response-experience-v2/conversation.test.ts",
+      "scope": "Script rhythm follows the dominant script and ignores a quoted word or plain numbers.",
+      "negative": true,
+      "reference": "frontend/src/components/response-experience-v2/conversation.test.ts"
+    }
+  ],
+  "rollout": "Backend and frontend together, after the parent chat release. Check real answers on a candidate before promotion.",
+  "rollback": "Re-promote the previous verified backend revision and frontend build; no database changes.",
+  "knownGaps": [
+    "Real model answers under the new instructions are not verified.",
+    "The turn spacer is not verified in the signed-in Workspace or on a physical phone."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "docs/xroga/WORKSPACE_ANSWER_PRESENTATION_20261128.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Founder approval and live answer acceptance on a candidate."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "NOT_APPLICABLE",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

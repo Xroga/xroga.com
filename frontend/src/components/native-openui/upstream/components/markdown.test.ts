@@ -8,6 +8,7 @@ import catalog from '../../../../../../backend/src/ai/nativeOpenUiCatalog.json';
 import { bindNativeAnswerText, supplementNativeProse } from '../../../../../../backend/src/ai/nativeOpenUi';
 import { initialNativeValueReader } from '../../../../../../backend/src/ai/nativeOpenUiValues';
 import { inline, MathExpression, MarkdownBlocks, nativeMarkdownMatches, placeNativeSections, preservedMarkdownTableKeys, proseOutsideNativeDocuments, tableContentKey } from './markdown';
+import { withoutGeneratedVisualCopy } from '../../generatedCopy';
 
 test('saved and streamed answer text hides only the attached presentation delimiter', () => {
   const prose = 'The interest earned is $1,560.80.';
@@ -618,4 +619,16 @@ test('state-dependent Markdown cannot suppress a native heading', () => {
   const matches = nativeMarkdownMatches(root, initialNativeValueReader(program));
   assert.ok(matches.documents.has('## Checklist'));
   assert.equal(matches.markdownSectionHeadings.size, 0);
+});
+
+test('the saved plain-text copy of a visual is not drawn again under the visual', () => {
+  const prose = 'May was the strongest month and March the weakest.';
+  const program = bindNativeAnswerText('root = Col([Markdown(_xroga_answer), chart])\n'
+    + 'chart = Section("Monthly sales", [Table(["Month", "Sales"], [["Mar", 11000], ["May", 21000]])])', prose);
+  const saved = supplementNativeProse(prose, program, true);
+  assert.match(saved, /21000/, 'copy, share and recovery keep the data');
+  assert.equal(withoutGeneratedVisualCopy(saved, program), prose);
+  assert.equal(withoutGeneratedVisualCopy('A figure was corrected.\n\n' + saved, program), 'A figure was corrected.\n\n' + prose);
+  assert.equal(withoutGeneratedVisualCopy(saved, 'root = Col([Text("Unbound")])'), saved);
+  assert.equal(withoutGeneratedVisualCopy('Different prose entirely.', program), 'Different prose entirely.');
 });

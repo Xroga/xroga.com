@@ -11,3 +11,15 @@ export function conversationActivityV2(rows: readonly XrogaActivityPresentation[
     || row.note || Boolean(row.sources?.length) || /:client-(?:read|thought)$/.test(row.id)
     || Boolean(row.evidenceRefs?.length || row.artifactRefs?.length));
 }
+
+/** Arabic-script and Devanagari text needs taller lines than Latin text. Decided by the letters that make up
+ * most of the writing, so one quoted word in another script changes nothing. */
+export function readingScript(text: string): 'arabic' | 'devanagari' | undefined {
+  const sample = text.slice(0, 4000);
+  const count = (pattern: RegExp) => sample.match(pattern)?.length ?? 0;
+  const letters = count(/\p{L}/gu);
+  if (!letters) return undefined;
+  if (count(/\p{Script=Arabic}/gu) / letters > .4) return 'arabic';
+  if (count(/\p{Script=Devanagari}/gu) / letters > .4) return 'devanagari';
+  return undefined;
+}

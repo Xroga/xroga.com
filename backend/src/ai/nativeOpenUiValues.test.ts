@@ -399,3 +399,9 @@ test('initial table evaluation rejects non-finite values, actions and cycles', (
     assert.equal(read(parseExpression(tokenize('$amount'))), 1, 'An action must not modify initial state');
   }
 });
+
+test('a more precise figure that rounds to the readout is not a conflict', () => {
+  const rows = [{ label: 'Monthly payment', value: '$664.29' }];
+  assert.deepEqual(conflictingNativeReadouts('The unrounded monthly payment is $664.2862.', rows), []);
+  assert.deepEqual(conflictingNativeReadouts('The monthly payment is $664.2962.', rows), rows);
+});

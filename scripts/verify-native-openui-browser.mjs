@@ -554,6 +554,7 @@ try {
       assert.deepEqual(labelAudit.violations.map(({ id }) => id), []);
       if ([390, 1440].includes(viewport.width)) await page.screenshot({ path: resolve(output, 'formatted-checklist-' + viewport.width + '-' + theme + '.png'), fullPage: true });
       await open('rebuiltSignedChart');
+      await page.getByText('View data', { exact: true }).click();
       const signedTable = page.getByRole('table', { name: 'Chart data' });
       await signedTable.getByRole('cell', { name: '-800', exact: true }).waitFor();
       for (const value of ['0', '500']) assert.equal(await signedTable.getByRole('cell', { name: value, exact: true }).count(), 1);
@@ -578,6 +579,7 @@ try {
       for (const index of [0, 3]) assert.ok(geometry.bars[index].top < geometry.zero && geometry.bars[index].height > 0);
       for (const index of [1, 2]) assert.ok(geometry.bars[index].top >= geometry.zero && geometry.bars[index].height > 0);
       if (geometry.width < 440) assert.ok(geometry.height <= 317, 'Compact panes constrain tall charts');
+      await page.getByText('View data', { exact: true }).click();
       await page.getByRole('table', { name: 'Chart data' }).getByRole('cell', { name: '-$2,000.00', exact: true }).waitFor();
       if ([390, 1440].includes(viewport.width)) {
         await page.getByRole('region', { name: 'Answer', exact: true }).screenshot({ path: resolve(output, 'signed-stacked-' + viewport.width + '-' + theme + '.png') });

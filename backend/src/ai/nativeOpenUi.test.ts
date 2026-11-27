@@ -194,10 +194,14 @@ test('the model gets instructions from the native registry and may answer in tex
     assert.match(prompt, /React supports Date values and Server Functions/);
   }
   for (const name of ['Col(', 'Chart(', 'Slider(', 'Svg(', 'Diagram(', 'Section(', 'Table(', 'Payment(', 'Source(']) assert.ok(nativeOpenUiPrompt.includes(name), name);
-  assert.match(nativeOpenUiPrompt, /The OpenUI program is the primary rich answer/);
-  assert.match(nativeOpenUiPrompt, /first give the complete readable answer in Markdown/);
-  assert.match(nativeOpenUiPrompt, /readable answer must stand on its own if a visual fails/);
-  assert.match(nativeOpenUiPrompt, /formulas, initial inputs and initial results/);
+  for (const prompt of [nativeOpenUiPlainPrompt, nativeOpenUiPrompt]) {
+    assert.match(prompt, /understands the answer within a few seconds/);
+    assert.match(prompt, /Go longer when the user asks for detail, a word count, a document or code/);
+  }
+  assert.match(nativeOpenUiPrompt, /first write the short readable answer in Markdown/);
+  assert.match(nativeOpenUiPrompt, /Each figure has one visible home/);
+  assert.match(nativeOpenUiPrompt, /never write a duplicate table, value list or formula as a backup/);
+  assert.doesNotMatch(nativeOpenUiPrompt, /formulas, initial inputs and initial results|complete readable answer/);
   assert.match(nativeOpenUiPrompt, /do not copy or paraphrase the explanation/);
   assert.match(nativeOpenUiPrompt, /Use Markdown\(_xroga_answer\) once in your visible layout/);
   assert.match(nativeOpenUiPrompt, /native Section with exactly the same title/);
