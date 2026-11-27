@@ -4,6 +4,38 @@ import {randomUUID} from 'node:crypto';
 import {researchAnswerRequestSchema,RESEARCH_ANSWER_MAXIMUM_MICRO_USD,researchCitationIssues,bindCitationLinks,publicWorkspaceResearchAnswer,presentPublicResearchAnswer} from './researchAnswer.js';
 import {nativeMarkdownTables} from './nativeMarkdown.js';
 
+test('public research keeps independently sufficient alternatives in its practical test verdict', () => {
+  const source = { url: 'https://standard.example/verification' };
+  const testRow = 'Try scanning the label with the reader. Scanning must work and no manual code may be requested. '
+    + 'If the reader fails, record which permitted alternative the station offers.';
+  const rule = 'The station must support verification unless it provides at least one approved alternative.';
+  const answer = (criterion: string, test: string) =>
+    ['| Topic | Main rule | Practical test | Source |', '| --- | --- | --- | --- |',
+      '| Label lookup | ' + [criterion, test, '[1]'].join(' | ') + ' |'].join('\n');
+  const review = (text: string) =>
+    presentPublicResearchAnswer(text, { status: 'complete' }, [source], 'Explain the requirement and how to check it.');
+
+  const result = review(answer(rule, testRow));
+  assert.deepEqual(result.completion, { status: 'complete' });
+  assert.equal(result.requiresReadableFallback, true);
+  assert.deepEqual(nativeMarkdownTables(result.response)[0].rows, [[
+    'Label lookup', rule,
+    'Try scanning the label with the reader. Record which checks worked. Apply the stated rule and its permitted alternatives before deciding whether the test fails. '
+      + 'If the reader fails, record which permitted alternative the station offers.',
+    '[1]',
+  ]]);
+  assert.equal(review(result.response).response, result.response);
+
+  const mandatory = answer('The station must support scanning in all cases.', testRow);
+  const alreadyConditional = answer(rule, 'Try scanning. Fail only if scanning fails and no permitted alternative works.');
+  const setup = answer(rule, 'Try scanning. The reader must be available to run the test. If scanning fails, record which alternative works.');
+  const code = 'Source [1].\n\n~~~md\n' + answer(rule, testRow) + '\n~~~';
+  for (const unchanged of [mandatory, alreadyConditional, setup, code]) {
+    assert.equal(review(unchanged).response, unchanged);
+    assert.equal(review(unchanged).requiresReadableFallback, undefined);
+  }
+});
+
 test('public research ties a package route to the listing with its price', () => {
   const sources = [{
     url: 'https://travel.example/packages',
