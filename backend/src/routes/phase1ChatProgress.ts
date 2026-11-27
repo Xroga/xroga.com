@@ -2,7 +2,8 @@ import { Router } from 'express';
 import { readIntent } from '../ai/intentReasoning.js';
 import { understandingProgress } from '../ai/startupProgress.js';
 import { publicAiPayload } from '../lib/publicAiIdentity.js';
-import { generateReasoningSummary, reasoningSummaryEnabled } from '../ai/reasoningSummary.js';
+import { generateReasoningSummary, planStep, reasoningSummaryEnabled } from '../ai/reasoningSummary.js';
+import { withProgressSink } from '../ai/progressChannel.js';
 import type { AuthRequest } from '../middleware/auth.js';
 
 /**
@@ -27,6 +28,8 @@ import type { AuthRequest } from '../middleware/auth.js';
 const router = Router();
 
 const HEARTBEAT_MS = 10_000;
+/** How long a finished answer may wait for the notes still being written, so they are not lost by a moment. */
+const NOTES_GRACE_MS = 2_500;
 
 function wantsStream(accept: unknown): boolean {
   return typeof accept === 'string' && accept.toLowerCase().includes('text/event-stream');
@@ -57,13 +60,25 @@ router.post('/chat', (req: AuthRequest, res, next) => {
   heartbeat.unref?.();
   res.once('close', () => { open = false; clearInterval(heartbeat); });
 
-  write('progress', {
+  // One real step that spans the whole handler: it ends when the handler's answer (or refusal) arrives.
+  const preparing = (activityStatus: 'running' | 'completed' | 'failed', text: string) => write('progress', {
     agent: 'session',
     status: 'preparing_answer',
-    message: 'Preparing your answer.',
+    activityId: 'preparing-answer',
+    activityStatus,
+    message: text,
     swarmStatusLabel: 'Working',
-    swarmActivity: 'Preparing your answer',
+    swarmActivity: text,
   });
+  preparing('running', 'Preparing your answer');
+
+  // Files that arrived with this request, by their own names. Nothing is claimed about reading them.
+  const files = Array.isArray(req.body?.attachments) ? req.body.attachments.slice(0, 8) : [];
+  if (files.length) {
+    const names = files.map((file: unknown) => String((file as { name?: unknown } | null)?.name ?? '').slice(0, 60)).filter(Boolean);
+    const text = `Received ${files.length} attached ${files.length === 1 ? 'file' : 'files'}${names.length ? `: ${names.slice(0, 4).join(', ')}` : ''}`;
+    write('progress', publicAiPayload({ agent: 'session', status: 'step', activityId: 'attached-files', activityStatus: 'completed', message: text, swarmActivity: text }));
+  }
 
   try {
     if (message.trim()) {
@@ -77,22 +92,29 @@ router.post('/chat', (req: AuthRequest, res, next) => {
 
   // A short model-written note on the approach. It is a separate bounded call under the caller's own
   // tenant reservation, runs alongside the answer, and is dropped if the answer finishes first.
+  let notes: Promise<void> | null = null;
   if (message.trim() && req.userId && req.tenantContext && reasoningSummaryEnabled()) {
     const controller = new AbortController();
     res.once('close', () => controller.abort());
-    void generateReasoningSummary({
+    notes = generateReasoningSummary({
       scope: { context: req.tenantContext, userId: req.userId },
       message: message.trim(),
       signal: controller.signal,
     }).then((summary) => {
       if (!summary || !open) return;
-      write('progress', publicAiPayload({
-        agent: 'session',
-        status: 'reasoning_summary',
-        message: summary,
-        swarmStatusLabel: 'Thinking',
-        swarmActivity: summary,
-      }));
+      // One frame per note, so each appears as its own written update.
+      for (const line of summary.split('\n')) {
+        const step = planStep(line);
+        const note = step ?? line;
+        write('progress', publicAiPayload({
+          agent: 'session',
+          status: 'reasoning_summary',
+          message: note,
+          swarmStatusLabel: 'Thinking',
+          swarmActivity: note,
+          ...(step ? { planStep: true } : {}),
+        }));
+      }
     });
   }
 
@@ -105,13 +127,23 @@ router.post('/chat', (req: AuthRequest, res, next) => {
     clearInterval(heartbeat);
     res.status = originalStatus;
     res.json = sendJson;
-    write('result', { status, body });
-    open = false;
-    res.end();
+    const finish = () => {
+      if (status < 400) preparing('completed', 'Prepared your answer');
+      else preparing('failed', 'Could not prepare the answer');
+      write('result', { status, body });
+      open = false;
+      res.end();
+    };
+    if (notes && status < 400) {
+      let timer: NodeJS.Timeout | undefined;
+      void Promise.race([notes, new Promise<void>((resolve) => { timer = setTimeout(resolve, NOTES_GRACE_MS); })])
+        .catch(() => undefined)
+        .then(() => { clearTimeout(timer); finish(); });
+    } else finish();
     return res;
   }) as typeof res.json;
 
-  return next();
+  return withProgressSink((frame) => write('progress', publicAiPayload({ ...frame })), () => next());
 });
 
 export default router;

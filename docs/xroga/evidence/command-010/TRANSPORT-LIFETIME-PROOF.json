@@ -251,7 +251,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "1dc6c0ef9be8280f4534e83baa0bf2b72bd50a7f3480284d8ee4c5dd3c2b40e8",
+      "sha256": "8cb49dde18ed80baecf8f06f1b762b4b8a8c21a1073c18ca105c7bf8e3f3e8c7",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/black-hole/webIntelligence.ts",
         "sha256": "f7ee10618d7993cc8e827b7f77d23eec06e663232d26a44c598a48825fbb6b7d"
@@ -835,7 +835,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "d7ac0222f724ad09cf42e5d9afa5e4f40fe8f9a6fd76041c8fcffbf451fd2dff",
+      "sha256": "5276be96f1e819194653a4e1a9f8d4aa9075c100637443f84454776932475b90",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/services/integrations/businessAction.ts",
         "sha256": "79fa4e23cd501826f0425aaa01bcdc79a14b2d457f57f2f56a29b0fde021c0a3"
@@ -889,7 +889,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "sha256": "39a0926d4ffd44f21b9ba166a8579a6ed7febae7693d39057ee2f3bf50092175",
+      "sha256": "cc2d685f207705b93a3a8b0724e8b6c0eaac2878ec0fb132dac730e441b3c077",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/services/integrations/businessRead.ts",
         "sha256": "c051a5b6418a6ec659d62b693c1dec64b3a03a5b81a1a341e83ede8ca2cd24a7"
@@ -1224,5 +1224,31 @@
     "verifiedEgressCandidates": 155,
     "guardChange": "Hosted browser execution rejects local Chrome runs before task or egress processing. Current model SDK caller was separately rebound.",
     "workspacePortReview": "Five previously reviewed local Workspace port sends remain exact; the current source review binds those sends to the authenticated Workspace and existing API ownership fence."
+  },
+  "workspaceProcessingStreamIntegration": {
+    "servingRelease": "b6b9222e070de214d1c3e41694045e7ec12b709d",
+    "servingTransportProofSha256": "4d397820ded57d188d10be7b161f60cc52ae68c62e3f3c8c3e3e1ac30adc90dd",
+    "previousTransportProofSha256": "2d74201b04025e3e35211bed8123f836630a2a937206f13818f3d321027c76f2",
+    "bindings": [
+      {
+        "path": "backend/src/ai/black-hole/webIntelligence.ts",
+        "beforeIntegrationSha256": "1dc6c0ef9be8280f4534e83baa0bf2b72bd50a7f3480284d8ee4c5dd3c2b40e8",
+        "servingReleaseSha256": "0d26410da54803a4bb527d53f934892ee85741a68a31ef5865a7ca660b00bc7b",
+        "integratedSha256": "8cb49dde18ed80baecf8f06f1b762b4b8a8c21a1073c18ca105c7bf8e3f3e8c7"
+      },
+      {
+        "path": "backend/src/services/integrations/businessAction.ts",
+        "beforeIntegrationSha256": "d7ac0222f724ad09cf42e5d9afa5e4f40fe8f9a6fd76041c8fcffbf451fd2dff",
+        "servingReleaseSha256": "b4e8da9cfae3e1c13b537734133e22bca0deccd5d41480d78e753efd1e05c74d",
+        "integratedSha256": "5276be96f1e819194653a4e1a9f8d4aa9075c100637443f84454776932475b90"
+      },
+      {
+        "path": "backend/src/services/integrations/businessRead.ts",
+        "beforeIntegrationSha256": "39a0926d4ffd44f21b9ba166a8579a6ed7febae7693d39057ee2f3bf50092175",
+        "servingReleaseSha256": "cc2d685f207705b93a3a8b0724e8b6c0eaac2878ec0fb132dac730e441b3c077",
+        "integratedSha256": "cc2d685f207705b93a3a8b0724e8b6c0eaac2878ec0fb132dac730e441b3c077"
+      }
+    ],
+    "scope": "Static source reconciliation for the merged processing stream. The serving release proof is a reference. Fresh runtime acceptance remains required."
   }
 }
