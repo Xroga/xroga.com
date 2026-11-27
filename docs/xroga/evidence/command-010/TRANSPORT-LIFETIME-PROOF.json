@@ -324,7 +324,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "b598c509dacca47546033b195b3d7618cde4bc634f60aa88106c07797c968cd5",
+      "sha256": "0621b1e20fa1fb4d9a657b09ed8eb08eeccd5ded2713d76a2a26234a058ed1c5",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -654,6 +654,11 @@
         "baseline": "8530c904c54b32dba220dc013cfdc7bc0c6ca76e",
         "previousSha256": "8421acd5e8233fe3207a59285288db1366c2d3f266eb76966302d2488d3546b4",
         "scope": "Recognize source-quoted, model-planned local downloads. Verified authority, model dispatch, storage and tenant call shapes are unchanged."
+      },
+      "fastChatRebinding": {
+        "previousSha256": "b598c509dacca47546033b195b3d7618cde4bc634f60aa88106c07797c968cd5",
+        "ownerApproval": "On 2026-11-27 the repository owner was told that faster ordinary chat changes a security-reviewed file and that their approval would be recorded here; they replied asking for it to be completed end to end, with no plan or extra thinking for ordinary chat. Recorded by the assistant that made the change; no separate human code review is claimed.",
+        "finding": "Only two lines differ: one import list and the reasoningMode argument of the Workspace answer call, now answerReasoningMode(native, opts.goalContract). Line numbers are unchanged; caller identities, derived from character offsets, move with the longer import line. An ordinary written answer (ANSWER or INVESTIGATE, low or medium complexity, no planned outline) asks for no private reasoning; every other turn is as before. Destination, credential, reservation, receipt, settlement and output ceilings are unchanged."
       }
     },
     {
@@ -695,7 +700,7 @@
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.test.ts",
-      "sha256": "7e8fcf37b9fce5cf9682e1cce07e67753971d750b8cd3e1e129e500256a16bfa",
+      "sha256": "5624dece2068de233f6fa2bfc8b268955d8f00c3d3c3673a8a4f20ad0ca49f92",
       "beforeNamedDocumentPromptFixtureSha256": "6468973bd3fb562124f9f9e16d83fd1ce23c67cf276060c04aab4fb6a5158483",
       "previousGenericSdkBinding": {
         "sha256": "acb7d3ee286d862c38e386380a20a7632415cd454510076abedca054016f2959",
@@ -735,7 +740,12 @@
         "finding": "The controlled fixture now counts quota reads for ordinary plain and rich answers and for file and approved Search turns. It verifies the single post-settlement refresh and exhausted-account denial before model reservation or attachment processing. Existing receipt and persistence checks still run. This source binding carries no new hosted, CI or production acceptance.",
         "liveAcceptance": false
       },
-      "beforeStreamedAnswerSha256": "66f5a6492e6dcc9bcd8662fa2aba180d94127155d62ca41d456ddf0f93b4ee5a"
+      "beforeStreamedAnswerSha256": "66f5a6492e6dcc9bcd8662fa2aba180d94127155d62ca41d456ddf0f93b4ee5a",
+      "fastChatRebinding": {
+        "previousSha256": "7e8fcf37b9fce5cf9682e1cce07e67753971d750b8cd3e1e129e500256a16bfa",
+        "ownerApproval": "On 2026-11-27 the repository owner was told that faster ordinary chat changes a security-reviewed file and that their approval would be recorded here; they replied asking for it to be completed end to end, with no plan or extra thinking for ordinary chat. Recorded by the assistant that made the change; no separate human code review is claimed.",
+        "finding": "Test updated to expect no private reasoning for a brief ordinary answer; the other reviewed assertions are unchanged."
+      }
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.ts",
@@ -748,7 +758,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "624814d6816daad4161cf9623b84855874963c1627572bcd57ac597b41af9887",
+      "sha256": "2990335ce7d819944af091b3a0c295a76be2a3f485fb7281038500869a2f889f",
       "beforeTxtDownloadRoutingSha256": "450d77c6f89e9334ef2345d316895580732bda5b614ad3d87d42f4d4643f75fa",
       "beforeInlineCalculatorRoutingSha256": "58e3fa0ea9ec46ed2aa0be0c7aa6ca0777c213059c12f3cd6ecf04a6a2ab6e29",
       "beforePlannerCompletionDiagnosticsSha256": "6ca81b0c9234195e6159d1e03735a21ce50d50cf1e8f71b53cb62199bf95cb26",
@@ -773,7 +783,12 @@
         "previousSha256": "406c14484910f41e05c10eea704bb3977c023fb2d3b5e9d68b5c4bb3dabf6457",
         "scope": "Bounded research intent and dispatch selection were reviewed. Direct provider transports, credentials and authority implementation retain their existing requirements. Controlled evidence only."
       },
-      "beforeStreamedAnswerSha256": "3559ca76cdec97bf90e5ab0d511215d0d2b8265bea47e0fac21be78be984673e"
+      "beforeStreamedAnswerSha256": "3559ca76cdec97bf90e5ab0d511215d0d2b8265bea47e0fac21be78be984673e",
+      "fastChatRebinding": {
+        "previousSha256": "624814d6816daad4161cf9623b84855874963c1627572bcd57ac597b41af9887",
+        "ownerApproval": "On 2026-11-27 the repository owner was told that faster ordinary chat changes a security-reviewed file and that their approval would be recorded here; they replied asking for it to be completed end to end, with no plan or extra thinking for ordinary chat. Recorded by the assistant that made the change; no separate human code review is claimed.",
+        "finding": "Adds answerReasoningMode, greeting-only replies that make no model call, and instructions asking for a smaller decision on ordinary turns. Planner dispatch options, reservation, receipt handling and capability checks are unchanged."
+      }
     },
     {
       "path": "backend/src/operations/benchmarkAdapter.ts",

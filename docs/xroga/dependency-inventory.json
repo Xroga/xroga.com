@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a1275a5b1376e535afc6d694c406b0bf5ea4df90",
+  "source_sha": "45f7329137caf1754709e07e132464d362b2047f",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17332,7 +17332,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "b598c509dacca47546033b195b3d7618cde4bc634f60aa88106c07797c968cd5"
+      "sha256": "0621b1e20fa1fb4d9a657b09ed8eb08eeccd5ded2713d76a2a26234a058ed1c5"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -17392,7 +17392,7 @@
     },
     {
       "path": "backend/src/ai/reasoningSummary.ts",
-      "sha256": "03f2c3790a024e54b268f9c1db69a987304505dd029313d1897883a83df78726"
+      "sha256": "8d10616263a1d831845191d200d961a7ee86c0ca5fbdddc6df15dc20ee443765"
     },
     {
       "path": "backend/src/ai/repairController.ts",
@@ -17684,7 +17684,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "624814d6816daad4161cf9623b84855874963c1627572bcd57ac597b41af9887"
+      "sha256": "2990335ce7d819944af091b3a0c295a76be2a3f485fb7281038500869a2f889f"
     },
     {
       "path": "backend/src/ai/usageAccounting.ts",
@@ -18828,7 +18828,7 @@
     },
     {
       "path": "backend/src/routes/phase1ChatProgress.ts",
-      "sha256": "363f098753aa2e5746ac9ff4a0b1bf20d7640689c1d7fd5154c99c545fa45979"
+      "sha256": "2756e37297bdd275099772415a0e4d6f79210863c311d51bde4684812d33d9c4"
     },
     {
       "path": "backend/src/routes/profile.ts",
@@ -23276,7 +23276,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalLiveActivity.tsx",
-      "sha256": "c5ae201fbb1a02d432d3f7779258ce26bb635d66d92edc492b0aa25c3a384cc5"
+      "sha256": "b69c68aa72a29076deb5f8b3aa58d6a4a630616f0d40252be84d1459d8309adf"
     },
     {
       "path": "frontend/src/components/terminal/TerminalSearchBar.tsx",
@@ -24532,7 +24532,7 @@
     },
     {
       "path": "frontend/src/lib/terminal/clientSteps.ts",
-      "sha256": "13b3b035fe95ec9cb3347abc8629d736e16bee8b700f1017bc319e7409eadd0c"
+      "sha256": "79aa2b7aea9ed8eb112a15028b5fb86d37fa7324727aef6113f59656852c59bf"
     },
     {
       "path": "frontend/src/lib/terminal/dictation.ts",
@@ -34830,21 +34830,21 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1189,
+      "line": 1240,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1297,
+      "line": 1348,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1622,
+      "line": 1673,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37147,7 +37147,7 @@
     },
     {
       "path": "backend/src/routes/phase1ChatProgress.ts",
-      "line": 86,
+      "line": 89,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
