@@ -19,6 +19,7 @@ export interface Assets {
   shader(fragment: string, time: number, progress: number): Picture;
 }
 
+import { drawPlot } from './plot-draw';
 import { applyGrade, balanceGrade, measureLook, type Grade, type Lut3D } from '@src/agent/grade';
 
 type Ctx = OffscreenCanvasRenderingContext2D;
@@ -444,6 +445,10 @@ async function drawLayer(ctx: Ctx, layer: Layer, at: number, clipDuration: numbe
     case 'video': {
       const pic = await assets.frame(layer.url, layer.resizeMode, playbackOf(layer).sourceAt(Math.max(0, local)));
       if (pic) drawPicture(ctx, layer.grade ? graded(pic, layer.grade, assets, at, 'video' + (layer.start | 0), undefined, layer) : pic, boxOf(layer.rect, W, H), layer.resizeMode, 1, 0, layer.frame);
+      return;
+    }
+    case 'plot': {
+      drawPlot(ctx, layer.plot, boxOf(layer.rect, W, H), Math.max(0, at - layer.start));
       return;
     }
     case 'adjustment': {

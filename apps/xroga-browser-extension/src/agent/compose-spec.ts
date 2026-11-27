@@ -13,6 +13,7 @@ import { normalizeFx, type AudioFx } from './audio-fx';
 import { describeGrade, normalizeGrade, type Grade } from './grade';
 import { CAPTION_STYLES } from './subtitle-format';
 import { isEasing, resolveEasing } from './easing';
+import { normalizePlot, type PlotSpec } from './plot';
 import { zoomKeyframes, zoomRangeKeyframes } from './compose-motion';
 import { cellCenter } from './compose-extras';
 import type { Range } from './transcript-tools';
@@ -134,6 +135,7 @@ export type Layer =
   | ({ type: 'captions'; words?: Array<{ text: string; start: number; end: number }>; source?: { url: string; from: number; to?: number }; subtitles?: string; subtitleOffset?: number; font: FontName; fontSize: number; color: string; highlightColor?: string; background: string; position: 'top' | 'middle' | 'bottom'; margin: number; maxWidth: number; maxChars: number; wordsSpread?: boolean } & Timed)
   | ({ type: 'video'; url: string; cutFrom: number; cutTo?: number; resizeMode: ResizeMode; volume: number; speed?: number; rect: Rect; cuts: Range[]; speedRanges?: SpeedRange[]; speedPreset?: string; fx?: AudioFx; grade?: Grade; reverse: boolean; freeze?: { at: number; hold: number }; frame?: PictureFrame } & Timed)
   | ({ type: 'adjustment'; grade: Grade } & Timed)
+  | ({ type: 'plot'; plot: PlotSpec; rect: Rect } & Timed)
   | ({ type: 'audio'; url: string; cutFrom: number; cutTo?: number; volume: number; fx?: AudioFx } & Timed)
   | ({ type: 'detached-audio'; url: string; cutFrom: number; cutTo?: number; volume: number; fx?: AudioFx } & Timed);
 export interface Transition {
@@ -422,6 +424,10 @@ export function normalizeSpec(raw: unknown): Normalized {
         if (!url) errors.push(`${at} (${type}) needs an https address in url.`);
         if (type === 'image') layers.push({ type: 'image', url: url ?? '', resizeMode: resizeOf(L.resizeMode), zoom: zoomOf(L.zoomDirection ?? L.zoom, 'in'), zoomAmount: num(L.zoomAmount, 0.1, 0, 1), rect: rectOf(L), ...(frameOf(L) ? { frame: frameOf(L)! } : {}), ...(normalizeGrade(L.grade) ? { grade: normalizeGrade(L.grade)! } : {}), ...timing });
         else layers.push({ type: 'image-overlay', url: url ?? '', position: positionOf(L.position, 'center'), width: num(L.width, 0.3, 0.02, 1), height: num(L.height, 0.3, 0.02, 1), zoom: zoomOf(L.zoomDirection ?? L.zoom, 'none'), zoomAmount: num(L.zoomAmount, 0.1, 0, 1), ...(normalizeGrade(L.grade) ? { grade: normalizeGrade(L.grade)! } : {}), ...timing });
+      } else if (type === 'plot') {
+        const made = normalizePlot(L, colorOf);
+        if (!made.ok) errors.push(`${at} (plot) ${made.error}`);
+        else layers.push({ type: 'plot', plot: made.plot, rect: rectOf({ x: 0.5, y: 0.5, width: 0.9, height: 0.8, originX: 'center', originY: 'center', ...L }), ...timing });
       } else if (type === 'adjustment') {
         const grade = normalizeGrade(L.grade ?? L);
         if (!grade) errors.push(`${at} (adjustment) needs a grade: { preset or brightness, contrast, saturation, wheels, curves, lut, vignette, grain, … }.`);
@@ -466,7 +472,7 @@ export function normalizeSpec(raw: unknown): Normalized {
         const url = httpsOnly(L.url ?? L.path);
         if (!url) errors.push(`${at} (${type}) needs an https address in url.`);
         layers.push({ type, url: url ?? '', cutFrom: num(L.cutFrom, 0, 0, 36000), ...(typeof L.cutTo === 'number' && Number.isFinite(L.cutTo) ? { cutTo: Math.max(0, L.cutTo) } : {}), volume: num(L.mixVolume ?? L.volume, 1, 0, 4), ...(normalizeFx(L.fx) ? { fx: normalizeFx(L.fx)! } : {}), ...timing });
-      } else errors.push(`${at} has the type "${type}": use adjustment, fill-color, pause, linear-gradient, radial-gradient, rainbow-colors, shader, shape, title, subtitle, title-background, news-title, slide-in-text, image, image-overlay, video, audio or detached-audio.`);
+      } else errors.push(`${at} has the type "${type}": use plot, adjustment, fill-color, pause, linear-gradient, radial-gradient, rainbow-colors, shader, shape, title, subtitle, title-background, news-title, slide-in-text, image, image-overlay, video, audio or detached-audio.`);
     });
     const hasVideo = layers.some(l => l.type === 'video');
     const fixed = typeof clip.duration === 'number' && Number.isFinite(clip.duration);

@@ -1767,7 +1767,7 @@
       "priority": "P0",
       "default_treatment": "BACKEND ARTIFACT PRIMITIVE",
       "provenance": "H",
-      "status": "INSPECTED",
+      "status": "LIVE CHROMIUM VERIFIED",
       "canonical_url": "https://github.com/lovell/sharp",
       "resolved_slug": "lovell/sharp",
       "default_branch": "main",
@@ -1779,15 +1779,23 @@
       "pushed_at": "2026-11-16T13:06:33Z",
       "language": "JavaScript",
       "stars": 32866,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "README and the API documentation (resize with its five fits and positions, extract, trim, rotate, flip, flop, greyscale, negate, tint, modulate, blur, sharpen, extend, composite, output formats and options, several outputs); the way libvips is bound is read and not used",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
-      "xroga_file_paths": [],
-      "new_tests": [],
-      "chrome_check": null,
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/src/agent/image-spec.ts",
+        "apps/xroga-browser-extension/src/extension/image-render.ts",
+        "apps/xroga-browser-extension/src/agent/zip-write.ts",
+        "apps/xroga-browser-extension/src/agent/grade.ts"
+      ],
+      "new_tests": [
+        "apps/xroga-browser-extension/src/agent/__tests__/image-spec.test.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/convert-image.ts"
+      ],
+      "chrome_check": "S6-convert-image on a real CC0 photograph and the W3C logo: cover to 200×200, a circle with transparent corners, black and white (no colour left), WebP smaller than JPEG and than the original (27.6 KB against 38.2 and 39.7), a crop, padding in red, three sizes in a ZIP, a favicon set of 11 PNGs plus favicon.ico and a note, a watermark, and an SVG trace",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
+      "adoption_or_rejection_reason": "Ideas only, code written fresh over the browser canvas: the new tool convert_image takes crop, trim of a plain border, rotate, flip and flop, resize with cover, contain, fill, inside and outside and a position, no enlargement, colour work through the grade controls of compose_video, blur and sharpen, rounded corners or a circle, padding and a background, a watermark, several widths in one ZIP, a favicon and app-icon set with an .ico, and PNG, JPEG, WebP, ICO or SVG output; the person agrees before it is saved. Not taken: libvips and its native addon (no extension can run it), AVIF, TIFF and HEIF encoding (the browser has no encoder), ICC profiles and EXIF editing (the canvas drops metadata, which is said), animated pictures and raw pixel pipelines.",
       "classification": "INVOKE ON DEMAND",
       "rights_note": null
     },
@@ -1797,7 +1805,7 @@
       "priority": "P2",
       "default_treatment": "ON-DEMAND SANDBOX",
       "provenance": "H",
-      "status": "INSPECTED",
+      "status": "LIVE CHROMIUM VERIFIED",
       "canonical_url": "https://github.com/visioncortex/vtracer",
       "resolved_slug": "visioncortex/vtracer",
       "default_branch": "master",
@@ -1809,15 +1817,22 @@
       "pushed_at": "2026-11-17T17:07:56Z",
       "language": "Rust",
       "stars": 7576,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "README, the command-line options (colour precision, layer difference, filter speckle, corner threshold, segment length, splice threshold, mode pixel/polygon/spline, hierarchical stacked or cutout), the clustering and path code, the web app",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
-      "xroga_file_paths": [],
-      "new_tests": [],
-      "chrome_check": null,
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/src/agent/vector-trace.ts",
+        "apps/xroga-browser-extension/src/agent/gif.ts",
+        "apps/xroga-browser-extension/src/extension/image-render.ts"
+      ],
+      "new_tests": [
+        "apps/xroga-browser-extension/src/agent/__tests__/image-spec.test.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/convert-image.ts"
+      ],
+      "chrome_check": "S6-convert-image traced the W3C logo into an SVG of 6 colour layers over a background, 1.2 KB",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
+      "adoption_or_rejection_reason": "Idea only, code written fresh: a flat picture is reduced to a palette (median cut, the same as for GIF, now cut where a colour changes), each colour becomes a mask, the edges of each mask are followed into closed outlines with holes, the outlines are simplified (Douglas-Peucker), and the paths are stacked big first with the even-odd rule; convert_image with format svg. Not built: the spline curve fitting and corner detection (the paths are polygons, which suit logos and icons but are not smooth for curves), hierarchical clustering, and its modes; a photograph becomes a poster of its colours, and the tool says so.",
       "classification": "INVOKE ON DEMAND",
       "rights_note": null
     },
@@ -1827,7 +1842,7 @@
       "priority": "P2",
       "default_treatment": "ON-DEMAND AFTER LICENSE/COST REVIEW",
       "provenance": "H",
-      "status": "INSPECTED",
+      "status": "LIVE CHROMIUM VERIFIED",
       "canonical_url": "https://github.com/xinntao/Real-ESRGAN",
       "resolved_slug": "xinntao/Real-ESRGAN",
       "default_branch": "master",
@@ -1839,15 +1854,20 @@
       "pushed_at": "2024-08-06T13:15:18Z",
       "language": "Python",
       "stars": 37580,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "README, the inference script and its tiling and padding, the RRDBNet and SRVGG architectures, the released models and their licences, the face-enhancement option",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
-      "xroga_file_paths": [],
-      "new_tests": [],
-      "chrome_check": null,
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/src/extension/image-render.ts",
+        "apps/xroga-browser-extension/src/agent/image-spec.ts"
+      ],
+      "new_tests": [
+        "apps/xroga-browser-extension/src/background/scenarios/upscale-image.ts"
+      ],
+      "chrome_check": "S6-upscale-image: a 120×90 piece of a real photograph became 240×180 by the model, with edge detail 4.81 against 1.80 for the canvas stretch (the first use included the download of the model: 75 s for one tile)",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
+      "adoption_or_rejection_reason": "The capability was built with another model, said plainly. Real-ESRGAN itself is PyTorch weights with no browser build, so it was not used. convert_image upscale 2 or 4 runs Swin2SR (Apache-2.0, an 8-bit ONNX export of about 21 MB for transformers.js) on this device, in tiles with a margin as Real-ESRGAN does, downloaded on first use. Its output is a different model's: it was checked on one photograph, not benchmarked against Real-ESRGAN, and it is slow (seconds per megapixel on one thread). Not built: face enhancement, anime models, denoise strength control.",
       "classification": "INVOKE ON DEMAND",
       "rights_note": null
     },
@@ -1857,7 +1877,7 @@
       "priority": "P2",
       "default_treatment": "ON-DEMAND SANDBOX",
       "provenance": "H",
-      "status": "INSPECTED",
+      "status": "LIVE CHROMIUM VERIFIED",
       "canonical_url": "https://github.com/ManimCommunity/manim",
       "resolved_slug": "ManimCommunity/manim",
       "default_branch": "main",
@@ -1869,15 +1889,23 @@
       "pushed_at": "2026-11-20T16:58:37Z",
       "language": "Python",
       "stars": 42725,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "README and the scene model, the animation classes (Create, Write, FadeIn, FadeOut, Transform, Indicate, GrowFromCenter), the mobjects (Axes, NumberPlane, FunctionGraph, BarChart, VGroup, Text, MathTex), the rate functions, the renderer options",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
-      "xroga_file_paths": [],
-      "new_tests": [],
-      "chrome_check": null,
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/src/agent/plot.ts",
+        "apps/xroga-browser-extension/src/extension/plot-draw.ts",
+        "apps/xroga-browser-extension/src/agent/compose-spec.ts",
+        "apps/xroga-browser-extension/src/agent/compose-help.ts"
+      ],
+      "new_tests": [
+        "apps/xroga-browser-extension/src/agent/__tests__/plot.test.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/plot-video.ts"
+      ],
+      "chrome_check": "S6-plot-video on a real render: a sine curve draws itself in (orange pixels 428 then 812) and bars grow (blue pixels from a few thousand to 48 502); the frames were looked at: axes through zero with ticks, two curves, labelled bars",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
+      "adoption_or_rejection_reason": "Idea only, code written fresh: a plot layer for compose_video draws axes with ticks, a curve from a formula (several, separated by ;), a line from numbers or bars with names, and they draw themselves in over drawIn seconds (manim's Create). The formula is read by a parser of its own (numbers, x, pi, e, + - * / ^, brackets, 20 functions, implicit products such as 2x), never eval. Already present from earlier batches: text that writes in (typewriter), fades, zooms, easing. Not built: Transform morphs between shapes, LaTeX and MathTex, 3D scenes, the camera frame, and the geometric mobjects.",
       "classification": "INVOKE ON DEMAND",
       "rights_note": null
     },
@@ -1887,7 +1915,7 @@
       "priority": "P2",
       "default_treatment": "ON-DEMAND SCOPED READS",
       "provenance": "H",
-      "status": "INSPECTED",
+      "status": "CODE INTEGRATED",
       "canonical_url": "https://github.com/eracle/OpenOutreach",
       "resolved_slug": "eracle/OpenOutreach",
       "default_branch": "main",
@@ -1899,15 +1927,19 @@
       "pushed_at": "2026-11-19T15:58:34Z",
       "language": "Python",
       "stars": 3796,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "README, CLAUDE.md, the CLI and wizard, the configuration model, the find-leads skill, the tests; the two child projects (finder and sender) are named and not read",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
-      "xroga_file_paths": [],
-      "new_tests": [],
-      "chrome_check": null,
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/src/agent/skill-catalog.ts"
+      ],
+      "new_tests": [
+        "apps/xroga-browser-extension/src/agent/__tests__/skill-triggers.test.ts"
+      ],
+      "chrome_check": "the Google Maps search address in the skill was run in a real browser (dentists in leeds: the results feed and three business names)",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
+      "adoption_or_rejection_reason": "Method only, as a bundled skill (find-and-qualify-local-leads): describe the ideal customer first, judge each lead against it with a written reason that cites what was seen, keep the source of every row, deliver a sheet with make_document. Not taken: the licensed data provider and its credits, and sending mail from a mailbox (consequential and outward-facing: the skill finds and judges, and anything sent needs approval each time). The tool is a Python CLI and a database; none of it runs in an extension.",
       "classification": "INVOKE ON DEMAND",
       "rights_note": null
     },
@@ -1917,7 +1949,7 @@
       "priority": "P3",
       "default_treatment": "EVALUATE SOURCE PERMISSIONS",
       "provenance": "H",
-      "status": "INSPECTED",
+      "status": "SOURCE REVIEWED",
       "canonical_url": "https://github.com/Mahanaicoach/google-maps-scraper-kit",
       "resolved_slug": "Mahanaicoach/google-maps-scraper-kit",
       "default_branch": "master",
@@ -1929,7 +1961,7 @@
       "pushed_at": "2026-11-19T00:10:32Z",
       "language": "Python",
       "stars": 2561,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "README, the slash commands and the skill, the engine and examples at the level of what it extracts and how it batches; code not read for reuse (AGPL)",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
       "xroga_file_paths": [],
@@ -1937,7 +1969,7 @@
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
+      "adoption_or_rejection_reason": "Concepts only, no code (AGPL-3.0): the fields of an outreach-ready list (name, phone, website, email and social links found on the website, category, address, rating, reviews), a filter for businesses with no website, search by business type and place across several towns, and de-duplication. They shaped the bundled skill find-and-qualify-local-leads, which reads Google Maps in the person's own browser and the sites it lists, instead of running a scraping engine. No engine, proxy, or bulk collection was built.",
       "classification": "REJECT",
       "rights_note": "AGPL-3.0: no code may be copied into the extension; concepts only"
     },
@@ -1947,7 +1979,7 @@
       "priority": "P2",
       "default_treatment": "ON-DEMAND SANDBOX",
       "provenance": "H",
-      "status": "INSPECTED",
+      "status": "CODE INTEGRATED",
       "canonical_url": "https://github.com/speedyapply/JobSpy",
       "resolved_slug": "speedyapply/JobSpy",
       "default_branch": "main",
@@ -1959,15 +1991,19 @@
       "pushed_at": "2026-11-20T16:15:35Z",
       "language": "Python",
       "stars": 4798,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "README, the model (job post, compensation interval and range, job type), the search parameters of the LinkedIn, Indeed and ZipRecruiter scrapers, the board list, the CLI and MCP entry",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
-      "xroga_file_paths": [],
-      "new_tests": [],
+      "xroga_file_paths": [
+        "apps/xroga-browser-extension/src/agent/skill-catalog.ts"
+      ],
+      "new_tests": [
+        "apps/xroga-browser-extension/src/agent/__tests__/skill-triggers.test.ts"
+      ],
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
+      "adoption_or_rejection_reason": "Method and facts only, as a bundled skill (job-search-across-boards): search several boards, one comparable row per posting (title, company, place, remote, type, pay with period, date, source, link), pay normalised to one period with the conversion said, duplicates removed across boards, ranking against what the person said, a sheet with make_document, and no application without approval. The address parameters (LinkedIn f_TPR and f_AL, Indeed fromage, ZipRecruiter days) are from its scrapers. Not taken: the Python scrapers, proxies and the dataframe; the person's own signed-in Chrome is used instead.",
       "classification": "INVOKE ON DEMAND",
       "rights_note": null
     },
@@ -1977,7 +2013,7 @@
       "priority": "P3",
       "default_treatment": "CONCEPTS ONLY UNTIL LEGAL REVIEW",
       "provenance": "H",
-      "status": "INSPECTED",
+      "status": "SOURCE REVIEWED",
       "canonical_url": "https://github.com/browser-use/workflow-use",
       "resolved_slug": "browser-use/workflow-use",
       "default_branch": "main",
@@ -1989,7 +2025,7 @@
       "pushed_at": "2026-11-20T17:06:32Z",
       "language": "Python",
       "stars": 4259,
-      "inspected_level": "github-metadata-only",
+      "inspected_level": "README, the recorder extension, the workflow schema (step types and variables), the builder, the healing service (agent fallback, variable extraction, deterministic conversion, XPath optimisation), the semantic executor and step verifier, the MCP service",
       "xroga_current_equivalent": null,
       "chosen_reuse_method": null,
       "xroga_file_paths": [],
@@ -1997,7 +2033,7 @@
       "chrome_check": null,
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": null,
+      "adoption_or_rejection_reason": "Concepts compared, no code (AGPL-3.0). Xroga already has the same shape: record_demo learns a task from the person, macro saves a routine with ${variables} and replays public reads over plain HTTP, batch verifies each step, and the agent takes over when a step fails. Ideas noted and not built: generating a routine automatically from a finished run, pattern-based recognition of which typed values are variables, and the self-healing rewrite of a broken step.",
       "classification": "REJECT",
       "rights_note": "AGPL-3.0: no code may be copied into the extension; concepts only"
     },
@@ -2007,7 +2043,7 @@
       "priority": "P0",
       "default_treatment": "ADAPT SITE MATCHING AND SKILL ACTIVATION",
       "provenance": "N",
-      "status": "CODE INTEGRATED",
+      "status": "LIVE CHROMIUM VERIFIED",
       "canonical_url": "https://github.com/alibaba/qz-browser-agent",
       "resolved_slug": "alibaba/qz-browser-agent",
       "default_branch": "main",
@@ -2019,20 +2055,24 @@
       "pushed_at": "2026-11-14T14:25:00Z",
       "language": "HTML",
       "stars": 228,
-      "inspected_level": "README and skill-scope design read; code not copied",
+      "inspected_level": "README, architecture, commands and permissions documents, the capability folders (page, data, documents, media, script, wait, tabs, accessibility, diagnostics, sessions, skills, bookmarks, models, mcp), about 70 tools, the document codecs, the skill runtime, the benchmarks",
       "xroga_current_equivalent": "src/agent/site-context.ts strict host and path matching",
       "chosen_reuse_method": "idea only: site-scoped skills matched by an exact origin rule",
       "xroga_file_paths": [
-        "apps/xroga-browser-extension/src/agent/site-context.ts",
-        "apps/xroga-browser-extension/src/agent/skill-catalog.ts"
+        "apps/xroga-browser-extension/src/agent/office-write.ts",
+        "apps/xroga-browser-extension/src/agent/zip-write.ts",
+        "apps/xroga-browser-extension/src/agent/document-tool.ts",
+        "apps/xroga-browser-extension/src/agent/save-file.ts",
+        "apps/xroga-browser-extension/src/extension/run-manager.ts"
       ],
       "new_tests": [
-        "src/agent/__tests__/site-context.test.ts"
+        "apps/xroga-browser-extension/src/agent/__tests__/office-write.test.ts",
+        "apps/xroga-browser-extension/src/background/scenarios/make-document.ts"
       ],
-      "chrome_check": null,
+      "chrome_check": "S6-make-document in the real extension: 12 live Wikipedia search rows became a spreadsheet (4.4 KB), a Word document (4.0 KB) and a deck (8.0 KB) in the service worker, each read back with the extension's own readers, and the spreadsheet was saved through chrome.downloads and found again with the same size (4426 bytes); the files also open in openpyxl, python-docx and python-pptx (checked once, in a temporary environment that was then removed)",
       "deepseek_check": null,
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Rule matching is dot-boundary strict (look-alike hosts never match); skills never limit the model.",
+      "adoption_or_rejection_reason": "Rule matching is dot-boundary strict (look-alike hosts never match); skills never limit the model. / Second pass (2026-11-27): its tool list was compared with Xroga's. Built: make_document, real .xlsx (typed cells, dates, formats, formulas, frozen header, filter, widths), .docx (markdown or blocks: headings, lists, tables, links, quotes, code) and .pptx (cover, bullets with levels, tables) written on the device, and the save_file limit raised from 5 MB to 100 MB. Already present in Xroga: tabs, waits, network and console reads, data operations, sub-agents, skills, bookmarks. Not built, with the reason: scheduled automations with their own panel (a product feature), an ask-the-model helper tool, browser history search, location, an MCP client, the side-panel data grid, the Firefox package, and the Chinese-market model providers.",
       "classification": "ADAPT CODE",
       "rights_note": null
     },
@@ -2054,20 +2094,20 @@
       "pushed_at": "2026-06-10T05:11:14Z",
       "language": "JavaScript",
       "stars": 122,
-      "inspected_level": "action contract read (MIT)",
+      "inspected_level": "README, SKILL.md, the Chrome bridge, and all 22 site folders with their action references (about 540 KB): addresses, requirements, authentication notes and the page code of each action",
       "xroga_current_equivalent": "src/agent/site-actions.ts VerifiedSiteAction",
       "chosen_reuse_method": "adapt the contract (read vs write class, input schema, requirements); reject its in-page eval handlers",
       "xroga_file_paths": [
-        "apps/xroga-browser-extension/src/agent/site-actions.ts"
+        "apps/xroga-browser-extension/src/agent/site-actions.ts",
+        "apps/xroga-browser-extension/src/agent/skill-catalog.ts"
       ],
       "new_tests": [
-        "src/agent/__tests__/site-actions.test.ts",
-        "src/agent/__tests__/site-tools.test.ts"
+        "apps/xroga-browser-extension/src/agent/__tests__/skill-triggers.test.ts"
       ],
-      "chrome_check": "Chromium scenario SITE-1 passes 3 of 3: verified write clicks once, changed page refused before any click, wrong postcondition unverified, repeat refused, consequential never touches the page",
+      "chrome_check": "the Google Maps search address was run in a real browser (results feed present, three business names read); the Hacker News Algolia API and the Substack archive API answered with JSON from a plain request; Reddit's .json refused a plain request, which the skill says",
       "deepseek_check": "live: site_action chosen in 3 of 5 runs on a matching page, tasks still completed through general tools otherwise",
       "performance_before_after": null,
-      "adoption_or_rejection_reason": "Steps are declarative data over an allowlist of page tools; no downloaded code runs in a page.",
+      "adoption_or_rejection_reason": "Steps are declarative data over an allowlist of page tools; no downloaded code runs in a page. / Second pass (2026-11-27): everything read. Taken as a bundled skill (known-sites-direct-urls): the direct search and detail addresses of 22 sites with the placeholders to fill, which of them need the person signed in, and the public JSON endpoints that exist (Hacker News search, Substack archive). Rejected on purpose: the page code that is run with page.evaluate in a signed-in tab, and its advice to ask the person for a session cookie (li_at, sessionid, auth_token): Xroga uses the person's own signed-in tab and never asks for a cookie, a token or a password. The page code is also tied to the sites' current markup and would break; the skill tells the agent to read what is on the page.",
       "classification": "ADAPT CODE",
       "rights_note": null
     },
@@ -2464,5 +2504,5 @@
       "rights_note": null
     }
   ],
-  "generated_at_update": "2026-11-26T20:43:56.331Z"
+  "generated_at_update": "2026-11-27T08:38:20.195Z"
 }
