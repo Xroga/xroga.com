@@ -600,6 +600,14 @@ describe('social protocol fast path', () => {
     assert.equal(protocolSocialResponse('hello?', false), null);
     assert.equal(protocolSocialResponse('Hello — inspect this repository'), null);
     assert.equal(protocolSocialResponse('hi', true), null);
+    for (const hello of ['hello, good evening!', 'Hi, how are you today?', 'how are you?', 'السلام علیکم', 'سلام، آپ کیسے ہیں؟', 'Assalam o alaikum kaise ho?', 'नमस्ते, आप कैसे हैं?', 'Bonjour, comment allez-vous ?', '¿cómo estás?', 'Привет, как дела?']) {
+      assert.ok(protocolSocialResponse(hello), hello);
+    }
+    assert.match(protocolSocialResponse('نمستے') ?? 'none', /none/);
+    assert.match(protocolSocialResponse('सलाम') ?? 'none', /none/);
+    for (const other of ['hello world program?', 'how are you going to fix my build', 'hi, make me a website', 'سلام کی تاریخ بتائیں', 'good evening plan for Dubai', 'salute']) {
+      assert.equal(protocolSocialResponse(other), null, other);
+    }
   });
 });
 

@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "5efb3056ce6a68eb89f640e4f688e0a969f146c58930488519ce4bd53dbfc01c",
+  "reviewRegistrySha256": "950c4509dea9b0cb0edf0494f5d5a2beb75a2cb6430a018e5faeaa454135dd86",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -3936,11 +3936,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d231c120d15cdb303798"
+        "id": "9fd30d5a9fe01e2fa702"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a89bee68ee14df41ddd5"
+        "id": "7b9661ffc196bf766028"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6720,7 +6720,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "3a7aa1dbe9ba47ad2c75"
+        "id": "da08edd2705ec4324ce0"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7620,7 +7620,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "3a7aa1dbe9ba47ad2c75"
+        "id": "da08edd2705ec4324ce0"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7776,11 +7776,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "d231c120d15cdb303798"
+        "id": "9fd30d5a9fe01e2fa702"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "a89bee68ee14df41ddd5"
+        "id": "7b9661ffc196bf766028"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -11525,7 +11525,7 @@
       }
     },
     {
-      "id": "d231c120d15cdb303798",
+      "id": "9fd30d5a9fe01e2fa702",
       "path": "backend/src/ai/pipeline.ts",
       "line": 3990,
       "enclosing": "runBuildPipeline",
@@ -11533,7 +11533,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "b598c509dacca47546033b195b3d7618cde4bc634f60aa88106c07797c968cd5",
+      "sourceSha256": "0621b1e20fa1fb4d9a657b09ed8eb08eeccd5ded2713d76a2a26234a058ed1c5",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Native reasoning alignment changes only answer options and their canonical output reservation. These two in-memory conversion expressions remain byte-identical. No new persistence call, authority or security certification is inferred. The tenant dispatch test verifies reservation and wire maxima match.",
@@ -11546,7 +11546,7 @@
       }
     },
     {
-      "id": "a89bee68ee14df41ddd5",
+      "id": "7b9661ffc196bf766028",
       "path": "backend/src/ai/pipeline.ts",
       "line": 4174,
       "enclosing": "runBuildPipeline",
@@ -11554,7 +11554,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "b598c509dacca47546033b195b3d7618cde4bc634f60aa88106c07797c968cd5",
+      "sourceSha256": "0621b1e20fa1fb4d9a657b09ed8eb08eeccd5ded2713d76a2a26234a058ed1c5",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Native reasoning alignment changes only answer options and their canonical output reservation. These two in-memory conversion expressions remain byte-identical. No new persistence call, authority or security certification is inferred. The tenant dispatch test verifies reservation and wire maxima match.",
@@ -33194,15 +33194,15 @@
       }
     },
     {
-      "id": "3a7aa1dbe9ba47ad2c75",
+      "id": "da08edd2705ec4324ce0",
       "path": "frontend/src/lib/voiceSegmenter.ts",
-      "line": 50,
+      "line": 52,
       "enclosing": "pauseCutIndex",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c73176a55e776661d1374be102e9b46b42fbd160122407941203a059408f5b47"
+      "sourceSha256": "19f3c8ef02e52f1f0341cd902ba56ae4c5f34274f8e8e0f561fa60661d7cf767"
     },
     {
       "id": "15456514e184bf2ec9b1",

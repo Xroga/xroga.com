@@ -37,7 +37,7 @@ test('actual semantic planner carries issued actor, platform reservation and exa
       if (mode === 'literal-answer') {
         assert.equal(body.model, 'deepseek-v4.1-flash-1017');
         assert.equal(body.messages.at(-1).content, literalPrompt);
-        assert.equal(body.reasoning_effort, undefined);
+        assert.equal(body.reasoning_effort, 'none');
         assert.ok(body.max_tokens >= 16384);
         assert.equal(body.response_format, undefined);
         const response = {

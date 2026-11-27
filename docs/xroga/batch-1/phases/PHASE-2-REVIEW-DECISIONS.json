@@ -2762,7 +2762,7 @@
       "relatedSourceBindings": [
         {
           "path": "backend/src/ai/pipeline.ts",
-          "sha256": "b598c509dacca47546033b195b3d7618cde4bc634f60aa88106c07797c968cd5",
+          "sha256": "0621b1e20fa1fb4d9a657b09ed8eb08eeccd5ded2713d76a2a26234a058ed1c5",
           "plainReasoningSourceBinding": {
             "previousSha256": "5c37c7d2bbc96fc8c4ddf1f294c9b1f2bde5385048847400a5bcbd69a3582e06",
             "finding": "Verified the full runBuildPipeline function and subsequent source are byte-identical. The chat change retains default model reasoning and uses the existing native output reservation. Worker admission evidence and acceptance state are unchanged."
@@ -2859,6 +2859,11 @@
             "baseline": "6bd4fdec53bbacb9896df101c5986a4390ee06ba",
             "scope": "Explicit public Search changes chat routing only. The full runBuildPipeline function and following source are byte-identical. Prior worker admission evidence and current acceptance are unchanged.",
             "liveAcceptance": false
+          },
+          "fastChatRebinding": {
+            "previousSha256": "b598c509dacca47546033b195b3d7618cde4bc634f60aa88106c07797c968cd5",
+            "ownerApproval": "On 2026-11-27 the repository owner was told that faster ordinary chat changes a security-reviewed file and that their approval would be recorded here; they replied asking for it to be completed end to end, with no plan or extra thinking for ordinary chat. Recorded by the assistant that made the change; no separate human code review is claimed.",
+            "finding": "Only two lines differ: one import list and the reasoningMode argument of the Workspace answer call, now answerReasoningMode(native, opts.goalContract). Line numbers are unchanged; caller identities, derived from character offsets, move with the longer import line. An ordinary written answer (ANSWER or INVESTIGATE, low or medium complexity, no planned outline) asks for no private reasoning; every other turn is as before. Destination, credential, reservation, receipt, settlement and output ceilings are unchanged."
           }
         },
         {

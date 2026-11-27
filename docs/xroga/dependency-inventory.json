@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a1275a5b1376e535afc6d694c406b0bf5ea4df90",
+  "source_sha": "28943ccf2be670f5f0f87cf7e8d545cd7dc54194",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -8408,7 +8408,6 @@
         "backend/src/ai/legacyBuilderAdapter.ts",
         "backend/src/ai/nativeOpenUiWorkspace.ts",
         "backend/src/ai/providerRuntime.ts",
-        "backend/src/ai/reasoningSummary.ts",
         "backend/src/ai/resourceMeter.ts",
         "backend/src/ai/routerConfig.ts",
         "backend/src/ai/softwareAgent/softwareAgentFeatureFlags.ts",
@@ -8620,7 +8619,6 @@
         "XROGA_QA_HOST_ALLOWED_SUFFIXES",
         "XROGA_QA_HOST_MAX_CONCURRENT",
         "XROGA_QA_HOST_SECRET",
-        "XROGA_REASONING_SUMMARY",
         "XROGA_RELEASE_CANDIDATE",
         "XROGA_REQUIRE_HIGH_RISK_REVIEW",
         "XROGA_REQUIRE_MANAGED_CUSTODY",
@@ -8649,7 +8647,6 @@
         "backend/src/ai/legacyBuilderAdapter.ts",
         "backend/src/ai/nativeOpenUiWorkspace.ts",
         "backend/src/ai/providerRuntime.ts",
-        "backend/src/ai/reasoningSummary.ts",
         "backend/src/ai/resourceMeter.ts",
         "backend/src/ai/routerConfig.ts",
         "backend/src/ai/softwareAgent/softwareAgentFeatureFlags.ts",
@@ -15847,25 +15844,6 @@
       ]
     },
     {
-      "name": "XROGA_REASONING_SUMMARY",
-      "consuming_sources": [
-        "backend/src/ai/reasoningSummary.ts"
-      ],
-      "environments": [
-        "backend/operator or inherited system context"
-      ],
-      "secret_class": "RUNTIME_CONFIGURATION",
-      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
-      "requiredness": "OPTIONAL_OR_DEFAULTED",
-      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
-      "mechanisms": [
-        "STATIC_ENV_READER"
-      ],
-      "dependency_ids": [
-        "runtime-controls-and-conditional-aliases"
-      ]
-    },
-    {
       "name": "XROGA_RELEASE_CANDIDATE",
       "consuming_sources": [
         "backend/src/runtime/startupPolicy.ts"
@@ -17332,7 +17310,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "b598c509dacca47546033b195b3d7618cde4bc634f60aa88106c07797c968cd5"
+      "sha256": "0621b1e20fa1fb4d9a657b09ed8eb08eeccd5ded2713d76a2a26234a058ed1c5"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -17389,10 +17367,6 @@
     {
       "path": "backend/src/ai/quota.ts",
       "sha256": "33f0ab8cf98b74e9e1fcd3519c1a158cf20a3f0a6269a1128ea9a39e0c37e98d"
-    },
-    {
-      "path": "backend/src/ai/reasoningSummary.ts",
-      "sha256": "03f2c3790a024e54b268f9c1db69a987304505dd029313d1897883a83df78726"
     },
     {
       "path": "backend/src/ai/repairController.ts",
@@ -17684,7 +17658,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "624814d6816daad4161cf9623b84855874963c1627572bcd57ac597b41af9887"
+      "sha256": "2990335ce7d819944af091b3a0c295a76be2a3f485fb7281038500869a2f889f"
     },
     {
       "path": "backend/src/ai/usageAccounting.ts",
@@ -18828,7 +18802,7 @@
     },
     {
       "path": "backend/src/routes/phase1ChatProgress.ts",
-      "sha256": "363f098753aa2e5746ac9ff4a0b1bf20d7640689c1d7fd5154c99c545fa45979"
+      "sha256": "bec1caa0a04603cd114bab6c2c99c56eb640a711b2bbb9f5f4ed287d38daa2f6"
     },
     {
       "path": "backend/src/routes/profile.ts",
@@ -20992,7 +20966,7 @@
     },
     {
       "path": "frontend/src/components/activity/ActivityTimeline.tsx",
-      "sha256": "f787c78b914c14d4e8faaf16cbfe38256aa2dcf365fd7340206b87e511fd0e43"
+      "sha256": "552cff6f53a009c6619ee681cf63f5bd2fb29038c1de768ae10f848c1ff62e77"
     },
     {
       "path": "frontend/src/components/activity/BlackHoleIndicator.tsx",
@@ -23276,7 +23250,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalLiveActivity.tsx",
-      "sha256": "c5ae201fbb1a02d432d3f7779258ce26bb635d66d92edc492b0aa25c3a384cc5"
+      "sha256": "f9e7360d991960182b6737b54bf5c4430012126f05f2cb00cc7fafd0e347ffec"
     },
     {
       "path": "frontend/src/components/terminal/TerminalSearchBar.tsx",
@@ -24532,7 +24506,7 @@
     },
     {
       "path": "frontend/src/lib/terminal/clientSteps.ts",
-      "sha256": "13b3b035fe95ec9cb3347abc8629d736e16bee8b700f1017bc319e7409eadd0c"
+      "sha256": "b4eeff29448bb8615683b2e343ac78888a2d5c94f3c626c9003800b8419e2178"
     },
     {
       "path": "frontend/src/lib/terminal/dictation.ts",
@@ -24544,7 +24518,7 @@
     },
     {
       "path": "frontend/src/lib/terminal/processingStream.ts",
-      "sha256": "7031b85f6fd325fce88c5696b61f33a9fd25c9d04e49fe6989b048146d85c93b"
+      "sha256": "9330fb13dda5f241a4e928ebc47067327ff5fd7504a8c137b2ee38086ec51a0e"
     },
     {
       "path": "frontend/src/lib/terminal/processingView.ts",
@@ -24660,7 +24634,7 @@
     },
     {
       "path": "frontend/src/lib/voiceSegmenter.ts",
-      "sha256": "c73176a55e776661d1374be102e9b46b42fbd160122407941203a059408f5b47"
+      "sha256": "19f3c8ef02e52f1f0341cd902ba56ae4c5f34274f8e8e0f561fa60661d7cf767"
     },
     {
       "path": "frontend/src/lib/voiceWarmup.ts",
@@ -34830,21 +34804,21 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1189,
+      "line": 1240,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1297,
+      "line": 1348,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1622,
+      "line": 1673,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -37147,7 +37121,7 @@
     },
     {
       "path": "backend/src/routes/phase1ChatProgress.ts",
-      "line": 86,
+      "line": 76,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

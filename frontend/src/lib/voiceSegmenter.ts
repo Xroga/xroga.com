@@ -8,11 +8,13 @@ export const SEGMENT_SEARCH_FROM_SECONDS = 18;
 const FRAME_SECONDS = 0.05;
 /** A window that mixes languages is decoded under one language, which can silently drop the other
  * language's speech. Cutting at a real pause once a segment is long enough keeps segments short and
- * mostly single-language. Measured on human speech: 6 s keeps single-language accuracy unchanged and
- * keeps the English part of mixed windows (about 96% recall versus 0-98%); 4 s hurt Hindi and 8 s missed
- * switches. A pause is at least PAUSE_SECONDS long and quieter than 3% of the speech energy. */
-export const PAUSE_CUT_MIN_SECONDS = 6;
-export const PAUSE_SECONDS = 0.35;
+ * mostly single-language. Measured November 28 on six public Urdu recordings joined with computer-spoken
+ * English: 3 s with a 0.5 s pause kept 82% of the Urdu words in mixed speech (6 s with 0.35 s kept 59%),
+ * lowered word error from 30% to 16% and made about as many requests; 5-6 s missed switches. The longer
+ * pause avoids cutting at breaths. An earlier measurement with 0.35 s pauses found 4 s hurt Hindi; Hindi
+ * was not re-measured. A pause is at least PAUSE_SECONDS long and quieter than 3% of the speech energy. */
+export const PAUSE_CUT_MIN_SECONDS = 3;
+export const PAUSE_SECONDS = 0.5;
 const PAUSE_RELATIVE_ENERGY = 0.03;
 const PAUSE_FRAME_SECONDS = 0.02;
 

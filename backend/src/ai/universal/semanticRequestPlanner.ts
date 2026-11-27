@@ -367,6 +367,27 @@ export const SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS =
 export const SEMANTIC_PLANNER_MAX_TOTAL_TIMEOUT_MS =
   30_000;
 
+/** The reader waits for this decision before any answer, so an ordinary turn must stay small. */
+const PLANNER_SPEED_RULES = 'Answer quickly. For a conversational, explanatory, advisory, writing or factual answer with no requested file, visual, form or external action, return only the required JSON fields plus confidence and contextComplexity, and omit every other field. contextComplexity: low = greeting, simple fact or short rewrite; medium = ordinary explanation, advice, writing, summary, comparison, outline or personal plan; high = only genuinely hard work, such as multi-step mathematics, difficult debugging, deep analysis or a large multi-part deliverable.';
+
+/**
+ * Whether the answering model should think privately before writing.
+ *
+ * Ordinary written chat (a fact, an explanation, advice, writing, a summary) starts writing at once, which is
+ * what makes it feel immediate. Hard work, answers with a planned outline (visuals, forms, files), anything that changes
+ * something, and any turn the planner did not rate keep the model's default thinking.
+ */
+export function answerReasoningMode(
+  native: boolean,
+  goal?: { semanticIntent?: string; contextComplexity?: string; presentation?: ReadonlyArray<unknown> },
+): 'none' | 'default' {
+  if (!native) return 'none';
+  const ordinary = goal?.contextComplexity === 'low' || goal?.contextComplexity === 'medium';
+  const reading = goal?.semanticIntent === 'ANSWER' || goal?.semanticIntent === 'INVESTIGATE';
+  const written = !goal?.presentation?.length;
+  return ordinary && reading && written ? 'none' : 'default';
+}
+
 export const SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS =
   28_000;
 
@@ -497,6 +518,33 @@ const SOCIAL_ACKNOWLEDGEMENT =
   /^(?:thanks|thank\s+you|thank\s+you\s+very\s+much|okay|ok|got\s+it|bye|goodbye)[!.,\s]*$/i;
 
 /**
+ * Whole messages that are only a greeting, optionally with "how are you", answered in the same language
+ * without a model call. Anything with another word in it goes to the ordinary planner.
+ */
+const GREETINGS: ReadonlyArray<readonly [hello: string, howAreYou: string, reply: string]> = [
+  [String.raw`(?:hi+|hello|hey|heya|yo|howdy|good (?:morning|afternoon|evening|day))(?: there)?`, String.raw`how(?: a|'| a')?re (?:you|u)(?: doing)?(?: today| tonight)?|how(?:'s| is) it going`, 'Hey! 👋 What can I help you accomplish today?'],
+  [String.raw`(?:as+ala+m(?:u|o)?[ -]?(?:o[ -])?[ao]?laikum|salaa?m)`, String.raw`(?:aap )?(?:kaise|kaisay|kese|kesy) (?:ho|hain|hen)(?: aap)?|kya haal (?:hai|he)`, 'Wa alaikum assalam! Main aap ki kya madad kar sakta hoon?'],
+  [String.raw`(?:namaste|namaskar)`, String.raw`(?:aap )?(?:kaise|kese) (?:ho|hain)(?: aap)?`, 'Namaste! Main aapki kya madad kar sakta hoon?'],
+  [String.raw`(?:السلام علیکم|اسلام علیکم|سلام|ہیلو|ہائے)`, String.raw`(?:آپ )?(?:کیسے|کیسی) (?:ہو|ہیں)(?: آپ)?|کیا حال ہے`, 'وعلیکم السلام! میں آپ کی کیا مدد کر سکتا ہوں؟'],
+  [String.raw`(?:السلام عليكم|مرحبا)`, String.raw`كيف حالك`, 'أهلاً! كيف يمكنني مساعدتك؟'],
+  [String.raw`(?:नमस्ते|नमस्कार|हेलो|हैलो|हाय)`, String.raw`(?:आप )?(?:कैसे|कैसी) (?:हो|हैं)(?: आप)?`, 'नमस्ते! मैं आपकी क्या मदद कर सकता हूँ?'],
+  [String.raw`(?:bonjour|bonsoir|salut)`, String.raw`comment (?:ça va|ca va|allez[ -]vous)|ça va`, 'Bonjour ! Comment puis-je vous aider ?'],
+  [String.raw`(?:hola|buenos d[ií]as|buenas (?:tardes|noches))`, String.raw`¿?c[oó]mo est[aá]s`, '¡Hola! ¿En qué puedo ayudarte?'],
+  [String.raw`(?:привет|здравствуйте|добрый (?:день|вечер)|доброе утро)`, String.raw`как (?:дела|ты|вы)`, 'Здравствуйте! Чем могу помочь?'],
+];
+
+function greetingOnlyReply(message: string): string | null {
+  const text = message.normalize('NFC').trim().toLowerCase().replace(/’/g, "'").replace(/\s+/g, ' ').replace(/[!.۔।\s]+$/u, '');
+  if (!text || text.length > 80) return null;
+  for (const [hello, how, reply] of GREETINGS) {
+    // A question mark is allowed only after "how are you".
+    if (new RegExp(`^(?:${hello})(?:[ ,،!.-]+(?:${hello}))*$`, 'u').test(text)
+      || new RegExp(`^(?:(?:${hello})[ ,،!.-]*)*(?:${how})[ ?？؟!]*$`, 'u').test(text)) return reply;
+  }
+  return null;
+}
+
+/**
  * A deliberately tiny protocol
  * optimization, never an intent router.
  */
@@ -509,6 +557,9 @@ export function protocolSocialResponse(
   ) {
     return null;
   }
+
+  const welcomed = greetingOnlyReply(message);
+  if (welcomed) return welcomed;
 
   const normalized =
     message.trim();
@@ -1379,7 +1430,7 @@ export async function planSemanticRequest(
   const system =
     `Understand the user's current goal from the full conversation and context. Return one strict JSON semantic decision, not the full internal contract. Do not use product modes, keyword categories, framework guesses, or a default website/build route. Choose the smallest READY capability set that can genuinely produce the requested outcome. Read-only analysis must remain read-only. Use research.public-web when the current request needs publicly verifiable evidence, including implicit requests for present-day rankings, recommendations, company or product comparisons, official websites, and other time-sensitive information even when the user never says search. Respect an explicit request to work offline. Keep unrelated project and chat history out of a self-contained public query. Set official_only only when the user requires the research itself to use official sources, not merely to include official website links in the answer. A subjective ranking needs stated criteria and supporting evidence, not a claim of an objective order. Do not select business.read merely because the user says search or research. Select business.action only when the user explicitly asks Xroga to change external business-app state; use business.read for retrieval, search, inspection, listing, or summarization inside the user's connected applications without mutation. A standalone code snippet, function, example or sample test shown in the answer uses conversation.respond. Select software.implement when the user asks to create or modify a project or files, or to produce a runnable software deliverable. A request to create or change software requires software.implement even when the software models concepts that also exist in connected apps, such as records, schedules, messages, payments, or files. Xroga Connect acts on an existing external account; it does not create a requested software product, project Preview, source publication, or deployment. Never upgrade a read request into an action, and never treat a request for an external action as answer-only. If the user requests several independent external actions, preserve every requested outcome; do not imply a single tool call completed them all. A project being present is context, not evidence of modification intent. The server owns project identity and authorities; do not return or invent either. Use blockers only for essential missing user input, AUTH_REQUIRED, PROVIDER_UNAVAILABLE, TEMPORARILY_UNAVAILABLE, or UNSUPPORTED capability. Never call information current unless freshnessRequirement is PREFERRED or CURRENT_REQUIRED.\n\n${PLANNER_PRODUCT_RULES}\n\nRequired JSON fields: semanticIntent=ANSWER|INVESTIGATE|PROPOSE|MODIFY|EXTERNAL_ACTION|MIXED; requiredCapabilities=[registered ids]; freshnessRequirement=NONE|PREFERRED|CURRENT_REQUIRED; publicWebQuery is required when requiredCapabilities contains research.public-web. Set it to a focused public query (1–128 Unicode characters). Optional fields: goal; desiredOutcome; constraints[]; acceptance[]; sourcePolicy={mode:any|official_only,scope:public_web|x,officialDomains:[]}; previewRequirement=NONE|PREFERRED|REQUIRED; publicationRequirement=NONE|REQUESTED; deploymentRequirement=NONE|REQUESTED; risks[]; confidence=0..1; blockers[]; contextComplexity=low|medium|high|unknown.\n\nRegistered capabilities and request-time readiness:\n${JSON.stringify(
       availableSummary,
-    )}\n\n${PRESENTATION_PLAN_INSTRUCTIONS}${documentDelivery}${publicWebPlanning}`;
+    )}\n\n${PRESENTATION_PLAN_INSTRUCTIONS}${documentDelivery}${publicWebPlanning}\n\n${PLANNER_SPEED_RULES}`;
 
   const interpretationInput:
     GoalInterpretationInput = {

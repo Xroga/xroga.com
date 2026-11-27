@@ -2,10 +2,10 @@
   "version": "1.0",
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
-    "branch": "claude/mic-early-text-20261127",
-    "sha": "a1275a5b1376e535afc6d694c406b0bf5ea4df90",
-    "sourceTimestampUtc": "2026-11-27T22:57:10+05:00",
-    "auditStartedUtc": "2026-11-27T18:09:53.628Z",
+    "branch": "claude/fast-chat-20261127",
+    "sha": "28943ccf2be670f5f0f87cf7e8d545cd7dc54194",
+    "sourceTimestampUtc": "2026-11-28T01:28:22+05:00",
+    "auditStartedUtc": "2026-11-27T20:31:05.938Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -4525,7 +4525,6 @@
       "callers": [
         "backend/src/ai/intentReasoning.test.ts:11",
         "backend/src/ai/presentationRelevance.test.ts:5",
-        "backend/src/routes/phase1ChatProgress.ts:2",
         "backend/src/routes/swarm.ts:18"
       ],
       "reachable": true,
@@ -5887,7 +5886,7 @@
         "backend/src/ai/nativeOpenUiWorkspace.ts:7",
         "backend/src/ai/pipeline.ts:27",
         "backend/src/routes/nativeOpenUiEvaluation.ts:13",
-        "backend/src/routes/phase1ChatProgress.ts:7",
+        "backend/src/routes/phase1ChatProgress.ts:4",
         "backend/src/services/integrations/researchResult.ts:8",
         "frontend/src/app/share/[token]/page.tsx:2",
         "frontend/src/components/native-openui/Diagram.tsx:11",
@@ -7078,7 +7077,6 @@
         "backend/src/ai/pipeline.ts:36",
         "backend/src/ai/providerPacingTransport.test.ts:3",
         "backend/src/ai/qa.ts:1",
-        "backend/src/ai/reasoningSummary.ts:1",
         "backend/src/ai/repoSummarize.ts:8",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:9",
         "backend/src/ai/sonnetApproval.ts:13",
@@ -7817,7 +7815,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "b598c509dacca47546033b195b3d7618cde4bc634f60aa88106c07797c968cd5",
+      "sha256": "0621b1e20fa1fb4d9a657b09ed8eb08eeccd5ded2713d76a2a26234a058ed1c5",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -8684,7 +8682,7 @@
         "backend/src/ai/openaiCompat.ts:1",
         "backend/src/ai/progressChannel.test.ts:3",
         "backend/src/routes/phase1ChatProgress.test.ts:6",
-        "backend/src/routes/phase1ChatProgress.ts:6",
+        "backend/src/routes/phase1ChatProgress.ts:3",
         "backend/src/services/integrations/businessAction.ts:1",
         "backend/src/services/integrations/businessRead.ts:1"
       ],
@@ -9880,75 +9878,6 @@
         "backend/src/security/budgetOwner.local.integration.ts",
         "backend/src/security/quotaEvidence.local.integration.ts",
         "backend/src/services/BillingService.budget.test.ts"
-      ],
-      "state": "IMPLEMENTED_BUT_UNVERIFIED",
-      "confidence": "MEDIUM",
-      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
-      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
-      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
-    },
-    {
-      "id": "surface:6b6608aca0b309f1efdb",
-      "subsystem": "ai_execution",
-      "sourcePath": "backend/src/ai/reasoningSummary.ts",
-      "sha256": "03f2c3790a024e54b268f9c1db69a987304505dd029313d1897883a83df78726",
-      "symbols": [
-        "PLAN_LINE",
-        "REASONING_SUMMARY_MAX_LINES",
-        "REASONING_SUMMARY_MAX_LINE_CHARS",
-        "REASONING_SUMMARY_MAX_OUTPUT_TOKENS",
-        "REASONING_SUMMARY_MODEL",
-        "SYSTEM",
-        "cleanReasoningSummary",
-        "context",
-        "execute",
-        "flag",
-        "generateReasoningSummary",
-        "lines",
-        "match",
-        "message",
-        "messages",
-        "planStage",
-        "planStep",
-        "reasoningSummaryEnabled",
-        "result",
-        "scope",
-        "whole"
-      ],
-      "imports": [
-        "../lib/publicAiIdentity.js",
-        "../lib/truthfulExecution.js",
-        "../security/tenantContext.js",
-        "./openaiCompat.js",
-        "./tenantModelDispatch.js"
-      ],
-      "runtimeImports": [
-        "backend/src/ai/openaiCompat.ts",
-        "backend/src/ai/tenantModelDispatch.ts",
-        "backend/src/lib/publicAiIdentity.ts",
-        "backend/src/lib/truthfulExecution.ts",
-        "backend/src/security/tenantContext.ts"
-      ],
-      "entryPoints": [
-        "backend/src/index.ts"
-      ],
-      "callers": [
-        "backend/src/ai/reasoningSummary.test.ts:3",
-        "backend/src/routes/phase1ChatProgress.ts:5"
-      ],
-      "reachable": true,
-      "persistenceDependencies": [],
-      "externalProviderDependencies": [],
-      "authBoundary": [],
-      "tenantBoundary": [],
-      "approvalBoundary": [],
-      "costBoundary": [
-        "backend/src/ai/reasoningSummary.ts#withTenantModelReservation"
-      ],
-      "evidenceBoundary": [],
-      "testCoverage": [
-        "backend/src/ai/reasoningSummary.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -14096,7 +14025,6 @@
         "backend/src/ai/pipeline.ts:110",
         "backend/src/ai/startupProgress.test.ts:107",
         "backend/src/ai/startupProgress.test.ts:3",
-        "backend/src/routes/phase1ChatProgress.ts:3",
         "backend/src/routes/swarm.ts:19"
       ],
       "reachable": true,
@@ -14466,7 +14394,6 @@
         "backend/src/ai/parallelDispatch.ts:10",
         "backend/src/ai/pipeline.ts:7",
         "backend/src/ai/qa.ts:2",
-        "backend/src/ai/reasoningSummary.ts:2",
         "backend/src/ai/repoSummarize.ts:18",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:4",
         "backend/src/ai/sonnetApproval.ts:12",
@@ -14515,7 +14442,6 @@
         "backend/src/ai/modelContext.security.test.ts",
         "backend/src/ai/modelRedirectFallback.security.test.ts",
         "backend/src/ai/openaiCompat.egress.test.ts",
-        "backend/src/ai/reasoningSummary.test.ts",
         "backend/src/ai/tenantModelDispatch.test.ts",
         "backend/src/security/genericSdk.local.integration.ts",
         "backend/src/services/integrations/businessAccounting.failure.test.ts"
@@ -15259,8 +15185,10 @@
       "id": "surface:2caccad5e3c57290edad",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "624814d6816daad4161cf9623b84855874963c1627572bcd57ac597b41af9887",
+      "sha256": "2990335ce7d819944af091b3a0c295a76be2a3f485fb7281038500869a2f889f",
       "symbols": [
+        "GREETINGS",
+        "PLANNER_SPEED_RULES",
         "SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS",
         "SEMANTIC_PLANNER_HEDGE_DELAY_MS",
         "SEMANTIC_PLANNER_MAX_OUTPUT_TOKENS",
@@ -15274,6 +15202,7 @@
         "actionText",
         "actor",
         "adjustable",
+        "answerReasoningMode",
         "attemptMessages",
         "authorities",
         "authorizedReadOnlyExternal",
@@ -15310,6 +15239,7 @@
         "goal",
         "goalContract",
         "greeting",
+        "greetingOnlyReply",
         "hasBusinessAction",
         "hasOtherWrite",
         "hasSoftwareImplementation",
@@ -15325,6 +15255,7 @@
         "models",
         "normalized",
         "ordered",
+        "ordinary",
         "parsed",
         "planExplicitProjectBuild",
         "planProtocolSocialTurn",
@@ -15337,6 +15268,7 @@
         "protocolSocialResponse",
         "publicWebPlanning",
         "readiness",
+        "reading",
         "requiredAuthorities",
         "requiredCapabilities",
         "researchReady",
@@ -15352,12 +15284,15 @@
         "steps",
         "structuredData",
         "system",
+        "text",
         "totalController",
         "totalTimeoutMs",
         "totalTimer",
         "unavailable",
         "unresolvedGoalBlockers",
-        "usage"
+        "usage",
+        "welcomed",
+        "written"
       ],
       "imports": [
         "../../capabilities/index.js",
@@ -15411,6 +15346,7 @@
         "backend/src/ai/pipeline.ts:176",
         "backend/src/ai/postCompletionAccounting.test.ts:5",
         "backend/src/ai/sonnetApproval.test.ts:10",
+        "backend/src/ai/universal/answerThinking.test.ts:3",
         "backend/src/ai/universal/capabilityReadiness.test.ts:5",
         "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts:6",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:4",
@@ -15439,6 +15375,7 @@
       "testCoverage": [
         "backend/src/ai/postCompletionAccounting.test.ts",
         "backend/src/ai/sonnetApproval.test.ts",
+        "backend/src/ai/universal/answerThinking.test.ts",
         "backend/src/ai/universal/capabilityReadiness.test.ts",
         "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts",
@@ -26428,10 +26365,9 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/reasoningSummary.ts:5",
         "backend/src/lib/publicAiIdentity.test.ts:3",
-        "backend/src/routes/phase1ChatProgress.ts:4",
-        "backend/src/routes/phase1ChatProgress.ts:8",
+        "backend/src/routes/phase1ChatProgress.ts:2",
+        "backend/src/routes/phase1ChatProgress.ts:5",
         "backend/src/routes/swarm.ts:17",
         "backend/src/workers/googleSwarmQueue.ts:8"
       ],
@@ -27375,7 +27311,6 @@
         "backend/src/ai/parallelApproval.ts:18",
         "backend/src/ai/parallelWeb.ts:3",
         "backend/src/ai/pipeline.ts:230",
-        "backend/src/ai/reasoningSummary.ts:4",
         "backend/src/ai/research.ts:5",
         "backend/src/ai/runTrace.ts:7",
         "backend/src/ai/softwareAgent/softwareAgentProductionInfrastructure.ts:47",
@@ -27383,7 +27318,7 @@
         "backend/src/ai/universal/repositoryChatEvidence.ts:2",
         "backend/src/lib/adaptiveEngine.test.ts:9",
         "backend/src/lib/truthfulExecution.test.ts:3",
-        "backend/src/routes/phase1ChatProgress.ts:9",
+        "backend/src/routes/phase1ChatProgress.ts:6",
         "backend/src/services/integrations/researchResult.ts:4",
         "backend/src/synthesis/productDefinition.ts:3",
         "backend/src/synthesis/projectRuntime/manager.ts:4",
@@ -33421,61 +33356,44 @@
       "id": "surface:a84cf17b2bc2287e5cc5",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
-      "sha256": "363f098753aa2e5746ac9ff4a0b1bf20d7640689c1d7fd5154c99c545fa45979",
+      "sha256": "bec1caa0a04603cd114bab6c2c99c56eb640a711b2bbb9f5f4ed287d38daa2f6",
       "symbols": [
         "HEARTBEAT_MS",
-        "controller",
         "files",
-        "finish",
         "found",
         "heartbeat",
-        "line",
         "lines",
-        "message",
         "names",
-        "note",
-        "notes",
-        "notesArrived",
         "open",
         "originalStatus",
         "partial",
         "preparing",
         "progressTiming",
-        "reading",
         "reminder",
         "router",
         "sendJson",
         "shown",
         "source",
         "sourceUrls",
-        "startedAt",
         "status",
-        "step",
         "still",
         "stillWorking",
         "text",
-        "timer",
         "updates",
         "wantsStream",
         "write"
       ],
       "imports": [
-        "../ai/intentReasoning.js",
         "../ai/nativeOpenUi.js",
         "../ai/progressChannel.js",
-        "../ai/reasoningSummary.js",
-        "../ai/startupProgress.js",
         "../lib/publicAiIdentity.js",
         "../lib/truthfulExecution.js",
         "../middleware/auth.js",
         "express"
       ],
       "runtimeImports": [
-        "backend/src/ai/intentReasoning.ts",
         "backend/src/ai/nativeOpenUi.ts",
         "backend/src/ai/progressChannel.ts",
-        "backend/src/ai/reasoningSummary.ts",
-        "backend/src/ai/startupProgress.ts",
         "backend/src/lib/publicAiIdentity.ts",
         "backend/src/lib/truthfulExecution.ts"
       ],
@@ -37852,7 +37770,6 @@
         "backend/src/ai/providerBudget.ts:4",
         "backend/src/ai/quota.failure.test.ts:4",
         "backend/src/ai/quota.ts:2",
-        "backend/src/ai/reasoningSummary.ts:3",
         "backend/src/ai/repoSummarize.security.test.ts:6",
         "backend/src/ai/repoSummarize.ts:19",
         "backend/src/ai/researchAnswer.test.ts:176",
@@ -67618,7 +67535,7 @@
       "id": "surface:1dacf962de020747d05b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/activity/ActivityTimeline.tsx",
-      "sha256": "f787c78b914c14d4e8faaf16cbfe38256aa2dcf365fd7340206b87e511fd0e43",
+      "sha256": "552cff6f53a009c6619ee681cf63f5bd2fb29038c1de768ae10f848c1ff62e77",
       "symbols": [
         "ActivityTimeline",
         "ActivityTimelineProps",
@@ -67644,7 +67561,6 @@
         "isCommand",
         "label",
         "lineText",
-        "onlyThinking",
         "open",
         "openRows",
         "repeatsHeader",
@@ -102614,15 +102530,17 @@
       "id": "surface:d57670e245a2278fa94d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/TerminalLiveActivity.tsx",
-      "sha256": "c5ae201fbb1a02d432d3f7779258ce26bb635d66d92edc492b0aa25c3a384cc5",
+      "sha256": "f9e7360d991960182b6737b54bf5c4430012126f05f2cb00cc7fafd0e347ffec",
       "symbols": [
         "TerminalLiveActivity",
         "TerminalLiveActivityProps",
         "active",
         "baseLabel",
+        "fullStream",
         "label",
         "model",
         "processing",
+        "routine",
         "rows",
         "shell",
         "stage",
@@ -102635,6 +102553,7 @@
         "@/lib/swarm",
         "@/lib/terminal/activityPresentation",
         "@/lib/terminal/activityTimeline",
+        "@/lib/terminal/clientSteps",
         "@/lib/terminal/processingStream",
         "@/lib/terminal/processingView",
         "@/lib/terminal/terminalEvent",
@@ -102644,6 +102563,7 @@
         "frontend/src/components/activity/ActivityTimeline.tsx",
         "frontend/src/lib/terminal/activityPresentation.ts",
         "frontend/src/lib/terminal/activityTimeline.ts",
+        "frontend/src/lib/terminal/clientSteps.ts",
         "frontend/src/lib/terminal/processingStream.ts",
         "frontend/src/lib/terminal/processingView.ts"
       ],
@@ -121763,16 +121683,19 @@
       "id": "surface:f0b6514316e865a55dfb",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/terminal/clientSteps.ts",
-      "sha256": "13b3b035fe95ec9cb3347abc8629d736e16bee8b700f1017bc319e7409eadd0c",
+      "sha256": "b4eeff29448bb8615683b2e343ac78888a2d5c94f3c626c9003800b8419e2178",
       "symbols": [
         "CLIENT_READ",
         "CLIENT_THOUGHT",
         "ClientStepStatus",
         "READING",
+        "ROUTINE_ROW",
         "STOPPED_REPLY",
         "count",
         "isClientStep",
+        "isRoutineTurn",
         "listed",
+        "rated",
         "raw",
         "seconds",
         "short",
@@ -121795,6 +121718,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
+        "frontend/src/components/terminal/TerminalLiveActivity.tsx:14",
         "frontend/src/context/TerminalChatContext.tsx:76",
         "frontend/src/lib/terminal/activityPresentation.ts:1",
         "frontend/src/lib/terminal/anyPrompt.test.ts:9",
@@ -121949,7 +121873,7 @@
       "id": "surface:f97bad94eb42e051ed62",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/terminal/processingStream.ts",
-      "sha256": "7031b85f6fd325fce88c5696b61f33a9fd25c9d04e49fe6989b048146d85c93b",
+      "sha256": "9330fb13dda5f241a4e928ebc47067327ff5fd7504a8c137b2ee38086ec51a0e",
       "symbols": [
         "MAX_ENTRIES",
         "PAST",
@@ -124121,7 +124045,7 @@
       "id": "surface:fb246ef519592dcb4713",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/voiceSegmenter.ts",
-      "sha256": "c73176a55e776661d1374be102e9b46b42fbd160122407941203a059408f5b47",
+      "sha256": "19f3c8ef02e52f1f0341cd902ba56ae4c5f34274f8e8e0f561fa60661d7cf767",
       "symbols": [
         "FRAME_SECONDS",
         "PAUSE_CUT_MIN_SECONDS",
@@ -139431,9 +139355,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b5227ba92a2eee2e7b4e",
+      "id": "registration:b0b6dc29a0a165083d13",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
-      "line": 60,
+      "line": 53,
       "receiver": "router",
       "method": "post",
       "path": "/chat",
@@ -140977,10 +140901,10 @@
       "reason": "Router factory invoked by an imported default export; terminal middleware traced, behavior must still be tested."
     },
     {
-      "id": "route:dbf3e72f129bd8adb37e",
-      "registrationId": "registration:b5227ba92a2eee2e7b4e",
+      "id": "route:9f2f8dfaad8206b26dbb",
+      "registrationId": "registration:b0b6dc29a0a165083d13",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
-      "line": 60,
+      "line": 53,
       "method": "POST",
       "path": "/api/phase1/chat",
       "mountChain": [
@@ -146288,18 +146212,18 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:4ea021823b4868c4683f",
+      "id": "schedule:0daa096ef72c04949089",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
-      "line": 79,
+      "line": 69,
       "kind": "setInterval",
       "symbol": "<module>",
       "reachable": true,
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:df3875366f49eedca823",
+      "id": "schedule:41ccc0509a8263bab129",
       "sourcePath": "backend/src/routes/phase1ChatProgress.ts",
-      "line": 91,
+      "line": 81,
       "kind": "setInterval",
       "symbol": "<module>",
       "reachable": true,
@@ -156379,13 +156303,6 @@
       "focusLocations": []
     },
     {
-      "id": "test-suite:846cdb9ce4a867dd5520",
-      "sourcePath": "backend/src/ai/reasoningSummary.test.ts",
-      "declaredTests": 7,
-      "skipLocations": [],
-      "focusLocations": []
-    },
-    {
       "id": "test-suite:c9f218eca988b762efd2",
       "sourcePath": "backend/src/ai/repairController.test.ts",
       "declaredTests": 13,
@@ -156844,6 +156761,13 @@
       "id": "test-suite:d7d027afaee0a76fde79",
       "sourcePath": "backend/src/ai/tenantModelDispatch.test.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:a5a5cc2db480c3226f13",
+      "sourcePath": "backend/src/ai/universal/answerThinking.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -158252,7 +158176,7 @@
     {
       "id": "test-suite:8d73808569e38c5b4489",
       "sourcePath": "backend/src/routes/phase1ChatProgress.test.ts",
-      "declaredTests": 7,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -162751,7 +162675,7 @@
     {
       "id": "test-suite:e4b27e6139d4bf048484",
       "sourcePath": "frontend/src/lib/terminal/clientSteps.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -163031,7 +162955,7 @@
     {
       "id": "test-suite:b6f5b85e2b28cbcc7dd1",
       "sourcePath": "frontend/src/lib/voiceSegmenter.pause.test.ts",
-      "declaredTests": 5,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },

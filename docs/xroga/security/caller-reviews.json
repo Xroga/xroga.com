@@ -1121,9 +1121,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "b598c509dacca47546033b195b3d7618cde4bc634f60aa88106c07797c968cd5",
+      "sourceSha256": "0621b1e20fa1fb4d9a657b09ed8eb08eeccd5ded2713d76a2a26234a058ed1c5",
       "callIds": [
-        "d231c120d15cdb303798"
+        "9fd30d5a9fe01e2fa702"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2707,13 +2707,21 @@
         "previousCallIds": [
           "d55a2bc1d31f353c8c21"
         ]
+      },
+      "fastChatRebinding": {
+        "previousSha256": "b598c509dacca47546033b195b3d7618cde4bc634f60aa88106c07797c968cd5",
+        "ownerApproval": "On 2026-11-27 the repository owner was told that faster ordinary chat changes a security-reviewed file and that their approval would be recorded here; they replied asking for it to be completed end to end, with no plan or extra thinking for ordinary chat. Recorded by the assistant that made the change; no separate human code review is claimed.",
+        "finding": "Only two lines differ: one import list and the reasoningMode argument of the Workspace answer call, now answerReasoningMode(native, opts.goalContract). Line numbers are unchanged; the identities, derived from character offsets, move with the longer import line and name the same two expressions. An ordinary written answer (ANSWER or INVESTIGATE, low or medium complexity, no planned outline) asks for no private reasoning; every other turn is as before. Destination, credential, reservation, receipt, settlement and output ceilings are unchanged.",
+        "previousCallIds": [
+          "d231c120d15cdb303798"
+        ]
       }
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "b598c509dacca47546033b195b3d7618cde4bc634f60aa88106c07797c968cd5",
+      "sourceSha256": "0621b1e20fa1fb4d9a657b09ed8eb08eeccd5ded2713d76a2a26234a058ed1c5",
       "callIds": [
-        "a89bee68ee14df41ddd5"
+        "7b9661ffc196bf766028"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -4296,6 +4304,14 @@
         "scope": "Recognize source-quoted, model-planned local downloads. Verified authority, model dispatch, storage and tenant call shapes are unchanged.",
         "previousCallIds": [
           "8f870c04c0ddab6c11f2"
+        ]
+      },
+      "fastChatRebinding": {
+        "previousSha256": "b598c509dacca47546033b195b3d7618cde4bc634f60aa88106c07797c968cd5",
+        "ownerApproval": "On 2026-11-27 the repository owner was told that faster ordinary chat changes a security-reviewed file and that their approval would be recorded here; they replied asking for it to be completed end to end, with no plan or extra thinking for ordinary chat. Recorded by the assistant that made the change; no separate human code review is claimed.",
+        "finding": "Only two lines differ: one import list and the reasoningMode argument of the Workspace answer call, now answerReasoningMode(native, opts.goalContract). Line numbers are unchanged; the identities, derived from character offsets, move with the longer import line and name the same two expressions. An ordinary written answer (ANSWER or INVESTIGATE, low or medium complexity, no planned outline) asks for no private reasoning; every other turn is as before. Destination, credential, reservation, receipt, settlement and output ceilings are unchanged.",
+        "previousCallIds": [
+          "a89bee68ee14df41ddd5"
         ]
       }
     },

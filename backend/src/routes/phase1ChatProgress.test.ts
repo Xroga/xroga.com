@@ -58,7 +58,7 @@ test('an event-stream client gets real progress frames, then the same answer as 
     assert.equal(all.at(-1)?.event, 'result');
     assert.deepEqual(all.at(-1)?.data, { status: 200, body: { response: 'hello', engine: 'xroga' } });
     const progress = all.filter((frame) => frame.event === 'progress');
-    assert.ok(progress.some((frame) => frame.data.status === 'understanding_request'));
+    assert.deepEqual([...new Set(progress.map((frame) => frame.data.status))], ['preparing_answer'], 'no commentary about the request, no plan');
     assert.equal(progress[0]?.data.status, 'preparing_answer');
     assert.equal(progress.at(-1)?.data.activityStatus, 'completed', 'the preparing step ends when the answer arrives');
     assert.equal(progress.at(-1)?.data.activityId, progress[0]?.data.activityId);
@@ -104,27 +104,6 @@ test('a long answer keeps reporting that it is still running, then closes that l
       assert.ok(!quick.some((frame) => frame.data.activityId === 'still-working'), 'a quick answer gets no filler');
     });
   } finally { progressTiming.everyMs = before; }
-});
-
-test('a quick answer never waits for notes, a long one briefly does', async () => {
-  const saved = { ...progressTiming };
-  let release: (() => void) | undefined;
-  progressTiming.summarize = () => new Promise<string | null>((resolve) => { release = () => resolve(null); });
-  progressTiming.notesGraceMs = 300;
-  const app = express();
-  app.use(express.json());
-  app.use((req, _res, next) => { Object.assign(req, { userId: 'u', tenantContext: {} }); next(); });
-  app.use('/api/phase1', router);
-  app.post('/api/phase1/chat', (_req, res) => { setTimeout(() => res.json({ response: 'hello' }), 40); });
-  const server = app.listen(0);
-  const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
-  const timed = async () => { const start = Date.now(); await (await post(base, 'hi there', 'text/event-stream')).text(); return Date.now() - start; };
-  try {
-    progressTiming.notesMatterAfterMs = 10_000;
-    assert.ok(await timed() < 250, 'a quick answer goes out at once');
-    progressTiming.notesMatterAfterMs = 10;
-    assert.ok(await timed() >= 320, 'a longer answer gives its notes a moment');
-  } finally { release?.(); server.close(); Object.assign(progressTiming, saved); }
 });
 
 test('the answer is shown while it is written, as readable text only, before the checked result', async () => {

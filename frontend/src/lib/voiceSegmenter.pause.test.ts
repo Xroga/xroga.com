@@ -27,10 +27,16 @@ test('a real pause after the minimum length cuts the segment there so each part 
 });
 
 test('pauses before the minimum length, short pauses and continuous speech do not add cuts', () => {
-  assert.equal(run(speech(20, [[4, 0.6]])).length, 1, 'early pause ignored');
-  assert.equal(run(speech(20, [[12, 0.2]])).length, 1, 'a 0.2 s gap is not a pause');
+  assert.equal(run(speech(20, [[2, 0.6]])).length, 1, 'early pause ignored');
+  assert.equal(run(speech(20, [[12, 0.4]])).length, 1, 'a 0.4 s breath between words is not a pause');
   assert.equal(run(speech(20)).length, 1, 'continuous speech is one segment');
   assert.equal(run(speech(40, [[22, 0.2]])).length, 2, 'the 25 s rule is unchanged');
+});
+
+test('a short sentence in one language is separated from the next one after three seconds', () => {
+  const out = run(speech(12, [[3.6, 0.6]]));
+  assert.equal(out.length, 2);
+  assert.ok(out[0].samples.length / RATE > 3.6 && out[0].samples.length / RATE < 4.2, String(out[0].samples.length / RATE));
 });
 
 test('a pause is found in a noisy room because it is judged against the speech level, not silence', () => {
