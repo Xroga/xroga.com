@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "0db6ec32e05320d743ae75774a6293f900ab406f",
+  "source_sha": "dbc3bb5b2d59fba9d744ddc1dea2620518d84c1d",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -23392,7 +23392,7 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sha256": "778082159fdc39b4dffb8ce1b3de60be0d502b06c67191658533fea01d431bb6"
+      "sha256": "4085bf18a54f104e8b01b26bf999f80116582a0af02712cf773c5ec48c004026"
     },
     {
       "path": "frontend/src/components/terminal/builder/BuilderDatabase.tsx",
@@ -24661,6 +24661,10 @@
     {
       "path": "frontend/src/lib/voiceSegmenter.ts",
       "sha256": "c73176a55e776661d1374be102e9b46b42fbd160122407941203a059408f5b47"
+    },
+    {
+      "path": "frontend/src/lib/voiceWarmup.ts",
+      "sha256": "1baa9e8ebab036397a334d81b3a57cf331f0da150528d81d39f5d645d633cb13"
     },
     {
       "path": "frontend/src/lib/warmApi.ts",
