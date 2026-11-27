@@ -5892,7 +5892,7 @@
         "frontend/src/components/native-openui/Diagram.tsx:11",
         "frontend/src/components/native-openui/Editorial.tsx:11",
         "frontend/src/components/native-openui/NativeSurface.tsx:9",
-        "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:14",
+        "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:15",
         "frontend/src/components/native-openui/upstream/components/chart.tsx:8",
         "frontend/src/components/native-openui/upstream/components/markdown.test.ts:8",
         "frontend/src/components/native-openui/upstream/components/markdown.tsx:9",
@@ -6410,7 +6410,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "67f2fd972dcc2f3d68fe989bc62f534e56be09aaa57119c5dc429e6b46381023",
+      "sha256": "2fecf34441a4e10f342197ba71fab7ff82a20bf0bec5b377bf3f0c2c3a843122",
       "symbols": [
         "accessibilityRule",
         "answerScopeRule",
@@ -6418,6 +6418,7 @@
         "buildNativeOpenUiPrompt",
         "comparisonConsistencyRule",
         "componentSelectionRule",
+        "concisionRule",
         "dataConsistencyRule",
         "general",
         "iconSelectionRule",
@@ -6610,8 +6611,8 @@
         "backend/src/lib/richShareSnapshot.test.ts:4",
         "backend/src/lib/richShareSnapshot.ts:1",
         "frontend/src/app/share/[token]/page.tsx:1",
-        "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:16",
-        "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx:10",
+        "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:17",
+        "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx:11",
         "frontend/src/components/terminal/MessageBubbleActions.tsx:19"
       ],
       "reachable": true,
@@ -6641,7 +6642,7 @@
       "id": "surface:309e6a3c1f73a053bdef",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiValues.ts",
-      "sha256": "e92a173ed84c8d50b7793704d787b75f0cd08f7685d020ce50b5eac755dffee7",
+      "sha256": "a34837acb7ad56804ac6db10119d3417e1a15290dfd4849a892a3ed84327b874",
       "symbols": [
         "active",
         "amount",
@@ -89849,7 +89850,7 @@
       "id": "surface:169100c09d49c9650f7a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/NativeSurface.tsx",
-      "sha256": "ff5db2c2c70c69c5b199eccadcdb02fb09ad3a32332b572786668fbe45d8a49c",
+      "sha256": "15a4cd51054e1e704d5659a4291ef35576d9772f696676d34c10d459b0958bca",
       "symbols": [
         "NativeAnswer",
         "NativeSurface",
@@ -89877,6 +89878,7 @@
         "../../../../backend/src/ai/nativeOpenUi",
         "../../../../backend/src/ai/nativeOpenUiValues",
         "./evidence",
+        "./generatedCopy",
         "./library",
         "./renderer-config",
         "./surface.css",
@@ -89893,6 +89895,7 @@
         "backend/src/ai/nativeOpenUi.ts",
         "backend/src/ai/nativeOpenUiValues.ts",
         "frontend/src/components/native-openui/evidence.tsx",
+        "frontend/src/components/native-openui/generatedCopy.ts",
         "frontend/src/components/native-openui/library.tsx",
         "frontend/src/components/native-openui/renderer-config.ts",
         "frontend/src/components/native-openui/surface.css",
@@ -89907,7 +89910,7 @@
       ],
       "callers": [
         "frontend/src/components/native-openui/Evaluation.tsx:12",
-        "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:18"
+        "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:19"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -89939,7 +89942,7 @@
       "id": "surface:1815fe3ed39eb8d357c4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx",
-      "sha256": "fd55306467d362f15789b384e8196b95d04328809f4e312b9403190919bc2f53",
+      "sha256": "581b57115374f4027be5bc0a52ae6c55085f79042e0957f1a477893ea969cf44",
       "symbols": [
         "NativeWorkspaceAnswer",
         "NativeWorkspaceAnswerProps",
@@ -89949,15 +89952,18 @@
         "document",
         "evidence",
         "fallback",
+        "loading",
         "readNativeWorkspaceAnswer",
         "readNativeWorkspaceProse",
-        "text"
+        "text",
+        "written"
       ],
       "imports": [
         "../../../../backend/src/ai/nativeOpenUi",
         "../../../../backend/src/ai/nativeOpenUiShare",
         "../response-experience-v2/loadPresentation",
         "./NativeSurface",
+        "./generatedCopy",
         "@/components/terminal/ChatErrorBoundary",
         "@/components/terminal/ReasoningAndFollowUps",
         "@/components/terminal/ResponseSourceScope",
@@ -89972,6 +89978,7 @@
         "backend/src/ai/nativeOpenUi.ts",
         "backend/src/ai/nativeOpenUiShare.ts",
         "frontend/src/components/native-openui/NativeSurface.tsx",
+        "frontend/src/components/native-openui/generatedCopy.ts",
         "frontend/src/components/response-experience-v2/loadPresentation.ts",
         "frontend/src/components/terminal/ChatErrorBoundary.tsx",
         "frontend/src/components/terminal/ReasoningAndFollowUps.tsx",
@@ -90222,6 +90229,47 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:e0aba3fd3e1ab33dbb1e",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/native-openui/generatedCopy.ts",
+      "sha256": "e201431c2a2948fbe7b1590f1a91393bd0a33f9f3b70d0641df4521383e2ee4f",
+      "symbols": [
+        "at",
+        "bound",
+        "literal",
+        "withoutGeneratedVisualCopy"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/native-answer-evaluation/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/native-openui/NativeSurface.tsx:16",
+        "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:13",
+        "frontend/src/components/native-openui/upstream/components/markdown.test.ts:11"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/components/native-openui/upstream/components/markdown.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:1bf86dec2f9f087bee07",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/library.tsx",
@@ -90337,7 +90385,7 @@
       "id": "surface:54b82e40fb048a969cb3",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/chart.tsx",
-      "sha256": "93880c8d8679ef5af22535f93fff05d6e19fb0d51e3080efc6f2dbbf702f3f04",
+      "sha256": "2bd564fc67408e4938b7b26684fb680a600d4837566d9c9ee706544d5512bbca",
       "symbols": [
         "COLORS",
         "Cartesian",
@@ -94216,7 +94264,7 @@
       "id": "surface:25cc0a5b860692abe56d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx",
-      "sha256": "7e44b28c90e2c7f0dd07a63fea08615c94e5fcde87575bc6efe922be93c869ba",
+      "sha256": "5d550328d73bb60bf9d0d3d42ffd3ed704686b48be064af083b4eec89b6672d4",
       "symbols": [
         "ConversationTurnV2",
         "TurnActions",
@@ -94227,6 +94275,7 @@
       ],
       "imports": [
         "../../../../backend/src/ai/nativeOpenUiShare",
+        "./conversation",
         "./conversation-v2.module.css",
         "./document",
         "./shareSnapshot",
@@ -94239,6 +94288,7 @@
       "runtimeImports": [
         "backend/src/ai/nativeOpenUiShare.ts",
         "frontend/src/components/response-experience-v2/conversation-v2.module.css",
+        "frontend/src/components/response-experience-v2/conversation.ts",
         "frontend/src/components/response-experience-v2/shareSnapshot.ts",
         "frontend/src/components/terminal/MessageShareModal.tsx",
         "frontend/src/lib/assistantCopy.ts",
@@ -95168,10 +95218,14 @@
       "id": "surface:2b6e5200d85cde88ec7c",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/conversation.ts",
-      "sha256": "00a1374e0592df6598239a5774ae29989d4204f7a408138777da0defc0c701c3",
+      "sha256": "55761fd7e557a2af7cdeccf9a00aeeb15feab550ac3ac447ff09ede7b343efa4",
       "symbols": [
         "conversationActivityV2",
-        "planned"
+        "count",
+        "letters",
+        "planned",
+        "readingScript",
+        "sample"
       ],
       "imports": [
         "@/lib/terminal/activityPresentation"
@@ -95183,6 +95237,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
+        "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx:8",
         "frontend/src/components/response-experience-v2/conversation.test.ts:3",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:16",
         "frontend/src/lib/savedProcessingActivity.test.ts:3",
@@ -95703,7 +95758,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:13",
+        "frontend/src/components/native-openui/NativeWorkspaceAnswer.tsx:14",
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:15",
         "frontend/src/components/response-experience-v2/loadPresentation.test.ts:3"
       ],
@@ -95848,7 +95903,7 @@
       ],
       "callers": [
         "frontend/src/app/share/[token]/page.tsx:15",
-        "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx:9",
+        "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx:10",
         "frontend/src/components/response-experience-v2/SharedResponseV2.tsx:4",
         "frontend/src/components/response-experience-v2/document.test.ts:11",
         "frontend/src/components/response-experience-v2/shareSnapshot.test.ts:4",
@@ -101960,7 +102015,7 @@
       "id": "surface:9c57a6290c71522141f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "bd53987b93b3e6fa44e40ec17ec9d7afc1b256024c74e32fbd6b3595a48d645d",
+      "sha256": "ea7c23136f19ab1383a638d1a3668a45b1a8bfff6479b3bafb976934ede44cc6",
       "symbols": [
         "AGENT_STYLES",
         "SwarmMessageLog",
@@ -101983,6 +102038,7 @@
         "displayInitial",
         "element",
         "err",
+        "excess",
         "featureType",
         "first",
         "firstTurnId",
@@ -102010,6 +102066,7 @@
         "messagePrompt",
         "messageRefs",
         "middle",
+        "most",
         "nativeAnswer",
         "nativeCopy",
         "nativeProse",
@@ -102021,11 +102078,13 @@
         "profile",
         "prompt",
         "promptByAssistantId",
+        "promptTop",
         "prompts",
         "renderedMessages",
         "renderedPromptId",
         "requestSync",
         "researchTodoActive",
+        "reserveTurnSpace",
         "result",
         "root",
         "scrollTarget",
@@ -102036,6 +102095,7 @@
         "showPending",
         "showResearchPages",
         "showSuggestions",
+        "space",
         "storeIncognito",
         "storeIncognitoRaw",
         "suggestions",
@@ -102054,6 +102114,7 @@
         "transcriptRef",
         "transcriptScrollRoot",
         "turn",
+        "turnSpaceRef",
         "updateAsk",
         "visibleMessages",
         "webEvidence",
@@ -132675,7 +132736,7 @@
       "id": "surface:bd6af899f2dd9df930f6",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/verify-native-openui-browser.mjs",
-      "sha256": "f8581ff7139a7677c6efc933be5be6e9ad52ac04efd5cc1f89456d567e2fe715",
+      "sha256": "3abb2a78935ec48c12858e71bd4fa7bfedc34c11d7970dcdcc3a13e7ab6cdbf6",
       "symbols": [
         "accessibility",
         "answer",
@@ -147856,9 +147917,9 @@
   ],
   "findings": [
     {
-      "id": "finding:f796f1d1946339135c26",
+      "id": "finding:24ca3bb6c96a17948fb9",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "line": 81,
+      "line": 85,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -150946,9 +151007,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:b1773b6e96adf024e232",
+      "id": "finding:d4c45e3504f504d9d462",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "line": 405,
+      "line": 425,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -156067,7 +156128,7 @@
     {
       "id": "test-suite:cf78e18abc3aa283d701",
       "sourcePath": "backend/src/ai/nativeOpenUiValues.test.ts",
-      "declaredTests": 26,
+      "declaredTests": 27,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -161387,7 +161448,7 @@
     {
       "id": "test-suite:4ce9d7bbf578638998f1",
       "sourcePath": "frontend/src/components/native-openui/upstream/components/markdown.test.ts",
-      "declaredTests": 36,
+      "declaredTests": 37,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -161415,7 +161476,7 @@
     {
       "id": "test-suite:b857dadcc8ab57c3e89e",
       "sourcePath": "frontend/src/components/response-experience-v2/conversation.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
