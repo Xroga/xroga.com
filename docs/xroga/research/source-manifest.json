@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "256106f50caa81636eaead4f583aa721c45f4593",
+  "source_sha": "df901fb7463cefae6d7c1966d51864b737c88196",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -6416,9 +6416,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "1a009c5d73ee4b8d510d502ea9b234e002202b2689965bf28241d7740ec9cc0a",
-      "byte_size": 5952464,
-      "modified_timestamp": "2026-11-27T19:45:18.670Z",
+      "sha256": "2e7f4c77aaa6d1e29ea9f3b25670ce5d495749f51c9b1482c38b2af2bf82bff2",
+      "byte_size": 5952473,
+      "modified_timestamp": "2026-11-27T21:09:58.597Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -30258,9 +30258,9 @@
       "source_id": "SRC-37524c7f08dce1e8",
       "filename": "voiceDictation.ts",
       "path_or_url": "frontend/src/lib/voiceDictation.ts",
-      "sha256": "e803f196bdf2543691f29a1b59b86e8464d36d173cb03ce8283953c0f2f16355",
-      "byte_size": 6482,
-      "modified_timestamp": "2026-11-27T12:20:51.615Z",
+      "sha256": "1f89427e48835f677791a33f9f6178a1817b9b53afd9ff5d4a85bba43d9fcacb",
+      "byte_size": 6693,
+      "modified_timestamp": "2026-11-27T21:03:29.587Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",
