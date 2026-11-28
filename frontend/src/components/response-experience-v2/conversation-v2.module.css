@@ -32,3 +32,27 @@
   .actions button { width: 40px; height: 40px; }
   :global(body):has(.scope) :global([data-testid=persistent-terminal-dock]) :global(.xv-terminal-dock-inner) { padding-inline: 12px; }
 }
+/* One reading rhythm for written answers, whichever renderer drew them. */
+.answer :global(.xv-response-text) { font-size: 1rem; line-height: 1.65; }
+.answer :global(.xv-response-text) :where(ul) { list-style: disc outside; padding-inline-start: 1.35em; }
+.answer :global(.xv-response-text) :where(ol) { list-style: decimal outside; padding-inline-start: 1.35em; }
+/* Urdu, Arabic and Persian: a Nastaliq or Naskh face when the device has one, with room for its marks. */
+.turn [data-script=arabic], .turn [data-script=arabic] :global(.xroga-native-openui) {
+  --openui-font-body: var(--font-inter, Arial), "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", "Noto Naskh Arabic", "Segoe UI";
+  font-family: var(--openui-font-body), system-ui, sans-serif;
+}
+.turn [data-script=arabic] :where(p, li, td, th, summary, dt, dd),
+.turn [data-script=arabic] :global(:is(.iui-markdown, .iui-text, .xv-response-text)) :where(p, li, td, th) { line-height: 2; }
+.turn [data-script=arabic] :global(.xroga-native-openui .iui-md-h), .turn [data-script=arabic] :where(h1, h2, h3, h4) { line-height: 1.8; letter-spacing: 0; }
+.turn .userMessage[data-script=arabic] { line-height: 2; }
+.turn [data-script=devanagari] :where(p, li, td, th),
+.turn [data-script=devanagari] :global(:is(.iui-markdown, .xv-response-text)) :where(p, li, td, th) { line-height: 1.8; }
+/* The written answer shown while visuals load looks like the finished one, so nothing appears to jump. */
+.answer :global(.xv-response-text) blockquote { margin-inline: 0; padding: 0; border: 0; background: transparent; color: var(--success, #3ecf8e); font-weight: 550; }
+/* Text-only answers use the same tables as answers with visuals: rows on the page, with room around them. */
+.answer :global(.xv-response-text [aria-label="Answer table"]) { margin-block: 1rem; border: 0; border-radius: 0; }
+.answer :global(.xv-response-text [aria-label="Answer table"]) :where(th) { background: transparent !important; border-block-end: 1px solid color-mix(in srgb, var(--foreground) 22%, transparent); }
+.answer :global(.xv-response-text [aria-label="Answer table"]) :where(th, td) { text-align: start; }
+.answer :global(.xv-response-text [aria-label="Answer table"]) :where(th, td):first-child { padding-inline-start: 0; }
+.answer :global(.xv-response-text [aria-label="Answer table"]) :where(th, td):last-child { padding-inline-end: 0; }
+.answer :global(.xv-response-text [aria-label="Answer table"] :is(tr, th, td)) { border-color: color-mix(in srgb, var(--foreground) 14%, transparent) !important; }

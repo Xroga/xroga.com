@@ -5,6 +5,7 @@ import { MessageShareModal } from '@/components/terminal/MessageShareModal';
 import { serializeAssistantCopy } from '@/lib/assistantCopy';
 import { publicAnswerExportText } from '@/lib/publicAnswerText';
 import styles from './conversation-v2.module.css';
+import { readingScript } from './conversation';
 import type { ResponseInputV2 } from './document';
 import { richShareSnapshot } from './shareSnapshot';
 import { NATIVE_SHARE_PREFIX } from '../../../../backend/src/ai/nativeOpenUiShare';
@@ -48,12 +49,12 @@ export function ConversationTurnV2({ role, content, copyContent = content, promp
 }) {
   return <div className={styles.turn} data-conversation-turn-v2={role}>
     {role === 'user' ? <>
-      <div className={styles.userMessage} dir="auto">{content}</div>
+      <div className={styles.userMessage} dir="auto" data-script={readingScript(content)}>{content}</div>
       <TurnActions role={role} content={content} />
     </> : <>
       {activity && <div className={styles.activity}>{activity}</div>}
       {controls && <div className={styles.controls}>{controls}</div>}
-      <div className={styles.answer}>{children}</div>
+      <div className={styles.answer} data-script={readingScript(content || copyContent)}>{children}</div>
       {!streaming && <TurnActions role={role} content={copyContent} prompt={prompt} message={message} richResponse={richResponse} />}
     </>}
   </div>;

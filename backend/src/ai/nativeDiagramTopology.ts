@@ -2,7 +2,7 @@ export const DIAGRAM_NODE_TONES = ['neutral', 'info', 'success', 'purple', 'warn
 
 /** Relationship and layout constraints shared by Workspace admission and the renderer. */
 export function hasRenderableDiagramTopology(nodes: unknown, links: unknown): boolean {
-  if (!Array.isArray(nodes) || nodes.length < 2 || nodes.length > 12 ||
+  if (!Array.isArray(nodes) || nodes.length < 2 || nodes.length > 40 ||
       !Array.isArray(links) || links.length < 1 || links.length > 18) return false;
   const ids = new Set<string>();
   const peers = new Map<number, number>();

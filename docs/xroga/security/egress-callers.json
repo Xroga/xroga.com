@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "b1861930453f615cb2947d6b1ecaf852a5b68af993cc65a62fedb28915463e4a",
+  "sourceTreeDigest": "e976709245c8199e62f1ba1113c703a14bdd80a21acc2ca92bb7402d63811360",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -254,9 +254,14 @@
         {
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "29e704826d0e504396a577427e0181d909331628d30f4ad2878e975f462290b9",
+          "sha256": "6597af1cd108743cc5522e80a2743659fbf8d8528311570ad1d55bc1a846906a",
           "reboundOnBranch": {
             "previousSha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
+          },
+          "historyAndSearchLimitRebinding": {
+            "previousSha256": "29e704826d0e504396a577427e0181d909331628d30f4ad2878e975f462290b9",
+            "ownerApproval": "On 2026-11-28 the repository owner asked in chat for the answer, history and search limits to be removed. They were then told that the server history change edits a security-reviewed file, that the records would state their approval and that no separate human code review is claimed, and were asked \"May I change the protected file for the chat history limit?\". They replied \"Yes, change it\". Recorded by the assistant that made the change; no separate human code review is claimed.",
+            "finding": "The one changed assertion expects 25 search results instead of 10, following the owner's request to raise search limits. Every authority, owner, egress, hold and settlement assertion is unchanged."
           }
         }
       ]
@@ -284,15 +289,25 @@
         {
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "29e704826d0e504396a577427e0181d909331628d30f4ad2878e975f462290b9",
+          "sha256": "6597af1cd108743cc5522e80a2743659fbf8d8528311570ad1d55bc1a846906a",
           "reboundOnBranch": {
             "previousSha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
+          },
+          "historyAndSearchLimitRebinding": {
+            "previousSha256": "29e704826d0e504396a577427e0181d909331628d30f4ad2878e975f462290b9",
+            "ownerApproval": "On 2026-11-28 the repository owner asked in chat for the answer, history and search limits to be removed. They were then told that the server history change edits a security-reviewed file, that the records would state their approval and that no separate human code review is claimed, and were asked \"May I change the protected file for the chat history limit?\". They replied \"Yes, change it\". Recorded by the assistant that made the change; no separate human code review is claimed.",
+            "finding": "The one changed assertion expects 25 search results instead of 10, following the owner's request to raise search limits. Every authority, owner, egress, hold and settlement assertion is unchanged."
           }
         },
         {
           "path": "docs/xroga/evidence/command-010/WORKSPACE-AUTOMATIC-PUBLIC-SEARCH-20261119.json",
           "marker": "EXACT_SOURCE_AUTOMATIC_PUBLIC_READ_LOCAL_CONTROLLED_EVIDENCE",
-          "sha256": "db737bc630e4b76dc80e212fcf0b92d4ac1f089c687c19395e84f1391b2be939"
+          "sha256": "de16f95a17c825571ec8085836469f359ee76ce00e0542ef5ce45152f76cf39b",
+          "historyAndSearchLimitRebinding": {
+            "previousSha256": "db737bc630e4b76dc80e212fcf0b92d4ac1f089c687c19395e84f1391b2be939",
+            "ownerApproval": "On 2026-11-28 the repository owner asked in chat for the answer, history and search limits to be removed. They were then told that the server history change edits a security-reviewed file, that the records would state their approval and that no separate human code review is claimed, and were asked \"May I change the protected file for the chat history limit?\". They replied \"Yes, change it\". Recorded by the assistant that made the change; no separate human code review is claimed.",
+            "finding": "A pinned record (docs/xroga/evidence/command-010/WORKSPACE-AUTOMATIC-PUBLIC-SEARCH-20261119.json) was rebound for the owner-approved history and search limit change; its reviewed content is otherwise unchanged."
+          }
         }
       ]
     },

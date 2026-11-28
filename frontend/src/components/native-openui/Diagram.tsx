@@ -101,6 +101,20 @@ export function layoutDiagram(props: z.infer<typeof diagramProps>, compact: bool
   return { nodes, edges, byId, rowCount: rows.length, outsideLanes: edges.some(edge => edge.pathOptions) };
 }
 
+/** Rows of blocks joined downwards: every link goes from one row to the next. Anything with a bypass, a
+ * return path or a link inside a row needs routed edges and keeps the graph canvas. */
+export function stackedDiagramRows(props: z.infer<typeof diagramProps>) {
+  if (!hasRenderableDiagramTopology(props.nodes, props.links)) return null;
+  const levels = [...new Set(props.nodes.map(node => node.level))].sort((a, b) => a - b);
+  const row = new Map(props.nodes.map(node => [node.id, levels.indexOf(node.level)]));
+  if (props.links.some(link => row.get(link.to)! - row.get(link.from)! !== 1)) return null;
+  return levels.map((level, index) => ({
+    nodes: props.nodes.filter(node => node.level === level),
+    // What travels into this row. Repeated wording is shown once.
+    incoming: [...new Set(props.links.filter(link => row.get(link.to) === index).flatMap(link => link.label ? [link.label] : []))],
+  }));
+}
+
 export const Diagram = defineComponent({
   name: 'Diagram',
   props: diagramProps,
@@ -111,12 +125,13 @@ export const Diagram = defineComponent({
     const diagramId = 'diagram-' + title.replace(/[^a-zA-Z0-9-]/g, '');
     const diagram = useRef<HTMLElement>(null);
     const [compact, setCompact] = useState<boolean>();
+    const stack = stackedDiagramRows(props);
     const result = layoutDiagram(props, compact === true);
     // This read-only graph lets React Flow own its measured node state. Replacing
     // controlled nodes on an unrelated parent render discards those measurements.
     // Reinitialize only when the actual graph or responsive layout changes.
     const graphKey = JSON.stringify([compact, props.nodes, props.links]);
-    const renderable = result !== null;
+    const renderable = result !== null && !stack;
     useLayoutEffect(() => {
       const element = diagram.current;
       if (!renderable || !element) return;
@@ -136,6 +151,37 @@ export const Diagram = defineComponent({
       ? Math.min(900, Math.max(224, result.rowCount * 145 - 24))
       : Math.min(500, Math.max(216, result.rowCount * 92 + 32));
     const titleAlreadyVisible = sectionTitle !== undefined && nativeReadableTextKey(sectionTitle) === nativeReadableTextKey(props.title);
+    const relationships = <div className="native-diagram-relationships">
+      <strong>Diagram relationships</strong>
+      <ul>
+        {props.links.map((link, index) => <li key={index}>
+          {result.byId.get(link.from)?.label} → {result.byId.get(link.to)?.label}{link.label && ' · ' + link.label}
+        </li>)}
+      </ul>
+    </div>;
+    if (stack) return (
+      <figure className="native-diagram native-diagram-stack" aria-labelledby={titleAlreadyVisible ? undefined : title}
+        aria-label={titleAlreadyVisible ? props.title : undefined}>
+        <figcaption>
+          {!titleAlreadyVisible && <strong id={title}>{props.title}</strong>}
+          <p>{props.description}</p>
+        </figcaption>
+        <ol className="native-diagram-rows" aria-hidden="true">
+          {stack.map((row, index) => <li key={index}>
+            {index > 0 && <div className="native-diagram-arrow"><b>↓</b>
+              {row.incoming.length > 0 && <span dir="auto">{row.incoming.join(' · ')}</span>}</div>}
+            <div className="native-diagram-row" data-count={row.nodes.length}>
+              {row.nodes.map(node => <div key={node.id} className={'native-diagram-block native-diagram-node-' + (node.tone ?? 'neutral')} dir="auto">
+                <span className="native-diagram-node-title"><DiagramResourceMark label={node.label} fallback={node.icon && <Glyph name={node.icon} size={16} />} />{node.label}</span>
+                {node.detail && <span className="native-diagram-node-detail">{node.detail}</span>}
+              </div>)}
+            </div>
+          </li>)}
+        </ol>
+        {/* The same blocks and links as text, for screen readers and copying. */}
+        {relationships}
+      </figure>
+    );
     return (
       <figure ref={diagram} className="native-diagram" aria-labelledby={titleAlreadyVisible ? undefined : title}
         aria-label={titleAlreadyVisible ? props.title : undefined}>
@@ -172,14 +218,7 @@ export const Diagram = defineComponent({
             fitViewOptions={result.outsideLanes ? fitViewOptions : undefined} />
         </div>
         </ReactFlowProvider>}
-        <div className="native-diagram-relationships">
-          <strong>Diagram relationships</strong>
-          <ul>
-            {props.links.map((link, index) => <li key={index}>
-              {result.byId.get(link.from)?.label} → {result.byId.get(link.to)?.label}{link.label && ' · ' + link.label}
-            </li>)}
-          </ul>
-        </div>
+        {relationships}
       </figure>
     );
   },

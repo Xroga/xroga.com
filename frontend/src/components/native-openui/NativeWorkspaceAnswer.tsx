@@ -10,6 +10,7 @@ import { ResponseSourceScope } from '@/components/terminal/ResponseSourceScope';
 import { ChatErrorBoundary } from '@/components/terminal/ChatErrorBoundary';
 import { SharedAnswerDownloads } from '@/components/terminal/SharedAnswerDownloads';
 import { publicAnswerExportText } from '@/lib/publicAnswerText';
+import { withoutGeneratedVisualCopy } from './generatedCopy';
 import { loadPresentation } from '../response-experience-v2/loadPresentation';
 import { splitNativeOpenUiAnswer } from '../../../../backend/src/ai/nativeOpenUi';
 
@@ -47,12 +48,15 @@ type NativeWorkspaceAnswerProps = {
 
 export const NativeWorkspaceAnswer = memo(function NativeWorkspaceAnswer({ answer, sources, sourceReferral = true }: NativeWorkspaceAnswerProps) {
   const evidence = useMemo(() => sources?.map((source, index) => ({ ...source, id: 'source-' + (index + 1) })), [sources]);
-  const fallback = <section aria-label="Answer" dir="auto">
-    <ModernResponseText content={answer.text} sources={sources?.map(source => ({ snippet: '', ...source }))} />
+  const written = (content: string) => <section aria-label="Answer" dir="auto">
+    <ModernResponseText content={content} sources={sources?.map(source => ({ snippet: '', ...source }))} />
   </section>;
+  // A failed visual leaves the complete saved answer. While visuals load, only what stays on screen is shown.
+  const fallback = written(answer.text);
+  const loading = answer.program ? written(withoutGeneratedVisualCopy(answer.text, answer.program)) : fallback;
   return <ResponseSourceScope>
     {answer.program ? <ChatErrorBoundary fallback={fallback} logErrorDetails={false}>
-      <Suspense fallback={fallback}><Surface answer={answer} sources={evidence} /></Suspense>
+      <Suspense fallback={loading}><Surface answer={answer} sources={evidence} /></Suspense>
     </ChatErrorBoundary> : fallback}
     {answer.documentDownload ? <SharedAnswerDownloads
       response={publicAnswerExportText(answer.text)}

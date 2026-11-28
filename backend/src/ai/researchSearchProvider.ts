@@ -15,14 +15,14 @@ export const DEEPSEEK_SEARCH_URL = 'https://api.deepseek.com/v1/tools/search';
 export const DEEPSEEK_SEARCH_MICRO_USD = 750;
 /** DeepSeek accepts 1-128 characters for `query` and `ori_question`. */
 export const DEEPSEEK_QUERY_MAX = 128;
-export const DEEPSEEK_SEARCH_RESULTS = 10;
+export const DEEPSEEK_SEARCH_RESULTS = 25;
 /** Primary-source and official-link discovery need broader results. DeepSeek bills per
  * successful request, independently of the requested result count. */
 export const DEEPSEEK_DISCOVERY_RESULTS = 25;
 // Only explicit, scoped primary-source lookups request page bodies. Their
 // smaller result set avoids pulling full text from incidental results.
-export const DEEPSEEK_PRIMARY_PAGE_RESULTS = 12;
-export const DEEPSEEK_PRIMARY_PAGE_EXCERPT = 3_200;
+export const DEEPSEEK_PRIMARY_PAGE_RESULTS = 20;
+export const DEEPSEEK_PRIMARY_PAGE_EXCERPT = 10_000;
 
 export function officialResearchDomains(domains: readonly string[]): string[] {
   return [...new Set(domains.map(domain => domain.trim().toLowerCase().replace(/^www\./, '').replace(/\.$/, ''))
@@ -121,7 +121,7 @@ export function normaliseDeepseekSearch(raw: unknown, traceId: string | null, pr
     if (typeof r.url !== 'string' || (r.title !== undefined && typeof r.title !== 'string')) throw new Error('Malformed provider result');
     const primaryText = primaryQuestion && typeof r.content === 'string' ? matchingPageParagraphs(r.content, primaryQuestion) : '';
     const summary = typeof r.summary === 'string' && r.summary.trim() ? r.summary : typeof r.snippet === 'string' ? r.snippet : '';
-    const excerpt = primaryText || summary.slice(0, 2_000);
+    const excerpt = primaryText || summary.slice(0, 8_000);
     const date = typeof r.date === 'string' && !Number.isNaN(Date.parse(r.date)) ? r.date : null;
     const siteName = typeof r.site_name === 'string' ? r.site_name.replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, 120) : '';
     const domain = iconDomain(r.site_icon, r.url);

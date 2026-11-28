@@ -9,7 +9,7 @@
     {
       "path": "backend/src/ai/pipeline.ts",
       "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
-      "currentSha256": "0621b1e20fa1fb4d9a657b09ed8eb08eeccd5ded2713d76a2a26234a058ed1c5",
+      "currentSha256": "9773fb022073d3ff19613688ad8a5fe450b67cac2dc83b0c45e8e2a421525bb7",
       "genericSdkPreviousCurrentBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
@@ -24,8 +24,8 @@
         "944a58bb15dca85b3ddd"
       ],
       "afterIds": [
-        "9fd30d5a9fe01e2fa702",
-        "7b9661ffc196bf766028"
+        "aa4a60503dfcd3585a62",
+        "25780e5476afe0332e4b"
       ],
       "unchangedNearestBlockSha256": [
         "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
@@ -4351,6 +4351,15 @@
         "previousAfterIds": [
           "d231c120d15cdb303798",
           "a89bee68ee14df41ddd5"
+        ]
+      },
+      "historyAndSearchLimitRebinding": {
+        "previousSha256": "0621b1e20fa1fb4d9a657b09ed8eb08eeccd5ded2713d76a2a26234a058ed1c5",
+        "ownerApproval": "On 2026-11-28 the repository owner asked in chat for the answer, history and search limits to be removed. They were then told that the server history change edits a security-reviewed file, that the records would state their approval and that no separate human code review is claimed, and were asked \"May I change the protected file for the chat history limit?\". They replied \"Yes, change it\". Recorded by the assistant that made the change; no separate human code review is claimed.",
+        "finding": "Only the two history mappings differ: both now keep up to 200 earlier messages (previously 8 and 12) without cutting message text (previously 4,000 and 8,000 characters). The credential filter for public research history, destinations, reservation, receipt, settlement and output ceilings are unchanged. More history raises input tokens inside the existing per-user budget. Line numbers are unchanged; caller identities, derived from character offsets, move with the shorter lines.",
+        "previousAfterIds": [
+          "9fd30d5a9fe01e2fa702",
+          "7b9661ffc196bf766028"
         ]
       }
     },

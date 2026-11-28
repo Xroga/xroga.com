@@ -337,7 +337,8 @@ export function conflictingNativeReadouts(prose: string, readouts: ReturnType<ty
         ) : null;
       const claimed = equation?.[1] === expected[0][1] ? equation[2] : nearby[2];
       const number = Number(claimed.replace(/,/g, ''));
-      const decimals = claimed.split('.')[1]?.length ?? 0;
+      // A claim with more decimals than the readout ($664.2862 beside $664.29) agrees when it rounds to it.
+      const decimals = Math.min(claimed.split('.')[1]?.length ?? 0, expected[0][2].split('.')[1]?.length ?? 0);
       if (Math.abs(number - target) > 0.5 * 10 ** -decimals + 1e-8) return true;
     }
     return false;

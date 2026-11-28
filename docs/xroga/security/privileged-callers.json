@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "950c4509dea9b0cb0edf0494f5d5a2beb75a2cb6430a018e5faeaa454135dd86",
+  "reviewRegistrySha256": "03a63ed04b9c2b487a50ad1deda3c0fdd36d1b64f2121ddb56a8977865529f1c",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -3936,11 +3936,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "9fd30d5a9fe01e2fa702"
+        "id": "aa4a60503dfcd3585a62"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "7b9661ffc196bf766028"
+        "id": "25780e5476afe0332e4b"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7776,11 +7776,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "9fd30d5a9fe01e2fa702"
+        "id": "aa4a60503dfcd3585a62"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "7b9661ffc196bf766028"
+        "id": "25780e5476afe0332e4b"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -11525,7 +11525,7 @@
       }
     },
     {
-      "id": "9fd30d5a9fe01e2fa702",
+      "id": "aa4a60503dfcd3585a62",
       "path": "backend/src/ai/pipeline.ts",
       "line": 3990,
       "enclosing": "runBuildPipeline",
@@ -11533,7 +11533,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0621b1e20fa1fb4d9a657b09ed8eb08eeccd5ded2713d76a2a26234a058ed1c5",
+      "sourceSha256": "9773fb022073d3ff19613688ad8a5fe450b67cac2dc83b0c45e8e2a421525bb7",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Native reasoning alignment changes only answer options and their canonical output reservation. These two in-memory conversion expressions remain byte-identical. No new persistence call, authority or security certification is inferred. The tenant dispatch test verifies reservation and wire maxima match.",
@@ -11546,7 +11546,7 @@
       }
     },
     {
-      "id": "7b9661ffc196bf766028",
+      "id": "25780e5476afe0332e4b",
       "path": "backend/src/ai/pipeline.ts",
       "line": 4174,
       "enclosing": "runBuildPipeline",
@@ -11554,7 +11554,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0621b1e20fa1fb4d9a657b09ed8eb08eeccd5ded2713d76a2a26234a058ed1c5",
+      "sourceSha256": "9773fb022073d3ff19613688ad8a5fe450b67cac2dc83b0c45e8e2a421525bb7",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Native reasoning alignment changes only answer options and their canonical output reservation. These two in-memory conversion expressions remain byte-identical. No new persistence call, authority or security certification is inferred. The tenant dispatch test verifies reservation and wire maxima match.",
@@ -32235,7 +32235,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "93880c8d8679ef5af22535f93fff05d6e19fb0d51e3080efc6f2dbbf702f3f04"
+      "sourceSha256": "2bd564fc67408e4938b7b26684fb680a600d4837566d9c9ee706544d5512bbca"
     },
     {
       "id": "1f43d019e4642a62314a",
@@ -32246,7 +32246,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "93880c8d8679ef5af22535f93fff05d6e19fb0d51e3080efc6f2dbbf702f3f04"
+      "sourceSha256": "2bd564fc67408e4938b7b26684fb680a600d4837566d9c9ee706544d5512bbca"
     },
     {
       "id": "c1f57b8225d79c77eef9",

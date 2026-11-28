@@ -46,7 +46,8 @@
   --iui-field-gap: .875rem;
   --iui-action-gap: .875rem;
   --iui-focus: var(--native-accent);
-  font-family: var(--openui-font-body, system-ui, sans-serif);
+  --iui-font: var(--openui-font-body, var(--font-inter, system-ui)), system-ui, sans-serif;
+  font-family: var(--iui-font);
   font-size: 1rem;
   line-height: 1.65;
 }
@@ -101,7 +102,7 @@
   margin-block-start: .4rem;
 }
 .xroga-native-openui .iui-markdown > :is(p, ul, ol, blockquote) {
-  max-inline-size: 68ch;
+  max-inline-size: 100%;
 }
 .xroga-native-openui .iui-markdown > p { text-wrap: pretty; }
 .xroga-native-openui .iui-text:not(.iui-text-xs, .iui-text-sm) { font-size: 1rem; line-height: 1.65; }
@@ -118,7 +119,6 @@
   border-radius: 12px;
   padding: var(--iui-card-padding-limit);
 }
-.xroga-native-openui .iui-card:has(> .native-answer-controls) { max-inline-size: 36rem; }
 .xroga-native-openui .iui-grid:has(> .native-answer-metric):not(:has(> :not(.native-answer-metric))) {
   --iui-grid-child-min-limit: 7.5rem;
   --iui-grid-gap-limit: .625rem;
@@ -127,6 +127,7 @@
 .xroga-native-openui .iui-card > .iui-text { font-size: .9375rem; }
 .xroga-native-openui .iui-table-scroll { border-color: var(--native-line); }
 .xroga-native-openui .iui-table :is(td,th) {
+  text-align: start;
   padding: .5rem clamp(.5rem, 1.4vw, .75rem);
   font-size: .875rem;
   line-height: 1.5;
@@ -311,3 +312,73 @@
 .native-choice-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: .65rem; }
 .native-choice-actions button { min-height: 2.25rem; padding-inline: .7rem; border: 1px solid var(--native-line); border-radius: 8px; background: var(--native-panel); color: inherit; }
 .native-choice-actions button:disabled { opacity: .65; }
+
+/* Reading typography. Written answers and answers with visuals share one font, one measure and one rhythm. */
+.xroga-native-openui .iui-markdown { font-size: 1rem; line-height: 1.65; }
+.xroga-native-openui .iui-markdown > * + * { margin-top: .875rem; }
+.xroga-native-openui .iui-markdown > * + .iui-md-h { margin-block-start: 1.5rem; }
+.xroga-native-openui .iui-markdown > .iui-md-h + * { margin-block-start: .5rem; }
+.xroga-native-openui .iui-md-h { letter-spacing: -.01em; font-weight: 600; }
+.xroga-native-openui .iui-md-h1 { font-size: 1.25rem; }
+.xroga-native-openui .iui-md-h2 { font-size: 1.125rem; }
+.xroga-native-openui :is(.iui-md-h3, .iui-md-h4) { font-size: 1rem; }
+/* The page reset removes list markers. Numbered steps and bullets must stay visible. */
+.xroga-native-openui .iui-markdown ul { list-style: disc outside; }
+.xroga-native-openui .iui-markdown ol { list-style: decimal outside; }
+.xroga-native-openui .iui-markdown ul ul { list-style-type: circle; }
+.xroga-native-openui .iui-markdown li { display: list-item; }
+.xroga-native-openui .katex-display { max-width: 100%; overflow-x: auto; overflow-y: hidden; padding-block: .25rem; }
+.xroga-native-openui .iui-flow > * + :is(.native-answer-section, .iui-card, .iui-chart, .native-diagram, .iui-table-scroll) { margin-block-start: 1.25rem; }
+.native-answer-section h2 { font-size: 1.0625rem; font-weight: 600; }
+/* A calculator's number fields sit side by side when there is room, instead of one tall column. */
+.native-answer-controls-grid:has(> .iui-field > input[inputmode="decimal"]) {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr));
+}
+/* The chart is the answer; its exact figures open on request and stay available to screen readers. */
+.native-chart-data > summary { width: fit-content; cursor: pointer; color: var(--iui-muted); font-size: .8125rem; line-height: 1.8; }
+.native-chart-data[open] > summary { margin-block-end: .375rem; }
+.native-chart-data caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.xroga-native-openui .iui-table .is-numeric { text-align: end; }
+
+/* Tables read as rows on the page: thin lines, no box and no filled header. */
+.xroga-native-openui .iui-table-scroll { border: 0; border-radius: 0; }
+.xroga-native-openui .iui-table th { background: transparent; border-block-end: 1px solid var(--native-line); }
+.xroga-native-openui .iui-table-bounded thead th { background: var(--iui-canvas); }
+.xroga-native-openui .iui-table :is(td, th):first-child { padding-inline-start: 0; }
+.xroga-native-openui .iui-table :is(td, th):last-child { padding-inline-end: 0; }
+.xroga-native-openui .iui-table tbody tr:hover { background: color-mix(in srgb, var(--iui-ink) 4%, transparent); }
+/* Charts sit directly on the page. */
+.xroga-native-openui .native-chart-frame { padding: 0; border-radius: 0; background: transparent; }
+/* Headline numbers are tiles. */
+.xroga-native-openui .iui-grid > .native-answer-metric,
+.xroga-native-openui .iui-flow:not(.iui-card) > .native-answer-metric:not(:has(+ .native-answer-controls), .native-answer-controls + *) {
+  padding: .75rem .875rem; border: 1px solid var(--native-line); border-radius: 12px;
+}
+/* A one-line takeaway stands out without a box. */
+.xroga-native-openui .iui-markdown blockquote {
+  padding: 0; border: 0; border-radius: 0; background: transparent; color: var(--iui-success); font-weight: 550;
+}
+.xroga-native-openui .iui-markdown hr { margin-block: .625rem; }
+.xroga-native-openui .iui-markdown > hr + .iui-md-h { margin-block-start: .875rem; }
+/* Ticks are round, as in a task list. */
+.xroga-native-openui .iui-check > input[type="checkbox"] { inline-size: 1.05rem; block-size: 1.05rem; border-radius: 999px; }
+/* Step-by-step flows: full-width blocks, one colour per role, joined downwards. */
+.native-diagram-stack { padding: .75rem; }
+.native-diagram-rows { display: grid; gap: .375rem; margin: 0; padding: 0; list-style: none; }
+.native-diagram-rows > li { display: grid; gap: .375rem; }
+.native-diagram-arrow { display: grid; justify-items: center; gap: .125rem; color: var(--iui-muted); font-size: .8125rem; line-height: 1.4; text-align: center; }
+.native-diagram-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); gap: .5rem; }
+.native-diagram-block { display: grid; justify-items: center; align-content: center; gap: .125rem; min-width: 0; padding: .75rem .875rem; border: 1px solid var(--native-line); border-radius: 10px; background: var(--native-panel); text-align: center; overflow-wrap: anywhere; }
+.native-diagram-block.native-diagram-node-info { border-color: transparent; background: color-mix(in srgb, var(--native-accent) 20%, transparent); }
+.native-diagram-block.native-diagram-node-success { border-color: transparent; background: color-mix(in srgb, var(--iui-success) 20%, transparent); }
+.native-diagram-block.native-diagram-node-purple { border-color: transparent; background: color-mix(in srgb, var(--iui-purple) 22%, transparent); }
+.native-diagram-block.native-diagram-node-warning { border-color: transparent; background: color-mix(in srgb, var(--iui-warning) 20%, transparent); }
+.native-diagram-stack > .native-diagram-relationships { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.xroga-native-openui .native-diagram-rows, .xroga-native-openui .native-diagram-rows > li { list-style: none; padding-inline: 0; }
+.xroga-native-openui .iui-table :is(th, th button) { font-family: var(--iui-font); }
+.xroga-native-openui .iui-check > input[type="checkbox"] {
+  appearance: none; flex-shrink: 0; margin: .3em 0 0; border: 1.5px solid var(--iui-muted); background: transparent; cursor: pointer;
+}
+.xroga-native-openui .iui-check > input[type="checkbox"]:checked {
+  border-color: var(--iui-success); background: radial-gradient(circle, var(--iui-success) 0 45%, transparent 50%);
+}

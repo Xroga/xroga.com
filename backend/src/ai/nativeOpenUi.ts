@@ -10,7 +10,8 @@ export const NATIVE_UI_FORMAT = 'xroga-openui-v1' as const;
 export const NATIVE_UI_LIBRARY = 'xroga-native-v1' as const;
 export const NATIVE_UI_MARKER = '\n<<<XROGA_OPENUI_V1>>>\n';
 export const PARTIAL_NATIVE_PRESENTATION_NOTE = 'Some visuals could not be validated. The available explanation and verified visuals are shown below.';
-export const MAX_PROGRAM_CHARS = 24000;
+// Large enough that a long answer keeps its visuals. The bounds still stop a runaway program freezing a browser.
+export const MAX_PROGRAM_CHARS = 200_000;
 // Expanded depth includes both layout nesting and shared formula references.
 // Keep it bounded for evaluation, without rejecting ordinary composed calculators
 // at the former 28-level limit. Node work, source size and cycles stay independent.
@@ -40,16 +41,16 @@ export function bindNativeAnswerText(program: string, prose: string): string {
   if (!prose || program.length > MAX_PROGRAM_CHARS) return program;
   try {
     const tokens = tokenize(program);
-    if (tokens.length > 4800) return program;
+    if (tokens.length > 40_000) return program;
     let depth = 0;
     for (const token of tokens) {
       if ([1, 3, 5].includes(token.t)) depth++;
       if ([2, 4, 6].includes(token.t)) depth--;
-      if (depth < 0 || depth > 18) return program;
+      if (depth < 0 || depth > 32) return program;
     }
     if (depth) return program;
     const statements = split(tokens);
-    if (statements.length > 96 || statements.some(statement => statement.tokens.length > 1200)) return program;
+    if (statements.length > 600 || statements.some(statement => statement.tokens.length > 20_000)) return program;
     if (statements.some(statement => statement.id === '_xroga_answer')) return program;
     let referenced = false;
     for (const statement of statements) walkAST(parseExpression(statement.tokens), node => {
@@ -354,7 +355,7 @@ export function supplementNativeProse(prose: string, program: string, includeAll
   const existingText = new Set(prose.split(/\n\s*\n|\n(?=\s*[-*+]\s)/).map(value =>
     nativeReadableTextKey(value.replace(/^\s*(?:#{1,6}\s+|[-*+]\s+)/, ''))));
   const existingTasks = readableTaskKeys(prose);
-  let remaining = 24_000;
+  let remaining = MAX_PROGRAM_CHARS;
   const append = (value: string) => {
     lines.push(value);
     remaining -= value.length;
@@ -638,7 +639,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
   try {
     stage = 'lexer';
     const tokens = tokenize(program);
-    if (tokens.length > 4800) return fail('budget');
+    if (tokens.length > 40_000) return fail('budget');
     // Bound the expression parser before building any AST. The lexer treats
     // delimiters inside quoted strings as data.
     // Token discriminants from the pinned OpenUI lexer (left/right pairs).
@@ -651,7 +652,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
     if (nesting !== 0) return fail('syntax');
     stage = 'statements';
     statements = split(tokens);
-    if (!statements.length || statements.length > 96) return fail('budget');
+    if (!statements.length || statements.length > 600) return fail('budget');
     const symbols = new Map<string, ASTNode>();
     for (const [index, declaration] of statements.entries()) {
       statement = index + 1;
@@ -661,7 +662,7 @@ export function validateNativeOpenUi(program: string, evidenceIds: ReadonlySet<s
       else if (!safeKey(declaration.id.replace(/^\$/, ''))) declarationIssue = 'unsafe_name';
       else if (symbols.has(declaration.id)) declarationIssue = 'duplicate';
       if (declarationIssue) return fail('syntax');
-      if (declaration.tokens.length > 1200) return fail('budget');
+      if (declaration.tokens.length > 20_000) return fail('budget');
       try { symbols.set(declaration.id, parseExpression(declaration.tokens)); }
       catch { declarationIssue = 'expression'; return fail('syntax'); }
     }
@@ -1027,7 +1028,7 @@ export function recoverTruncatedNativeWorkspaceProgram(program: string, evidence
   if (program.length > MAX_PROGRAM_CHARS) return;
   try {
     const tokens = tokenize(program);
-    if (tokens.length > 4800) return;
+    if (tokens.length > 40_000) return;
     const statements = split(tokens);
     const tail = statements.at(-1);
     if (tail?.start === undefined || tail.end !== program.length || statements.slice(0, -1).some(item => item.id === tail.id)) return;

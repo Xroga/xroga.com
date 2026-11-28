@@ -13,6 +13,7 @@ import './upstream/components/theme.css';
 import './upstream/components/components.css';
 import '@xyflow/react/dist/style.css';
 import './surface.css';
+import { withoutGeneratedVisualCopy } from './generatedCopy';
 import 'katex/dist/katex.min.css';
 
 export type NativeAnswer = {
@@ -56,7 +57,7 @@ export function NativeSurface({ answer, sources, isStreaming = false }: {
   const shownText = recovered ? answer.text.slice(PARTIAL_NATIVE_PRESENTATION_NOTE.length + 2) : answer.text;
   // Keep the model's short introduction before its native answer. Additional
   // historical prose stays available below, with only exact duplicates removed.
-  const outside = proseOutsideNativeDocuments(shownText, matches);
+  const outside = proseOutsideNativeDocuments(accepted && !isStreaming ? withoutGeneratedVisualCopy(shownText, accepted) : shownText, matches);
   const boundary = outside.indexOf('\n\n');
   const first = boundary < 0 ? outside : outside.slice(0, boundary);
   const hasSummary = !/^(?:\s*#{1,6}\s|\s*[-*>|]\s|\s*\d+[.)]\s|\s*`{3}|\s*~{3})/.test(first);

@@ -325,7 +325,7 @@ test('one exact research approval completes its original rich answer, saves evid
    if(mode.startsWith('automatic')){
     if(mode==='automatic-official'){
       assert.deepEqual(Object.keys(body).sort(),['count','query']);
-      assert.equal(body.count,10);
+      assert.equal(body.count,25);
       assert.match(body.query,/difference between solar and lunar eclipses/);
       assert.match(body.query,/ site:nasa\.gov$/);
       assert.ok([...body.query].length<=128);
@@ -333,10 +333,10 @@ test('one exact research approval completes its original rich answer, saves evid
       assert.deepEqual(body,{query:'Top 10 best AI companies of 2026. Explain the ranking method, show their official websites',count:25});
     }else if(mode==='automatic-parity'){
       assert.deepEqual(Object.keys(body).sort(),['count','query']);
-      assert.equal(body.count,10);
+      assert.equal(body.count,25);
       assert.match(body.query,expectedPublicQuery!);
       assert.ok([...body.query].length<=128);
-    }else assert.deepEqual(body,{query:'price of btc currently',count:10});
+    }else assert.deepEqual(body,{query:'price of btc currently',count:25});
     assert.doesNotMatch(JSON.stringify(body),/UNRELATED_PRIOR|MUST_NOT_LEAVE|substituted planner context|AMBIENT_PRIVATE_REPOSITORY|evil.example|WORKSPACE_INTERNAL_CONTEXT/);
    }
    const results=mode==='automatic-no-sources'?[]:[
