@@ -373,19 +373,18 @@ const PLANNER_SPEED_RULES = 'Answer quickly. For a conversational, explanatory, 
 /**
  * Whether the answering model should think privately before writing.
  *
- * Ordinary written chat (a fact, an explanation, advice, writing, a summary) starts writing at once, which is
- * what makes it feel immediate. Hard work, answers with a planned outline (visuals, forms, files), anything that changes
- * something, and any turn the planner did not rate keep the model's default thinking.
+ * Every ordinary answer the reader waits for starts writing at once, with or without visuals, which is what makes it
+ * feel immediate. Work the planner rates as hard, anything that changes something, and any turn the planner did not
+ * rate keep the model's default thinking.
  */
 export function answerReasoningMode(
   native: boolean,
-  goal?: { semanticIntent?: string; contextComplexity?: string; presentation?: ReadonlyArray<unknown> },
+  goal?: { semanticIntent?: string; contextComplexity?: string },
 ): 'none' | 'default' {
   if (!native) return 'none';
   const ordinary = goal?.contextComplexity === 'low' || goal?.contextComplexity === 'medium';
   const reading = goal?.semanticIntent === 'ANSWER' || goal?.semanticIntent === 'INVESTIGATE';
-  const written = !goal?.presentation?.length;
-  return ordinary && reading && written ? 'none' : 'default';
+  return ordinary && reading ? 'none' : 'default';
 }
 
 export const SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS =

@@ -705,7 +705,7 @@
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.test.ts",
-      "sha256": "5624dece2068de233f6fa2bfc8b268955d8f00c3d3c3673a8a4f20ad0ca49f92",
+      "sha256": "00030a5a9872686fd2749525a4129e91509f0d0c934db1652d2a06be7798e203",
       "beforeNamedDocumentPromptFixtureSha256": "6468973bd3fb562124f9f9e16d83fd1ce23c67cf276060c04aab4fb6a5158483",
       "previousGenericSdkBinding": {
         "sha256": "acb7d3ee286d862c38e386380a20a7632415cd454510076abedca054016f2959",
@@ -750,6 +750,11 @@
         "previousSha256": "7e8fcf37b9fce5cf9682e1cce07e67753971d750b8cd3e1e129e500256a16bfa",
         "ownerApproval": "On 2026-11-27 the repository owner was told that faster ordinary chat changes a security-reviewed file and that their approval would be recorded here; they replied asking for it to be completed end to end, with no plan or extra thinking for ordinary chat. Recorded by the assistant that made the change; no separate human code review is claimed.",
         "finding": "Test updated to expect no private reasoning for a brief ordinary answer; the other reviewed assertions are unchanged."
+      },
+      "answerSpeedRebinding": {
+        "previousSha256": "5624dece2068de233f6fa2bfc8b268955d8f00c3d3c3673a8a4f20ad0ca49f92",
+        "ownerApproval": "On 2026-11-28 the repository owner was told that answers were slow because the model thinks privately before writing, that making them start at once changes a file protected by the security review records, and that their approval would be recorded there as before. They replied \"Yes, fix speed\". Recorded by the assistant that made the change; no separate human code review is claimed.",
+        "finding": "One assertion about the reasoning setting follows that rule: the ordinary drafted answer starts at once, while hard, unrated, research and attached-file calls keep the model default. Every tenant, account, payload, settlement and reservation assertion is unchanged."
       }
     },
     {
@@ -763,7 +768,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "2990335ce7d819944af091b3a0c295a76be2a3f485fb7281038500869a2f889f",
+      "sha256": "6d95e5371dd8b01f5eb84323ddc0f5cbf7e9ecf5a731d97426a1848d6755cc5f",
       "beforeTxtDownloadRoutingSha256": "450d77c6f89e9334ef2345d316895580732bda5b614ad3d87d42f4d4643f75fa",
       "beforeInlineCalculatorRoutingSha256": "58e3fa0ea9ec46ed2aa0be0c7aa6ca0777c213059c12f3cd6ecf04a6a2ab6e29",
       "beforePlannerCompletionDiagnosticsSha256": "6ca81b0c9234195e6159d1e03735a21ce50d50cf1e8f71b53cb62199bf95cb26",
@@ -793,6 +798,11 @@
         "previousSha256": "624814d6816daad4161cf9623b84855874963c1627572bcd57ac597b41af9887",
         "ownerApproval": "On 2026-11-27 the repository owner was told that faster ordinary chat changes a security-reviewed file and that their approval would be recorded here; they replied asking for it to be completed end to end, with no plan or extra thinking for ordinary chat. Recorded by the assistant that made the change; no separate human code review is claimed.",
         "finding": "Adds answerReasoningMode, greeting-only replies that make no model call, and instructions asking for a smaller decision on ordinary turns. Planner dispatch options, reservation, receipt handling and capability checks are unchanged."
+      },
+      "answerSpeedRebinding": {
+        "previousSha256": "2990335ce7d819944af091b3a0c295a76be2a3f485fb7281038500869a2f889f",
+        "ownerApproval": "On 2026-11-28 the repository owner was told that answers were slow because the model thinks privately before writing, that making them start at once changes a file protected by the security review records, and that their approval would be recorded there as before. They replied \"Yes, fix speed\". Recorded by the assistant that made the change; no separate human code review is claimed.",
+        "finding": "Only answerReasoningMode and its comment differ: a planned outline no longer keeps private reasoning for an ANSWER or INVESTIGATE turn rated low or medium. High or unrated complexity and every other intent keep the model default. Planner dispatch, destinations, reservation, receipt handling, capability checks and output ceilings are unchanged. Less private reasoning does not raise cost."
       }
     },
     {

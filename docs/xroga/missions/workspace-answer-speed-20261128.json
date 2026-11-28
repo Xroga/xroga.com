@@ -1,0 +1,104 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-ANSWER-SPEED-20261128",
+  "baseSha": "d3ec65ce8f5ca17bcafd05308b7c706042884d67",
+  "requirementIds": [
+    "XR-ORIGINAL-F076"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "medium",
+  "scope": "Start ordinary Workspace answers at once, including answers with a planned chart, table or calculator, by asking for no private reasoning unless the work is rated hard, unrated or changes something.",
+  "changedFiles": [
+    "backend/src/ai/tenantModelDispatch.test.ts",
+    "backend/src/ai/universal/answerThinking.test.ts",
+    "backend/src/ai/universal/semanticRequestPlanner.ts",
+    "docs/xroga/missions/workspace-answer-speed-20261128.json"
+  ],
+  "decisions": {
+    "keep": [
+      "Private reasoning for hard, unrated, action and attached-file work, the planner, the model route and all validators"
+    ],
+    "extend": [
+      "Immediate writing to ordinary answers that carry a planned outline"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Changes one existing decision function.",
+    "rfc": null
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No data changes.",
+    "rollback": "No schema rollback."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "No authentication changes."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No resource access changes."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No approval changes. With owner approval on November 28, the source hashes pinned by review records were rebound."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No credential changes."
+    },
+    "egress": {
+      "changed": false,
+      "description": "Same destination; the existing documented reasoning setting is sent for more turns."
+    },
+    "cost": {
+      "changed": true,
+      "description": "Fewer private reasoning tokens for ordinary answers with visuals. Reservation and settlement are unchanged."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No billing changes."
+    }
+  },
+  "tests": [
+    {
+      "command": "tsx --test backend/src/ai/universal/answerThinking.test.ts",
+      "scope": "Ordinary answers with or without an outline write at once; hard, unrated and action work keeps thinking.",
+      "negative": true,
+      "reference": "backend/src/ai/universal/answerThinking.test.ts"
+    },
+    {
+      "command": "tsx --test backend/src/ai/tenantModelDispatch.test.ts",
+      "scope": "Reasoning setting per call, with tenant, reservation and settlement assertions unchanged.",
+      "negative": true,
+      "reference": "backend/src/ai/tenantModelDispatch.test.ts"
+    }
+  ],
+  "rollout": "API only. Measure time to first text on the live site.",
+  "rollback": "Move API traffic back to xroga-api-answers-d3ec65ce; no database changes.",
+  "knownGaps": [
+    "Quality of calculators and diagrams written without private reasoning is not verified on real answers.",
+    "The planning call before each answer, about four to six seconds, is unchanged."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "docs/xroga/missions/workspace-answer-speed-20261128.json"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Required checks and live timing acceptance."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "NOT_APPLICABLE",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

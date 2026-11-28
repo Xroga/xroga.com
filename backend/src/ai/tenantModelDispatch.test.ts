@@ -76,7 +76,7 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
       if(mode==='native') {
         assert.equal(body.response_format,undefined,'Native OpenUI uses the same request, without the old JSON schema');
         assert.match(body.messages[0].content,/<<<XROGA_OPENUI_V1>>>/);
-        assert.equal(body.reasoning_effort, undefined, 'Rich native answers retain the model reasoning default');
+        assert.equal(body.reasoning_effort, JSON.stringify(body.messages.at(-1)).includes('Draft an email to confirm') ? 'none' : undefined, 'An ordinary rich answer starts writing at once; hard, unrated, research and attached-file turns keep the model default');
         assert.ok(body.max_tokens >= 20_480, 'Rich native answers reserve output beyond the reasoning allowance');
       }
       if(mode==='native-plain') {
