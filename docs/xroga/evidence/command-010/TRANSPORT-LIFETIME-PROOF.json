@@ -768,7 +768,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "6d95e5371dd8b01f5eb84323ddc0f5cbf7e9ecf5a731d97426a1848d6755cc5f",
+      "sha256": "ca423e20daa55dadebf3276173364b198ac9a30e93adc6af7b8d2068b6d6571f",
       "beforeTxtDownloadRoutingSha256": "450d77c6f89e9334ef2345d316895580732bda5b614ad3d87d42f4d4643f75fa",
       "beforeInlineCalculatorRoutingSha256": "58e3fa0ea9ec46ed2aa0be0c7aa6ca0777c213059c12f3cd6ecf04a6a2ab6e29",
       "beforePlannerCompletionDiagnosticsSha256": "6ca81b0c9234195e6159d1e03735a21ce50d50cf1e8f71b53cb62199bf95cb26",
@@ -803,7 +803,13 @@
         "previousSha256": "2990335ce7d819944af091b3a0c295a76be2a3f485fb7281038500869a2f889f",
         "ownerApproval": "On 2026-11-28 the repository owner was told that answers were slow because the model thinks privately before writing, that making them start at once changes a file protected by the security review records, and that their approval would be recorded there as before. They replied \"Yes, fix speed\". Recorded by the assistant that made the change; no separate human code review is claimed.",
         "finding": "Only answerReasoningMode and its comment differ: a planned outline no longer keeps private reasoning for an ANSWER or INVESTIGATE turn rated low or medium. High or unrated complexity and every other intent keep the model default. Planner dispatch, destinations, reservation, receipt handling, capability checks and output ceilings are unchanged. Less private reasoning does not raise cost."
-      }
+      },
+      "calculatorOutlineRebinding": {
+        "previousSha256": "2990335ce7d819944af091b3a0c295a76be2a3f485fb7281038500869a2f889f",
+        "ownerApproval": "On 2026-11-28 the repository owner was told the loan calculator was answered with source code and, asked whether to fix and release it, answered \"Yes, fix and release\". Recorded by the assistant that made the change; no separate human code review is claimed.",
+        "finding": "Only the text of the planner speed instruction differs: answers that need a tool, form, chart, diagram or file keep their presentation outline and obligations. Planner dispatch options, reservation, receipt handling and capability checks are unchanged."
+      },
+      "mergedRebinding": "Both owner-approved changes to this file were merged: the answer speed rule and the calculator outline instruction. The pinned value is the hash of the merged file; neither change was altered."
     },
     {
       "path": "backend/src/operations/benchmarkAdapter.ts",
