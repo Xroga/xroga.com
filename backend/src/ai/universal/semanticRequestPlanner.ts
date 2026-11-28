@@ -368,24 +368,23 @@ export const SEMANTIC_PLANNER_MAX_TOTAL_TIMEOUT_MS =
   30_000;
 
 /** The reader waits for this decision before any answer, so an ordinary turn must stay small. */
-const PLANNER_SPEED_RULES = 'Answer quickly. For a conversational, explanatory, advisory, writing or factual answer with no requested file, visual, form or external action, return only the required JSON fields plus confidence and contextComplexity, and omit every other field. contextComplexity: low = greeting, simple fact or short rewrite; medium = ordinary explanation, advice, writing, summary, comparison, outline or personal plan; high = only genuinely hard work, such as multi-step mathematics, difficult debugging, deep analysis or a large multi-part deliverable.';
+const PLANNER_SPEED_RULES = 'Answer quickly. When the whole answer is ordinary writing, including a comparison or a table, return only the required JSON fields plus confidence and contextComplexity, and omit every other field. When the answer has to be something the reader operates or sees drawn (an adjustable calculator or tool, a fillable form, a chart, a diagram or flow, or a downloadable file), it is not ordinary writing: include the presentation outline and answerObligations for it exactly as described above, using only the listed formats (a form uses prose), and rate it at least medium. Making such a thing inside the answer is not a request for source code. contextComplexity: low = greeting, simple fact or short rewrite; medium = ordinary explanation, advice, writing, summary, comparison, outline or personal plan; high = only genuinely hard work, such as multi-step mathematics, difficult debugging, deep analysis or a large multi-part deliverable.';
 
 /**
  * Whether the answering model should think privately before writing.
  *
- * Ordinary written chat (a fact, an explanation, advice, writing, a summary) starts writing at once, which is
- * what makes it feel immediate. Hard work, answers with a planned outline (visuals, forms, files), anything that changes
- * something, and any turn the planner did not rate keep the model's default thinking.
+ * Every ordinary answer the reader waits for starts writing at once, with or without visuals, which is what makes it
+ * feel immediate. Work the planner rates as hard, anything that changes something, and any turn the planner did not
+ * rate keep the model's default thinking.
  */
 export function answerReasoningMode(
   native: boolean,
-  goal?: { semanticIntent?: string; contextComplexity?: string; presentation?: ReadonlyArray<unknown> },
+  goal?: { semanticIntent?: string; contextComplexity?: string },
 ): 'none' | 'default' {
   if (!native) return 'none';
   const ordinary = goal?.contextComplexity === 'low' || goal?.contextComplexity === 'medium';
   const reading = goal?.semanticIntent === 'ANSWER' || goal?.semanticIntent === 'INVESTIGATE';
-  const written = !goal?.presentation?.length;
-  return ordinary && reading && written ? 'none' : 'default';
+  return ordinary && reading ? 'none' : 'default';
 }
 
 export const SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS =
