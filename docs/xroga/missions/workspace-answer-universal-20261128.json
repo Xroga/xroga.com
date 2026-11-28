@@ -1,0 +1,109 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-ANSWER-UNIVERSAL-20261128",
+  "baseSha": "5cc5e04151b23a77bcdce6b95fddb956f746ed91",
+  "requirementIds": [
+    "XR-ORIGINAL-F076"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "medium",
+  "scope": "One general presentation and writing guide for every Workspace answer and web research answer, replacing topic-specific prompt rules, with more even spacing in answers.",
+  "changedFiles": [
+    "backend/src/ai/nativeOpenUi.test.ts",
+    "backend/src/ai/nativeOpenUiPrompt.ts",
+    "backend/src/ai/prompts.test.ts",
+    "backend/src/ai/prompts.ts",
+    "docs/xroga/missions/workspace-answer-universal-20261128.json",
+    "frontend/src/components/native-openui/surface.css",
+    "frontend/src/components/response-experience-v2/conversation-v2.module.css"
+  ],
+  "decisions": {
+    "keep": [
+      "Program syntax, evidence citation, calculator wiring, safety-procedure order, answer validators and technical correction checks"
+    ],
+    "extend": [
+      "Answer spacing styles"
+    ],
+    "replace": [
+      "Topic-specific prompt rules (web framework, row security, payment webhooks, auth cookies, keyboard focus, bundles, schedules, listings) with general accuracy and evidence rules"
+    ],
+    "deprecate": []
+  },
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Same prompt functions and styles; only their wording changes.",
+    "rfc": null
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No data changes.",
+    "rollback": "No schema rollback."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "No auth changes."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No tenant changes."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No approval changes."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No credentials changes."
+    },
+    "egress": {
+      "changed": false,
+      "description": "No egress changes."
+    },
+    "cost": {
+      "changed": true,
+      "description": "A shorter system prompt lowers input tokens. Reservation and settlement are unchanged."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No billing changes."
+    }
+  },
+  "tests": [
+    {
+      "command": "tsx --test backend/src/ai/nativeOpenUi.test.ts",
+      "scope": "The guide is general, asks for scannable non-speech writing, keeps layout rules, and invalid programs stay rejected.",
+      "negative": true,
+      "reference": "backend/src/ai/nativeOpenUi.test.ts"
+    },
+    {
+      "command": "tsx --test backend/src/ai/prompts.test.ts",
+      "scope": "Research answers keep evidence, citation and observation-time rules.",
+      "negative": true,
+      "reference": "backend/src/ai/prompts.test.ts"
+    }
+  ],
+  "rollout": "API and website. Ask fresh prompts of many kinds on the live site and compare the layout.",
+  "rollback": "Return API and website traffic to the previous revision and deployment; no database changes.",
+  "knownGaps": [
+    "Real model answers written from the new guide are not yet observed.",
+    "Removed topic rules relied partly on the existing correction checks, which cover only some of those topics."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "docs/xroga/missions/workspace-answer-universal-20261128.json"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Required checks and live timing acceptance."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "NOT_APPLICABLE",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

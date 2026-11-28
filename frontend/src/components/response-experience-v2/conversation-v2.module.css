@@ -56,3 +56,10 @@
 .answer :global(.xv-response-text [aria-label="Answer table"]) :where(th, td):first-child { padding-inline-start: 0; }
 .answer :global(.xv-response-text [aria-label="Answer table"]) :where(th, td):last-child { padding-inline-end: 0; }
 .answer :global(.xv-response-text [aria-label="Answer table"] :is(tr, th, td)) { border-color: color-mix(in srgb, var(--foreground) 14%, transparent) !important; }
+/* Text-only answers keep the same room between ideas as answers with visuals. */
+.answer :global(.xv-response-text) :where(p) { margin-block: 0 1rem; }
+.answer :global(.xv-response-text) :where(ul, ol) { margin-block: 0 1rem; }
+.answer :global(.xv-response-text) :global(.xv-answer-list) li { margin-block: 0; }
+.answer :global(.xv-response-text) :global(.xv-answer-list) li + li { margin-block-start: .5rem; }
+.answer :global(.xv-response-text) :where(h1, h2, h3, h4) { margin-block: 1.875rem .625rem; line-height: 1.35; }
+.answer :global(.xv-response-text) :global(.xv-formatted-response) > :last-child { margin-block-end: 0; }

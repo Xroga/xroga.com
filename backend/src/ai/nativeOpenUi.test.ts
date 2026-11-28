@@ -178,36 +178,22 @@ test('shared calculation references remain usable inside a native layout without
 
 test('the model gets instructions from the native registry and may answer in text', () => {
   for (const prompt of [nativeOpenUiPlainPrompt, nativeOpenUiPrompt]) {
-    assert.match(prompt, /requested length and format before any default presentation guidance/);
-    assert.match(prompt, /Simple questions need just the answer and any essential context/);
-    assert.match(prompt, /For complex or detailed requests, preserve each distinct requirement/);
-    assert.match(prompt, /If the user declines visuals or a specific component, honor that choice/);
-    assert.match(prompt, /Verify the value, unit, and reference point, baseline, or denominator together/);
-    assert.match(prompt, /NEXT_PUBLIC_ is for values exposed to the browser/);
-    assert.match(prompt, /Carry precautions into every step/);
-    assert.match(prompt, /Put required reassembly, guards, and safety checks before each powered test/);
-    assert.match(prompt, /If a prerequisite fails or there is an unresolved hazard, stop and refer it to a qualified person/);
-    assert.match(prompt, /Apply the same stop or referral outcome to that condition in every example/);
-    assert.match(prompt, /steps, examples, diagrams, and checklists all follow the same safe order/);
-    assert.ok(prompt.indexOf('For safety-sensitive procedures') < prompt.indexOf('In a roving tabindex pattern'));
-    assert.match(prompt, /Required units must cover the whole requested quantity/);
-    assert.match(prompt, /React supports Date values and Server Functions/);
+    assert.match(prompt, /Judge from the request itself what the reader needs/);
+    assert.match(prompt, /There is no length limit/);
+    assert.match(prompt, /Follow any length or format the user asks for/);
+    assert.match(prompt, /Write to be scanned, not read aloud/);
+    assert.match(prompt, /Never write like a speech, essay or blog/);
+    assert.match(prompt, /goes in a list or table rather than a paragraph/);
+    assert.match(prompt, /prerequisites first, then the action, then how to check it/);
+    assert.doesNotMatch(prompt, /\d+ to \d+ words|under \d+ words/);
+    // The guide is general: no topic, product or test-prompt rules.
+    assert.doesNotMatch(prompt, /NEXT_PUBLIC|tenant|roving tabindex|bundle|React supports|webhook|Supabase SSR/i);
   }
   for (const name of ['Col(', 'Chart(', 'Slider(', 'Svg(', 'Diagram(', 'Section(', 'Table(', 'Payment(', 'Source(']) assert.ok(nativeOpenUiPrompt.includes(name), name);
-  for (const prompt of [nativeOpenUiPlainPrompt, nativeOpenUiPrompt]) {
-    assert.match(prompt, /judging depth and form from the request/);
-    assert.match(prompt, /There is no length limit in either direction/);
-    assert.doesNotMatch(prompt, /\d+ to \d+ words|under \d+ words/);
-  }
   assert.match(nativeOpenUiPrompt, /first write the readable answer in Markdown/);
-  assert.match(nativeOpenUiPrompt, /Each figure has one visible home/);
-  assert.match(nativeOpenUiPrompt, /donut Chart for parts of a whole/);
-  assert.match(nativeOpenUiPrompt, /never write a duplicate table, value list or formula as a backup/);
-  assert.doesNotMatch(nativeOpenUiPrompt, /formulas, initial inputs and initial results|complete readable answer/);
-  assert.match(nativeOpenUiPrompt, /do not copy or paraphrase the explanation/);
-  assert.match(nativeOpenUiPrompt, /Use Markdown\(_xroga_answer\) once in your visible layout/);
-  assert.match(nativeOpenUiPrompt, /native Section with exactly the same title/);
-  assert.match(nativeOpenUiPrompt, /Keep a complete Markdown decision or comparison table in its original section/);
+  assert.match(nativeOpenUiPrompt, /Show each figure in one place only/);
+  assert.match(nativeOpenUiPrompt, /Use Markdown\(_xroga_answer\) once/);
+  assert.match(nativeOpenUiPrompt, /Section whose title is exactly one of your Markdown headings/);
   const exampleRoots = nativeOpenUiPrompt.match(/^root = Col\(\[.*$/gm) ?? [];
   assert.equal(exampleRoots.length, 5);
   for (const example of exampleRoots) {
@@ -215,7 +201,6 @@ test('the model gets instructions from the native registry and may answer in tex
   }
   assert.ok(exampleRoots.some(example => example.includes('Section("Plan comparison", [Table(')));
   assert.ok(exampleRoots.some(example => example.includes('Section("Request path", [flow])')));
-  assert.match(nativeOpenUiPrompt, /do not present a bundle-based break-even point or recommendation as fact/);
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.'), { text: 'Paris.', program: '' });
   assert.deepEqual(splitNativeOpenUiAnswer('Paris.\n<<<XROGA_OP', true), { text: 'Paris.', program: '' });
   assert.deepEqual(splitNativeOpenUiAnswer('<<<XROGA_OP', true), { text: '', program: '' });
@@ -226,12 +211,8 @@ test('the model gets instructions from the native registry and may answer in tex
 
 test('long workflow guidance distinguishes reading order, handoffs, responsibilities and semantic icons', () => {
   const prompt = workspaceNativeOpenUiPrompt(['prose', 'steps', 'graph'], false);
-  assert.match(nativeOpenUiPlainPrompt, /Answer simple questions directly/);
-  assert.match(nativeOpenUiPlainPrompt, /clearly labeled worked example/);
-  assert.match(prompt, /responsibility table can show what is automated and what needs human review/);
-  assert.match(prompt, /diagram shows where the work goes next/);
-  assert.match(prompt, /steps, examples, diagrams, and checklists all follow the same safe order/);
-  assert.match(prompt, /Lucide icon on a section or diagram node when it helps distinguish roles/);
+  assert.match(prompt, /a Diagram for a process, hierarchy or architecture/);
+  assert.match(prompt, /kebab-case Lucide icon/);
 
   const prose = [
     'A coordinator reviews new work before delivery starts.',
@@ -251,11 +232,10 @@ test('long workflow guidance distinguishes reading order, handoffs, responsibili
   assert.match(answer.response, /incomplete brief returns to intake/);
 });
 
-test('format guidance puts the requested artifact first and keeps extra analysis conditional', () => {
+test('format guidance follows the request and keeps every component available', () => {
   const prompt = workspaceNativeOpenUiPrompt(['table'], false);
-  assert.match(prompt, /make it the main answer/);
-  assert.match(prompt, /sortable table, provide the data, units and working sort/);
-  assert.match(prompt, /omit charts and aggregate metrics unless the request calls for analysis/);
+  assert.match(prompt, /A simple request needs no visual/);
+  assert.match(prompt, /A sortable native Table replaces the Markdown table/);
   assert.match(prompt, /Chart\(/, 'explicit analysis still has access to chart components');
 });
 

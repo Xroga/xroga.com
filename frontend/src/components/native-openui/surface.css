@@ -382,3 +382,9 @@
 .xroga-native-openui .iui-check > input[type="checkbox"]:checked {
   border-color: var(--iui-success); background: radial-gradient(circle, var(--iui-success) 0 45%, transparent 50%);
 }
+
+/* Room between ideas: list items breathe and each heading clearly starts a new part. */
+.xroga-native-openui .iui-markdown > * + * { margin-top: 1rem; }
+.xroga-native-openui .iui-markdown :is(ul, ol) { gap: .5rem; }
+.xroga-native-openui .iui-markdown > * + .iui-md-h { margin-block-start: 1.875rem; }
+.xroga-native-openui .iui-markdown > .iui-md-h + * { margin-block-start: .625rem; }

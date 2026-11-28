@@ -74,12 +74,10 @@ test('research retains the full output budget when the user requests a report', 
 test('unqualified research comparisons follow the scope of the question', () => {
   const prompt = researchSynthesisPrompt('Compare two approaches using their official documentation.', 'Evidence excerpts.');
   assert.match(prompt, /More retrieved material does not make the question broader/);
-  assert.match(prompt, /Let inline citations carry the source references/);
-  assert.match(prompt, /excerpt actually supports the claim/);
-  assert.match(prompt, /exact rate, range, or historical example only when it helps answer/);
-  assert.match(prompt, /source measures the same entity and criterion the user asked about/);
-  assert.match(prompt, /Do not promote a discovery-only post into a definitive ranking/);
-  assert.match(prompt, /Add both only when each answers a different part/);
+  assert.match(prompt, /Never write like a speech or report/);
+  assert.match(prompt, /excerpt actually supports it/);
+  assert.match(prompt, /Rank only comparable values/);
+  assert.match(prompt, /add no separate source list unless asked/);
   assert.doesNotMatch(prompt, /write a comprehensive|End with practical takeaways/);
 });
 
