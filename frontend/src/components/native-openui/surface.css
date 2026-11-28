@@ -54,7 +54,7 @@
 
 :where([data-theme="dark"], [data-theme="black"], [data-theme="gray"]) .xroga-native-openui:not(:where(.native-evaluation[data-theme="light"] .xroga-native-openui, :is(.terminal-skin-light, .terminal-skin-light-grid, .terminal-skin-solar) .xroga-native-openui)),
 :where(.terminal-skin-dark, .terminal-skin-amoled, .terminal-skin-gray, .terminal-skin-midnight, .terminal-skin-forest, .terminal-skin-matrix, .terminal-skin-amber) .xroga-native-openui {
-  --native-accent: #8bb8ff;
+  --native-accent: #5c97ff;
   --native-accent-soft: #202e48;
   --native-panel: #1e2128;
   --native-line: #3a404d;
@@ -356,7 +356,7 @@
 }
 /* A one-line takeaway stands out without a box. */
 .xroga-native-openui .iui-markdown blockquote {
-  padding: 0; border: 0; border-radius: 0; background: transparent; color: var(--iui-success); font-weight: 550;
+  padding: 0; border: 0; border-radius: 0; background: transparent; color: var(--native-accent); font-weight: 550;
 }
 .xroga-native-openui .iui-markdown hr { margin-block: .625rem; }
 .xroga-native-openui .iui-markdown > hr + .iui-md-h { margin-block-start: .875rem; }
@@ -390,3 +390,6 @@
 .xroga-native-openui .iui-markdown > .iui-md-h + * { margin-block-start: .625rem; }
 /* Read aloud and copied, but not repeated on screen under its heading. */
 .native-diagram figcaption p.native-diagram-spoken { position: absolute; width: 1px; height: 1px; margin: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.xroga-native-openui .iui-markdown li::marker { color: var(--native-accent); }
+.xroga-native-openui .iui-markdown a, .xroga-native-openui .iui-markdown :not(pre) > code { color: var(--native-accent); }
+.xroga-native-openui .iui-markdown :not(pre) > code { background: color-mix(in srgb, var(--native-accent) 14%, transparent); }

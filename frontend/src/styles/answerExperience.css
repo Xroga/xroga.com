@@ -1,6 +1,6 @@
 /* Answer content is an article, not terminal telemetry. Keep this after legacy typography. */
 .xv-formatted-response {
-  --answer-sky: #316fe8;
+  --answer-sky: #5c97ff;
   max-inline-size: var(--xroga-answer-width, 46rem);
   color: var(--foreground);
   font-size: 16px;
@@ -41,7 +41,7 @@
 .xv-formatted-response table th { background:color-mix(in srgb,var(--card) 78%,var(--answer-sky) 22%); font-weight:700; }
 .xv-formatted-response table th,.xv-formatted-response table td { padding:12px 14px; border-bottom:1px solid color-mix(in srgb,var(--foreground) 10%,transparent); }
 .xv-formatted-response :where(pre) { margin:1.25em 0; }
-.terminal-skin-light .xv-formatted-response,.terminal-skin-light-grid .xv-formatted-response,.terminal-skin-solar .xv-formatted-response { --answer-sky:#225fd1; }
+.terminal-skin-light .xv-formatted-response,.terminal-skin-light-grid .xv-formatted-response,.terminal-skin-solar .xv-formatted-response { --answer-sky:#195bd5; }
 @media(max-width:639px){.xv-formatted-response{font-size:15px}.xv-formatted-response > .xv-answer-section{margin-block-start:1.2rem}}
 
 /* Verified entity results are distinct from narrative: ticket-like route cards and image-led stays. */
@@ -188,3 +188,8 @@
 :where(.terminal-skin-dark, .terminal-skin-amoled, .terminal-skin-gray, .terminal-skin-midnight, .terminal-skin-forest, .terminal-skin-matrix, .terminal-skin-amber) .iui-codeblock .iui-code-token {
   color: var(--iui-code-dark, inherit);
 }
+
+/* One blue across every answer: markers, links, inline code, code headers and takeaways. */
+.xv-formatted-response a, .xv-formatted-response :not(pre) > code { color: var(--answer-sky); }
+.xv-formatted-response :not(pre) > code { background: color-mix(in srgb, var(--answer-sky) 14%, transparent); }
+.iui-codeblock .iui-codeblock-head :is(.iui-codeblock-language, button) { color: var(--native-accent, var(--answer-sky, #5c97ff)); }
