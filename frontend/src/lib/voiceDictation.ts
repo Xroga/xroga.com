@@ -9,7 +9,9 @@ import type { VoiceSegment } from './voiceSegmenter';
 export const SILENCE_MEAN_SQUARE = 2.5e-7;
 export const MIN_SEGMENT_SECONDS = 0.25;
 export const MAX_CONCURRENT_UPLOADS = 2;
-export const MAX_RETAINED_SEGMENTS = 8;
+/** Most unsent audio held in memory (about 9 MB). It counts seconds, not pieces: short pieces must not
+ * stop a recording while the voice server is still starting. */
+export const MAX_RETAINED_SECONDS = 200;
 export const MAX_RECORDING_SECONDS = 30 * 60;
 /** Waits before a segment is sent again after a passing failure. */
 export const TRANSIENT_RETRY_DELAYS_MS = [800, 2500] as const;
@@ -46,7 +48,7 @@ export function createDictationPipeline(options: {
   const items = new Map<number, Item>();
   const now = options.now ?? (() => performance.now());
   let active = 0, halted: unknown, disposed = false, waiting: Array<() => void> = [];
-  const retained = () => [...items.values()].filter(item => item.wav).length;
+  const retained = () => [...items.values()].reduce((seconds, item) => item.wav ? seconds + item.seconds : seconds, 0);
   const idle = () => active === 0 && (halted !== undefined || ![...items.values()].some(item => item.state === 'queued'));
   const wake = () => {
     if (!idle()) return;
@@ -114,7 +116,7 @@ export function createDictationPipeline(options: {
       options.onChange?.();
     },
     /** True when audio is piling up faster than it can be transcribed. */
-    get overloaded() { return retained() > MAX_RETAINED_SEGMENTS; },
+    get overloaded() { return retained() > MAX_RETAINED_SECONDS; },
     settle(): Promise<void> {
       return idle() ? Promise.resolve() : new Promise(resolve => { waiting.push(resolve); });
     },

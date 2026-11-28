@@ -6298,7 +6298,7 @@ html[data-reduced-motion='true'] .xv-voice-primary {
 /* Dictation bar: compact pill with a small cancel icon, slim live waveform and a small stop icon. */
 .xv-voice-capture-wrap { width: 100%; min-width: 0; }
 .xv-voice-capture-bar {
-  grid-template-columns: 30px minmax(0, 1fr) 30px;
+  grid-template-columns: 30px minmax(0, 1fr) auto 30px;
   gap: 8px;
   height: 42px;
   min-height: 42px;
@@ -6328,6 +6328,20 @@ html[data-reduced-motion='true'] .xv-voice-primary {
 .xv-voice-capture-bar .xv-voice-capture-cancel svg { width: 14px; height: 14px; }
 .xv-voice-capture-bar .xv-voice-capture-send svg { width: 10px; height: 10px; border-radius: 2px; }
 .xv-voice-capture-middle { display: flex; min-width: 0; height: 30px; align-items: center; color: var(--muted); }
+.xv-voice-capture-language {
+  max-width: 92px;
+  height: 30px;
+  padding: 0 4px;
+  border: 1px solid color-mix(in srgb, var(--foreground) 14%, transparent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+}
+.xv-voice-capture-language option { color: var(--foreground); background: var(--card); }
+.xv-voice-capture-language:focus-visible { outline: 2px solid var(--accent, currentColor); outline-offset: 2px; }
+.xv-voice-capture-language:disabled { opacity: .42; cursor: default; }
 .xv-voice-live-wave { display: block; width: 100%; height: 100%; color: color-mix(in srgb, var(--foreground) 55%, var(--muted)); }
 .xv-voice-capture-label { font-size: 12px; font-weight: 500; color: color-mix(in srgb, var(--foreground) 80%, var(--muted)); padding-inline: 6px; }
 /* Same arrangement in right-to-left pages; finger-friendly without double-tap zoom. */

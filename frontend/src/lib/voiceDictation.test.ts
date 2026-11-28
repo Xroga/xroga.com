@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {createDictationPipeline, MAX_CONCURRENT_UPLOADS, MAX_RETAINED_SEGMENTS} from './voiceDictation';
+import {createDictationPipeline, MAX_CONCURRENT_UPLOADS, MAX_RETAINED_SECONDS} from './voiceDictation';
 import type {VoiceSegment} from './voiceSegmenter';
 
 const RATE = 16000;
@@ -132,8 +132,17 @@ test('cancelling sends nothing further and a late reply cannot add text after di
   assert.equal(pipeline.result().complete, true, 'nothing queued after cancel');
 });
 
+test('a server that is slow to start does not stop a recording cut into many short pieces', () => {
+  const pipeline = createDictationPipeline({signal: new AbortController().signal, transcribe: () => new Promise<string>(() => {})});
+  // A 40 second startup while the speaker pauses every four seconds, and well beyond it.
+  for (let i = 0; i < 30; i++) pipeline.add(segment(i, true, 4));
+  assert.equal(pipeline.overloaded, false);
+});
+
 test('audio piling up behind a slow connection is reported as overload before memory grows unbounded', () => {
   const pipeline = createDictationPipeline({signal: new AbortController().signal, transcribe: () => new Promise<string>(() => {})});
-  for (let i = 0; i <= MAX_RETAINED_SEGMENTS; i++) pipeline.add(segment(i));
+  for (let i = 0; i < MAX_RETAINED_SECONDS / 25; i++) pipeline.add(segment(i, true, 25));
+  assert.equal(pipeline.overloaded, false);
+  pipeline.add(segment(100, true, 1));
   assert.equal(pipeline.overloaded, true);
 });

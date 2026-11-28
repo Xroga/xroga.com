@@ -10,6 +10,7 @@ import { createVoiceSegmenter } from '@/lib/voiceSegmenter';
 import { createDictationPipeline, MAX_RECORDING_SECONDS, type DictationPipeline } from '@/lib/voiceDictation';
 import { describeVoiceFailure, describeVoiceStartFailure } from '@/lib/voiceMessages';
 import { createVoiceWarmup } from '@/lib/voiceWarmup';
+import { readVoiceLanguage, saveVoiceLanguage, VOICE_LANGUAGES } from '@/lib/voiceLanguage';
 import {
   DICTATION_ERROR_MESSAGES,
   DictationController,
@@ -63,6 +64,11 @@ export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
   const [heard, setHeard] = useState('');
   const retryExpiry = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const levels = useRef<number[]>([]);
+  // Read after mount so the server and the first browser render agree.
+  const [language, setLanguage] = useState('');
+  const spokenLanguage = useRef('');
+  useEffect(() => { const saved = readVoiceLanguage(); spokenLanguage.current = saved; setLanguage(saved); }, []);
+  const chooseLanguage = (value: string) => { spokenLanguage.current = value; setLanguage(value); saveVoiceLanguage(value); };
   const publish = useRef((text: string) => onVoiceDraft(text));
   publish.current = (text: string) => {
     onVoiceDraft(text);
@@ -231,7 +237,7 @@ export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
       current.capture = capture;
       const pipeline = createDictationPipeline({
         signal: current.abort.signal,
-        transcribe: (wav, signal) => transcribeVoiceAudio(wav, signal, { freeOnly: true, preparedPcm: true, expectedToken: token }),
+        transcribe: (wav, signal) => transcribeVoiceAudio(wav, signal, { freeOnly: true, preparedPcm: true, expectedToken: token, language: spokenLanguage.current }),
       });
       current.pipeline = pipeline;
       current.segmenter = createVoiceSegmenter(capture.rate, segment => {
@@ -278,6 +284,10 @@ export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
             : speech.current ? <span className="xv-voice-capture-label">{heard ? `Listening… ${heard}` : 'Listening…'}</span>
             : <VoiceWaveform levels={levels} active={listening} />}
         </div>
+        {speech.current ? <span /> : <select className="xv-voice-capture-language" aria-label="Speech language" title="Speech language. Auto detects it; choose one if your words come out in the wrong language."
+          value={language} disabled={mode === 'finalizing'} onChange={event => chooseLanguage(event.target.value)}>
+          {VOICE_LANGUAGES.map(option => <option key={option.code} value={option.code}>{option.label}</option>)}
+        </select>}
         <button type="button" className="xv-voice-capture-button xv-voice-capture-send" aria-label="Stop dictation" disabled={!listening} onClick={stop}><Square aria-hidden fill="currentColor" /></button>
       </div>
       {notice && mode !== 'finalizing' ? <p role="status" className="xv-voice-v8-hint">{notice}</p> : null}
