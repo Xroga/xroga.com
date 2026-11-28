@@ -1,0 +1,100 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-WRITE-WHILE-PLANNING-20261128",
+  "baseSha": "21c96541e5cd4cdfa1d85bc037cc0d12dc1a4479",
+  "requirementIds": [
+    "XR-ORIGINAL-F076"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "medium",
+  "scope": "Start an ordinary read-only answer while the plan is being made, and show it only when the finished plan is that same ordinary answer.",
+  "changedFiles": [
+    "docs/xroga/missions/workspace-write-while-planning-20261128.json",
+    "frontend/src/context/TerminalChatContext.tsx",
+    "frontend/src/lib/writeWhilePlanning.test.ts",
+    "frontend/src/lib/writeWhilePlanning.ts"
+  ],
+  "decisions": {
+    "keep": [
+      "The semantic plan as the authority over what is shown and what runs; the existing chat route, validators and budget reservation"
+    ],
+    "extend": [
+      "Workspace turn handling"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "The same two routes are called, earlier. No new execution path.",
+    "rfc": null
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No data changes.",
+    "rollback": "No schema rollback."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "No auth changes."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No tenant changes."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No approval behaviour changes. On November 28 the owner was told this would start writing while planning, cost one unused call on other turns and need approval before release, and replied \"Yes, build it\"."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No credentials changes."
+    },
+    "egress": {
+      "changed": false,
+      "description": "Same two first-party routes; the early request carries no files, project or web access."
+    },
+    "cost": {
+      "changed": true,
+      "description": "Eligible turns planned as something else pay for one extra answer call. Server reservation and settlement are unchanged."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No billing changes."
+    }
+  },
+  "tests": [
+    {
+      "command": "tsx --test frontend/src/lib/writeWhilePlanning.test.ts",
+      "scope": "Eligibility, a grant-free early contract, showing only an agreeing plan, cancellation and failure.",
+      "negative": true,
+      "reference": "frontend/src/lib/writeWhilePlanning.test.ts"
+    }
+  ],
+  "rollout": "Website only. Owner approval is required before release. Measure time to first text and the share of dropped early answers.",
+  "rollback": "Return the website to dpl_AHEnPvqL2D6jt2ex1AV6w66Eu5hp; no database or API change.",
+  "knownGaps": [
+    "Not yet measured live.",
+    "A dropped early answer is still generated and paid for.",
+    "Slow provider replies are unchanged.",
+    "Turns with files, a selected project, build work or an explicit web request are unchanged."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "docs/xroga/missions/workspace-write-while-planning-20261128.json"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Owner release approval and live timing."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "NOT_APPLICABLE",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}
