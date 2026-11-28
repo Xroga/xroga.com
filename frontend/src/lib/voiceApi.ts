@@ -1,4 +1,5 @@
 import { API_URL, ApiError, getAccessToken,fetchApiResponse } from '@/lib/api';
+import {isVoiceLanguage} from './voiceLanguage';
 import {normalizeVoiceAudio} from './voicePcm';
 import {sameVoiceAccount, voiceClientAwait, voiceDeadline} from './voiceRequestPolicy';
 
@@ -20,7 +21,7 @@ async function drainVoiceReply(reader: ReadableStreamDefaultReader<Uint8Array>):
 }
 
 export async function transcribeVoiceAudio(audio: Blob, cancellation?: AbortSignal,
-  options?: {freeOnly: true; preparedPcm: true; expectedToken: string}): Promise<string> {
+  options?: {freeOnly: true; preparedPcm: true; expectedToken: string; language?: string}): Promise<string> {
   const signal = voiceDeadline(60000, cancellation);
   signal.throwIfAborted();
   const token = await voiceClientAwait(getAccessToken(), signal);
@@ -38,7 +39,8 @@ export async function transcribeVoiceAudio(audio: Blob, cancellation?: AbortSign
   // Cancellation and the deadline reach the connection only until the transcript has arrived.
   const wire = new AbortController(), forward = () => wire.abort();
   signal.addEventListener('abort', forward, {once: true});
-  const response = await voiceClientAwait(fetchApiResponse(`${API_URL}/api/voice/${options?.freeOnly ? 'transcribe-free' : 'transcribe'}`, {
+  const spoken = options?.freeOnly && isVoiceLanguage(options.language) ? `?language=${encodeURIComponent(options.language)}` : '';
+  const response = await voiceClientAwait(fetchApiResponse(`${API_URL}/api/voice/${options?.freeOnly ? 'transcribe-free' : 'transcribe'}${spoken}`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,

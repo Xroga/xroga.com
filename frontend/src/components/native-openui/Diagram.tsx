@@ -132,25 +132,28 @@ export const Diagram = defineComponent({
     // Reinitialize only when the actual graph or responsive layout changes.
     const graphKey = JSON.stringify([compact, props.nodes, props.links]);
     const renderable = result !== null && !stack;
+    const widestRow = Math.max(...props.nodes.map(node => props.nodes.filter(peer => peer.level === node.level).length)) * 234 * .95;
     useLayoutEffect(() => {
       const element = diagram.current;
       if (!renderable || !element) return;
       const measure = () => {
         const style = getComputedStyle(element);
         const availableWidth = element.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
-        setCompact(availableWidth < 460);
+        // Use the narrow layout before the wide one would have to shrink its text.
+        setCompact(availableWidth < Math.max(460, widestRow));
       };
       measure();
       const resize = new ResizeObserver(measure);
       resize.observe(element);
       return () => resize.disconnect();
-    }, [renderable]);
+    }, [renderable, widestRow]);
     if (!result) return <p role="status">The diagram relationships could not be rendered. {props.description}</p>;
     const fitViewOptions = { padding: result.outsideLanes ? 0.2 : compact ? 0.08 : 0.14, maxZoom: 1.1 };
     const height = compact
       ? Math.min(900, Math.max(224, result.rowCount * 145 - 24))
-      : Math.min(500, Math.max(216, result.rowCount * 92 + 32));
-    const titleAlreadyVisible = sectionTitle !== undefined && nativeReadableTextKey(sectionTitle) === nativeReadableTextKey(props.title);
+      : Math.min(900, Math.max(216, result.rowCount * 150 + 40));
+    // Under a heading the caption would say the same thing again, so it stays for assistive technology only.
+    const underHeading = sectionTitle !== undefined;
     const relationships = <div className="native-diagram-relationships">
       <strong>Diagram relationships</strong>
       <ul>
@@ -160,11 +163,11 @@ export const Diagram = defineComponent({
       </ul>
     </div>;
     if (stack) return (
-      <figure className="native-diagram native-diagram-stack" aria-labelledby={titleAlreadyVisible ? undefined : title}
-        aria-label={titleAlreadyVisible ? props.title : undefined}>
+      <figure className="native-diagram native-diagram-stack" aria-labelledby={underHeading ? undefined : title}
+        aria-label={underHeading ? props.title : undefined}>
         <figcaption>
-          {!titleAlreadyVisible && <strong id={title}>{props.title}</strong>}
-          <p>{props.description}</p>
+          {!underHeading && <strong id={title}>{props.title}</strong>}
+          <p className={underHeading ? 'native-diagram-spoken' : undefined}>{props.description}</p>
         </figcaption>
         <ol className="native-diagram-rows" aria-hidden="true">
           {stack.map((row, index) => <li key={index}>
@@ -183,11 +186,11 @@ export const Diagram = defineComponent({
       </figure>
     );
     return (
-      <figure ref={diagram} className="native-diagram" aria-labelledby={titleAlreadyVisible ? undefined : title}
-        aria-label={titleAlreadyVisible ? props.title : undefined}>
+      <figure ref={diagram} className="native-diagram" aria-labelledby={underHeading ? undefined : title}
+        aria-label={underHeading ? props.title : undefined}>
         <figcaption>
-          {!titleAlreadyVisible && <strong id={title}>{props.title}</strong>}
-          <p>{props.description}</p>
+          {!underHeading && <strong id={title}>{props.title}</strong>}
+          <p className={underHeading ? 'native-diagram-spoken' : undefined}>{props.description}</p>
         </figcaption>
         {compact !== undefined && <ReactFlowProvider key={graphKey}>
         <div className="native-diagram-canvas" style={{ height }}>

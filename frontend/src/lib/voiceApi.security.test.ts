@@ -4,15 +4,17 @@ import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import ts from 'typescript';
 import {sameVoiceAccount, voiceClientAwait, voiceDeadline, isTerminalVoiceFailure} from './voiceRequestPolicy';
+import {isVoiceLanguage} from './voiceLanguage';
 
 /** AbortSignal as shipped by Safari before iOS 17.4: no static any(). */
 const olderIosAbortSignal = {timeout: (ms: number) => AbortSignal.timeout(ms)};
 
-function actualVoiceApi(mode: string, freeOnly = false, abortSignal: unknown = AbortSignal, reply?: () => Response) {
-  let token: string | null = 'original-user-token', requests = 0, wire: AbortSignal | undefined, accept: string | null = null;
+function actualVoiceApi(mode: string, freeOnly = false, abortSignal: unknown = AbortSignal, reply?: () => Response, language?: string) {
+  let token: string | null = 'original-user-token', target = '', requests = 0, wire: AbortSignal | undefined, accept: string | null = null;
   class ApiError extends Error {constructor(message: string, public status: number, public data: unknown = {}) {super(message);}}
-  const context: Record<string, unknown> = {exports: {}, AbortSignal: abortSignal, AbortController, setTimeout, clearTimeout, Blob, Response, TextDecoder, Uint8Array, Error,
+  const context: Record<string, unknown> = {exports: {}, encodeURIComponent, AbortSignal: abortSignal, AbortController, setTimeout, clearTimeout, Blob, Response, TextDecoder, Uint8Array, Error,
     require: (name: string) => {
+      if (name === './voiceLanguage') return {isVoiceLanguage};
       if (name === './voiceRequestPolicy') return {sameVoiceAccount, voiceClientAwait, voiceDeadline};
       if (name === './voicePcm') return {normalizeVoiceAudio: async () => {
         if (mode === 'changeDuringNormalize') token = 'different-account-token';
@@ -21,7 +23,7 @@ function actualVoiceApi(mode: string, freeOnly = false, abortSignal: unknown = A
       }};
       if (name === '@/lib/api') return {API_URL: 'https://api.xroga.com', ApiError, getAccessToken: async () => token,
         fetchApiResponse: async (url: string, init: RequestInit) => {
-          requests++; assert.equal(url, 'https://api.xroga.com/api/voice/' + (freeOnly ? 'transcribe-free' : 'transcribe'));
+          requests++; target = url; if (language === undefined) assert.equal(url, 'https://api.xroga.com/api/voice/' + (freeOnly ? 'transcribe-free' : 'transcribe'));
           assert.equal(new Headers(init.headers).get('authorization'), 'Bearer original-user-token');
           assert.equal(new Headers(init.headers).get('content-type'), 'audio/wav'); assert.ok(init.signal);
           wire = init.signal ?? undefined; accept = new Headers(init.headers).get('accept');
@@ -36,8 +38,8 @@ function actualVoiceApi(mode: string, freeOnly = false, abortSignal: unknown = A
     }};
   const source = readFileSync(new URL('./voiceApi.ts', import.meta.url), 'utf8');
   vm.runInNewContext(ts.transpileModule(source, {compilerOptions: {target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS}}).outputText, context, {timeout: 1000});
-  return {requests: () => requests, wire: () => wire, accept: () => accept, run: (signal?: AbortSignal) => (context.exports as {transcribeVoiceAudio: (audio: Blob, signal?: AbortSignal, options?: {freeOnly: true; preparedPcm: true; expectedToken: string}) => Promise<string>}).transcribeVoiceAudio(new Blob([new Uint8Array(1024)]), signal,
-    freeOnly ? {freeOnly: true, preparedPcm: true, expectedToken: 'original-user-token'} : undefined)};
+  return {target: () => target, requests: () => requests, wire: () => wire, accept: () => accept, run: (signal?: AbortSignal) => (context.exports as {transcribeVoiceAudio: (audio: Blob, signal?: AbortSignal, options?: {freeOnly: true; preparedPcm: true; expectedToken: string}) => Promise<string>}).transcribeVoiceAudio(new Blob([new Uint8Array(1024)]), signal,
+    freeOnly ? {freeOnly: true, preparedPcm: true, expectedToken: 'original-user-token', ...(language === undefined ? {} : {language})} : undefined)};
 }
 
 test('actual voice API pins the original session through local decoding and publication', async t => {
@@ -122,4 +124,13 @@ test('the free upload takes the transcript from the first line and leaves the co
   await t.test('the paid route keeps asking for a whole JSON reply', async () => {
     const api = actualVoiceApi('ok'); await api.run(); assert.equal(api.accept(), null);
   });
+});
+
+test('a chosen speech language travels only as a listed code on the free upload', async () => {
+  const chosen = actualVoiceApi('ok', true, AbortSignal, undefined, 'hi');
+  await chosen.run(); assert.equal(chosen.target(), 'https://api.xroga.com/api/voice/transcribe-free?language=hi');
+  for (const value of ['', 'xx', 'hi&admin=1']) {
+    const other = actualVoiceApi('ok', true, AbortSignal, undefined, value);
+    await other.run(); assert.equal(other.target(), 'https://api.xroga.com/api/voice/transcribe-free', value);
+  }
 });

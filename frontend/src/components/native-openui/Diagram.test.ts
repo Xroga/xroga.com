@@ -53,8 +53,10 @@ test('a diagram with a visible section heading keeps its accessible name without
   assert.match(inSection, /Review before handoff\./);
   assert.doesNotMatch(inSection, /<strong[^>]*>Review handoff<\/strong>/);
   assert.match(renderToStaticMarkup(diagram), /<strong[^>]*>Review handoff<\/strong>/);
+  // A differently worded heading still replaces the caption, and the explanation is not shown twice.
   const separate = renderToStaticMarkup(createElement(NativeSectionTitle.Provider, { value: 'Release steps' }, diagram));
-  assert.match(separate, /<strong[^>]*>Review handoff<\/strong>/);
+  assert.doesNotMatch(separate, /<strong[^>]*>Review handoff<\/strong>/);
+  assert.match(separate, /<p class="native-diagram-spoken">Review before handoff\.<\/p>/);
 });
 
 test('plain chains retain their handles and reciprocal bypasses take different open sides', () => {

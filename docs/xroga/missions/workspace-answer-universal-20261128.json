@@ -1,0 +1,123 @@
+{
+  "version": "1.0",
+  "missionId": "WORKSPACE-ANSWER-UNIVERSAL-20261128",
+  "baseSha": "5cc5e04151b23a77bcdce6b95fddb956f746ed91",
+  "requirementIds": [
+    "XR-ORIGINAL-F076"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "medium",
+  "scope": "Faster text and table answers, search only for current or requested facts, a scannable style for web research answers, even spacing, one blue accent and readable diagrams. The answer instructions for generated visuals are unchanged: changing them coincided with requested calculators left unbuilt on the live site.",
+  "changedFiles": [
+    "backend/src/ai/nativeOpenUi.test.ts",
+    "backend/src/ai/nativeOpenUiPrompt.ts",
+    "backend/src/ai/prompts.test.ts",
+    "backend/src/ai/prompts.ts",
+    "backend/src/ai/researchAnswer.test.ts",
+    "backend/src/ai/tenantModelDispatch.test.ts",
+    "backend/src/ai/universal/answerThinking.test.ts",
+    "backend/src/ai/universal/semanticRequestPlanner.ts",
+    "docs/xroga/missions/workspace-answer-universal-20261128.json",
+    "frontend/src/components/native-openui/Diagram.test.ts",
+    "frontend/src/components/native-openui/Diagram.tsx",
+    "frontend/src/components/native-openui/surface.css",
+    "frontend/src/components/response-experience-v2/conversation-v2.module.css",
+    "frontend/src/styles/answerExperience.css"
+  ],
+  "decisions": {
+    "keep": [
+      "Program syntax, evidence citation, calculator wiring, safety-procedure order, answer validators and technical correction checks"
+    ],
+    "extend": [
+      "Answer spacing styles"
+    ],
+    "replace": [
+      "Topic-specific prompt rules (web framework, row security, payment webhooks, auth cookies, keyboard focus, bundles, schedules, listings) with general accuracy and evidence rules"
+    ],
+    "deprecate": []
+  },
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Same prompt functions and styles; only their wording changes.",
+    "rfc": null
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No data changes.",
+    "rollback": "No schema rollback."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "No auth changes."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No tenant changes."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No approval behaviour changes. On November 28 the owner, asked about tightening the search rule in a protected file and releasing, answered by directing every issue completed without blockers and answers sped up; pinned source hashes were rebound with that wording."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No credentials changes."
+    },
+    "egress": {
+      "changed": true,
+      "description": "Same destinations. Fewer public searches are expected; more answers send the documented reasoning setting."
+    },
+    "cost": {
+      "changed": true,
+      "description": "A shorter system prompt lowers input tokens. Reservation and settlement are unchanged."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No billing changes."
+    }
+  },
+  "tests": [
+    {
+      "command": "tsx --test backend/src/ai/nativeOpenUi.test.ts",
+      "scope": "The guide is general, asks for scannable non-speech writing, keeps layout rules, and invalid programs stay rejected.",
+      "negative": true,
+      "reference": "backend/src/ai/nativeOpenUi.test.ts"
+    },
+    {
+      "command": "tsx --test backend/src/ai/prompts.test.ts",
+      "scope": "Research answers keep evidence, citation and observation-time rules.",
+      "negative": true,
+      "reference": "backend/src/ai/prompts.test.ts"
+    },
+    {
+      "command": "node scripts/verify-native-openui-browser.mjs <outdir>",
+      "scope": "Rendered answers at phone to desktop widths, accessibility and diagram legibility.",
+      "negative": false,
+      "reference": "scripts/verify-native-openui-browser.mjs"
+    }
+  ],
+  "rollout": "API and website. Ask fresh prompts of many kinds on the live site and compare the layout.",
+  "rollback": "Return API traffic to xroga-api-calc-63640bb6 and the website to dpl_CbNRe8Xh5KhqSvrKGNrXkZv8suDb; no database changes.",
+  "knownGaps": [
+    "Real model answers under these changes are verified only after release.",
+    "Attached-file answers and answers that build a calculator, chart, diagram or cards keep the model default reasoning and may still start slowly: without it a live calculator was left unbuilt.",
+    "Planning before each answer still takes several seconds."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "docs/xroga/missions/workspace-answer-universal-20261128.json"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Required checks and live timing acceptance."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "NOT_APPLICABLE",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

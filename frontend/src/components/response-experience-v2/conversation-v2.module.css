@@ -48,7 +48,7 @@
 .turn [data-script=devanagari] :where(p, li, td, th),
 .turn [data-script=devanagari] :global(:is(.iui-markdown, .xv-response-text)) :where(p, li, td, th) { line-height: 1.8; }
 /* The written answer shown while visuals load looks like the finished one, so nothing appears to jump. */
-.answer :global(.xv-response-text) blockquote { margin-inline: 0; padding: 0; border: 0; background: transparent; color: var(--success, #3ecf8e); font-weight: 550; }
+.answer :global(.xv-response-text) blockquote { margin-inline: 0; padding: 0; border: 0; background: transparent; color: var(--answer-sky, #5c97ff); font-weight: 550; }
 /* Text-only answers use the same tables as answers with visuals: rows on the page, with room around them. */
 .answer :global(.xv-response-text [aria-label="Answer table"]) { margin-block: 1rem; border: 0; border-radius: 0; }
 .answer :global(.xv-response-text [aria-label="Answer table"]) :where(th) { background: transparent !important; border-block-end: 1px solid color-mix(in srgb, var(--foreground) 22%, transparent); }
@@ -56,3 +56,10 @@
 .answer :global(.xv-response-text [aria-label="Answer table"]) :where(th, td):first-child { padding-inline-start: 0; }
 .answer :global(.xv-response-text [aria-label="Answer table"]) :where(th, td):last-child { padding-inline-end: 0; }
 .answer :global(.xv-response-text [aria-label="Answer table"] :is(tr, th, td)) { border-color: color-mix(in srgb, var(--foreground) 14%, transparent) !important; }
+/* Text-only answers keep the same room between ideas as answers with visuals. */
+.answer :global(.xv-response-text) :where(p) { margin-block: 0 1rem; }
+.answer :global(.xv-response-text) :where(ul, ol) { margin-block: 0 1rem; }
+.answer :global(.xv-response-text) :global(.xv-answer-list) li { margin-block: 0; }
+.answer :global(.xv-response-text) :global(.xv-answer-list) li + li { margin-block-start: .5rem; }
+.answer :global(.xv-response-text) :where(h1, h2, h3, h4) { margin-block: 1.875rem .625rem; line-height: 1.35; }
+.answer :global(.xv-response-text) :global(.xv-formatted-response) > :last-child { margin-block-end: 0; }

@@ -6,7 +6,7 @@
       "path": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/TRANSPORT-LIFETIME-PROOF-87e33b94.json",
       "historicalSha256": "9950d43b6acdd1c5ad4e4bf784ef5115d47af775141905e918525f4ac3cfb4a0",
-      "currentSha256": "26e83f7e46b3540a159cf2785360627b250139821507972937972db5e9f1f03e",
+      "currentSha256": "5337860ad77b2d83312021da93ccc9e043c43ac595d9397e875959e8a9ecbf68",
       "beforeStreamedAnswerSha256": "4d397820ded57d188d10be7b161f60cc52ae68c62e3f3c8c3e3e1ac30adc90dd",
       "beforeTxtDownloadRoutingSha256": "2f143e3f6a8962acdde67ce8f5672d676de383232d67dd4691b144dbb5c1ec8e",
       "beforeNamedDocumentPromptFixtureSha256": "80b4ea2aadb2c6b492bad62182fb59e111ccdc5044b001a9db4c0c102563b6c7",
@@ -59,7 +59,22 @@
         "ownerApproval": "On 2026-11-28 the repository owner was told that answers were slow because the model thinks privately before writing, that making them start at once changes a file protected by the security review records, and that their approval would be recorded there as before. They replied \"Yes, fix speed\". Recorded by the assistant that made the change; no separate human code review is claimed.",
         "finding": "A pinned record (docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json) was rebound for the owner-approved answer speed change; its reviewed content is otherwise unchanged."
       },
-      "beforeCalculatorOutlineSha256": "45a8392ade8017e98ef2fd2a1653eb0545d74826bb2d675525064b8119844ef8"
+      "beforeCalculatorOutlineSha256": "45a8392ade8017e98ef2fd2a1653eb0545d74826bb2d675525064b8119844ef8",
+      "answerStartRebinding": {
+        "previousSha256": "67ab88c1073cd9688798fd7ddf186c04d1f7da6ea963cef66b38aeb7a036ec5e",
+        "ownerApproval": "On 2026-11-28 the repository owner was asked: \"May I tighten the web search rule in a protected file, then release and test live?\" They replied in chat, in Hindi, asking for every answer presentation issue to be completed end to end without blockers, and wrote that answers taking 70 to 80 seconds to appear are wrong and must be sped up; they had also reported too many web searches. Recorded by the assistant that made the change; no separate human code review is claimed.",
+        "finding": "A pinned record (docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json) was rebound for the owner-approved answer start and search change; its reviewed content is otherwise unchanged."
+      },
+      "visualReasoningRebinding": {
+        "previousSha256": "2f5728acb96b763d8baf315583e9909a1432ad7757745ea1ad2ffd0a57c3933d",
+        "ownerApproval": "On 2026-11-28 the repository owner was asked: \"May I tighten the web search rule in a protected file, then release and test live?\" They replied in chat, in Hindi, asking for every answer presentation issue to be completed end to end without blockers, and wrote that answers taking 70 to 80 seconds to appear are wrong and must be sped up; they had also reported too many web searches. Recorded by the assistant that made the change; no separate human code review is claimed.",
+        "finding": "A pinned record (docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json) was rebound for the visual answer reasoning repair; its reviewed content is otherwise unchanged."
+      },
+      "promptRestoreRebinding": {
+        "previousSha256": "dc2946f25d3d48d7782d59244d2c028b02f4c05080ba8992b32916f78b1bf304",
+        "ownerApproval": "On 2026-11-28 the repository owner was asked: \"May I tighten the web search rule in a protected file, then release and test live?\" They replied in chat, in Hindi, asking for every answer presentation issue to be completed end to end without blockers, and wrote that answers taking 70 to 80 seconds to appear are wrong and must be sped up; they had also reported too many web searches. Recorded by the assistant that made the change; no separate human code review is claimed.",
+        "finding": "A pinned record (docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json) was rebound for the answer instruction repair; its reviewed content is otherwise unchanged."
+      }
     },
     {
       "path": "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",

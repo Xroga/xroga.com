@@ -371,7 +371,7 @@ test('one exact research approval completes its original rich answer, saves evid
     assert.doesNotMatch(JSON.stringify(body.messages),/MUST_NOT_LEAVE|substituted planner context/);
     assert.match(JSON.stringify(body.messages),/UNRELATED_PRIOR_NASA_TURN/);
     assert.equal(body.messages.length,3);
-    assert.equal(body.reasoning_effort,undefined);
+    assert.equal(body.reasoning_effort,'none');
     if(mode==='automatic'){
      assert.equal(body.max_tokens,64_000);
      assert.match(body.messages[0].content,/Return only the answer, without an OpenUI program/);
