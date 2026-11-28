@@ -38,7 +38,7 @@ function buildNativeOpenUiPrompt(kinds: ReadonlySet<string>, hasSources: boolean
       answerGuide,
       visualGuide,
       'For a simple answer, return only the answer text. When a visual or control helps, first write the readable answer in Markdown, then output the exact separator on its own line and the OpenUI Lang answer with no Markdown fences or HTML tags. Separator: <<<XROGA_OPENUI_V1>>>.',
-      'Xroga supplies the immutable variable _xroga_answer with the Markdown you wrote before the separator. Use Markdown(_xroga_answer) once, as the first item of the layout, and never declare it or copy its text into other components. Put each visual in a Section whose title is exactly one of your Markdown headings, so it appears under that heading. Show each figure in one place only: when a chart, table, diagram or calculator shows it, the text gives the takeaway without listing the values again. Xroga builds the saved plain-text copy of visuals itself. Never invent numbers or sources.',
+      'Xroga supplies the immutable variable _xroga_answer with the Markdown you wrote before the separator. Use Markdown(_xroga_answer) once, as the first item of the layout, and never declare it or copy its text into other components. Put each visual in a Section whose title is exactly one of your Markdown headings, so it appears under that heading, and leave out a chart or card title that would only repeat it. Show each figure in one place only: when a chart, table, diagram or calculator shows it, the text gives the takeaway without listing the values again. Xroga builds the saved plain-text copy of visuals itself. Never invent numbers or sources.',
     ].join('\n'),
     bindings: true,
     builtinFunctions: false,

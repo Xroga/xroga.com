@@ -388,3 +388,5 @@
 .xroga-native-openui .iui-markdown :is(ul, ol) { gap: .5rem; }
 .xroga-native-openui .iui-markdown > * + .iui-md-h { margin-block-start: 1.875rem; }
 .xroga-native-openui .iui-markdown > .iui-md-h + * { margin-block-start: .625rem; }
+/* Read aloud and copied, but not repeated on screen under its heading. */
+.native-diagram figcaption p.native-diagram-spoken { position: absolute; width: 1px; height: 1px; margin: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

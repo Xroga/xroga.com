@@ -7,13 +7,15 @@
   ],
   "state": "CODE_COMPLETE",
   "risk": "medium",
-  "scope": "One general presentation and writing guide for every Workspace answer and web research answer, replacing topic-specific prompt rules, with more even spacing in answers.",
+  "scope": "One general presentation and writing guide for every Workspace answer and web research answer, replacing topic-specific prompt rules, with more even spacing in answers. Diagrams under a heading no longer repeat their title and description on screen and keep a readable size.",
   "changedFiles": [
     "backend/src/ai/nativeOpenUi.test.ts",
     "backend/src/ai/nativeOpenUiPrompt.ts",
     "backend/src/ai/prompts.test.ts",
     "backend/src/ai/prompts.ts",
     "docs/xroga/missions/workspace-answer-universal-20261128.json",
+    "frontend/src/components/native-openui/Diagram.test.ts",
+    "frontend/src/components/native-openui/Diagram.tsx",
     "frontend/src/components/native-openui/surface.css",
     "frontend/src/components/response-experience-v2/conversation-v2.module.css"
   ],
@@ -82,6 +84,12 @@
       "scope": "Research answers keep evidence, citation and observation-time rules.",
       "negative": true,
       "reference": "backend/src/ai/prompts.test.ts"
+    },
+    {
+      "command": "node scripts/verify-native-openui-browser.mjs <outdir>",
+      "scope": "Rendered answers at phone to desktop widths, accessibility and diagram legibility.",
+      "negative": false,
+      "reference": "scripts/verify-native-openui-browser.mjs"
     }
   ],
   "rollout": "API and website. Ask fresh prompts of many kinds on the live site and compare the layout.",

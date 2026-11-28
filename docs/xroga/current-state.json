@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "claude/answer-universal-20261128",
-    "sha": "5cc5e04151b23a77bcdce6b95fddb956f746ed91",
-    "sourceTimestampUtc": "2026-11-28T13:53:47+05:00",
-    "auditStartedUtc": "2026-11-28T09:21:03.298Z",
+    "sha": "2bdb58afd28cf058b3c4515f8cd6d27bd094232a",
+    "sourceTimestampUtc": "2026-11-28T14:24:00+05:00",
+    "auditStartedUtc": "2026-11-28T09:49:37.379Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -6410,7 +6410,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "09b63d418cd721b2534eed73b2fe73f3b7548cd94e2fda2caaa72c7827754207",
+      "sha256": "b4844448c6f7400062bb7e3eca0e0612e9b080a59bb305a2fbdba0e77d271fc3",
       "symbols": [
         "answerGuide",
         "buildNativeOpenUiPrompt",
@@ -89584,7 +89584,7 @@
       "id": "surface:92ce2788e7a639e6a608",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/native-openui/Diagram.tsx",
-      "sha256": "c0a2f7e34dfad41c5ebc249097754b9f55a8554c6f2356e63fa9c79371182d3c",
+      "sha256": "c415a49f20e580dfb6a7607ce40bd77dd2a544345289a917da1beb587a4cbfd8",
       "symbols": [
         "AnswerDiagramNode",
         "AnswerNode",
@@ -89630,9 +89630,10 @@
         "stackedDiagramRows",
         "style",
         "title",
-        "titleAlreadyVisible",
         "to",
+        "underHeading",
         "upward",
+        "widestRow",
         "width"
       ],
       "imports": [

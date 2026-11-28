@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "5cc5e04151b23a77bcdce6b95fddb956f746ed91",
+  "source_sha": "2bdb58afd28cf058b3c4515f8cd6d27bd094232a",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17258,7 +17258,7 @@
     },
     {
       "path": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "09b63d418cd721b2534eed73b2fe73f3b7548cd94e2fda2caaa72c7827754207"
+      "sha256": "b4844448c6f7400062bb7e3eca0e0612e9b080a59bb305a2fbdba0e77d271fc3"
     },
     {
       "path": "backend/src/ai/nativeOpenUiRecovery.ts",
@@ -22450,7 +22450,7 @@
     },
     {
       "path": "frontend/src/components/native-openui/Diagram.tsx",
-      "sha256": "c0a2f7e34dfad41c5ebc249097754b9f55a8554c6f2356e63fa9c79371182d3c"
+      "sha256": "c415a49f20e580dfb6a7607ce40bd77dd2a544345289a917da1beb587a4cbfd8"
     },
     {
       "path": "frontend/src/components/native-openui/Editorial.tsx",
