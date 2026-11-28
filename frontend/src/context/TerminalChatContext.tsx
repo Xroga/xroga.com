@@ -18,6 +18,7 @@ import { terminalRunReducer } from '@/lib/terminal/terminalRunReducer';
 import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { streamSwarmExecute, apiFetch, ApiError, type ChatAttachment, api, phase1ChatWithProgress } from '@/lib/api';
+import { canWriteWhilePlanning, plannedAsPlainAnswer, provisionalGoal, startEarlyAnswer } from '@/lib/writeWhilePlanning';
 import { resolveBuilderProject, syncBuilderConversation } from '@/lib/builderChat';
 import { attachResearchResult, markResearchUnavailable, pendingResearchConfirmation, RESEARCH_RECEIPT_AVAILABLE, type ResearchHandoff } from '@/lib/researchHandoff';
 import {attachModelResult,markModelUnavailable,pendingModelConfirmation,type ModelHandoff} from '@/lib/modelHandoff';
@@ -2940,7 +2941,16 @@ const stopRequestedRunIdRef =
           freshProductIntent,
         );
         startThinking();
-        const semanticPlan = await api.phase1.plan(
+        // An ordinary answer starts while the plan is still being made. The plan decides whether it is shown.
+        const earlyAnswer = canWriteWhilePlanning({
+          prompt: displayPrompt,
+          hasAttachments: Boolean(attachments?.length),
+          hasProject: Boolean(canonicalProjectContext),
+          isBuildWork: startingHeavyBuild || startingHeavyJob || isBuildUpdate || isBuildAnswer || Boolean(resumeRunId) || Boolean(priorSite),
+        })
+          ? startEarlyAnswer({ message: displayPrompt, history, goalContract: provisionalGoal(displayPrompt) }, controller.signal, phase1ChatWithProgress)
+          : null;
+        const requestPlan = () => api.phase1.plan(
           displayPrompt,
           history,
           attachments,
@@ -2954,6 +2964,17 @@ const stopRequestedRunIdRef =
           { hasExistingPreview: Boolean(priorSite), isUpdate: isBuildUpdate },
           controller.signal,
         );
+        const semanticPlan = await requestPlan().catch(async (planError: unknown) => {
+          const allowanceHeld = planError instanceof ApiError && (planError.status === 402 || planError.status === 429);
+          if (!earlyAnswer || !allowanceHeld || controller.signal.aborted) {
+            earlyAnswer?.discard();
+            throw planError;
+          }
+          // The early answer can hold the remaining allowance until it settles.
+          earlyAnswer.discard();
+          await earlyAnswer.settled;
+          return requestPlan();
+        });
         /*
  * Clicking Retry on a stopped build is explicit execution intent.
  *
@@ -2990,6 +3011,9 @@ const usePhase1Engine =
 let runSwarmBuild =
   explicitResume ||
   semanticSoftwareExecution;
+
+const showEarlyAnswer = Boolean(earlyAnswer) && usePhase1Engine && plannedAsPlainAnswer(semanticPlan);
+if (!showEarlyAnswer) earlyAnswer?.discard();
 
 semanticBuildPlanned =
   runSwarmBuild;
@@ -3082,12 +3106,19 @@ if (
               kind: needsCurrentSources || semanticPlan.goalContract.requiredCapabilities.includes('research.public-web')
                 ? 'source-backed' : 'standard',
             });
-            const result = await phase1ChatWithProgress({ message: displayPrompt, history, ...(attachments?.length ? { attachments } : {}), ...(semanticPlan.goalContract ? { goalContract: semanticPlan.goalContract } : {}) }, { signal: controller.signal, onProgress: (frame) => pushTerminalEvent('progress', frame),
+            const handlers = { signal: controller.signal, onProgress: (frame: Record<string, unknown>) => pushTerminalEvent('progress', frame),
               // The answer appears while it is written; the checked reply below replaces it.
-              onPartial: (text) => {
+              onPartial: (text: string) => {
                 if (runSwarmBuild || controller.signal.aborted || sessionIdRef.current !== originatingSessionId) return;
                 setMessages((current) => current.map((message) => (message.id === assistantId ? { ...message, content: text } : message)));
-              } })
+              } };
+            const askForAnswer = () => phase1ChatWithProgress({ message: displayPrompt, history, ...(attachments?.length ? { attachments } : {}), ...(semanticPlan.goalContract ? { goalContract: semanticPlan.goalContract } : {}) }, handlers);
+            const result = await (showEarlyAnswer && earlyAnswer
+              ? earlyAnswer.adopt(handlers).catch((earlyError: unknown) => {
+                  if (controller.signal.aborted) throw earlyError;
+                  return askForAnswer();
+                })
+              : askForAnswer())
               .finally(() => setPendingReply((current) => current?.messageId === assistantId ? null : current));
             if (controller.signal.aborted || sessionIdRef.current !== originatingSessionId) return;
             finishThinking(result.webSources);

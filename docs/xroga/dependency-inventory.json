@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "6dea483af6d4c30707d97f7ff4114eaa21f34440",
+  "source_sha": "21c96541e5cd4cdfa1d85bc037cc0d12dc1a4479",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -23590,7 +23590,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "a0ca963862c51487dccf5daf0aca5c88b72ab71b7d2db65c572e0390a09eeb40"
+      "sha256": "8547da22a9082e341c021ca8b0e0276cafc695e742e3963bfefd44ad66f7342e"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -24679,6 +24679,10 @@
     {
       "path": "frontend/src/lib/workspaceSessionStorage.ts",
       "sha256": "8cb71cbafababd835a9ddfee4a930a7c1fca8ddeb7f40a7c0337395ef55db810"
+    },
+    {
+      "path": "frontend/src/lib/writeWhilePlanning.ts",
+      "sha256": "b68ef349d771102b9dec0d8fbf553aef592138fb6b753dbe762dc83d0415b421"
     },
     {
       "path": "frontend/src/lib/xrogaA2uiAdapter.ts",
@@ -30794,7 +30798,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4167,
+      "line": 4198,
       "credentialsInUrl": false
     },
     {
@@ -40706,21 +40710,21 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 682,
+      "line": 683,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2195,
+      "line": 2196,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2228,
+      "line": 2229,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
