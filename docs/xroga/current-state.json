@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "claude/mic-language-20261128",
-    "sha": "90fe0bb5769b7aee2270a7eecc8c66b30fe93267",
-    "sourceTimestampUtc": "2026-11-28T13:25:52+05:00",
-    "auditStartedUtc": "2026-11-28T10:23:57.177Z",
+    "sha": "36abb349dab1e062268e3eba0c0b15882dd7c0e5",
+    "sourceTimestampUtc": "2026-11-28T15:27:20+05:00",
+    "auditStartedUtc": "2026-11-28T10:45:15.856Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -155426,21 +155426,21 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:69ae8659614b10701aef",
+      "id": "frontend-call:d9a635297377cbbf727c",
       "sourcePath": "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
       "line": 36,
       "callee": "api.slice",
       "reachable": false
     },
     {
-      "id": "frontend-call:30f878d45c02634a7acf",
+      "id": "frontend-call:abad8355cb0582d780f6",
       "sourcePath": "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
       "line": 36,
       "callee": "api.indexOf",
       "reachable": false
     },
     {
-      "id": "frontend-call:8246f9fbc997a54d4efe",
+      "id": "frontend-call:df8b24502a721be92085",
       "sourcePath": "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
       "line": 36,
       "callee": "api.indexOf",

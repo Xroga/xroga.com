@@ -4797,8 +4797,8 @@
     },
     {
       "id": "19343161fc1afbd3f2fb",
-      "callSha256": "93e31a05032e016a8c6cf393fee960363d7115eaf59892ae3f1e5bcffecd6580",
-      "sourceFileSha256": "e19c70b1457812bc991a08da11e1058164364b1b1c4ebe2ed72026742ea94535",
+      "callSha256": "e0dd4c3db934a9e16a5fd17e4c715e71ece2b715816fb1f48e18c3bbb91da185",
+      "sourceFileSha256": "f90719a9e50b41258837cbcc615f4f772c71efdbde560012084a785a5c8b2afa",
       "disposition": "VERIFIED_GUARD",
       "trust": "EXACT_AUTHENTICATED_MANUAL_PCM_TO_PINNED_FREE_CLOUDFLARE_ACCOUNT_AND_MODEL_ONLY",
       "tenantAuthority": "ISSUED_ACTOR_OWNER_RESERVATION_AUDIT_REVOCATION_CANCELLATION_AND_ZERO_SETTLEMENT_BEFORE_PUBLICATION_NO_PAID_FALLBACK",
@@ -4806,14 +4806,14 @@
         {
           "path": "backend/src/routes/voiceFree.security.test.ts",
           "marker": "free speech route preserves original actor, credential, reservation and publication boundaries",
-          "sha256": "45b6da7df8a0128fda4e9963ed621f39be1351343b43b546513d43d836bb9174"
+          "sha256": "5cdd5b8e58f468094b4916972902ad32baf0af88ee52820bec2db233e9288cbb"
         }
       ]
     },
     {
       "id": "eb39e5759b146603faf0",
       "callSha256": "b7de7d8baaceeb3d667da23d6269cd0b28044250d9ce7e272275698162245500",
-      "sourceFileSha256": "40c944ffb955805538ebda49f8b95cae0072e33985e56277eaf9ea4515eada73",
+      "sourceFileSha256": "30468b51bd201328c353266ccbc06f6e6ae93dd0444dc6f6eda966f1ea0d492c",
       "disposition": "VERIFIED_GUARD",
       "trust": "FIRST_PARTY_API_ORIGIN_WAKE_UP_NO_CREDENTIAL_NO_BODY_RESPONSE_IGNORED",
       "tenantAuthority": "NONE_REQUIRED_NO_USER_DATA_OR_AUTHORITY_SENT_BEST_EFFORT_ONLY",
@@ -4821,7 +4821,7 @@
         {
           "path": "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
           "marker": "voice backend wake-up request carries no credentials, body or user data and its response is ignored",
-          "sha256": "f7739c339fd6f7e17feba6ef782c476b4b73f7de4b9022a811897ad933029bfc"
+          "sha256": "8c622236ec526679cf91f1fbdf0d1c6f4f2782bf15070957a9079ddc12e39f4d"
         }
       ],
       "reviewedOnBranch": "Re-inspected 2026-11-27 and recorded with owner approval: the reviewed wake-up call text and its evidence are unchanged. The same file now accepts a refreshed access token only when subject, session identifier and issuer all match the one captured at the start; any other change still stops the upload, each request sends the token it checked, and the server verifies every token. No destination, credential, billing or schema change."

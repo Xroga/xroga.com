@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "e976709245c8199e62f1ba1113c703a14bdd80a21acc2ca92bb7402d63811360",
+  "sourceTreeDigest": "8596b79673165071c785eb21cacc5ee0b663e74aab4577a49f7984d854c3ea0f",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -2264,11 +2264,11 @@
     {
       "id": "19343161fc1afbd3f2fb",
       "file": "backend/src/routes/voiceFree.ts",
-      "line": 62,
+      "line": 68,
       "entryPoint": "<module-or-callback>",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "93e31a05032e016a8c6cf393fee960363d7115eaf59892ae3f1e5bcffecd6580",
+      "callSha256": "e0dd4c3db934a9e16a5fd17e4c715e71ece2b715816fb1f48e18c3bbb91da185",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "EXACT_AUTHENTICATED_MANUAL_PCM_TO_PINNED_FREE_CLOUDFLARE_ACCOUNT_AND_MODEL_ONLY",
       "tenantAuthority": "ISSUED_ACTOR_OWNER_RESERVATION_AUDIT_REVOCATION_CANCELLATION_AND_ZERO_SETTLEMENT_BEFORE_PUBLICATION_NO_PAID_FALLBACK",
@@ -2279,7 +2279,7 @@
         {
           "path": "backend/src/routes/voiceFree.security.test.ts",
           "marker": "free speech route preserves original actor, credential, reservation and publication boundaries",
-          "sha256": "45b6da7df8a0128fda4e9963ed621f39be1351343b43b546513d43d836bb9174"
+          "sha256": "5cdd5b8e58f468094b4916972902ad32baf0af88ee52820bec2db233e9288cbb"
         }
       ]
     },
@@ -5131,7 +5131,7 @@
     {
       "id": "eb39e5759b146603faf0",
       "file": "frontend/src/lib/voiceApi.ts",
-      "line": 9,
+      "line": 10,
       "entryPoint": "warmVoiceBackend",
       "transport": "fetch",
       "callee": "fetch",
@@ -5146,7 +5146,7 @@
         {
           "path": "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
           "marker": "voice backend wake-up request carries no credentials, body or user data and its response is ignored",
-          "sha256": "f7739c339fd6f7e17feba6ef782c476b4b73f7de4b9022a811897ad933029bfc"
+          "sha256": "8c622236ec526679cf91f1fbdf0d1c6f4f2782bf15070957a9079ddc12e39f4d"
         }
       ]
     },

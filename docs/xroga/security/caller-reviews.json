@@ -29417,13 +29417,13 @@
     },
     {
       "path": "backend/src/routes/voiceFree.ts",
-      "sourceSha256": "e19c70b1457812bc991a08da11e1058164364b1b1c4ebe2ed72026742ea94535",
+      "sourceSha256": "f90719a9e50b41258837cbcc615f4f772c71efdbde560012084a785a5c8b2afa",
       "callIds": [
-        "45f985637dbdf238dbd3"
+        "6e5be796216cf7c15bac"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver: a built-in Buffer copy of the request body, with no database or Storage client receiver. Provider admission and settlement happen in beginVoiceRequest, which is reviewed separately.",
-      "reason": "Only this built-in conversion is excluded. Free voice transport and accounting remain separately reviewed and tested. Rebound with founder approval on November 27 for the early-transcript change: publication follows admission and provider receipt checks, accounting finishes on the open response.",
+      "reason": "Only this built-in conversion is excluded. Free voice transport and accounting remain separately reviewed and tested. Rebound with founder approval on November 27 for the early-transcript change: publication follows admission and provider receipt checks, accounting finishes on the open response. Rebound with founder approval on November 28 for the optional speech language: a fixed list is checked before reservation and dispatch.",
       "evidence": [
         {
           "path": "backend/src/routes/voiceFree.ts",
