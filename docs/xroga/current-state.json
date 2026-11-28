@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "claude/answer-universal-20261128",
-    "sha": "a48d84a90157e66a333181cbf71ba6ede1136cb8",
-    "sourceTimestampUtc": "2026-11-28T14:50:24+05:00",
-    "auditStartedUtc": "2026-11-28T09:59:12.363Z",
+    "sha": "183b024e02749f1907546bbe5a4440aa5f006b98",
+    "sourceTimestampUtc": "2026-11-28T14:59:15+05:00",
+    "auditStartedUtc": "2026-11-28T10:00:18.289Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -123856,13 +123856,13 @@
       "id": "surface:37524c7f08dce1e8dbd8",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/voiceDictation.ts",
-      "sha256": "e803f196bdf2543691f29a1b59b86e8464d36d173cb03ce8283953c0f2f16355",
+      "sha256": "1f89427e48835f677791a33f9f6178a1817b9b53afd9ff5d4a85bba43d9fcacb",
       "symbols": [
         "DictationPipeline",
         "Item",
         "MAX_CONCURRENT_UPLOADS",
         "MAX_RECORDING_SECONDS",
-        "MAX_RETAINED_SEGMENTS",
+        "MAX_RETAINED_SECONDS",
         "MIN_SEGMENT_SECONDS",
         "SILENCE_MEAN_SQUARE",
         "State",
@@ -162977,7 +162977,7 @@
     {
       "id": "test-suite:d401376d58d11ccb7ea7",
       "sourcePath": "frontend/src/lib/voiceDictation.test.ts",
-      "declaredTests": 9,
+      "declaredTests": 10,
       "skipLocations": [],
       "focusLocations": []
     },
