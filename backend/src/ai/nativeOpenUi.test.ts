@@ -239,6 +239,13 @@ test('format guidance follows the request and keeps every component available', 
   assert.match(prompt, /Chart\(/, 'explicit analysis still has access to chart components');
 });
 
+test('an answer that needs a visual is told it is unfinished without the program', () => {
+  for (const [kind, name] of [['calculator', 'a working calculator'], ['chart', 'a Chart'], ['graph', 'a Diagram']]) {
+    assert.match(workspaceNativeOpenUiPrompt(['prose', kind], false), new RegExp('This answer needs ' + name + '[\\s\\S]*unfinished without that program'));
+  }
+  for (const kinds of [[], ['prose'], ['prose', 'steps'], ['table']]) assert.doesNotMatch(workspaceNativeOpenUiPrompt(kinds, false), /This answer needs/);
+});
+
 test('stray trailing presentation markers are removed before the program is validated or stored', () => {
   const program = 'root = Col([Text("The comparison is ready.")])';
   for (const close of ['</XROGA_OPENUI_V1>>>', '</<XROGA_OPENUI_V1>>>', NATIVE_UI_MARKER.trim()]) {

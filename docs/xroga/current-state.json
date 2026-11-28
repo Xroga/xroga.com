@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "claude/answer-universal-20261128",
-    "sha": "04d79e0af6cf2bd62230ce0249d21152f9160929",
-    "sourceTimestampUtc": "2026-11-28T15:00:21+05:00",
-    "auditStartedUtc": "2026-11-28T10:30:34.858Z",
+    "sha": "8326b617fc56cbb7740e2fc1a8f095c1cccacbd0",
+    "sourceTimestampUtc": "2026-11-28T15:30:40+05:00",
+    "auditStartedUtc": "2026-11-28T11:14:57.938Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -6410,7 +6410,7 @@
       "id": "surface:a67f0b1fa2dd0f11a67f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "6bf4d7616b117f2d7b767273ac96eaecab4dc1fdf924540b5fb36143b7c3c81b",
+      "sha256": "d9ce9c6e5012ac7b0f4324f0ccd3b432c3cb5327f94992d8d84d2b8909d016ed",
       "symbols": [
         "answerGuide",
         "buildNativeOpenUiPrompt",
@@ -6418,6 +6418,9 @@
         "library",
         "nativeOpenUiPlainPrompt",
         "nativeOpenUiPrompt",
+        "needed",
+        "programKinds",
+        "requiredProgram",
         "selected",
         "visualGuide",
         "withoutSources",
@@ -156094,7 +156097,7 @@
     {
       "id": "test-suite:2e491f4d2fcbc11f974c",
       "sourcePath": "backend/src/ai/nativeOpenUi.test.ts",
-      "declaredTests": 95,
+      "declaredTests": 96,
       "skipLocations": [],
       "focusLocations": []
     },

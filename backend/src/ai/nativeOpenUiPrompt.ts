@@ -21,6 +21,17 @@ export const nativeOpenUiPlainPrompt = [
 ].join(' ');
 
 const library = catalog.spec as LibrarySpec;
+
+/** Outline parts that only a program can show. */
+const programKinds: Readonly<Record<string, string>> = {
+  calculator: 'a working calculator', chart: 'a Chart', graph: 'a Diagram', metrics: 'Metric cards', cards: 'Cards', tabs: 'Tabs', checklist: 'a Checkbox checklist',
+};
+
+function requiredProgram(kinds: ReadonlySet<string>) {
+  const needed = [...kinds].flatMap(kind => programKinds[kind] ?? []);
+  return needed.length ? [`This answer needs ${needed.join(' and ')}. Write at most a short introduction, then the separator and the program that builds it. The answer is unfinished without that program: never stop after the introduction and never only describe what was asked for.`] : [];
+}
+
 function buildNativeOpenUiPrompt(kinds: ReadonlySet<string>, hasSources: boolean) {
   const selected = Object.fromEntries(Object.entries(library.components).filter(([name]) =>
     hasSources || name !== 'Source'));
@@ -39,6 +50,7 @@ function buildNativeOpenUiPrompt(kinds: ReadonlySet<string>, hasSources: boolean
       visualGuide,
       'For a simple answer, return only the answer text. When a visual or control helps, first write the readable answer in Markdown, then output the exact separator on its own line and the OpenUI Lang answer with no Markdown fences or HTML tags. Separator: <<<XROGA_OPENUI_V1>>>.',
       'Xroga supplies the immutable variable _xroga_answer with the Markdown you wrote before the separator. Use Markdown(_xroga_answer) once, as the first item of the layout, and never declare it or copy its text into other components. Put each visual in a Section whose title is exactly one of your Markdown headings, so it appears under that heading, and leave out a chart or card title that would only repeat it. Show each figure in one place only: when a chart, table, diagram or calculator shows it, the text gives the takeaway without listing the values again. Xroga builds the saved plain-text copy of visuals itself. Never invent numbers or sources.',
+      ...requiredProgram(kinds),
     ].join('\n'),
     bindings: true,
     builtinFunctions: false,
