@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "454fbd2eff2424dcc41fe83096e7c9916ae3ac2d",
+  "source_sha": "fecc6ad70f3ae95d3464498ce98b266047121465",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17658,7 +17658,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "2990335ce7d819944af091b3a0c295a76be2a3f485fb7281038500869a2f889f"
+      "sha256": "6d95e5371dd8b01f5eb84323ddc0f5cbf7e9ecf5a731d97426a1848d6755cc5f"
     },
     {
       "path": "backend/src/ai/usageAccounting.ts",
@@ -34808,21 +34808,21 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1240,
+      "line": 1239,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1348,
+      "line": 1347,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1673,
+      "line": 1672,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "454fbd2eff2424dcc41fe83096e7c9916ae3ac2d",
+  "source_sha": "fecc6ad70f3ae95d3464498ce98b266047121465",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -6416,9 +6416,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "61fd093552cc5cbb2019549b1adbf3c6a91c9e48613e32f0f7ce6093441bdab1",
-      "byte_size": 5955035,
-      "modified_timestamp": "2026-11-27T22:14:15.581Z",
+      "sha256": "bafb7b49cc214324b9e0fbaeabdb3023d2e6defc4e586fa6245feb9ccd6e07d8",
+      "byte_size": 5955018,
+      "modified_timestamp": "2026-11-28T08:53:40.769Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -8756,9 +8756,9 @@
       "source_id": "SRC-2caccad5e3c57290",
       "filename": "semanticRequestPlanner.ts",
       "path_or_url": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "2990335ce7d819944af091b3a0c295a76be2a3f485fb7281038500869a2f889f",
-      "byte_size": 52544,
-      "modified_timestamp": "2026-11-27T19:03:52.364Z",
+      "sha256": "6d95e5371dd8b01f5eb84323ddc0f5cbf7e9ecf5a731d97426a1848d6755cc5f",
+      "byte_size": 52405,
+      "modified_timestamp": "2026-11-28T08:43:00.154Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",
