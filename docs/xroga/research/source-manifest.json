@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "6ad2d536280adfb2e40a53e43c05ff291353352b",
+  "source_sha": "6dea483af6d4c30707d97f7ff4114eaa21f34440",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -6416,9 +6416,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "27f5310e9606f89ecee12d19105089fe4987ff51b53ccad33b2041e589a9b87e",
+      "sha256": "10f0a0e7f48d8f5e84217eb55763420c849140636ee79634dcfe2a3a08cb7abc",
       "byte_size": 5957560,
-      "modified_timestamp": "2026-11-28T13:28:31.548Z",
+      "modified_timestamp": "2026-11-28T13:42:46.341Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -7456,9 +7456,9 @@
       "source_id": "SRC-a67f0b1fa2dd0f11",
       "filename": "nativeOpenUiPrompt.ts",
       "path_or_url": "backend/src/ai/nativeOpenUiPrompt.ts",
-      "sha256": "859b59ef74ef8becee0b059c145c2afb0861ec2b9f739847707d20f7f73521cd",
-      "byte_size": 25926,
-      "modified_timestamp": "2026-11-28T13:22:12.421Z",
+      "sha256": "1c90bb3499a8a18b08c907a143b1fed5309dcc4965c37c3ac9c2c485a5a966b7",
+      "byte_size": 25487,
+      "modified_timestamp": "2026-11-28T13:41:36.231Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",

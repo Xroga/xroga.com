@@ -7,7 +7,7 @@
   ],
   "state": "CODE_COMPLETE",
   "risk": "medium",
-  "scope": "A scannable, non-speech writing style for every Workspace and web research answer, with more even spacing. The topic-specific layout rules stay: replacing them left requested calculators unbuilt in live testing, so that replacement was reverted. Diagrams under a heading no longer repeat their title and description on screen and keep a readable size. Answers start without private reasoning unless rated hard, the planner searches only for current or checkable facts or on request, and every answer path uses one blue accent.",
+  "scope": "Faster text and table answers, search only for current or requested facts, a scannable style for web research answers, even spacing, one blue accent and readable diagrams. The answer instructions for generated visuals are unchanged: changing them coincided with requested calculators left unbuilt on the live site.",
   "changedFiles": [
     "backend/src/ai/nativeOpenUi.test.ts",
     "backend/src/ai/nativeOpenUiPrompt.ts",
