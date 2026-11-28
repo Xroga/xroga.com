@@ -101,7 +101,7 @@
   "rollback": "Return API traffic to xroga-api-calc-63640bb6 and the website to dpl_CbNRe8Xh5KhqSvrKGNrXkZv8suDb; no database changes.",
   "knownGaps": [
     "Real model answers under these changes are verified only after release.",
-    "Attached-file answers keep the model default reasoning and may still start slowly.",
+    "Attached-file answers and answers that build a calculator, chart, diagram or cards keep the model default reasoning and may still start slowly: without it a live calculator was left unbuilt.",
     "Planning before each answer still takes several seconds."
   ],
   "placeholderClaimsRemaining": [],

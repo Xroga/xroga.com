@@ -2,11 +2,15 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { answerReasoningMode } from './semanticRequestPlanner.js';
 
-test('answers write at once; only work rated hard keeps private reasoning', () => {
+test('text and table answers write at once; hard work and answers that build a visual keep private reasoning', () => {
   for (const contextComplexity of ['low', 'medium', 'unknown']) {
-    for (const semanticIntent of ['ANSWER', 'INVESTIGATE', 'PROPOSE', 'MODIFY']) assert.equal(answerReasoningMode(true, { semanticIntent, contextComplexity }), 'none');
+    assert.equal(answerReasoningMode(true, { contextComplexity }), 'none');
+    for (const kind of ['prose', 'table', 'steps']) assert.equal(answerReasoningMode(true, { contextComplexity, presentation: [{ kind }] }), 'none');
+    for (const kind of ['calculator', 'chart', 'graph', 'metrics', 'cards', 'tabs']) {
+      assert.equal(answerReasoningMode(true, { contextComplexity, presentation: [{ kind: 'prose' }, { kind }] }), 'default');
+    }
   }
-  assert.equal(answerReasoningMode(true, { semanticIntent: 'ANSWER', contextComplexity: 'high' }), 'default');
+  assert.equal(answerReasoningMode(true, { contextComplexity: 'high' }), 'default');
   assert.equal(answerReasoningMode(true), 'none');
-  assert.equal(answerReasoningMode(false, { semanticIntent: 'ANSWER', contextComplexity: 'high' }), 'none');
+  assert.equal(answerReasoningMode(false, { contextComplexity: 'high', presentation: [{ kind: 'chart' }] }), 'none');
 });

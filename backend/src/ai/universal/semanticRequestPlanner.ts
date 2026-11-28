@@ -370,15 +370,20 @@ export const SEMANTIC_PLANNER_MAX_TOTAL_TIMEOUT_MS =
 /** The reader waits for this decision before any answer, so an ordinary turn must stay small. */
 const PLANNER_SPEED_RULES = 'Answer quickly. When the whole answer is ordinary writing, including a comparison or a table, return only the required JSON fields plus confidence and contextComplexity, and omit every other field. When the answer has to be something the reader operates or sees drawn (an adjustable calculator or tool, a fillable form, a chart, a diagram or flow, or a downloadable file), it is not ordinary writing: include the presentation outline and answerObligations for it exactly as described above, using only the listed formats (a form uses prose), and rate it at least medium. Making such a thing inside the answer is not a request for source code. contextComplexity: low = greeting, simple fact or short rewrite; medium = ordinary explanation, advice, writing, summary, comparison, outline or personal plan; high = only genuinely hard work, such as multi-step mathematics, difficult debugging, deep analysis or a large multi-part deliverable.';
 
+/** Outline parts that only a program can show. Without private reasoning the model left them unbuilt. */
+const REASONED_PRESENTATION_KINDS: readonly string[] = ['calculator', 'chart', 'graph', 'metrics', 'cards', 'tabs'];
+
 /**
- * Workspace answers start writing at once. Only work the planner rates as hard keeps the model's
- * private reasoning, because that delays the first words by a minute or more.
+ * Text and table answers start writing at once. Work the planner rates as hard, and answers that must
+ * build a visual, keep the model's private reasoning even though it delays the first words.
  */
 export function answerReasoningMode(
   native: boolean,
-  goal?: { semanticIntent?: string; contextComplexity?: string },
+  goal?: { contextComplexity?: string; presentation?: ReadonlyArray<{ kind: string }> },
 ): 'none' | 'default' {
-  return native && goal?.contextComplexity === 'high' ? 'default' : 'none';
+  if (!native) return 'none';
+  const visual = goal?.presentation?.some(section => REASONED_PRESENTATION_KINDS.includes(section.kind));
+  return visual || goal?.contextComplexity === 'high' ? 'default' : 'none';
 }
 
 export const SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS =
