@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "454fbd2eff2424dcc41fe83096e7c9916ae3ac2d",
+  "source_sha": "3a464dcbf35d0e1c656d4b83e216a2f0a3f766a9",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -24622,7 +24622,7 @@
     },
     {
       "path": "frontend/src/lib/voiceDictation.ts",
-      "sha256": "e803f196bdf2543691f29a1b59b86e8464d36d173cb03ce8283953c0f2f16355"
+      "sha256": "1f89427e48835f677791a33f9f6178a1817b9b53afd9ff5d4a85bba43d9fcacb"
     },
     {
       "path": "frontend/src/lib/voiceMessages.ts",
@@ -41332,7 +41332,7 @@
     },
     {
       "path": "frontend/src/lib/voiceDictation.ts",
-      "line": 46,
+      "line": 48,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

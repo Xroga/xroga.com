@@ -7,7 +7,7 @@
   ],
   "state": "CODE_COMPLETE",
   "risk": "medium",
-  "scope": "Repair Workspace dictation: iOS Safari capture and upload failures, and losses from quiet pieces, brief upload failures, token refresh, Stop and multi-channel microphones. Record the mixed-language root cause without changing transcription. Wake the scale-to-zero voice server when a signed-in person opens or returns to the Workspace, to shorten the wait after Stop. Show the free transcript as soon as the provider receipt is admitted and finish its accounting while the same response stays open. Cut dictation after three seconds at a half-second pause so mixed-language speech loses fewer words.",
+  "scope": "Repair Workspace dictation: iOS Safari capture and upload failures, and losses from quiet pieces, brief upload failures, token refresh, Stop and multi-channel microphones. Record the mixed-language root cause without changing transcription. Wake the scale-to-zero voice server when a signed-in person opens or returns to the Workspace, to shorten the wait after Stop. Show the free transcript as soon as the provider receipt is admitted and finish its accounting while the same response stays open. Cut dictation after three seconds at a half-second pause so mixed-language speech loses fewer words. Limit unsent dictation audio by seconds so short pieces and a slow server start do not stop a recording.",
   "changedFiles": [
     "backend/src/routes/voiceFree.security.test.ts",
     "backend/src/routes/voiceFree.ts",
