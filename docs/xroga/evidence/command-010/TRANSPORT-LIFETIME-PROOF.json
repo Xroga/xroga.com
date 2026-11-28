@@ -705,7 +705,7 @@
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.test.ts",
-      "sha256": "b76143ca5e3e81cbb41ed5a58893cdad1914524f4bd1d777d0ac28760f72822d",
+      "sha256": "9eec14db0d981f1f39108bfddb2400e1bbceb6cf2148e3e85aa4bce9c5c79a0d",
       "beforeNamedDocumentPromptFixtureSha256": "6468973bd3fb562124f9f9e16d83fd1ce23c67cf276060c04aab4fb6a5158483",
       "previousGenericSdkBinding": {
         "sha256": "acb7d3ee286d862c38e386380a20a7632415cd454510076abedca054016f2959",
@@ -765,6 +765,11 @@
         "previousSha256": "adbd1da0cd947c832f21171a4b81c3d69934cf8e39c7390106e7377a4a4c7dd9",
         "ownerApproval": "On 2026-11-28 the repository owner was asked: \"May I tighten the web search rule in a protected file, then release and test live?\" They replied in chat, in Hindi, asking for every answer presentation issue to be completed end to end without blockers, and wrote that answers taking 70 to 80 seconds to appear are wrong and must be sped up; they had also reported too many web searches. Recorded by the assistant that made the change; no separate human code review is claimed.",
         "finding": "One assertion about the reasoning setting follows that rule. Every tenant, account, payload, settlement and reservation assertion is unchanged."
+      },
+      "promptRestoreRebinding": {
+        "previousSha256": "b76143ca5e3e81cbb41ed5a58893cdad1914524f4bd1d777d0ac28760f72822d",
+        "ownerApproval": "On 2026-11-28 the repository owner was asked: \"May I tighten the web search rule in a protected file, then release and test live?\" They replied in chat, in Hindi, asking for every answer presentation issue to be completed end to end without blockers, and wrote that answers taking 70 to 80 seconds to appear are wrong and must be sped up; they had also reported too many web searches. Recorded by the assistant that made the change; no separate human code review is claimed.",
+        "finding": "Only the expected reasoning setting differs: the research synthesis call and the drafted text answer start at once, attached files and visual answers keep the model default. Every tenant, account, payload, settlement and reservation assertion is unchanged."
       }
     },
     {
