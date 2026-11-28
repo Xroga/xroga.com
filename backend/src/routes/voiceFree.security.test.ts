@@ -25,7 +25,7 @@ test('free speech route preserves original actor, credential, reservation and pu
   process.env.NODE_ENV = 'production'; process.env.SUPABASE_URL = 'http://127.0.0.1:55439'; process.env.SUPABASE_SERVICE_ROLE_KEY = 'synthetic-only';
   let actor: unknown = context, userId = owner, mode = 'ok', dispatches = 0, usageWrites = 0;
   let response: express.Response | undefined;
-  let settleGate: Promise<void> | undefined;
+  let settleGate: Promise<void> | undefined, expectedLanguage: string | undefined;
   const events: string[] = [], holds = new Map<string, Record<string, unknown>>(), releases: Record<string, unknown>[] = [];
   const app = express();
   app.use((req, res, next) => {response = res; Object.assign(req, {userId, tenantContext: actor}); next();}); app.use('/voice', voice);
@@ -75,7 +75,7 @@ test('free speech route preserves original actor, credential, reservation and pu
     assert.equal(init?.redirect, 'manual'); assert.ok(init?.signal);
     assert.equal(new Headers(init.headers).get('authorization'), `Bearer ${token}`);
     const body = JSON.parse(String(init.body)); assert.equal(body.task, 'transcribe'); assert.equal(body.vad_filter, true); assert.equal(body.initial_prompt, VOICE_VOCABULARY);
-    assert.equal(body.condition_on_previous_text, false); assert.equal(body.language, undefined);
+    assert.equal(body.condition_on_previous_text, false); assert.equal(body.language, expectedLanguage);
     assert.deepEqual(Buffer.from(body.audio, 'base64'), wav()); dispatches++; events.push('provider');
     if (mode === 'redirect') return new Response(null, {status: 307, headers: {location: 'https://untrusted.invalid'}});
     if (['401', '403', '429', '503'].includes(mode)) return Response.json({error: 'PRIVATE_PROVIDER_MESSAGE'}, {status: Number(mode)});
@@ -88,7 +88,7 @@ test('free speech route preserves original actor, credential, reservation and pu
       transcription_info: {duration: mode === 'wrongDuration' ? 100 : 1, language: 'ur'}}}, {headers: mode === 'missingRequestId' ? {} : {'cf-ray': '0123456789abcdef-LHR'}});
   });
   function reset(value = 'ok') {
-    mode = value; settleGate = undefined; dispatches = 0; usageWrites = 0; events.length = 0; releases.length = 0; actor = context; userId = owner;
+    mode = value; settleGate = undefined; expectedLanguage = undefined; dispatches = 0; usageWrites = 0; events.length = 0; releases.length = 0; actor = context; userId = owner;
     process.env.CLOUDFLARE_VOICE_ACCOUNT_ID = account; process.env.CLOUDFLARE_VOICE_API_TOKEN = token; process.env.CLOUDFLARE_VOICE_FREE_PLAN_CONFIRMED = 'true';
   }
   const post = (audio = wav()) => originalFetch(base + '/voice/transcribe-free', {method: 'POST', headers: {'content-type': 'audio/wav'}, body: audio});
@@ -163,6 +163,20 @@ test('free speech route preserves original actor, credential, reservation and pu
   });
   for (const value of ['reservationDenied', 'wrongOwnerHold', 'rotateAtReservation', 'admissionAuditDenied', '401', '403', '429', '503', 'redirect', 'malformed', 'oversized', 'rotateAfterDispatch', 'revokeFreePlan', 'wrongDuration', 'missingRequestId', 'secret']) await t.test(value + ' still publishes no early text', async () => {
     reset(value); const result = await early(); assert.notEqual(result.status, 200); assert.doesNotMatch(await result.text(), /PRIVATE_PROVIDER_MESSAGE|synthetic-cloudflare|Build a website/);
+  });
+  const spoken = (query: string, accept = 'application/json') => originalFetch(base + '/voice/transcribe-free' + query, {method: 'POST', headers: {'content-type': 'audio/wav', accept}, body: wav()});
+  await t.test('a listed language chosen by the speaker reaches the model, with every safeguard unchanged', async () => {
+    for (const accept of ['application/json', 'application/x-ndjson']) {
+      reset(); expectedLanguage = 'hi'; const result = await spoken('?language=hi', accept); assert.equal(result.status, 200); await result.text();
+      assert.deepEqual(events, ['reserve', 'audit:ADMITTED', 'provider', 'settle', 'usage', 'audit:COMPLETED']);
+    }
+    reset(); assert.equal((await spoken('')).status, 200);
+  });
+  await t.test('an unlisted, repeated or injected language is refused before any reservation or audio', async () => {
+    for (const query of ['?language=xx', '?language=HI', '?language=', '?language=hi&language=ur', '?language[a]=hi', '?language=hi%0Ax', '?language=__proto__']) {
+      reset(); const result = await spoken(query); assert.equal(result.status, 422, query); assert.match(await result.text(), /VOICE_LANGUAGE_UNSUPPORTED/);
+      assert.equal(dispatches, 0); assert.deepEqual(events, []);
+    }
   });
   await t.test('silent and malformed PCM do not invoke a model', async () => {
     reset(); assert.equal((await post(wav(true))).status, 422); assert.notEqual((await post(Buffer.alloc(600))).status, 200); assert.equal(dispatches, 0);
