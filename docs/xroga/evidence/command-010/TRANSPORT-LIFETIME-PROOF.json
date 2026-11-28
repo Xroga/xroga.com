@@ -763,7 +763,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "2990335ce7d819944af091b3a0c295a76be2a3f485fb7281038500869a2f889f",
+      "sha256": "d4839a9ea2e8bd770dbacbdd68680650f5bae0af696ec045b2e3ec4fe1dea4bf",
       "beforeTxtDownloadRoutingSha256": "450d77c6f89e9334ef2345d316895580732bda5b614ad3d87d42f4d4643f75fa",
       "beforeInlineCalculatorRoutingSha256": "58e3fa0ea9ec46ed2aa0be0c7aa6ca0777c213059c12f3cd6ecf04a6a2ab6e29",
       "beforePlannerCompletionDiagnosticsSha256": "6ca81b0c9234195e6159d1e03735a21ce50d50cf1e8f71b53cb62199bf95cb26",
@@ -793,6 +793,11 @@
         "previousSha256": "624814d6816daad4161cf9623b84855874963c1627572bcd57ac597b41af9887",
         "ownerApproval": "On 2026-11-27 the repository owner was told that faster ordinary chat changes a security-reviewed file and that their approval would be recorded here; they replied asking for it to be completed end to end, with no plan or extra thinking for ordinary chat. Recorded by the assistant that made the change; no separate human code review is claimed.",
         "finding": "Adds answerReasoningMode, greeting-only replies that make no model call, and instructions asking for a smaller decision on ordinary turns. Planner dispatch options, reservation, receipt handling and capability checks are unchanged."
+      },
+      "calculatorOutlineRebinding": {
+        "previousSha256": "2990335ce7d819944af091b3a0c295a76be2a3f485fb7281038500869a2f889f",
+        "ownerApproval": "On 2026-11-28 the repository owner was told the loan calculator was answered with source code and, asked whether to fix and release it, answered \"Yes, fix and release\". Recorded by the assistant that made the change; no separate human code review is claimed.",
+        "finding": "Only the text of the planner speed instruction differs: answers that need a tool, form, chart, diagram or file keep their presentation outline and obligations. Planner dispatch options, reservation, receipt handling and capability checks are unchanged."
       }
     },
     {

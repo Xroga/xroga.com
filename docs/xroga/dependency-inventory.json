@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "454fbd2eff2424dcc41fe83096e7c9916ae3ac2d",
+  "source_sha": "677696558dd8cdb6e3e6b1b55103c1134a5dc287",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17658,7 +17658,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "2990335ce7d819944af091b3a0c295a76be2a3f485fb7281038500869a2f889f"
+      "sha256": "d4839a9ea2e8bd770dbacbdd68680650f5bae0af696ec045b2e3ec4fe1dea4bf"
     },
     {
       "path": "backend/src/ai/usageAccounting.ts",

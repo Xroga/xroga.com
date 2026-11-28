@@ -53,6 +53,7 @@ test('actual semantic planner carries issued actor, platform reservation and exa
       const expectedPrompt = contextualLiteral?.message ??
         (mode === 'misrouted-calculator' ? 'build an interactive calculator' : 'Explain a safe local parser');
       const system = body.messages[0].content as string;
+      assert.match(system, /reader operates or sees drawn.*include the presentation outline and answerObligations/, 'A tool or drawing keeps its outline');
       assert.equal(system.split('Retrieve current public evidence through the configured provider adapter.').length, 2,
         'The full capability descriptor belongs in one registry catalog');
       assert.match(system, /Destructive, financial, permission-changing.*additional confirmation gate/);
