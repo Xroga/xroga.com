@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "af18c0c3f5d52c31ed29e35755ad96adf1a23875",
+  "source_sha": "2f2bbb4dacf509c2ad1ca5ab8d71273943158623",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -18878,7 +18878,7 @@
     },
     {
       "path": "backend/src/routes/voiceFree.ts",
-      "sha256": "e19c70b1457812bc991a08da11e1058164364b1b1c4ebe2ed72026742ea94535"
+      "sha256": "f90719a9e50b41258837cbcc615f4f772c71efdbde560012084a785a5c8b2afa"
     },
     {
       "path": "backend/src/routes/wellbeing.ts",
@@ -23370,7 +23370,7 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sha256": "4085bf18a54f104e8b01b26bf999f80116582a0af02712cf773c5ec48c004026"
+      "sha256": "b15b2568dc62c8347fb2128e9af0c66af1b471fae3fd9bc2a3bf32784ca2df38"
     },
     {
       "path": "frontend/src/components/terminal/builder/BuilderDatabase.tsx",
@@ -24614,7 +24614,7 @@
     },
     {
       "path": "frontend/src/lib/voiceApi.ts",
-      "sha256": "40c944ffb955805538ebda49f8b95cae0072e33985e56277eaf9ea4515eada73"
+      "sha256": "30468b51bd201328c353266ccbc06f6e6ae93dd0444dc6f6eda966f1ea0d492c"
     },
     {
       "path": "frontend/src/lib/voiceCapture.ts",
@@ -24623,6 +24623,10 @@
     {
       "path": "frontend/src/lib/voiceDictation.ts",
       "sha256": "1f89427e48835f677791a33f9f6178a1817b9b53afd9ff5d4a85bba43d9fcacb"
+    },
+    {
+      "path": "frontend/src/lib/voiceLanguage.ts",
+      "sha256": "0892b8322eed6946c23db43afbecb896c0a136fea8b58145326a30d5819b2125"
     },
     {
       "path": "frontend/src/lib/voiceMessages.ts",
@@ -26849,7 +26853,7 @@
       "hostname": "api.cloudflare.com",
       "protocol": "https:",
       "path": "backend/src/routes/voiceFree.ts",
-      "line": 60,
+      "line": 66,
       "credentialsInUrl": false
     },
     {
@@ -37153,7 +37157,14 @@
     },
     {
       "path": "backend/src/routes/voiceFree.ts",
-      "line": 16,
+      "line": 14,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/voiceFree.ts",
+      "line": 18,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
